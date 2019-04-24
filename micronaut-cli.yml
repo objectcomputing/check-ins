@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: com.objectcomputing
+---
+testFramework: junit
+sourceLanguage: java

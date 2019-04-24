@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OCI Google Drive Upload</title>
+    <link rel="stylesheet" type="text/css" th:href="@{upload.css}" />
+</head>
+<body>
+    <h4 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <span th:if="${sysError != null}" class="error" th:text="${sysError}"/>
+        <label>File Upload
+            <fieldset id="upload-fs">
+                <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
+            </fieldset>
+        </label>
+
+        <button type="submit" name="submit">Upload file</button>
+    </form>
+</body>
+</html>
