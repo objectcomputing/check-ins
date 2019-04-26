@@ -1,9 +1,7 @@
 package com.objectcomputing;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
@@ -12,44 +10,29 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import io.micronaut.validation.Validated;
 import io.micronaut.views.View;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.List;
 
+@Validated
 @Controller("upload")
 public class UploadController {
-
-    private static final String APPLICATION_NAME = "OCI Google Drive Upload";
-
     private static final String RSP_SERVER_ERROR_KEY = "serverError";
     private static final String RSP_ERROR_KEY = "error";
     private static final String RSP_COMPLETE_MESSAGE_KEY = "completeMessage";
 
-    protected static Drive drive;
-    protected static GoogleDriveUtil googleDriveUtil;
+    @NotNull
+    private GoogleDriveAccessor googleDriveAccessor;
 
     /**
-     * Get access to the designated Google Drive set in your secrets/credentials.json
-     * @return true if access was successful or false if it wasn't
+     * UploadController
+     * @param googleDriveAccessor
+     * @throws IOException
      */
-    private boolean accessGoogleDrive() {
-        boolean isConnected = true;
-        if(drive == null) {
-            try {
-                if(googleDriveUtil == null) {
-                    googleDriveUtil = new GoogleDriveUtil(GoogleNetHttpTransport.newTrustedTransport(),
-                            APPLICATION_NAME,
-                            List.of(DriveScopes.DRIVE_FILE));
-
-                }
-                drive = googleDriveUtil.accessGoogleDrive();
-            } catch (IOException | GeneralSecurityException e) {
-                isConnected = false;
-            }
-        }
-        return isConnected && drive != null;
+    public UploadController(GoogleDriveAccessor googleDriveAccessor) throws IOException {
+        this.googleDriveAccessor = googleDriveAccessor;
     }
 
     /**
@@ -69,16 +52,17 @@ public class UploadController {
      */
     @View("upload")
     @Post(consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse upload(CompletedFileUpload file) {
+    public HttpResponse upload(CompletedFileUpload file) throws IOException {
+        Drive drive = googleDriveAccessor.accessGoogleDrive();
+        if(drive == null) {
+            return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
+                    "Unable to access Google Drive"));
+        }
 
         if ((file.getFilename() == null || file.getFilename().equals(""))) {
             return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_ERROR_KEY, "Required file"));
         }
 
-        if(!accessGoogleDrive()) {
-            return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
-                    "Unable to access Google Drive"));
-        }
 
         File fileMetadata = new File();
         fileMetadata.setName(file.getFilename());

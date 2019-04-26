@@ -9,3 +9,9 @@ micronaut:
         mapping: "/**"
         paths:
           - "classpath:static/css"
+
+oci-google-drive:
+  application:
+    name: "OCI Google Drive Uploader"
+    scopes:
+      - "https://www.googleapis.com/auth/drive.file"

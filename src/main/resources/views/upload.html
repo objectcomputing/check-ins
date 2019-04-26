@@ -6,9 +6,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{upload.css}" />
 </head>
 <body>
-    <h4 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
+    <h5 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
+    <p th:if="${serverError != null}" class="error" th:text="${serverError}"/>
     <form action="/upload" method="post" enctype="multipart/form-data">
-        <span th:if="${sysError != null}" class="error" th:text="${sysError}"/>
         <label>File Upload
             <fieldset id="upload-fs">
                 <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
