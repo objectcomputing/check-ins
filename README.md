@@ -1,3 +1,3 @@
 # Google Drive Upload Read Me file
 
-## Important infromation goes here
+## Important words and stuff goes here
