@@ -3,18 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
-    <link rel="stylesheet" type="text/css" th:href="@{upload.css}" />
+    <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
 </head>
 <body>
     <h5 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
     <p th:if="${serverError != null}" class="error" th:text="${serverError}"/>
+
+
+    <!-- OCI logo as a link -->
+    <a  href="https://objectcomputing.com/" target="_blank">
+        <img src="https://objectcomputing.com/themes/objectcomputing/images/header-logo.svg" alt="OCI Logo" width="350" >
+    </a>
+
+    <!-- file upload buttons and stuff -->
     <form action="/upload" method="post" enctype="multipart/form-data">
-        <label>Upload file here
+        <label>File Upload
             <fieldset id="upload-fs">
                 <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
             </fieldset>
         </label>
-        <button type="submit" name="submit">Upload file</button>
+
+        <p>
+            <button type="submit" name="submit">Upload file</button>
+        </p>
+
     </form>
+
+    <div id="background-image">
+
+    </div>
 </body>
 </html>
+
+
+<!-- https://lh6.googleusercontent.com/uXXINdEoLLa-3A81ChwrL_3TzpPQMpzfImwqsvVRZBxR_SnonpU-FNiUSRn9-mOso9eLBNtX10WiHWX2eyStPTtao0hw4FNyjG07QLYw8Uppfs5-H0w=w773 -->

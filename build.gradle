@@ -43,6 +43,7 @@ dependencies {
     compile "io.micronaut:micronaut-views"
     runtime "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
     runtime "ch.qos.logback:logback-classic:1.2.3"
+    runtime "org.fusesource.jansi:jansi:1.18"
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testCompile "org.junit.jupiter:junit-jupiter-api"
     testCompile "io.micronaut.test:micronaut-test-junit5"

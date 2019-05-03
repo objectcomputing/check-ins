@@ -2,3 +2,30 @@
 	color: red;
 }
 
+label {
+	color: darkblue;
+	text-align: center;
+}
+
+button {
+	width: -webkit-fit-content;
+	width: -moz-fit-content;
+	width: fit-content;
+	margin-top: 15px;
+	padding: 10px 25px;
+	font-size: 14px;
+	line-height: 1;
+	text-transform: uppercase;
+	background-color: #2559a7;
+	color: white;
+
+}
+
+button:hover {
+	text-decoration: underline;
+	cursor: pointer;
+
+}
+
+
+
