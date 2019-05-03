@@ -5,6 +5,8 @@
 label {
 	color: darkblue;
 	text-align: center;
+	margin: 70px;
+
 }
 
 button {
@@ -27,5 +29,12 @@ button:hover {
 
 }
 
+.box {
+	color: #b60808;
+	margin: 75px;
+}
 
+.buttons {
+	color: green;
+}
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
     <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
+
 </head>
 <body>
     <h5 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
@@ -16,22 +17,22 @@
     </a>
 
     <!-- file upload buttons and stuff -->
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <label>File Upload
-            <fieldset id="upload-fs">
-                <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
-            </fieldset>
-        </label>
+    <div class="buttons">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label>File Upload
+                <fieldset id="upload-fs">
+                    <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
+                </fieldset>
+            </label>
 
-        <p>
-            <button type="submit" name="submit">Upload file</button>
-        </p>
+            <p>
+                <button type="submit" name="submit">Upload file</button>
+            </p>
 
-    </form>
-
-    <div id="background-image">
-
+        </form>
     </div>
+
+
 </body>
 </html>
 
