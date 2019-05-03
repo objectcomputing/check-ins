@@ -7,7 +7,8 @@ label {
 	text-align: center;
 	margin: 400px;
 	font-family: Roboto;
-
+	display: block;
+	margin: auto;
 
 }
 
@@ -23,7 +24,7 @@ button {
 	color: white;
 	font-family: Roboto;
 	margin: auto;
-
+	display: block;
 
 }
 
