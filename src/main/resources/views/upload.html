@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
     <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
+    <style>
+        body {
+            background-image: url("../images/background.jpeg");
+            background-repeat: no-repeat;
+            background-size:cover;
 
+        }
+
+    </style>
 </head>
 <body>
     <h5 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
@@ -29,6 +37,7 @@
                 <button type="submit" name="submit">Upload file</button>
             </p>
 
+
         </form>
     </div>
 
@@ -38,3 +47,7 @@
 
 
 <!-- https://lh6.googleusercontent.com/uXXINdEoLLa-3A81ChwrL_3TzpPQMpzfImwqsvVRZBxR_SnonpU-FNiUSRn9-mOso9eLBNtX10WiHWX2eyStPTtao0hw4FNyjG07QLYw8Uppfs5-H0w=w773 -->
+
+<!-- background image
+            <img src="../images/background.jpeg" alt="background image">
+-->
