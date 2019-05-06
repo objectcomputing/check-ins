@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
     <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
@@ -27,12 +28,14 @@
     <!-- file upload buttons and stuff -->
     <div class="buttons">
         <form action="/upload" method="post" enctype="multipart/form-data">
-            <label>File Upload
-                <fieldset id="upload-fs">
-                    <input type="file" name="file"><span th:if="${error != null}" class="error" th:text="${error}"/>
-                </fieldset>
-            </label>
 
+                <fieldset id="upload-fs">
+                    <input type="file" name="file" id="file" class="uploader"><span th:if="${error != null}" class="error" th:text="${error}"/>
+                    <label for="file">Choose a file</label>
+                </fieldset>
+
+
+            <!-- submit button for files -->
             <p>
                 <button type="submit" name="submit">Upload file</button>
             </p>
@@ -42,12 +45,15 @@
     </div>
 
 
+
 </body>
 </html>
 
 
 <!-- https://lh6.googleusercontent.com/uXXINdEoLLa-3A81ChwrL_3TzpPQMpzfImwqsvVRZBxR_SnonpU-FNiUSRn9-mOso9eLBNtX10WiHWX2eyStPTtao0hw4FNyjG07QLYw8Uppfs5-H0w=w773 -->
 
-<!-- background image
+<!-- background image, label text for file upload button
             <img src="../images/background.jpeg" alt="background image">
+
+            <label for="file">Choose a file</label>
 -->

@@ -40,7 +40,36 @@ button:hover {
 }
 
 
-.buttons {
-	color: green;
+
+.uploader {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+label {
+	width: -webkit-fit-content;
+	width: -moz-fit-content;
+	width: fit-content;
+	padding: 12px 17px;
+	font-size: 14px;
+	line-height: 1;
+	text-transform: uppercase;
+	background-color: #2559a7;
+	color: white;
+	font-family: Roboto;
+	margin: auto;
+	display: block;
+
+
+}
+
+label:hover {
+	text-decoration: underline;
+	cursor: pointer;
+
 }
 
