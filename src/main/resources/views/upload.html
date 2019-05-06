@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+    <script type ="text/javascript" src="../views/upload.js"></script>
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
     <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
@@ -30,7 +30,7 @@
         <form action="/upload" method="post" enctype="multipart/form-data">
 
                 <fieldset id="upload-fs">
-                    <input type="file" name="file" id="file" class="uploader"><span th:if="${error != null}" class="error" th:text="${error}"/>
+                    <input type="file" name="file" id="file" class="uploader" multiple required /><span th:if="${error != null}" class="error" th:text="${error}"/>
                     <label for="file">Choose a file</label>
                 </fieldset>
 
@@ -40,6 +40,7 @@
                 <button type="submit" name="submit">Upload file</button>
             </p>
 
+            <div id="file-upload-filename"></div>
 
         </form>
     </div>
