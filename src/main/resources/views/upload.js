@@ -1,18 +1,29 @@
+var files = [];
 
-var input = document.getElementById('file');
-var infoArea = document.getElementById('file-upload-filename');
 
-input.addEventListener('change', showFileName);
 
-function showFileName(event){
 
-    var input = event.srcElement;
+function updateName(){
 
-    var fileName = input.file[0].name;
+    /* gets the number of files */
+    let nBytes = 0;
+        oFiles = document.getElementById("file").files;
+        nFiles = oFiles.length;
 
-    infoArea.textContent = 'File Name' + fileName;
+    for (let nFileId = 0; nFileId < nFiles; nFileId++) {
+        nBytes += oFiles[nFileId].name;
+    }
+    let sOutput = nBytes + "file Name";
+
+
+
+    document.getElementById("fileNum").innerHTML = nFiles;
+    document.getElementById("fileName").innerHTML = sOutput;
+
 
 }
+
+
 
 
 
