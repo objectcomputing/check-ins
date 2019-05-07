@@ -31,7 +31,7 @@
 
                 <fieldset id="upload-fs">
                     <input type="file" name="file" id="file" class="uploader" multiple onchange="updateName();">  <span th:if="${error != null}" class="error" th:text="${error}"/>
-                    <label for="file">Choose a file</label>
+                    <label for="file" id="filesName">Choose a file</label>
                 </fieldset>
 
 
@@ -41,9 +41,6 @@
             </p>
 
             <div id="file-upload-filename"></div>
-
-            <p id="fileNum">0</p>
-            <p id="fileName">file name</p>
 
         </form>
     </div>

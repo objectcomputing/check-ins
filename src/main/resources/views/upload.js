@@ -1,6 +1,3 @@
-var files = [];
-
-
 
 
 function updateName(){
@@ -11,16 +8,21 @@ function updateName(){
         nFiles = oFiles.length;
 
     for (let nFileId = 0; nFileId < nFiles; nFileId++) {
-        nBytes += oFiles[nFileId].name;
+        nBytes = oFiles[nFileId].name;
     }
-    let sOutput = nBytes + "file Name";
+    let sOutput = nBytes;
 
 
 
-    document.getElementById("fileNum").innerHTML = nFiles;
-    document.getElementById("fileName").innerHTML = sOutput;
+    if(nFiles > 1){
+        document.getElementById("filesName").innerHTML = nFiles + " Files Uploaded";
+    } else {
+        document.getElementById("filesName").innerHTML = sOutput;
+    }
 
-
+    if(nFiles = 0){
+        document.getElementById("filesName").innerHTML = "Choose a file";
+    }
 }
 
 
