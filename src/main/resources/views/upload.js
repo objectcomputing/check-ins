@@ -16,14 +16,16 @@ function updateName(){
 
     if(nFiles > 1){
         document.getElementById("filesName").innerHTML = nFiles + " Files Uploaded";
-    } else {
+    } else if (nFiles > 0) {
         document.getElementById("filesName").innerHTML = sOutput;
-    }
-
-    if(nFiles = 0){
+    } else {
         document.getElementById("filesName").innerHTML = "Choose a file";
     }
+
 }
+
+
+
 
 
 
