@@ -27,6 +27,7 @@ button:hover {
 .box {
 	color: #b60808;
 	margin: 75px;
+
 }
 
 
@@ -38,6 +39,7 @@ button:hover {
 	overflow: hidden;
 	position: absolute;
 	z-index: -1;
+	border: hidden;
 }
 
 label {
@@ -64,3 +66,7 @@ label:hover {
 
 }
 
+.fieldset {
+	border: none;
+
+}

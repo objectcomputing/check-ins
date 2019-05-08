@@ -29,10 +29,11 @@
     <div class="buttons">
         <form action="/upload" method="post" enctype="multipart/form-data">
 
-                <fieldset id="upload-fs">
+                <fieldset id="upload-fs" class="fieldset">
                     <input type="file" name="file" id="file" class="uploader" multiple onchange="updateName();">  <span th:if="${error != null}" class="error" th:text="${error}"/>
                     <label for="file" id="filesName">Choose a file</label>
                 </fieldset>
+
 
 
             <!-- submit button for files -->
@@ -51,10 +52,3 @@
 </html>
 
 
-<!-- https://lh6.googleusercontent.com/uXXINdEoLLa-3A81ChwrL_3TzpPQMpzfImwqsvVRZBxR_SnonpU-FNiUSRn9-mOso9eLBNtX10WiHWX2eyStPTtao0hw4FNyjG07QLYw8Uppfs5-H0w=w773 -->
-
-<!-- background image, label text for file upload button
-            <img src="../images/background.jpeg" alt="background image">
-
-            <label for="file">Choose a file</label>
--->
