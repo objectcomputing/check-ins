@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 @MicronautTest
 class UploadControllerTest {
 
-    private static final String fileToUpload = "/micronaut.png";
+    private static final String FILE_TO_UPLOAD = "/micronaut.png";
 
     @Inject
     @Client("/upload")
@@ -86,7 +86,7 @@ class UploadControllerTest {
     void testDriveCantConnect() throws URISyntaxException, IOException {
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
-        java.io.File file = new java.io.File(this.getClass().getResource(fileToUpload).toURI());
+        java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
         HttpRequest<?> req = HttpRequest.POST("",
                 MultipartBody.builder().addPart("file", file).build()).contentType(MediaType.MULTIPART_FORM_DATA);
         Flowable flowable = client.retrieve(req);
@@ -109,7 +109,7 @@ class UploadControllerTest {
 
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
 
-        java.io.File file = new java.io.File(this.getClass().getResource(fileToUpload).toURI());
+        java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
         HttpRequest<?> req = HttpRequest.POST("",
                 MultipartBody.builder().addPart("file", file).build()).contentType(MediaType.MULTIPART_FORM_DATA);
         Flowable flowable = client.exchange(req);
