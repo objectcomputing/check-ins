@@ -9,6 +9,5 @@ out/
 *.ipr
 *.iws
 .project
-tokens
 .settings
 .classpath
