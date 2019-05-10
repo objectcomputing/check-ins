@@ -2,6 +2,13 @@
 	color: red;
 }
 
+body {
+	background-image: url("background.jpeg");
+	background-repeat: no-repeat;
+	background-size:cover;
+
+}
+
 button {
 	width: -webkit-fit-content;
 	width: -moz-fit-content;
@@ -29,7 +36,6 @@ button:hover {
 	margin: 75px;
 
 }
-
 
 
 .uploader {
@@ -68,5 +74,14 @@ label:hover {
 
 .fieldset {
 	border: none;
+
+}
+
+.success {
+	color: #dbdbdb;
+	font-family: Roboto;
+	font-size: 14px;
+	text-align: center;
+
 
 }

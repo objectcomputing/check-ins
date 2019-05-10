@@ -1,24 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script type ="text/javascript" src="../views/upload.js"></script>
+    <script type ="text/javascript" th:src="@{upload.js}"></script>
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
-    <link rel="stylesheet" type="text/css" href="../static/css/upload.css" />
-    <style>
-        body {
-            background-image: url("../images/background.jpeg");
-            background-repeat: no-repeat;
-            background-size:cover;
+    <link rel="stylesheet" type="text/css" th:href="@{upload.css}" />
 
-        }
-
-    </style>
 </head>
 <body>
-    <h5 th:if="${completeMessage != null}" th:text="${completeMessage}"/>
-    <p th:if="${serverError != null}" class="error" th:text="${serverError}"/>
-
 
     <!-- OCI logo as a link -->
     <a  href="https://objectcomputing.com/" target="_blank">
@@ -30,11 +19,9 @@
         <form action="/upload" method="post" enctype="multipart/form-data">
 
                 <fieldset id="upload-fs" class="fieldset">
-                    <input type="file" name="file" id="file" class="uploader" multiple onchange="updateName();">  <span th:if="${error != null}" class="error" th:text="${error}"/>
+                    <input type="file" name="file" id="file" class="uploader" onchange="updateName();">  <span th:if="${error != null}" class="error" th:text="${error}"/>
                     <label for="file" id="filesName">Choose a file</label>
                 </fieldset>
-
-
 
             <!-- submit button for files -->
             <p>
@@ -44,6 +31,12 @@
             <div id="file-upload-filename"></div>
 
         </form>
+    </div>
+
+    <!-- message to say file has been uploaded -->
+    <div class="return">
+        <h5 th:if="${completeMessage != null}" class="success" th:text="${completeMessage}"/>
+        <p th:if="${serverError != null}" class="error" th:text="${serverError}"/>
     </div>
 
 
