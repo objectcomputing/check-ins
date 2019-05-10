@@ -105,6 +105,7 @@ class UploadControllerTest {
         Create create = mock(Create.class);
         when(drive.files()).thenReturn(files);
         when(files.create(any(File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
+        when(create.setFields(any(String.class))).thenReturn(create);
         when(create.execute()).thenReturn(null);
 
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
