@@ -1,3 +1,10 @@
+buildscript{
+    dependencies{
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.3'
+    }
+}
+
+
 plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "java"
@@ -7,6 +14,7 @@ plugins {
     id "application"
     id "idea"
 }
+
 
 
 
@@ -72,12 +80,12 @@ run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
 
 
-// deploying to gcp with gradlew 
-buildscript{
-    dependencies{
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.3'
-    }
-}
+// deploying to gcp with gradlew
+//buildscript{
+//    dependencies{
+//        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.3'
+//    }
+//}
 
 apply plugin: 'com.google.cloud.tools.appengine'
 
@@ -88,6 +96,6 @@ appengine {
     deploy {
         stopPreviousVersion = true
         promote = true
-        project = 'google-cloud-upload'
+        project = 'oci-intern-2019'
     }
 }
