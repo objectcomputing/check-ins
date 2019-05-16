@@ -1,6 +1,6 @@
-runtime: java
+runtime: java 
 env: flex
-service: mn-google-drive-upload
+service: default
 automatic_scaling:
   min_num_instances: 1
   max_num_instances: 4

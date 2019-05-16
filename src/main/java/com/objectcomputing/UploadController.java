@@ -21,6 +21,7 @@ import io.micronaut.views.View;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Validated
@@ -102,7 +103,7 @@ public class UploadController {
         File fileMetadata = new File();
         fileMetadata.setName(file.getFilename());
         fileMetadata.setMimeType(file.getContentType().orElse(MediaType.APPLICATION_OCTET_STREAM_TYPE).toString());
-        fileMetadata.setParents(List.of(parentId));
+        fileMetadata.setParents(Arrays.asList(parentId));
 
         InputStreamContent content;
         try {
