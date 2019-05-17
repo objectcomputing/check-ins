@@ -2,6 +2,11 @@ micronaut:
   application:
     name: google-drive-upload
 
+  server:
+    maxRequestSize: 100MB
+    multipart:
+      maxFileSize: 100MB
+
   router:
     static-resources:
       default:
