@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.gmail.Gmail;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
@@ -36,15 +37,19 @@ public class UploadController {
     private String directoryKey;
 
     @NotNull
-    private GoogleDriveAccessor googleDriveAccessor;
+    private final GoogleDriveAccessor googleDriveAccessor;
+
+    @NotNull
+    private final GmailSender gmailSender;
 
     /**
      * UploadController
      * @param googleDriveAccessor
      * @throws IOException
      */
-    public UploadController(GoogleDriveAccessor googleDriveAccessor) throws IOException {
+    public UploadController(GoogleDriveAccessor googleDriveAccessor, GmailSender gmailSender) throws IOException {
         this.googleDriveAccessor = googleDriveAccessor;
+        this.gmailSender = gmailSender;
     }
 
     /**
@@ -115,6 +120,8 @@ public class UploadController {
 
         try {
             drive.files().create(fileMetadata, content).setFields("parents").execute();
+
+            gmailSender.sendEmail("New Benefits File", "A new benefits file has been uploaded.  Please check the Google Drive folder.");
         } catch (IOException e) {
             return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
                     "Unable to upload file to Google Drive"));

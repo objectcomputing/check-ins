@@ -23,3 +23,4 @@ oci-google-drive:
     name: "OCI Google Drive Uploader"
     scopes:
       - "https://www.googleapis.com/auth/drive.file"
+      - "https://www.googleapis.com/auth/gmail.send"
