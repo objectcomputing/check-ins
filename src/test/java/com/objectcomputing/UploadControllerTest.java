@@ -45,37 +45,35 @@ class UploadControllerTest {
 
     @Test
     void testGetUpload() {
-        HttpRequest<?> req = HttpRequest.GET("");
-        Flowable flowable = client.exchange(req);
-        HttpResponse response = (HttpResponse) flowable.blockingFirst();
+        final HttpRequest<?> req = HttpRequest.GET("");
+        final Flowable<?> flowable = client.exchange(req);
+        final HttpResponse<?> response = (HttpResponse<?>) flowable.blockingFirst();
         Assertions.assertEquals(response.getStatus(), HttpStatus.OK);
     }
 
     // Wrong media type
     @Test
     void testUploadControllerWrongType() {
-        HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null));
-        Flowable flowable = client.retrieve(req);
+        final HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null));
+        final Flowable<?> flowable = client.retrieve(req);
 
-        HttpClientResponseException exception =
-                Assertions.assertThrows(HttpClientResponseException.class, flowable::blockingFirst);
+        final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
+                flowable::blockingFirst);
 
-        Assertions.assertTrue(exception
-                .getMessage()
-                .contains(String.format("Allowed types: [%s]", MediaType.MULTIPART_FORM_DATA)));
+        Assertions.assertTrue(
+                exception.getMessage().contains(String.format("Allowed types: [%s]", MediaType.MULTIPART_FORM_DATA)));
         Assertions.assertEquals(exception.getStatus(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     // Null File
     @Test
     void testUploadNullFile() {
-        HttpRequest<?> req = HttpRequest.POST("",
-                MultipartBody.builder().addPart("dnc", "dnc")
-                        .build()).contentType(MediaType.MULTIPART_FORM_DATA);
-        Flowable flowable = client.retrieve(req);
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("dnc", "dnc").build())
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+        final Flowable<?> flowable = client.retrieve(req);
 
-        HttpClientResponseException exception =
-                Assertions.assertThrows(HttpClientResponseException.class, flowable::blockingFirst);
+        final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
+                flowable::blockingFirst);
 
         Assertions.assertTrue(exception.getMessage().matches("Required argument .* not specified"));
         Assertions.assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
@@ -86,13 +84,13 @@ class UploadControllerTest {
     void testDriveCantConnect() throws URISyntaxException, IOException {
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
-        java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
-        HttpRequest<?> req = HttpRequest.POST("",
-                MultipartBody.builder().addPart("file", file).build()).contentType(MediaType.MULTIPART_FORM_DATA);
-        Flowable flowable = client.retrieve(req);
+        final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+        final Flowable<?> flowable = client.retrieve(req);
 
-        HttpClientResponseException exception =
-                Assertions.assertThrows(HttpClientResponseException.class, flowable::blockingFirst);
+        final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
+                flowable::blockingFirst);
 
         Assertions.assertEquals(exception.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -100,9 +98,9 @@ class UploadControllerTest {
     // Happy path
     @Test
     void testUploadFile() throws URISyntaxException, IOException {
-        Drive drive = mock(Drive.class);
-        Files files = mock(Files.class);
-        Create create = mock(Create.class);
+        final Drive drive = mock(Drive.class);
+        final Files files = mock(Files.class);
+        final Create create = mock(Create.class);
         when(drive.files()).thenReturn(files);
         when(files.create(any(File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
         when(create.setFields(any(String.class))).thenReturn(create);
@@ -110,12 +108,12 @@ class UploadControllerTest {
 
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
 
-        java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
-        HttpRequest<?> req = HttpRequest.POST("",
-                MultipartBody.builder().addPart("file", file).build()).contentType(MediaType.MULTIPART_FORM_DATA);
-        Flowable flowable = client.exchange(req);
+        final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+        final Flowable<?> flowable = client.exchange(req);
 
-        HttpResponse response = (HttpResponse) flowable.blockingFirst();
+        final HttpResponse<?> response = (HttpResponse<?>) flowable.blockingFirst();
         Assertions.assertEquals(response.getStatus(), HttpStatus.OK);
     }
 
