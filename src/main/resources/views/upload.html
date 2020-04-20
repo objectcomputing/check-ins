@@ -21,10 +21,18 @@
     <div>
         <h2>Quarterly Development Check-ins</h2>
         <p>
-            Thank you for your time and dedication to our team. You can submit submit any notes, supporting documentation,
-            or other relevant files via the form below. Access to anything uploaded here will be restricted to those who
-            require it to perform their role (HR personnel, future PDLs, etc). If you should require a copy of any of the
-            documents that you have submitted here, please email <a href="mailto:hr@objectcomputing.com">hr@objectcomputing.com</a>
+            The role of Professional Development Lead is vital to the
+            continued growth of our organization and our team members.
+            Thank you for your time and dedication to our team!
+        </p>
+        <p>
+            You can submit submit any Check-in notes, supporting documentation,
+            or other relevant files via the form below. Access to files
+            uploaded here will be restricted to those who require them
+            to perform their role (HR personnel, future PDLs, etc). If
+            you should require a copy of any of the documents that you
+            have submitted here, please email
+            <a href="mailto:hr@objectcomputing.com">hr@objectcomputing.com</a>
         </p>
 
         <p>
@@ -33,8 +41,7 @@
         <form action="/upload" method="post" enctype="multipart/form-data">
 
             <fieldset id="upload-fs" class="fieldset">
-                <input type="file" name="file" id="file" class="uploader" onchange="updateName();"> <span
-                    th:if="${error != null}" class="error" th:text="${error}" />
+                <input type="file" name="file" id="file" class="uploader" onchange="updateName();">
                 <label for="file" id="filesName">Choose a file</label>
             </fieldset>
 

@@ -34,7 +34,6 @@ public class UploadController {
 
     private static final String DIRECTORY_FILE_PATH = "/secrets/directory.json";
     private static final String RSP_SERVER_ERROR_KEY = "serverError";
-    private static final String RSP_ERROR_KEY = "error";
     private static final String RSP_COMPLETE_MESSAGE_KEY = "completeMessage";
 
     @Property(name = "oci-google-drive.application.dir-key")
@@ -90,7 +89,7 @@ public class UploadController {
         }
 
         if ((file.getFilename() == null || file.getFilename().equals(""))) {
-            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_ERROR_KEY, "Required file"));
+            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Please select a file before uploading."));
         }
 
         if (directoryKey == null) {
@@ -122,7 +121,7 @@ public class UploadController {
             content = new InputStreamContent(fileMetadata.getMimeType(), file.getInputStream());
         } catch (final IOException e) {
             LOG.error("Unexpected error processing file upload.", e);
-            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_ERROR_KEY,
+            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
                     String.format("Unexpected error processing %s", file.getFilename())));
         }
 

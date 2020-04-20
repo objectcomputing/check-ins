@@ -47,7 +47,11 @@ label:hover {
 .fieldset {
     border: none;
     margin: 20px 0px;
-    padding: 0;
+	padding: 0;
+}
+
+.fieldset>label {
+	font-weight: bold;
 }
 
 .success {
