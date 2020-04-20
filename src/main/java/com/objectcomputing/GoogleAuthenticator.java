@@ -47,7 +47,8 @@ public class GoogleAuthenticator {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
 
-        return GoogleCredential.fromStream(in, httpTransport, JSON_FACTORY).createDelegated("kimberlinm@objectcomputing.com ").createScoped(scopes);
+        // return GoogleCredential.fromStream(in, httpTransport, JSON_FACTORY).createDelegated("kimberlinm@objectcomputing.com ").createScoped(scopes);
+        return GoogleCredential.fromStream(in, httpTransport, JSON_FACTORY).createScoped(scopes);
         
     }
 
