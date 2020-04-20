@@ -8,6 +8,10 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.gmail.Gmail;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
@@ -28,6 +32,9 @@ import java.util.List;
 @Validated
 @Controller("upload")
 public class UploadController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UploadController.class);
+
     private static final String DIRECTORY_FILE_PATH = "/secrets/directory.json";
     private static final String RSP_SERVER_ERROR_KEY = "serverError";
     private static final String RSP_ERROR_KEY = "error";
@@ -74,7 +81,7 @@ public class UploadController {
         try {
             drive = googleDriveAccessor.accessGoogleDrive();
         } catch (IOException e) {
-            // Catch down below
+            LOG.error("Error occurred while initializing Google Drive.", e);
         }
 
         if(drive == null) {
@@ -114,6 +121,7 @@ public class UploadController {
         try {
             content = new InputStreamContent(fileMetadata.getMimeType(), file.getInputStream());
         } catch (IOException e) {
+            LOG.error("Unexpected error processing file upload.", e);
             return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_ERROR_KEY,
                     String.format("Unexpected error processing %s", file.getFilename())));
         }
@@ -121,8 +129,9 @@ public class UploadController {
         try {
             drive.files().create(fileMetadata, content).setFields("parents").execute();
 
-            gmailSender.sendEmail("New Benefits File", "A new benefits file has been uploaded.  Please check the Google Drive folder.");
+            //gmailSender.sendEmail("New Benefits File", "A new benefits file has been uploaded.  Please check the Google Drive folder.");
         } catch (IOException e) {
+            LOG.error("Unexpected error uploading file to Google Drive.", e);
             return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
                     "Unable to upload file to Google Drive"));
         }
