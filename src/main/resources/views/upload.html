@@ -1,31 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <script type ="text/javascript" th:src="@{upload.js}"></script>
+    <script type="text/javascript" th:src="@{js/upload.js}"></script>
     <meta charset="UTF-8">
     <title>OCI Google Drive Upload</title>
-    <link rel="stylesheet" type="text/css" th:href="@{upload.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{css/oci.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{css/upload.css}" />
 
 </head>
+
 <body>
 
     <!-- OCI logo as a link -->
-    <a  href="https://objectcomputing.com/" target="_blank">
-        <img src="https://objectcomputing.com/themes/objectcomputing/images/header-logo.svg" alt="OCI Logo" width="350" >
+    <a href="https://objectcomputing.com/" target="_blank">
+        <img src="https://objectcomputing.com/themes/objectcomputing/images/header-logo.svg" alt="OCI Logo" width="350">
     </a>
 
     <!-- file upload buttons and stuff -->
-    <div class="buttons">
+    <div>
+        <h2>Quarterly Development Check-ins</h2>
+        <p>
+            The role of Professional Development Lead is vital to the
+            continued growth of our organization and our team members.
+            Thank you for your time and dedication to our team!
+        </p>
+        <p>
+            You can submit submit any Check-in notes or other relevant
+            documentation that you would like to persist for future PDLs
+            or for consideration in merit discussions via the form
+            below. Access to files uploaded here will be restricted to
+            those who require them to perform their role (HR personnel, PDLs, etc).
+        </p>
+        <p>
+            If you should require a copy of any of the documents that you
+            have submitted here, please email
+            <a href="mailto:hr@objectcomputing.com">hr@objectcomputing.com</a>
+        </p>
+
+        <p>
+            Please note that the following form can only upload one file at a time (max size of 100MB).
+        </p>
         <form action="/upload" method="post" enctype="multipart/form-data">
 
-                <fieldset id="upload-fs" class="fieldset">
-                    <input type="file" name="file" id="file" class="uploader" onchange="updateName();">  <span th:if="${error != null}" class="error" th:text="${error}"/>
-                    <label for="file" id="filesName">Choose a file</label>
-                </fieldset>
+            <fieldset id="upload-fs" class="fieldset">
+                <input type="file" name="file" id="file" class="uploader" onchange="updateName();">
+                <label for="file" id="filesName">Choose a file</label>
+            </fieldset>
 
             <!-- submit button for files -->
             <p>
-                <button type="submit" name="submit">Upload file</button>
+                <button type="submit" name="submit">Upload</button>
             </p>
 
             <div id="file-upload-filename"></div>
@@ -35,13 +60,12 @@
 
     <!-- message to say file has been uploaded -->
     <div class="return">
-        <h5 th:if="${completeMessage != null}" class="success" th:text="${completeMessage}"/>
-        <p th:if="${serverError != null}" class="error" th:text="${serverError}"/>
+        <h5 th:if="${completeMessage != null}" class="success" th:text="${completeMessage}" />
+        <p th:if="${serverError != null}" class="error" th:text="${serverError}" />
     </div>
 
 
 
 </body>
+
 </html>
-
-

@@ -1,13 +1,9 @@
 package com.objectcomputing;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.Base64;
-import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Message;
-import io.micronaut.context.annotation.Property;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,12 +11,16 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.security.GeneralSecurityException;
-import java.util.Properties;
+
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Base64;
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
+
+import io.micronaut.context.annotation.Property;
 
 @Singleton
 public class GmailSender {
