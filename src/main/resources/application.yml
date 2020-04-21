@@ -17,7 +17,6 @@ micronaut:
 
 oci-google-drive:
   application:
-    dir-key: "benefits"
     name: "OCI Google Drive Uploader"
     scopes:
       - "https://www.googleapis.com/auth/drive.file"
