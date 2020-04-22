@@ -2,17 +2,22 @@ micronaut:
   application:
     name: google-drive-upload
 
+  server:
+    maxRequestSize: 100MB
+    multipart:
+      maxFileSize: 100MB
+
   router:
     static-resources:
       default:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:static/css"
+          - "classpath:static"
 
 oci-google-drive:
   application:
-    dir-key: "benefits"
     name: "OCI Google Drive Uploader"
     scopes:
       - "https://www.googleapis.com/auth/drive.file"
+      - "https://www.googleapis.com/auth/gmail.send"
