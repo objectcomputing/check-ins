@@ -118,7 +118,7 @@ public class UploadController {
         }
 
         try {
-            drive.files().create(fileMetadata, content).setFields("parents").execute();
+            drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("parents").execute();
 
             // gmailSender.sendEmail("New Benefits File", "A new benefits file has been
             // uploaded. Please check the Google Drive folder.");
