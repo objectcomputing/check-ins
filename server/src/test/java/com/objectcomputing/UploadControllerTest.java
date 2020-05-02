@@ -103,6 +103,7 @@ class UploadControllerTest {
         final Create create = mock(Create.class);
         when(drive.files()).thenReturn(files);
         when(files.create(any(File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
+        when(create.setSupportsAllDrives(true)).thenReturn(create);
         when(create.setFields(any(String.class))).thenReturn(create);
         when(create.execute()).thenReturn(null);
 

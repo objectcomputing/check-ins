@@ -26,7 +26,7 @@ public class GoogleDriveAccessor {
      *
      * @param applicationName the name of this application
      */
-    public GoogleDriveAccessor(@Property(name = "oci-google-drive.application.name") String applicationName)
+    public GoogleDriveAccessor(@Property(name = "check-ins.application.name") String applicationName)
             throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         this.applicationName = applicationName;
