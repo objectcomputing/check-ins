@@ -16,7 +16,7 @@ plugins {
 
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
-
+archivesBaseName = "check-ins-server"
 
 version "0.1"
 group "com.objectcomputing"
@@ -93,7 +93,7 @@ apply plugin: 'com.google.cloud.tools.appengine'
 
 appengine {
     stage{
-        artifact = 'build/libs/google-drive-upload-0.1.jar'
+        artifact = 'build/libs/check-ins-server-0.1.jar'
     }
     deploy {
         stopPreviousVersion = true
