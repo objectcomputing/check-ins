@@ -32,7 +32,7 @@ public class GmailSender {
 
     @Inject
     GmailSender(
-            @Property(name = "oci-google-drive.application.name") String applicationName,
+            @Property(name = "check-ins.application.name") String applicationName,
             GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
         this.applicationName = applicationName;
         this.authenticator = authenticator;

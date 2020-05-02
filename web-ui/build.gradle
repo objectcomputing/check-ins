@@ -1,0 +1,33 @@
+plugins {
+    id "com.github.node-gradle.node" version "2.2.3"
+}
+
+node {
+    version = '13.0.1' // https://nodejs.org/en/
+    yarnVersion = '1.22.0' // https://yarnpkg.com/en/
+    download = true
+}
+
+task start(type: YarnTask, dependsOn: 'yarn') {
+    group = 'application'
+    description = 'Run the client app'
+    args = ['run', 'start']
+}
+
+task build(type: YarnTask, dependsOn: 'yarn') {
+    group = 'build'
+    description = 'Build the client bundle'
+    args = ['run', 'build']
+}
+
+task test(type: YarnTask, dependsOn: 'yarn') {
+    group = 'verification'
+    description = 'Run the client tests'
+    args = ['run', 'test']
+}
+
+task eject(type: YarnTask, dependsOn: 'yarn') {
+    group = 'other'
+    description = 'Eject from the create-react-app scripts'
+    args = ['run', 'eject']
+}

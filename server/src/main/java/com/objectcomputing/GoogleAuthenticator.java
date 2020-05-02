@@ -29,7 +29,7 @@ public class GoogleAuthenticator {
      *
      * @param scopes, the scope(s) of access to request for this application
      */
-    public GoogleAuthenticator(@Property(name = "oci-google-drive.application.scopes") Collection<String> scopes)
+    public GoogleAuthenticator(@Property(name = "check-ins.application.scopes") Collection<String> scopes)
             throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         this.scopes = scopes;
