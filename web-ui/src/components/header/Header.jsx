@@ -4,7 +4,6 @@ import "./Header.css";
 const Header = ({ title }) => {
   return (
     <div class="header">
-      <div className="checkin">Check-in!</div>
       <h1>{title}</h1>
     </div>
   );

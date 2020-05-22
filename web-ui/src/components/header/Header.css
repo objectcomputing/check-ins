@@ -11,20 +11,10 @@
     display: flex;
     justify-content: center;
     flex-direction: row;
-    margin-top: 5px;
+    margin-top: 25px;
     margin-bottom: 5px;
     padding-left: 55px;
     padding-right: 10px;
-}
-
-.checkin {
-    position: absolute;
-    top: 5px;
-    left: 55px;
-    font-family: 'Shadows Into Light', cursive;
-    font-size: calc(1rem + 1vw);
-    margin-top: 0px;
-    margin-bottom: 0px;
 }
 
 .avatar {

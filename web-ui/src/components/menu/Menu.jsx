@@ -11,6 +11,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Avatar from "../avatar/Avatar";
+import "./Menu.css";
 
 const drawerWidth = 150;
 
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  // toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
   },
@@ -62,7 +63,7 @@ function Menu(props) {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <Divider />
+      <h3 class='checkin'>Check in!</h3>
       <Button>
         <Link style={linkStyle} to="/">
           Home

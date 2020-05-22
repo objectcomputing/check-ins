@@ -19,7 +19,7 @@ const HomePage = () => (
         <p>
             If you should require a copy of any of the documents that you
             have submitted here, please email
-            <a href="mailto:hr@objectcomputing.com">hr@objectcomputing.com</a>
+            <a href="mailto:hr@objectcomputing.com"> hr@objectcomputing.com</a>
         </p>
 
         <p>
