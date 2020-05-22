@@ -6,11 +6,11 @@ import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Avatar from "../avatar/Avatar";
 
 const drawerWidth = 150;
 
@@ -57,27 +57,35 @@ function Menu(props) {
     setMobileOpen(!mobileOpen);
   };
 
+  const linkStyle = { "text-decoration": "none" };
+
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <Divider />
-      <List>
-        <Button>
-          <Link to="/">Home</Link>
-        </Button>
-        <br />
-        <Button>
-          <Link to="/team">Team</Link>
-        </Button>
-        <br />
-        <Button>
-          <Link to="/resources">Resources</Link>
-        </Button>
-        <br />
-        <Button>
-          <Link to="/upload">Uploads</Link>
-        </Button>
-      </List>
+      <Button>
+        <Link style={linkStyle} to="/">
+          Home
+        </Link>
+      </Button>
+      <br />
+      <Button>
+        <Link style={linkStyle} to="/team">
+          Team
+        </Link>
+      </Button>
+      <br />
+      <Button>
+        <Link style={linkStyle} to="/resources">
+          Resources
+        </Link>
+      </Button>
+      <br />
+      <Button>
+        <Link style={linkStyle} to="/upload">
+          Uploads
+        </Link>
+      </Button>
     </div>
   );
 
@@ -99,6 +107,7 @@ function Menu(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
+        <Avatar />
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">
