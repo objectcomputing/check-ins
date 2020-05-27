@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
@@ -10,7 +9,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Avatar from "../avatar/Avatar";
+import Avatar from "@material-ui/core/Avatar";
+import PersonIcon from "@material-ui/icons/Person";
 import "./Menu.css";
 
 const drawerWidth = 150;
@@ -63,7 +63,7 @@ function Menu(props) {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <h3 class='checkin'>Check in!</h3>
+      <h3 class="checkin">Check in!</h3>
       <Button>
         <Link style={linkStyle} to="/">
           Home
@@ -108,7 +108,15 @@ function Menu(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <Avatar />
+        <Avatar
+          style={{
+            backgroundColor: "#72c7d5",
+            position: "absolute",
+            right: "5px",
+          }}
+        >
+          <PersonIcon />
+        </Avatar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">
