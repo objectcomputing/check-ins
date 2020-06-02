@@ -32,12 +32,12 @@ const HomePage = () => (
       (max size of 100MB).
     </p>
     <form action="/upload" method="post" enctype="multipart/form-data">
-      <fieldset id="upload-fs" class="fieldset">
+      <fieldset id="upload-fs" className="fieldset">
         <input
           type="file"
           name="file"
           id="file"
-          class="uploader"
+          className="uploader"
           onchange="updateName();"
         />
         <label for="file" id="filesName">
