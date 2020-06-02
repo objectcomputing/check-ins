@@ -40,8 +40,8 @@ configurations {
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
-    compile "io.micronaut.configuration:micronaut-jdbc-tomcat"
-    compile "io.micronaut.configuration:micronaut-hibernate-jpa"
+    compileOnly 'org.projectlombok:lombok:1.16.20'
+    annotationProcessor "org.projectlombok:lombok:1.16.20"
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut:micronaut-runtime"
@@ -63,6 +63,9 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    implementation "io.micronaut.configuration:micronaut-hibernate-jpa" 
+    implementation "io.micronaut.configuration:micronaut-jdbc-hikari" 
+
 }
 
 test.classpath += configurations.developmentOnly
