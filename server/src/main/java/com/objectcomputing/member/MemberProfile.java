@@ -2,16 +2,15 @@ package com.objectcomputing.member;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import io.micronaut.data.annotation.AutoPopulated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.sql.Date;
+import java.util.UUID;
 
 
 @Entity
@@ -37,8 +36,9 @@ public class MemberProfile {
                         }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name="uuid")
+    @AutoPopulated
+    private UUID uuid;
 
     @NotNull
     @Column(name = "name", nullable = false)

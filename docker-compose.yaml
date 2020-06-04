@@ -1,0 +1,13 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:11.6
+    environment:
+      POSTGRES_DB: memberprofiledb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./server/src/main/resources/db/2020.06.03.16.00.00_createInitialDb.sql:/docker-entrypoint-initdb.d/2020.06.03.16.00.00_createInitialDb.sql
+    ports:
+      - "5432:5432"
+    container_name: memberprofiledb
