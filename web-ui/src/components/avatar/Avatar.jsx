@@ -15,7 +15,7 @@ const AvatarComponent = (profile = {}) => {
       {Object.keys(profile).length === 0 ? (
         <PersonIcon />
       ) : (
-        <img alt="Profile Picture" src={{ image_url }} />
+        <img alt="Profile" src={{ image_url }} />
       )}
     </Avatar>
   );

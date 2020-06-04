@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AvatarComponent from "../avatar/Avatar";
 import "./Menu.css";
@@ -52,6 +53,7 @@ function Menu(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -89,6 +91,22 @@ function Menu(props) {
     </div>
   );
 
+  function AvatarModal() {
+    let loggedIn = false;
+    return (
+      <Dialog aria-labelledby="simple-dialog-title" open={open}>
+        <Button
+          onClick={() => {
+            alert("Loggin in");
+          }}
+          style={{ width: "100px" }}
+        >
+          <h3>{loggedIn ? "Logout" : "Login"}</h3>
+        </Button>
+      </Dialog>
+    );
+  }
+
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -107,7 +125,16 @@ function Menu(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <AvatarComponent />
+        <Button
+          onClick={() => setOpen(!open)}
+          style={{
+            position: "absolute",
+            right: "5px",
+          }}
+        >
+          <AvatarModal />
+          <AvatarComponent />
+        </Button>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">
