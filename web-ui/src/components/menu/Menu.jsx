@@ -135,12 +135,25 @@ function Menu(props) {
             style={customStyles}
             ariaHideApp={false}
           >
-            <Button
-              onClick={() => alert("Loggin in")}
-              style={{ color: "white" }}
-            >
-              Login
-            </Button>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Button
+                onClick={() => console.log("Loggin in")}
+                style={{ color: "white" }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => console.log("Profile")}
+                style={{ color: "white" }}
+              >
+                <Link
+                  style={{ color: "white", textDecoration: "none" }}
+                  to="/profile"
+                >
+                  Profile
+                </Link>
+              </Button>
+            </div>
           </Modal>
           <AvatarComponent />
         </Button>
