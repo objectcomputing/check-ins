@@ -12,7 +12,7 @@ const AvatarComponent = (profile = {}) => {
         right: "5px",
       }}
     >
-      {Object.keys(profile).length === 0 ? (
+      {Object.keys(profile).length === 0 || image_url === "" ? (
         <PersonIcon />
       ) : (
         <img alt="Profile" src={{ image_url }} />

@@ -8,9 +8,9 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AvatarComponent from "../avatar/Avatar";
+import Modal from "react-modal";
 import "./Menu.css";
 
 const drawerWidth = 150;
@@ -48,11 +48,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const customStyles = {
+  content: {
+    backgroundColor: "#3f51b5",
+    display: "flex",
+    justifyContent: "center",
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    transform: "translate(-50%, -50%)",
+  },
+};
+
 function Menu(props) {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -91,22 +104,6 @@ function Menu(props) {
     </div>
   );
 
-  function AvatarModal() {
-    let loggedIn = false;
-    return (
-      <Dialog aria-labelledby="simple-dialog-title" open={open}>
-        <Button
-          onClick={() => {
-            alert("Loggin in");
-          }}
-          style={{ width: "100px" }}
-        >
-          <h3>{loggedIn ? "Logout" : "Login"}</h3>
-        </Button>
-      </Dialog>
-    );
-  }
-
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -132,7 +129,19 @@ function Menu(props) {
             right: "5px",
           }}
         >
-          <AvatarModal />
+          <Modal
+            isOpen={open}
+            contentLabel="Testing"
+            style={customStyles}
+            ariaHideApp={false}
+          >
+            <Button
+              onClick={() => alert("Loggin in")}
+              style={{ color: "white" }}
+            >
+              Login
+            </Button>
+          </Modal>
           <AvatarComponent />
         </Button>
       </AppBar>
