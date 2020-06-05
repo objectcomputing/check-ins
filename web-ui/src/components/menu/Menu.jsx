@@ -137,15 +137,12 @@ function Menu(props) {
           >
             <div style={{ display: "flex", flexDirection: "column" }}>
               <Button
-                onClick={() => console.log("Loggin in")}
+                onClick={() => console.log("Logging in")}
                 style={{ color: "white" }}
               >
                 Login
               </Button>
-              <Button
-                onClick={() => console.log("Profile")}
-                style={{ color: "white" }}
-              >
+              <Button style={{ color: "white" }}>
                 <Link
                   style={{ color: "white", textDecoration: "none" }}
                   to="/profile"
