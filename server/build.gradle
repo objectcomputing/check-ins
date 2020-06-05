@@ -40,6 +40,8 @@ configurations {
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
+    annotationProcessor "org.projectlombok:lombok:1.16.20"
+    compileOnly 'org.projectlombok:lombok:1.16.20'
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut:micronaut-runtime"
@@ -53,6 +55,7 @@ dependencies {
     implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
     implementation "io.micronaut:micronaut-views"
     implementation "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+    runtime "com.h2database:h2"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
@@ -60,6 +63,9 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    implementation "io.micronaut.configuration:micronaut-hibernate-jpa" 
+    implementation "io.micronaut.data:micronaut-data-jdbc:1.0.2"
+    implementation "io.micronaut.configuration:micronaut-jdbc-hikari" 
 }
 
 test.classpath += configurations.developmentOnly
