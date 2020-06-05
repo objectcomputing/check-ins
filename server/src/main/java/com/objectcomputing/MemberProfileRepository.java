@@ -11,5 +11,5 @@ public interface MemberProfileRepository {
     List<MemberProfile> findByPdlId(UUID pdlId);
     List<MemberProfile> findAll();
     MemberProfile createProfile(MemberProfile memberProfile);
-    int update(MemberProfile memberProfile);
+    MemberProfile update(MemberProfile memberProfile);
 }

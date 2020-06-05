@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.member.MemberProfile;
 
@@ -55,33 +56,14 @@ public class MemberProfileRepositoryImpl implements MemberProfileRepository {
 
     @Override
     @Transactional
-    public MemberProfile createProfile(MemberProfile memberProfile) {
-        MemberProfile newMemberProfile = new MemberProfile(memberProfile.getName(), 
-                                                            memberProfile.getRole(), 
-                                                            memberProfile.getPdlId(), 
-                                                            memberProfile.getLocation(), 
-                                                            memberProfile.getWorkEmail(), 
-                                                            memberProfile.getInsperityId(), 
-                                                            memberProfile.getStartDate(), 
-                                                            memberProfile.getBioText());
-
-        entityManager.persist(newMemberProfile);
-        return newMemberProfile;
+    public MemberProfile createProfile(@NotNull MemberProfile memberProfile) {
+        entityManager.persist(memberProfile);
+        return memberProfile;
     }
 
     @Override
     @Transactional
-    public int update(MemberProfile memberProfile) {
-        return entityManager.createQuery("UPDATE MemberProfile m SET name = :name, role = :role, pdlId = :pdlId, location = :location, workEmail = : workEmail, insperityId = :insperityId, startDate = :startDate, bioText = :bioText WHERE uuid = :uuid")
-                .setParameter("uuid", memberProfile.getUuid())
-                .setParameter("name", memberProfile.getName())
-                .setParameter("role", memberProfile.getRole())
-                .setParameter("pdlId", memberProfile.getPdlId())
-                .setParameter("location", memberProfile.getLocation())
-                .setParameter("workEmail", memberProfile.getWorkEmail())
-                .setParameter("insperityId", memberProfile.getInsperityId())
-                .setParameter("startDate", memberProfile.getStartDate())
-                .setParameter("bioText", memberProfile.getBioText())
-                .executeUpdate();
+    public MemberProfile update(@NotNull MemberProfile memberProfile) {
+        return entityManager.merge(memberProfile);
     }
 }

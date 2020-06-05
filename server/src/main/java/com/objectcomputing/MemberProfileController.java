@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import com.objectcomputing.member.MemberProfile;
 
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -28,7 +27,6 @@ public class MemberProfileController {
 
     @Get("/{?name,role,pdlId}")
     public List<MemberProfile> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
-        System.out.println("value requested = " + name + role + pdlId);
 
         if(name != null) {
             return memberProfileRepository.findByName(name);
@@ -52,23 +50,20 @@ public class MemberProfileController {
 
     @Put("/")
     public HttpResponse<?> update(@Body @Valid MemberProfile memberProfile) {
-        if(null != memberProfile.getUuid()){
 
-            int numberOfEntitiesUpdated = memberProfileRepository.update(memberProfile);
-            
+        if(null != memberProfile.getUuid()) {
+            MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
             return HttpResponse
-            .noContent()
-            .header(HttpHeaders.LOCATION, location(memberProfile.getUuid()).getPath());
-        } else {
-            return HttpResponse.badRequest();
+                    .ok()
+                    .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
+                    .body(updatedMemberProfile);
+                    
         }
+        
+        return HttpResponse.badRequest();
     }
 
     protected URI location(UUID uuid) {
         return URI.create("/team-profile/" + uuid);
-    }
-
-    protected URI location(MemberProfile memberProfile) {
-        return location(memberProfile.getUuid());
     }
 }
