@@ -66,7 +66,7 @@ function Menu(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setIsOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -122,36 +122,48 @@ function Menu(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
+        <Modal
+          isOpen={open}
+          contentLabel="Testing"
+          style={customStyles}
+          ariaHideApp={false}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div>
+              <Button
+                style={{
+                  color: "white",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  paddingRight: 0,
+                }}
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                X
+              </Button>
+            </div>
+            <Button onClick={() => setIsOpen(!open)} style={{ color: "white" }}>
+              Login
+            </Button>
+            <Button onClick={() => setIsOpen(!open)} style={{ color: "white" }}>
+              <Link
+                style={{ color: "white", textDecoration: "none" }}
+                to="/profile"
+              >
+                Profile
+              </Link>
+            </Button>
+          </div>
+        </Modal>
         <Button
-          onClick={() => setOpen(!open)}
+          onClick={() => setIsOpen(!open)}
           style={{
             position: "absolute",
             right: "5px",
           }}
         >
-          <Modal
-            isOpen={open}
-            contentLabel="Testing"
-            style={customStyles}
-            ariaHideApp={false}
-          >
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Button
-                onClick={() => console.log("Logging in")}
-                style={{ color: "white" }}
-              >
-                Login
-              </Button>
-              <Button style={{ color: "white" }}>
-                <Link
-                  style={{ color: "white", textDecoration: "none" }}
-                  to="/profile"
-                >
-                  Profile
-                </Link>
-              </Button>
-            </div>
-          </Modal>
           <AvatarComponent />
         </Button>
       </AppBar>
