@@ -141,20 +141,13 @@ function Menu(props) {
               </Link>
             </Button>
           </div>
-          <div>
-            <Button
-              style={{
-                color: "white",
-                display: "flex",
-                justifyContent: "flex-end",
-                paddingRight: 0,
-              }}
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            >
-              X
-            </Button>
+          <div
+            className="close-div"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
+            X
           </div>
         </Modal>
         <Button

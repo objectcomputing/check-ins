@@ -19,6 +19,7 @@ const Profile = (profile = {}) => {
         }}
       >
         <img
+          alt="Profile"
           src={image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg"}
           style={{ borderRadius: "50%", maxWidth: "256px", maxHeight: "256px" }}
         />
@@ -42,7 +43,7 @@ const Profile = (profile = {}) => {
           >
             Software Engineer
           </div>
-           {/* could put role up here as tag instead of below?? */}
+          {/* could put role up here as tag instead of below?? */}
           <h2 style={{ margin: 0 }}>Name</h2>
           <div>
             <p>Role</p>
