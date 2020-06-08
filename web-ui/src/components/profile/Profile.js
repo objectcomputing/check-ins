@@ -19,8 +19,8 @@ const Profile = (profile = {}) => {
         }}
       >
         <img
-          src={image_url}
-          style={{ maxWidth: "256px", maxHeight: "256px" }}
+          src={image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg"}
+          style={{ borderRadius: "50%", maxWidth: "256px", maxHeight: "256px" }}
         />
       </div>
       <div
@@ -29,8 +29,21 @@ const Profile = (profile = {}) => {
           flexDirection: "row",
         }}
       >
-        <div style={{ textAlign: "left" }}>
-          <h2>Name</h2>
+        <div style={{ marginTop: "30%", textAlign: "left" }}>
+          <div
+            style={{
+              backgroundColor: "green",
+              borderRadius: "15px",
+              color: "white",
+              padding: "5px",
+              marginBottom: "10px",
+              textAlign: "center",
+            }}
+          >
+            Software Engineer
+          </div>
+           {/* could put role up here as tag instead of below?? */}
+          <h2 style={{ margin: 0 }}>Name</h2>
           <div>
             <p>Role</p>
             <p>Email</p>
