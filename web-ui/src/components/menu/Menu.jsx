@@ -129,21 +129,6 @@ function Menu(props) {
           ariaHideApp={false}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div>
-              <Button
-                style={{
-                  color: "white",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  paddingRight: 0,
-                }}
-                onClick={() => {
-                  setIsOpen(false);
-                }}
-              >
-                X
-              </Button>
-            </div>
             <Button onClick={() => setIsOpen(!open)} style={{ color: "white" }}>
               Login
             </Button>
@@ -154,6 +139,21 @@ function Menu(props) {
               >
                 Profile
               </Link>
+            </Button>
+          </div>
+          <div>
+            <Button
+              style={{
+                color: "white",
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingRight: 0,
+              }}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              X
             </Button>
           </div>
         </Modal>
