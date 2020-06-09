@@ -2,7 +2,7 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import PersonIcon from "@material-ui/icons/Person";
 
-const AvatarComponent = (profile = {}) => {
+const AvatarComponent = (loggedIn = false, profile = {}) => {
   const { image_url } = profile;
   return (
     <Avatar
@@ -12,7 +12,9 @@ const AvatarComponent = (profile = {}) => {
         right: "5px",
       }}
     >
-      {Object.keys(profile).length === 0 || image_url === "" ? (
+      {Object.keys(profile).length === 0 ||
+      image_url === "" ||
+      loggedIn === false ? (
         <PersonIcon />
       ) : (
         <img alt="Profile" src={{ image_url }} />
