@@ -15,16 +15,17 @@ public class CheckIns {
 
     public CheckIns() {}
 
-    public CheckIns(String teamMember, UUID pdlId, Date checkInDate, int targetQtr, int targetYear) {
-        this.teamMember= teamMember;
+    public CheckIns(UUID teamMemberId, UUID pdlId, Date checkInDate, int targetQtr, int targetYear) {
+        this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
         this.checkInDate=checkInDate;
         this.targetQtr=targetQtr;
         this.targetYear=targetYear;
     }
     
-    @Column(name="teamMember")
-    private String teamMember;
+    @Column(name="teamMemberId")
+    private UUID teamMemberId;
+
 
     @Id
     @Column(name="uuid")
@@ -40,14 +41,15 @@ public class CheckIns {
     @Column(name="targetyear")
     private int targetYear;
 
-    public String getTeamMember() {
-        return this.teamMember;
+
+    public UUID getTeamMemberId() {
+        return this.teamMemberId;
     }
 
-    public void setTeamMember(String teamMember) {
-        this.teamMember = teamMember;
+    public void setTeamMemberId(UUID teamMemberId) {
+        this.teamMemberId = teamMemberId;
     }
-
+   
     public UUID getPdlId() {
         return this.pdlId;
     }

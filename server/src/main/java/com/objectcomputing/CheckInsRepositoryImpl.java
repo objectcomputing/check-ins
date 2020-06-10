@@ -19,19 +19,13 @@ public class CheckInsRepositoryImpl implements CheckInsRepository {
     public List<CheckIns> findByName(String teamMember) {
         return null;
     }
-
-    @Override
-    public List<CheckIns> findByTargetQtr(String targetQtr) {
-        return null;
-    }
-
     @Override
     public List<CheckIns> findByPdlId(UUID pdlId) {
         return null;
     }
 
     @Override
-    public List<CheckIns> findByTargetYear(String targetYear) {
+    public List<CheckIns> findByTargetQuarter(String targetYear, String targetQtr) {
         return null;
     }
 
