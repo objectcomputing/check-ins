@@ -13,11 +13,3 @@ img {
   max-width: 256px;
   max-height: 256px;
 }
-.tag {
-  background-color: green;
-  border-radius: 15px;
-  color: white;
-  padding: 5px;
-  margin-bottom: 10px;
-  text-align: center;
-}

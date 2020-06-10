@@ -10,7 +10,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AvatarComponent from "../avatar/Avatar";
-import Modal from "react-modal";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+
 import "./Menu.css";
 
 const drawerWidth = 150;
@@ -48,25 +54,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const customStyles = {
-  content: {
-    backgroundColor: "#3f51b5",
-    display: "flex",
-    justifyContent: "center",
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    transform: "translate(-50%, -50%)",
-  },
-};
-
 function Menu(props) {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [open, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const anchorRef = React.useRef(null);
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = React.useRef(open);
+  React.useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+
+    prevOpen.current = open;
+  }, [open]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -122,43 +138,44 @@ function Menu(props) {
             <MenuIcon />
           </IconButton>
         </Toolbar>
-        <Modal
-          isOpen={open}
-          contentLabel="Testing"
-          style={customStyles}
-          ariaHideApp={false}
-        >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Button onClick={() => setIsOpen(!open)} style={{ color: "white" }}>
-              Login
-            </Button>
-            <Button onClick={() => setIsOpen(!open)} style={{ color: "white" }}>
-              <Link
-                style={{ color: "white", textDecoration: "none" }}
-                to="/profile"
-              >
-                Profile
-              </Link>
-            </Button>
-          </div>
-          <div
-            className="close-div"
-            onClick={() => {
-              setIsOpen(false);
-            }}
-          >
-            X
-          </div>
-        </Modal>
-        <Button
-          onClick={() => setIsOpen(!open)}
-          style={{
-            position: "absolute",
-            right: "5px",
-          }}
+        <div
+          ref={anchorRef}
+          aria-controls={open ? "menu-list-grow" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle}
         >
           <AvatarComponent />
-        </Button>
+        </div>
+        <Popper
+          open={open}
+          anchorEl={anchorRef.current}
+          transition
+          disablePortal
+          style={{ left: "unset", margin: "0 auto", right: 0, width: "100px" }}
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom" ? "center top" : "center bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList autoFocusItem={open} id="menu-list-grow">
+                    <MenuItem onClick={handleToggle}>
+                      <Link style={{ textDecoration: "none" }} to="/profile">
+                        Profile
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">

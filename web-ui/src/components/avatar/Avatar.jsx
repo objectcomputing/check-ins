@@ -10,6 +10,7 @@ const AvatarComponent = (loggedIn = false, profile = {}) => {
         backgroundColor: "#72c7d5",
         position: "absolute",
         right: "5px",
+        top: "10px",
       }}
     >
       {!image_url || loggedIn === false ? (

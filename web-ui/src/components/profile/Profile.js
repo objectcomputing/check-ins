@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Profile.css";
 
 const Profile = (profile = {}) => {
@@ -13,9 +13,7 @@ const Profile = (profile = {}) => {
         />
       </div>
       <div className="flex-row">
-        <div style={{ marginTop: "30%", textAlign: "left" }}>
-          <div className="tag">Software Engineer</div>
-          {/* could put role up here as tag instead of below?? */}
+        <div style={{ marginTop: "50%", textAlign: "left" }}>
           <h2 style={{ margin: 0 }}>Name</h2>
           <div>
             <p>Role</p>
