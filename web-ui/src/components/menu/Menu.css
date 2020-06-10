@@ -5,3 +5,11 @@
   padding-top: 10px;
   margin-left: 10px;
 }
+
+.close-div {
+  cursor: pointer;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0;
+}

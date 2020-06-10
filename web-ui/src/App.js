@@ -8,6 +8,7 @@ import UploadNotesPage from "./pages/UploadNotesPage";
 import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
+import Profile from "./components/profile/Profile";
 
 const customHistory = createBrowserHistory();
 
@@ -36,6 +37,10 @@ function App() {
             <Route path="/upload">
               <Header title="Upload Notes" />
               <UploadNotesPage />
+            </Route>
+            <Route path="/profile">
+              <Header title="Profile" />
+              <Profile />
             </Route>
             <Route path="/">
               <Header title="Professional Development @ OCI" />
