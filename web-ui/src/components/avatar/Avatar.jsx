@@ -12,9 +12,7 @@ const AvatarComponent = (loggedIn = false, profile = {}) => {
         right: "5px",
       }}
     >
-      {Object.keys(profile).length === 0 ||
-      image_url === "" ||
-      loggedIn === false ? (
+      {!image_url || loggedIn === false ? (
         <PersonIcon />
       ) : (
         <img alt="Profile" src={{ image_url }} />
