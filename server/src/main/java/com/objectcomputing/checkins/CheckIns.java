@@ -10,12 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="record_checkins")
+@Table(name="checkins")
 public class CheckIns {
 
     public CheckIns() {}
 
-    public CheckIns(UUID teamMemberId, UUID pdlId, Date checkInDate, int targetQtr, int targetYear) {
+    public CheckIns(UUID teamMemberId, UUID pdlId, Date checkInDate, String targetQtr, String targetYear) {
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
         this.checkInDate=checkInDate;
@@ -36,10 +36,10 @@ public class CheckIns {
     private Date checkInDate;
 
     @Column(name="targetqtr")
-    private int targetQtr;
+    private String targetQtr;
 
     @Column(name="targetyear")
-    private int targetYear;
+    private String targetYear;
 
 
     public UUID getTeamMemberId() {
@@ -66,19 +66,19 @@ public class CheckIns {
         this.checkInDate = checkInDate;
     }
 
-    public int getTargetQtr() {
+    public String getTargetQtr() {
         return this.targetQtr;
     }
 
-    public void setTargetQtr(int targetQtr) {
+    public void setTargetQtr(String targetQtr) {
         this.targetQtr = targetQtr;
     }
 
-    public int getTargetYear() {
+    public String getTargetYear() {
         return this.targetYear;
     }
 
-    public void setTargetYear(int targetYear) {
+    public void setTargetYear(String targetYear) {
         this.targetYear = targetYear;
     }
 

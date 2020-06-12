@@ -5,13 +5,13 @@ import java.util.UUID;
 
 import com.objectcomputing.checkins.CheckIns;
 
-public interface CheckInsRepository {
+import io.micronaut.data.repository.CrudRepository;
 
-    List<CheckIns> findByName(String teamMember);
+public interface CheckInsRepository extends CrudRepository<CheckIns,UUID>{
+
+    List<CheckIns> findByName(UUID teamMemberId);
     List<CheckIns> findByPdlId(UUID pdlId);
     List<CheckIns> findByTargetQuarter(String targetYear,String targetQtr);
     List<CheckIns> findAll();
-    CheckIns createMemberCheckIn(CheckIns checkIns);
-    CheckIns update(CheckIns checkIns);
 
 }
