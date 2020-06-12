@@ -19,7 +19,7 @@ sourceCompatibility = "1.8"
 archivesBaseName = "check-ins-server"
 
 version "0.1"
-group "com.objectcomputing"
+group "com.objectcomputing.checkins"
 
 repositories {
     mavenCentral()
@@ -40,14 +40,13 @@ configurations {
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
-    annotationProcessor "org.projectlombok:lombok:1.16.20"
-    compileOnly 'org.projectlombok:lombok:1.16.20'
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut:micronaut-runtime"
     implementation "io.micronaut:micronaut-http-client"
     implementation "javax.annotation:javax.annotation-api"
     implementation "com.sun.mail:javax.mail:1.6.2"
+    implementation "com.mailjet:mailjet-client:4.2.1"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "com.google.api-client:google-api-client:1.30.9"
     implementation "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
@@ -70,7 +69,7 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "com.objectcomputing.Application"
+mainClassName = "com.objectcomputing.checkins.Application"
 // use JUnit 5 platform
 test {
     useJUnitPlatform()

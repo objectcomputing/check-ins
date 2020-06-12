@@ -1,4 +1,4 @@
-package com.objectcomputing;
+package com.objectcomputing.checkins;
 
 import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.services.drive.Drive;

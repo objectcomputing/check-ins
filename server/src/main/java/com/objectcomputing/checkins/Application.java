@@ -1,4 +1,4 @@
-package com.objectcomputing;
+package com.objectcomputing.checkins;
 
 import io.micronaut.runtime.Micronaut;
 
