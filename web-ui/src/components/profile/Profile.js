@@ -2,7 +2,7 @@ import React from "react";
 import "./Profile.css";
 
 const Profile = (profile = {}) => {
-  const { image_url} = profile;
+const { image_url } = profile;
 
   return (
     <div className="flex-row">
