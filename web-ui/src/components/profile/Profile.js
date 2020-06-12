@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import "./Profile.css";
 
 const Profile = (profile = {}) => {
-  const { image_url, name, email, role, pdl } = profile;
+  const { image_url} = profile;
 
   return (
     <div className="flex-row">
