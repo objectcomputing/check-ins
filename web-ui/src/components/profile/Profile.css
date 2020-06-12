@@ -1,0 +1,15 @@
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.image-div {
+  display: flex;
+  flex-direction: row;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+img {
+  border-radius: 50%;
+  max-width: 256px;
+  max-height: 256px;
+}
