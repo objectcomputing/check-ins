@@ -1,4 +1,4 @@
-package com.objectcomputing;
+package com.objectcomputing.checkins;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +41,17 @@ public class UploadController {
     private final GoogleDriveAccessor googleDriveAccessor;
 
     @NotNull
-    private final GmailSender gmailSender;
+    private final EmailSender emailSender;
 
     /**
      * UploadController
      * @param googleDriveAccessor
      * @throws IOException
      */
-    public UploadController(final GoogleDriveAccessor googleDriveAccessor, final GmailSender gmailSender)
+    public UploadController(final GoogleDriveAccessor googleDriveAccessor, final EmailSender emailSender)
             throws IOException {
         this.googleDriveAccessor = googleDriveAccessor;
-        this.gmailSender = gmailSender;
+        this.emailSender = emailSender;
     }
 
     /**
@@ -120,8 +121,7 @@ public class UploadController {
         try {
             drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("parents").execute();
 
-            // gmailSender.sendEmail("New Benefits File", "A new benefits file has been
-            // uploaded. Please check the Google Drive folder.");
+            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded by a PDL. Please check the Google Drive folder.");
         } catch (final IOException e) {
             LOG.error("Unexpected error uploading file to Google Drive.", e);
             return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,

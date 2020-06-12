@@ -1,4 +1,4 @@
-package com.objectcomputing.member;
+package com.objectcomputing.checkins.member;
 
 import java.sql.Date;
 import java.util.UUID;
@@ -11,10 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import lombok.NoArgsConstructor;
-
 @Entity
-@NoArgsConstructor
 @Table(name ="member_profile")
 public class MemberProfile {
 
