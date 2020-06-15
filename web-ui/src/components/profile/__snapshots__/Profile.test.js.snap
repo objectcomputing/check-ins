@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="flex-row"
+>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="Profile"
+      src="https://i.imgur.com/TkSNOpF.jpg"
+    />
+  </div>
+  <div
+    className="flex-row"
+  >
+    <div
+      style={
+        Object {
+          "marginTop": "50%",
+          "textAlign": "left",
+        }
+      }
+    >
+      <h2
+        style={
+          Object {
+            "margin": 0,
+          }
+        }
+      >
+        Name
+      </h2>
+      <div>
+        <p>
+          Role
+        </p>
+        <p>
+          Email
+        </p>
+        <p>
+          Current PDL
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders image_url 1`] = `
+<div
+  className="flex-row"
+>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="Profile"
+      src="http://someurl.com/das.png"
+    />
+  </div>
+  <div
+    className="flex-row"
+  >
+    <div
+      style={
+        Object {
+          "marginTop": "50%",
+          "textAlign": "left",
+        }
+      }
+    >
+      <h2
+        style={
+          Object {
+            "margin": 0,
+          }
+        }
+      >
+        Name
+      </h2>
+      <div>
+        <p>
+          Role
+        </p>
+        <p>
+          Email
+        </p>
+        <p>
+          Current PDL
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
