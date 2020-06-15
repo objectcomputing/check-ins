@@ -10,13 +10,14 @@ import javax.validation.Valid;
 import com.objectcomputing.checkins.member.MemberProfile;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 
-@Controller("/team-profile")
+@Controller("/member-profile")
 public class MemberProfileController {
 
     protected final MemberProfileRepository memberProfileRepository;
@@ -25,7 +26,7 @@ public class MemberProfileController {
         this.memberProfileRepository = memberProfileRepository;
     }
 
-    @Get("/{?name,role,pdlId}")
+    @Get(uri = "/{?name,role,pdlId}", produces = MediaType.APPLICATION_JSON)
     public List<MemberProfile> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
 
         if(name != null) {
@@ -39,7 +40,7 @@ public class MemberProfileController {
         }
     }
 
-    @Post("/")
+    @Post(uri = "/", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<MemberProfile> save(@Body @Valid MemberProfile memberProfile) {
         MemberProfile newMemberProfile = memberProfileRepository.save(memberProfile);
         
@@ -48,7 +49,7 @@ public class MemberProfileController {
                 .headers(headers -> headers.location(location(newMemberProfile.getUuid())));
     }
 
-    @Put("/")
+    @Put(uri = "/", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<?> update(@Body @Valid MemberProfile memberProfile) {
 
         if(null != memberProfile.getUuid()) {

@@ -28,7 +28,10 @@ public class MemberProfile {
                         this.bioText=bioText;
                         }
 
-    @Id
+    public MemberProfile() {
+	}
+
+	@Id
     @Column(name="uuid")
     @GeneratedValue
     private UUID uuid;
