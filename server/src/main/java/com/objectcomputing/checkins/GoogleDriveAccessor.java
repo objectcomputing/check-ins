@@ -1,4 +1,4 @@
-package com.objectcomputing;
+package com.objectcomputing.checkins;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;

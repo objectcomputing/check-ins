@@ -36,3 +36,11 @@ jpa:
       hibernate:
         hbm2ddl:
           auto: update
+notifications:
+  email:
+    mailjet:
+      api-key:
+        private:
+        public:
+      client:
+        version:
