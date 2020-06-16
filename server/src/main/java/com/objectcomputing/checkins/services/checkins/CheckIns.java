@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="checkins")
@@ -24,11 +25,13 @@ public class CheckIns {
     }
     
     @Column(name="teamMemberId")
+    @NotNull
     private UUID teamMemberId;
 
 
     @Id
     @Column(name="uuid")
+    @NotNull
     @GeneratedValue    
     private UUID pdlId;
 
