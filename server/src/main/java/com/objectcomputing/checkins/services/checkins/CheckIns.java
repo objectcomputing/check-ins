@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins;
+package com.objectcomputing.checkins.services.checkins;
 
 import java.sql.Date;
 import java.util.UUID;

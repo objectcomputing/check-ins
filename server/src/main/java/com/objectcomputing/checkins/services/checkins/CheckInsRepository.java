@@ -1,9 +1,9 @@
-package com.objectcomputing;
+package com.objectcomputing.checkins.services.checkins;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.objectcomputing.checkins.CheckIns;
+import com.objectcomputing.checkins.services.checkins.CheckIns;
 
 import io.micronaut.data.repository.CrudRepository;
 
