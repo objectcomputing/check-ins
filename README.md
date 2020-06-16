@@ -1,3 +1,9 @@
+# Overview
+This repository contains a micronaut application for uploading files and tracking skill set of team members. This application will also be used for PDL checkins and auto generated resumes from the skill set.
+
+# Getting Started
+To build this module, execute : `./gradlew assembleServerAndClient`. Please run this command twice. 
+Once the build is successful then execute: `./gradlew run` and open the browser to run the application at `http://localhost:8080`.
 # Google Drive Upload
 Simple uploader application written in [Micronaut](https://micronaut.io) and targeted at GCP for uploading files to a limited access Google Drive folder.
 

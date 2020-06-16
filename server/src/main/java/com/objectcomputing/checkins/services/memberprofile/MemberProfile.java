@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.member;
+package com.objectcomputing.checkins.services.memberprofile;
 
 import java.sql.Date;
 import java.util.UUID;
