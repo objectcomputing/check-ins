@@ -2,7 +2,8 @@ import React from "react";
 import "./Profile.css";
 
 const Profile = (profile = {}) => {
-const { image_url } = profile;
+  const { image_url, name } = profile.profile;
+  console.log(profile);
 
   return (
     <div className="flex-row">
@@ -14,7 +15,7 @@ const { image_url } = profile;
       </div>
       <div className="flex-row">
         <div style={{ marginTop: "50%", textAlign: "left" }}>
-          <h2 style={{ margin: 0 }}>Name</h2>
+          <h2 style={{ margin: 0 }}>{name}</h2>
           <div>
             <p>Role</p>
             <p>Email</p>
