@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins;
+package com.objectcomputing.checkins.services.memberprofile;
 
 import java.net.URI;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.member.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
