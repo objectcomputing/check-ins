@@ -7,6 +7,7 @@
   flex-direction: row;
   margin-left: 50px;
   margin-right: 20px;
+  cursor: pointer;
 }
 img {
   border-radius: 50%;

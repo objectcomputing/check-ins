@@ -9,8 +9,14 @@ const testProfile = [
 
 let teamProfile = (profile) => {
   let team = profile.map((e) => {
-    console.log(e.name);
-    return <Profile key={e.name} profile={e}></Profile>;
+    return (
+      <Profile
+        key={e.name}
+        name={e.name}
+        image_url={e.image_url}
+        team={true}
+      ></Profile>
+    );
   });
   return team;
 };
