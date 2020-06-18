@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="image-div"
+  onClick={[Function]}
+>
+  <img
+    alt="Profile"
+    src="nope"
+    style={
+      Object {
+        "maxHeight": "156px",
+        "maxWidth": "156px",
+      }
+    }
+  />
+</div>
+`;

@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    className="flex-row"
+    style={
+      Object {
+        "flexWrap": "wrap",
+      }
+    }
+  >
+    <div
+      className="image-div"
+      onClick={[Function]}
+    >
+      <img
+        alt="Profile"
+        src="https://i.imgur.com/TkSNOpF.jpg"
+        style={
+          Object {
+            "maxHeight": "156px",
+            "maxWidth": "156px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="image-div"
+      onClick={[Function]}
+    >
+      <img
+        alt="Profile"
+        src="https://i.imgur.com/TkSNOpF.jpg"
+        style={
+          Object {
+            "maxHeight": "156px",
+            "maxWidth": "156px",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
