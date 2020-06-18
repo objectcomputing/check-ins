@@ -32,7 +32,7 @@ public class MemberProfile {
                         }
 
     public MemberProfile() {
-	}
+    }
 
 	@Id
     @Type(type = "uuid-char")
