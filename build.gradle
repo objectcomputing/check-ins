@@ -1,3 +1,8 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
 task copyClientResources(dependsOn: ':web-ui:build') { 
     group = 'build'
     description = 'Copy web-ui resources into server'
@@ -15,10 +20,37 @@ task assembleServerAndClient(dependsOn: ['copyClientResources', ':server:shadowJ
     description = 'Build combined server & client JAR'
 }
 
-task test {
+// task test {
 
+// }
+
+
+// task check {
+
+// }
+
+publishing {
+     publications {
+        checkInsProject(MavenPublication) {
+            version "0.1"
+            group "com.objectcomputing.checkins"         
+            from components.java
+            
+        }
+    }
+
+    repositories {
+        maven {
+            name = "CheckInsProject"
+            url = "https://maven.pkg.github.com/oci-labs/check-ins"
+            credentials {
+            username = System.getenv("GITHUB_ACTOR")!=null?System.getenv("GITHUB_ACTOR"):"OCI-LABS"
+            password = System.getenv("GITHUB_TOKEN")!=null?System.getenv("GITHUB_TOKEN"):"OCI-LABS"
+            }
+        }
+    }
 }
 
-task check {
 
-}
+
+
