@@ -1,5 +1,4 @@
 import React from "react";
-import Profile from "../components/profile/Profile";
 import TeamMemberContainer from "../components/team-member/TeamMemberContainer";
 
 const testProfile = [
