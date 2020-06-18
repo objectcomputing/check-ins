@@ -28,7 +28,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom 'io.micronaut:micronaut-bom:1.1.0'
+        mavenBom 'io.micronaut:micronaut-bom:2.0.0.M1'
         mavenBom 'org.junit:junit-bom:5.5.2'
     }
 }
@@ -41,6 +41,7 @@ configurations {
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
+    annotationProcessor "io.micronaut.data:micronaut-data-processor:1.0.2"
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
     implementation "io.micronaut:micronaut-runtime"

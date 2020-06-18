@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins;
+package com.objectcomputing.checkins.services.memberprofile;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import com.objectcomputing.checkins.member.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -178,7 +178,16 @@ public class MemberProfileControllerTest {
             put("bioText", "testBio");
         }};
 
-        MemberProfile testMemberProfile = new MemberProfile("testName", "test role", UUID.randomUUID(), "test location", "test email", "test InsperityId", testDate, "test bio");
+        MemberProfile testMemberProfile = new MemberProfile();
+        testMemberProfile.setUuid(UUID.randomUUID());
+        testMemberProfile.setName("testName");
+        testMemberProfile.setRole("test role");
+        testMemberProfile.setPdlId(UUID.randomUUID());
+        testMemberProfile.setLocation("test location");
+        testMemberProfile.setWorkEmail("test email");
+        testMemberProfile.setInsperityId("test InsperityId");
+        testMemberProfile.setStartDate(testDate);
+        testMemberProfile.setBioText("test bioText");
 
         when(memberProfileRepository.save(testMemberProfile)).thenReturn(testMemberProfile);
 

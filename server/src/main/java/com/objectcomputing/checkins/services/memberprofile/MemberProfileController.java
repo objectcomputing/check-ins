@@ -7,8 +7,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
