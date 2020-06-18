@@ -20,9 +20,9 @@ jobs:
         with:
           java-version: 1.8
       - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+        run: chmod +x gradlew
       - name: Gradle package
-      run: ./gradlew assembleServerAndClient
+        run: ./gradlew assembleServerAndClient
       
 #TO-DO : setup sonar once we have completed Issue#25
   # sonar:
