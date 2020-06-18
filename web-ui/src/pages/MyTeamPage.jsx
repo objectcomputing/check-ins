@@ -1,28 +1,19 @@
 import React from "react";
 import Profile from "../components/profile/Profile";
+import TeamMemberContainer from "../components/team-member/TeamMemberContainer";
 
 const testProfile = [
   { name: "holmes" },
   { name: "homie" },
   { name: "homie g" },
+  { name: "Jes" },
+  { name: "Michael" },
+  { name: "Holly" },
+  { name: "Mohit" },
+  { name: "Pramukh" },
 ];
 
-let teamProfile = (profile) => {
-  let team = profile.map((e) => {
-    return (
-      <Profile
-        key={e.name}
-        name={e.name}
-        image_url={e.image_url}
-        team={true}
-      ></Profile>
-    );
-  });
-  return team;
-};
-
 const HomePage = () => {
-  let team = teamProfile(testProfile);
   return (
     <div
       style={{
@@ -39,7 +30,7 @@ const HomePage = () => {
           flexDirection: "row",
         }}
       >
-        {team}
+        <TeamMemberContainer profiles={testProfile} />
       </div>
     </div>
   );

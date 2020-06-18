@@ -1,12 +1,12 @@
 .flex-row {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   margin-bottom: 20px;
 }
-.profile-image {
+.image-div {
   display: flex;
   flex-direction: row;
-  margin-left: 50px;
   margin-right: 20px;
   cursor: pointer;
 }
