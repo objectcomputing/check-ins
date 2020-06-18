@@ -7,7 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.services.checkins.CheckIns;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
@@ -17,33 +17,33 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 
 @Controller("/check-in")
-public class CheckInsController {
+public class CheckInController {
+    
+    protected final CheckInRepository checkInRepository;
 
-    protected final CheckInsRepository checkInsRepository;
-
-    public CheckInsController(CheckInsRepository checkInsRepository){
-        this.checkInsRepository = checkInsRepository;
+    public CheckInController(CheckInRepository checkInRepository){
+        this.checkInRepository = checkInRepository;
     }
 
     @Get("/{?teamMemberId,targetYear,targetQtr,pdlId}")
-    public List<CheckIns> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear, @Nullable UUID  pdlId
+    public List<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear, @Nullable UUID  pdlId
                                             ,@Nullable String targetQtr) {          
 
-        if(teamMemberId != null) {
-            return checkInsRepository.findByName(teamMemberId);
+       if(teamMemberId != null) {
+            return checkInRepository.findByTeamMemberId(teamMemberId);
         } else if(targetYear != null) {
-            return checkInsRepository.findByTargetQuarter(targetYear,targetQtr);
+            return checkInRepository.findByTargetYearAndTargetQtr(targetYear,targetQtr);
         } else if(pdlId != null) {
-            return checkInsRepository.findByPdlId(pdlId);
+            return checkInRepository.findByPdlId(pdlId);
         } else {
-            return checkInsRepository.findAll();
+            return checkInRepository.findAll();
         }
     }
 
 
     @Post("/")
-    public HttpResponse<CheckIns> save(@Body @Valid CheckIns checkIns) {
-        CheckIns newMemberCheckIn = checkInsRepository.save(checkIns);
+    public HttpResponse<CheckIn> save(@Body @Valid CheckIn checkIn) {
+        CheckIn newMemberCheckIn = checkInRepository.save(checkIn);
         
         return HttpResponse.created(newMemberCheckIn)
                 .headers(headers -> headers.location(location(newMemberCheckIn.getPdlId())));
@@ -51,10 +51,10 @@ public class CheckInsController {
 
 
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid CheckIns checkIn) {
+    public HttpResponse<?> update(@Body @Valid CheckIn checkIn) {
 
         if(null != checkIn.getTeamMemberId()){
-            CheckIns updatedMemberCheckIn = checkInsRepository.update(checkIn);
+            CheckIn updatedMemberCheckIn = checkInRepository.update(checkIn);
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedMemberCheckIn.getTeamMemberId())))

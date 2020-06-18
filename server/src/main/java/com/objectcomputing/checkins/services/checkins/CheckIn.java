@@ -5,18 +5,19 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import io.micronaut.data.annotation.GeneratedValue;
+
 @Entity
 @Table(name="checkins")
-public class CheckIns {
+public class CheckIn {
 
-    public CheckIns() {}
+    public CheckIn() {}
 
-    public CheckIns(UUID teamMemberId, UUID pdlId, Date checkInDate, String targetQtr, String targetYear) {
+    public CheckIn(UUID teamMemberId, UUID pdlId, Date checkInDate, String targetQtr, String targetYear) {
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
         this.checkInDate=checkInDate;
@@ -24,15 +25,20 @@ public class CheckIns {
         this.targetYear=targetYear;
     }
     
+    @Id
+    @Column(name="uuid")
+    @NotNull
+    @GeneratedValue
+    private UUID id;
+
     @Column(name="teamMemberId")
     @NotNull
     private UUID teamMemberId;
 
 
     @Id
-    @Column(name="uuid")
+    @Column(name="pdlId")
     @NotNull
-    @GeneratedValue    
     private UUID pdlId;
 
     @Column(name="checkindate")
