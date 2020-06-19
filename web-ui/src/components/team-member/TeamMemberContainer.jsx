@@ -34,7 +34,7 @@ const TeamMemberContainer = (props) => {
             />
           </div>
           <div className="flex-row">
-            <div style={{ marginTop: "50%", textAlign: "left" }}>
+            <div style={{ marginTop: "50px", textAlign: "left" }}>
               <h2 style={{ margin: 0 }}>{name}</h2>
               <div>
                 <p>Role</p>
