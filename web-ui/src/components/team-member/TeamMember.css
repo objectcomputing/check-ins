@@ -1,4 +1,11 @@
 .flex-row {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.team-member-info {
+  align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: center;

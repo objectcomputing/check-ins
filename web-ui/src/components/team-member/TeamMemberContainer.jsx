@@ -33,13 +33,22 @@ const TeamMemberContainer = (props) => {
               src={image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg"}
             />
           </div>
-          <div className="flex-row">
-            <div style={{ marginTop: "50px", textAlign: "left" }}>
+          <div className="team-member-info">
+            <div style={{ textAlign: "left" }}>
               <h2 style={{ margin: 0 }}>{name}</h2>
-              <div>
-                <p>Role</p>
-                <p>Email</p>
-                <p>Current PDL</p>
+              <div style={{ display: "flex" }}>
+                <div style={{ marginRight: "50px", textAlign: "left" }}>
+                  <p>Role</p>
+                  <p>Email</p>
+                  <p>Current PDL</p>
+                  <p>Location</p>
+                </div>
+                <div>
+                  <p>Length of Service</p>
+                  <p>Supervisor Name</p>
+                  <p>Email Address</p>
+                  <p>Bio</p>
+                </div>
               </div>
             </div>
           </div>
