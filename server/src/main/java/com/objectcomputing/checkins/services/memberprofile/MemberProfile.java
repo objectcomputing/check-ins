@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name ="member_profile")
@@ -28,9 +31,15 @@ public class MemberProfile {
                         this.bioText=bioText;
                         }
 
-    @Id
-    @Column(name="uuid")
-    @GeneratedValue
+    public MemberProfile() {
+    }
+
+	@Id
+    @Type(type = "uuid-char")
+    @Column(name="uuid", updatable = false, nullable = false, unique = true)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @ColumnDefault("random_uuid()")
     private UUID uuid;
 
     @NotNull
@@ -39,7 +48,8 @@ public class MemberProfile {
 
     @Column(name="role")
     private String role ;
-
+    
+    @Type(type = "uuid-char")
     @Column(name="pdlId")
     private UUID pdlId;
 
