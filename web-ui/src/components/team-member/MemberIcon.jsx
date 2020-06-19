@@ -12,7 +12,7 @@ const MemberIcon = (props) => {
       <img
         alt="Profile"
         src={image}
-        style={{ maxWidth: "156px", maxHeight: "156px" }}
+        style={{ maxWidth: "156px", maxHeight: "156px", marginBottom: "20px" }}
       />
     </div>
   );
