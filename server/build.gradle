@@ -59,7 +59,6 @@ dependencies {
     implementation "io.micronaut.configuration:micronaut-hibernate-jpa"
     implementation "io.micronaut.data:micronaut-data-jdbc:1.0.2"
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
-    runtime "com.h2database:h2"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"

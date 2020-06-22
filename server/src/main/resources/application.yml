@@ -24,23 +24,10 @@ check-ins:
       - "https://www.googleapis.com/auth/drive.file"
       - "https://www.googleapis.com/auth/gmail.send"
 
-datasources:
-  default:
-    url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''    
-jpa:
-  default:
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: update
-notifications:
-  email:
-    mailjet:
-      api-key:
-        private:
-        public:
-      client:
-        version:
+  datasources:
+    default:
+      url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/memberprofiledb`}
+      driverClassName: org.postgresql.Driver
+      username: postgres
+      password: 'postgres'
+      dialect: POSTGRES
