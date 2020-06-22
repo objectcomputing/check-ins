@@ -24,7 +24,6 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.validation.Validated;
-import io.micronaut.views.View;
 
 @Validated
 @Controller("upload")
@@ -44,7 +43,9 @@ public class UploadController {
     private final EmailSender emailSender;
 
     /**
+     * 
      * UploadController
+     * 
      * @param googleDriveAccessor
      * @throws IOException
      */
@@ -59,7 +60,6 @@ public class UploadController {
      * 
      * @return HttpResponse
      */
-    @View("upload")
     @Get
     public HttpResponse<?> upload() {
         return HttpResponse.ok();
@@ -71,7 +71,6 @@ public class UploadController {
      * @param file, the file to upload to Google Drive
      * @return HttpResponse
      */
-    @View("upload")
     @Post(consumes = MediaType.MULTIPART_FORM_DATA)
     public HttpResponse<?> upload(@Body final CompletedFileUpload file) {
         Drive drive = null;
@@ -87,7 +86,8 @@ public class UploadController {
         }
 
         if ((file.getFilename() == null || file.getFilename().equals(""))) {
-            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Please select a file before uploading."));
+            return HttpResponse
+                    .badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Please select a file before uploading."));
         }
 
         JsonNode dirNode = null;
@@ -121,11 +121,12 @@ public class UploadController {
         try {
             drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("parents").execute();
 
-            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded by a PDL. Please check the Google Drive folder.");
+            emailSender.sendEmail("New Check-in Notes",
+                    "New check-in notes have been uploaded by a PDL. Please check the Google Drive folder.");
         } catch (final IOException e) {
             LOG.error("Unexpected error uploading file to Google Drive.", e);
-            return HttpResponse.serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
-                    "Unable to upload file to Google Drive"));
+            return HttpResponse
+                    .serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Unable to upload file to Google Drive"));
         }
 
         return HttpResponse.ok(CollectionUtils.mapOf(RSP_COMPLETE_MESSAGE_KEY,
