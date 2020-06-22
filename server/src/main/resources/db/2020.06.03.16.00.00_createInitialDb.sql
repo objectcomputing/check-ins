@@ -1,6 +1,6 @@
 drop table if exists memberProfile;
 CREATE TABLE memberProfile(
-   uuid uuid PRIMARY KEY,
+   uuid varchar PRIMARY KEY,
    name varchar,
    role varchar,
    pdlId bigint,

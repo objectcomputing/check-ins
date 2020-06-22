@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.AutoPopulated;
 
 @Entity
 @Table(name="checkins")
@@ -27,8 +27,7 @@ public class CheckIn {
     
     @Id
     @Column(name="uuid")
-    @NotNull
-    @GeneratedValue
+    @AutoPopulated
     private UUID id;
 
     @Column(name="teamMemberId")
