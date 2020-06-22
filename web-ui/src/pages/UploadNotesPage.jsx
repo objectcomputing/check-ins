@@ -1,7 +1,24 @@
 import React, { useState } from "react";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+import "./UploadNotesPage.css";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const HomePage = () => {
   const [responseText, setResponseText] = useState("");
+  const [severity, setSeverity] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -10,6 +27,8 @@ const HomePage = () => {
       if (!input.files[0]) {
         //if user doesn't select a file
         setResponseText("Please select a file before uploading.");
+        setSeverity("error");
+        setOpen(true);
         return;
       }
 
@@ -19,7 +38,12 @@ const HomePage = () => {
       const result = await fetch("/upload", { method: "POST", body });
       const resJson = await result.json();
       setResponseText(Object.values(resJson)[0]);
+      Object.keys(resJson)[0] === "completeMessage"
+        ? setSeverity("success")
+        : setSeverity("error");
+      setOpen(true);
     } catch (error) {
+      setOpen(false);
       console.log(error);
     }
   }
@@ -73,9 +97,13 @@ const HomePage = () => {
             Upload
           </button>
         </p>
-
-        <div id="file-upload-filename">{responseText}</div>
+        {/* <div className={className}>{responseText}</div> */}
       </form>
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={severity}>
+          {responseText}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
