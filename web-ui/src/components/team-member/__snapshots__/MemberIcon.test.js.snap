@@ -10,6 +10,7 @@ exports[`renders correctly 1`] = `
     src="nope"
     style={
       Object {
+        "marginBottom": "20px",
         "maxHeight": "156px",
         "maxWidth": "156px",
       }
