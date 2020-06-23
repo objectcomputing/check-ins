@@ -16,9 +16,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import com.objectcomputing.checkins.services.memberprofile.*;
-
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
