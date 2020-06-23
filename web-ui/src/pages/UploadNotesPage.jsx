@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import "./UploadNotesPage.css";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -11,12 +11,12 @@ const HomePage = () => {
   const [responseText, setResponseText] = useState("");
   const [severity, setSeverity] = useState("");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
     setOpen(false);
   };
 
@@ -28,10 +28,12 @@ const HomePage = () => {
         //if user doesn't select a file
         setResponseText("Please select a file before uploading.");
         setSeverity("error");
+        setLoading(false);
         setOpen(true);
         return;
       }
 
+      setLoading(true);
       let body = new FormData();
       body.append("file", input.files[0]);
 
@@ -42,7 +44,9 @@ const HomePage = () => {
         ? setSeverity("success")
         : setSeverity("error");
       setOpen(true);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       setOpen(false);
       console.log(error);
     }
@@ -78,7 +82,6 @@ const HomePage = () => {
         Please note that the following form can only upload one file at a time
         (max size of 100MB).
       </p>
-      {/* <form action="/upload" method="post" enctype="multipart/form-data"> */}
       <form onSubmit={onSubmit}>
         <fieldset id="upload-fs" className="fieldset">
           <input
@@ -93,13 +96,21 @@ const HomePage = () => {
           </label>
         </fieldset>
         <p>
-          <button type="submit" name="submit">
-            Upload
-          </button>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <button type="submit" name="submit">
+              Upload
+            </button>
+          )}
         </p>
-        {/* <div className={className}>{responseText}</div> */}
       </form>
-      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+      <Snackbar
+        autoHideDuration={5000}
+        open={open}
+        onClose={handleClose}
+        style={{ left: "56%", bottom: "50px" }}
+      >
         <Alert onClose={handleClose} severity={severity}>
           {responseText}
         </Alert>
