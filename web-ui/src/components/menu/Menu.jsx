@@ -100,14 +100,14 @@ function Menu() {
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to="/team">
-          Team
+        <Link style={linkStyle} to="/resources">
+          Resources
         </Link>
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to="/resources">
-          Resources
+        <Link style={linkStyle} to="/team">
+          Team
         </Link>
       </Button>
       <br />
@@ -122,7 +122,11 @@ function Menu() {
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar
+        position="fixed"
+        className={classes.appBar}
+        style={{ backgroundColor: "#265ba6" }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
