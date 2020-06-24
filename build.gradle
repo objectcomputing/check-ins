@@ -1,5 +1,5 @@
 ///// ################ SONARCLOUD PLUGIN ##############################
-///////// MANUAL SONAR //////
+///////// MANUAL SONAR ////// triggered with ./gradlew sonar
 // plugins {
 //     id 'java-library'
 //     id 'maven-publish'
@@ -7,24 +7,18 @@
 // }
 // apply plugin: "org.sonarqube"
 
-// // sonarqube {
-// //     properties {
-// //         property "sonar.sourceEncoding", "UTF-8"
-// //     }
-// // }
-
-////// update below keys and project name based on OCI
+///////// update below keys and project name based on OCI
 // sonarqube {
 //   properties {
-//     property "sonar.projectKey", "Maroju100_check-ins" 
-//     property "sonar.organization", "maroju100" 
+//     property "sonar.projectKey", "oci-labs_check-ins"
+//     property "sonar.organization", "oci-labs"
 //     property "sonar.host.url", "https://sonarcloud.io"
-//     property "sonar.login", "b4257eb435501085ef4f9a2bb55548ceeff75789"
+//     property "sonar.login", "76d54e72c4fbab6a5d7928cc95e2e9248986b1c5"
 //   }
 // }
 
 
-/////// AUTOMATIC SONAR /////////
+/////// AUTOMATIC SONAR ///////// commit or pull requests trigger analysis
 
 plugins {
     id 'java-library'
