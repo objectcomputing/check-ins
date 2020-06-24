@@ -1,4 +1,4 @@
-################ SONARCLOUD PLUGIN ################################
+///// ################ SONARCLOUD PLUGIN ################################
 ///////// MANUAL SONAR //////
 // plugins {
 //     id 'java-library'
@@ -13,7 +13,7 @@
 // //     }
 // // }
 
-# update below keys and project name based on OCI
+////// update below keys and project name based on OCI
 // sonarqube {
 //   properties {
 //     property "sonar.projectKey", "Maroju100_check-ins" 
@@ -44,7 +44,7 @@ sonarqube {
     }
 }
 
-################### SONARCLOUD PLUGIN END#########################
+////// ################### SONARCLOUD PLUGIN END#########################
 
 
 //plugins {
