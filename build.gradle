@@ -1,7 +1,56 @@
+################ SONARCLOUD PLUGIN ################################
+///////// MANUAL SONAR //////
+// plugins {
+//     id 'java-library'
+//     id 'maven-publish'
+//     id "org.sonarqube" version "3.0"
+// }
+// apply plugin: "org.sonarqube"
+
+// // sonarqube {
+// //     properties {
+// //         property "sonar.sourceEncoding", "UTF-8"
+// //     }
+// // }
+
+# update below keys and project name based on OCI
+// sonarqube {
+//   properties {
+//     property "sonar.projectKey", "Maroju100_check-ins" 
+//     property "sonar.organization", "maroju100" 
+//     property "sonar.host.url", "https://sonarcloud.io"
+//     property "sonar.login", "b4257eb435501085ef4f9a2bb55548ceeff75789"
+//   }
+// }
+
+
+/////// AUTOMATIC SONAR /////////
+
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id "jacoco"
+    id "java"
+    id "application"
+    id "org.sonarqube" version "3.0"
+
 }
+
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+    }
+}
+
+################### SONARCLOUD PLUGIN END#########################
+
+
+//plugins {
+//    id 'java-library'
+//    id 'maven-publish'
+//}
 
 task copyClientResources(dependsOn: ':web-ui:build') { 
     group = 'build'
