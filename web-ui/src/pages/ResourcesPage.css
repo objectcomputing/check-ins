@@ -1,6 +1,5 @@
 /* using !important tag only for pdf canvas override*/
-.blue-button {
-  background-color: #265ba6;
+.custom-button {
   border: none;
   border-radius: 4px;
   color: white;
@@ -12,6 +11,12 @@
   margin: 10px;
   padding: 3px 9px;
   text-transform: uppercase;
+}
+
+.pdf-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: "20px";
 }
 
 .react-pdf__Page__canvas {

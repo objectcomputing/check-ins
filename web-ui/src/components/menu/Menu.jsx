@@ -125,7 +125,7 @@ function Menu() {
       <AppBar
         position="fixed"
         className={classes.appBar}
-        style={{ backgroundColor: "#265ba6" }}
+        style={{ backgroundColor: "#255aa8" }}
       >
         <Toolbar>
           <IconButton

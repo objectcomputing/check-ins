@@ -12,16 +12,41 @@ const HomePage = () => {
   const [pageNum, setPageNum] = useState(1);
   const [PDF, setPDF] = useState(null);
 
+  const ociBlue = "#255aa8";
+  const ociLightBlue = "#72c7d5";
+  const ociOrange = "#feb672";
+
   const pdfs = [
-    { name: "Development Discussion Guide", pdf: DevGuide },
-    { name: "Expectations Discussion Guide", pdf: ExpectationsGuide },
-    { name: "Expectations Worksheet", pdf: ExpectationsWorksheet },
-    { name: "Feedback Discussion Guide", pdf: FeedbackGuide },
-    { name: "Individual Development Plan", pdf: IndividualDevPlan },
+    {
+      color: ociBlue,
+      name: "Expectations Discussion Guide",
+      pdf: ExpectationsGuide,
+    },
+    {
+      color: ociBlue,
+      name: "Expectations Worksheet",
+      pdf: ExpectationsWorksheet,
+    },
+    {
+      color: ociLightBlue,
+      name: "Feedback Discussion Guide",
+      pdf: FeedbackGuide,
+    },
+    {
+      color: ociLightBlue,
+      name: "Development Discussion Guide",
+      pdf: DevGuide,
+    },
+    {
+      color: ociOrange,
+      name: "Individual Development Plan",
+      pdf: IndividualDevPlan,
+    },
   ];
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
+    setPageNum(1);
   };
 
   const nextPage = (numPages) => {
@@ -39,13 +64,42 @@ const HomePage = () => {
   const ChoosePDF = () => {
     return pdfs.map((pdf) => (
       <div
-        className="blue-button"
+        className="custom-button"
         key={pdf.name}
-        onClick={() => setPDF(pdf.pdf)}
+        onClick={() => {
+          setPDF(pdf.pdf);
+        }}
+        style={{ backgroundColor: pdf.color }}
       >
         {pdf.name}
       </div>
     ));
+  };
+
+  const ChangePage = () => {
+    return (
+      <p>
+        {pageNum > 1 && (
+          <button
+            className="custom-button"
+            onClick={() => prevPage()}
+            style={{ backgroundColor: ociBlue }}
+          >
+            Prev
+          </button>
+        )}
+        Page {pageNum} of {numPages}
+        {pageNum < numPages && (
+          <button
+            className="custom-button"
+            onClick={() => nextPage(numPages)}
+            style={{ backgroundColor: ociBlue }}
+          >
+            Next
+          </button>
+        )}
+      </p>
+    );
   };
 
   return (
@@ -58,52 +112,16 @@ const HomePage = () => {
     >
       <h3>Professional Development @ OCI</h3>
       <br />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "20px",
-        }}
-      >
+      <div className="pdf-container">
         <ChoosePDF />
       </div>
       {PDF && (
         <div>
-          <p>
-            {pageNum > 1 && (
-              <button className="blue-button" onClick={() => prevPage()}>
-                Prev
-              </button>
-            )}
-            Page {pageNum} of {numPages}
-            {pageNum < numPages && (
-              <button
-                className="blue-button"
-                onClick={() => nextPage(numPages)}
-              >
-                Next
-              </button>
-            )}
-          </p>
+          <ChangePage />
           <Document file={PDF} onLoadSuccess={onDocumentLoadSuccess}>
             <Page key={`page_${pageNum}`} pageNumber={pageNum} />
           </Document>
-          <p>
-            {pageNum > 1 && (
-              <button className="blue-button" onClick={() => prevPage()}>
-                Prev
-              </button>
-            )}
-            Page {pageNum} of {numPages}
-            {pageNum < numPages && (
-              <button
-                className="blue-button"
-                onClick={() => nextPage(numPages)}
-              >
-                Next
-              </button>
-            )}
-          </p>
+          <ChangePage />
         </div>
       )}
     </div>
