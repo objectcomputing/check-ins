@@ -11,6 +11,7 @@
 <!-- /TOC -->
 
 # Check-ins
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oci-labs_check-ins)](https://sonarcloud.io/dashboard?id=oci-labs_check-ins)
 <a id="markdown-check-ins" name="check-ins"></a>
 This web application is written in [Micronaut](https://micronaut.io) for uploading files and tracking skill set of team members. This application will also be used for PDL checkins and to auto-generate resumes from the skill set.
 
@@ -58,4 +59,4 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 <a id="markdown-contributing" name="contributing"></a>
 [Contributing](./CONTRIBUTING.md)
 
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oci-labs_check-ins)](https://sonarcloud.io/dashboard?id=oci-labs_check-ins)
+
