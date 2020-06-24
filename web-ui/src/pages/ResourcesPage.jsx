@@ -101,6 +101,10 @@ const HomePage = () => {
       </p>
     );
   };
+  const handlePrint = (event) => {
+    event.preventDefault();
+    window.open(PDF, "PRINT", "height=700,width=900");
+  };
 
   return (
     <div
@@ -122,6 +126,13 @@ const HomePage = () => {
             <Page key={`page_${pageNum}`} pageNumber={pageNum} />
           </Document>
           <ChangePage />
+          <button
+            className="custom-button"
+            onClick={handlePrint}
+            style={{ backgroundColor: ociBlue, marginBottom: "50px" }}
+          >
+            Print pdf
+          </button>
         </div>
       )}
     </div>
