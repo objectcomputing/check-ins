@@ -3,7 +3,7 @@ CREATE TABLE memberProfile(
    uuid varchar PRIMARY KEY,
    name varchar,
    role varchar,
-   pdlId bigint,
+   pdlId varchar,
    location varchar,
    workEmail varchar,
    insperityId varchar,
@@ -11,4 +11,12 @@ CREATE TABLE memberProfile(
    bioText varchar
 );
 
-
+drop table if exists checkins;
+CREATE TABLE checkins(
+   id varchar PRIMARY KEY,
+   teamMemberId varchar,
+   pdlId varchar,
+   checkInDate date,
+   targetQtr varchar,
+   targetYear varchar
+);

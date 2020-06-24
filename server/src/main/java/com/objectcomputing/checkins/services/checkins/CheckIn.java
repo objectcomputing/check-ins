@@ -34,8 +34,6 @@ public class CheckIn {
     @NotNull
     private UUID teamMemberId;
 
-
-    @Id
     @Column(name="pdlId")
     @NotNull
     private UUID pdlId;
@@ -49,6 +47,13 @@ public class CheckIn {
     @Column(name="targetyear")
     private String targetYear;
 
+    public UUID getId() {
+        return this.id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public UUID getTeamMemberId() {
         return this.teamMemberId;

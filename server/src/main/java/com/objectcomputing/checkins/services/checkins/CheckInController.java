@@ -7,16 +7,17 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.services.checkins.CheckIn;
-
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 
 @Controller("/check-in")
+@Produces(MediaType.APPLICATION_JSON)
 public class CheckInController {
     
     protected final CheckInRepository checkInRepository;
@@ -26,8 +27,8 @@ public class CheckInController {
     }
 
     @Get("/{?teamMemberId,targetYear,targetQtr,pdlId}")
-    public List<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear, @Nullable UUID  pdlId
-                                            ,@Nullable String targetQtr) {          
+    public List<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear,
+                                     @Nullable UUID  pdlId, @Nullable String targetQtr) {          
 
        if(teamMemberId != null) {
             return checkInRepository.findByTeamMemberId(teamMemberId);
@@ -46,18 +47,18 @@ public class CheckInController {
         CheckIn newMemberCheckIn = checkInRepository.save(checkIn);
         
         return HttpResponse.created(newMemberCheckIn)
-                .headers(headers -> headers.location(location(newMemberCheckIn.getPdlId())));
+                .headers(headers -> headers.location(location(newMemberCheckIn.getId())));
     }
 
 
     @Put("/")
     public HttpResponse<?> update(@Body @Valid CheckIn checkIn) {
 
-        if(null != checkIn.getTeamMemberId()){
+        if(null != checkIn.getId()){
             CheckIn updatedMemberCheckIn = checkInRepository.update(checkIn);
             return HttpResponse
                     .ok()
-                    .headers(headers -> headers.location(location(updatedMemberCheckIn.getTeamMemberId())))
+                    .headers(headers -> headers.location(location(updatedMemberCheckIn.getId())))
                     .body(updatedMemberCheckIn);
                     
         }
@@ -65,8 +66,8 @@ public class CheckInController {
         return HttpResponse.badRequest();
     }
 
-	private URI location(UUID pdlId) {
-        return URI.create("/check-in/" + pdlId);
+	private URI location(UUID id) {
+        return URI.create("/check-in/" + id);
 	}
 
 }
