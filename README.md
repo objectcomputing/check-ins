@@ -57,3 +57,5 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 # Contributing
 <a id="markdown-contributing" name="contributing"></a>
 [Contributing](./CONTRIBUTING.md)
+
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oci-labs_check-ins)](https://sonarcloud.io/dashboard?id=oci-labs_check-ins)
