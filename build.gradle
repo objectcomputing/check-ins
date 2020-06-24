@@ -1,4 +1,4 @@
-///// ################ SONARCLOUD PLUGIN ################################
+///// ################ SONARCLOUD PLUGIN ##############################
 ///////// MANUAL SONAR //////
 // plugins {
 //     id 'java-library'
