@@ -1,23 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap");
 
 .header h1 {
-    font-size: calc(1rem + 1vw);
-    font-weight: 500;
-    margin-top: 5px;
-    margin-bottom: 0px;
+  font-size: calc(1rem + 1vw);
+  font-weight: 500;
+  margin-top: 5px;
+  margin-bottom: 0px;
 }
 
 .header {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
-    margin-top: 25px;
-    margin-bottom: 5px;
-    padding-left: 55px;
-    padding-right: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 25px;
+  margin-bottom: 5px;
+  padding-left: 55px;
+  padding-right: 10px;
 }
 
 .avatar {
-    position: absolute;
-    right: 5px;
+  cursor: pointer;
+  position: absolute;
+  right: 5px;
 }
