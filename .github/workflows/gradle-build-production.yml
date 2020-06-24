@@ -1,4 +1,4 @@
-name: Gradle Build Production
+name: Gradle Build - Production
 on:
   push:
     branches: [master]
