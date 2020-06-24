@@ -1,4 +1,4 @@
-name: Gradle Build Feature Branch
+name: Gradle Build - Feature / Bug
 on:
   push:
     branches:
