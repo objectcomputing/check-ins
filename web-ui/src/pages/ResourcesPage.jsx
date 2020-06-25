@@ -16,7 +16,7 @@ const HomePage = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNum, setPageNum] = useState(1);
   const [PDF, setPDF] = useState(null);
-  const [isPDL, setIsPDL] = useState(false);
+  let isPDL = false;
 
   const ociBlue = "#255aa8";
   const ociLightBlue = "#72c7d5";
