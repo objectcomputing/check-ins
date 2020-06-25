@@ -1,5 +1,5 @@
 drop table if exists memberProfile;
-CREATE TABLE memberProfile(
+CREATE TABLE memberProfile (
    uuid varchar PRIMARY KEY,
    name varchar,
    role varchar,
@@ -12,9 +12,9 @@ CREATE TABLE memberProfile(
 );
 
 drop table if exists checkins;
-CREATE TABLE checkins(
+CREATE TABLE checkins (
    id varchar PRIMARY KEY,
-   teamMemberId varchar,
+   teamMemberId varchar REFERENCES memberProfile(uuid),
    pdlId varchar,
    checkInDate date,
    targetQtr varchar,
