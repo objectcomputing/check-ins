@@ -19,13 +19,11 @@
 
 
 /////// AUTOMATIC SONAR ///////// commit or pull requests trigger analysis
-
 plugins {
     id 'java-library'
     id 'maven-publish'
     id "jacoco"
     id "java"
-    id "application"
     id "org.sonarqube" version "3.0"
 
 }
