@@ -1,46 +1,70 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf/dist/entry.webpack";
-import DevGuide from "../pdfs/Development Discussion Guide for Team Members.pdf";
-import ExpectationsGuide from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
-import ExpectationsWorksheet from "../pdfs/Expectations Worksheet.pdf";
-import FeedbackGuide from "../pdfs/Feedback Discussion Guide for Team Members.pdf";
-import IndividualDevPlan from "../pdfs/Individual Development Plan .pdf";
+
+import DevGuideTeam from "../pdfs/Development Discussion Guide for Team Members.pdf";
+import ExpectationsGuideTeam from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
+import ExpectationsWorksheetTeam from "../pdfs/Expectations Worksheet.pdf";
+import FeedbackGuideTeam from "../pdfs/Feedback Discussion Guide for Team Members.pdf";
+import IndividualDevPlanTeam from "../pdfs/Individual Development Plan .pdf";
+import DevGuidePDL from "../pdfs/Development Discussion Guide for PDLs.pdf";
+import ExpectationsGuidePDL from "../pdfs/Expectations Discussion Guide for PDLs.pdf";
+import FeedbackGuidePDL from "../pdfs/Feedback Discussion Guide for PDLs.pdf";
+
 import "./ResourcesPage.css";
 
 const HomePage = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNum, setPageNum] = useState(1);
   const [PDF, setPDF] = useState(null);
+  const [isPDL, setIsPDL] = useState(false);
 
   const ociBlue = "#255aa8";
   const ociLightBlue = "#72c7d5";
   const ociOrange = "#feb672";
 
-  const pdfs = [
+  const teamMemberPDFs = [
     {
       color: ociBlue,
       name: "Expectations Discussion Guide",
-      pdf: ExpectationsGuide,
+      pdf: ExpectationsGuideTeam,
     },
     {
       color: ociBlue,
       name: "Expectations Worksheet",
-      pdf: ExpectationsWorksheet,
+      pdf: ExpectationsWorksheetTeam,
     },
     {
       color: ociLightBlue,
       name: "Feedback Discussion Guide",
-      pdf: FeedbackGuide,
+      pdf: FeedbackGuideTeam,
     },
     {
       color: ociLightBlue,
       name: "Development Discussion Guide",
-      pdf: DevGuide,
+      pdf: DevGuideTeam,
     },
     {
       color: ociOrange,
       name: "Individual Development Plan",
-      pdf: IndividualDevPlan,
+      pdf: IndividualDevPlanTeam,
+    },
+  ];
+
+  const pdlPDFs = [
+    {
+      color: ociBlue,
+      name: "Development Discussion Guide",
+      pdf: DevGuidePDL,
+    },
+    {
+      color: ociLightBlue,
+      name: "Expectations Discussion Guide",
+      pdf: ExpectationsGuidePDL,
+    },
+    {
+      color: ociOrange,
+      name: "Feedback Discussion Guide",
+      FeedbackGuidePDL,
     },
   ];
 
@@ -62,7 +86,9 @@ const HomePage = () => {
   };
 
   const ChoosePDF = () => {
-    return pdfs.map((pdf) => (
+    let pdfMap = isPDL ? pdlPDFs : teamMemberPDFs;
+
+    return pdfMap.map((pdf) => (
       <div
         className="custom-button"
         key={pdf.name}
