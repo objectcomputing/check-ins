@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Document, Page } from "react-pdf/dist/entry.webpack";
+import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 
 import DevGuideTeam from "../pdfs/Development Discussion Guide for Team Members.pdf";
 import ExpectationsGuideTeam from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
