@@ -12,7 +12,7 @@ import FeedbackGuidePDL from "../pdfs/Feedback Discussion Guide for PDLs.pdf";
 
 import "./ResourcesPage.css";
 
-const HomePage = () => {
+const ResourcesPage = () => {
   const [numPages, setNumPages] = useState(null);
   const [pageNum, setPageNum] = useState(1);
   const [PDF, setPDF] = useState(null);
@@ -165,4 +165,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default ResourcesPage;
