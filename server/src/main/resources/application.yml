@@ -24,10 +24,11 @@ check-ins:
       - "https://www.googleapis.com/auth/drive.file"
       - "https://www.googleapis.com/auth/gmail.send"
 
-  datasources:
-    default:
-      url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/memberprofiledb`}
-      driverClassName: org.postgresql.Driver
-      username: postgres
-      password: 'postgres'
-      dialect: POSTGRES
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: 'postgres'
+    schema-generate: CREATE_DROP
+    dialect: POSTGRES

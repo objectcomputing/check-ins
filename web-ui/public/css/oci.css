@@ -65,7 +65,7 @@
 
 html, body {
 	font-size: 16px;
-	font-family: Roboto;
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
 	font-weight: 300;
 	color: #7a7b7f;
 	letter-spacing: 1px;

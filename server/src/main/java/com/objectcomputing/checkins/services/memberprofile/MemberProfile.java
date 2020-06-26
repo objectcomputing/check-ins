@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Type;
-
 import io.micronaut.data.annotation.AutoPopulated;
 
 @Entity
@@ -45,7 +43,6 @@ public class MemberProfile {
     @Column(name="role")
     private String role ;
     
-    @Type(type = "uuid-char")
     @Column(name="pdlId")
     private UUID pdlId;
 

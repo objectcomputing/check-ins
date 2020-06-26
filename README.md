@@ -9,6 +9,8 @@
 - [Contributing](#contributing)
 
 <!-- /TOC -->
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=oci-labs_check-ins)](https://sonarcloud.io/dashboard?id=oci-labs_check-ins)
+![Gradle Build - Develop](https://github.com/oci-labs/check-ins/workflows/Gradle%20Build%20-%20Develop/badge.svg)
 
 # Check-ins
 <a id="markdown-check-ins" name="check-ins"></a>
@@ -45,10 +47,17 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 
 ### Running the application
 <a id="markdown-running-the-application" name="running-the-application"></a>
-To build this module, execute the following command twice :  `./gradlew assembleServerAndClient`
-Once the build is successful, execute: `./gradlew run`. 
-Open the browser to run the application at `http://localhost:8080`.
+#### Installs
+- [Docker](https://docs.docker.com/get-docker/)
+
+#### Building
+1. Start the database in a Docker container by running `docker-compose up` in a terminal.
+2. In a different terminal, execute the following command twice :  `./gradlew assembleServerAndClient`
+3. Once the build is successful, execute: `./gradlew run`
+4. Open the browser to run the application at `http://localhost:8080`
 
 # Contributing
 <a id="markdown-contributing" name="contributing"></a>
 [Contributing](./CONTRIBUTING.md)
+
+
