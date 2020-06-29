@@ -15,9 +15,11 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller("/check-in")
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name="check-ins")
 public class CheckInController {
     
     protected final CheckInRepository checkInRepository;
@@ -25,7 +27,14 @@ public class CheckInController {
     public CheckInController(CheckInRepository checkInRepository){
         this.checkInRepository = checkInRepository;
     }
-
+    /**
+     * Find Check-in details by Member Id, Year, Quarter, PDL Id or find all. 
+     * @param teamMemberId
+     * @param targetYear
+     * @param pdlId
+     * @param targetQtr
+     * @return
+     */
     @Get("/{?teamMemberId,targetYear,targetQtr,pdlId}")
     public List<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear,
                                      @Nullable UUID  pdlId, @Nullable String targetQtr) {          
@@ -41,7 +50,11 @@ public class CheckInController {
         }
     }
 
-
+    /**
+     * Save check-in details.
+     * @param checkIn
+     * @return
+     */
     @Post("/")
     public HttpResponse<CheckIn> save(@Body @Valid CheckIn checkIn) {
         CheckIn newMemberCheckIn = checkInRepository.save(checkIn);
@@ -50,7 +63,11 @@ public class CheckInController {
                 .headers(headers -> headers.location(location(newMemberCheckIn.getId())));
     }
 
-
+    /**
+     * Update check in details
+     * @param checkIn
+     * @return
+     */
     @Put("/")
     public HttpResponse<?> update(@Body @Valid CheckIn checkIn) {
 

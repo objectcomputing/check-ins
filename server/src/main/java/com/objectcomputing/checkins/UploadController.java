@@ -24,9 +24,12 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Validated
 @Controller("upload")
+@Tag(name="upload")
+
 public class UploadController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UploadController.class);
