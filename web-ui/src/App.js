@@ -10,6 +10,7 @@ import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import ProfileContext from "./context/ProfileContext";
+import axios from "axios";
 
 import "./App.css";
 
@@ -21,12 +22,33 @@ const defaultProfile = {
   role: "Lyrical Poet",
 };
 
+let teamMembers = [];
+
+const getTeamMembers = async () => {
+  try {
+    const res = await axios({
+      method: "get",
+      url: "/member-profile/?pdlId=fb6424a0-b429-4edf-8f05-6927689bec5f",
+      responseType: "json",
+    });
+    res.data.forEach((profile) => {
+      teamMembers.push(profile);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+getTeamMembers();
+
 const customHistory = createBrowserHistory();
 
 function App() {
   return (
     <Router history={customHistory}>
-      <ProfileContext.Provider value={defaultProfile}>
+      <ProfileContext.Provider
+        value={{ defaultProfile: defaultProfile, teamMembers: teamMembers }}
+      >
         <div>
           <Menu />
           <div

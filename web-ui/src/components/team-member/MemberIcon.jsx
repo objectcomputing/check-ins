@@ -3,9 +3,8 @@ import "./TeamMember.css";
 
 const MemberIcon = (props) => {
   const { profile, onSelect } = props;
-  let image = profile.image_url
-    ? profile.image_url
-    : "https://i.imgur.com/TkSNOpF.jpg";
+  const { image_url } = profile;
+  let image = image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg";
 
   return (
     <div onClick={() => onSelect(profile)} className="image-div">

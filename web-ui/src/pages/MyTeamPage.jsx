@@ -1,18 +1,7 @@
 import React from "react";
 import TeamMemberContainer from "../components/team-member/TeamMemberContainer";
 
-const testProfile = [
-  { name: "holmes" },
-  { name: "homie" },
-  { name: "homie g" },
-  { name: "Jes" },
-  { name: "Michael" },
-  { name: "Holly" },
-  { name: "Mohit" },
-  { name: "Pramukh" },
-];
-
-const HomePage = () => {
+const MyTeamPage = () => {
   return (
     <div
       style={{
@@ -29,10 +18,10 @@ const HomePage = () => {
           flexDirection: "row",
         }}
       >
-        <TeamMemberContainer profiles={testProfile} />
+        <TeamMemberContainer />
       </div>
     </div>
   );
 };
 
-export default HomePage;
+export default MyTeamPage;

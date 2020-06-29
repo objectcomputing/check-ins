@@ -3,7 +3,8 @@ import ProfileContext from "../../context/ProfileContext";
 import "./Profile.css";
 
 const Profile = () => {
-  const { bio, email, image_url, name, PDL, role } = useContext(ProfileContext);
+  const context = useContext(ProfileContext);
+  const { bio, email, image_url, name, PDL, role } = context.defaultProfile;
 
   return (
     <div className="flex-row" style={{ marginTop: "20px" }}>

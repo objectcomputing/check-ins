@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
+import ProfileContext from "../../context/ProfileContext";
 import "./TeamMember.css";
 
-const TeamMemberContainer = (props) => {
-  const { profiles } = props;
+const TeamMemberContainer = () => {
+  const context = useContext(ProfileContext);
+  const profiles = context.teamMembers;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
   });
-  const { name, image_url } = selectedProfile;
+  const {
+    bioText,
+    image_url,
+    location,
+    name,
+    pdlId,
+    role,
+    startDate,
+    workEmail,
+  } = selectedProfile;
 
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
@@ -38,16 +49,14 @@ const TeamMemberContainer = (props) => {
               <h2 style={{ margin: 0 }}>{name}</h2>
               <div style={{ display: "flex" }}>
                 <div style={{ marginRight: "50px", textAlign: "left" }}>
-                  <p>Role</p>
-                  <p>Email</p>
-                  <p>Current PDL</p>
-                  <p>Location</p>
+                  <p>Role: {role}</p>
+                  <p>PDL: {pdlId}</p>
+                  <p>Location: {location}</p>
                 </div>
                 <div>
-                  <p>Length of Service</p>
-                  <p>Supervisor Name</p>
-                  <p>Email Address</p>
-                  <p>Bio</p>
+                  <p>Length of Service: {startDate}</p>
+                  <p>Email: {workEmail}</p>
+                  <p>Bio: {bioText}</p>
                 </div>
               </div>
             </div>
@@ -55,7 +64,7 @@ const TeamMemberContainer = (props) => {
         </div>
       )}
       <div className="flex-row" style={{ flexWrap: "wrap" }}>
-        {team}
+        {team.length === 0 ? "No team members :/" : team}
       </div>
     </div>
   );
