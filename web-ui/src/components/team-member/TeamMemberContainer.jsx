@@ -21,6 +21,26 @@ const TeamMemberContainer = () => {
     workEmail,
   } = selectedProfile;
 
+  let now = Date.now();
+
+  const monthsandYears = (date, now) => {
+    if (!date) {
+      return;
+    }
+    let diff = Math.floor(now - date);
+    let day = 1000 * 60 * 60 * 24;
+
+    let days = Math.floor(diff / day);
+    let months = Math.floor(days / 31);
+    let years = Math.floor(months / 12);
+    months %= 12;
+    const time = { months: months, years: years };
+
+    return time;
+  };
+
+  const time = monthsandYears(startDate, now);
+
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
       return (
@@ -54,7 +74,10 @@ const TeamMemberContainer = () => {
                   <p>Location: {location}</p>
                 </div>
                 <div>
-                  <p>Length of Service: {startDate}</p>
+                  <p>
+                    Length of Service:
+                    {`${time.years} year(s), ${time.months} month(s)`}
+                  </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>
                 </div>
