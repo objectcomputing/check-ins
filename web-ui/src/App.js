@@ -22,6 +22,28 @@ const defaultProfile = {
   role: "Lyrical Poet",
 };
 
+const defaultTeamMembers = [
+  {
+    name: "jes",
+    role: "engineer",
+    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    location: "kihei",
+    workEmail: "example email",
+    startDate: 1573551461820,
+    bioText: "example bio text",
+  },
+  {
+    name: "pramukh",
+    role: "engineer",
+    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    location: "St. Louis",
+    workEmail: "example email",
+    insperityId: "example string of insperity",
+    startDate: 1493051461820,
+    bioText: "example bio text",
+  },
+];
+
 let teamMembers = [];
 
 const getTeamMembers = async () => {
@@ -47,7 +69,11 @@ function App() {
   return (
     <Router history={customHistory}>
       <ProfileContext.Provider
-        value={{ defaultProfile: defaultProfile, teamMembers: teamMembers }}
+        value={{
+          defaultProfile: defaultProfile,
+          defaultTeamMembers: defaultTeamMembers,
+          teamMembers: teamMembers,
+        }}
       >
         <div>
           <Menu />

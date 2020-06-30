@@ -6,6 +6,7 @@ import "./TeamMember.css";
 const TeamMemberContainer = () => {
   const context = useContext(ProfileContext);
   const profiles = context.teamMembers;
+  const defaultProfiles = context.defaultTeamMembers;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
@@ -53,7 +54,7 @@ const TeamMemberContainer = () => {
     });
     return team;
   };
-  let team = teamProfile(profiles);
+  let team = teamProfile(defaultProfiles);
   return (
     <div>
       {name && (
