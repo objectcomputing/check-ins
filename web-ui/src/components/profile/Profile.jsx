@@ -5,17 +5,9 @@ import "./Profile.css";
 
 const Profile = () => {
   const context = useContext(ProfileContext);
-  const { bio, email, image_url, name, PDL, role } = context.defaultProfile;
+  const { bio, email, image_url, name, pdl, role } = context.defaultProfile;
   const [roles, setRole] = useState(role);
   const [disabled, setDisabled] = useState(true);
-
-  // function useInput(item) {
-  //   const [value, setValue] = useState(item);
-  //   const input = (
-  //     <input value={value} onChange={(e) => setValue(e.target.value)} />
-  //   );
-  //   return [value, input];
-  // }
 
   return (
     <div className="flex-row" style={{ marginTop: "20px" }}>

@@ -5,6 +5,11 @@
   justify-content: flex-start;
   margin-left: 20px;
 }
+.member-image {
+  max-width: 156px;
+  max-height: 156px;
+  margin-bottom: 20px;
+}
 .team-member-info {
   align-items: center;
   display: flex;
