@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import io.micronaut.data.annotation.AutoPopulated;
 
 @Entity
-@Table(name ="member_profile")
+@Table(name ="memberprofile")
 public class MemberProfile {
 
     public MemberProfile(String name, String role, UUID pdlId, String location,
