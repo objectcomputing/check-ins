@@ -88,7 +88,7 @@ const TeamMemberContainer = () => {
         </div>
       )}
       <div className="flex-row" style={{ flexWrap: "wrap" }}>
-        {team.length === 0 ? "No team members :/" : team}
+        {team.length === 0 ? <p>"No team members :/"</p> : team}
       </div>
     </div>
   );

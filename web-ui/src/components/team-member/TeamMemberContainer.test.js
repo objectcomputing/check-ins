@@ -1,5 +1,5 @@
 import React from "react";
-import TeamMembercontainer from "./TeamMemberContainer";
+import TeamMemberContainer from "./TeamMemberContainer";
 
 const testProfile = [
   { name: "holmes", image_url: "" },
@@ -7,5 +7,5 @@ const testProfile = [
 ];
 
 it("renders correctly", () => {
-  snapshot(<TeamMembercontainer profiles={testProfile} />);
+  snapshot(<TeamMemberContainer profiles={testProfile} />);
 });

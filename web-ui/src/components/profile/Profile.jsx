@@ -4,7 +4,7 @@ import "./Profile.css";
 
 const Profile = () => {
   const context = useContext(ProfileContext);
-  const { bio, email, image_url, name, PDL, role } = context.defaultProfile;
+  const { bio, email, image_url, name, pdl, role } = context.defaultProfile;
 
   return (
     <div className="flex-row" style={{ marginTop: "20px" }}>
@@ -20,7 +20,7 @@ const Profile = () => {
           <div>
             <p>Role: {role}</p>
             <p>Email: {email}</p>
-            <p>Current PDL: {PDL}</p>
+            <p>Current PDL: {pdl}</p>
             <p>{bio}</p>
           </div>
         </div>

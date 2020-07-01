@@ -8,11 +8,7 @@ const MemberIcon = (props) => {
 
   return (
     <div onClick={() => onSelect(profile)} className="image-div">
-      <img
-        alt="Profile"
-        src={image}
-        style={{ maxWidth: "156px", maxHeight: "156px", marginBottom: "20px" }}
-      />
+      <img alt="Profile" className="member-image" src={image} />
     </div>
   );
 };

@@ -18,7 +18,7 @@ const defaultProfile = {
   bio: "It was all a dream, I used to read Word Up magazine",
   email: "Biggie@oci.com",
   name: "Christopher Wallace",
-  PDL: "Tupac Shakur",
+  pdl: "Tupac Shakur",
   role: "Lyrical Poet",
 };
 
