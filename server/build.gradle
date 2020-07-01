@@ -65,6 +65,8 @@ dependencies {
     runtime "org.postgresql:postgresql:42.2.0"
     runtime "io.micronaut.sql:micronaut-jdbc-hikari:2.3.4"
 
+    compile 'com.google.cloud.sql:postgres-socket-factory:1.0.16'
+
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testCompile 'org.junit.jupiter:junit-jupiter-api'
@@ -99,7 +101,11 @@ shadowJar {
 run.classpath += configurations.developmentOnly
 run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Xdebug',"-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n")
 
-
+task runLocal(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClassName = "com.objectcomputing.checkins.Application"
+   jvmArgs '-Dmicronaut.environments=local'
+}
 // deploying to gcp with gradlew
 //buildscript{
 //    dependencies{

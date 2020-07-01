@@ -1,0 +1,40 @@
+micronaut:
+  application:
+    name: check-ins
+
+  server:
+    cors:
+      enabled: true
+    maxRequestSize: 100MB
+    multipart:
+      maxFileSize: 100MB
+
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+      default:
+        enabled: true
+        mapping: "/**"
+        paths:
+          - "classpath:public"
+
+check-ins:
+  application:
+    name: "OCI Check-ins"
+    scopes:
+      - "https://www.googleapis.com/auth/drive.file"
+      - "https://www.googleapis.com/auth/gmail.send"
+
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:postgresql:///<DATABASE_NAME>?cloudSqlInstance=<INSTANCE_CONNECTION_NAME>&socketFactory=com.google.cloud.sql.postgres.SocketFactory`}
+    driverClassName: org.postgresql.Driver
+    username: <POSTGRESQL_USER_NAME>
+    password: <POSTGRESQL_USER_PASSWORD>
+    schema-generate: CREATE
+    dialect: POSTGRES
