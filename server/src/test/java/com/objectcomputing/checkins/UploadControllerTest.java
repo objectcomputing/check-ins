@@ -41,7 +41,7 @@ class UploadControllerTest {
     UploadController uploadController;
 
     @Inject
-    static GoogleDriveAccessor googleDriveAccessor;
+    private GoogleDriveAccessor googleDriveAccessor;
 
     @Test
     void testGetUpload() {
@@ -75,7 +75,7 @@ class UploadControllerTest {
         final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
                 flowable::blockingFirst);
 
-        Assertions.assertTrue(exception.getMessage().matches("Required argument .* not specified"));
+        Assertions.assertTrue(exception.getMessage().matches("Required Body .* not specified"));
         Assertions.assertEquals(exception.getStatus(), HttpStatus.BAD_REQUEST);
     }
 
@@ -120,9 +120,9 @@ class UploadControllerTest {
 
     @MockBean(GoogleDriveAccessor.class)
     public GoogleDriveAccessor googleDriveAccessor() {
-        if(googleDriveAccessor == null) {
+//         if(googleDriveAccessor == null) {
             googleDriveAccessor = mock(GoogleDriveAccessor.class);
-        }
+//         }
         return googleDriveAccessor;
     }
 }
