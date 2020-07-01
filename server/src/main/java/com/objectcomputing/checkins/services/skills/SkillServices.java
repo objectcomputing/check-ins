@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SkillServices {
 
@@ -16,11 +17,22 @@ public class SkillServices {
 
     Skill saveSkill(Skill skill) {
 
-        LOG.info("Storing skill.");
+        LOG.info("Storing skill." + skill);
         Skill returned = skillsRepo.save(skill);
-        LOG.info("skill stored.");
+        LOG.info("skill stored. returned = " + returned);
 
         return returned;
+    }
+
+    Skill readSkill(UUID skillId) {
+
+        LOG.info("Storing skill.");
+        Skill returned = skillsRepo.findBySkillid(skillId);
+
+        LOG.info("skill found. " + returned);
+
+        return returned;
+
     }
 //
 //    List<Skill> saveSkills(int howManySkills) {

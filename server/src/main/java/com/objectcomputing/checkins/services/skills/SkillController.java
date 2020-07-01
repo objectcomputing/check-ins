@@ -1,18 +1,20 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @Controller("/skill")
+@Tag(name="skill")
 public class SkillController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillController.class);
@@ -33,6 +35,12 @@ public class SkillController {
 //        LOG.info("skills stored.");
 //        List<Skill> skillsList = skillsService.saveSkill(skill);
 //    }
+
+    /**
+     * Create and save a new skill.
+     * @param skill
+     * @return
+     */
 
     @Post(value = "create")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
@@ -68,6 +76,21 @@ public class SkillController {
         returned = skillsService.saveSkill(newSkill);
         LOG.info("returned = " + returned.toString());
 
+    }
+
+    /**
+     * Find and read a skill given its id .
+     * @param skillid
+     * @return
+     */
+
+    @Get(value = "/{skillid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Skill readSkill(@Body UUID skillid) {
+        LOG.info("read skill by id: " + skillid);
+        Skill foundSkill = skillsService.readSkill(skillid);
+        LOG.info("found skill by id: " + foundSkill + " " + foundSkill.getSkillid());
+        return foundSkill;
     }
 
     protected URI location(UUID uuid) {

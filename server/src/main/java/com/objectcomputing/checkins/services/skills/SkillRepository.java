@@ -17,7 +17,7 @@ public interface SkillRepository extends CrudRepository<Skill, UUID> {
     List<Skill> findAll();
     List<Skill> findByPending(boolean pending);
 
-        List<Skill> findBySkillid(UUID skillid);
+    Skill findBySkillid(UUID skillid);
 
 //    @Override
 //    <S extends Skill> S update(@Valid @NotNull @NonNull S entity);
