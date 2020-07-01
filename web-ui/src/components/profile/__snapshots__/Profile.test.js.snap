@@ -3,9 +3,14 @@
 exports[`renders correctly 1`] = `
 <div
   className="flex-row"
+  style={
+    Object {
+      "marginTop": "20px",
+    }
+  }
 >
   <div
-    className="image-div"
+    className="profile-image"
   >
     <img
       alt="Profile"
@@ -18,7 +23,6 @@ exports[`renders correctly 1`] = `
     <div
       style={
         Object {
-          "marginTop": "50%",
           "textAlign": "left",
         }
       }
@@ -30,17 +34,23 @@ exports[`renders correctly 1`] = `
           }
         }
       >
-        Name
+        Christopher Wallace
       </h2>
       <div>
         <p>
-          Role
+          Role: 
+          Lyrical Poet
         </p>
         <p>
-          Email
+          Email: 
+          Biggie@oci.com
         </p>
         <p>
-          Current PDL
+          Current PDL: 
+          Tupac Shakur
+        </p>
+        <p>
+          It was all a dream, I used to read Word Up magazine
         </p>
       </div>
     </div>
@@ -51,13 +61,18 @@ exports[`renders correctly 1`] = `
 exports[`renders image_url 1`] = `
 <div
   className="flex-row"
+  style={
+    Object {
+      "marginTop": "20px",
+    }
+  }
 >
   <div
-    className="image-div"
+    className="profile-image"
   >
     <img
       alt="Profile"
-      src="http://someurl.com/das.png"
+      src="https://i.imgur.com/TkSNOpF.jpg"
     />
   </div>
   <div
@@ -66,7 +81,6 @@ exports[`renders image_url 1`] = `
     <div
       style={
         Object {
-          "marginTop": "50%",
           "textAlign": "left",
         }
       }
@@ -78,17 +92,23 @@ exports[`renders image_url 1`] = `
           }
         }
       >
-        Name
+        Christopher Wallace
       </h2>
       <div>
         <p>
-          Role
+          Role: 
+          Lyrical Poet
         </p>
         <p>
-          Email
+          Email: 
+          Biggie@oci.com
         </p>
         <p>
-          Current PDL
+          Current PDL: 
+          Tupac Shakur
+        </p>
+        <p>
+          It was all a dream, I used to read Word Up magazine
         </p>
       </div>
     </div>

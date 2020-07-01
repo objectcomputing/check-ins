@@ -1,6 +1,5 @@
 import React from "react";
 import Profile from "./Profile";
-import renderer from "react-test-renderer";
 
 it("renders correctly", () => {
   snapshot(<Profile />);

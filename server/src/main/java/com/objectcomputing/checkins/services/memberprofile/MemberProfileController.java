@@ -14,10 +14,12 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.http.annotation.Produces;
 
 @Controller("/member-profile")
 @Produces(MediaType.APPLICATION_JSON)
+@Tag(name="member profile")
 public class MemberProfileController {
 
     protected final MemberProfileRepository memberProfileRepository;
@@ -25,7 +27,13 @@ public class MemberProfileController {
     public MemberProfileController(MemberProfileRepository memberProfileRepository){
         this.memberProfileRepository = memberProfileRepository;
     }
-
+    /**
+     * Find Team Member profile by Name, Role, PdlId or find all.
+     * @param name
+     * @param role
+     * @param pdlId
+     * @return
+     */
     @Get("/{?name,role,pdlId}")
     public List<MemberProfile> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
 
@@ -40,6 +48,11 @@ public class MemberProfileController {
         }
     }
 
+    /**
+     * Save a new team member profile.
+     * @param memberProfile
+     * @return
+     */
     @Post("/")
     public HttpResponse<MemberProfile> save(@Body @Valid MemberProfile memberProfile) {
         MemberProfile newMemberProfile = memberProfileRepository.save(memberProfile);
@@ -49,6 +62,11 @@ public class MemberProfileController {
                 .headers(headers -> headers.location(location(newMemberProfile.getUuid())));
     }
 
+    /**
+     * Update a Team member profile.
+     * @param memberProfile
+     * @return
+     */
     @Put("/")
     public HttpResponse<?> update(@Body @Valid MemberProfile memberProfile) {
 

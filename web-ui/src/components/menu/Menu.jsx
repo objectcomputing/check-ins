@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
+    backgroundColor: "#255aa8",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
@@ -100,14 +101,14 @@ function Menu() {
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to="/team">
-          Team
+        <Link style={linkStyle} to="/resources">
+          Resources
         </Link>
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to="/resources">
-          Resources
+        <Link style={linkStyle} to="/team">
+          Team
         </Link>
       </Button>
       <br />
