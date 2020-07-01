@@ -1,12 +1,47 @@
 import React, { useContext, useState } from "react";
 import ProfileContext from "../../context/ProfileContext";
 import EditIcon from "@material-ui/icons/Edit";
+import Button from "@material-ui/core/Button";
+
 import "./Profile.css";
+
+const InputComponent = ({ disabled, label, rows = 1, value, setValue }) => {
+  if (rows > 1) {
+    return (
+      <div>
+        <label htmlFor={label}>{label}</label>
+        <textarea
+          disabled={disabled}
+          id={label}
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+        ></textarea>
+      </div>
+    );
+  } else
+    return (
+      <div>
+        <label htmlFor={label}>{label}</label>
+        <input
+          disabled={disabled}
+          id={label}
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+        ></input>
+      </div>
+    );
+};
 
 const Profile = () => {
   const context = useContext(ProfileContext);
   const { bio, email, image_url, name, pdl, role } = context.defaultProfile;
-  const [roles, setRole] = useState(role);
+
+  const [Role, setRole] = useState(role);
+  const [Email, setEmail] = useState(email);
+  const [PDL, setPDL] = useState(pdl);
+  const [Bio, setBio] = useState(bio);
+  const [updating, setUpdating] = useState(false);
+
   const [disabled, setDisabled] = useState(true);
 
   return (
@@ -21,57 +56,59 @@ const Profile = () => {
         <div style={{ textAlign: "left" }}>
           <h2 style={{ margin: 0 }}>
             {name}
-            <EditIcon
-              onClick={() => {
-                setDisabled(!disabled);
-              }}
-              style={{
-                color: !disabled ? "green" : "black",
-                marginLeft: "20px",
-              }}
-            />
+            {updating && (
+              <Button
+                style={{
+                  backgroundColor: "green",
+                  color: "white",
+                  marginLeft: "20px",
+                }}
+                onClick={() => {
+                  setDisabled(!disabled);
+                  setUpdating(!updating);
+                }}
+              >
+                Update
+              </Button>
+            )}
+            {!updating && (
+              <EditIcon
+                onClick={() => {
+                  setDisabled(!disabled);
+                  setUpdating(!updating);
+                }}
+                style={{
+                  color: "black",
+                  marginLeft: "20px",
+                }}
+              />
+            )}
           </h2>
-          <div>
-            <label htmlFor="role">Role:</label>
-            <input
-              disabled={disabled}
-              onChange={(e) => setRole(e.target.value)}
-              id="role"
-              style={{
-                border: disabled ? "none" : "1px solid black",
-              }}
-              value={roles}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor="email">Email:</label>
-            <input
-              disabled={disabled}
-              id="email"
-              style={{ border: disabled ? "none" : "1px solid black" }}
-              value={email}
-            ></input>
-          </div>
-          <div style={{ display: "flex", textAlign: "left" }}>
-            <label htmlFor="pdl">PDL:</label>
-            <input
-              disabled
-              id="pdl"
-              style={{ border: "none" }}
-              value={PDL}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor="bio">Bio:</label>
-            <textarea
-              disabled={disabled}
-              id="bio"
-              style={{
-                border: disabled ? "none" : "1px solid black",
-              }}
-              value={bio}
-            ></textarea>
-          </div>
+          <InputComponent
+            disabled={disabled}
+            label="Role: "
+            value={Role}
+            setValue={setRole}
+          />
+          <InputComponent
+            disabled={disabled}
+            label="Email: "
+            value={Email}
+            setValue={setEmail}
+          />
+          <InputComponent
+            disabled
+            label="PDL: "
+            value={PDL}
+            setValue={setPDL}
+          />
+          <InputComponent
+            disabled={disabled}
+            label="Bio: "
+            rows={2}
+            value={Bio}
+            setValue={setBio}
+          />
         </div>
       </div>
     </div>
