@@ -36,7 +36,7 @@ public class Skill {
     private String name;
 
     @Column(name="pending")
-    private boolean pending;
+    private boolean pending = true;
 
     public UUID getSkillid() {
         return skillid;
