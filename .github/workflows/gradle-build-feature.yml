@@ -16,4 +16,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Gradle package
-        run: ./gradlew assembleServerAndClient
+        run: ./gradlew assemble

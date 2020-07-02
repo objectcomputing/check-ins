@@ -44,23 +44,6 @@ sonarqube {
 //    id 'maven-publish'
 //}
 
-task copyClientResources(dependsOn: ':web-ui:build') { 
-    group = 'build'
-    description = 'Copy web-ui resources into server'
-}
-
-copyClientResources.doFirst { 
-    copy {
-        from project(':web-ui').buildDir.absolutePath
-        into "${project(':server').buildDir}/resources/main/public"
-    }
-}
-
-task assembleServerAndClient(dependsOn: ['copyClientResources', ':server:shadowJar']) { 
-    group = 'build'
-    description = 'Build combined server & client JAR'
-}
-
 // task test {
 
 // }
