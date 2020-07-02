@@ -1,12 +1,15 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
@@ -38,6 +41,7 @@ public class SkillController {
 
     /**
      * Create and save a new skill.
+     *
      * @param skill
      * @return
      */
@@ -80,13 +84,13 @@ public class SkillController {
 
     /**
      * Find and read a skill given its id .
+     *
      * @param skillid
      * @return
      */
-
-    @Get(value = "/{skillid}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Skill readSkill(@Body UUID skillid) {
+//  /skill/{id}
+    @Get("/{skillid}")
+    public Skill readSkill(@PathVariable UUID skillid) {
         LOG.info("read skill by id: " + skillid);
         Skill foundSkill = skillsService.readSkill(skillid);
         LOG.info("found skill by id: " + foundSkill + " " + foundSkill.getSkillid());
@@ -95,6 +99,22 @@ public class SkillController {
 
     protected URI location(UUID uuid) {
         return URI.create("/skill/" + uuid);
+    }
+
+    /**
+     * Find Skill by Name.
+     *
+     * @param name
+     * @return
+     */
+
+    // /skill/?name=blah
+    @Get("/{?name,pending}")
+    public List<Skill> findByName(@Nullable String name,@Nullable boolean pending) {
+
+        List<Skill> found = skillsService.findByName(name);
+        return skillsService.findByName(name);
+
     }
 
 }

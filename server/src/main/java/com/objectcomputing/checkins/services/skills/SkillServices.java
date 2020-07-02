@@ -34,6 +34,23 @@ public class SkillServices {
         return returned;
 
     }
+
+    List<Skill> findByName(String name) {
+        LOG.info("finding skill.");
+        List<Skill> skillList = skillsRepo.findByName(name);
+        LOG.info("skills found: " + skillList);
+
+        return skillList;
+    }
+
+    List<Skill> findByPending(boolean pending) {
+        LOG.info("finding skill.");
+        List<Skill> skillList = skillsRepo.findByPending(pending);
+        LOG.info("skills found: " + skillList);
+
+        return skillList;
+    }
+
 //
 //    List<Skill> saveSkills(int howManySkills) {
 //
