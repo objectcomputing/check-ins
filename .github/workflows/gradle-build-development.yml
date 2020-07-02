@@ -22,7 +22,7 @@ jobs:
       - name: Scan with Gradle
         run: ./gradlew build --scan
       - name: Build with Gradle
-      run: ./gradlew assemble
+        run: ./gradlew assemble
 
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
