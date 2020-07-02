@@ -21,12 +21,7 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew assemble
-      # Try and publish to packages
-      - name: Publish to GitHub Packages
-        run: gradle publish
-        env:
-          USERNAME: ${{ github.actor }}
-          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
@@ -36,6 +31,7 @@ jobs:
       # Build and push image to Google Container Registry
       - name: Build
         run: |-
+          ls -l
           gcloud builds submit \
             --quiet \
             --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
