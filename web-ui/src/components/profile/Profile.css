@@ -15,3 +15,41 @@ img {
   max-width: 256px;
   max-height: 256px;
 }
+
+input {
+  background-color: unset;
+  border-radius: 2px;
+  border: none;
+  font-size: 16px;
+  color: black;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+input:not(:disabled) {
+  border: 1px solid black;
+}
+
+label {
+  font-weight: 600;
+}
+
+p {
+  font-size: 16px;
+  margin: 0 auto;
+}
+
+textarea {
+  background-color: unset;
+  border-radius: 2px;
+  border: none;
+  color: black;
+  display: flex;
+  font-size: 16px;
+  min-height: 50px;
+  min-width: 350px;
+}
+
+textarea:not(:disabled) {
+  border: 1px solid black;
+}
