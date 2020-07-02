@@ -22,7 +22,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemble
 
-      Setup gcloud CLI
+      # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '290.0.1'
