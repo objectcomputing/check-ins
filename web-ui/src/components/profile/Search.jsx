@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Fuse from "fuse.js";
 
-import "./Profile.css";
+import "./Search.css";
 
 const Search = (props) => {
   const [pattern, setPattern] = useState("");
@@ -13,6 +13,7 @@ const Search = (props) => {
     keys: ["skill"],
   };
 
+  //list to come from db
   const list = [
     { skill: "JavaScript" },
     { skill: "Java" },
@@ -39,20 +40,21 @@ const Search = (props) => {
     <div className="search-parent">
       <div style={{ display: "inline-block" }}>
         <input
+          className="search-input"
           onChange={(e) => setPattern(e.target.value)}
           placeholder="Search Skills"
           value={pattern}
         ></input>
-        <div>
+        <div className="skills-parent">
           {filtered.map((skill) => {
             return (
               <p
+                className="skill"
                 key={skill}
                 onClick={() => {
                   onClick(skill);
                   setPattern("");
                 }}
-                style={{ border: "1px solid black", cursor: "pointer" }}
               >
                 {skill}
               </p>

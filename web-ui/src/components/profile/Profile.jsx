@@ -2,35 +2,32 @@ import React, { useContext, useState } from "react";
 import ProfileContext from "../../context/ProfileContext";
 import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
+import CancelIcon from "@material-ui/icons/Cancel";
 import Search from "./Search";
 
 import "./Profile.css";
 
 const InputComponent = ({ disabled, label, rows = 1, value, setValue }) => {
-  if (rows > 1) {
-    return (
-      <div>
-        <label htmlFor={label}>{label}</label>
+  return (
+    <div className="input-component">
+      <label htmlFor={label}>{label}</label>
+      {rows > 1 ? (
         <textarea
           disabled={disabled}
           id={label}
           onChange={(e) => setValue(e.target.value)}
           value={value}
         ></textarea>
-      </div>
-    );
-  } else
-    return (
-      <div>
-        <label htmlFor={label}>{label}</label>
+      ) : (
         <input
           disabled={disabled}
           id={label}
           onChange={(e) => setValue(e.target.value)}
           value={value}
         ></input>
-      </div>
-    );
+      )}
+    </div>
+  );
 };
 
 const Profile = () => {
@@ -52,6 +49,13 @@ const Profile = () => {
       return;
     }
     setCurrentSkills(currentSkills.concat(skill));
+  };
+
+  const removeSkill = (skill) => {
+    const filtered = currentSkills.filter((e) => {
+      return e !== skill;
+    });
+    setCurrentSkills(filtered);
   };
 
   return (
@@ -130,6 +134,16 @@ const Profile = () => {
           return (
             <div className="current-skills" key={e}>
               {e}
+              <CancelIcon
+                onClick={() => {
+                  removeSkill(e);
+                }}
+                style={{
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  marginLeft: "5px",
+                }}
+              />
             </div>
           );
         })}

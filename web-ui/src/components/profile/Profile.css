@@ -1,5 +1,6 @@
 .current-skills {
   background-color: green;
+  border: 1px solid black;
   border-radius: 5px;
   color: white;
   display: inline-block;
@@ -40,6 +41,11 @@ input:not(:disabled) {
   border: 1px solid black;
 }
 
+.input-component label {
+  display: inline-block;
+  width: 50px;
+}
+
 label {
   font-weight: 600;
 }
@@ -47,11 +53,6 @@ label {
 p {
   font-size: 16px;
   margin: 0 auto;
-}
-
-.search-parent {
-  display: flex;
-  justify-content: center;
 }
 
 textarea {
