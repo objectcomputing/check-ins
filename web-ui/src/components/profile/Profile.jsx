@@ -4,31 +4,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Search from "./Search";
+import InputComponent from "./Input";
 
 import "./Profile.css";
-
-const InputComponent = ({ disabled, label, rows = 1, value, setValue }) => {
-  return (
-    <div className="input-component">
-      <label htmlFor={label}>{label}</label>
-      {rows > 1 ? (
-        <textarea
-          disabled={disabled}
-          id={label}
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-        ></textarea>
-      ) : (
-        <input
-          disabled={disabled}
-          id={label}
-          onChange={(e) => setValue(e.target.value)}
-          value={value}
-        ></input>
-      )}
-    </div>
-  );
-};
 
 const Profile = () => {
   const context = useContext(ProfileContext);
