@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller("/skill")
+@Produces(MediaType.APPLICATION_JSON)
 @Tag(name="skill")
 public class SkillController {
 
@@ -46,7 +47,7 @@ public class SkillController {
      * @return
      */
 
-    @Post(value = "create")
+    @Post(value = "/create")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
         LOG.info("skills stored.");
         Skill newSkill = skillsService.saveSkill(skill);
@@ -56,7 +57,7 @@ public class SkillController {
                 .headers(headers -> headers.location(location(newSkill.getSkillid())));
     }
 
-    @Post(value = "createtest")
+    @Post(value = "/createtest")
     @Consumes(MediaType.APPLICATION_JSON)
     public void createATestSkill(@Body Skill skill) {
         LOG.info("skills stored.");
@@ -64,7 +65,7 @@ public class SkillController {
         LOG.info("returned = " + returned);
     }
 
-    @Get("testloadskills")
+    @Get("/testloadskills")
     public void testCreateSkills() {
 
         LOG.info("testing skills stored.");
@@ -89,16 +90,22 @@ public class SkillController {
      * @return
      */
 //  /skill/{id}
-    @Get("/{skillid}")
-    public Skill readSkill(@PathVariable UUID skillid) {
-        LOG.info("read skill by id: " + skillid);
-        Skill foundSkill = skillsService.readSkill(skillid);
-        LOG.info("found skill by id: " + foundSkill + " " + foundSkill.getSkillid());
-        return foundSkill;
-    }
+//    @Get("/{skillid}")
+//    public Skill readSkill(@PathVariable UUID skillid) {
+//        LOG.info("read skill by id: " + skillid);
+//        Skill foundSkill = skillsService.readSkill(skillid);
+//        LOG.info("found skill by id: " + foundSkill + " " + foundSkill.getSkillid());
+//        return foundSkill;
+//    }
 
-    protected URI location(UUID uuid) {
-        return URI.create("/skill/" + uuid);
+    @Get("/{?skillid,name,pending}")
+    public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable boolean pending) {
+        LOG.info("SkillController");
+        LOG.info("finding skills by values." +skillid + " " + name + " " + pending);
+
+        List<Skill> found = skillsService.findByValue(skillid, name, pending);
+        return found;
+
     }
 
     /**
@@ -109,12 +116,16 @@ public class SkillController {
      */
 
     // /skill/?name=blah
-    @Get("/{?name,pending}")
-    public List<Skill> findByName(@Nullable String name,@Nullable boolean pending) {
+//    @Get("/{?name,pending}")
+//    public List<Skill> findByName(@Nullable String name,@Nullable boolean pending) {
+//
+//        List<Skill> found = skillsService.findByName(name);
+//        return skillsService.findByName(name);
+//
+//    }
 
-        List<Skill> found = skillsService.findByName(name);
-        return skillsService.findByName(name);
-
-    }
+        protected URI location(UUID uuid) {
+            return URI.create("/skill/" + uuid);
+        }
 
 }

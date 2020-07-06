@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class SkillServices {
 
     Skill readSkill(UUID skillId) {
 
-        LOG.info("Storing skill.");
+        LOG.info("Reading skill by id.");
         Skill returned = skillsRepo.findBySkillid(skillId);
 
         LOG.info("skill found. " + returned);
@@ -35,8 +36,24 @@ public class SkillServices {
 
     }
 
+    List<Skill> findByValue(UUID skillid, String name, Boolean pending) {
+        LOG.info("finding values." +skillid + " " + name + " " + pending);
+        List<Skill> skillList = null;
+        if (skillid != null) {
+           skillList = Collections.singletonList(readSkill(skillid));
+        } else if(name != null) {
+            skillList = findByName(name);
+        }  else if(pending != null) {
+            skillList = findByPending(pending);
+        }
+
+        LOG.info("skills found: " + skillList);
+
+        return skillList;
+    }
+
     List<Skill> findByName(String name) {
-        LOG.info("finding skill.");
+        LOG.info("finding by name.");
         List<Skill> skillList = skillsRepo.findByName(name);
         LOG.info("skills found: " + skillList);
 
@@ -44,7 +61,7 @@ public class SkillServices {
     }
 
     List<Skill> findByPending(boolean pending) {
-        LOG.info("finding skill.");
+        LOG.info("finding by pending.");
         List<Skill> skillList = skillsRepo.findByPending(pending);
         LOG.info("skills found: " + skillList);
 

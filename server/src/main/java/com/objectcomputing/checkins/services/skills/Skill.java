@@ -32,7 +32,8 @@ public class Skill {
     private UUID skillid;
 
     @NotBlank
-    @Column(name="name")
+    @NotNull
+    @Column(name="name", nullable = true)
     private String name;
 
     @Column(name="pending")

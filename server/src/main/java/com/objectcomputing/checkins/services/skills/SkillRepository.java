@@ -13,11 +13,11 @@ import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SkillRepository extends CrudRepository<Skill, UUID> {
+    Skill findBySkillid(UUID skillid);
     List<Skill> findByName(String name);
     List<Skill> findByPending(boolean pending);
-    List<Skill> findAll();
 
-    Skill findBySkillid(UUID skillid);
+    List<Skill> findAll();
 
 //    @Override
 //    <S extends Skill> S update(@Valid @NotNull @NonNull S entity);
