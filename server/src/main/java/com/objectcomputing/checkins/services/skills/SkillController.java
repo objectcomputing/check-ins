@@ -99,7 +99,7 @@ public class SkillController {
 //    }
 
     @Get("/{?skillid,name,pending}")
-    public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable boolean pending) {
+    public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable Boolean pending) {
         LOG.info("SkillController");
         LOG.info("finding skills by values." +skillid + " " + name + " " + pending);
 
