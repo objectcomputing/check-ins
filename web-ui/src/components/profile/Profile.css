@@ -1,3 +1,13 @@
+.current-skills {
+  background-color: green;
+  border-radius: 5px;
+  color: white;
+  display: inline-block;
+  font-weight: 600;
+  margin: 5px;
+  padding: 5px;
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;
@@ -37,6 +47,11 @@ label {
 p {
   font-size: 16px;
   margin: 0 auto;
+}
+
+.search-parent {
+  display: flex;
+  justify-content: center;
 }
 
 textarea {
