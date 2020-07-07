@@ -83,8 +83,7 @@ dependencies {
     implementation "io.micronaut.security:micronaut-security-jwt:2.0.0"
     implementation 'io.micronaut.security:micronaut-security-oauth2:2.0.0'
 
-    implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
-    implementation 'io.micronaut.views:micronaut-views-thymeleaf:2.0.0.RC1'
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }
 
 test.classpath += configurations.developmentOnly
