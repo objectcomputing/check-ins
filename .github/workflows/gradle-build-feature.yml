@@ -2,8 +2,10 @@ name: Gradle Build - Feature / Bug
 on:
   push:
     branches:
-      - 'feature/**'
-      - 'bug/**'
+      - 'feature-**/*'
+      - 'bugfix-**/*'
+      - 'chore-**/*'
+      - 'doc-**/*'
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -1,7 +1,9 @@
 name: Gradle Build - Production
 on:
   push:
-    branches: [master]
+    branches:
+      - 'master'
+      - 'release/*'
   pull_request:
     branches: [master]
 jobs:
