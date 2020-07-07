@@ -10,6 +10,8 @@ import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import ProfileContext from "./context/ProfileContext";
+import { SkillsContextProvider } from "./context/SkillsContext";
+
 import axios from "axios";
 
 import "./App.css";
@@ -53,7 +55,7 @@ const getTeamMembers = async () => {
       url: "/member-profile/?pdlId=fb6424a0-b429-4edf-8f05-6927689bec5f",
       responseType: "json",
     });
-    res.data.forEach((profile) => {
+    res.data.map((profile) => {
       teamMembers.push(profile);
     });
   } catch (error) {
@@ -75,40 +77,42 @@ function App() {
           teamMembers: teamMembers,
         }}
       >
-        <div>
-          <Menu />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-            className="App"
-          >
-            <Switch>
-              <Route path="/team">
-                <Header title="My Team" />
-                <MyTeamPage />
-              </Route>
-              <Route path="/resources">
-                <Header title="Resources" />
-                <ResourcesPage />
-              </Route>
-              <Route path="/upload">
-                <Header title="Upload Notes" />
-                <UploadNotesPage />
-              </Route>
-              <Route path="/profile">
-                <Header title="Profile" />
-                <Profile />
-              </Route>
-              <Route path="/">
-                <Header title="Professional Development @ OCI" />
-                <HomePage />
-              </Route>
-            </Switch>
+        <SkillsContextProvider>
+          <div>
+            <Menu />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+              className="App"
+            >
+              <Switch>
+                <Route path="/team">
+                  <Header title="My Team" />
+                  <MyTeamPage />
+                </Route>
+                <Route path="/resources">
+                  <Header title="Resources" />
+                  <ResourcesPage />
+                </Route>
+                <Route path="/upload">
+                  <Header title="Upload Notes" />
+                  <UploadNotesPage />
+                </Route>
+                <Route path="/profile">
+                  <Header title="Profile" />
+                  <Profile />
+                </Route>
+                <Route path="/">
+                  <Header title="Professional Development @ OCI" />
+                  <HomePage />
+                </Route>
+              </Switch>
+            </div>
           </div>
-        </div>
+        </SkillsContextProvider>
       </ProfileContext.Provider>
     </Router>
   );

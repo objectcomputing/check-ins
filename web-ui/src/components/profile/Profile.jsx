@@ -3,6 +3,12 @@ import ProfileContext from "../../context/ProfileContext";
 import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
+import {
+  SkillsContext,
+  MY_SKILL_ADD,
+  MY_SKILL_REMOVE,
+  MY_SKILL_TOGGLE,
+} from "../../context/SkillsContext";
 import Search from "./Search";
 import Input from "./Input";
 
@@ -19,21 +25,16 @@ const Profile = () => {
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
-  let defaultSkills = ["Blockchain", "Mobile", "Node"];
-  const [currentSkills, setCurrentSkills] = useState(defaultSkills);
+  const { state, dispatch } = useContext(SkillsContext);
+  const { mySkills } = state;
 
   const onClick = (skill) => {
-    if (currentSkills.includes(skill)) {
-      return;
-    }
-    setCurrentSkills(currentSkills.concat(skill));
+    console.log({ skill });
+    dispatch({ type: MY_SKILL_TOGGLE, payload: skill });
   };
 
   const removeSkill = (skill) => {
-    const filtered = currentSkills.filter((e) => {
-      return e !== skill;
-    });
-    setCurrentSkills(filtered);
+    dispatch({ type: MY_SKILL_REMOVE, payload: skill });
   };
 
   return (
@@ -103,7 +104,7 @@ const Profile = () => {
       <div>
         <Search onClick={onClick} />
         <h2>Skills</h2>
-        {currentSkills.map((e) => {
+        {mySkills.map((e) => {
           return (
             <div className="current-skills" key={e}>
               {e}

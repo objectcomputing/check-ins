@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import {
+  SkillsContext,
+  MY_SKILL_ADD,
+  MY_SKILL_REMOVE,
+  MY_SKILL_TOGGLE,
+} from "../../context/SkillsContext";
 import Fuse from "fuse.js";
 
 import "./Search.css";
 
 const Search = ({ onClick }) => {
+  const { state, dispatch } = useContext(SkillsContext);
+  const { skillsList, mySkills } = state;
+  const [pending, setPending] = useState(false);
   const [pattern, setPattern] = useState("");
 
   const options = {
@@ -12,35 +21,32 @@ const Search = ({ onClick }) => {
     keys: ["skill"],
   };
 
-  //list to come from db
-  const list = [
-    { skill: "JavaScript" },
-    { skill: "Java" },
-    { skill: "C++" },
-    { skill: "Jquery" },
-    { skill: "Node" },
-    { skill: "Machine Learning" },
-    { skill: "Go" },
-    { skill: "Micronaut" },
-  ];
-  let filtered = [];
+  const filter = (skillList, options) => {
+    const fuse = new Fuse(skillList, options);
 
-  const filter = (list, options) => {
-    const fuse = new Fuse(list, options);
-
-    let temp = fuse.search(pattern);
-    temp.forEach((item) => {
-      filtered.push(item.item.skill);
+    return fuse.search(pattern).map((item) => {
+      return item.item.skill;
     });
   };
 
-  filter(list, options);
+  const toggleSkill = (e) => {
+    const value = e.target.value;
+    dispatch({ type: MY_SKILL_TOGGLE, payload: value });
+  };
+
+  const filtered = filter(skillsList, options);
+
   return (
     <div className="search-parent">
       <div style={{ display: "inline-block" }}>
         <input
           className="search-input"
           onChange={(e) => setPattern(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              toggleSkill(e);
+            }
+          }}
           placeholder="Search Skills"
           value={pattern}
         ></input>
