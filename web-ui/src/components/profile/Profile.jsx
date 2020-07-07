@@ -4,7 +4,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Search from "./Search";
-import InputComponent from "./Input";
+import Input from "./Input";
 
 import "./Profile.css";
 
@@ -77,25 +77,20 @@ const Profile = () => {
                 />
               )}
             </h2>
-            <InputComponent
+            <Input
               disabled={disabled}
               label="Role: "
               value={Role}
               setValue={setRole}
             />
-            <InputComponent
+            <Input
               disabled={disabled}
               label="Email: "
               value={Email}
               setValue={setEmail}
             />
-            <InputComponent
-              disabled
-              label="PDL: "
-              value={PDL}
-              setValue={setPDL}
-            />
-            <InputComponent
+            <Input disabled label="PDL: " value={PDL} setValue={setPDL} />
+            <Input
               disabled={disabled}
               label="Bio: "
               rows={2}

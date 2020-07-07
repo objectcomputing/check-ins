@@ -3,9 +3,8 @@ import Fuse from "fuse.js";
 
 import "./Search.css";
 
-const Search = (props) => {
+const Search = ({ onClick }) => {
   const [pattern, setPattern] = useState("");
-  const { onClick } = props;
 
   const options = {
     includeScore: true,

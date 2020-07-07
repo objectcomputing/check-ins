@@ -2,7 +2,7 @@ import React from "react";
 
 import "./Profile.css";
 
-const InputComponent = ({ disabled, label, rows = 1, value, setValue }) => {
+const Input = ({ disabled, label, rows = 1, value, setValue }) => {
   return (
     <div className="input-component">
       <label htmlFor={label}>{label}</label>
@@ -25,4 +25,4 @@ const InputComponent = ({ disabled, label, rows = 1, value, setValue }) => {
   );
 };
 
-export default InputComponent;
+export default Input;
