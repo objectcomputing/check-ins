@@ -1,10 +1,8 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +21,14 @@ public class SkillController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillController.class);
 
-    @Inject
-    private SkillRepository skillRepo;
+//    @Inject
+//    private SkillRepository skillRepo;
 
     @Inject
     private SkillServices skillsService;
 
-    public void setSkillRepo(SkillRepository skillsRepository) {
-        this.skillRepo = skillsRepository;
-    }
-
-//    @Post(value = "create")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public void createSkills(@Body Skill skill) {
-//        LOG.info("skills stored.");
-//        List<Skill> skillsList = skillsService.saveSkill(skill);
+//    public void setSkillRepo(SkillRepository skillsRepository) {
+//        this.skillRepo = skillsRepository;
 //    }
 
     /**
@@ -84,19 +75,13 @@ public class SkillController {
     }
 
     /**
-     * Find and read a skill given its id .
+     * Find and read a skill or skills given its id, name, or pending status.
      *
      * @param skillid
+     * @param name
+     * @param pending
      * @return
      */
-//  /skill/{id}
-//    @Get("/{skillid}")
-//    public Skill readSkill(@PathVariable UUID skillid) {
-//        LOG.info("read skill by id: " + skillid);
-//        Skill foundSkill = skillsService.readSkill(skillid);
-//        LOG.info("found skill by id: " + foundSkill + " " + foundSkill.getSkillid());
-//        return foundSkill;
-//    }
 
     @Get("/{?skillid,name,pending}")
     public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable Boolean pending) {
@@ -108,24 +93,8 @@ public class SkillController {
 
     }
 
-    /**
-     * Find Skill by Name.
-     *
-     * @param name
-     * @return
-     */
-
-    // /skill/?name=blah
-//    @Get("/{?name,pending}")
-//    public List<Skill> findByName(@Nullable String name,@Nullable boolean pending) {
-//
-//        List<Skill> found = skillsService.findByName(name);
-//        return skillsService.findByName(name);
-//
-//    }
-
-        protected URI location(UUID uuid) {
-            return URI.create("/skill/" + uuid);
-        }
+    protected URI location(UUID uuid) {
+        return URI.create("/skill/" + uuid);
+    }
 
 }
