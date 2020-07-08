@@ -1,8 +1,6 @@
 micronaut:
   application:
     name: check-ins
-  views:
-    folder: 'classpath:public'
 
   server:
     cors:

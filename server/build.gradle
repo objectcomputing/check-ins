@@ -38,7 +38,7 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.data:micronaut-data-processor:$micronautDataVersion"
     annotationProcessor("io.micronaut.configuration:micronaut-openapi:1.5.1")
-
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"
@@ -59,6 +59,11 @@ dependencies {
     }
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut.flyway:micronaut-flyway")
+    implementation("io.micronaut.security:micronaut-security")
+    implementation "io.micronaut.security:micronaut-security-jwt:$micronautSecurityVersion"
+    implementation "io.micronaut.security:micronaut-security-oauth2:$micronautSecurityVersion"
+    implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
+    implementation "io.micronaut.views:micronaut-views-thymeleaf"
     
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
@@ -78,12 +83,6 @@ dependencies {
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
 
     publicResources project(':web-ui')
-    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
-    implementation("io.micronaut.security:micronaut-security")
-    implementation "io.micronaut.security:micronaut-security-jwt:2.0.0"
-    implementation 'io.micronaut.security:micronaut-security-oauth2:2.0.0'
-
-    implementation("io.micronaut.views:micronaut-views-thymeleaf")
 }
 
 test.classpath += configurations.developmentOnly

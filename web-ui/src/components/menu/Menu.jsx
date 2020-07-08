@@ -90,19 +90,6 @@ function Menu() {
 
   const linkStyle = { textDecoration: "none" };
 
-  async function getLoginDetails(e) {
-    e.preventDefault();
-    try {
-      const result = await fetch("/", { method: "GET" });
-      console.log(result.data)
-      const resJson = await result.json();
-      var isLoggedIn = Object.keys(resJson)[0];
-      console.log(isLoggedIn);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   const drawer = (
     <div>
       <div className={classes.toolbar} />
@@ -179,8 +166,12 @@ function Menu() {
                         Profile
                       </Link>
                     </MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
-                    <MenuItem>
+                    <MenuItem onClick={() => window.location.reload()}>
+                      <Link style={{ textDecoration: "none" }} to={`/logout`}>
+                        Logout
+                      </Link>
+                    </MenuItem>
+                    <MenuItem onClick={() => window.location.reload()}>
                       <Link style={{ textDecoration: "none" }} to={`/oauth/login/google`}>
                         Login
                       </Link>
