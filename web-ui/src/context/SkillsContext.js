@@ -6,21 +6,21 @@ export const MY_SKILL_TOGGLE = "toggle";
 
 const SkillsContext = React.createContext();
 
-const list = [
-  { skill: "JavaScript" },
-  { skill: "Java" },
+const skillsList = [
+  { skill: "JAVASCRIPT" },
+  { skill: "JAVA" },
   { skill: "C++" },
-  { skill: "Jquery" },
-  { skill: "Node" },
-  { skill: "Machine Learning" },
-  { skill: "Go" },
-  { skill: "Micronaut" },
+  { skill: "JQUERY" },
+  { skill: "NODE" },
+  { skill: "MACHINE LEARNING" },
+  { skill: "GO" },
+  { skill: "MICRONAUT" },
 ];
 
-const mySkills = ["Blockchain", "Mobile", "Node"];
+const mySkills = [{ skill: "JQUERY" }, { skill: "GO" }, { skill: "NODE" }];
 
 const initialState = {
-  skillsList: list,
+  skillsList: skillsList,
   mySkills: mySkills,
 };
 
@@ -28,7 +28,7 @@ const reducer = (state, action) => {
   switch (action.type) {
     case MY_SKILL_ADD:
       state.mySkills = state.mySkills.filter((i) => {
-        return action.payload === i;
+        return action.payload !== i;
       });
       state.mySkills.push(action.payload);
       break;

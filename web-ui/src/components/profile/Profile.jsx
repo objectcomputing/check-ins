@@ -28,13 +28,24 @@ const Profile = () => {
   const { state, dispatch } = useContext(SkillsContext);
   const { mySkills } = state;
 
-  const onClick = (skill) => {
-    console.log({ skill });
-    dispatch({ type: MY_SKILL_TOGGLE, payload: skill });
+  const onClick = (item) => {
+    const inMySkills = mySkills.find(({ skill }) => {
+      return skill === item.toUpperCase();
+    });
+    if (inMySkills) {
+      return;
+    }
+    dispatch({
+      type: MY_SKILL_TOGGLE,
+      payload: { skill: item.toUpperCase() },
+    });
   };
 
   const removeSkill = (skill) => {
-    dispatch({ type: MY_SKILL_REMOVE, payload: skill });
+    dispatch({
+      type: MY_SKILL_REMOVE,
+      payload: { skill: skill.toUpperCase() },
+    });
   };
 
   return (
@@ -104,13 +115,13 @@ const Profile = () => {
       <div>
         <Search onClick={onClick} />
         <h2>Skills</h2>
-        {mySkills.map((e) => {
+        {mySkills.map(({ skill }) => {
           return (
-            <div className="current-skills" key={e}>
-              {e}
+            <div className="current-skills" key={skill}>
+              {skill}
               <CancelIcon
                 onClick={() => {
-                  removeSkill(e);
+                  removeSkill(skill);
                 }}
                 style={{
                   cursor: "pointer",

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import {
   SkillsContext,
   MY_SKILL_ADD,
@@ -12,7 +12,6 @@ import "./Search.css";
 const Search = ({ onClick }) => {
   const { state, dispatch } = useContext(SkillsContext);
   const { skillsList, mySkills } = state;
-  const [pending, setPending] = useState(false);
   const [pattern, setPattern] = useState("");
 
   const options = {
@@ -29,10 +28,20 @@ const Search = ({ onClick }) => {
     });
   };
 
-  const toggleSkill = (e) => {
+  const addSkill = (e) => {
     const value = e.target.value;
-    dispatch({ type: MY_SKILL_TOGGLE, payload: value });
+    dispatch({ type: MY_SKILL_ADD, payload: { skill: value.toUpperCase() } });
   };
+
+  const pending = useMemo(() => {
+    return (
+      mySkills.filter((i) => {
+        skillsList.find(({ skill }) => {
+          return skill !== i.skill;
+        });
+      }).length > 0
+    );
+  }, [skillsList, mySkills]);
 
   const filtered = filter(skillsList, options);
 
@@ -43,8 +52,15 @@ const Search = ({ onClick }) => {
           className="search-input"
           onChange={(e) => setPattern(e.target.value)}
           onKeyPress={(e) => {
+            const inMySkills = mySkills.find(({ skill }) => {
+              return skill === pattern.toUpperCase();
+            });
+            if (inMySkills) {
+              return;
+            }
             if (e.key === "Enter") {
-              toggleSkill(e);
+              setPattern("");
+              addSkill(e);
             }
           }}
           placeholder="Search Skills"
@@ -65,6 +81,7 @@ const Search = ({ onClick }) => {
               </p>
             );
           })}
+          {/* <p>{pending ? "Pending..." : "Not Pending"}</p> */}
         </div>
       </div>
     </div>
