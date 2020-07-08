@@ -17,8 +17,6 @@ public class SkillServices {
 
     protected Skill saveSkill(Skill skill) {
 
-        LOG.info("Storing skill. {}" , skill);
-
         List<Skill> returnedList = findByValue(null, skill.getName(), null);
         return returnedList.size() < 1 ? skillsRepo.save(skill) : null;
 
@@ -26,17 +24,13 @@ public class SkillServices {
 
     protected Skill readSkill(UUID skillId) {
 
-        LOG.info("Reading skill by id.");
         Skill returned = skillsRepo.findBySkillid(skillId);
-
-        LOG.info("skill found. {}", returned);
 
         return returned;
 
     }
 
     protected List<Skill> findByValue(UUID skillid, String name, Boolean pending) {
-        LOG.info("finding values." +skillid + " " + name + " " + pending);
         List<Skill> skillList = null;
         if (skillid != null) {
            skillList = Collections.singletonList(readSkill(skillid));
@@ -46,25 +40,27 @@ public class SkillServices {
             skillList = findByPending(pending);
         }
 
-        LOG.info("skills found: {}",  skillList);
-
         return skillList;
     }
 
     private List<Skill> findByNameLike(String name) {
-        LOG.info("finding by name like.");
         List<Skill> skillList = skillsRepo.findByNameLike(name);
-        LOG.info("skills found: {}", skillList);
 
         return skillList;
     }
 
     protected List<Skill> findByPending(boolean pending) {
-        LOG.info("finding by pending.");
         List<Skill> skillList = skillsRepo.findByPending(pending);
-        LOG.info("skills found: {}" ,skillList);
 
         return skillList;
+    }
+
+    protected Skill updatePending(Skill skill) {
+
+        Skill returned = skillsRepo.update(skill);
+
+        return returned;
+
     }
 
 }

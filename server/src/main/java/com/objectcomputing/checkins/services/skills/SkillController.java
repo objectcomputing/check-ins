@@ -43,13 +43,11 @@ public class SkillController {
     @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
         LOG.info("skills stored.");
-//        Skill newSkill = skillRepo.save(skill);
         Skill newSkill = skillsService.saveSkill(skill);
 
         LOG.info("newSkill = " + newSkill);
 
         if (newSkill == null) {
-//            return HttpResponse.badRequest(message);
             return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
         } else {
             return HttpResponse
@@ -95,12 +93,29 @@ public class SkillController {
 
     @Get("/{?skillid,name,pending}")
     public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable Boolean pending) {
-        LOG.info("SkillController");
-        LOG.info("finding skills by values." +skillid + " " + name + " " + pending);
 
         List<Skill> found = skillsService.findByValue(skillid, name, pending);
         return found;
 
+    }
+
+    /**
+     * Update the pending status of a skill.
+     * @param skill
+     * @return
+     */
+    @Put("/updatePending")
+    public HttpResponse<?> updatePending(@Body @Valid Skill skill) {
+
+        if(null != skill.getSkillid()) {
+            Skill updatedSkill = skillsService.updatePending(skill);
+            return HttpResponse
+                    .ok()
+                    .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
+                    .body(updatedSkill);
+        }
+
+        return HttpResponse.badRequest();
     }
 
     protected URI location(UUID uuid) {
