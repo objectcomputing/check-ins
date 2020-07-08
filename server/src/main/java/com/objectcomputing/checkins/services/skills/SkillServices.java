@@ -41,7 +41,7 @@ public class SkillServices {
         if (skillid != null) {
            skillList = Collections.singletonList(readSkill(skillid));
         } else if(name != null) {
-            skillList = findByName(name);
+            skillList = findByNameLike(name);
         }  else if(pending != null) {
             skillList = findByPending(pending);
         }
@@ -51,9 +51,9 @@ public class SkillServices {
         return skillList;
     }
 
-    protected List<Skill> findByName(String name) {
-        LOG.info("finding by name.");
-        List<Skill> skillList = skillsRepo.findByName(name);
+    private List<Skill> findByNameLike(String name) {
+        LOG.info("finding by name like.");
+        List<Skill> skillList = skillsRepo.findByNameLike(name);
         LOG.info("skills found: {}", skillList);
 
         return skillList;

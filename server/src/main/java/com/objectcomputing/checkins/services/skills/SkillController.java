@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
