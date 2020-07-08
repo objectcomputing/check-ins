@@ -1,7 +1,7 @@
 drop table if exists skills;
 CREATE TABLE skills(
    skillid varchar PRIMARY KEY,
-   name varchar,
+   name varchar UNIQUE,
    pending boolean
 );
 

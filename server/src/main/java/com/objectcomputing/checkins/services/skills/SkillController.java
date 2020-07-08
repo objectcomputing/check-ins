@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skills;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,15 +22,15 @@ public class SkillController {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillController.class);
 
-//    @Inject
-//    private SkillRepository skillRepo;
+    @Inject
+    private SkillRepository skillRepo;
 
     @Inject
     private SkillServices skillsService;
 
-//    public void setSkillRepo(SkillRepository skillsRepository) {
-//        this.skillRepo = skillsRepository;
-//    }
+    public void setSkillRepo(SkillRepository skillsRepository) {
+        this.skillRepo = skillsRepository;
+    }
 
     /**
      * Create and save a new skill.
@@ -38,23 +39,31 @@ public class SkillController {
      * @return
      */
 
-    @Post(value = "/create")
+    @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
         LOG.info("skills stored.");
+//        Skill newSkill = skillRepo.save(skill);
         Skill newSkill = skillsService.saveSkill(skill);
-        LOG.info("newSkill = " + newSkill);
-        return HttpResponse
-                .created(newSkill)
-                .headers(headers -> headers.location(location(newSkill.getSkillid())));
-    }
 
-    @Post(value = "/createtest")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void createATestSkill(@Body Skill skill) {
-        LOG.info("skills stored.");
-        Skill returned = skillsService.saveSkill(skill);
-        LOG.info("returned = " + returned);
+        LOG.info("newSkill = " + newSkill);
+
+        if (newSkill == null) {
+//            return HttpResponse.badRequest(message);
+            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
+        } else {
+            return HttpResponse
+                    .created(newSkill)
+                    .headers(headers -> headers.location(location(newSkill.getSkillid())));
+        }
     }
+//
+//    @Post(value = "/createtest")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    public void createATestSkill(@Body Skill skill) {
+//        LOG.info("skills stored.");
+//        Skill returned = skillsService.saveSkill(skill);
+//        LOG.info("returned = " + returned);
+//    }
 
     @Get("/testloadskills")
     public void testCreateSkills() {

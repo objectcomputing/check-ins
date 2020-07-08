@@ -33,7 +33,7 @@ public class Skill {
 
     @NotBlank
     @NotNull
-    @Column(name="name", nullable = true)
+    @Column(name="name", nullable = true, unique = true)
     private String name;
 
     @Column(name="pending")
@@ -66,7 +66,7 @@ public class Skill {
 
     @Override
     public String toString() {
-        return "Skill{" +
+        return "Skill {" +
                 "name='" + name + '\'' +
                 ", pending=" + pending +
                 '}';

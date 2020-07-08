@@ -16,8 +16,9 @@ public interface SkillRepository extends CrudRepository<Skill, UUID> {
     Skill findBySkillid(UUID skillid);
     List<Skill> findByName(String name);
     List<Skill> findByPending(boolean pending);
-
     List<Skill> findAll();
+
+    Skill updateSkill(UUID skillid);
 
     @Override
     <S extends Skill> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
