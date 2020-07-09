@@ -1,8 +1,10 @@
 import React, { useReducer, useMemo } from "react";
+import axios from "axios";
 
 export const MY_SKILL_ADD = "add";
 export const MY_SKILL_REMOVE = "remove";
 export const MY_SKILL_TOGGLE = "toggle";
+export const MY_PROFILE_UPDATE = "update";
 
 const SkillsContext = React.createContext();
 
@@ -17,11 +19,63 @@ const skillsList = [
   { skill: "MIicronaut" },
 ];
 
+let teamMembers = [];
+
+const getTeamMembers = async () => {
+  try {
+    const res = await axios({
+      method: "get",
+      url: "/member-profile/?pdlId=fb6424a0-b429-4edf-8f05-6927689bec5f",
+      responseType: "json",
+    });
+    res.data.map((profile) => {
+      teamMembers.push(profile);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+getTeamMembers();
+
+const defaultProfile = {
+  bio: "It was all a dream, I used to read Word Up magazine",
+  email: "Biggie@oci.com",
+  name: "Christopher Wallace",
+  pdl: "Tupac Shakur",
+  role: "Lyrical Poet",
+};
+
+const defaultTeamMembers = [
+  {
+    name: "jes",
+    role: "engineer",
+    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    location: "kihei",
+    workEmail: "example email",
+    startDate: 1573551461820,
+    bioText: "example bio text",
+  },
+  {
+    name: "pramukh",
+    role: "engineer",
+    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    location: "St. Louis",
+    workEmail: "example email",
+    insperityId: "example string of insperity",
+    startDate: 1493051461820,
+    bioText: "example bio text",
+  },
+];
+
 const mySkills = [{ skill: "Jquery" }, { skill: "Go" }, { skill: "Node" }];
 
 const initialState = {
+  defaultProfile: defaultProfile,
+  defaultTeamMembers: defaultTeamMembers,
   skillsList: skillsList,
   mySkills: mySkills,
+  teamMembers: teamMembers,
 };
 
 const reducer = (state, action) => {
@@ -49,7 +103,9 @@ const reducer = (state, action) => {
         state.mySkills.push(action.payload);
       }
       break;
-
+    case MY_PROFILE_UPDATE:
+      state.defaultProfile = action.payload;
+      break;
     default:
   }
   return { ...state };

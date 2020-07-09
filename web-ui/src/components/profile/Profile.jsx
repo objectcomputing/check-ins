@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import ProfileContext from "../../context/ProfileContext";
 import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
@@ -7,6 +6,7 @@ import {
   SkillsContext,
   MY_SKILL_REMOVE,
   MY_SKILL_TOGGLE,
+  MY_PROFILE_UPDATE,
 } from "../../context/SkillsContext";
 import Search from "./Search";
 import Input from "./Input";
@@ -14,18 +14,30 @@ import Input from "./Input";
 import "./Profile.css";
 
 const Profile = () => {
-  const context = useContext(ProfileContext);
-  const { bio, email, image_url, name, pdl, role } = context.defaultProfile;
+  const { state, dispatch } = useContext(SkillsContext);
+  const { mySkills, defaultProfile } = state;
+
+  const { bio, email, image_url, name, pdl, role } = defaultProfile;
 
   const [Role, setRole] = useState(role);
   const [Email, setEmail] = useState(email);
-  const [PDL, setPDL] = useState(pdl);
   const [Bio, setBio] = useState(bio);
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
-  const { state, dispatch } = useContext(SkillsContext);
-  const { mySkills } = state;
+  const updateProfile = () => {
+    const updatedProfile = {
+      role: Role,
+      email: Email,
+      name: name,
+      pdl: pdl,
+      bio: Bio,
+    };
+    dispatch({
+      type: MY_PROFILE_UPDATE,
+      payload: updatedProfile,
+    });
+  };
 
   const onClick = (item) => {
     const inMySkills = mySkills.find(({ skill }) => {
@@ -70,6 +82,7 @@ const Profile = () => {
                   onClick={() => {
                     setDisabled(!disabled);
                     setUpdating(!updating);
+                    updateProfile();
                   }}
                 >
                   Update
@@ -100,7 +113,10 @@ const Profile = () => {
               value={Email}
               setValue={setEmail}
             />
-            <Input disabled label="PDL: " value={PDL} setValue={setPDL} />
+            <div>
+              <span>PDL: </span>
+              {pdl}
+            </div>
             <Input
               disabled={disabled}
               label="Bio: "

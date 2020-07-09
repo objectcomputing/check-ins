@@ -55,6 +55,10 @@ p {
   margin: 0 auto;
 }
 
+span {
+  font-weight: 600;
+}
+
 textarea {
   background-color: unset;
   border-radius: 2px;
