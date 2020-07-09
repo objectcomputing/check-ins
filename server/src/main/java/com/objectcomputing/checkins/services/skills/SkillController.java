@@ -12,9 +12,13 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Controller("/skill")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,10 +46,9 @@ public class SkillController {
 
     @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
-        LOG.info("skills stored.");
         Skill newSkill = skillsService.saveSkill(skill);
 
-        LOG.info("newSkill = " + newSkill);
+        LOG.debug("newSkill = " + newSkill);
 
         if (newSkill == null) {
             return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
@@ -64,21 +67,11 @@ public class SkillController {
 //        LOG.info("returned = " + returned);
 //    }
 
-    @Get("/testloadskills")
-    public void testCreateSkills() {
+    @Post("/loadskills")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void loadSkills(@Body Skill[] skillslist) {
 
-        LOG.info("testing skills stored.");
-        Skill newSkill = new Skill("java", true);
-        Skill returned = skillsService.saveSkill(newSkill);
-        LOG.info("returned = " + returned);
-
-        newSkill = new Skill("tensorflow", false);
-        returned = skillsService.saveSkill(newSkill);
-        LOG.info("returned = " + returned);
-
-        newSkill = new Skill("Docker");
-        returned = skillsService.saveSkill(newSkill);
-        LOG.info("returned = " + returned.toString());
+        skillsService.loadSkills(skillslist);
 
     }
 
