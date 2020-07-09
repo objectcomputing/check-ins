@@ -52,8 +52,8 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
 
 #### Building
 1. Start the database in a Docker container by running `docker-compose up` in a terminal.
-2. In a different terminal, execute the following command :  `./gradlew assemble`
-3. Once the build is successful, execute: `micronaut_environments=local ./gradlew run`
+2. In a different terminal, execute the following command : `micronaut_environments=local ./gradlew build`
+3. Once the build is successful, execute: `./gradlew assemble && micronaut_environments=local ./gradlew run`
 4. Open the browser to run the application at `http://localhost:8080`
 
 # Contributing
