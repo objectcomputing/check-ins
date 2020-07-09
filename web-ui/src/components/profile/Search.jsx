@@ -1,10 +1,5 @@
-import React, { useContext, useState, useMemo } from "react";
-import {
-  SkillsContext,
-  MY_SKILL_ADD,
-  MY_SKILL_REMOVE,
-  MY_SKILL_TOGGLE,
-} from "../../context/SkillsContext";
+import React, { useContext, useState } from "react";
+import { SkillsContext, MY_SKILL_ADD } from "../../context/SkillsContext";
 import Fuse from "fuse.js";
 
 import "./Search.css";

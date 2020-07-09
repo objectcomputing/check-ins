@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import {
   SkillsContext,
-  MY_SKILL_ADD,
   MY_SKILL_REMOVE,
   MY_SKILL_TOGGLE,
 } from "../../context/SkillsContext";
