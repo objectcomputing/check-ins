@@ -58,6 +58,12 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
         exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     }
+    
+    //tag::securitydependency[]
+    annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security")
+    //end::securitydependency[]
+    
     implementation("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut.flyway:micronaut-flyway")
     
