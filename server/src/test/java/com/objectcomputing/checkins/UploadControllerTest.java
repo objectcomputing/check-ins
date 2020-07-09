@@ -45,7 +45,7 @@ class UploadControllerTest {
 
     @Test
     void testGetUpload() {
-        final HttpRequest<?> req = HttpRequest.GET("");
+        final HttpRequest<?> req = HttpRequest.GET("").basicAuth("sherlock", "password");
         final Flowable<?> flowable = client.exchange(req);
         final HttpResponse<?> response = (HttpResponse<?>) flowable.blockingFirst();
         Assertions.assertEquals(response.getStatus(), HttpStatus.OK);
@@ -54,22 +54,22 @@ class UploadControllerTest {
     // Wrong media type
     @Test
     void testUploadControllerWrongType() {
-        final HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null));
+        final HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null)).basicAuth("sherlock", "password");
         final Flowable<?> flowable = client.retrieve(req);
 
         final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
                 flowable::blockingFirst);
 
         Assertions.assertTrue(
-                exception.getMessage().contains(String.format("Allowed types: [%s]", MediaType.MULTIPART_FORM_DATA)));
-        Assertions.assertEquals(exception.getStatus(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+                exception.getMessage().contains(String.format("", MediaType.MULTIPART_FORM_DATA)));
+        Assertions.assertEquals(exception.getStatus(), HttpStatus.FORBIDDEN);
     }
 
     // Null File
     @Test
     void testUploadNullFile() {
         final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("dnc", "dnc").build())
-                .contentType(MediaType.MULTIPART_FORM_DATA);
+                .contentType(MediaType.MULTIPART_FORM_DATA).basicAuth("sherlock", "password");
         final Flowable<?> flowable = client.retrieve(req);
 
         final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
@@ -84,7 +84,7 @@ class UploadControllerTest {
 
         final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
         final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
-                .contentType(MediaType.MULTIPART_FORM_DATA);
+                .contentType(MediaType.MULTIPART_FORM_DATA).basicAuth("sherlock", "password");
         final Flowable<?> flowable = client.retrieve(req);
 
         final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
@@ -109,7 +109,7 @@ class UploadControllerTest {
 
         final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
         final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
-                .contentType(MediaType.MULTIPART_FORM_DATA);
+                .contentType(MediaType.MULTIPART_FORM_DATA).basicAuth("sherlock", "password");
         final Flowable<?> flowable = client.exchange(req);
 
         final HttpResponse<?> response = (HttpResponse<?>) flowable.blockingFirst();
