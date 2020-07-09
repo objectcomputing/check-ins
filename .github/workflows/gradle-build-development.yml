@@ -1,9 +1,12 @@
-name: Gradle Build - Develop
+name: Gradle Build & Deploy - Develop
 on:
   push:
     branches: [develop]
-  pull_request:
-    branches: [develop]
+
+env:
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  RUN_REGION: us-central1
+  SERVICE_NAME: checkins-develop
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,3 +20,34 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew assemble
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.RUN_SA_KEY }}
+          project_id: ${{ secrets.RUN_PROJECT }}
+      - name: Auth Configure Docker
+        run: |-
+          gcloud --quiet auth configure-docker
+      - name: Build the Docker image
+        run: |-
+          cd server
+          docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
+      - name: Push the Docker image to Google Container Registry
+        run: |-
+          cd server
+          docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      - name: Deploy image to Cloud Run
+        run: |-
+          gcloud run deploy "$SERVICE_NAME" \
+            --quiet \
+            --region "$RUN_REGION" \
+            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --set-env-vars "DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }} \
+            --set-env-vars "DB_NAME=${{ secrets.DEV_DB_NAME }} \
+            --set-env-vars "DB_PASSWORD=${{ secrets.DEV_DB_PASSWORD }} \
+            --set-env-vars "DB_USERNAME=${{ secrets.DEV_DB_USERNAME }} \
+            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }} \
+            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }} \
+            --platform "managed" \
+            --allow-unauthenticated
