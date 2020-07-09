@@ -21,7 +21,7 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public"
+          - "classpath:public" 
 
 check-ins:
   application:
@@ -38,3 +38,29 @@ datasources:
     password: 'postgres'
     schema-generate: CREATE_DROP
     dialect: POSTGRES
+
+micronaut:
+  security:
+    enabled: true
+    authentication: idtoken
+    oauth2:
+      clients:
+        google:
+          client-id: ${ OAUTH_CLIENT_ID }
+          client-secret: ${ OAUTH_CLIENT_SECRET }
+          openid:
+            issuer: 'https://accounts.google.com'
+    endpoints:
+      logout:
+        get-allowed: true
+    intercept-url-map:
+      -
+        pattern: /**
+        http-method: GET
+        access:
+          - isAnonymous()
+    session:
+      enabled: true 
+      login-success-target-url: '/'
+      unauthorized-target-url: '/unauthorized'
+      forbidden-target-url: '/forbidden'
