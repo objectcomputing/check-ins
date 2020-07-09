@@ -17,6 +17,10 @@ import io.micronaut.http.annotation.Put;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.http.annotation.Produces;
 
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/member-profile")
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="member profile")
