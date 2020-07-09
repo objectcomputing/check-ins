@@ -1,10 +1,19 @@
 import React from "react";
 import Profile from "./Profile";
+import { SkillsContextProvider } from "../../context/SkillsContext";
 
 it("renders correctly", () => {
-  snapshot(<Profile />);
+  snapshot(
+    <SkillsContextProvider value={null}>
+      <Profile />
+    </SkillsContextProvider>
+  );
 });
 
 it("renders image_url", () => {
-  snapshot(<Profile image_url="http://someurl.com/das.png" />);
+  snapshot(
+    <SkillsContextProvider value={null}>
+      <Profile image_url="http://someurl.com/das.png" />
+    </SkillsContextProvider>
+  );
 });

@@ -84,20 +84,11 @@ exports[`renders correctly 1`] = `
             value="Biggie@oci.com"
           />
         </div>
-        <div
-          className="input-component"
-        >
-          <label
-            htmlFor="PDL: "
-          >
+        <div>
+          <span>
             PDL: 
-          </label>
-          <input
-            disabled={true}
-            id="PDL: "
-            onChange={[Function]}
-            value="Tupac Shakur"
-          />
+          </span>
+          Tupac Shakur
         </div>
         <div
           className="input-component"
@@ -131,6 +122,7 @@ exports[`renders correctly 1`] = `
         <input
           className="search-input"
           onChange={[Function]}
+          onKeyPress={[Function]}
           placeholder="Search Skills"
           value=""
         />
@@ -145,7 +137,7 @@ exports[`renders correctly 1`] = `
     <div
       className="current-skills"
     >
-      Blockchain
+      Jquery
       <svg
         aria-hidden={true}
         className="MuiSvgIcon-root"
@@ -168,7 +160,7 @@ exports[`renders correctly 1`] = `
     <div
       className="current-skills"
     >
-      Mobile
+      Go
       <svg
         aria-hidden={true}
         className="MuiSvgIcon-root"
@@ -299,20 +291,11 @@ exports[`renders image_url 1`] = `
             value="Biggie@oci.com"
           />
         </div>
-        <div
-          className="input-component"
-        >
-          <label
-            htmlFor="PDL: "
-          >
+        <div>
+          <span>
             PDL: 
-          </label>
-          <input
-            disabled={true}
-            id="PDL: "
-            onChange={[Function]}
-            value="Tupac Shakur"
-          />
+          </span>
+          Tupac Shakur
         </div>
         <div
           className="input-component"
@@ -346,6 +329,7 @@ exports[`renders image_url 1`] = `
         <input
           className="search-input"
           onChange={[Function]}
+          onKeyPress={[Function]}
           placeholder="Search Skills"
           value=""
         />
@@ -360,7 +344,7 @@ exports[`renders image_url 1`] = `
     <div
       className="current-skills"
     >
-      Blockchain
+      Jquery
       <svg
         aria-hidden={true}
         className="MuiSvgIcon-root"
@@ -383,7 +367,7 @@ exports[`renders image_url 1`] = `
     <div
       className="current-skills"
     >
-      Mobile
+      Go
       <svg
         aria-hidden={true}
         className="MuiSvgIcon-root"

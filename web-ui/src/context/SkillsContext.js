@@ -16,7 +16,7 @@ const skillsList = [
   { skill: "Node" },
   { skill: "Machine Learning" },
   { skill: "Go" },
-  { skill: "MIicronaut" },
+  { skill: "Micronaut" },
 ];
 
 let teamMembers = [];

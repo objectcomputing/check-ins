@@ -1,12 +1,11 @@
 import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
-import ProfileContext from "../../context/ProfileContext";
+import { SkillsContext } from "../../context/SkillsContext";
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
-  const context = useContext(ProfileContext);
-  // const profiles = context.teamMembers;
-  const defaultProfiles = context.defaultTeamMembers;
+  const { state } = useContext(SkillsContext);
+  const { defaultTeamMembers } = state;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
@@ -54,7 +53,7 @@ const TeamMemberContainer = () => {
     });
     return team;
   };
-  let team = teamProfile(defaultProfiles);
+  let team = teamProfile(defaultTeamMembers);
   return (
     <div>
       {name && (
