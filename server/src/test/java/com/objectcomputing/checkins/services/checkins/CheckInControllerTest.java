@@ -62,22 +62,22 @@ public class CheckInControllerTest {
     @Test
     public void testFindNonExistingEndpointReturns404() {
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99"));
+            client.toBlocking().exchange(HttpRequest.GET("/99").basicAuth("sherlock", "password"));
         });
 
         assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
         System.out.println("INSIDE UNIT TEST");
     }
 
     @Test
     public void testFindNonExistingEndpointReturnsNotFound() {
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo"));
+            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo").basicAuth("sherlock", "password"));
         });
 
         assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
     }
 
     // Find By TeamMemberId - when no user data exists
@@ -91,7 +91,7 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByTeamMemberId(testTeamMemberId)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId)));
+        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId)).basicAuth("sherlock", "password"));
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(2, response.getContentLength());
     }
@@ -108,7 +108,7 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByTargetYearAndTargetQtr(testTargetYear, testTargetQuarter)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter)));
+        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter)).basicAuth("sherlock", "password"));
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(2, response.getContentLength());
     }
@@ -124,7 +124,7 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByPdlId(testId)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?pdlId=%s", testId)));
+        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?pdlId=%s", testId)).basicAuth("sherlock", "password"));
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(2, response.getContentLength());
     }
@@ -138,7 +138,7 @@ public class CheckInControllerTest {
             isDataSetupForGetTest = true;
         }
 
-        HttpRequest requestFindAll = HttpRequest.GET(String.format(""));
+        HttpRequest requestFindAll = HttpRequest.GET(String.format("")).basicAuth("sherlock", "password");
         List<CheckIn> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseFindAll.size());
         assertEquals(testMemberId, responseFindAll.get(0).getTeamMemberId());
@@ -154,7 +154,7 @@ public class CheckInControllerTest {
             isDataSetupForGetTest = true;
         }
 
-        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testMemberId));
+        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testMemberId)).basicAuth("sherlock", "password");
         List<CheckIn> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseFindByName.size());
         assertEquals(testMemberId, responseFindByName.get(0).getTeamMemberId());
@@ -170,7 +170,7 @@ public class CheckInControllerTest {
             isDataSetupForGetTest = true;
         }
 
-        HttpRequest requestFindByTargetYearAndTargetQtr = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testYear, testQuarter));
+        HttpRequest requestFindByTargetYearAndTargetQtr = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testYear, testQuarter)).basicAuth("sherlock", "password");
         List<CheckIn> responseFindByTargetYearAndTargetQtr = client.toBlocking().retrieve(requestFindByTargetYearAndTargetQtr, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseFindByTargetYearAndTargetQtr.size());
         assertEquals(testMemberId, responseFindByTargetYearAndTargetQtr.get(0).getTeamMemberId());
@@ -187,7 +187,7 @@ public class CheckInControllerTest {
             isDataSetupForGetTest = true;
         }
 
-        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
+        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId)).basicAuth("sherlock", "password");
         List<CheckIn> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseFindByPdlId.size());
         assertEquals(testMemberId, responseFindByPdlId.get(0).getTeamMemberId());
@@ -202,7 +202,7 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.save(testCheckIn)).thenReturn(testCheckIn);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody).basicAuth("sherlock", "password"));
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.getContentLength());
     }
@@ -213,11 +213,11 @@ public class CheckInControllerTest {
 
         CheckIn testCheckIn = new CheckIn();
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testCheckIn));
+            client.toBlocking().exchange(HttpRequest.POST("/99", testCheckIn).basicAuth("sherlock", "password"));
         });
 
         assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
     }
 
     // PUT - Valid Body
@@ -239,7 +239,7 @@ public class CheckInControllerTest {
             put("targetYear", "2022");
         }};
 
-        HttpRequest requestForPut = HttpRequest.PUT("", fakeBody);
+        HttpRequest requestForPut = HttpRequest.PUT("", fakeBody).basicAuth("sherlock", "password");
         List<CheckIn> responseForPut = client.toBlocking().retrieve(requestForPut, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseForPut.size());
         assertEquals(testPutId, responseForPut.get(0).getId());
@@ -251,7 +251,7 @@ public class CheckInControllerTest {
     public void testPutUpdateForEmptyInput() {
         CheckIn testCheckIn = new CheckIn();
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testCheckIn));
+            client.toBlocking().exchange(HttpRequest.PUT("", testCheckIn).basicAuth("sherlock", "password"));
         });
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
@@ -262,14 +262,14 @@ public class CheckInControllerTest {
     public void testPutUpdateWithMissingField() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", fakeBody));
+            client.toBlocking().exchange(HttpRequest.PUT("", fakeBody).basicAuth("sherlock", "password"));
         });
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     private void setupTestData() {
-        client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        client.toBlocking().exchange(HttpRequest.POST("", fakeBody).basicAuth("sherlock", "password"));
     }
 
 }
