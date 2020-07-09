@@ -30,18 +30,14 @@ const Search = ({ onClick }) => {
 
   const addSkill = (e) => {
     const value = e.target.value;
-    dispatch({ type: MY_SKILL_ADD, payload: { skill: value.toUpperCase() } });
+    const pending = skillsList.filter((i) => {
+      return i.skill.toUpperCase() === value.toUpperCase();
+    });
+    dispatch({
+      type: MY_SKILL_ADD,
+      payload: { skill: value, pending: pending.length < 1 },
+    });
   };
-
-  const pending = useMemo(() => {
-    return (
-      mySkills.filter((i) => {
-        skillsList.find(({ skill }) => {
-          return skill !== i.skill;
-        });
-      }).length > 0
-    );
-  }, [skillsList, mySkills]);
 
   const filtered = filter(skillsList, options);
 
@@ -53,12 +49,13 @@ const Search = ({ onClick }) => {
           onChange={(e) => setPattern(e.target.value)}
           onKeyPress={(e) => {
             const inMySkills = mySkills.find(({ skill }) => {
-              return skill === pattern.toUpperCase();
+              return skill.toUpperCase() === pattern.toUpperCase();
             });
-            if (inMySkills) {
-              return;
-            }
             if (e.key === "Enter") {
+              if (inMySkills) {
+                setPattern("");
+                return;
+              }
               setPattern("");
               addSkill(e);
             }
@@ -81,7 +78,6 @@ const Search = ({ onClick }) => {
               </p>
             );
           })}
-          {/* <p>{pending ? "Pending..." : "Not Pending"}</p> */}
         </div>
       </div>
     </div>

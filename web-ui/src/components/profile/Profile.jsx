@@ -30,21 +30,21 @@ const Profile = () => {
 
   const onClick = (item) => {
     const inMySkills = mySkills.find(({ skill }) => {
-      return skill === item.toUpperCase();
+      return skill.toUpperCase() === item.toUpperCase();
     });
     if (inMySkills) {
       return;
     }
     dispatch({
       type: MY_SKILL_TOGGLE,
-      payload: { skill: item.toUpperCase() },
+      payload: { skill: item },
     });
   };
 
   const removeSkill = (skill) => {
     dispatch({
       type: MY_SKILL_REMOVE,
-      payload: { skill: skill.toUpperCase() },
+      payload: { skill: skill },
     });
   };
 
