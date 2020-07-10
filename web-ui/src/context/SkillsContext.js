@@ -28,9 +28,7 @@ const getTeamMembers = async () => {
       url: "/member-profile/?pdlId=fb6424a0-b429-4edf-8f05-6927689bec5f",
       responseType: "json",
     });
-    res.data.map((profile) => {
-      teamMembers.push(profile);
-    });
+    res.data.forEach((profile) => teamMembers.push(profile));
   } catch (error) {
     console.log(error);
   }
@@ -115,7 +113,7 @@ const SkillsContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   let value = useMemo(() => {
     return { state, dispatch };
-  });
+  }, [state]);
   return (
     <SkillsContext.Provider value={value}>
       {props.children}

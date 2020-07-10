@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 
 @Entity
 @Table(name="checkins")
@@ -26,25 +28,27 @@ public class CheckIn {
     }
     
     @Id
-    @Column(name="uuid")
+    @Column(name="id")
     @AutoPopulated
+    @TypeDef(type=DataType.STRING)
     private UUID id;
 
     @Column(name="teamMemberId")
     @NotNull
+    @TypeDef(type=DataType.STRING)
     private UUID teamMemberId;
 
     @Column(name="pdlId")
     @NotNull
     private UUID pdlId;
 
-    @Column(name="checkindate")
+    @Column(name="checkInDate")
     private Date checkInDate;
 
-    @Column(name="targetqtr")
+    @Column(name="targetQtr")
     private String targetQtr;
 
-    @Column(name="targetyear")
+    @Column(name="targetYear")
     private String targetYear;
 
     public UUID getId() {
