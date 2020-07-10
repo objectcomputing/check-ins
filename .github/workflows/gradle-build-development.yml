@@ -43,7 +43,7 @@ jobs:
             --quiet \
             --region "$RUN_REGION" \
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-            --set-env-vars "DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}" \
+            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}" \
             --set-env-vars "DB_NAME=${{ secrets.DEV_DB_NAME }}" \
             --set-env-vars "DB_PASSWORD=${{ secrets.DEV_DB_PASSWORD }}" \
             --set-env-vars "DB_USERNAME=${{ secrets.DEV_DB_USERNAME }}" \
