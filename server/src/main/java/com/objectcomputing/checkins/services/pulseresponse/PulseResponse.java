@@ -19,8 +19,13 @@ public class PulseResponse {
     
     public PulseResponse() {}
 
-    public PulseResponse(Date SubmissionDate, Date UpdatedDate, UUID teamMemberId, String questionResponse, String internalFeelings, String externalFeelings) {
-        this.teamMemberId= teamMemberId;
+    public PulseResponse(Date submissionDate, Date updatedDate, UUID teamMemberId, String questionResponse, String internalFeelings, String externalFeelings) {
+        this.submissionDate = submissionDate;
+        this.updatedDate = updatedDate;
+        this.teamMemberId = teamMemberId;
+        this.questionResponse = questionResponse;
+        this.internalFeelings = internalFeelings;
+        this.externalFeelings = externalFeelings;
     }
     
     @Id
@@ -30,10 +35,10 @@ public class PulseResponse {
     private UUID id;
 
     @Column(name="SubmissionDate")
-    private Date SubmissionDate;
+    private Date submissionDate;
 
     @Column(name="UpdatedDate")
-    private Date UpdatedDate;
+    private Date updatedDate;
 
     @Column(name="teamMemberId")
     @NotNull
@@ -58,19 +63,19 @@ public class PulseResponse {
     }
 
     public Date getSubmissionDate() {
-        return SubmissionDate;
+        return submissionDate;
     }
 
     public void setSubmissionDate(Date submissionDate) {
-        SubmissionDate = submissionDate;
+        submissionDate = submissionDate;
     }
 
     public Date getUpdatedDate() {
-        return UpdatedDate;
+        return updatedDate;
     }
 
     public void setUpdatedDate(Date updatedDate) {
-        UpdatedDate = updatedDate;
+        updatedDate = updatedDate;
     }
 
     public UUID getTeamMemberId() {
