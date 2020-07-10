@@ -12,7 +12,7 @@ import org.openqa.selenium.support.FindBy;
 /**
  * @author tajr
  * 
- * This class will store all the locators and methods of login page.
+ * This class will store all the locators and methods of home page.
  *
  */
 public class HomePage {

@@ -37,9 +37,7 @@ public class TC02_Verify_Upload_File_Error_Msg
 	@Test
 	public void verifyCheckInAppLaunch() throws InterruptedException
 	{
-	
 	homePage.uploadFileErrorMsg();
-	
 	}
 	
 	@AfterMethod
