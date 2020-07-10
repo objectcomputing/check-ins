@@ -5,9 +5,9 @@ micronaut:
   server:
     cors:
       enabled: true
-    maxRequestSize: 100MB
+    max-request-size: 100MB
     multipart:
-      maxFileSize: 100MB
+      max-file-size: 100MB
 
   router:
     static-resources:
@@ -21,25 +21,8 @@ micronaut:
         enabled: true
         mapping: "/**"
         paths:
-          - "classpath:public"
+          - "classpath:public" 
 
-check-ins:
-  application:
-    name: "OCI Check-ins"
-    scopes:
-      - "https://www.googleapis.com/auth/drive.file"
-      - "https://www.googleapis.com/auth/gmail.send"
-
-datasources:
-  default:
-    url: ${JDBC_URL:`jdbc:postgresql:///${DB_NAME}?cloudSqlInstance= ${DB_CONNECTION_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory`}
-    driverClassName: org.postgresql.Driver
-    username: ${ DB_USERNAME }
-    password: ${ DB_PASSWORD }
-    schema-generate: CREATE
-    dialect: POSTGRES
-
-micronaut:
   security:
     enabled: true
     authentication: idtoken
@@ -64,4 +47,26 @@ micronaut:
       login-success-target-url: '/'
       unauthorized-target-url: '/unauthorized'
       forbidden-target-url: '/forbidden'
-      
+---      
+datasources:
+  default:
+    # Define the following for local development
+    #url: 'jdbc:postgresql://localhost/cli-analytics'
+    #username: 'postgres'
+    #password: 'secret'
+    driver-class-name: org.postgresql.Driver
+    dialect: POSTGRES
+    schema-generate: NONE
+---
+check-ins:
+  application:
+    name: "OCI Check-ins"
+    scopes:
+      - "https://www.googleapis.com/auth/drive.file"
+      - "https://www.googleapis.com/auth/gmail.send"
+---
+flyway:
+  enabled: enabled
+  datasources:
+    default:
+      locations: classpath:db

@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 
 @Entity
 @Table(name ="member_profile")
@@ -34,6 +36,7 @@ public class MemberProfile {
     @Id
     @Column(name="uuid")
     @AutoPopulated
+    @TypeDef(type=DataType.STRING)
     private UUID uuid;
 
     @NotNull
@@ -44,6 +47,7 @@ public class MemberProfile {
     private String role ;
     
     @Column(name="pdlId")
+    @TypeDef(type=DataType.STRING)
     private UUID pdlId;
 
     @Column(name="location")

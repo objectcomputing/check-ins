@@ -57,8 +57,11 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
         exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     }
+    implementation 'org.postgresql:postgresql:42.2.12'
+    implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
+    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
+    implementation 'io.micronaut.flyway:micronaut-flyway'
     implementation("io.swagger.core.v3:swagger-annotations")
-    implementation("io.micronaut.flyway:micronaut-flyway")
     implementation("io.micronaut.security:micronaut-security")
     implementation "io.micronaut.security:micronaut-security-jwt:$micronautSecurityVersion"
     implementation "io.micronaut.security:micronaut-security-oauth2:$micronautSecurityVersion"
@@ -67,8 +70,6 @@ dependencies {
     
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
-    runtime "org.postgresql:postgresql:42.2.0"
-    runtime "io.micronaut.sql:micronaut-jdbc-hikari:2.3.4"
 
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
