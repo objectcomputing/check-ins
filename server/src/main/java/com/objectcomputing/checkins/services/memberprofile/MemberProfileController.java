@@ -87,6 +87,6 @@ public class MemberProfileController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/team-profile/" + uuid);
+        return URI.create("/member-profile/" + uuid);
     }
 }
