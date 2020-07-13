@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <h4 />
+  <div
+    style={
+      Object {
+        "display": "flex",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "alignItems": "flex-end",
+          "display": "",
+          "margin": "10px",
+        }
+      }
+    >
+      <div>
+        <i
+          aria-hidden="true"
+          className="fa fa-frown-o fa-3x"
+        />
+      </div>
+      <input
+        name="feeling"
+        onChange={[Function]}
+        type="radio"
+        value="Terrible"
+      />
+      Terrible
+    </div>
+    <div
+      style={
+        Object {
+          "alignItems": "flex-end",
+          "display": "flex",
+          "margin": "10px",
+        }
+      }
+    >
+      <div>
+        <i
+          aria-hidden="true"
+        />
+      </div>
+      <input
+        name="feeling"
+        onChange={[Function]}
+        type="radio"
+        value="Bad"
+      />
+      Bad
+    </div>
+    <div
+      style={
+        Object {
+          "alignItems": "flex-end",
+          "display": "",
+          "margin": "10px",
+        }
+      }
+    >
+      <div>
+        <i
+          aria-hidden="true"
+          className="fa fa-meh-o fa-3x"
+        />
+      </div>
+      <input
+        name="feeling"
+        onChange={[Function]}
+        type="radio"
+        value="Okay"
+      />
+      Okay
+    </div>
+    <div
+      style={
+        Object {
+          "alignItems": "flex-end",
+          "display": "flex",
+          "margin": "10px",
+        }
+      }
+    >
+      <div>
+        <i
+          aria-hidden="true"
+        />
+      </div>
+      <input
+        name="feeling"
+        onChange={[Function]}
+        type="radio"
+        value="Good"
+      />
+      Good
+    </div>
+    <div
+      style={
+        Object {
+          "alignItems": "flex-end",
+          "display": "",
+          "margin": "10px",
+        }
+      }
+    >
+      <div>
+        <i
+          aria-hidden="true"
+          className="fa fa-smile-o fa-3x"
+        />
+      </div>
+      <input
+        name="feeling"
+        onChange={[Function]}
+        type="radio"
+        value="Great"
+      />
+      Great
+    </div>
+  </div>
+</div>
+`;
