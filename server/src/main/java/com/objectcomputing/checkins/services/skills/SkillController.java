@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -12,13 +11,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Controller("/skill")
 @Produces(MediaType.APPLICATION_JSON)
@@ -58,14 +53,6 @@ public class SkillController {
                     .headers(headers -> headers.location(location(newSkill.getSkillid())));
         }
     }
-//
-//    @Post(value = "/createtest")
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public void createATestSkill(@Body Skill skill) {
-//        LOG.info("skills stored.");
-//        Skill returned = skillsService.saveSkill(skill);
-//        LOG.info("returned = " + returned);
-//    }
 
     @Post("/loadskills")
     @Consumes(MediaType.APPLICATION_JSON)

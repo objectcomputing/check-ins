@@ -4,10 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -74,11 +70,6 @@ public class SkillServices {
         Stream<Skill> stream = Stream.of(skillslist);
 
             stream.forEach(s-> saveSkill(s));
-//
-//            stream.forEach(s->{
-//                Skill returned = saveSkill(s);
-//            });
-
 
     }
 }
