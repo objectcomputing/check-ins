@@ -26,8 +26,9 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-0"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Terrible"
       />
@@ -48,8 +49,9 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-1"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Bad"
       />
@@ -71,8 +73,9 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-2"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Okay"
       />
@@ -93,8 +96,9 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-3"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Good"
       />
@@ -116,8 +120,9 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-4"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Great"
       />
@@ -155,8 +160,9 @@ exports[`renders message correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-0"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Terrible"
       />
@@ -177,8 +183,9 @@ exports[`renders message correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-1"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Bad"
       />
@@ -200,8 +207,9 @@ exports[`renders message correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-2"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Okay"
       />
@@ -222,8 +230,9 @@ exports[`renders message correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-3"
         name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Good"
       />
@@ -245,135 +254,9 @@ exports[`renders message correctly 1`] = `
         />
       </div>
       <input
+        id="feelings-input-4"
         name="feeling"
-        onChange={[Function]}
-        type="radio"
-        value="Great"
-      />
-      Great
-    </div>
-  </div>
-</div>
-`;
-
-exports[`renders onSelect correctly 1`] = `
-<div>
-  <h4 />
-  <div
-    style={
-      Object {
-        "display": "flex",
-      }
-    }
-  >
-    <div
-      style={
-        Object {
-          "alignItems": "flex-end",
-          "display": "",
-          "margin": "10px",
-        }
-      }
-    >
-      <div>
-        <i
-          aria-hidden="true"
-          className="fa fa-frown-o fa-3x"
-        />
-      </div>
-      <input
-        name="feeling"
-        onChange={[Function]}
-        type="radio"
-        value="Terrible"
-      />
-      Terrible
-    </div>
-    <div
-      style={
-        Object {
-          "alignItems": "flex-end",
-          "display": "flex",
-          "margin": "10px",
-        }
-      }
-    >
-      <div>
-        <i
-          aria-hidden="true"
-        />
-      </div>
-      <input
-        name="feeling"
-        onChange={[Function]}
-        type="radio"
-        value="Bad"
-      />
-      Bad
-    </div>
-    <div
-      style={
-        Object {
-          "alignItems": "flex-end",
-          "display": "",
-          "margin": "10px",
-        }
-      }
-    >
-      <div>
-        <i
-          aria-hidden="true"
-          className="fa fa-meh-o fa-3x"
-        />
-      </div>
-      <input
-        name="feeling"
-        onChange={[Function]}
-        type="radio"
-        value="Okay"
-      />
-      Okay
-    </div>
-    <div
-      style={
-        Object {
-          "alignItems": "flex-end",
-          "display": "flex",
-          "margin": "10px",
-        }
-      }
-    >
-      <div>
-        <i
-          aria-hidden="true"
-        />
-      </div>
-      <input
-        name="feeling"
-        onChange={[Function]}
-        type="radio"
-        value="Good"
-      />
-      Good
-    </div>
-    <div
-      style={
-        Object {
-          "alignItems": "flex-end",
-          "display": "",
-          "margin": "10px",
-        }
-      }
-    >
-      <div>
-        <i
-          aria-hidden="true"
-          className="fa fa-smile-o fa-3x"
-        />
-      </div>
-      <input
-        name="feeling"
-        onChange={[Function]}
+        onClick={[Function]}
         type="radio"
         value="Great"
       />

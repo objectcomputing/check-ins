@@ -1,6 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+const propTypes = {
+  message: PropTypes.string,
+  onSelect: PropTypes.func,
+};
+const displayName = "Feelings";
+
 const Feelings = ({ onSelect, message }) => {
   const inputs = [
     ["Terrible", "fa fa-frown-o fa-3x"],
@@ -19,7 +25,7 @@ const Feelings = ({ onSelect, message }) => {
       <div style={{ display: "flex" }}>
         {inputs.map(([text, icon], i) => (
           <div
-            key={i}
+            key={`feelings-${i}`}
             style={{
               margin: "10px",
               display: icon === undefined ? "flex" : "",
@@ -30,9 +36,10 @@ const Feelings = ({ onSelect, message }) => {
               <i className={icon} aria-hidden="true"></i>
             </div>
             <input
+              id={`feelings-input-${i}`}
               type="radio"
               name="feeling"
-              onChange={onChange}
+              onClick={onChange}
               value={text}
             />
             {text}
@@ -43,9 +50,7 @@ const Feelings = ({ onSelect, message }) => {
   );
 };
 
-Feelings.propTypes = {
-  message: PropTypes.string,
-  onSelect: PropTypes.func,
-};
+Feelings.propTypes = propTypes;
+Feelings.displayName = displayName;
 
 export default Feelings;
