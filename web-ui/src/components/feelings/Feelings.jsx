@@ -1,8 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const Feelings = (props) => {
-  const { onSelect, message } = props;
-
+const Feelings = ({ onSelect, message }) => {
   const inputs = [
     ["Terrible", "fa fa-frown-o fa-3x"],
     ["Bad"],
@@ -42,6 +41,11 @@ const Feelings = (props) => {
       </div>
     </div>
   );
+};
+
+Feelings.propTypes = {
+  message: PropTypes.string,
+  onSelect: PropTypes.func,
 };
 
 export default Feelings;
