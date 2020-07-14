@@ -1,10 +1,3 @@
-drop table if exists skills;
-CREATE TABLE skills(
-   skillid varchar PRIMARY KEY,
-   name varchar UNIQUE,
-   pending boolean
-);
-
 drop table if exists member_profile;
 CREATE TABLE member_profile (
    uuid varchar PRIMARY KEY,

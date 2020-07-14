@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.skills;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +31,7 @@ public class Skill {
     @Id
     @Column(name="skillid")
     @AutoPopulated
+    @TypeDef(type= DataType.STRING)
     private UUID skillid;
 
     @NotBlank
