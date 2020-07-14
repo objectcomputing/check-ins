@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -14,12 +14,12 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 
 @Entity
-@Table(name="PulseResponse")
+@Table(name="pulse_response")
 public class PulseResponse {
     
     public PulseResponse() {}
 
-    public PulseResponse(Date submissionDate, Date updatedDate, UUID teamMemberId, String questionResponse, String internalFeelings, String externalFeelings) {
+    public PulseResponse(LocalDate submissionDate, LocalDate updatedDate, UUID teamMemberId, String questionResponse, String internalFeelings, String externalFeelings) {
         this.submissionDate = submissionDate;
         this.updatedDate = updatedDate;
         this.teamMemberId = teamMemberId;
@@ -34,11 +34,12 @@ public class PulseResponse {
     @TypeDef(type=DataType.STRING)
     private UUID id;
 
-    @Column(name="SubmissionDate")
-    private Date submissionDate;
+    @Column(name="submissionDate")
+    @NotNull
+    private LocalDate submissionDate;
 
-    @Column(name="UpdatedDate")
-    private Date updatedDate;
+    @Column(name="updatedDate")
+    private LocalDate updatedDate;
 
     @Column(name="teamMemberId")
     @NotNull
@@ -62,20 +63,20 @@ public class PulseResponse {
         this.id = id;
     }
 
-    public Date getSubmissionDate() {
+    public LocalDate getSubmissionDate() {
         return submissionDate;
     }
 
-    public void setSubmissionDate(Date submissionDate) {
-        submissionDate = submissionDate;
+    public void setSubmissionDate(LocalDate submissionDate) {
+        this.submissionDate = submissionDate;
     }
 
-    public Date getUpdatedDate() {
+    public LocalDate getUpdatedDate() {
         return updatedDate;
     }
 
-    public void setUpdatedDate(Date updatedDate) {
-        updatedDate = updatedDate;
+    public void setUpdatedDate(LocalDate updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public UUID getTeamMemberId() {
