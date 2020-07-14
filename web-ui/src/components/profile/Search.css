@@ -1,0 +1,20 @@
+.search-parent {
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  padding: 5px;
+  width: 200px;
+}
+
+.skill {
+  border: 1px solid black;
+  cursor: pointer;
+  padding: 5px;
+  width: 200px;
+}
+.skills-parent {
+  background-color: white;
+  position: absolute;
+}

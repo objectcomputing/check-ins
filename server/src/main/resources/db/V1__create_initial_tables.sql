@@ -1,3 +1,5 @@
+drop table if exists member_profile;
+CREATE TABLE member_profile (
 drop table if exists skills;
 CREATE TABLE skills(
    skillid varchar PRIMARY KEY,
@@ -21,7 +23,7 @@ CREATE TABLE memberProfile (
 drop table if exists checkins;
 CREATE TABLE checkins (
    id varchar PRIMARY KEY,
-   teamMemberId varchar REFERENCES memberProfile(uuid),
+   teamMemberId varchar REFERENCES member_profile(uuid),
    pdlId varchar,
    checkInDate date,
    targetQtr varchar,

@@ -1,3 +1,14 @@
+.current-skills {
+  background-color: green;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: white;
+  display: inline-block;
+  font-weight: 600;
+  margin: 5px;
+  padding: 5px;
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;
@@ -30,6 +41,11 @@ input:not(:disabled) {
   border: 1px solid black;
 }
 
+.input-component label {
+  display: inline-block;
+  width: 50px;
+}
+
 label {
   font-weight: 600;
 }
@@ -37,6 +53,10 @@ label {
 p {
   font-size: 16px;
   margin: 0 auto;
+}
+
+span {
+  font-weight: 600;
 }
 
 textarea {
