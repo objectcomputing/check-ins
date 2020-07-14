@@ -14,7 +14,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 
 @Entity
-@Table(name ="memberprofile")
+@Table(name ="member_profile")
 public class MemberProfile {
 
     public MemberProfile(String name, String role, UUID pdlId, String location,

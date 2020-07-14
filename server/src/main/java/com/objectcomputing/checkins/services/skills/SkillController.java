@@ -4,6 +4,8 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller("/skill")
+@Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="skill")
 public class SkillController {
@@ -42,8 +45,6 @@ public class SkillController {
     @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
         Skill newSkill = skillsService.saveSkill(skill);
-
-        LOG.debug("newSkill = " + newSkill);
 
         if (newSkill == null) {
             return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
