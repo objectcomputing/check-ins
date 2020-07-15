@@ -36,7 +36,7 @@ public class Skill {
 
     @NotBlank
     @NotNull
-    @Column(name="name", nullable = true, unique = true)
+    @Column(name="name", unique = true)
     private String name;
 
     @Column(name="pending")

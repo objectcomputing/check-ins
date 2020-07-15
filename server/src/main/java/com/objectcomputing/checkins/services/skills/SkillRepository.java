@@ -18,10 +18,6 @@ public interface SkillRepository extends CrudRepository<Skill, UUID> {
     List<Skill> findByNameIlike(String name);
     List<Skill> findByPending(boolean pending);
 
-//    @Override
-//    @NonNull
-//    <S extends Skill> S update(@Valid @NotNull @NonNull S entity);
-
     @Override
     <S extends Skill> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 

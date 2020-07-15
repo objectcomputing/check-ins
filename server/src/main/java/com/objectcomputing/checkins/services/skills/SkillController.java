@@ -23,16 +23,18 @@ import java.util.UUID;
 @Tag(name="skill")
 public class SkillController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SkillController.class);
-
-    @Inject
-    private SkillRepository skillRepo;
+//    @Inject
+//    private SkillRepository skillRepo;
+    private SkillRepository skillRepository;
 
     @Inject
     private SkillServices skillsService;
 
+//    public void setSkillRepo(SkillRepository skillsRepository) {
+//        this.skillRepo = skillsRepository;
+//    }
     public void setSkillRepo(SkillRepository skillsRepository) {
-        this.skillRepo = skillsRepository;
+        this.skillRepository = skillsRepository;
     }
 
     /**
@@ -54,6 +56,13 @@ public class SkillController {
                     .headers(headers -> headers.location(location(newSkill.getSkillid())));
         }
     }
+
+    /**
+     * Load the current skills into checkinsdb.
+     *
+     * @param skillslist
+     * @return
+     */
 
     @Post("/loadskills")
     @Consumes(MediaType.APPLICATION_JSON)

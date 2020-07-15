@@ -29,10 +29,8 @@ public class SkillControllerTest {
     SkillRepository mockSkillRepository = mock(SkillRepository.class);
     Skill mockSkill = mock(Skill.class);
 
-    private static Date testDate = new Date(System.currentTimeMillis());
     private static String testSkillName = "testName";
     private static boolean pending = false;
-    private static boolean isDataSetupForGetTest = false;
 
     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
         put("name", testSkillName);
@@ -172,7 +170,4 @@ public class SkillControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    private void setupTestData() {
-        client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
-    }
 }
