@@ -15,7 +15,7 @@ public interface SkillRepository extends CrudRepository<Skill, UUID> {
 
     Skill findBySkillid(UUID skillid);
     List<Skill> findByName(String name);
-    List<Skill> findByNameLike(String name);
+    List<Skill> findByNameIlike(String name);
     List<Skill> findByPending(boolean pending);
 
 //    @Override

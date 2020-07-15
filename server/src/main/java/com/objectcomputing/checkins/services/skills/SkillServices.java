@@ -45,7 +45,8 @@ public class SkillServices {
     }
 
     private List<Skill> findByNameLike(String name) {
-        List<Skill> skillList = skillsRepo.findByNameLike(name);
+        String wildcard = "%" + name + "%" ;
+        List<Skill> skillList = skillsRepo.findByNameIlike(wildcard);
 
         return skillList;
     }
