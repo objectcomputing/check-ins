@@ -89,11 +89,11 @@ public class SkillController {
      * @param skill
      * @return
      */
-    @Put("/updatePending")
-    public HttpResponse<?> updatePending(@Body @Valid Skill skill) {
+    @Put("/")
+    public HttpResponse<?> update(@Body @Valid Skill skill) {
 
         if(null != skill.getSkillid()) {
-            Skill updatedSkill = skillsService.updatePending(skill);
+            Skill updatedSkill = skillsService.update(skill);
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedSkill.getSkillid())))

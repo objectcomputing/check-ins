@@ -57,7 +57,7 @@ public class SkillServices {
         return skillList;
     }
 
-    protected Skill updatePending(Skill skill) {
+    protected Skill update(Skill skill) {
 
         Skill returned = skillsRepo.update(skill);
 
