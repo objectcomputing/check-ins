@@ -23,16 +23,11 @@ import java.util.UUID;
 @Tag(name="skill")
 public class SkillController {
 
-//    @Inject
-//    private SkillRepository skillRepo;
     private SkillRepository skillRepository;
 
     @Inject
     private SkillServices skillsService;
 
-//    public void setSkillRepo(SkillRepository skillsRepository) {
-//        this.skillRepo = skillsRepository;
-//    }
     public void setSkillRepo(SkillRepository skillsRepository) {
         this.skillRepository = skillsRepository;
     }
