@@ -7,6 +7,8 @@ env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop
+  GCE_INSTANCE: instance-1
+  GCE_INSTANCE_ZONE: us-central1-a
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,17 +39,22 @@ jobs:
         run: |-
           cd server
           docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-      - name: Deploy image to Cloud Run
+      - name: Deploy image to Compute Engine Instance
         run: |-
-          gcloud run deploy "$SERVICE_NAME" \
-            --quiet \
-            --region "$RUN_REGION" \
-            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}" \
-            --set-env-vars "DB_NAME=${{ secrets.DEV_DB_NAME }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DEV_DB_PASSWORD }}" \
-            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DEV_DB_USERNAME }}" \
-            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
-            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
-            --platform "managed" \
-            --allow-unauthenticated
+          gcloud compute instances update-container "$GCE_INSTANCE" \
+            --zone "$GCE_INSTANCE_ZONE" \
+            --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      # - name: Deploy image to Cloud Run
+      #   run: |-
+      #     gcloud run deploy "$SERVICE_NAME" \
+      #       --quiet \
+      #       --region "$RUN_REGION" \
+      #       --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+      #       --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}" \
+      #       --set-env-vars "DB_NAME=${{ secrets.DEV_DB_NAME }}" \
+      #       --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DEV_DB_PASSWORD }}" \
+      #       --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DEV_DB_USERNAME }}" \
+      #       --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
+      #       --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+      #       --platform "managed" \
+      #       --allow-unauthenticated
