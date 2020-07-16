@@ -16,6 +16,8 @@ public class SkillServices {
     @Inject
     private SkillRepository skillsRepo;
 
+    private SkillRepository skillRepository;
+
     protected Skill saveSkill(Skill skill) {
 
         List<Skill> returnedList = findByValue(null, skill.getName(), null);
@@ -73,4 +75,5 @@ public class SkillServices {
             stream.forEach(s-> saveSkill(s));
 
     }
+
 }

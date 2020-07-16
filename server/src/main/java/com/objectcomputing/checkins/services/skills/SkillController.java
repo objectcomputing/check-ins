@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,6 +65,21 @@ public class SkillController {
     public void loadSkills(@Body Skill[] skillslist) {
 
         skillsService.loadSkills(skillslist);
+
+    }
+
+    /**
+     * Find and read a skill given its id.
+     *
+     * @param skillid
+     * @return
+     */
+
+    @Get("/{skillid}")
+    public Skill getById(@Nullable UUID skillid) {
+        Skill found = skillsService.readSkill(skillid);
+//        List<Skill> found = skillsService.getById(skillid);
+        return found;
 
     }
 
