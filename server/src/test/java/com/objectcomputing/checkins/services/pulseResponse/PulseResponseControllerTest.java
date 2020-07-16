@@ -49,7 +49,6 @@ public class PulseResponseControllerTest {
     MemberProfileController memberProfileController;
     
     PulseResponseRepository mockPulseResponseRepository = mock(PulseResponseRepository.class);
-    PulseResponse mockPulseResponse = mock(PulseResponse.class);
     
     private static LocalDate testsubmissionDate = LocalDate.of(2020, 1, 01);
     private static LocalDate testUpdatedDate = LocalDate.of(2020, 2, 01);
@@ -59,7 +58,6 @@ public class PulseResponseControllerTest {
     @Before
     void setup() {
         reset(mockPulseResponseRepository);
-        reset(mockPulseResponse);
     }
     
     @BeforeAll
@@ -79,6 +77,7 @@ public class PulseResponseControllerTest {
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
             assertEquals(HttpStatus.CREATED, response.getStatus());
+            assertNotNull(response.body());
             testTeamMemberId = ((MemberProfile) response.body()).getUuid();
         }
     }
@@ -87,16 +86,6 @@ public class PulseResponseControllerTest {
     public void testFindNonExistingEndpointReturns404() {
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/99"));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    @Test
-    public void testFindNonExistingEndpointReturnsNotFound() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo"));
         });
 
         assertNotNull(thrown.getResponse());
@@ -170,7 +159,6 @@ public class PulseResponseControllerTest {
             put("submissionDate", testsubmissionDate);
             put("updatedDate", testUpdatedDate);
             put("teamMemberId", testTeamMemberId);
-            put("questionResponse", "POST");
             put("internalFeelings", "operation");
             put("externalFeelings", "successful");
         }};
@@ -184,26 +172,51 @@ public class PulseResponseControllerTest {
     @Test
     public void testPutUpdate() {
 
+        // Insert value for PulseResponse
+        final Map<String, Object> testBody = new HashMap<String, Object>() {{
+            put("submissionDate", testsubmissionDate);
+            put("updatedDate", testUpdatedDate);
+            put("teamMemberId", testTeamMemberId);
+            put("internalFeelings", "operation");
+            put("externalFeelings", "successful");
+        }};
+
+        final HttpResponse<PulseResponse> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testBody), PulseResponse.class);
+        assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
+        assertNotNull(responseFromPost.body());
+        UUID testId = responseFromPost.body().getId();
+
+        // Update value of PulseResponse
+        PulseResponse testPulseResponse = new PulseResponse(testsubmissionDate, testUpdatedDate, testTeamMemberId, "Internal Feeling", "External Feeling");
+        testPulseResponse.setId(testId);
+
+        final HttpResponse<PulseResponse> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testPulseResponse), PulseResponse.class);
+        assertEquals(HttpStatus.OK, responseFromPut.getStatus());
+        assertNotNull(responseFromPut.body());
+        assertEquals(testId, responseFromPut.body().getId());
+        assertEquals("Internal Feeling", responseFromPut.body().getInternalFeelings());
+        assertEquals("External Feeling", responseFromPut.body().getExternalFeelings());
+    }
+
+    // PUT - Request with non-existent id
+    @Test
+    public void testPutUpdateForNonExistentID() {
+
         UUID testId = UUID.randomUUID();
         final Map<String, Object> testBody = new HashMap<String, Object>() {{
             put("id", testId);
             put("submissionDate", testsubmissionDate);
             put("updatedDate", testUpdatedDate);
             put("teamMemberId", testTeamMemberId);
-            put("questionResponse", "PUT");
             put("internalFeelings", "operation");
             put("externalFeelings", "successful");
         }};
 
-        PulseResponse testPulseResponse = new PulseResponse(testsubmissionDate, testUpdatedDate, testTeamMemberId, "QR", "Internal Feeling", "External Feeling");
-        testPulseResponse.setId(testId);
-
-        when(mockPulseResponseRepository.update(testPulseResponse)).thenReturn(testPulseResponse);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.PUT("", testBody));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
-
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("", testBody));
+        });
+        assertNotNull(thrown);
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     // PUT - Request with empty body
@@ -227,7 +240,6 @@ public class PulseResponseControllerTest {
             put("submissionDate", testsubmissionDate);
             put("updatedDate", testUpdatedDate);
             put("teamMemberId", testTeamMemberId);
-            put("questionResponse", "PUT");
             put("internalFeelings", "Operation");
             put("externalFeelings", "Fails");
         }};
@@ -237,23 +249,22 @@ public class PulseResponseControllerTest {
         });
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-
     }
 
     private void setupTestData() {
 
-        if(!isDataSetupForTest){
-            
+        if(!isDataSetupForTest) {
+
             final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
                 put("submissionDate", testsubmissionDate);
                 put("updatedDate", testUpdatedDate);
                 put("teamMemberId", testTeamMemberId);
-                put("questionResponse", "Test Value for Question Response");
                 put("internalFeelings", "Test Value for Internal Feeling");
                 put("externalFeelings", "Test Value for External Feeling");
             }};
             
             client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+
             isDataSetupForTest = true;
         }
     }

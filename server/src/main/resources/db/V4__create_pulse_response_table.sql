@@ -4,7 +4,6 @@ CREATE TABLE pulse_response (
    submissionDate date,
    updatedDate date,
    teamMemberId varchar REFERENCES member_profile(uuid),
-   questionResponse varchar,
    internalFeelings varchar,
    externalFeelings varchar
 );

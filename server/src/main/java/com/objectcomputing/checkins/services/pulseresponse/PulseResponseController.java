@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.validation.Valid;
 
 import io.micronaut.core.convert.format.Format;
@@ -27,11 +27,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "pulse response")
 public class PulseResponseController {
 
-    protected final PulseResponseRepository pulseResponseRepository;
-
-    public PulseResponseController(PulseResponseRepository pulseResponseRepository) {
-        this.pulseResponseRepository = pulseResponseRepository;
-    }
+    @Inject
+    PulseResponseService pulseResponseService;
 
     /**
      * Find Pulse Response by Team Member or Date Range.
@@ -45,17 +42,7 @@ public class PulseResponseController {
     public HttpResponse<List<PulseResponse>> findByValue(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
             @Nullable @Format("yyyy-MM-dd") LocalDate dateTo, @Nullable UUID teamMemberId) {
 
-        if(teamMemberId != null) {
-            return HttpResponse
-                    .ok()
-                    .body(pulseResponseRepository.findByTeamMemberId(teamMemberId));
-        } else if(dateFrom != null && dateTo != null) {
-            return HttpResponse
-                    .ok()
-                    .body(pulseResponseRepository.findBySubmissionDateBetween(dateFrom, dateTo));
-        }
-
-        return HttpResponse.badRequest();
+        return pulseResponseService.findBy(dateFrom, dateTo, teamMemberId);
     }
 
     /**
@@ -65,11 +52,7 @@ public class PulseResponseController {
      */
     @Post("/")
     public HttpResponse<PulseResponse> save(@Body @Valid PulseResponse pulseResponse) {
-        PulseResponse newPulseResponse = pulseResponseRepository.save(pulseResponse);
-        
-        return HttpResponse
-                .created(newPulseResponse)
-                .headers(headers -> headers.location(location(newPulseResponse.getId())));
+        return pulseResponseService.save(pulseResponse);
     }
 
     /**
@@ -78,21 +61,7 @@ public class PulseResponseController {
      * @return
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid PulseResponse pulseResponse) {
-
-        if(null != pulseResponse.getId()) {
-            PulseResponse updatedPulseResponse = pulseResponseRepository.update(pulseResponse);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(location(updatedPulseResponse.getId())))
-                    .body(updatedPulseResponse);
-                    
-        }
-        
-        return HttpResponse.badRequest();
-    }
-
-    protected URI location(UUID uuid) {
-        return URI.create("/pulse-response/" + uuid);
+    public HttpResponse<PulseResponse> update(@Body @Valid PulseResponse pulseResponse) {
+        return pulseResponseService.update(pulseResponse);
     }
 }
