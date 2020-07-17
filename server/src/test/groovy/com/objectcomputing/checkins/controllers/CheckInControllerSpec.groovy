@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn
 import com.objectcomputing.checkins.services.checkins.CheckInRepository
 import com.objectcomputing.checkins.EmbeddedServerSpecification
 import com.objectcomputing.checkins.fixtures.CheckInFixture
-import io.micronaut.core.type.Argument
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
@@ -12,18 +12,30 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.uri.UriBuilder
 import spock.lang.Subject
 
+import java.sql.Date
+
 class CheckInControllerSpec extends EmbeddedServerSpecification implements CheckInFixture {
 
     @Subject
     CheckInRepository checkInRepository = applicationContext.getBean(CheckInRepository)
 
     void 'find a checkIn name'() {
+        UUID id = UUID.randomUUID()
+        Date testDate = new Date(System.currentTimeMillis())
         given: 'an existing checkIn'
-        CheckIn checkIn = saveCheckIn()
+        // the fkey in member profile is necessary to have a passing test for check-in,
+        // so an insert is made to member-profile before inserting into check-in with the uuid from member-profile
+        MemberProfile memberProfile = new MemberProfile("testName", "testRole", id, "testLocation",
+                "testEmail", "testInsperityId", testDate, "testBio")
+        memberProfileRepository.save(memberProfile)
+
+        CheckIn checkIn = new CheckIn(memberProfile.uuid, id, testDate, "Q1", "2021")
+        checkInRepository.save(checkIn)
+
 
         and: 'an http request'
         URI uri = UriBuilder.of('/check-in/?')
-            .queryParam('teamMemberId', checkIn.teamMemberId)
+            .queryParam('teamMemberId', checkIn.getTeamMemberId())
             .build()
 
         HttpRequest request = HttpRequest.GET(uri)
@@ -43,6 +55,7 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
 
         cleanup:
         checkInRepository.deleteAll()
+        memberProfileRepository.deleteAll()
 
     }
 
@@ -107,31 +120,4 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
         checkInRepository.deleteAll()
 
     }
-
-    void 'try to find a member by pdl id that does not exist returns empty body'() {
-        UUID id = UUID.randomUUID()
-
-        given: 'an http request'
-        URI uri = UriBuilder.of('/check-in/?')
-                .queryParam('pdlId', id)
-                .build()
-
-        HttpRequest request = HttpRequest.GET(uri)
-
-        when:
-        HttpResponse<?> response = client.exchange(request)
-
-        then:
-        response.status() == HttpStatus.OK
-        response.getContentLength() == 2
-
-        cleanup:
-        checkInRepository.deleteAll()
-
-    }
-
-//    @Override
-//    CheckInRepository getCheckInRepository() {
-//        return null
-//    }
 }
