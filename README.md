@@ -64,18 +64,19 @@ Note: Be sure that the target Google Drive folder has edit access granted to the
         $ OAUTH_CLIENT_ID=<Insert_Client_ID> OAUTH_CLIENT_SECRET=<Insert_Client_Secret> MICRONAUT_ENVIRONMENTS=local ./gradlew run
         ```
     
-    * On Powershell -
+    * On Powershell/Command-Line -
+        Set the following environment variables -
         ```sh
-        $ set "MICRONAUT_ENVIRONMENTS=local"
+        MICRONAUT_ENVIRONMENTS=local
+        OAUTH_CLIENT_ID=<Client_ID>
+        OAUTH_CLIENT_SECRET=<Client_Secret>
         ```
+        Build and run the application - 
         ```sh
         $ gradlew build
         ```
         ```sh
         $ gradlew assemble
-        ```
-        ```sh
-        $ set MICRONAUT_ENVIRONMENTS=local
         ```
         ```sh
         $ gradlew run
