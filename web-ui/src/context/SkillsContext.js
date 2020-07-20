@@ -5,6 +5,7 @@ export const MY_SKILL_ADD = "add";
 export const MY_SKILL_REMOVE = "remove";
 export const MY_SKILL_TOGGLE = "toggle";
 export const MY_PROFILE_UPDATE = "update";
+export const UPDATE_PDL = "update_pdl";
 
 const SkillsContext = React.createContext();
 
@@ -47,8 +48,11 @@ const defaultProfile = {
 const defaultTeamMembers = [
   {
     name: "jes",
+    id: "lk134l5hg-1-1l34h-145j",
+    insperityId: "example string of insperity",
     role: "engineer",
-    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    // pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    pdl: "Mark",
     location: "kihei",
     workEmail: "example email",
     startDate: 1573551461820,
@@ -56,8 +60,10 @@ const defaultTeamMembers = [
   },
   {
     name: "pramukh",
+    id: "lk154l5hg-5-1l34h-145j",
     role: "engineer",
-    pdlId: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    // pdl: "fb6424a0-b429-4edf-8f05-6927689bec5f",
+    pdl: "Jason",
     location: "St. Louis",
     workEmail: "example email",
     insperityId: "example string of insperity",
@@ -103,6 +109,12 @@ const reducer = (state, action) => {
       break;
     case MY_PROFILE_UPDATE:
       state.defaultProfile = action.payload;
+      break;
+    case UPDATE_PDL:
+      const profiles = state.defaultTeamMembers.map((i) => {
+        return i.id === action.payload.id ? action.payload : i;
+      });
+      state.defaultTeamMembers = profiles;
       break;
     default:
   }
