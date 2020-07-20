@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +38,7 @@ public class MemberProfileControllerTest {
     MemberProfileRepository mockMemberProfileRepository = mock(MemberProfileRepository.class);
     MemberProfile mockMemberProfile = mock(MemberProfile.class);
 
-    private static Date testDate = new Date(System.currentTimeMillis());
+    private static LocalDate testDate = LocalDate.now();
     private static String testUser = "testName";
     private static String testRole = "testRole";
     private static UUID testPdlId = UUID.randomUUID();
@@ -205,19 +205,6 @@ public class MemberProfileControllerTest {
         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.getContentLength());
-    }
-
-    // POST - Invalid call
-    @Test
-    public void testPostNonExistingEndpointReturns404() {
-
-        MemberProfile testMemberProfile = new MemberProfile();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testMemberProfile));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     // PUT - Valid Body

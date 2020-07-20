@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -19,7 +19,7 @@ public class CheckIn {
 
     public CheckIn() {}
 
-    public CheckIn(UUID teamMemberId, UUID pdlId, Date checkInDate, String targetQtr, String targetYear) {
+    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate, String targetQtr, String targetYear) {
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
         this.checkInDate=checkInDate;
@@ -43,7 +43,7 @@ public class CheckIn {
     private UUID pdlId;
 
     @Column(name="checkInDate")
-    private Date checkInDate;
+    private LocalDate checkInDate;
 
     @Column(name="targetQtr")
     private String targetQtr;
@@ -75,11 +75,11 @@ public class CheckIn {
         this.pdlId = pdlId;
     }
 
-    public Date getCheckInDate() {
+    public LocalDate getCheckInDate() {
         return this.checkInDate;
     }
 
-    public void setCheckInDate(Date checkInDate) {
+    public void setCheckInDate(LocalDate checkInDate) {
         this.checkInDate = checkInDate;
     }
 

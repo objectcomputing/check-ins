@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -18,7 +18,7 @@ import io.micronaut.data.model.DataType;
 public class MemberProfile {
 
     public MemberProfile(String name, String role, UUID pdlId, String location,
-                        String workEmail, String insperityId, Date startDate,
+                        String workEmail, String insperityId, LocalDate startDate,
                         String bioText) {
                         this.name=name;
                         this.role=role;
@@ -61,7 +61,7 @@ public class MemberProfile {
     private String insperityId; 
 
     @Column(name="startDate")
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name="bioText")
     private String bioText;
@@ -122,11 +122,11 @@ public class MemberProfile {
         this.insperityId = insperityId;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 

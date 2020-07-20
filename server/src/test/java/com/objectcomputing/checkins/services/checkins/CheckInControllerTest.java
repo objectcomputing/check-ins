@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +40,7 @@ public class CheckInControllerTest {
 
     private static UUID testMemberId = UUID.randomUUID();
     private static UUID testPdlId = UUID.randomUUID();
-    private static Date testDate = new Date(System.currentTimeMillis());
+    private static LocalDate testDate = LocalDate.now();
     private static String testQuarter = "Q2";
     private static String testYear = "2020";
     private static boolean isDataSetupForGetTest = false;
@@ -204,19 +204,6 @@ public class CheckInControllerTest {
         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.getContentLength());
-    }
-
-    // POST - Invalid call
-    @Test
-    public void testPostNonExistingEndpointReturns404() {
-
-        CheckIn testCheckIn = new CheckIn();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testCheckIn));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     // PUT - Valid Body
