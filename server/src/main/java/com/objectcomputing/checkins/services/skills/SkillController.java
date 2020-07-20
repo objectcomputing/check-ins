@@ -7,14 +7,11 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,13 +21,11 @@ import java.util.UUID;
 @Tag(name="skill")
 public class SkillController {
 
-    private SkillRepository skillRepository;
-
     @Inject
-    private SkillServices skillsService;
+    private SkillServices skillServices;
 
-    public void setSkillRepo(SkillRepository skillsRepository) {
-        this.skillRepository = skillsRepository;
+    public void setSkillServices(SkillServices skillServices) {
+        this.skillServices = skillServices;
     }
 
     /**
@@ -42,7 +37,7 @@ public class SkillController {
 
     @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
-        Skill newSkill = skillsService.saveSkill(skill);
+        Skill newSkill = skillServices.saveSkill(skill);
 
         if (newSkill == null) {
             return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
@@ -64,7 +59,7 @@ public class SkillController {
     @Consumes(MediaType.APPLICATION_JSON)
     public void loadSkills(@Body Skill[] skillslist) {
 
-        skillsService.loadSkills(skillslist);
+        skillServices.loadSkills(skillslist);
 
     }
 
@@ -77,8 +72,7 @@ public class SkillController {
 
     @Get("/{skillid}")
     public Skill getById(@Nullable UUID skillid) {
-        Skill found = skillsService.readSkill(skillid);
-//        List<Skill> found = skillsService.getById(skillid);
+        Skill found = skillServices.readSkill(skillid);
         return found;
 
     }
@@ -86,16 +80,15 @@ public class SkillController {
     /**
      * Find and read a skill or skills given its id, name, or pending status.
      *
-     * @param skillid
      * @param name
      * @param pending
      * @return
      */
 
-    @Get("/{?skillid,name,pending}")
-    public List<Skill> findByValue(@Nullable UUID skillid, @Nullable String name, @Nullable Boolean pending) {
+    @Get("/{?name,pending}")
+    public List<Skill> findByValue(@Nullable String name, @Nullable Boolean pending) {
 
-        List<Skill> found = skillsService.findByValue(skillid, name, pending);
+        List<Skill> found = skillServices.findByValue(name, pending);
         return found;
 
     }
@@ -109,7 +102,7 @@ public class SkillController {
     public HttpResponse<?> update(@Body @Valid Skill skill) {
 
         if(null != skill.getSkillid()) {
-            Skill updatedSkill = skillsService.update(skill);
+            Skill updatedSkill = skillServices.update(skill);
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
