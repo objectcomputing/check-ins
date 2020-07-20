@@ -38,11 +38,12 @@ public class MemberProfileControllerTest {
     MemberProfileRepository mockMemberProfileRepository = mock(MemberProfileRepository.class);
     MemberProfile mockMemberProfile = mock(MemberProfile.class);
 
+    private static UUID testUuid;
     private static LocalDate testDate = LocalDate.now();
     private static String testUser = "testName";
     private static String testRole = "testRole";
     private static UUID testPdlId = UUID.randomUUID();
-    private static boolean isDataSetupForGetTest = false;
+    private static boolean isDataSetupForTest = false;
 
     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
         put("name", testUser);
@@ -61,23 +62,16 @@ public class MemberProfileControllerTest {
         reset(mockMemberProfile);
     }
 
+    // Find By id - when no user data exists
     @Test
-    public void testFindNonExistingEndpointReturns404() {
+    public void testGetFindByIdReturns404() {
+
+        UUID testId = UUID.randomUUID();
+
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99"));
+            client.toBlocking().exchange(HttpRequest.GET(String.format("/" + testId)));
         });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    @Test
-    public void testFindNonExistingEndpointReturnsNotFound() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo"));
-        });
-
-        assertNotNull(thrown.getResponse());
+        assertNotNull(thrown);
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
@@ -133,29 +127,41 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindAll() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindAll = HttpRequest.GET(String.format(""));
         List<MemberProfile> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockMemberProfile.getClass()));  
+        
         assertEquals(1, responseFindAll.size());
         assertEquals(testUser, responseFindAll.get(0).getName());
         assertEquals(testRole, responseFindAll.get(0).getRole());
+    }
+
+    // test Find By Id
+    @Test
+    public void testGetFindById() {
+
+        setupTestData();
+
+        HttpRequest requestFindById = HttpRequest.GET(String.format("/" + testUuid));
+        HttpResponse<MemberProfile> response = client.toBlocking().exchange(requestFindById, mockMemberProfile.getClass());  
+        
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.body());
+        assertEquals(testUuid, response.body().getUuid());
+        assertEquals(testUser, response.body().getName());
+        assertEquals(testRole, response.body().getRole());
     }
 
     // test Find By Name
     @Test
     public void testGetFindByName() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", testUser));
         List<MemberProfile> responseFindByName = client.toBlocking().retrieve(requestFindByName, Argument.of(List.class, mockMemberProfile.getClass()));  
+        
         assertEquals(1, responseFindByName.size());
         assertEquals(testUser, responseFindByName.get(0).getName());
         assertEquals(testRole, responseFindByName.get(0).getRole());
@@ -165,13 +171,11 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindByRole() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindByRole = HttpRequest.GET(String.format("/?role=%s", testRole));
         List<MemberProfile> responseFindByRole = client.toBlocking().retrieve(requestFindByRole, Argument.of(List.class, mockMemberProfile.getClass()));  
+        
         assertEquals(1, responseFindByRole.size());
         assertEquals(testUser, responseFindByRole.get(0).getName());
         assertEquals(testRole, responseFindByRole.get(0).getRole());
@@ -181,13 +185,11 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindByPdlId() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
         List<MemberProfile> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockMemberProfile.getClass()));  
+
         assertEquals(1, responseFindByPdlId.size());
         assertEquals(testUser, responseFindByPdlId.get(0).getName());
         assertEquals(testRole, responseFindByPdlId.get(0).getRole());
@@ -257,6 +259,14 @@ public class MemberProfileControllerTest {
     }
 
     private void setupTestData() {
-        client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        
+        if(!isDataSetupForTest) {
+            HttpResponse<MemberProfile> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", fakeBody), MemberProfile.class);
+            assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
+            assertNotNull(responseFromPost.body());
+            testUuid = responseFromPost.body().getUuid();
+
+            isDataSetupForTest = true;
+        }
     }
 }

@@ -40,6 +40,7 @@ public class CheckIn {
 
     @Column(name="pdlId")
     @NotNull
+    @TypeDef(type=DataType.STRING)
     private UUID pdlId;
 
     @Column(name="checkInDate")
