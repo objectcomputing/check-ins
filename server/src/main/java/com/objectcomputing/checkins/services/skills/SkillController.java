@@ -71,7 +71,7 @@ public class SkillController {
      */
 
     @Get("/{skillid}")
-    public Skill getById(@Nullable UUID skillid) {
+    public Skill getById(UUID skillid) {
         Skill found = skillServices.readSkill(skillid);
         return found;
 

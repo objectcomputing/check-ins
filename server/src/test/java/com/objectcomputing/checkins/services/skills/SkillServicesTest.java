@@ -1,11 +1,8 @@
 package com.objectcomputing.checkins.services.skills;
 
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,15 +28,15 @@ public class SkillServicesTest {
     SkillRepository mockSkillRepository = mock(SkillRepository.class);
     Skill mockSkill = mock(Skill.class);
 
-    private static String testSkillName = "testSkillName";
-    private static boolean pending = true;
+    private static String fakeSkillName = "testSkillName";
+    private static String fakeSkillName2 = "testSkillName2";
+    private static boolean fakePending = true;
 
-//    String fakeUuid = "d05c7870-16b2-4f3e-a5c6-e8e2c82a7f26";
     String fakeUuid = "12345678-9123-4567-abcd-123456789abc";
-//    String fakeResponseKey = "98765432-9876-9876-9876-987654321234";
+    String fakeUuid2 = "22345678-9123-4567-abcd-123456789abc";
 
     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-        put("name", testSkillName);
+        put("name", fakeSkillName);
         put("pending", true);
     }};
 
@@ -50,156 +47,186 @@ public class SkillServicesTest {
         reset(mockSkill);
     }
 
-    // Find By Name - when no user data exists
+    // Saves skill to db given id
     @Test
-    public void testGetFindByNameReturnsEmptyBody() {
+    public void testSaveSkill() {
 
         String testSkillName = "testSkill";
-        Skill skill = new Skill();
-        List<Skill> result = new ArrayList<Skill>();
-        result.add(skill);
-
-        when(mockSkillRepository.findByName("testSkill")).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest
-                        .GET(String.format("/?name=%s", testSkillName)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
-
-    // Find By Pending - when no skill data exists
-    @Test
-    public void testGetFindByPendingReturnsEmptyBody() {
-
-        boolean testPending = false;
-        Skill skill = new Skill();
-        List<Skill> result = new ArrayList<Skill>();
-        result.add(skill);
-
-        when(mockSkillRepository.findByPending(false)).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest
-                        .GET(String.format("/?pending=%b", testPending)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
-
-    // Find By Skill Id - when no skill data exists
-    @Test
-    public void testGetFindBySkillIdReturnsEmptyBody() {
-
-        boolean testPending = false;
-        Skill skill = new Skill();
-        List<Skill> result = new ArrayList<Skill>();
-        result.add(skill);
-
-//        fakeResponseKeyObj.setResponseKey(UUID.fromString(fakeResponseKey));
-
-        when(mockSkillRepository.findByPending(false)).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest
-                        .GET(String.format("/?pending=%b", testPending)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
-
-    // Find By skillId - when skill data exists
-    @Test
-    public void testGetFindBySkillId_HappyPath() {
-
         UUID uuid = UUID.fromString(fakeUuid);
         Skill skill = new Skill();
         skill.setSkillid(uuid);
         skill.setName(testSkillName);
-        skill.setPending(pending);
+        skill.setPending(fakePending);
+
+        when(mockSkillRepository.save(skill)).thenReturn(skill);
+        Skill returned = itemUnderTest.saveSkill(skill);
+
+        assertEquals(skill.getSkillid(), returned.getSkillid());
+
+    }
+
+    // Saves skill to db given id
+    @Test
+    public void testSaveSkill_skill_not_found() {
+
+        String testSkillName = "testSkill";
+        UUID uuid = UUID.fromString(fakeUuid);
+        Skill skill = new Skill();
+        skill.setSkillid(uuid);
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
+        Skill skillNotThere = new Skill();
+        skillNotThere.setSkillid(UUID.fromString(fakeUuid2));
+        skillNotThere.setName(testSkillName+"notThere");
+        skillNotThere.setPending(fakePending);
+
+        when(mockSkillRepository.save(skill)).thenReturn(skill);
+        Skill returned = itemUnderTest.saveSkill(skillNotThere);
+
+        assertEquals(null, returned);
+
+    }
+
+    // Reads skill from db given id
+    @Test
+    public void testReadSkill() {
+
+        String testSkillName = "testSkill";
+        UUID uuid = UUID.fromString(fakeUuid);
+        Skill skill = new Skill();
+        skill.setSkillid(uuid);
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
+
+        when(mockSkillRepository.findBySkillid(uuid)).thenReturn(skill);
+        Skill returned = itemUnderTest.readSkill(uuid);
+
+        assertEquals(skill.getSkillid(), returned.getSkillid());
+        assertEquals(skill.getName(), returned.getName());
+        assertEquals(skill.isPending(), returned.isPending());
+
+    }
+
+    // Tries to read nonexistant skill from db given id
+    @Test
+    public void testReadSkill_skill_not_found() {
+
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
+
+        when(mockSkillRepository.findBySkillid(UUID.fromString(fakeUuid))).thenReturn(skill);
+        Skill returned = itemUnderTest.readSkill(UUID.fromString(fakeUuid2));
+
+        assertEquals(null, returned);
+
+    }
+
+    // Reads skill from db given name or pending status
+    @Test
+    public void testFindByValue_using_name_and_pending() {
+
+        String testSkillName = "testSkill";
+//        UUID uuid = UUID.fromString(fakeUuid);
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
         List<Skill> result = new ArrayList<Skill>();
         result.add(skill);
 
-//        skill.setSkillid(UUID.fromString(fakeUuid));
-//        when(mockSkillRepository.findBySkillid(uuid)).thenReturn(Collections.singletonList(result));
+        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByValue(testSkillName, fakePending);
 
-        when(mockSkillRepository.findBySkillid(uuid)).thenReturn(skill);
+        assertEquals(skill.getSkillid(), returned.get(0).getSkillid());
+        assertEquals(skill.getName(), returned.get(0).getName());
+        assertEquals(skill.isPending(), returned.get(0).isPending());
 
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest
-                        .GET(String.format("/%s", skill.getSkillid())));
-        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertEquals(itemUnderTest.getById(), );
-//        assertEquals(2, response.getContentLength());
     }
 
-    // POST - Valid Body
+    // Tries to read nonexistant skill from db given id
     @Test
-    public void testPostSave() {
+    public void testFindByValue_skill_not_found_using_name_and_pending() {
 
-        Skill testSkill = new Skill("testName");
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
 
-        when(mockSkillRepository.save(testSkill)).thenReturn(testSkill);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
 
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest.POST("", fakeBody));
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.getContentLength());
+        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByValue(testSkillName+"notThere", fakePending);
+
+        // findByNameLike is returning a linked list of size 0 if not found
+        assertEquals(0, returned.size());
+
     }
 
-    // POST - Invalid call
+    // Reads skill from db given name or pending status
     @Test
-    public void testPostNonExistingEndpointReturns404() {
+    public void testFindByValue_using_name_only() {
 
-        Skill testSkill = new Skill();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testSkill));
-        });
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
 
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByValue(testSkillName, null);
+
+        assertEquals(skill.getSkillid(), returned.get(0).getSkillid());
+        assertEquals(skill.getName(), returned.get(0).getName());
+        assertEquals(skill.isPending(), returned.get(0).isPending());
+
     }
 
-    // PUT - Valid Body
+    // Tries to read nonexistant skill from db given id
     @Test
-    public void testPutUpdate() {
+    public void testFindByValue_skill_not_found_using_name_only() {
 
-        UUID testId = UUID.randomUUID();
-        Skill testSkill = new Skill("Name", false);
-        testSkill.setSkillid(testId);
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
 
-        Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-            put("skillid", testId);
-            put("name", "updatedName");
-            put("pending", false);
-        }};
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
 
-        when(mockSkillRepository.update(testSkill)).thenReturn(testSkill);
+        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByValue(testSkillName+"notThere", null);
 
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest.PUT("/updatePending", fakeBody));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
+        // findByNameLike is returning a linked list of size 0 if not found
+        assertEquals(0, returned.size());
+
     }
-
-    // PUT - Request with empty body
+    // Reads skill from db given name or pending status
     @Test
-    public void testPutUpdateForEmptyInput() {
-        Skill testSkill = new Skill();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/updatePending", testSkill));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    public void testfindByNameLike() {
+
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(testSkillName);
+        skill.setPending(fakePending);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
+
+        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByNameLike(testSkillName);
+
+        assertEquals(skill.getSkillid(), returned.get(0).getSkillid());
+        assertEquals(skill.getName(), returned.get(0).getName());
+        assertEquals(skill.isPending(), returned.get(0).isPending());
+
     }
 
-    // PUT - Request with invalid body - missing ID
-    @Test
-    public void testPutUpdateWithMissingField() {
-
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/updatePending", fakeBody));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-    }
 
 }

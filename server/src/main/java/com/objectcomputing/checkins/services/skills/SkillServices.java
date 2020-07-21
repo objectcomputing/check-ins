@@ -21,7 +21,6 @@ public class SkillServices {
         this.skillRepository = skillsRepository;
     }
 
-
     protected Skill saveSkill(Skill skill) {
 
         List<Skill> returnedList = findByValue(skill.getName(), null);
@@ -38,6 +37,7 @@ public class SkillServices {
     }
 
     protected List<Skill> findByValue(String name, Boolean pending) {
+        LOG.info("findByValue");
         List<Skill> skillList = null;
 
         if(name != null) {
@@ -49,17 +49,19 @@ public class SkillServices {
         return skillList;
     }
 
-    private List<Skill> findByNameLike(String name) {
+    protected List<Skill> findByNameLike(String name) {
         String wildcard = "%" + name + "%" ;
         List<Skill> skillList = skillRepository.findByNameIlike(wildcard);
 
         return skillList;
+
     }
 
     protected List<Skill> findByPending(boolean pending) {
         List<Skill> skillList = skillRepository.findByPending(pending);
 
         return skillList;
+
     }
 
     protected Skill update(Skill skill) {
@@ -75,7 +77,7 @@ public class SkillServices {
 
         Stream<Skill> stream = Stream.of(skillslist);
 
-            stream.forEach(s-> saveSkill(s));
+        stream.forEach(s-> saveSkill(s));
 
     }
 
