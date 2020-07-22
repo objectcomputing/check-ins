@@ -6,6 +6,7 @@ export const MY_SKILL_REMOVE = "remove";
 export const MY_SKILL_TOGGLE = "toggle";
 export const MY_PROFILE_UPDATE = "update";
 export const UPDATE_PDL = "update_pdl";
+export const UPDATE_PDLS = "update_pdls";
 
 const SkillsContext = React.createContext();
 
@@ -71,14 +72,16 @@ const defaultTeamMembers = [
     bioText: "example bio text",
   },
 ];
+defaultTeamMembers.forEach((member) => (member.selected = false));
 
 const mySkills = [{ skill: "Jquery" }, { skill: "Go" }, { skill: "Node" }];
 
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
-  skillsList: skillsList,
+  isAdmin: true,
   mySkills: mySkills,
+  skillsList: skillsList,
   teamMembers: teamMembers,
 };
 
@@ -110,12 +113,17 @@ const reducer = (state, action) => {
     case MY_PROFILE_UPDATE:
       state.defaultProfile = action.payload;
       break;
-    case UPDATE_PDL:
-      const profiles = state.defaultTeamMembers.map((i) => {
-        return i.id === action.payload.id ? action.payload : i;
+    case UPDATE_PDLS: {
+      const { selectedProfiles, pdl } = action.payload;
+      const ids = selectedProfiles.map((p) => p.id);
+      const profiles = state.defaultTeamMembers.map((tm) => {
+        return ids.includes(tm.id)
+          ? { ...tm, pdl: action.payload.pdl, selected: false }
+          : tm;
       });
       state.defaultTeamMembers = profiles;
       break;
+    }
     default:
   }
   return { ...state };

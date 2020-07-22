@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,6 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
+import { SkillsContext } from "../../context/SkillsContext";
 
 import "./Menu.css";
 
@@ -56,6 +57,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
+  const { state } = useContext(SkillsContext);
+  const { isAdmin } = state;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -117,6 +120,13 @@ function Menu() {
           Uploads
         </Link>
       </Button>
+      {isAdmin && (
+        <Button>
+          <Link style={linkStyle} to="/admin">
+            Edit PDLs
+          </Link>
+        </Button>
+      )}
     </div>
   );
 
@@ -172,7 +182,10 @@ function Menu() {
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={() => window.location.reload()}>
-                      <Link style={{ textDecoration: "none" }} to={`/oauth/login/google`}>
+                      <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/oauth/login/google`}
+                      >
                         Login
                       </Link>
                     </MenuItem>
