@@ -207,20 +207,20 @@ public class SkillServicesTest {
         assertEquals(0, returned.size());
 
     }
-    // Reads skill from db given name or pending status
+
     @Test
     public void testfindByNameLike() {
 
-        String testSkillName = "testSkill";
+        String fakeSkillName = "fakeSkill";
         Skill skill = new Skill();
         skill.setSkillid(UUID.fromString(fakeUuid));
-        skill.setName(testSkillName);
+        skill.setName(fakeSkillName);
         skill.setPending(fakePending);
         List<Skill> result = new ArrayList<Skill>();
         result.add(skill);
 
-        when(mockSkillRepository.findByNameIlike("%" + testSkillName + "%" )).thenReturn(result);
-        List<Skill> returned = itemUnderTest.findByNameLike(testSkillName);
+        when(mockSkillRepository.findByNameIlike("%" + fakeSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByNameLike(fakeSkillName);
 
         assertEquals(skill.getSkillid(), returned.get(0).getSkillid());
         assertEquals(skill.getName(), returned.get(0).getName());
@@ -228,5 +228,66 @@ public class SkillServicesTest {
 
     }
 
+    @Test
+    public void testfindByNameLike_unfound() {
+
+        String fakeSkillName = "fakeSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(fakeSkillName);
+        skill.setPending(fakePending);
+        Skill skillNotFound = new Skill();
+        skillNotFound.setSkillid(UUID.fromString(fakeUuid2));
+        skillNotFound.setName(fakeSkillName+"notFound");
+        skillNotFound.setPending(fakePending);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skillNotFound);
+
+        when(mockSkillRepository.findByNameIlike("%" + fakeSkillName + "%" )).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByNameLike(skillNotFound.getName());
+
+        assertEquals(0, returned.size());
+
+    }
+
+    @Test
+    public void testfindByPending() {
+
+        String fakeSkillName = "fakeSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(fakeSkillName);
+        skill.setPending(fakePending);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
+
+        when(mockSkillRepository.findByPending(fakePending)).thenReturn(result);
+        List<Skill> returned = itemUnderTest.findByPending(fakePending);
+
+        assertEquals(skill.getSkillid(), returned.get(0).getSkillid());
+        assertEquals(skill.getName(), returned.get(0).getName());
+        assertEquals(skill.isPending(), returned.get(0).isPending());
+
+    }
+
+    @Test
+    public void testUpdate() {
+
+        String fakeSkillName = "fakeSkill";
+        Skill skill = new Skill();
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        skill.setName(fakeSkillName);
+        skill.setPending(fakePending);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
+
+        when(mockSkillRepository.update(skill)).thenReturn(skill);
+        Skill returned = itemUnderTest.update(skill);
+
+        assertEquals(skill.getSkillid(), returned.getSkillid());
+        assertEquals(skill.getName(), returned.getName());
+        assertEquals(skill.isPending(), returned.isPending());
+
+    }
 
 }

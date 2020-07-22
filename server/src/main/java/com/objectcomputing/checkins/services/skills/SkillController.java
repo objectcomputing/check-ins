@@ -18,6 +18,7 @@ import java.util.UUID;
 @Controller("/skill")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="skill")
 public class SkillController {
 
