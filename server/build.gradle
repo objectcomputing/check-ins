@@ -11,6 +11,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
     id "idea"
+    id "groovy"
 }
 
 targetCompatibility = "1.8"
@@ -82,6 +83,12 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
+
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
 
     publicResources project(':web-ui')
 }
