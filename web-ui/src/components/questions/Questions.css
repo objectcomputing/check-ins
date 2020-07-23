@@ -1,0 +1,5 @@
+.questions {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}

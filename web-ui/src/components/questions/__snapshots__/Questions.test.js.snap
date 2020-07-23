@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders questions correctly 1`] = `
+<div
+  className="questions"
+>
+  <div
+    style={
+      Object {
+        "margin": "10px",
+      }
+    }
+  >
+    <h4>
+      1
+      . 
+      What's up?
+    </h4>
+    <textarea
+      id="questions-input-1"
+      onInput={[Function]}
+      wrap="soft"
+    />
+  </div>
+  <div
+    style={
+      Object {
+        "margin": "10px",
+      }
+    }
+  >
+    <h4>
+      2
+      . 
+      Doc
+    </h4>
+    <textarea
+      id="questions-input-2"
+      onInput={[Function]}
+      wrap="soft"
+    />
+  </div>
+</div>
+`;
