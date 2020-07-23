@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import "./EditPDL.css";
 
 const EditPDL = ({ onDeselect, onEdit, onSelect, profile }) => {
-  const { image_url, name, pdl } = profile;
+  const { image_url, name, pdl, role } = profile;
   const [disabled, setDisabled] = useState(true);
   const inputRef = useRef();
 
@@ -21,8 +21,9 @@ const EditPDL = ({ onDeselect, onEdit, onSelect, profile }) => {
           checked={profile.selected}
           type="checkbox"
         ></input>
-        <Avatar alt="Profile" src={image} />
+        <Avatar alt="Profile" src={image} style={{ marginLeft: "20px" }} />
         <p>Name: {name}</p>
+        <p>Role: {role}</p>
         <label htmlFor={name}>PDL:</label>
         <input
           id={name}

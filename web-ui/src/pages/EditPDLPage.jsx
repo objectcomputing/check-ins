@@ -5,7 +5,6 @@ import { SkillsContext, UPDATE_PDLS } from "../context/SkillsContext";
 const EditPDLPage = () => {
   const { state, dispatch } = useContext(SkillsContext);
   const { defaultTeamMembers } = state;
-  console.log({ defaultTeamMembers });
 
   const [selectedProfiles, setSelectedProfiles] = useState([]);
 
