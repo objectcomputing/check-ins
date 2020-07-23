@@ -66,7 +66,12 @@ public class SkillServices {
 
     protected Skill update(Skill skill) {
 
-        Skill returned = skillRepository.update(skill);
+        Skill returned = null;
+        Skill skillInDatabase = readSkill(skill.getSkillid());
+        if ((skillInDatabase != null)
+                && skillInDatabase.getName().equals(skill.getName())) {
+            returned = skillRepository.update(skill);
+        }
 
         return returned;
 

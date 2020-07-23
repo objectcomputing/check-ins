@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skills;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SkillRepository extends CrudRepository<Skill, UUID> {
 
+    @Nullable
     Skill findBySkillid(UUID skillid);
     List<Skill> findByName(String name);
     List<Skill> findByNameIlike(String name);

@@ -101,20 +101,24 @@ public class SkillController {
      */
     @Put("/")
     public HttpResponse<?> update(@Body @Valid Skill skill) {
-
-        if(null != skill.getSkillid()) {
+        
+        if (null != skill.getSkillid()) {
             Skill updatedSkill = skillServices.update(skill);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
-                    .body(updatedSkill);
+            if (null != updatedSkill) {
+                HttpResponse response = HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
+                        .body(updatedSkill);
+                return response;
+            } else {
+                return HttpResponse.badRequest();
+            }
         }
-
-        return HttpResponse.badRequest();
+            return HttpResponse.badRequest();
     }
 
-    protected URI location(UUID uuid) {
-        return URI.create("/skill/" + uuid);
-    }
+        protected URI location (UUID uuid){
+            return URI.create("/skill/" + uuid);
+        }
 
 }
