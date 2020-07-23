@@ -50,7 +50,7 @@ micronaut:
 ---      
 datasources:
   default:
-    url: ${JDBC_URL:`jdbc:postgresql://`}
+    url: ${JDBC_URL:`jdbc:postgresql:///`}
     driver-class-name: org.postgresql.Driver
     dialect: POSTGRES
     schema-generate: NONE
