@@ -43,6 +43,7 @@ jobs:
             --quiet \
             --region "$RUN_REGION" \
             --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --memory 1Gi \
             --add-cloudsql-instances ${{ secrets.DEV_DB_CONNECTION_NAME }} \
             --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}" \
             --set-env-vars "DB_NAME=${{ secrets.DEV_DB_NAME }}" \
