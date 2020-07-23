@@ -45,6 +45,7 @@ public class GoogleCloudDatabaseSetup implements BeanCreatedEventListener<Dataso
         config.addDataSourceProperty("cloudSqlInstance", cloudSqlInstanceName);
         if (DB_NAME != null) {
             config.setJdbcUrl(String.format("jdbc:postgresql:///%s", DB_NAME));
+            LOG.warn("JDBC URL = {}", String.format("jdbc:postgresql:///%s", DB_NAME));
         }
         return config;
     }
