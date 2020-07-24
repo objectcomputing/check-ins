@@ -37,7 +37,6 @@ public class SkillServices {
     }
 
     protected List<Skill> findByValue(String name, Boolean pending) {
-        LOG.info("findByValue");
         List<Skill> skillList = null;
 
         if(name != null) {
