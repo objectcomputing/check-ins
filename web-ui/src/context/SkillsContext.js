@@ -79,7 +79,7 @@ const mySkills = [{ skill: "Jquery" }, { skill: "Go" }, { skill: "Node" }];
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
-  isAdmin: true,
+  isAdmin: false,
   mySkills: mySkills,
   skillsList: skillsList,
   teamMembers: teamMembers,
