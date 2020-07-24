@@ -114,7 +114,7 @@ const reducer = (state, action) => {
       state.defaultProfile = action.payload;
       break;
     case UPDATE_PDLS: {
-      const { selectedProfiles, pdl } = action.payload;
+      const { selectedProfiles } = action.payload;
       const ids = selectedProfiles.map((p) => p.id);
       const profiles = state.defaultTeamMembers.map((tm) => {
         return ids.includes(tm.id)
