@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { SkillsContext, MY_SKILL_ADD } from "../../context/SkillsContext";
+import axios from "axios";
 import Fuse from "fuse.js";
 
 import "./Search.css";
@@ -28,10 +29,20 @@ const Search = ({ onClick }) => {
     const pending = skillsList.filter((i) => {
       return i.name.toUpperCase() === value.toUpperCase();
     });
+
     dispatch({
       type: MY_SKILL_ADD,
       payload: { name: value, pending: pending.length < 1 },
     });
+
+    const inSkillsList = skillsList.find(({ name }) => {
+      return name.toUpperCase() === value.toUpperCase();
+    });
+    if (!inSkillsList) {
+      axios
+        .post("/skill", { name: value, pending: "true" })
+        .catch((err) => console.log(err));
+    }
   };
 
   const filtered = filter(skillsList, options);

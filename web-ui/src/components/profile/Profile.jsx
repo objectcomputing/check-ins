@@ -71,6 +71,7 @@ const Profile = () => {
                 ? image_url
                 : require("../../images/default_profile.jpg")
             }
+            style={{ width: "200px", height: "220px" }}
           />
         </div>
         <div className="flex-row">
