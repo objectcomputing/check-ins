@@ -278,10 +278,9 @@ public class SkillServicesTest {
         skill.setSkillid(UUID.fromString(fakeUuid));
         skill.setName(fakeSkillName);
         skill.setPending(fakePending);
-        List<Skill> result = new ArrayList<Skill>();
-        result.add(skill);
 
         when(mockSkillRepository.update(skill)).thenReturn(skill);
+        when(itemUnderTest.readSkill(skill.getSkillid())).thenReturn(skill);
         Skill returned = itemUnderTest.update(skill);
 
         assertEquals(skill.getSkillid(), returned.getSkillid());

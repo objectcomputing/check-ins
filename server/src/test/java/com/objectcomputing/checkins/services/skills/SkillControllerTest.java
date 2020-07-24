@@ -6,10 +6,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.test.annotation.MicronautTest;
-import org.apache.http.HttpEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,7 +16,8 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
@@ -142,7 +140,6 @@ public class SkillControllerTest {
     @Test
     public void testPOSTCreateASkill() {
 
-
         Skill testSkill = new Skill("testName2", pending);
 
         when(mockSkillServices.saveSkill(testSkill)).thenReturn(testSkill);
@@ -162,9 +159,61 @@ public class SkillControllerTest {
             client.toBlocking().exchange(HttpRequest.POST("/", testSkill));
         });
 
-        // should throw a 409 - already exists
         assertNotNull(thrown.getResponse());
         assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
     }
+
+    @Test
+    public void testPUTupdate() {
+
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
+
+        when(mockSkillServices.update(fakeSkill)).thenReturn(fakeSkill);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest.PUT("/", fakeSkill));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.getContentLength());
+    }
+
+    @Test
+    public void testPUTupdate_nonexistent_skill() {
+
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
+        Skill fakeSkill2 = new Skill("fakeName2", pending);
+        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
+
+        when(mockSkillServices.update(fakeSkill2)).thenReturn(fakeSkill2);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
+
+    }
+
+    @Test
+    public void testPUTupdate_null_skill() {
+
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
+        Skill fakeSkill2 = new Skill("fakeName2", pending);
+        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
+
+        when(mockSkillServices.update(fakeSkill2)).thenReturn(null);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
+        });
+
+        assertNotNull(thrown.getResponse());
+
+    }
+
 
 }
