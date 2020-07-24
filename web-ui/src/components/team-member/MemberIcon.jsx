@@ -2,12 +2,20 @@ import React from "react";
 import "./TeamMember.css";
 
 const MemberIcon = (props) => {
-  const { profile, onSelect } = props;
+  const { profile, onSelect, onSelectPDL } = props;
   const { image_url } = profile;
-  let image = image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg";
+  let image = image_url
+    ? image_url
+    : require("../../images/default_profile.jpg");
 
   return (
-    <div onClick={() => onSelect(profile)} className="image-div">
+    <div
+      onClick={() => {
+        onSelectPDL(profile.pdl);
+        onSelect(profile);
+      }}
+      className="image-div"
+    >
       <img alt="Profile" className="member-image" src={image} />
     </div>
   );

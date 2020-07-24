@@ -3,6 +3,7 @@ import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
 import MyTeamPage from "./pages/MyTeamPage";
+import EditPDLPage from "./pages/EditPDLPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import UploadNotesPage from "./pages/UploadNotesPage";
 import HomePage from "./pages/HomePage";
@@ -30,6 +31,10 @@ function App() {
             className="App"
           >
             <Switch>
+              <Route path="/admin">
+                <Header title="Edit Team" />
+                <EditPDLPage />
+              </Route>
               <Route path="/team">
                 <Header title="My Team" />
                 <MyTeamPage />
