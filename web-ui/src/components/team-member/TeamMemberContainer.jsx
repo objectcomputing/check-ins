@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { SkillsContext } from "../../context/SkillsContext";
+
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
@@ -10,16 +11,19 @@ const TeamMemberContainer = () => {
     name: null,
     image_url: null,
   });
+
   const {
     bioText,
     image_url,
     location,
     name,
-    pdlId,
+    pdl,
     role,
     startDate,
     workEmail,
   } = selectedProfile;
+
+  const [PDL, setPDL] = useState(pdl);
 
   let now = Date.now();
 
@@ -48,16 +52,19 @@ const TeamMemberContainer = () => {
           key={profile.name}
           profile={profile}
           onSelect={setSelectedProfile}
+          onSelectPDL={setPDL}
         ></MemberIcon>
       );
     });
+
     return team;
   };
   let team = teamProfile(defaultTeamMembers);
+
   return (
     <div>
       {name && (
-        <div className="flex-row">
+        <div className="flex-row" style={{ minWidth: "800px" }}>
           <div className="image-div">
             <img
               alt="Profile"
@@ -70,13 +77,15 @@ const TeamMemberContainer = () => {
               <div style={{ display: "flex" }}>
                 <div style={{ marginRight: "50px", textAlign: "left" }}>
                   <p>Role: {role}</p>
-                  <p>PDL: {pdlId}</p>
+                  <p>PDL: {PDL}</p>
                   <p>Location: {location}</p>
                 </div>
                 <div>
                   <p>
                     Length of Service:
-                    {`${time.years} year(s), ${time.months} month(s)`}
+                    {`${time.years > 0 ? time.years + " year(s), " : ""} ${
+                      time.months
+                    } month(s)`}
                   </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>
@@ -87,7 +96,7 @@ const TeamMemberContainer = () => {
         </div>
       )}
       <div className="flex-row" style={{ flexWrap: "wrap" }}>
-        {team.length === 0 ? <p>"No team members :/"</p> : team}
+        {team.length === 0 ? <p>No team members :/</p> : team}
       </div>
     </div>
   );

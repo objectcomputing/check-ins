@@ -9,10 +9,12 @@
 }
 
 .skill {
-  border: 1px solid black;
   cursor: pointer;
   padding: 5px;
   width: 200px;
+}
+.skill:hover {
+  background-color: green;
 }
 .skills-parent {
   background-color: white;
