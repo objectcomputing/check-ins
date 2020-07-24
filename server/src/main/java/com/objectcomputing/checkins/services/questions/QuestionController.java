@@ -21,17 +21,15 @@ import java.util.UUID;
 @Tag(name="questions")
 public class QuestionController {
 
-    //    an endpoint is created for read all
     //    an endpoint is created for create
+    //    an endpoint is created for read all
     //    an endpoint is created for update
-
-    private QuestionRepository questionRepository;
 
     @Inject
     private QuestionServices questionService;
 
-    public void setQuestionRepo(QuestionRepository questionRepository) {
-        this.questionRepository = questionRepository;
+    public void setQuestionService(QuestionServices questionService) {
+        this.questionService = questionService;
     }
 
     /**
@@ -53,41 +51,43 @@ public class QuestionController {
                     .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
         }
     }
-
-    /**
-     * Find and read a question or questions given its id or text.
-     *
-     * @param questionid
-     * @param text
-     * @return
-     */
-
-    @Get("/{?questionid,text}")
-    public List<Question> findByValue(@Nullable UUID questionid, @Nullable String text) {
-
-        List<Question> found = questionService.findByValue(questionid, text);
-        return found;
-
-    }
-
-    /**
-     * Update the pending status of a skill.
-     * @param question
-     * @return
-     */
-    @Put("/")
-    public HttpResponse<?> update(@Body @Valid Question question) {
-
-        if(null != question.getQuestionid()) {
-            Question updatedQuestion = questionService.update(question);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-                    .body(updatedQuestion);
-        }
-
-        return HttpResponse.badRequest();
-    }
+    //  I know these are commented out - I added them before splitting the story and will
+    // need them in the future - please ignore for now
+//
+//    /**
+//     * Find and read a question or questions given its id or text.
+//     *
+//     * @param questionid
+//     * @param text
+//     * @return
+//     */
+//
+//    @Get("/{?questionid,text}")
+//    public List<Question> findByValue(@Nullable UUID questionid, @Nullable String text) {
+//
+//        List<Question> found = questionService.findByValue(questionid, text);
+//        return found;
+//
+//    }
+//
+//    /**
+//     * Update the pending status of a skill.
+//     * @param question
+//     * @return
+//     */
+//    @Put("/")
+//    public HttpResponse<?> update(@Body @Valid Question question) {
+//
+//        if(null != question.getQuestionid()) {
+//            Question updatedQuestion = questionService.update(question);
+//            return HttpResponse
+//                    .ok()
+//                    .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+//                    .body(updatedQuestion);
+//        }
+//
+//        return HttpResponse.badRequest();
+//    }
 
     protected URI location(UUID uuid) {
         return URI.create("/questions/" + uuid);

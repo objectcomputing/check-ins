@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -32,7 +33,7 @@ public class Question {
 
     @NotBlank
     @NotNull
-    @Column(name="text", unique = true)
+    @Column(name="text")
     private String text;
 
     public UUID getQuestionid() {
@@ -52,8 +53,23 @@ public class Question {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(questionid, question.questionid) &&
+                Objects.equals(text, question.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionid, text);
+    }
+
+    @Override
     public String toString() {
         return "Question {" +
+                "questionid='" + questionid + '\'' +
                 "text='" + text + '\'' +
                 '}';
     }

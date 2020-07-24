@@ -4,10 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Collections;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.UUID;
 
+@Singleton
 public class QuestionServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuestionServices.class);
@@ -19,24 +20,28 @@ public class QuestionServices {
     @Inject
     private QuestionRepository questionRepository;
 
+    public void setQuestionRepository(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
+
     protected Question saveQuestion(Question question) {
 
         List<Question> returnedList = findByValue(null, question.getText());
         return returnedList.size() < 1 ? questionRepository.save(question) : null;
 
     }
+//
+//    protected List<Question> readAllQuestions() {
+//
+//        List<Question> returned = questionRepository.findAll();
+//
+//        return returned;
+//
+//    }
 
-    protected List<Question> readAllQuestions() {
+    protected Question findByQuestionId(UUID skillId) {
 
-        List<Question> returned = questionRepository.findAll();
-
-        return returned;
-
-    }
-
-    protected Question findQuestion(UUID skillId) {
-
-        Question returned = questionRepository.findByQuestionId(skillId);
+        Question returned = questionRepository.findByQuestionid(skillId);
 
         return returned;
 
@@ -44,12 +49,10 @@ public class QuestionServices {
 
     protected List<Question> findByValue(UUID questionId, String text) {
         List<Question> questionList = null;
-        if (questionId != null) {
-            questionList = Collections.singletonList(findQuestion(questionId));
-        } else if(text != null) {
+        if(text != null) {
             questionList = findByText(text);
         } else {
-            readAllQuestions();
+  //          readAllQuestions();
         }
 
         return questionList;
@@ -61,11 +64,11 @@ public class QuestionServices {
         return skillList;
     }
 
-    public Question update(Question question) {
-        Question returned = questionRepository.update(question);
-
-        return returned;
-
-    }
+//    public Question update(Question question) {
+//        Question returned = questionRepository.update(question);
+//
+//        return returned;
+//
+//    }
 
 }

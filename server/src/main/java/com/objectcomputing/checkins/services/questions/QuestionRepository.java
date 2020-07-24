@@ -1,12 +1,18 @@
 package com.objectcomputing.checkins.services.questions;
 
+import io.micronaut.data.jdbc.annotation.JdbcRepository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
+import jdk.internal.jline.internal.Nullable;
+
 import java.util.List;
 import java.util.UUID;
 
+@JdbcRepository(dialect = Dialect.POSTGRES)
 public interface QuestionRepository extends CrudRepository<Question, UUID> {
 
-    Question findByQuestionId(UUID skillid);
+    @Nullable
+    Question findByQuestionid(UUID questionid);
     List<Question> findByText(String name);
     List<Question> findAll();
 
