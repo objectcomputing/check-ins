@@ -66,7 +66,11 @@ const Profile = () => {
         <div className="profile-image">
           <Avatar
             alt="Profile"
-            src={image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg"}
+            src={
+              image_url
+                ? image_url
+                : require("../../images/default_profile.jpg")
+            }
             style={{ width: "200px", height: "220px" }}
           />
         </div>
