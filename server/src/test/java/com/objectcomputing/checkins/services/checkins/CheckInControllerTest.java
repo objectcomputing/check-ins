@@ -67,7 +67,6 @@ public class CheckInControllerTest {
 
         assertNotNull(thrown.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-        System.out.println("INSIDE UNIT TEST");
     }
 
     @Test
