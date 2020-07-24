@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
+import Avatar from "@material-ui/core/Avatar";
 import {
   SkillsContext,
   MY_SKILL_REMOVE,
@@ -40,22 +41,22 @@ const Profile = () => {
   };
 
   const onClick = (item) => {
-    const inMySkills = mySkills.find(({ skill }) => {
-      return skill.toUpperCase() === item.toUpperCase();
+    const inMySkills = mySkills.find(({ name }) => {
+      return name.toUpperCase() === item.toUpperCase();
     });
     if (inMySkills) {
       return;
     }
     dispatch({
       type: MY_SKILL_TOGGLE,
-      payload: { skill: item },
+      payload: { name: item },
     });
   };
 
-  const removeSkill = (skill) => {
+  const removeSkill = (name) => {
     dispatch({
       type: MY_SKILL_REMOVE,
-      payload: { skill: skill },
+      payload: { name: name },
     });
   };
 
@@ -63,9 +64,10 @@ const Profile = () => {
     <div>
       <div className="flex-row" style={{ marginTop: "20px" }}>
         <div className="profile-image">
-          <img
+          <Avatar
             alt="Profile"
             src={image_url ? image_url : "https://i.imgur.com/TkSNOpF.jpg"}
+            style={{ width: "200px", height: "220px" }}
           />
         </div>
         <div className="flex-row">
@@ -130,13 +132,13 @@ const Profile = () => {
       <div>
         <Search onClick={onClick} />
         <h2>Skills</h2>
-        {mySkills.map(({ skill }) => {
+        {mySkills.map(({ name }) => {
           return (
-            <div className="current-skills" key={skill}>
-              {skill}
+            <div className="current-skills" key={name}>
+              {name}
               <CancelIcon
                 onClick={() => {
-                  removeSkill(skill);
+                  removeSkill(name);
                 }}
                 style={{
                   cursor: "pointer",
