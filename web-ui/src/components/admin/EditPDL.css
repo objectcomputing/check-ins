@@ -1,6 +1,7 @@
 .edit-pdl {
   align-items: center;
   display: flex;
+  justify-content: space-between;
   padding: 5px;
   text-align: left;
 }

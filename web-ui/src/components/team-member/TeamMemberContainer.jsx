@@ -4,7 +4,7 @@ import { SkillsContext } from "../../context/SkillsContext";
 
 import "./TeamMember.css";
 
-const TeamMemberContainer = ({ isAdmin = false }) => {
+const TeamMemberContainer = () => {
   const { state } = useContext(SkillsContext);
   const { defaultTeamMembers } = state;
   const [selectedProfile, setSelectedProfile] = useState({

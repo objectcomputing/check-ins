@@ -24,13 +24,15 @@ const EditPDL = ({ onDeselect, onEdit, onSelect, profile }) => {
         <Avatar alt="Profile" src={image} style={{ marginLeft: "20px" }} />
         <p>Name: {name}</p>
         <p>Role: {role}</p>
-        <label htmlFor={name}>PDL:</label>
-        <input
-          id={name}
-          disabled={disabled}
-          defaultValue={pdl}
-          ref={inputRef}
-        ></input>
+        <div>
+          <label htmlFor={name}>PDL:</label>
+          <input
+            id={name}
+            disabled={disabled}
+            defaultValue={pdl}
+            ref={inputRef}
+          ></input>
+        </div>
         <Button
           onClick={() => {
             disabled ? onSelect(profile) : onDeselect(profile);
