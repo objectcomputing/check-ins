@@ -102,9 +102,9 @@ public class SkillController {
     @Put("/")
     public HttpResponse<?> update(@Body @Valid Skill skill) {
         
-        if (null != skill.getSkillid()) {
+        if (skill.getSkillid() != null) {
             Skill updatedSkill = skillServices.update(skill);
-            if (null != updatedSkill) {
+            if (updatedSkill != null) {
                 HttpResponse response = HttpResponse
                         .ok()
                         .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
