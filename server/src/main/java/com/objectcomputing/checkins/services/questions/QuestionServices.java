@@ -24,7 +24,7 @@ public class QuestionServices {
         this.questionRepository = questionRepository;
     }
 
-    protected Question saveQuestion(Question question) {
+    public Question saveQuestion(Question question) {
 
         List<Question> returnedList = findByValue(null, question.getText());
         return returnedList.size() < 1 ? questionRepository.save(question) : null;

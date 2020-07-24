@@ -17,7 +17,7 @@ import java.util.UUID;
 @Table(name ="questions")
 public class Question {
 
-    public Question(UUID questionid, @NotBlank @NotNull String text) {
+    public Question(@NotBlank @NotNull String text) {
         this.questionid = questionid;
         this.text = text;
     }
