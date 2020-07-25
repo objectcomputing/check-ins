@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.sql.Date;
 import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
