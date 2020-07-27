@@ -20,7 +20,6 @@ import java.util.UUID;
 @Tag(name="questions")
 public class QuestionController {
 
-    //    an endpoint is created for read all
     //    an endpoint is created for update
 
     @Inject
@@ -61,6 +60,20 @@ public class QuestionController {
 
         List<Question> found = questionService.readAllQuestions();
 
+        return found;
+
+    }
+
+    /**
+     * Find and read a question given its id.
+     *
+     * @param questionid
+     * @return
+     */
+
+    @Get("/{questionid}")
+    public Question getById(UUID questionid) {
+        Question found = questionService.findByQuestionId(questionid);
         return found;
 
     }

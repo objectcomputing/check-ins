@@ -75,6 +75,22 @@ public class QuestionControllerTest {
     }
 
     @Test
+    public void testPOSTCreateAQuestion_null_question() {
+
+        Question fakeQuestion = new Question("fake question");
+
+        when(mockQuestionServices.saveQuestion(fakeQuestion)).thenReturn(null);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("/", fakeQuestion));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
+
+    }
+
+    @Test
     public void testGETreadAllQuestions() {
 
         Question fakeQuestion = new Question("fake question text");
