@@ -60,6 +60,13 @@ public class QuestionServices {
         return skillList;
     }
 
+    public List<Question> findAll() {
+        List<Question> questionList = questionRepository.findAll();
+
+        return questionList;
+
+    }
+
 //    public Question update(Question question) {
 //        Question returned = questionRepository.update(question);
 //

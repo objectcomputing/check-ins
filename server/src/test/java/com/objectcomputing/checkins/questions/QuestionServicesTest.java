@@ -71,7 +71,6 @@ public class QuestionServicesTest {
     public void testSaveQuestion_question_not_found() {
 
         String fakeQuestionText = "this is such a fake question?";
-//        UUID uuid = UUID.fromString(fakeUuid);
         Question fakeQuestion = new Question();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
         fakeQuestion.setText(fakeQuestionText);
