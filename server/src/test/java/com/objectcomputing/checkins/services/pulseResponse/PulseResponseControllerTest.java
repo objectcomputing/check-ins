@@ -63,7 +63,7 @@ public class PulseResponseControllerTest {
     @BeforeAll
     void setupMemberProfileRecord() {
         // setup a record in Member-Profile to satisfy foreign key constraint
-        final Date testDate = new Date(System.currentTimeMillis());
+        final LocalDate testDate = LocalDate.of(2020, 2, 01);
 
         if(memberProfileController != null) {
             MemberProfile testMemberProfile = new MemberProfile("TestName", 

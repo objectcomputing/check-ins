@@ -1,8 +1,5 @@
-package com.objectcomputing.checkins.questions;
+package com.objectcomputing.checkins.services.questions;
 
-import com.objectcomputing.checkins.services.questions.Question;
-import com.objectcomputing.checkins.services.questions.QuestionController;
-import com.objectcomputing.checkins.services.questions.QuestionServices;
 import com.objectcomputing.checkins.services.skills.SkillControllerTest;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
@@ -14,12 +11,13 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -62,7 +60,6 @@ public class QuestionControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
-
     @Test
     public void testPOSTCreateAQuestion() {
 
@@ -76,4 +73,23 @@ public class QuestionControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.getContentLength());
     }
+
+    @Test
+    public void testGETreadAllQuestions() {
+
+        Question fakeQuestion = new Question("fake question text");
+        List<Question> fakeQuestionList = new ArrayList<Question>();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestionList.add(fakeQuestion);
+
+        when(mockQuestionServices.readAllQuestions()).thenReturn(fakeQuestionList);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest.GET("/"));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.getContentLength());
+        response.equals(fakeQuestion);
+    }
+
 }

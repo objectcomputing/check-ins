@@ -8,7 +8,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
@@ -58,9 +57,9 @@ public class QuestionController {
      */
 
     @Get("/")
-    public List<Question> findAll() {
+    public List<Question> readAllQuestions() {
 
-        List<Question> found = questionService.findAll();
+        List<Question> found = questionService.readAllQuestions();
 
         return found;
 
