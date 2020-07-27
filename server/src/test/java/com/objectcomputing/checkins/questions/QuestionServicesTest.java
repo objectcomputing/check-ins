@@ -52,7 +52,7 @@ public class QuestionServicesTest {
     }
 
     @Test
-    public void testSaveSkill() {
+    public void testSaveQuestion() {
 
         String fakeQuestion = "this is such a fake question?";
         UUID uuid = UUID.fromString(fakeUuid);

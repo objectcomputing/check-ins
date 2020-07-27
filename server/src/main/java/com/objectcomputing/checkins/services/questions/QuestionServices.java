@@ -13,10 +13,6 @@ public class QuestionServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuestionServices.class);
 
-    //    an endpoint is created for read all
-    //    an endpoint is created for create
-    //    an endpoint is created for update
-
     @Inject
     private QuestionRepository questionRepository;
 

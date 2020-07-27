@@ -17,7 +17,7 @@ import java.util.UUID;
 @Table(name ="questions")
 public class Question {
 
-    public Question(@NotBlank @NotNull String text) {
+    public Question(@NotBlank String text) {
         this.questionid = questionid;
         this.text = text;
     }
@@ -32,7 +32,6 @@ public class Question {
     private UUID questionid;
 
     @NotBlank
-    @NotNull
     @Column(name="text")
     private String text;
 
