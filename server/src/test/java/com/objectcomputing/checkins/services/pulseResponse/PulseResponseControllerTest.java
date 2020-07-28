@@ -8,7 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +62,6 @@ public class PulseResponseControllerTest {
     @BeforeAll
     void setupMemberProfileRecord() {
         // setup a record in Member-Profile to satisfy foreign key constraint
-        final LocalDate testDate = LocalDate.of(2020, 2, 01);
 
         if(memberProfileController != null) {
             MemberProfile testMemberProfile = new MemberProfile("TestName", 
@@ -72,7 +70,7 @@ public class PulseResponseControllerTest {
                                                                 "TestLocation", 
                                                                 "TestEmail", 
                                                                 "TestInsperityId", 
-                                                                testDate, 
+                                                                LocalDate.of(2019, 1, 01),
                                                                 "TestBio");
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);

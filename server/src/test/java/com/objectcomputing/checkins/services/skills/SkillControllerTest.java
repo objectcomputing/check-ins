@@ -9,6 +9,8 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -20,16 +22,24 @@ import static org.mockito.Mockito.*;
 
 @MicronautTest
 public class SkillControllerTest {
+    private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Inject
     @Client("/skill")
     private HttpClient client;
 
-    SkillRepository mockSkillRepository = mock(SkillRepository.class);
+    @Inject
+    SkillController itemUnderTest;
+
+    SkillServices mockSkillServices = mock(SkillServices.class);
     Skill mockSkill = mock(Skill.class);
 
-    private static String testSkillName = "testName";
-    private static boolean pending = false;
+    private static String testSkillName = "testSkillName";
+    private static String testSkillName2 = "testSkillName2";
+    private static boolean pending = true;
+
+    String fakeUuid = "12345678-9123-4567-abcd-123456789abc";
+    String fakeUuid2 = "22345678-9123-4567-abcd-123456789abc";
 
     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
         put("name", testSkillName);
@@ -38,14 +48,15 @@ public class SkillControllerTest {
 
     @BeforeEach
     void setup() {
-        reset(mockSkillRepository);
+        itemUnderTest.setSkillServices(mockSkillServices);
+        reset(mockSkillServices);
         reset(mockSkill);
     }
 
     @Test
-    public void testFindNonExistingEndpointReturns404() {
+    public void testGETNonExistingEndpointReturns404() {
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99"));
+            client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc"));
         });
 
         assertNotNull(thrown.getResponse());
@@ -53,120 +64,156 @@ public class SkillControllerTest {
     }
 
     @Test
-    public void testFindNonExistingEndpointReturnsNotFound() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo"));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    // Find By Name - when no user data exists
-    @Test
-    public void testGetFindByNameReturnsEmptyBody() {
+    public void testGETFindByNameReturnsEmptyBody() {
 
         String testSkillName = "testSkill";
         Skill skill = new Skill();
         List<Skill> result = new ArrayList<Skill>();
         result.add(skill);
 
-        when(mockSkillRepository.findByName("testSkill")).thenReturn(result);
+        when(mockSkillServices.findByValue("testSkill", null)).thenReturn(result);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest
+                        .GET(String.format("/?name=%s", testSkillName)));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testGETFindByValue_Name() {
+
+        String testSkillName = "testSkill";
+        Skill skill = new Skill();
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
+
+        when(mockSkillServices.findByValue("testSkill", null)).thenReturn(result);
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest
                         .GET(String.format("/?name=%s", testSkillName)));
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        response.equals(skill);
     }
 
-    // Find By Pending - when no skill data exists
     @Test
-    public void testGetFindByPendingReturnsEmptyBody() {
+    public void testGETFindByValue_Pending() {
 
         boolean testPending = false;
         Skill skill = new Skill();
+        skill.setPending(testPending);
         List<Skill> result = new ArrayList<Skill>();
         result.add(skill);
 
-        when(mockSkillRepository.findByPending(false)).thenReturn(result);
+        when(mockSkillServices.findByValue("testSkill", testPending)).thenReturn(result);
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest
                         .GET(String.format("/?pending=%b", testPending)));
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        response.equals(skill);
+
     }
 
-    // POST - Valid Body
     @Test
-    public void testPostSave() {
+    public void testGETGetById_HappyPath() {
 
-        Skill testSkill = new Skill("testName");
+        UUID uuid = UUID.fromString(fakeUuid);
+        Skill skill = new Skill();
+        skill.setSkillid(uuid);
+        skill.setName(testSkillName);
+        skill.setPending(pending);
+        List<Skill> result = new ArrayList<Skill>();
+        result.add(skill);
 
-        when(mockSkillRepository.save(testSkill)).thenReturn(testSkill);
+        skill.setSkillid(UUID.fromString(fakeUuid));
+        when(mockSkillServices.readSkill(uuid)).thenReturn(skill);
 
         final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest.POST("", fakeBody));
+                .exchange(HttpRequest
+                        .GET(String.format("/%s", skill.getSkillid())));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        response.equals(skill);
+    }
+
+    @Test
+    public void testPOSTCreateASkill() {
+
+        Skill testSkill = new Skill("testName2", pending);
+
+        when(mockSkillServices.saveSkill(testSkill)).thenReturn(testSkill);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest.POST("/", testSkill));
+
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.getContentLength());
     }
 
-    // POST - Invalid call
     @Test
-    public void testPostNonExistingEndpointReturns404() {
+    public void testPOSTCreateASkill_Null_Skill() {
 
-        Skill testSkill = new Skill();
+        Skill testSkill = new Skill("testName", pending);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testSkill));
+            client.toBlocking().exchange(HttpRequest.POST("/", testSkill));
         });
 
         assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
     }
 
-    // PUT - Valid Body
     @Test
-    public void testPutUpdate() {
+    public void testPUTupdate() {
 
-        UUID testId = UUID.randomUUID();
-        Skill testSkill = new Skill("Name", false);
-        testSkill.setSkillid(testId);
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
 
-        Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-            put("skillid", testId);
-            put("name", "updatedName");
-            put("pending", false);
-        }};
-
-        when(mockSkillRepository.update(testSkill)).thenReturn(testSkill);
+        when(mockSkillServices.update(fakeSkill)).thenReturn(fakeSkill);
 
         final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest.PUT("/updatePending", fakeBody));
+                .exchange(HttpRequest.PUT("/", fakeSkill));
+
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotNull(response.getContentLength());
     }
 
-    // PUT - Request with empty body
     @Test
-    public void testPutUpdateForEmptyInput() {
-        Skill testSkill = new Skill();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/updatePending", testSkill));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-    }
+    public void testPUTupdate_nonexistent_skill() {
 
-    // PUT - Request with invalid body - missing ID
-    @Test
-    public void testPutUpdateWithMissingField() {
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
+        Skill fakeSkill2 = new Skill("fakeName2", pending);
+        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
+
+        when(mockSkillServices.update(fakeSkill2)).thenReturn(fakeSkill2);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("/updatePending", fakeBody));
+            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
         });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
+
     }
+
+    @Test
+    public void testPUTupdate_null_skill() {
+
+        Skill fakeSkill = new Skill("fakeName", pending);
+        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
+        Skill fakeSkill2 = new Skill("fakeName2", pending);
+        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
+
+        when(mockSkillServices.update(fakeSkill2)).thenReturn(null);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
+        });
+
+        assertNotNull(thrown.getResponse());
+
+    }
+
 
 }
