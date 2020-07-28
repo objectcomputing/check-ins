@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.checkInApp.Pages;
+package com.objectcomputing.checkins.endtoend.pages;
 
 import static org.testng.Assert.assertEquals;
 

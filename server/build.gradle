@@ -78,10 +78,15 @@ dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-params'
     testCompile 'org.junit.platform:junit-platform-launcher'
     testCompile 'org.junit.platform:junit-platform-runner'
-    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion") 
+    testCompile group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '4.1.0'
+    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
+    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
 
