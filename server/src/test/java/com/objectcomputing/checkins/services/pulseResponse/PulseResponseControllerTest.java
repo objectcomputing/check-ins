@@ -66,7 +66,7 @@ public class PulseResponseControllerTest {
         if(memberProfileController != null) {
             MemberProfile testMemberProfile = new MemberProfile("TestName", 
                                                                 "TestRole", 
-                                                                UUID.randomUUID(), 
+                                                                null, 
                                                                 "TestLocation", 
                                                                 "TestEmail", 
                                                                 "TestInsperityId", 
