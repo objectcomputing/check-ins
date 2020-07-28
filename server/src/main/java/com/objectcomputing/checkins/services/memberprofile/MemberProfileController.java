@@ -16,6 +16,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Consumes;
 
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -23,6 +24,7 @@ import io.micronaut.security.rules.SecurityRule;
 @Controller("/member-profile")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="member profile")
 public class MemberProfileController {
 
@@ -31,6 +33,25 @@ public class MemberProfileController {
     public MemberProfileController(MemberProfileRepository memberProfileRepository){
         this.memberProfileRepository = memberProfileRepository;
     }
+
+    /**
+     * Find Team Member profile by UUID.
+     * @param uuid
+     * @return
+     */
+    @Get("/{uuid}")
+    public HttpResponse<MemberProfile> getByUuid(UUID uuid) {
+        
+        if(!memberProfileRepository.existsById(uuid)) {
+            return HttpResponse.notFound();
+        }
+
+        MemberProfile result = memberProfileRepository.findByUuid(uuid);
+        return HttpResponse
+            .ok(result)
+            .headers(headers -> headers.location(location(result.getUuid())));
+    }
+
     /**
      * Find Team Member profile by Name, Role, PdlId or find all.
      * @param name
@@ -72,7 +93,7 @@ public class MemberProfileController {
      * @return
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid MemberProfile memberProfile) {
+    public HttpResponse<MemberProfile> update(@Body @Valid MemberProfile memberProfile) {
 
         if(null != memberProfile.getUuid()) {
             MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
