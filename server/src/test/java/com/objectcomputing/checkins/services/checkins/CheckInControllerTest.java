@@ -50,7 +50,7 @@ public class CheckInControllerTest {
 
     private static UUID testId;
     private static UUID testTeamMemberId;
-    private static UUID testPdlId = UUID.randomUUID();
+    private static UUID testPdlId;
     private static LocalDate testDate = LocalDate.now();
     private static String testQuarter = "Q2";
     private static String testYear = "2020";
@@ -74,6 +74,7 @@ public class CheckInControllerTest {
             assertEquals(HttpStatus.CREATED, response.getStatus());
             assertNotNull(response.body());
             testTeamMemberId = ((MemberProfile) response.body()).getUuid();
+            testPdlId = testTeamMemberId;
         }
     }
     
