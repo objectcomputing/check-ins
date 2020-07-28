@@ -94,7 +94,7 @@ public class QuestionControllerTest {
     public void testGETreadAllQuestions() {
 
         Question fakeQuestion = new Question("fake question text");
-        List<Question> fakeQuestionList = new ArrayList<Question>();
+        List<Question> fakeQuestionList = new ArrayList<>();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
         fakeQuestionList.add(fakeQuestion);
 
@@ -105,6 +105,26 @@ public class QuestionControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotNull(response.getContentLength());
+        response.equals(fakeQuestion);
+    }
+
+    @Test
+    public void testGETGetById_HappyPath() {
+
+        UUID uuid = UUID.fromString(fakeUuid);
+        Question fakeQuestion = new Question("Fake question text?");
+
+        fakeQuestion.setQuestionid(uuid);
+        List<Question> result = new ArrayList<>();
+        result.add(fakeQuestion);
+
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        when(mockQuestionServices.findByQuestionId(uuid)).thenReturn(fakeQuestion);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest
+                        .GET(String.format("/%s", fakeQuestion.getQuestionid())));
+        assertEquals(HttpStatus.OK, response.getStatus());
         response.equals(fakeQuestion);
     }
 

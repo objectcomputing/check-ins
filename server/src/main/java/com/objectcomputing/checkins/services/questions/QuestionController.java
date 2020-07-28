@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 
 @Controller("/questions")
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -74,6 +76,14 @@ public class QuestionController {
     @Get("/{questionid}")
     public Question getById(UUID questionid) {
         Question found = questionService.findByQuestionId(questionid);
+        return found;
+
+    }
+
+    @Get("/{?text}")
+    public List<Question> findByText(String text) {
+
+        List<Question> found = questionService.findByText(text);
         return found;
 
     }

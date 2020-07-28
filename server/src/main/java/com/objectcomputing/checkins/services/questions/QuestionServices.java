@@ -3,9 +3,11 @@ package com.objectcomputing.checkins.services.questions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
@@ -45,7 +47,7 @@ public class QuestionServices {
     protected List<Question> findByValue(UUID questionId, String text) {
         List<Question> questionList = null;
         if(text != null) {
-            questionList = findByText(text);
+            questionList = findByText(Optional.of(text));
         } else {
   //          readAllQuestions();
         }
@@ -53,8 +55,9 @@ public class QuestionServices {
         return questionList;
     }
 
-    private List<Question> findByText(String text) {
-        List<Question> skillList = questionRepository.findByText(text);
+    protected List<Question> findByText(Optional<String> text) {
+        String wildcard = "%" + text + "%" ;
+        List<Question> skillList = questionRepository.findByTextIlike(wildcard);
 
         return skillList;
     }
