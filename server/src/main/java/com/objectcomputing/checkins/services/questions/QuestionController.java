@@ -12,17 +12,14 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 
 @Controller("/questions")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="questions")
 public class QuestionController {
-
-    //    an endpoint is created for update
 
     @Inject
     private QuestionServices questionService;
@@ -52,21 +49,6 @@ public class QuestionController {
     }
 
     /**
-     * Find and read all questions.
-     *
-     * @return
-     */
-
-    @Get("/")
-    public List<Question> readAllQuestions() {
-
-        List<Question> found = questionService.readAllQuestions();
-
-        return found;
-
-    }
-
-    /**
      * Find and read a question given its id.
      *
      * @param questionid
@@ -80,10 +62,20 @@ public class QuestionController {
 
     }
 
+    /**
+     * Find questions with a paticular string or read all questions.
+     *
+     * @param text
+     * * @return
+     */
     @Get("/{?text}")
-    public List<Question> findByText(String text) {
-
-        List<Question> found = questionService.findByText(text);
+    public List<Question> findByText(Optional<String> text) {
+        List<Question> found = null;
+        if(text.isPresent()) {
+            found = questionService.findByText(text.get());
+        } else {
+            found = questionService.readAllQuestions();
+        }
         return found;
 
     }

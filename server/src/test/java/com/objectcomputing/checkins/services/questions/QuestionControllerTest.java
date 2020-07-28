@@ -1,34 +1,30 @@
 package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.services.skills.SkillControllerTest;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @MicronautTest
 public class QuestionControllerTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Inject
     @Client("/questions")
@@ -48,7 +44,6 @@ public class QuestionControllerTest {
         reset(mockQuestionServices);
         reset(mockQuestion);
     }
-
 
     @Test
     public void testGETNonExistingEndpointReturns404() {
@@ -102,6 +97,24 @@ public class QuestionControllerTest {
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest.GET("/"));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.getContentLength());
+        response.equals(fakeQuestion);
+    }
+
+    @Test
+    public void testGETFindQuestionsSimilar() {
+
+        Question fakeQuestion = new Question("fake question text");
+        List<Question> fakeQuestionList = new ArrayList<>();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestionList.add(fakeQuestion);
+
+        when(mockQuestionServices.findByText("fake")).thenReturn(fakeQuestionList);
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest.GET("/?text=fake"));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotNull(response.getContentLength());
