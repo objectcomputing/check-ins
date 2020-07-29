@@ -17,7 +17,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Profile"
         className="member-image"
-        src="https://i.imgur.com/TkSNOpF.jpg"
+        src="default_profile.jpg"
       />
     </div>
     <div
@@ -27,7 +27,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Profile"
         className="member-image"
-        src="https://i.imgur.com/TkSNOpF.jpg"
+        src="default_profile.jpg"
       />
     </div>
   </div>
