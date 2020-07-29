@@ -7,7 +7,6 @@ import io.micronaut.data.repository.CrudRepository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,8 +15,11 @@ import java.util.UUID;
 public interface GuildMemberRepository extends CrudRepository<GuildMember, UUID> {
 
     List<GuildMember> findByGuildid(UUID guildid);
+
     List<GuildMember> findByMemberid(UUID uuid);
+
     List<GuildMember> findByLead(Boolean aBoolean);
+
     Optional<GuildMember> findByGuildidAndMemberid(UUID guildMemberid, UUID memberId);
 
     @Override

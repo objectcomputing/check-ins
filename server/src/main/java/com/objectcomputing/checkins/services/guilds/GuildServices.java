@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class GuildServices {
 
@@ -20,13 +23,13 @@ public class GuildServices {
 
     protected Guild save(Guild guild) {
         Guild newGuild;
-        if(guild.getGuildid() != null) {
+        if (guild.getGuildid() != null) {
             throw new GuildBadArgException(String.format("Found unexpected guildid %s, please try updating instead",
                     guild.getGuildid()));
-        } else if(guildsRepo.findByName(guild.getName()).isPresent()) {
+        } else if (guildsRepo.findByName(guild.getName()).isPresent()) {
             throw new GuildBadArgException(String.format("Guild with name %s already exists", guild.getName()));
         } else {
-            newGuild =  guildsRepo.save(guild);
+            newGuild = guildsRepo.save(guild);
         }
 
         return newGuild;
@@ -38,7 +41,7 @@ public class GuildServices {
 
     protected Guild update(Guild guild) {
         Guild newGuild;
-        if(guild.getGuildid() != null && guildsRepo.findById(guild.getGuildid()).isPresent()) {
+        if (guild.getGuildid() != null && guildsRepo.findById(guild.getGuildid()).isPresent()) {
             newGuild = guildsRepo.update(guild);
         } else {
             throw new GuildBadArgException(String.format("Guild %s does not exist, can't update.", guild.getGuildid()));
@@ -47,8 +50,7 @@ public class GuildServices {
         return newGuild;
     }
 
-    protected void load(Guild[] guildsList)
-    {
+    protected void load(Guild[] guildsList) {
         Arrays.stream(guildsList).forEach(this::save);
     }
 
@@ -56,7 +58,7 @@ public class GuildServices {
         List<Guild> guild = null;
         if (guildid != null) {
             guild = Collections.singletonList(read(guildid));
-        } else if(name != null) {
+        } else if (name != null) {
             guild = findByNameLike(name);
         }
 
@@ -64,7 +66,7 @@ public class GuildServices {
     }
 
     private List<Guild> findByNameLike(String name) {
-        String wildcard = "%" + name + "%" ;
+        String wildcard = "%" + name + "%";
         return guildsRepo.findByNameIlike(wildcard);
     }
 }

@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.guilds;
 
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -9,7 +11,6 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
@@ -17,12 +18,15 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Controller("/guild")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name="guild")
+@Tag(name = "guild")
 public class GuildController {
 
     @Inject
@@ -69,15 +73,15 @@ public class GuildController {
     public HttpResponse<?> loadGuilds(@Body @NotNull List<Guild> guildslist) {
         List<String> errors = new ArrayList<>();
         List<Guild> guildsCreated = new ArrayList<>();
-        for(Guild guild: guildslist) {
+        for (Guild guild : guildslist) {
             try {
                 guildsService.save(guild);
                 guildsCreated.add(guild);
-            } catch(GuildBadArgException e) {
+            } catch (GuildBadArgException e) {
                 errors.add(String.format("Guild %s was not added because: %s", guild.getGuildid(), e.getMessage()));
             }
         }
-        if(errors.isEmpty()) {
+        if (errors.isEmpty()) {
             return HttpResponse.created(guildsCreated);
         } else {
             return HttpResponse.badRequest(errors);
@@ -87,25 +91,26 @@ public class GuildController {
     /**
      * Find and read a guild or guilds given its id, or name
      *
-     * @param guildId {@link UUID} of guild
-     * @param name, name of the guild
+     * @param guildid {@link UUID} of guild
+     * @param name,   name of the guild
      * @return {@link List<Guild> list of guilds}
      */
 
-    @Get("/{?guildId,name}")
-    public List<Guild> findGuilds(@Nullable UUID guildId, @Nullable String name) {
-        return guildsService.findByIdOrLikeName(guildId, name);
+    @Get("/{?guildid,name}")
+    public List<Guild> findGuilds(@Nullable UUID guildid, @Nullable String name) {
+        return guildsService.findByIdOrLikeName(guildid, name);
     }
 
     /**
      * Update guild.
+     *
      * @param guild, {@link Guild}
      * @return {@link HttpResponse<Guild>}
      */
     @Put("/")
     public HttpResponse<?> update(@Body @Valid Guild guild) {
         Guild updatedGuild = guildsService.update(guild);
-        return  HttpResponse
+        return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(location(updatedGuild.getGuildid())))
                 .body(updatedGuild);
@@ -133,37 +138,41 @@ public class GuildController {
 
     /**
      * Update guildMember.
+     *
      * @param guildMember, {@link GuildMember}
      * @return {@link HttpResponse<GuildMember>}
      */
     @Put("/member")
     public HttpResponse<?> updateMembers(@Body @Valid GuildMember guildMember) {
         GuildMember updatedGuild = guildMemberServices.update(guildMember);
-        return  HttpResponse
+        return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(location(updatedGuild.getGuildid())))
                 .body(updatedGuild);
 
     }
+
     /**
-     * Find and read a guild or guilds given its id, or name
+     * Find guild members that match all filled in parameters, return all results when given no params
      *
-     * @param id {@link UUID}
-     * @param guildId {@link UUID} of guild
-     * @param memberId {@link UUID} of member
-     * @param lead, is lead of the guild
+     * @param id       {@link UUID}
+     * @param guildid  {@link UUID} of guild
+     * @param memberid {@link UUID} of member
+     * @param lead,    is lead of the guild
      * @return {@link List<Guild> list of guilds}
      */
 
-    @Get("/member/{?id,guildId,memberId,lead}")
-    public Set<GuildMember> findGuildMembers(Optional<UUID> id, Optional<UUID> guildId,
-                                             Optional<UUID> memberId, Optional<Boolean> lead) {
-        return guildMemberServices.findByFields(id.orElse(null), guildId.orElse(null),
-                memberId.orElse(null), lead.orElse(null));
+    @Get("/member{?id,guildid,memberid,lead}")
+    public Set<GuildMember> findGuildMembers(@Nullable @TypeDef(type = DataType.STRING) UUID id,
+                                             @Nullable @TypeDef(type = DataType.STRING) UUID guildid,
+                                             @Nullable @TypeDef(type = DataType.STRING) UUID memberid,
+                                             @Nullable Boolean lead) {
+        return guildMemberServices.findByFields(id, guildid, memberid, lead);
     }
 
     /**
      * Load members
+     *
      * @param guildMembers, {@link List<GuildMember>}
      * @return {@link HttpResponse<List<GuildMember>}
      */
@@ -171,16 +180,16 @@ public class GuildController {
     public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMember> guildMembers) {
         List<String> errors = new ArrayList<>();
         List<GuildMember> membersCreated = new ArrayList<>();
-        for(GuildMember guildMember: guildMembers) {
+        for (GuildMember guildMember : guildMembers) {
             try {
                 guildMemberServices.save(guildMember);
                 membersCreated.add(guildMember);
-            } catch(GuildBadArgException e) {
+            } catch (GuildBadArgException e) {
                 errors.add(String.format("Member %s was not added to Guild %s because: %s", guildMember.getMemberid(),
                         guildMember.getGuildid(), e.getMessage()));
             }
         }
-        if(errors.isEmpty()) {
+        if (errors.isEmpty()) {
             return HttpResponse.created(membersCreated);
         } else {
             return HttpResponse.badRequest(errors);

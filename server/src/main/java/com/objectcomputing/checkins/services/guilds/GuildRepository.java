@@ -15,7 +15,9 @@ import java.util.UUID;
 public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     Guild findByGuildid(UUID guildId);
+
     Optional<Guild> findByName(String name);
+
     List<Guild> findByNameIlike(String name);
 
     @Override
