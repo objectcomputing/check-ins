@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;

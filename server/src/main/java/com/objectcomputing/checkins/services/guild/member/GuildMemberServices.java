@@ -1,4 +1,6 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild.member;
+
+import com.objectcomputing.checkins.services.guild.GuildBadArgException;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -21,8 +23,8 @@ public class GuildMemberServices {
         return guildMemberRepo.save(guildMember);
     }
 
-    protected GuildMember read(UUID guildMemberid, UUID memberId) {
-        return guildMemberRepo.findByGuildidAndMemberid(guildMemberid, memberId).orElse(null);
+    protected GuildMember read(UUID id) {
+        return guildMemberRepo.findById(id).orElse(null);
     }
 
     protected GuildMember update(GuildMember guildMember) {
@@ -41,23 +43,14 @@ public class GuildMemberServices {
         Arrays.stream(guildMemberlist).forEach(this::save);
     }
 
-    public List<GuildMember> findByGuildid(UUID guildId) {
-        return guildMemberRepo.findByGuildid(guildId);
-    }
-
     public void deleteById(UUID guildId, UUID memberId) {
         guildMemberRepo.findByGuildidAndMemberid(guildId, memberId)
                 .ifPresent(gm -> guildMemberRepo.deleteById(gm.getId()));
     }
 
-    public Set<GuildMember> findByFields(UUID id, UUID guildid, UUID memberid, Boolean lead) {
+    public Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead) {
         Set<GuildMember> guildMembers = new HashSet<>();
-
-        if (id != null) {
-            guildMemberRepo.findById(id).ifPresent(guildMembers::add);
-        } else {
-            guildMemberRepo.findAll().forEach(guildMembers::add);
-        }
+        guildMemberRepo.findAll().forEach(guildMembers::add);
 
         if (guildid != null) {
             guildMembers.retainAll(guildMemberRepo.findByGuildid(guildid));

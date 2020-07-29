@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild.member;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;

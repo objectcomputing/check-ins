@@ -1,14 +1,15 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GuildServices {
 
@@ -17,7 +18,7 @@ public class GuildServices {
     @Inject
     private GuildRepository guildsRepo;
     @Inject
-    private GuildMemberServices guildMemberServices;
+    private GuildMemberRepository guildMemberRepo;
     @Inject
     private MemberProfileRepository memberProfileRepository;
 
@@ -54,19 +55,21 @@ public class GuildServices {
         Arrays.stream(guildsList).forEach(this::save);
     }
 
-    protected List<Guild> findByIdOrLikeName(UUID guildid, String name) {
-        List<Guild> guild = null;
-        if (guildid != null) {
-            guild = Collections.singletonList(read(guildid));
-        } else if (name != null) {
-            guild = findByNameLike(name);
-        }
-
-        return guild;
-    }
-
-    private List<Guild> findByNameLike(String name) {
+    public List<Guild> findByNameLike(String name) {
         String wildcard = "%" + name + "%";
         return guildsRepo.findByNameIlike(wildcard);
+    }
+
+    public Set<Guild> findByFields(String name, UUID memberid) {
+        Set<Guild> guilds = new HashSet<>();
+        guildsRepo.findAll().forEach(guilds::add);
+        if(name != null) {
+            guilds.retainAll(guildsRepo.findByNameIlike(name));
+        } else if (memberid != null) {
+            guilds.retainAll(guildMemberRepo.findByMemberid(memberid)
+                    .stream().map(GuildMember::getGuildid).map(gid -> guildsRepo.findById(gid).orElse(null))
+                    .filter(Objects::nonNull).collect(Collectors.toSet()));
+        }
+        return guilds;
     }
 }

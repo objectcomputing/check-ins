@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild;
 
 public class GuildBadArgException extends RuntimeException {
     public GuildBadArgException(String message) {

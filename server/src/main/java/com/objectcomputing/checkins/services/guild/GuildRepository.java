@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guilds;
+package com.objectcomputing.checkins.services.guild;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
