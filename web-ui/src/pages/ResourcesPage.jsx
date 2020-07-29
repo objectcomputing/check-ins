@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 
-import DevGuideTeam from "../pdfs/Development Discussion Guide for Team Members.pdf";
-import ExpectationsGuideTeam from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
-import ExpectationsWorksheetTeam from "../pdfs/Expectations Worksheet.pdf";
-import FeedbackGuideTeam from "../pdfs/Feedback Discussion Guide for Team Members.pdf";
-import IndividualDevPlanTeam from "../pdfs/Individual Development Plan .pdf";
-import DevGuidePDL from "../pdfs/Development Discussion Guide for PDLs.pdf";
-import ExpectationsGuidePDL from "../pdfs/Expectations Discussion Guide for PDLs.pdf";
-import FeedbackGuidePDL from "../pdfs/Feedback Discussion Guide for PDLs.pdf";
+// import DevGuideTeam from "../pdfs/Development Discussion Guide for Team Members.pdf";
+// import ExpectationsGuideTeam from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
+// import ExpectationsWorksheetTeam from "../pdfs/Expectations Worksheet.pdf";
+// import FeedbackGuideTeam from "../pdfs/Feedback Discussion Guide for Team Members.pdf";
+// import IndividualDevPlanTeam from "../pdfs/Individual Development Plan .pdf";
+// import DevGuidePDL from "../pdfs/Development Discussion Guide for PDLs.pdf";
+// import ExpectationsGuidePDL from "../pdfs/Expectations Discussion Guide for PDLs.pdf";
+// import FeedbackGuidePDL from "../pdfs/Feedback Discussion Guide for PDLs.pdf";
 
 import "./ResourcesPage.css";
 
@@ -22,51 +22,64 @@ const ResourcesPage = () => {
   const ociLightBlue = "#72c7d5";
   const ociOrange = "#feb672";
 
+  const getPDF = async (name) => {
+    try {
+      const res = await fetch("http://localhost:3000/pdfs/" + name + ".pdf");
+      if (res.ok) return res.blob();
+      const message = await res.text();
+      throw new Error(message);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getPDFs = async (pdfArray) => {
+    for (const tmp of pdfArray) {
+      tmp.pdf = await getPDF(tmp.name);
+    }
+  };
+
   const teamMemberPDFs = [
     {
       color: ociBlue,
-      name: "Expectations Discussion Guide",
-      pdf: ExpectationsGuideTeam,
+      name: "Expectations Discussion Guide for Team Members",
     },
     {
       color: ociBlue,
       name: "Expectations Worksheet",
-      pdf: ExpectationsWorksheetTeam,
     },
     {
       color: ociLightBlue,
-      name: "Feedback Discussion Guide",
-      pdf: FeedbackGuideTeam,
+      name: "Feedback Discussion Guide for Team Members",
     },
     {
       color: ociLightBlue,
-      name: "Development Discussion Guide",
-      pdf: DevGuideTeam,
+      name: "Development Discussion Guide for Team Members",
     },
     {
       color: ociOrange,
       name: "Individual Development Plan",
-      pdf: IndividualDevPlanTeam,
     },
   ];
+
+  getPDFs(teamMemberPDFs);
 
   const pdlPDFs = [
     {
       color: ociBlue,
-      name: "Development Discussion Guide",
-      pdf: DevGuidePDL,
+      name: "Development Discussion Guide for PDLs",
     },
     {
       color: ociLightBlue,
-      name: "Expectations Discussion Guide",
-      pdf: ExpectationsGuidePDL,
+      name: "Expectations Discussion Guide for PDLs",
     },
     {
       color: ociOrange,
-      name: "Feedback Discussion Guide",
-      FeedbackGuidePDL,
+      name: "Feedback Discussion Guide for PDLs",
     },
   ];
+
+  getPDFs(pdlPDFs);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
