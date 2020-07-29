@@ -27,7 +27,7 @@ public class QuestionServices {
 
     }
 
-    protected Question findByQuestionId(UUID skillId) {
+    public Question findByQuestionId(UUID skillId) {
 
         Question returned = questionRepository.findByQuestionid(skillId);
 
@@ -56,7 +56,7 @@ public class QuestionServices {
         Question returned = null;
         Question questionInDatabase = findByQuestionId(question.getQuestionid());
         if ((questionInDatabase != null)
-                && questionInDatabase.getText().equals(question.getText())) {
+                && !questionInDatabase.getText().equals(question.getText())) {
             returned = questionRepository.update(question);
         }
 

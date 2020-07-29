@@ -86,5 +86,23 @@ public class QuestionServicesTest {
 
     }
 
+    @Test
+    public void testUpdate() {
 
+        String fakeQuestionText = "fake question text";
+        Question fakeQuestion = new Question();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestion.setText(fakeQuestionText);
+        Question updatedFakeQuestion = new Question();
+        updatedFakeQuestion.setQuestionid(UUID.fromString(fakeUuid2));
+        updatedFakeQuestion.setText(fakeQuestionText+"new stuff");
+
+        when(mockQuestionRepository.update(fakeQuestion)).thenReturn(updatedFakeQuestion);
+        when(itemUnderTest.findByQuestionId(fakeQuestion.getQuestionid())).thenReturn(updatedFakeQuestion);
+        Question returned = itemUnderTest.update(fakeQuestion);
+
+        assertEquals(updatedFakeQuestion.getQuestionid(), returned.getQuestionid());
+        assertEquals(updatedFakeQuestion.getText(), returned.getText());
+
+    }
 }
