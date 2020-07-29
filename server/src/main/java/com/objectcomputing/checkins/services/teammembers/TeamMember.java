@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.teammember;
+package com.objectcomputing.checkins.services.teammembers;
 
 import java.sql.Date;
 import java.util.UUID;
@@ -68,11 +68,11 @@ public class TeamMember {
         this.memberId = memberId;
     }
 
-    public boolean getisLead() {
+    public boolean getIsLead() {
         return isLead;
     }
 
-    public void setisLead(boolean isLead) {
+    public void setIsLead(boolean isLead) {
         this.isLead = isLead;
     }
     

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.teammember;
+package com.objectcomputing.checkins.services.teammembers;
 
 import java.util.List;
 import java.util.UUID;

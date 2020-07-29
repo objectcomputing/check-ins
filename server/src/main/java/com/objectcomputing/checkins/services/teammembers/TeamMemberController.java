@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.teammember;
+package com.objectcomputing.checkins.services.teammembers;
 
 import java.net.URI;
 import java.util.List;
