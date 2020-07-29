@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository
 import com.objectcomputing.checkins.EmbeddedServerSpecification
 import com.objectcomputing.checkins.fixtures.CheckInFixture
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
@@ -12,7 +13,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.uri.UriBuilder
 import spock.lang.Subject
 
-import java.sql.Date
+import java.time.LocalDate
 
 class CheckInControllerSpec extends EmbeddedServerSpecification implements CheckInFixture {
 
@@ -21,15 +22,16 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
 
     void 'find a checkIn name'() {
         UUID id = UUID.randomUUID()
-        Date testDate = new Date(System.currentTimeMillis())
+        LocalDate testDate = LocalDate.now()
+
         given: 'an existing checkIn'
         // the fkey in member profile is necessary to have a passing test for check-in,
         // so an insert is made to member-profile before inserting into check-in with the uuid from member-profile
-        MemberProfile memberProfile = new MemberProfile("testName", "testRole", id, "testLocation",
+        MemberProfile memberProfile = new MemberProfile("testName", "testRole", null, "testLocation",
                 "testEmail", "testInsperityId", testDate, "testBio")
         memberProfileRepository.save(memberProfile)
 
-        CheckIn checkIn = new CheckIn(memberProfile.uuid, id, testDate, "Q1", "2021")
+        CheckIn checkIn = new CheckIn(memberProfile.uuid, memberProfile.uuid, testDate, "Q1", "2021")
         checkInRepository.save(checkIn)
 
 
@@ -56,6 +58,7 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
         cleanup:
         checkInRepository.deleteAll()
         memberProfileRepository.deleteAll()
+        skillRepository.deleteAll()
 
     }
 
