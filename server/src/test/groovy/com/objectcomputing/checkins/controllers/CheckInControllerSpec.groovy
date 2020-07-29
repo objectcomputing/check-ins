@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository
 import com.objectcomputing.checkins.EmbeddedServerSpecification
 import com.objectcomputing.checkins.fixtures.CheckInFixture
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
