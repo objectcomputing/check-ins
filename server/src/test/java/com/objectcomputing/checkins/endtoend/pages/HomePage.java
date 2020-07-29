@@ -3,11 +3,11 @@
  */
 package com.objectcomputing.checkins.endtoend.pages;
 
-import static org.testng.Assert.assertEquals;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author tajr
@@ -42,6 +42,7 @@ public class HomePage {
 	
 	public void uploadFile() throws InterruptedException
 	{
+		// TODO needs to be fixed
 		filepath.sendKeys("/Users/tajr/Desktop/File.rtf");
 		Thread.sleep(5000);
 		upload_btn.click();

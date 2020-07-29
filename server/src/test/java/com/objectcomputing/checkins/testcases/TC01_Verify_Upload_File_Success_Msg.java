@@ -3,11 +3,12 @@
  */
 package com.objectcomputing.checkins.testcases;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import com.objectcomputing.checkins.endtoend.pages.HomePage;
 import com.objectcomputing.checkins.endtoend.utility.BrowserFactory;
@@ -22,7 +23,7 @@ public class TC01_Verify_Upload_File_Success_Msg
 	HomePage homePage;
 	
 	
-	@BeforeMethod
+	@Before
 	public void beforeMethod()
 	{
 	
@@ -35,15 +36,14 @@ public class TC01_Verify_Upload_File_Success_Msg
 	}
 	
 	@Test
-	public void verifyCheckInAppLaunch() throws InterruptedException
+	public void testVerifyCheckInAppLaunch() throws InterruptedException
 	{
-	
 	homePage.uploadFile();
 	homePage.uploadFileSuccessMsg();
 	
 	}
 	
-	@AfterMethod
+	@After
 
 	  public void afterMethod() {
 
