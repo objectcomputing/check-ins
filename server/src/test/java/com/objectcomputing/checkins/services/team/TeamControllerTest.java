@@ -2,6 +2,7 @@
 
 // import static org.junit.Assert.assertNotNull;
 // import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertNotEquals;
 // import static org.junit.jupiter.api.Assertions.assertThrows;
 // import static org.mockito.Mockito.mock;
 // import static org.mockito.Mockito.reset;
@@ -38,21 +39,12 @@
 //     TeamRepository mockTeamRepository = mock(TeamRepository.class);
 //     Team mockTeam = mock(Team.class);
 
-//     private static Date testDate = new Date(System.currentTimeMillis());
-//     private static String testUser = "testName";
-//     private static String testRole = "testRole";
-//     private static UUID testPdlId = UUID.randomUUID();
-//     private static boolean isDataSetupForGetTest = false;
+
+//     private static String testName = "name";
+
 
 //     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-//         put("name", testUser);
-//         put("role", testRole);
-//         put("pdlId", testPdlId);
-//         put("location", "testLocation");
-//         put("workEmail", "testEmail");
-//         put("insperityId", "testInsperityId");
-//         put("startDate", testDate);
-//         put("bioText", "testBio");
+//         put("name", testName);
 //     }};
 
 //     @BeforeEach
@@ -85,46 +77,14 @@
 //     @Test
 //     public void testGetFindByNameReturnsEmptyBody() {
 
-//         String testUser = "testUser";
+//         String testName = "testName";
 //         Team team = new Team();
 //         List<Team> result = new ArrayList<Team>();
 //         result.add(team);
 
-//         when(mockTeamRepository.findByName("testUser")).thenReturn(result);
+//         when(mockTeamRepository.findByName(testName)).thenReturn(result);
 
-//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?name=%s", testUser)));
-//         assertEquals(HttpStatus.OK, response.getStatus());
-//         assertEquals(2, response.getContentLength());
-//     }
-
-//     // Find By Role - when no user data exists
-//     @Test
-//     public void testGetFindByRoleReturnsEmptyBody() {
-
-//         String testRole = "test";
-//         Team team = new Team();
-//         List<Team> result = new ArrayList<Team>();
-//         result.add(team);
-
-//         when(mockTeamRepository.findByRole("test")).thenReturn(result);
-
-//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?role=%s", testRole)));
-//         assertEquals(HttpStatus.OK, response.getStatus());
-//         assertEquals(2, response.getContentLength());
-//     }
-
-//     // Find By PdlId - when no user data exists
-//     @Test
-//     public void testGetFindByPdlIdReturnsEmptyBody() {
-
-//         UUID testUUuid = UUID.randomUUID();
-//         Team team = new Team();
-//         List<Team> result = new ArrayList<Team>();
-//         result.add(team);
-
-//         when(mockTeamRepository.findByPdlId(testUUuid)).thenReturn(result);
-
-//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?pdlId=%s", testUUuid)));
+//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?name=%s", testName)));
 //         assertEquals(HttpStatus.OK, response.getStatus());
 //         assertEquals(2, response.getContentLength());
 //     }
@@ -133,76 +93,32 @@
 //     @Test
 //     public void testGetFindAll() {
 
-//         if(!isDataSetupForGetTest){
-//             setupTestData();
-//             isDataSetupForGetTest = true;
-//         }
-
 //         HttpRequest requestFindAll = HttpRequest.GET(String.format(""));
 //         List<Team> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeam.getClass()));  
 //         assertEquals(1, responseFindAll.size());
-//         assertEquals(testUser, responseFindAll.get(0).getName());
-//         assertEquals(testRole, responseFindAll.get(0).getRole());
+//         assertEquals(testName, responseFindAll.get(0).getName());
 //     }
 
 //     // test Find By Name
 //     @Test
 //     public void testGetFindByName() {
 
-//         if(!isDataSetupForGetTest){
-//             setupTestData();
-//             isDataSetupForGetTest = true;
-//         }
+//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?name=%s", testName)));
+//         assertEquals(HttpStatus.OK, response.getStatus());
+//         assertNotEquals(2, response.getContentLength());
 
-//         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", testUser));
-//         List<Team> responseFindByName = client.toBlocking().retrieve(requestFindByName, Argument.of(List.class, mockTeam.getClass()));  
-//         assertEquals(1, responseFindByName.size());
-//         assertEquals(testUser, responseFindByName.get(0).getName());
-//         assertEquals(testRole, responseFindByName.get(0).getRole());
 //     }
 
-//     // test Find By Role
-//     @Test
-//     public void testGetFindByRole() {
-
-//         if(!isDataSetupForGetTest){
-//             setupTestData();
-//             isDataSetupForGetTest = true;
-//         }
-
-//         HttpRequest requestFindByRole = HttpRequest.GET(String.format("/?role=%s", testRole));
-//         List<Team> responseFindByRole = client.toBlocking().retrieve(requestFindByRole, Argument.of(List.class, mockTeam.getClass()));  
-//         assertEquals(1, responseFindByRole.size());
-//         assertEquals(testUser, responseFindByRole.get(0).getName());
-//         assertEquals(testRole, responseFindByRole.get(0).getRole());
-//     }
-
-//     // test Find By PdlId
-//     @Test
-//     public void testGetFindByPdlId() {
-
-//         if(!isDataSetupForGetTest){
-//             setupTestData();
-//             isDataSetupForGetTest = true;
-//         }
-
-//         HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
-//         List<Team> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockTeam.getClass()));  
-//         assertEquals(1, responseFindByPdlId.size());
-//         assertEquals(testUser, responseFindByPdlId.get(0).getName());
-//         assertEquals(testRole, responseFindByPdlId.get(0).getRole());
-//         assertEquals(testPdlId, responseFindByPdlId.get(0).getPdlId());
-//     }
 
 //     // POST - Valid Body
 //     @Test
 //     public void testPostSave() {
 
-//         Team testTeam = new Team("testName", "test role", UUID.randomUUID(), "test location", "test email", "test InsperityId", testDate, "test bio");
+//         Team testTeam = new Team("testName", UUID.randomUUID(),"testDescription");
 
 //         when(mockTeamRepository.save(testTeam)).thenReturn(testTeam);
 
-//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", testTeam));
 //         assertEquals(HttpStatus.CREATED, response.getStatus());
 //         assertNotNull(response.getContentLength());
 //     }
@@ -224,25 +140,11 @@
 //     @Test
 //     public void testPutUpdate() {
 
-//         UUID testId = UUID.randomUUID();
-//         Team testTeam = new Team("Name", "test role", UUID.randomUUID(), "test location", "test email", "test InsperityId", testDate, "test bio");
-//         testTeam.setUuid(testId);
-
-//         Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-//             put("uuid", testId);
-//             put("name", "updatedName");
-//             put("role", "testRole");
-//             put("pdlId", UUID.randomUUID());
-//             put("location", "testLocation");
-//             put("workEmail", "testEmail");
-//             put("insperityId", "testInsperityId");
-//             put("startDate", testDate);
-//             put("bioText", "testBio");
-//         }};
+//         Team testTeam = new Team("testName", UUID.randomUUID(),"testDescription");
 
 //         when(mockTeamRepository.update(testTeam)).thenReturn(testTeam);
 
-//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.PUT("", fakeBody));
+//         final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.PUT("", testTeam));
 //         assertEquals(HttpStatus.OK, response.getStatus());
 //         assertNotNull(response.getContentLength());
 //     }
@@ -269,7 +171,4 @@
 //         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
 //     }
 
-//     private void setupTestData() {
-//         client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
-//     }
 // }
