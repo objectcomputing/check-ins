@@ -20,15 +20,15 @@ public class Guild {
     @Column(name = "guildid")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "only needed when updating an existing guild")
+    @Schema(description = "the id of the guild", required = true)
     private UUID guildid;
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(required = true, description = "name of the guild")
+    @Schema(description = "name of the guild")
     private String name;
     @NotBlank
     @Column(name = "description")
-    @Schema(required = true, description = "description of the guild")
+    @Schema(description = "description of the guild")
     private String description;
 
     public Guild(String name, String description) {

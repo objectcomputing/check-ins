@@ -1,21 +1,34 @@
 package com.objectcomputing.checkins.services.guild.member;
 
 import com.objectcomputing.checkins.services.guild.GuildBadArgException;
+import com.objectcomputing.checkins.services.guild.GuildRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class GuildMemberServices {
 
     @Inject
+    private GuildRepository guildRepo;
+    @Inject
     private GuildMemberRepository guildMemberRepo;
+    @Inject
+    private MemberProfileRepository memberRepo;
 
     protected GuildMember save(GuildMember guildMember) {
         UUID guildId = guildMember != null ? guildMember.getGuildid() : null;
-        UUID memberId = guildMember != null ? guildMember.getGuildid() : null;
+        UUID memberId = guildMember != null ? guildMember.getMemberid() : null;
         if (guildId == null || memberId == null) {
             throw new GuildBadArgException(String.format("Invalid guildMember %s", guildMember));
-        } else if (guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(),
+        } else if (!guildRepo.findById(guildId).isPresent()) {
+            throw new GuildBadArgException(String.format("Guild %s doesn't exist", guildId));
+        } else if (!memberRepo.findById(memberId).isPresent()) {
+            throw new GuildBadArgException(String.format("Member %s doesn't exist", memberId));
+        } else if(guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(),
                 guildMember.getMemberid()).isPresent()) {
             throw new GuildBadArgException(String.format("Member %s already exists in guild %s", guildId, memberId));
         }
@@ -29,7 +42,7 @@ public class GuildMemberServices {
 
     protected GuildMember update(GuildMember guildMember) {
         UUID guildId = guildMember != null ? guildMember.getGuildid() : null;
-        UUID memberId = guildMember != null ? guildMember.getGuildid() : null;
+        UUID memberId = guildMember != null ? guildMember.getMemberid() : null;
         if (guildId == null || memberId == null) {
             throw new GuildBadArgException(String.format("Invalid guildMember %s", guildMember));
         } else if (!guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(),

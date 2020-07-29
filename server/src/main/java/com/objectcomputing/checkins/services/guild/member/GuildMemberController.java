@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildBadArgException;
+import io.micronaut.context.annotation.Parameter;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -40,16 +40,19 @@ public class GuildMemberController {
         return HttpResponse.<JsonError>badRequest()
                 .body(error);
     }
+
     /**
      * Create and save a new guildMember.
      *
-     * @param guildMember, {@link GuildMember}
+     * @param guildMember, {@link GuildMemberCreateDTO}
      * @return {@link HttpResponse <GuildMember>}
      */
 
     @Post(value = "/")
-    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMember guildMember) {
-        GuildMember newGuildMember = guildMemberServices.save(guildMember);
+    @Parameter()
+    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember) {
+        GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildid(),
+                guildMember.getMemberid(), guildMember.getLead()));
         return HttpResponse
                 .created(newGuildMember)
                 .headers(headers -> headers.location(location(newGuildMember.getId())));
@@ -73,6 +76,7 @@ public class GuildMemberController {
 
     /**
      * Get GuildMember based off id
+     *
      * @param id {@link UUID} of the guild member entry
      * @return {@link GuildMember}
      */
@@ -99,14 +103,16 @@ public class GuildMemberController {
     /**
      * Load members
      *
-     * @param guildMembers, {@link List<GuildMember>}
+     * @param guildMembers, {@link List<GuildMemberCreateDTO> to load {@link GuildMember guild members}}
      * @return {@link HttpResponse<List<GuildMember>}
      */
     @Post("/load")
-    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMember> guildMembers) {
+    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMemberCreateDTO> guildMembers) {
         List<String> errors = new ArrayList<>();
         List<GuildMember> membersCreated = new ArrayList<>();
-        for (GuildMember guildMember : guildMembers) {
+        for (GuildMemberCreateDTO guildMemberDTO : guildMembers) {
+            GuildMember guildMember = new GuildMember(guildMemberDTO.getGuildid(),
+                    guildMemberDTO.getMemberid(), guildMemberDTO.getLead());
             try {
                 guildMemberServices.save(guildMember);
                 membersCreated.add(guildMember);

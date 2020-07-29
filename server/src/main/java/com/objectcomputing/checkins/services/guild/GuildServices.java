@@ -2,18 +2,13 @@ package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GuildServices {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GuildServices.class);
 
     @Inject
     private GuildRepository guildsRepo;
@@ -63,7 +58,7 @@ public class GuildServices {
     public Set<Guild> findByFields(String name, UUID memberid) {
         Set<Guild> guilds = new HashSet<>();
         guildsRepo.findAll().forEach(guilds::add);
-        if(name != null) {
+        if (name != null) {
             guilds.retainAll(guildsRepo.findByNameIlike(name));
         } else if (memberid != null) {
             guilds.retainAll(guildMemberRepo.findByMemberid(memberid)

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMemberServices;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -43,13 +42,13 @@ public class GuildController {
     /**
      * Create and save a new guild.
      *
-     * @param guild, {@link Guild}
+     * @param guild, {@link GuildCreateDTO}
      * @return {@link HttpResponse<Guild>}
      */
 
     @Post(value = "/")
-    public HttpResponse<Guild> createAGuild(@Body @Valid Guild guild) {
-        Guild newGuild = guildsService.save(guild);
+    public HttpResponse<Guild> createAGuild(@Body @Valid GuildCreateDTO guild) {
+        Guild newGuild = guildsService.save(new Guild(guild.getName(), guild.getDescription()));
         return HttpResponse
                 .created(newGuild)
                 .headers(headers -> headers.location(location(newGuild.getGuildid())));
@@ -58,20 +57,21 @@ public class GuildController {
     /**
      * Load the current guilds into checkinsdb.
      *
-     * @param guildslist, array of {@link Guild guilds} to load
+     * @param guildslist, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
      */
 
     @Post("/load")
     @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> loadGuilds(@Body @NotNull List<Guild> guildslist) {
+    public HttpResponse<?> loadGuilds(@Body @NotNull List<GuildCreateDTO> guildslist) {
         List<String> errors = new ArrayList<>();
         List<Guild> guildsCreated = new ArrayList<>();
-        for (Guild guild : guildslist) {
+        for (GuildCreateDTO guildDTO : guildslist) {
+            Guild guild = new Guild(guildDTO.getName(), guildDTO.getDescription());
             try {
                 guildsService.save(guild);
                 guildsCreated.add(guild);
             } catch (GuildBadArgException e) {
-                errors.add(String.format("Guild %s was not added because: %s", guild.getGuildid(), e.getMessage()));
+                errors.add(String.format("Guild %s was not added because: %s", guild.getName(), e.getMessage()));
             }
         }
         if (errors.isEmpty()) {
@@ -95,6 +95,7 @@ public class GuildController {
 
     /**
      * Find guild(s) given a combination of the following parameters
+     *
      * @param name,     name of the guild
      * @param memberid, {@link UUID} of the member you wish to inquire in to which guilds they are a part of
      * @return {@link List<Guild> list of guilds}, return all guilds when no parameters filled in else

@@ -23,17 +23,17 @@ public class GuildMember {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to guild entry")
+    @Schema(description = "id of this member to guild entry", required = true)
     private UUID id;
 
     @Column(name = "guildid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the guild this entry is associated with")
+    @Schema(description = "id of the guild this entry is associated with", required = true)
     private UUID guildid;
 
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with")
+    @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberid;
 
     @Column(name = "lead")
