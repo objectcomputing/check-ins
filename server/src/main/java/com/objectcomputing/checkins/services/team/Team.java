@@ -17,7 +17,7 @@ import io.micronaut.data.model.DataType;
 @Table(name ="team")
 public class Team {
 
-    public Team(String name, UUID teamLeadId, String description) {
+    public Team(String name, String description) {
                         this.name=name;
                         this.description=description;
                         }
