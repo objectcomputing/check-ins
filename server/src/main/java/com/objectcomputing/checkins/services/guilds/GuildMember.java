@@ -1,61 +1,80 @@
 package com.objectcomputing.checkins.services.guilds;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.Hidden;
+import io.micronaut.http.annotation.Body;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity
 @Table(name = "guildMembers")
-@IdClass(GuildMemberCompositeKey.class)
 public class GuildMember {
 
-    public GuildMember(UUID guildId, UUID memberId) {
-        this(guildId, memberId, false);
-    }
-
-    public GuildMember(UUID guildId, UUID memberId, boolean isLead) {
-        this.guildId = guildId;
-        this.memberId = memberId;
-        this.lead = isLead;
-    }
-
     @Id
-    @NotBlank
-    @Column(name="guildId")
+    @Column(name = "id")
+    @AutoPopulated
     @TypeDef(type= DataType.STRING)
-    private UUID guildId;
+    @Schema(description = "id of this member to guild entry")
+    private UUID id;
 
-    @Id
-    @NotBlank
-    @Column(name ="memberId")
+    @Column(name = "guildid")
     @TypeDef(type= DataType.STRING)
-    private UUID memberId;
+    @Schema(description = "id of the guild this entry is associated with")
+    private UUID guildid;
+
+    @Column(name = "memberid")
+    @TypeDef(type= DataType.STRING)
+    @Schema(description = "id of the member this entry is associated with")
+    private UUID memberid;
 
     @Column(name = "lead")
-    private boolean lead;
+    @Schema(description = "whether member is lead or not represented by true or false respectively",
+    nullable = true)
+    private Boolean lead;
 
-    public UUID getGuildId() {
-        return guildId;
+    public GuildMember(@JsonProperty("guildid") @TypeDef(type= DataType.STRING) @Valid @NotNull UUID guildid,
+                       @JsonProperty("memberid") @TypeDef(type= DataType.STRING) @Valid @NotNull UUID memberid,
+                       @JsonProperty("lead") Boolean lead) {
+        this.guildid = guildid;
+        this.memberid = memberid;
+        this.lead = lead != null && lead;
     }
 
-    public void setGuildId(UUID guildId) {
-        this.guildId = guildId;
+    public UUID getId() {
+        return id;
     }
 
-    public UUID getMemberId() {
-        return memberId;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void setMemberId(UUID memberId) {
-        this.memberId = memberId;
+    public UUID getGuildid() {
+        return guildid;
+    }
+
+    public void setGuildid(UUID guildid) {
+        this.guildid = guildid;
+    }
+
+    public UUID getMemberid() {
+        return memberid;
+    }
+
+    public void setMemberid(UUID memberid) {
+        this.memberid = memberid;
     }
 
     public boolean isLead() {
-        return lead;
+        return lead != null && lead;
     }
 
     public void setLead(boolean lead) {
@@ -65,9 +84,10 @@ public class GuildMember {
     @Override
     public String toString() {
         return "GuildMember{" +
-                "guildId=" + guildId +
-                ", memberId=" + memberId +
-                ", lead=" + lead +
+                "id=" + id +
+                ", guildid=" + guildid +
+                ", memberid=" + memberid +
+                ", lead=" + isLead() +
                 '}';
     }
 }

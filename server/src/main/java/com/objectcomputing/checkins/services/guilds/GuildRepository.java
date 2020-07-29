@@ -8,13 +8,14 @@ import io.micronaut.data.repository.CrudRepository;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
-    Guild findByGuildId(UUID guildId);
-    Guild findByName(String name);
+    Guild findByGuildid(UUID guildId);
+    Optional<Guild> findByName(String name);
     List<Guild> findByNameIlike(String name);
 
     @Override

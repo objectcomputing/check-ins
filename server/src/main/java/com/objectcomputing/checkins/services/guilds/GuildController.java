@@ -1,21 +1,23 @@
 package com.objectcomputing.checkins.services.guilds;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller("/guild")
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -23,44 +25,63 @@ import java.util.UUID;
 @Tag(name="guild")
 public class GuildController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GuildController.class);
-
     @Inject
     private GuildServices guildsService;
     @Inject
     private GuildMemberServices guildMemberServices;
 
+    @Error(exception = GuildBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    /*
+        GUILD
+     */
+
     /**
      * Create and save a new guild.
      *
      * @param guild, {@link Guild}
-     * @return
+     * @return {@link HttpResponse<Guild>}
      */
 
     @Post(value = "/")
     public HttpResponse<Guild> createAGuild(@Body @Valid Guild guild) {
         Guild newGuild = guildsService.save(guild);
-
-        if (newGuild == null) {
-            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
-        } else {
-            return HttpResponse
-                    .created(newGuild)
-                    .headers(headers -> headers.location(location(newGuild.getGuildId())));
-        }
+        return HttpResponse
+                .created(newGuild)
+                .headers(headers -> headers.location(location(newGuild.getGuildid())));
     }
 
     /**
      * Load the current guilds into checkinsdb.
      *
-     * @param guildslist
-     * @return
+     * @param guildslist, array of {@link Guild guilds} to load
      */
 
-    @Post("/loadguilds")
+    @Post("/load")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void loadGuilds(@Body Guild[] guildslist) {
-        guildsService.load(guildslist);
+    public HttpResponse<?> loadGuilds(@Body @NotNull List<Guild> guildslist) {
+        List<String> errors = new ArrayList<>();
+        List<Guild> guildsCreated = new ArrayList<>();
+        for(Guild guild: guildslist) {
+            try {
+                guildsService.save(guild);
+                guildsCreated.add(guild);
+            } catch(GuildBadArgException e) {
+                errors.add(String.format("Guild %s was not added because: %s", guild.getGuildid(), e.getMessage()));
+            }
+        }
+        if(errors.isEmpty()) {
+            return HttpResponse.created(guildsCreated);
+        } else {
+            return HttpResponse.badRequest(errors);
+        }
     }
 
     /**
@@ -68,32 +89,104 @@ public class GuildController {
      *
      * @param guildId {@link UUID} of guild
      * @param name, name of the guild
-     * @return
+     * @return {@link List<Guild> list of guilds}
      */
 
     @Get("/{?guildId,name}")
-    public List<Guild> findByValue(@Nullable UUID guildId, @Nullable String name) {
+    public List<Guild> findGuilds(@Nullable UUID guildId, @Nullable String name) {
         return guildsService.findByIdOrLikeName(guildId, name);
     }
 
     /**
      * Update guild.
      * @param guild, {@link Guild}
-     * @return
+     * @return {@link HttpResponse<Guild>}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Part @Valid Guild guild) {
+    public HttpResponse<?> update(@Body @Valid Guild guild) {
+        Guild updatedGuild = guildsService.update(guild);
+        return  HttpResponse
+                .ok()
+                .headers(headers -> headers.location(location(updatedGuild.getGuildid())))
+                .body(updatedGuild);
 
-        if(null != guild.getGuildId()) {
-            Guild updatedGuild = guildsService.update(guild);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(location(updatedGuild.getGuildId())))
-                    .body(updatedGuild);
-        }
-
-        return HttpResponse.badRequest();
     }
+
+    /*
+        GUILD MEMBERS
+     */
+
+    /**
+     * Create and save a new guildMember.
+     *
+     * @param guildMember, {@link GuildMember}
+     * @return {@link HttpResponse<GuildMember>}
+     */
+
+    @Post(value = "/member")
+    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMember guildMember) {
+        GuildMember newGuild = guildMemberServices.save(guildMember);
+        return HttpResponse
+                .created(newGuild)
+                .headers(headers -> headers.location(location(newGuild.getGuildid())));
+    }
+
+    /**
+     * Update guildMember.
+     * @param guildMember, {@link GuildMember}
+     * @return {@link HttpResponse<GuildMember>}
+     */
+    @Put("/member")
+    public HttpResponse<?> updateMembers(@Body @Valid GuildMember guildMember) {
+        GuildMember updatedGuild = guildMemberServices.update(guildMember);
+        return  HttpResponse
+                .ok()
+                .headers(headers -> headers.location(location(updatedGuild.getGuildid())))
+                .body(updatedGuild);
+
+    }
+    /**
+     * Find and read a guild or guilds given its id, or name
+     *
+     * @param id {@link UUID}
+     * @param guildId {@link UUID} of guild
+     * @param memberId {@link UUID} of member
+     * @param lead, is lead of the guild
+     * @return {@link List<Guild> list of guilds}
+     */
+
+    @Get("/member/{?id,guildId,memberId,lead}")
+    public Set<GuildMember> findGuildMembers(Optional<UUID> id, Optional<UUID> guildId,
+                                             Optional<UUID> memberId, Optional<Boolean> lead) {
+        return guildMemberServices.findByFields(id.orElse(null), guildId.orElse(null),
+                memberId.orElse(null), lead.orElse(null));
+    }
+
+    /**
+     * Load members
+     * @param guildMembers, {@link List<GuildMember>}
+     * @return {@link HttpResponse<List<GuildMember>}
+     */
+    @Post("/member/load")
+    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMember> guildMembers) {
+        List<String> errors = new ArrayList<>();
+        List<GuildMember> membersCreated = new ArrayList<>();
+        for(GuildMember guildMember: guildMembers) {
+            try {
+                guildMemberServices.save(guildMember);
+                membersCreated.add(guildMember);
+            } catch(GuildBadArgException e) {
+                errors.add(String.format("Member %s was not added to Guild %s because: %s", guildMember.getMemberid(),
+                        guildMember.getGuildid(), e.getMessage()));
+            }
+        }
+        if(errors.isEmpty()) {
+            return HttpResponse.created(membersCreated);
+        } else {
+            return HttpResponse.badRequest(errors);
+        }
+    }
+
 
     protected URI location(UUID uuid) {
         return URI.create("/guild/" + uuid);

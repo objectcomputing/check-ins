@@ -1,64 +1,53 @@
 package com.objectcomputing.checkins.services.guilds;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
-import net.minidev.json.annotate.JsonIgnore;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-@JsonDeserialize(using = GuildDeserializer.class)
-@JsonSerialize(using = GuildSerializer.class)
 @Entity
 @Table(name = "guilds")
 public class Guild {
-
     public Guild(String name, String description) {
-        this(null, name, description, new ArrayList<>());
+        this(null, name, description);
     }
 
-    public Guild(UUID guildId, String name, String description, ArrayList<GuildMember> members) {
-        this.guildId = guildId;
+    public Guild(UUID guildid, String name, String description) {
+        this.guildid = guildid;
         this.name = name;
         this.description = description;
-        this.members = members;
     }
 
     @Id
-    @Column(name="guildId")
+    @Column(name="guildid")
     @AutoPopulated
     @TypeDef(type= DataType.STRING)
-    private UUID guildId;
+    @Schema(description = "only needed when updating an existing guild")
+    private UUID guildid;
 
     @NotBlank
     @Column(name="name", unique = true)
+    @Schema(required = true, description = "name of the guild")
     private String name;
 
     @NotBlank
     @Column(name="description")
+    @Schema(required = true, description = "description of the guild")
     private String description;
 
-    @Transient
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "guildId")
-    private List<GuildMember> members;
-
-    public UUID getGuildId() {
-        return guildId;
+    public UUID getGuildid() {
+        return guildid;
     }
 
-    public void setGuildId(UUID guildId) {
-        this.guildId = guildId;
+    public void setGuildid(UUID guildid) {
+        this.guildid = guildid;
     }
 
     public String getName() {
@@ -67,26 +56,6 @@ public class Guild {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Schema(implementation = Map.class)
-    public List<GuildMember> getMembers() {
-        return members;
-    }
-
-    @Hidden
-    public List<UUID> getMembersUUIDs() {
-        return members != null ? members.stream().map(GuildMember::getMemberId).collect(Collectors.toList()) : null;
-    }
-
-    @Hidden
-    public List<UUID> getLeadsUUIDS() {
-        return members != null ? members.stream().filter(GuildMember::isLead).map(GuildMember::getMemberId).collect(Collectors.toList()) : null;
-    }
-
-    @Hidden
-    public boolean isLead(UUID memberId) {
-        return members != null && members.stream().anyMatch(m -> m.getMemberId().equals(memberId));
     }
 
     public String getDescription() {
@@ -100,10 +69,9 @@ public class Guild {
     @Override
     public String toString() {
         return "Guild{" +
-                "guildId=" + guildId +
+                "guildid=" + guildid +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", members=" + members +
+                ", description='" + description +
                 '}';
     }
 }

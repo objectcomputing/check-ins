@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.guilds;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GuildServices {
 
@@ -15,58 +15,33 @@ public class GuildServices {
     private GuildRepository guildsRepo;
     @Inject
     private GuildMemberServices guildMemberServices;
+    @Inject
+    private MemberProfileRepository memberProfileRepository;
 
     protected Guild save(Guild guild) {
-        Guild oldGuild = guildsRepo.findByName(guild.getName());
-        Guild newGuild = null;
-        if(oldGuild == null) {
-            newGuild = guildsRepo.save(guild);
-            final UUID guildId = newGuild.getGuildId();
-            if(guild.getMembers() != null) {
-                for (GuildMember gm : guild.getMembers()) {
-                    gm.setGuildId(guildId);
-                    GuildMember newMember = guildMemberServices.save(gm);
-                    if(newMember == null) {
-                        LOG.error(String.format("Unable to save guild member %s to guild: %s", gm.getMemberId(), guildId));
-                    }
-                }
-                newGuild = guildsRepo.findById(guildId).orElse(null);
-            }
+        Guild newGuild;
+        if(guild.getGuildid() != null) {
+            throw new GuildBadArgException(String.format("Found unexpected guildid %s, please try updating instead",
+                    guild.getGuildid()));
+        } else if(guildsRepo.findByName(guild.getName()).isPresent()) {
+            throw new GuildBadArgException(String.format("Guild with name %s already exists", guild.getName()));
         } else {
-            LOG.error(String.format("Unable to create guild, as a guild by this name already exists, %s",
-                    guild.getName()));
+            newGuild =  guildsRepo.save(guild);
         }
+
         return newGuild;
     }
 
     protected Guild read(UUID guildId) {
-        return guildsRepo.findByGuildId(guildId);
+        return guildsRepo.findByGuildid(guildId);
     }
 
     protected Guild update(Guild guild) {
-        Guild newGuild = guildsRepo.update(guild);
-        final UUID guildId = newGuild.getGuildId();
-        if(guild.getMembers() != null) {
-            // Figure out old guild members
-            Map<UUID, Boolean> oldMembers = guildMemberServices.findByGuildId(newGuild.getGuildId()).stream()
-                    .collect(Collectors.toMap(GuildMember::getGuildId, gm -> true));
-
-            for (GuildMember gm : guild.getMembers()) {
-                gm.setGuildId(guildId);
-                GuildMember newMember = guildMemberServices.update(gm);
-                if(newMember == null) {
-                    LOG.error(String.format("Unable to update guild member %s", gm.getMemberId()));
-                }
-
-                // Mark guild members that are updated as not to be removed
-                oldMembers.put(gm.getMemberId(), false);
-            }
-
-            // Remove all guild members that have been removed
-            oldMembers.entrySet().stream().filter(Map.Entry::getValue)
-                    .forEach(e -> guildMemberServices.deleteById(guildId, e.getKey()));
-
-            newGuild = guildsRepo.findById(guildId).orElse(null);
+        Guild newGuild;
+        if(guild.getGuildid() != null && guildsRepo.findById(guild.getGuildid()).isPresent()) {
+            newGuild = guildsRepo.update(guild);
+        } else {
+            throw new GuildBadArgException(String.format("Guild %s does not exist, can't update.", guild.getGuildid()));
         }
 
         return newGuild;
