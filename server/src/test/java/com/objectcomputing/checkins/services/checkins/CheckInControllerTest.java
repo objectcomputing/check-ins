@@ -1,23 +1,29 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -28,6 +34,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 
+@TestInstance(Lifecycle.PER_CLASS)
 @MicronautTest
 public class CheckInControllerTest {
 
@@ -35,24 +42,42 @@ public class CheckInControllerTest {
     @Client("/check-in")
     private HttpClient client;
 
+    @Inject
+    MemberProfileController memberProfileController;
+
     CheckInRepository mockCheckInRepository = mock(CheckInRepository.class);
     CheckIn mockCheckIn = mock(CheckIn.class);
 
-    private static UUID testMemberId = UUID.randomUUID();
-    private static UUID testPdlId = UUID.randomUUID();
-    private static Date testDate = new Date(System.currentTimeMillis());
+    private static UUID testId;
+    private static UUID testTeamMemberId;
+    private static UUID testPdlId;
+    private static LocalDate testDate = LocalDate.now();
     private static String testQuarter = "Q2";
     private static String testYear = "2020";
-    private static boolean isDataSetupForGetTest = false;
+    private static boolean isDataSetupForTest = false;
 
-    private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-        put("teamMemberId", testMemberId);
-        put("pdlId", testPdlId);
-        put("checkInDate", testDate);
-        put("targetQtr", testQuarter);
-        put("targetYear", testYear);
-    }};
+    @BeforeAll
+    void setupMemberProfileRecord() {
+    
+        // setup a record in Member-Profile to satisfy foreign key constraint
+        if(memberProfileController != null) {
+            MemberProfile testMemberProfile = new MemberProfile("TestName", 
+                                                                "TestRole", 
+                                                                UUID.randomUUID(), 
+                                                                "TestLocation", 
+                                                                "TestEmail", 
+                                                                "TestInsperityId", 
+                                                                LocalDate.now(), 
+                                                                "TestBio");
 
+            final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
+            assertEquals(HttpStatus.CREATED, response.getStatus());
+            assertNotNull(response.body());
+            testTeamMemberId = ((MemberProfile) response.body()).getUuid();
+            testPdlId = testTeamMemberId;
+        }
+    }
+    
     @BeforeEach
     void setup() {
         reset(mockCheckInRepository);
@@ -63,16 +88,6 @@ public class CheckInControllerTest {
     public void testFindNonExistingEndpointReturns404() {
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/99"));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    @Test
-    public void testFindNonExistingEndpointReturnsNotFound() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo"));
         });
 
         assertNotNull(thrown.getResponse());
@@ -90,9 +105,10 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByTeamMemberId(testTeamMemberId)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        HttpRequest request = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
+        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
+
+        assertEquals(0, response.size());
     }
 
     // Find By TargetYearAndTargetQtr - when no user data exists
@@ -107,9 +123,10 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByTargetYearAndTargetQtr(testTargetYear, testTargetQuarter)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        HttpRequest request = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter));
+        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
+
+        assertEquals(0, response.size());
     }
 
     // Find By PdlId - when no user data exists
@@ -123,24 +140,23 @@ public class CheckInControllerTest {
 
         when(mockCheckInRepository.findByPdlId(testId)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?pdlId=%s", testId)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
+        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", testId));
+        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
+
+        assertEquals(0, response.size());
     }
 
     // test Find All
     @Test
     public void testGetFindAll() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
-        HttpRequest requestFindAll = HttpRequest.GET(String.format(""));
-        List<CheckIn> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockCheckIn.getClass()));  
+        HttpRequest requestFindAll = HttpRequest.GET("");
+        List<CheckIn> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockCheckIn.getClass()));
+
         assertEquals(1, responseFindAll.size());
-        assertEquals(testMemberId, responseFindAll.get(0).getTeamMemberId());
+        assertEquals(testTeamMemberId, responseFindAll.get(0).getTeamMemberId());
         assertEquals(testPdlId, responseFindAll.get(0).getPdlId());
     }
 
@@ -148,15 +164,13 @@ public class CheckInControllerTest {
     @Test
     public void testGetFindByTeamMemberId() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
-        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testMemberId));
-        List<CheckIn> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockCheckIn.getClass()));  
+        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
+        List<CheckIn> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockCheckIn.getClass()));
+
         assertEquals(1, responseFindByName.size());
-        assertEquals(testMemberId, responseFindByName.get(0).getTeamMemberId());
+        assertEquals(testTeamMemberId, responseFindByName.get(0).getTeamMemberId());
         assertEquals(testPdlId, responseFindByName.get(0).getPdlId());
     }
 
@@ -164,15 +178,13 @@ public class CheckInControllerTest {
     @Test
     public void testGetFindByTargetYearAndTargetQtr() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindByTargetYearAndTargetQtr = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testYear, testQuarter));
-        List<CheckIn> responseFindByTargetYearAndTargetQtr = client.toBlocking().retrieve(requestFindByTargetYearAndTargetQtr, Argument.of(List.class, mockCheckIn.getClass()));  
+        List<CheckIn> responseFindByTargetYearAndTargetQtr = client.toBlocking().retrieve(requestFindByTargetYearAndTargetQtr, Argument.of(List.class, mockCheckIn.getClass()));
+        
         assertEquals(1, responseFindByTargetYearAndTargetQtr.size());
-        assertEquals(testMemberId, responseFindByTargetYearAndTargetQtr.get(0).getTeamMemberId());
+        assertEquals(testTeamMemberId, responseFindByTargetYearAndTargetQtr.get(0).getTeamMemberId());
         assertEquals(testYear, responseFindByTargetYearAndTargetQtr.get(0).getTargetYear());
         assertEquals(testQuarter, responseFindByTargetYearAndTargetQtr.get(0).getTargetQtr());
     }
@@ -181,15 +193,12 @@ public class CheckInControllerTest {
     @Test
     public void testGetFindByPdlId() {
 
-        if(!isDataSetupForGetTest){
-            setupTestData();
-            isDataSetupForGetTest = true;
-        }
+        setupTestData();
 
         HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
         List<CheckIn> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockCheckIn.getClass()));  
         assertEquals(1, responseFindByPdlId.size());
-        assertEquals(testMemberId, responseFindByPdlId.get(0).getTeamMemberId());
+        assertEquals(testTeamMemberId, responseFindByPdlId.get(0).getTeamMemberId());
         assertEquals(testPdlId, responseFindByPdlId.get(0).getPdlId());
     }
 
@@ -197,52 +206,30 @@ public class CheckInControllerTest {
     @Test
     public void testPostSave() {
 
-        CheckIn testCheckIn = new CheckIn(UUID.randomUUID(), UUID.randomUUID(), testDate, "Q1", "2021");
+        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, "Q3", "2025");
 
-        when(mockCheckInRepository.save(testCheckIn)).thenReturn(testCheckIn);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        final HttpResponse<CheckIn> response = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.getContentLength());
-    }
-
-    // POST - Invalid call
-    @Test
-    public void testPostNonExistingEndpointReturns404() {
-
-        CheckIn testCheckIn = new CheckIn();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testCheckIn));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertNotNull(response.body());
+        assertNotNull(response.body().getId());
+        assertEquals(testTeamMemberId, response.body().getTeamMemberId());
     }
 
     // PUT - Valid Body
     @Test
     public void testPutUpdate() {
 
-        UUID testPutId = UUID.randomUUID();
-        UUID testPutMemberId = UUID.randomUUID();
-        UUID testPutPdlId = UUID.randomUUID();
-        CheckIn testCheckIn = new CheckIn(testPutMemberId, testPutPdlId, testDate, "Q1", "2025");
-        testCheckIn.setId(testPutId);
+        setupTestData();
 
-        Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-            put("id", testPutId);
-            put("teamMemberId", testMemberId);
-            put("pdlId", testPdlId);
-            put("checkInDate", testDate);
-            put("targetQtr", "Q1");
-            put("targetYear", "2022");
-        }};
+        CheckIn testCheckInPut = new CheckIn(testTeamMemberId, testPdlId, testDate, "Q4", "2021");
+        testCheckInPut.setId(testId);
 
-        HttpRequest requestForPut = HttpRequest.PUT("", fakeBody);
-        List<CheckIn> responseForPut = client.toBlocking().retrieve(requestForPut, Argument.of(List.class, mockCheckIn.getClass()));  
-        assertEquals(1, responseForPut.size());
-        assertEquals(testPutId, responseForPut.get(0).getId());
-        assertEquals("2022", responseForPut.get(0).getTargetYear());
+        final HttpResponse<CheckIn> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testCheckInPut), CheckIn.class);
+        assertEquals(HttpStatus.OK, responseFromPut.getStatus());
+        assertNotNull(responseFromPut.body());
+        assertEquals(testId, responseFromPut.body().getId());
+        assertEquals("Q4", responseFromPut.body().getTargetQtr());
+        assertEquals("2021", responseFromPut.body().getTargetYear());
     }
 
     // PUT - Request with empty body
@@ -260,15 +247,27 @@ public class CheckInControllerTest {
     @Test
     public void testPutUpdateWithMissingField() {
 
+        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, testQuarter, testYear);
+
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", fakeBody));
+            client.toBlocking().exchange(HttpRequest.PUT("", testCheckin));
         });
+
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     private void setupTestData() {
-        client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        if(!isDataSetupForTest) {
+            CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, testQuarter, testYear);
+            final HttpResponse<CheckIn> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
+
+            assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
+            assertNotNull(responseFromPost.body());
+            testId = responseFromPost.body().getId();
+
+            isDataSetupForTest = true;
+        }
     }
 
 }

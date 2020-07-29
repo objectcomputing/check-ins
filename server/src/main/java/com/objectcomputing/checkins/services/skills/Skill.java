@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -66,6 +67,20 @@ public class Skill {
         this.pending = pending;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Skill skill = (Skill) o;
+        return pending == skill.pending &&
+                Objects.equals(skillid, skill.skillid) &&
+                Objects.equals(name, skill.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(skillid, name, pending);
+    }
 
     @Override
     public String toString() {
