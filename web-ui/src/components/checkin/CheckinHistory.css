@@ -1,0 +1,11 @@
+.info {
+  margin-bottom: auto;
+  margin-left: 25px;
+  margin-top: auto;
+  text-align: left;
+}
+
+.profile-section {
+  display: flex;
+  justify-content: center;
+}

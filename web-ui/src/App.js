@@ -6,6 +6,7 @@ import MyTeamPage from "./pages/MyTeamPage";
 import EditPDLPage from "./pages/EditPDLPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import UploadNotesPage from "./pages/UploadNotesPage";
+import CheckinsPage from "./pages/CheckinsPage";
 import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
@@ -50,6 +51,10 @@ function App() {
               <Route path="/profile">
                 <Header title="Profile" />
                 <Profile />
+              </Route>
+              <Route path="/checkins">
+                <Header />
+                <CheckinsPage />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />

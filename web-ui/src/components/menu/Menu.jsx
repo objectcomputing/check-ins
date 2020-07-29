@@ -120,6 +120,11 @@ function Menu() {
           Uploads
         </Link>
       </Button>
+      <Button>
+        <Link style={linkStyle} to="/checkins">
+          Check-ins
+        </Link>
+      </Button>
       {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">

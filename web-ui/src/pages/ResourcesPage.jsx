@@ -1,15 +1,6 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 
-// import DevGuideTeam from "../pdfs/Development Discussion Guide for Team Members.pdf";
-// import ExpectationsGuideTeam from "../pdfs/Expectations Discussion Guide for Team Members.pdf";
-// import ExpectationsWorksheetTeam from "../pdfs/Expectations Worksheet.pdf";
-// import FeedbackGuideTeam from "../pdfs/Feedback Discussion Guide for Team Members.pdf";
-// import IndividualDevPlanTeam from "../pdfs/Individual Development Plan .pdf";
-// import DevGuidePDL from "../pdfs/Development Discussion Guide for PDLs.pdf";
-// import ExpectationsGuidePDL from "../pdfs/Expectations Discussion Guide for PDLs.pdf";
-// import FeedbackGuidePDL from "../pdfs/Feedback Discussion Guide for PDLs.pdf";
-
 import "./ResourcesPage.css";
 
 const ResourcesPage = () => {

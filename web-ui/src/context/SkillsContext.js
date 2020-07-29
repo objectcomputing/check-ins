@@ -44,6 +44,7 @@ const defaultProfile = {
   name: "Christopher Wallace",
   pdl: "Tupac Shakur",
   role: "Lyrical Poet",
+  nextCheckinDate: 1573551461820,
 };
 
 const defaultTeamMembers = [
