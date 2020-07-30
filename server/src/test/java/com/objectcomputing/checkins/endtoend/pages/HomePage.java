@@ -22,33 +22,25 @@ public class HomePage {
 
     WebDriver driver;
     @FindBy(xpath = "/html[1]/body[1]/div[1]/form[1]/fieldset[1]/label[1]")
-    WebElement chooseafile_btn;
+    WebElement chooseAFileBtn;
     @FindBy(id = "file")
     WebElement filepath;
     @FindBy(name = "submit")
-    WebElement upload_btn;
+    WebElement uploadBtn;
     @FindBy(className = "success")
-    WebElement success_msg;
+    WebElement successMsg;
     @FindBy(className = "error")
-    WebElement error_msg;
+    WebElement errorMsg;
 
     public HomePage(WebDriver ldriver) {
         this.driver = ldriver;
     }
-//
-//    public void uploadFile() throws InterruptedException {
-//        // TODO needs to be fixed
-//        filepath.sendKeys("/Users/tajr/Desktop/File.rtf");
-//        Thread.sleep(5000);
-//        upload_btn.click();
-//        Thread.sleep(5000);
-//    }
 
     public void uploadFileSuccessMsg() throws InterruptedException {
-        String successMsg = success_msg.getText();
+        String successMsg = this.successMsg.getText();
         System.out.println("Upload File Msg: " + successMsg);
         Thread.sleep(1000);
-        assertEquals(success_msg.getText(), "THE FILE application.yml WAS UPLOADED");
+        assertEquals(this.successMsg.getText(), "THE FILE APPLICATION.YML WAS UPLOADED");
         Thread.sleep(5000);
     }
 
@@ -58,7 +50,7 @@ public class HomePage {
 		File file = getFileFromResources("application.yml");
 		filepath.sendKeys(file.getPath());
 		Thread.sleep(5000);
-		upload_btn.click();
+		uploadBtn.click();
 		Thread.sleep(5000);
 	}
 
@@ -75,12 +67,12 @@ public class HomePage {
 
 	}
     public void uploadFileErrorMsg() throws InterruptedException {
-        upload_btn.click();
+        uploadBtn.click();
         Thread.sleep(5000);
-        String errorMsg = error_msg.getText();
+        String errorMsg = this.errorMsg.getText();
         System.out.println("Upload File Msg: " + errorMsg);
         Thread.sleep(1000);
-        assertEquals(error_msg.getText(), "Please select a file before uploading.");
+        assertEquals(this.errorMsg.getText(), "Please select a file before uploading.");
         Thread.sleep(5000);
     }
 
