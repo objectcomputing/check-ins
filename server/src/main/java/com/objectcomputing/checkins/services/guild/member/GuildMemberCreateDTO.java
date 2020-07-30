@@ -3,13 +3,16 @@ package com.objectcomputing.checkins.services.guild.member;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
 public class GuildMemberCreateDTO {
+    @NotNull
     @Schema(description = "id of the guild this entry is associated with", required = true)
     private UUID guildid;
 
+    @NotNull
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberid;
 

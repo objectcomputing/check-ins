@@ -10,5 +10,6 @@ CREATE TABLE guildMembers(
    id varchar PRIMARY KEY,
    guildid varchar REFERENCES guilds(guildid),
    memberid varchar REFERENCES member_profile(uuid),
-   lead boolean default false
+   lead boolean default false,
+   UNIQUE(guildid, memberid)
 );
