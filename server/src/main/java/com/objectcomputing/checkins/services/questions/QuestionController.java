@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller("/questions")
@@ -48,29 +49,6 @@ public class QuestionController {
     }
 
     /**
-     * Update the text of a question.
-     * @param question
-     * @return
-     */
-    @Put("/")
-    public HttpResponse<?> update(@Body @Valid Question question) {
-
-        if(question.getQuestionid() != null) {
-            Question updatedQuestion = questionService.update(question);
-            if (updatedQuestion != null) {
-                return HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-                        .body(updatedQuestion);
-            } else {
-                return HttpResponse.badRequest();
-            }
-        }
-
-        return HttpResponse.badRequest();
-    }
-
-    /**
      * Find and read a question given its id.
      *
      * @param questionid
@@ -102,26 +80,29 @@ public class QuestionController {
 
     }
 
-    //  I know these are commented out - I added them before splitting the story and will
-    // need them in the future - please ignore for now
-//    /**
-//     * Update the pending status of a skill.
-//     * @param question
-//     * @return
-//     */
-//    @Put("/")
-//    public HttpResponse<?> update(@Body @Valid Question question) {
-//
-//        if(null != question.getQuestionid()) {
-//            Question updatedQuestion = questionService.update(question);
-//            return HttpResponse
-//                    .ok()
-//                    .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-//                    .body(updatedQuestion);
-//        }
-//
-//        return HttpResponse.badRequest();
-//    }
+    /**
+     * Update the text of a question.
+     * @param question
+     * @return
+     */
+    @Put("/")
+    public HttpResponse<?> update(@Body @Valid Question question) {
+
+        if(question.getQuestionid() != null) {
+            Question updatedQuestion = questionService.update(question);
+            if (updatedQuestion != null) {
+                return HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+                        .body(updatedQuestion);
+            } else {
+                return HttpResponse.badRequest();
+            }
+        }
+
+        return HttpResponse.badRequest();
+    }
+
 
     protected URI location(UUID uuid) {
         return URI.create("/questions/" + uuid);

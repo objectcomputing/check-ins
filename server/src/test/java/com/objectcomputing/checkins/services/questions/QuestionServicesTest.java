@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.questions;
+package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.services.questions.Question;
 import com.objectcomputing.checkins.services.questions.QuestionController;
@@ -93,7 +93,16 @@ public class QuestionServicesTest {
         fakeQuestion.setText(fakeQuestionText);
         Question updatedFakeQuestion = new Question();
         updatedFakeQuestion.setQuestionid(UUID.fromString(fakeUuid2));
-        updatedFakeQuestion.setText(fakeQuestionText+"new stuff");
+        updatedFakeQuestion.setText(fakeQuestionText + "new stuff");
+
+        when(mockQuestionRepository.update(fakeQuestion)).thenReturn(updatedFakeQuestion);
+        when(itemUnderTest.findByQuestionId(fakeQuestion.getQuestionid())).thenReturn(updatedFakeQuestion);
+        Question returned = itemUnderTest.update(fakeQuestion);
+
+        assertEquals(updatedFakeQuestion.getQuestionid(), returned.getQuestionid());
+        assertEquals(updatedFakeQuestion.getText(), returned.getText());
+
+    }
     @Test
     public void testReadAllQuestions() {
 
