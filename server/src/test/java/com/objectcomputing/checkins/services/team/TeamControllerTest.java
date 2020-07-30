@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.team;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +38,11 @@ public class TeamControllerTest {
 
     TeamRepository mockTeamRepository = mock(TeamRepository.class);
     Team mockTeam = mock(Team.class);
-    private static String testName = "name";
+
+
+    private static String testName = "testName";
+
+
     private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
         put("name", testName);
     }};
@@ -51,6 +55,7 @@ public class TeamControllerTest {
 
     @Test
     public void testFindNonExistingEndpointReturns404() {
+
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.GET("/99"));
         });
@@ -80,28 +85,34 @@ public class TeamControllerTest {
 
         when(mockTeamRepository.findByName(testName)).thenReturn(result);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?name=%s", testName)));
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest
+                        .GET(String.format("/?name=%s", testName)));
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
     }
 
     // test Find All
     @Test
     public void testGetFindAll() {
 
+        Team testTeam = new Team("testName","testDescription");
+        final HttpResponse<?> responseFromPost= client.toBlocking().exchange(HttpRequest.POST("", testTeam));
+
+
         HttpRequest requestFindAll = HttpRequest.GET(String.format(""));
         List<Team> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeam.getClass()));  
-        assertEquals(1, responseFindAll.size());
-        assertEquals(testName, responseFindAll.get(0).getName());
+        assertTrue(responseFindAll.size()>0);
     }
 
     // test Find By Name
     @Test
     public void testGetFindByName() {
+        Team testTeam = new Team("testName","testDescription");
+        HttpResponse<Team> responseFromPost= client.toBlocking().exchange(HttpRequest.POST("", testTeam),Team.class);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?name=%s", testName)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotEquals(2, response.getContentLength());
+        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", testName));
+        List<Team> responseFindByName = client.toBlocking().retrieve(requestFindByName, Argument.of(List.class, mockTeam.getClass()));  
+        assertEquals(testName, responseFindByName.get(0).getName());
 
     }
 
@@ -110,7 +121,7 @@ public class TeamControllerTest {
     @Test
     public void testPostSave() {
 
-        Team testTeam = new Team("testName", "testDescription");
+        Team testTeam = new Team("testName","testDescription");
 
         when(mockTeamRepository.save(testTeam)).thenReturn(testTeam);
 
@@ -119,24 +130,16 @@ public class TeamControllerTest {
         assertNotNull(response.getContentLength());
     }
 
-    // POST - Invalid call
-    @Test
-    public void testPostNonExistingEndpointReturns404() {
-
-        Team testTeam = new Team();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/99", testTeam));
-        });
-
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
     // PUT - Valid Body
     @Test
     public void testPutUpdate() {
 
-        Team testTeam = new Team("testName", "testDescription");
+        Team testTeam = new Team("testName","testDescription");
+        HttpResponse<Team> responseFromPost= client.toBlocking().exchange(HttpRequest.POST("", testTeam),Team.class);
+
+        UUID testUuid = responseFromPost.body().getUuid();
+        testTeam.setUuid(testUuid);
+        //Team testTeam = new Team("testName","testDescription");
 
         when(mockTeamRepository.update(testTeam)).thenReturn(testTeam);
 
@@ -168,20 +171,3 @@ public class TeamControllerTest {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
