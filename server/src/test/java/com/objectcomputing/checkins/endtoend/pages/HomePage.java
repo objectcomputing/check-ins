@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.io.File;
+import java.net.URL;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -32,23 +35,45 @@ public class HomePage {
     public HomePage(WebDriver ldriver) {
         this.driver = ldriver;
     }
-
-    public void uploadFile() throws InterruptedException {
-        // TODO needs to be fixed
-        filepath.sendKeys("/Users/tajr/Desktop/File.rtf");
-        Thread.sleep(5000);
-        upload_btn.click();
-        Thread.sleep(5000);
-    }
+//
+//    public void uploadFile() throws InterruptedException {
+//        // TODO needs to be fixed
+//        filepath.sendKeys("/Users/tajr/Desktop/File.rtf");
+//        Thread.sleep(5000);
+//        upload_btn.click();
+//        Thread.sleep(5000);
+//    }
 
     public void uploadFileSuccessMsg() throws InterruptedException {
         String successMsg = success_msg.getText();
         System.out.println("Upload File Msg: " + successMsg);
         Thread.sleep(1000);
-        assertEquals(success_msg.getText(), "THE FILE FILE.RTF WAS UPLOADED");
+        assertEquals(success_msg.getText(), "THE FILE application.yml WAS UPLOADED");
         Thread.sleep(5000);
     }
 
+
+	public void uploadFile() throws InterruptedException
+	{
+		File file = getFileFromResources("application.yml");
+		filepath.sendKeys(file.getPath());
+		Thread.sleep(5000);
+		upload_btn.click();
+		Thread.sleep(5000);
+	}
+
+	private File getFileFromResources(String fileName) {
+
+		ClassLoader classLoader = getClass().getClassLoader();
+
+		URL resource = classLoader.getResource(fileName);
+		if (resource == null) {
+			throw new IllegalArgumentException("file is not found!");
+		} else {
+			return new File(resource.getFile());
+		}
+
+	}
     public void uploadFileErrorMsg() throws InterruptedException {
         upload_btn.click();
         Thread.sleep(5000);
