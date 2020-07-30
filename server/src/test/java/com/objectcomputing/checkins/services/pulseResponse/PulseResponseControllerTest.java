@@ -70,7 +70,7 @@ public class PulseResponseControllerTest {
                                                                 "TestLocation", 
                                                                 "TestEmail", 
                                                                 "TestInsperityId", 
-                                                                LocalDate.of(2019, 1, 01), 
+                                                                LocalDate.of(2019, 1, 01),
                                                                 "TestBio");
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);

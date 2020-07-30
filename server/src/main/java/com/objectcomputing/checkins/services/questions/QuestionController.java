@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @Controller("/questions")
@@ -68,6 +69,59 @@ public class QuestionController {
 
         return HttpResponse.badRequest();
     }
+
+    /**
+     * Find and read a question given its id.
+     *
+     * @param questionid
+     * @return
+     */
+
+    @Get("/{questionid}")
+    public Question getById(UUID questionid) {
+        Question found = questionService.findByQuestionId(questionid);
+        return found;
+
+    }
+
+    /**
+     * Find questions with a paticular string or read all questions.
+     *
+     * @param text
+     * * @return
+     */
+    @Get("/{?text}")
+    public List<Question> findByText(Optional<String> text) {
+        List<Question> found = null;
+        if(text.isPresent()) {
+            found = questionService.findByText(text.get());
+        } else {
+            found = questionService.readAllQuestions();
+        }
+        return found;
+
+    }
+
+    //  I know these are commented out - I added them before splitting the story and will
+    // need them in the future - please ignore for now
+//    /**
+//     * Update the pending status of a skill.
+//     * @param question
+//     * @return
+//     */
+//    @Put("/")
+//    public HttpResponse<?> update(@Body @Valid Question question) {
+//
+//        if(null != question.getQuestionid()) {
+//            Question updatedQuestion = questionService.update(question);
+//            return HttpResponse
+//                    .ok()
+//                    .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+//                    .body(updatedQuestion);
+//        }
+//
+//        return HttpResponse.badRequest();
+//    }
 
     protected URI location(UUID uuid) {
         return URI.create("/questions/" + uuid);

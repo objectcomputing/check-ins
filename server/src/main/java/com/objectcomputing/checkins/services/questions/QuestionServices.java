@@ -27,6 +27,13 @@ public class QuestionServices {
 
     }
 
+    public List<Question> readAllQuestions() {
+        List<Question> questionList = questionRepository.findAll();
+
+        return questionList;
+
+    }
+
     public Question findByQuestionId(UUID skillId) {
 
         Question returned = questionRepository.findByQuestionid(skillId);
@@ -39,15 +46,14 @@ public class QuestionServices {
         List<Question> questionList = null;
         if(text != null) {
             questionList = findByText(text);
-        } else {
-  //          readAllQuestions();
         }
 
         return questionList;
     }
 
-    private List<Question> findByText(String text) {
-        List<Question> skillList = questionRepository.findByText(text);
+    protected List<Question> findByText(String text) {
+        String wildcard = "%" + text + "%" ;
+        List<Question> skillList = questionRepository.findByTextIlike(wildcard);
 
         return skillList;
     }
