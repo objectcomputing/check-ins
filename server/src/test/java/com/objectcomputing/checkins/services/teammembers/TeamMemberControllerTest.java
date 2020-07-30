@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.teammembers;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -42,7 +43,7 @@ import io.micronaut.test.annotation.MicronautTest;
 public class TeamMemberControllerTest {
 
     @Inject
-    @Client("/team-member")
+    @Client("/services/team-member")
     private HttpClient client;
 
     @Inject
@@ -79,10 +80,6 @@ public class TeamMemberControllerTest {
             assertNotNull(response.body());
             testTeamMemberId = ((MemberProfile) response.body()).getUuid();
         }
-    }
-
-    @BeforeAll
-    void setupTeamRecord() {
     
         // setup a record in Member-Profile to satisfy foreign key constraint
         if(teamController != null) {
@@ -153,10 +150,7 @@ public class TeamMemberControllerTest {
 
         HttpRequest requestFindAll = HttpRequest.GET("");
         List<TeamMember> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeamMember.getClass()));
-
-        assertEquals(1, responseFindAll.size());
-        assertEquals(testTeamMemberId, responseFindAll.get(0).getMemberId());
-        assertEquals(testTeamId, responseFindAll.get(0).getTeamId());
+        assertTrue(responseFindAll.size()>0);
     }
 
     // test Find By TeamMemberId
@@ -192,13 +186,14 @@ public class TeamMemberControllerTest {
 
         setupTestData();
 
-        TeamMember testTeamMemberPut = new TeamMember(testTeamId ,testTeamMemberId, isLead);
+        TeamMember testTeamMemberPut = new TeamMember(testTeamId ,testTeamMemberId, true);
         testTeamMemberPut.setUuid(testId);
 
         final HttpResponse<TeamMember> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testTeamMemberPut), TeamMember.class);
         assertEquals(HttpStatus.OK, responseFromPut.getStatus());
         assertNotNull(responseFromPut.body());
         assertEquals(testId, responseFromPut.body().getUuid());
+        assertEquals(true, responseFromPut.body().getIsLead());
     }
 
     // PUT - Request with empty body

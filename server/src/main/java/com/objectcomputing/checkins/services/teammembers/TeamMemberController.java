@@ -20,7 +20,7 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
-@Controller("/team-member")
+@Controller("/services/team-member")
 @Secured(SecurityRule.IS_ANONYMOUS)
 // @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
