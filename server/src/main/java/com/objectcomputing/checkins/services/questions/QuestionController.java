@@ -105,7 +105,7 @@ public class QuestionController {
 
 
     protected URI location(UUID uuid) {
-        return URI.create("/questions/" + uuid);
+        return URI.create("/services/questions/" + uuid);
     }
 
 }
