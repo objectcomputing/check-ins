@@ -36,7 +36,23 @@ const getTeamMembers = async () => {
   }
 };
 
+let checkins = [];
+
+const getCheckIns = async () => {
+  try {
+    const res = await axios({
+      method: "get",
+      url: "/check-in/?teamMemberId=3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      responseType: "json",
+    });
+    res.data.forEach((checkin) => checkins.push(checkin));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 getTeamMembers();
+getCheckIns();
 
 const defaultProfile = {
   bio: "It was all a dream, I used to read Word Up magazine",
@@ -45,6 +61,27 @@ const defaultProfile = {
   pdl: "Tupac Shakur",
   role: "Lyrical Poet",
   nextCheckinDate: 1573551461820,
+  checkins:
+    checkins.length > 0
+      ? checkins
+      : [
+          {
+            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            teamMemberId: "3fa85g64-5717-4562-b3fc-2c963f66afa6",
+            pdlId: "3fa85f64-5747-4562-b3fc-2c963f66afa6",
+            checkInDate: "2020-07-31",
+            targetQtr: "Q3",
+            targetYear: "2019",
+          },
+          {
+            id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+            teamMemberId: "3fa85g64-5717-4562-b3fc-2c963f66afa6",
+            pdlId: "3fa85f64-5747-4562-b3fc-2c963f66afa6",
+            checkInDate: "2020-08-31",
+            targetQtr: "Q3",
+            targetYear: "2020",
+          },
+        ],
 };
 
 const defaultTeamMembers = [
