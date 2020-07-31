@@ -31,7 +31,7 @@ public class QuestionServicesTest {
     private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Inject
-    @Client("/questions")
+    @Client("/services/questions")
     private HttpClient client;
 
     @Inject
