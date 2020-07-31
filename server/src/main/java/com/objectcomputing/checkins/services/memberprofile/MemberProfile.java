@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.annotation.Nullable;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -17,7 +18,7 @@ import io.micronaut.data.model.DataType;
 @Table(name ="member_profile")
 public class MemberProfile {
 
-    public MemberProfile(String name, String role, UUID pdlId, String location,
+    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
                         String workEmail, String insperityId, LocalDate startDate,
                         String bioText) {
                         this.name=name;
@@ -48,6 +49,7 @@ public class MemberProfile {
     
     @Column(name="pdlId")
     @TypeDef(type=DataType.STRING)
+    @Nullable
     private UUID pdlId;
 
     @Column(name="location")

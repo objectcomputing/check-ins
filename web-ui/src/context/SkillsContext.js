@@ -10,15 +10,32 @@ export const UPDATE_PDLS = "update_pdls";
 
 const SkillsContext = React.createContext();
 
+let skillsFromDB = [];
+
+const getSkills = async () => {
+  try {
+    const res = await axios({
+      method: "get",
+      url: "/skill/?pending=false",
+      responseType: "json",
+    });
+    res.data.forEach((skill) => skillsFromDB.push(skill));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+getSkills();
+
 const skillsList = [
-  { skill: "JavaScript" },
-  { skill: "Java" },
-  { skill: "C++" },
-  { skill: "Jquery" },
-  { skill: "Node" },
-  { skill: "Machine Learning" },
-  { skill: "Go" },
-  { skill: "Micronaut" },
+  { name: "JavaScript" },
+  { name: "Java" },
+  { name: "C++" },
+  { name: "Jquery" },
+  { name: "Node" },
+  { name: "Machine Learning" },
+  { name: "Go" },
+  { name: "Micronaut" },
 ];
 
 let teamMembers = [];
@@ -74,14 +91,14 @@ const defaultTeamMembers = [
 ];
 defaultTeamMembers.forEach((member) => (member.selected = false));
 
-const mySkills = [{ skill: "Jquery" }, { skill: "Go" }, { skill: "Node" }];
+const mySkills = [{ name: "Jquery" }, { name: "Go" }, { name: "Node" }];
 
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
+  skillsList: skillsFromDB.length > 0 ? skillsFromDB : skillsList,
   isAdmin: false,
   mySkills: mySkills,
-  skillsList: skillsList,
   teamMembers: teamMembers,
 };
 
@@ -89,22 +106,22 @@ const reducer = (state, action) => {
   switch (action.type) {
     case MY_SKILL_ADD:
       state.mySkills = state.mySkills.filter((i) => {
-        return action.payload.skill !== i.skill;
+        return action.payload.name !== i.name;
       });
       state.mySkills.push(action.payload);
       break;
     case MY_SKILL_REMOVE:
       state.mySkills = state.mySkills.filter((i) => {
-        return action.payload.skill !== i.skill;
+        return action.payload.name !== i.name;
       });
       break;
     case MY_SKILL_TOGGLE:
       const found = state.mySkills.find((i) => {
-        return i === action.payload;
+        return i.name === action.payload.name;
       });
       if (found) {
         state.mySkills = state.mySkills.filter((i) => {
-          return i !== action.payload;
+          return i.name !== action.payload.name;
         });
       } else {
         state.mySkills.push(action.payload);
@@ -114,7 +131,7 @@ const reducer = (state, action) => {
       state.defaultProfile = action.payload;
       break;
     case UPDATE_PDLS: {
-      const { selectedProfiles, pdl } = action.payload;
+      const { selectedProfiles } = action.payload;
       const ids = selectedProfiles.map((p) => p.id);
       const profiles = state.defaultTeamMembers.map((tm) => {
         return ids.includes(tm.id)

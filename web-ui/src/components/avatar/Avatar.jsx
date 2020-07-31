@@ -4,6 +4,7 @@ import PersonIcon from "@material-ui/icons/Person";
 
 const AvatarComponent = ({ loggedIn = false, profile = {} }) => {
   const { image_url } = profile;
+  const src = !image_url || loggedIn === false ? <PersonIcon /> : image_url;
   return (
     <Avatar
       style={{
@@ -13,13 +14,8 @@ const AvatarComponent = ({ loggedIn = false, profile = {} }) => {
         right: "5px",
         top: "10px",
       }}
-    >
-      {!image_url || loggedIn === false ? (
-        <PersonIcon />
-      ) : (
-        <img alt="Profile" src={image_url} />
-      )}
-    </Avatar>
+      src={src}
+    ></Avatar>
   );
 };
 
