@@ -81,7 +81,7 @@ public class TeamMemberControllerTest {
             testTeamMemberId = ((MemberProfile) response.body()).getUuid();
         }
     
-        // setup a record in Member-Profile to satisfy foreign key constraint
+        // setup a record in Team to satisfy foreign key constraint
         if(teamController != null) {
             Team testTeam = new Team("TestTeam", "TestDescription");
 
