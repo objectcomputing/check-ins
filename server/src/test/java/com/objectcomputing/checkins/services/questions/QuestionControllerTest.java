@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class QuestionControllerTest {
 
     @Inject
-    @Client("/questions")
+    @Client("/services/questions")
     private HttpClient client;
 
     @Inject
