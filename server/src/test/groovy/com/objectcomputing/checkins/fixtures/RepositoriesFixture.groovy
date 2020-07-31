@@ -4,7 +4,6 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository
 import com.objectcomputing.checkins.services.skills.SkillRepository
 
-//import com.objectcomputing.checkins.services.skills.SkillRepository
 import io.micronaut.context.ApplicationContext
 
 trait RepositoriesFixture {
