@@ -87,7 +87,7 @@ public class TeamMemberController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/team-member/" + uuid);
+        return URI.create("/services/team-member/" + uuid);
     }
 }
 
