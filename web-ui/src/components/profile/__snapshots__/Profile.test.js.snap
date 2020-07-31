@@ -13,10 +13,21 @@ exports[`renders correctly 1`] = `
     <div
       className="profile-image"
     >
-      <img
-        alt="Profile"
-        src="https://i.imgur.com/TkSNOpF.jpg"
-      />
+      <div
+        className="MuiAvatar-root MuiAvatar-circle"
+        style={
+          Object {
+            "height": "220px",
+            "width": "200px",
+          }
+        }
+      >
+        <img
+          alt="Profile"
+          className="MuiAvatar-img"
+          src="default_profile.jpg"
+        />
+      </div>
     </div>
     <div
       className="flex-row"
@@ -220,10 +231,21 @@ exports[`renders image_url 1`] = `
     <div
       className="profile-image"
     >
-      <img
-        alt="Profile"
-        src="https://i.imgur.com/TkSNOpF.jpg"
-      />
+      <div
+        className="MuiAvatar-root MuiAvatar-circle"
+        style={
+          Object {
+            "height": "220px",
+            "width": "200px",
+          }
+        }
+      >
+        <img
+          alt="Profile"
+          className="MuiAvatar-img"
+          src="default_profile.jpg"
+        />
+      </div>
     </div>
     <div
       className="flex-row"

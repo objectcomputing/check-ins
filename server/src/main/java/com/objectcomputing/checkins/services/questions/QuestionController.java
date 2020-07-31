@@ -8,11 +8,11 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller("/questions")
@@ -20,10 +20,6 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="questions")
 public class QuestionController {
-
-    //    an endpoint is created for create
-    //    an endpoint is created for read all
-    //    an endpoint is created for update
 
     @Inject
     private QuestionServices questionService;
@@ -51,25 +47,41 @@ public class QuestionController {
                     .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
         }
     }
+
+    /**
+     * Find and read a question given its id.
+     *
+     * @param questionid
+     * @return
+     */
+
+    @Get("/{questionid}")
+    public Question getById(UUID questionid) {
+        Question found = questionService.findByQuestionId(questionid);
+        return found;
+
+    }
+
+    /**
+     * Find questions with a paticular string or read all questions.
+     *
+     * @param text
+     * * @return
+     */
+    @Get("/{?text}")
+    public List<Question> findByText(Optional<String> text) {
+        List<Question> found = null;
+        if(text.isPresent()) {
+            found = questionService.findByText(text.get());
+        } else {
+            found = questionService.readAllQuestions();
+        }
+        return found;
+
+    }
+
     //  I know these are commented out - I added them before splitting the story and will
     // need them in the future - please ignore for now
-//
-//    /**
-//     * Find and read a question or questions given its id or text.
-//     *
-//     * @param questionid
-//     * @param text
-//     * @return
-//     */
-//
-//    @Get("/{?questionid,text}")
-//    public List<Question> findByValue(@Nullable UUID questionid, @Nullable String text) {
-//
-//        List<Question> found = questionService.findByValue(questionid, text);
-//        return found;
-//
-//    }
-//
 //    /**
 //     * Update the pending status of a skill.
 //     * @param question
