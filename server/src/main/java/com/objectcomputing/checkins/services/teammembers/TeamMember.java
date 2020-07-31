@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.teammembers;
 
-import java.sql.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
