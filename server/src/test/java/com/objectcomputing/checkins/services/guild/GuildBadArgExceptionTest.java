@@ -6,10 +6,10 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GuildBadArgExceptionTest {
+class GuildBadArgExceptionTest {
 
     @Test
-    public void testExceptionMessage() {
+    void testExceptionMessage() {
         final String message = "Hello world";
         GuildBadArgException argException = new GuildBadArgException(message);
         assertEquals(argException.getMessage(), message);

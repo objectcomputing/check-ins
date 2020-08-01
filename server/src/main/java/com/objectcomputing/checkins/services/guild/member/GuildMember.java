@@ -6,6 +6,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,16 +27,19 @@ public class GuildMember {
     @Schema(description = "id of this member to guild entry", required = true)
     private UUID id;
 
+    @NotNull
     @Column(name = "guildid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the guild this entry is associated with", required = true)
     private UUID guildid;
 
+    @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberid;
 
+    @Nullable
     @Column(name = "lead")
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
@@ -44,9 +48,14 @@ public class GuildMember {
     public GuildMember(@JsonProperty("guildid") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID guildid,
                        @JsonProperty("memberid") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID memberid,
                        @JsonProperty("lead") Boolean lead) {
+        this(null, guildid, memberid, lead);
+    }
+
+    public GuildMember(UUID id, UUID guildid, UUID memberid, Boolean lead) {
+        this.id = id;
         this.guildid = guildid;
         this.memberid = memberid;
-        this.lead = lead != null && lead;
+        this.lead = lead;
     }
 
     public UUID getId() {

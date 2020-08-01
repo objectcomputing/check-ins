@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/guild/member")
+@Controller("/services/guild/member")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild-member")
@@ -50,12 +50,14 @@ public class GuildMemberController {
 
     @Post(value = "/")
     @Parameter()
-    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember) {
+    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
+                                                   HttpRequest<GuildMemberCreateDTO> request) {
         GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildid(),
                 guildMember.getMemberid(), guildMember.getLead()));
         return HttpResponse
                 .created(newGuildMember)
-                .headers(headers -> headers.location(location(newGuildMember.getId())));
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), newGuildMember.getId()))));
     }
 
     /**
@@ -65,12 +67,13 @@ public class GuildMemberController {
      * @return {@link HttpResponse<GuildMember>}
      */
     @Put("/")
-    public HttpResponse<?> updateMembers(@Body @Valid GuildMember guildMember) {
-        GuildMember updatedGuild = guildMemberServices.update(guildMember);
+    public HttpResponse<?> updateMembers(@Body @Valid GuildMember guildMember, HttpRequest<GuildMember> request) {
+        GuildMember updatedGuildMember = guildMemberServices.update(guildMember);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(location(updatedGuild.getId())))
-                .body(updatedGuild);
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), updatedGuildMember.getId()))))
+                .body(updatedGuildMember);
 
     }
 
@@ -107,7 +110,8 @@ public class GuildMemberController {
      * @return {@link HttpResponse<List<GuildMember>}
      */
     @Post("/load")
-    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMemberCreateDTO> guildMembers) {
+    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMemberCreateDTO> guildMembers,
+                                            HttpRequest<List<GuildMember>> request) {
         List<String> errors = new ArrayList<>();
         List<GuildMember> membersCreated = new ArrayList<>();
         for (GuildMemberCreateDTO guildMemberDTO : guildMembers) {
@@ -122,13 +126,11 @@ public class GuildMemberController {
             }
         }
         if (errors.isEmpty()) {
-            return HttpResponse.created(membersCreated);
+            return HttpResponse.created(membersCreated)
+                    .headers(headers -> headers.location(request.getUri()));
         } else {
-            return HttpResponse.badRequest(errors);
+            return HttpResponse.badRequest(errors)
+                    .headers(headers -> headers.location(request.getUri()));
         }
-    }
-
-    protected URI location(UUID uuid) {
-        return URI.create("/guild/member/" + uuid);
     }
 }

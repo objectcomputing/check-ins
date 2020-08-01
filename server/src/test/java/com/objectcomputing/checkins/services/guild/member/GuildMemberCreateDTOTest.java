@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GuildMemberCreateDTOTest {
+class GuildMemberCreateDTOTest {
 
     @Inject
     private Validator validator;
 
     @Test
-    public void testDTOInstantiation() {
+    void testDTOInstantiation() {
         GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
         assertNull(dto.getGuildid());
         assertNull(dto.getMemberid());
@@ -28,18 +28,18 @@ public class GuildMemberCreateDTOTest {
     }
 
     @Test
-    public void testConstraintViolation() {
+    void testConstraintViolation() {
         GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
 
         Set<ConstraintViolation<GuildMemberCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
-        for(ConstraintViolation<GuildMemberCreateDTO> violation: violations) {
+        for (ConstraintViolation<GuildMemberCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
     }
 
     @Test
-    public void testPopulatedDTO() {
+    void testPopulatedDTO() {
         GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
 
         UUID guildId = UUID.randomUUID();

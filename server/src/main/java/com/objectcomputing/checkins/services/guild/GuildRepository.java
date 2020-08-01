@@ -14,8 +14,6 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
-    Guild findByGuildid(UUID guildId);
-
     Optional<Guild> findByName(String name);
 
     List<Guild> findByNameIlike(String name);

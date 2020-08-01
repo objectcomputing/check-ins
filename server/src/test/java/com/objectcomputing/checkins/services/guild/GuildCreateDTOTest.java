@@ -13,34 +13,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GuildCreateDTOTest {
+class GuildCreateDTOTest {
 
     @Inject
     private Validator validator;
 
 
     @Test
-    public void testDTOInstantiation() {
+    void testDTOInstantiation() {
         GuildCreateDTO dto = new GuildCreateDTO();
         assertNull(dto.getDescription());
         assertNull(dto.getName());
     }
 
     @Test
-    public void testConstraintViolation() {
+    void testConstraintViolation() {
         GuildCreateDTO dto = new GuildCreateDTO();
 
         dto.setName("");
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
-        for(ConstraintViolation<GuildCreateDTO> violation: violations) {
+        for (ConstraintViolation<GuildCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }
     }
 
     @Test
-    public void testPopulatedDTO() {
+    void testPopulatedDTO() {
         GuildCreateDTO dto = new GuildCreateDTO();
 
         final String name = "Melt man";

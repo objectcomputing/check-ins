@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/guild")
+@Controller("/services/guild")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild")
 public class GuildController {
 
     @Inject
-    private GuildServices guildsService;
+    private GuildServices guildService;
 
     @Error(exception = GuildBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
@@ -47,37 +47,38 @@ public class GuildController {
      */
 
     @Post(value = "/")
-    public HttpResponse<Guild> createAGuild(@Body @Valid GuildCreateDTO guild) {
-        Guild newGuild = guildsService.save(new Guild(guild.getName(), guild.getDescription()));
+    public HttpResponse<Guild> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<GuildCreateDTO> request) {
+        Guild newGuild = guildService.save(new Guild(guild.getName(), guild.getDescription()));
         return HttpResponse
                 .created(newGuild)
-                .headers(headers -> headers.location(location(newGuild.getGuildid())));
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newGuild.getGuildid()))));
     }
 
     /**
      * Load the current guilds into checkinsdb.
      *
-     * @param guildslist, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
+     * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
      */
 
     @Post("/load")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public HttpResponse<?> loadGuilds(@Body @NotNull List<GuildCreateDTO> guildslist) {
+    public HttpResponse<?> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
         List<String> errors = new ArrayList<>();
         List<Guild> guildsCreated = new ArrayList<>();
-        for (GuildCreateDTO guildDTO : guildslist) {
+        for (GuildCreateDTO guildDTO : guildsList) {
             Guild guild = new Guild(guildDTO.getName(), guildDTO.getDescription());
             try {
-                guildsService.save(guild);
+                guildService.save(guild);
                 guildsCreated.add(guild);
             } catch (GuildBadArgException e) {
                 errors.add(String.format("Guild %s was not added because: %s", guild.getName(), e.getMessage()));
             }
         }
         if (errors.isEmpty()) {
-            return HttpResponse.created(guildsCreated);
+            return HttpResponse.created(guildsCreated).headers(headers ->
+                    headers.location(request.getUri()));
         } else {
-            return HttpResponse.badRequest(errors);
+            return HttpResponse.badRequest(errors).headers(headers ->
+                    headers.location(request.getUri()));
         }
     }
 
@@ -90,7 +91,7 @@ public class GuildController {
 
     @Get("/{guildid}")
     public Guild readGuild(UUID guildid) {
-        return guildsService.read(guildid);
+        return guildService.read(guildid);
     }
 
     /**
@@ -104,7 +105,7 @@ public class GuildController {
 
     @Get("/{?name,memberid}")
     public Set<Guild> findGuilds(@Nullable String name, @Nullable UUID memberid) {
-        return guildsService.findByFields(name, memberid);
+        return guildService.findByFields(name, memberid);
     }
 
     /**
@@ -114,16 +115,12 @@ public class GuildController {
      * @return {@link HttpResponse<Guild>}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid Guild guild) {
-        Guild updatedGuild = guildsService.update(guild);
+    public HttpResponse<?> update(@Body @Valid Guild guild, HttpRequest<Guild> request) {
+        Guild updatedGuild = guildService.update(guild);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(location(updatedGuild.getGuildid())))
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getGuildid()))))
                 .body(updatedGuild);
 
-    }
-
-    protected URI location(UUID uuid) {
-        return URI.create("/guild/" + uuid);
     }
 }
