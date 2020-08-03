@@ -53,8 +53,6 @@ public class TeamController {
      * @return
      */
     @Post("/")
-    // @Secured("VIEW")
-
     public HttpResponse<Team> save(@Body @Valid Team team) {
         Team newTeam = teamRepository.save(team);
         
@@ -71,7 +69,7 @@ public class TeamController {
     @Put("/")
     public HttpResponse<?> update(@Body @Valid Team team) {
 
-        if(null != team.getUuid()) {
+        if(team.getUuid()!= null) {
             Team updatedTeam = teamRepository.update(team);
             return HttpResponse
                     .ok()

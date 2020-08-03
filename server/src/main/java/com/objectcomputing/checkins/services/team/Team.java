@@ -15,9 +15,9 @@ import io.micronaut.data.model.DataType;
 public class Team {
 
     public Team(String name, String description) {
-                        this.name=name;
-                        this.description=description;
-                        }
+        this.name=name;
+        this.description=description;
+        }
 
     public Team() {
     }
