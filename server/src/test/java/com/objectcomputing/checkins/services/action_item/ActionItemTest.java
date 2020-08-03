@@ -73,22 +73,22 @@ class ActionItemTest {
         final UUID checkinId = UUID.randomUUID();
         final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, createById, description);
-        ActionItem g2 = new ActionItem(id, checkinId, createById, description);
+        ActionItem a = new ActionItem(id, checkinId, createById, description);
+        ActionItem a2 = new ActionItem(id, checkinId, createById, description);
 
-        assertEquals(g, g2);
+        assertEquals(a, a2);
 
-        g2.setId(null);
+        a2.setId(null);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(a, a2);
 
-        g2.setId(g.getId());
+        a2.setId(a.getId());
 
-        assertEquals(g, g2);
+        assertEquals(a, a2);
 
-        g2.setDescription("dnc2");
+        a2.setDescription("dnc2");
 
-        assertNotEquals(g, g2);
+        assertNotEquals(a, a2);
     }
 
     @Test
@@ -98,11 +98,11 @@ class ActionItemTest {
         final UUID checkinId = UUID.randomUUID();
         final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, createById, description);
+        ActionItem a = new ActionItem(id, checkinId, createById, description);
 
-        map.put(g, true);
+        map.put(a, true);
 
-        assertTrue(map.get(g));
+        assertTrue(map.get(a));
     }
 
     @Test
@@ -111,9 +111,9 @@ class ActionItemTest {
         final UUID checkinId = UUID.randomUUID();
         final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, createById, description);
+        ActionItem a = new ActionItem(id, checkinId, createById, description);
 
-        String toString = g.toString();
+        String toString = a.toString();
         assertTrue(toString.contains(checkinId.toString()));
         assertTrue(toString.contains(id.toString()));
         assertTrue(toString.contains(createById.toString()));

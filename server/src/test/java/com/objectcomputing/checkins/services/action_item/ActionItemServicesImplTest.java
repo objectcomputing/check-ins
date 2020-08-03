@@ -351,7 +351,7 @@ class ActionItemServicesImplTest {
 
     @Test
     void testReadAll() {
-        Set<ActionItem> actionItems = Set.of (
+        Set<ActionItem> actionItems = Set.of(
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
         );

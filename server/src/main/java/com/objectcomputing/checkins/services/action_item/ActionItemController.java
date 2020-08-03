@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import io.micronaut.context.annotation.Parameter;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -48,7 +47,7 @@ public class ActionItemController {
      */
     @Post()
     public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
-                                                  HttpRequest<ActionItemCreateDTO> request) {
+                                                     HttpRequest<ActionItemCreateDTO> request) {
         ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
                 actionItem.getCreatedbyid(), actionItem.getDescription()));
         return HttpResponse
@@ -76,6 +75,7 @@ public class ActionItemController {
 
     /**
      * Delete actionItem
+     *
      * @param id, id of {@link ActionItem} to delete
      */
     @Delete("/{id}")
@@ -109,13 +109,13 @@ public class ActionItemController {
     /**
      * Find action items that match all filled in parameters, return all results when given no params
      *
-     * @param checkinid  {@link UUID} of checkin
+     * @param checkinid   {@link UUID} of checkin
      * @param createdbyid {@link UUID} of member
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?checkinid,createdbyid}")
     public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
-                                            @Nullable UUID createdbyid) {
+                                           @Nullable UUID createdbyid) {
         return actionItemServices.findByFields(checkinid, createdbyid);
     }
 
@@ -127,7 +127,7 @@ public class ActionItemController {
      */
     @Post("/items")
     public HttpResponse<?> loadActionItems(@Body @Valid @NotNull List<ActionItemCreateDTO> actionItems,
-                                            HttpRequest<List<ActionItem>> request) {
+                                           HttpRequest<List<ActionItem>> request) {
         List<String> errors = new ArrayList<>();
         List<ActionItem> actionItemsCreated = new ArrayList<>();
         for (ActionItemCreateDTO actionItemDTO : actionItems) {
