@@ -11,7 +11,7 @@ trait CheckInFixture {
     private static Date testDate = new Date(System.currentTimeMillis())
 
     CheckIn saveCheckIn() {
-        CheckIn checkIn = new CheckIn(UUID.randomUUID(), UUID.randomUUID(), testDate, "Q1", "2021")
+        CheckIn checkIn = new CheckIn(UUID.randomUUID(), UUID.randomUUID(), testDate)
         checkInRepository.save(checkIn)
 
         checkIn

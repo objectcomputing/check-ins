@@ -29,7 +29,7 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
                 "testEmail", "testInsperityId", testDate, "testBio")
         memberProfileRepository.save(memberProfile)
 
-        CheckIn checkIn = new CheckIn(memberProfile.uuid, id, testDate, "Q1", "2021")
+        CheckIn checkIn = new CheckIn(memberProfile.uuid, id, testDate)
         checkInRepository.save(checkIn)
 
 
@@ -97,27 +97,27 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
 
     }
 
-    void 'try to find a member by target year and quarter that does not exist returns empty body'() {
-        String testTargetYear = "2019"
-        String testTargetQuarter = "Q4"
+    // void 'try to find a member by target year and quarter that does not exist returns empty body'() {
+    //     String testTargetYear = "2019"
+    //     String testTargetQuarter = "Q4"
 
-        given: 'an http request'
-        URI uri = UriBuilder.of('/check-in/?')
-                .queryParam('targetYear', testTargetYear)
-                .queryParam('targetQtr', testTargetQuarter)
-                .build()
+    //     given: 'an http request'
+    //     URI uri = UriBuilder.of('/check-in/?')
+    //             .queryParam('targetYear', testTargetYear)
+    //             .queryParam('targetQtr', testTargetQuarter)
+    //             .build()
 
-        HttpRequest request = HttpRequest.GET(uri)
+    //     HttpRequest request = HttpRequest.GET(uri)
 
-        when:
-        HttpResponse<?> response = client.exchange(request)
+    //     when:
+    //     HttpResponse<?> response = client.exchange(request)
 
-        then:
-        response.status() == HttpStatus.OK
-        response.getContentLength() == 2
+    //     then:
+    //     response.status() == HttpStatus.OK
+    //     response.getContentLength() == 2
 
-        cleanup:
-        checkInRepository.deleteAll()
+    //     cleanup:
+    //     checkInRepository.deleteAll()
 
-    }
+    // }
 }
