@@ -7,6 +7,7 @@ export const MY_SKILL_TOGGLE = "toggle";
 export const MY_PROFILE_UPDATE = "update";
 export const UPDATE_PDL = "update_pdl";
 export const UPDATE_PDLS = "update_pdls";
+export const UPDATE_CHECKIN = "update_checkin";
 
 const SkillsContext = React.createContext();
 
@@ -162,6 +163,22 @@ const reducer = (state, action) => {
       state.defaultTeamMembers = profiles;
       break;
     }
+    case UPDATE_CHECKIN:
+      const { date, index } = action.payload;
+      const timeString = date.getHours() + ":" + date.getMinutes();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      const today = new Date();
+      const quarter = Math.floor((today.getMonth() + 3) / 3);
+      const checkin = state.defaultProfile.checkins[index];
+      state.defaultProfile.checkins[index] = {
+        ...checkin,
+        checkInDate: `${year}-${month}-${day} ${timeString}`,
+        targetYear: year,
+        targetQtr: quarter,
+      };
+      break;
     default:
   }
   return { ...state };

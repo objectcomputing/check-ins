@@ -2,6 +2,13 @@
   opacity: 0.3;
 }
 
+.date-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
 .info {
   margin-bottom: auto;
   margin-left: 25px;
@@ -11,5 +18,5 @@
 
 .profile-section {
   display: flex;
-  justify-content: center;
+  margin-left: 50px;
 }
