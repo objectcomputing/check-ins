@@ -60,7 +60,7 @@ public class GuildController {
      * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
      */
 
-    @Post("/load")
+    @Post("/guilds")
     public HttpResponse<?> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
         List<String> errors = new ArrayList<>();
         List<Guild> guildsCreated = new ArrayList<>();

@@ -124,7 +124,7 @@ class GuildControllerTest {
             return thisG;
         }).when(guildService).save(any(Guild.class));
 
-        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("guilds", dtoList);
         final HttpResponse<List<Guild>> response = client.toBlocking().exchange(request, Argument.listOf(Guild.class));
 
         assertEquals(guildList, response.body());
@@ -144,7 +144,7 @@ class GuildControllerTest {
 
         List<GuildCreateDTO> dtoList = List.of(guildCreateDTO, guildCreateDTO2);
 
-        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("guilds", dtoList);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -183,7 +183,7 @@ class GuildControllerTest {
             throw new GuildBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("guilds", dtoList);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 

@@ -107,7 +107,7 @@ public class GuildMemberController {
      * @param guildMembers, {@link List<GuildMemberCreateDTO> to load {@link GuildMember guild members}}
      * @return {@link HttpResponse<List<GuildMember>}
      */
-    @Post("/load")
+    @Post("/members")
     public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMemberCreateDTO> guildMembers,
                                             HttpRequest<List<GuildMember>> request) {
         List<String> errors = new ArrayList<>();
