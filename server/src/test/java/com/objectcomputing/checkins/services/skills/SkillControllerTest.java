@@ -208,7 +208,7 @@ public class SkillControllerTest {
         when(mockSkillServices.update(fakeSkill2)).thenReturn(null);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
+            client.toBlocking().exchange(HttpRequest.PUT("/", fakeSkill));
         });
 
         assertNotNull(thrown.getResponse());

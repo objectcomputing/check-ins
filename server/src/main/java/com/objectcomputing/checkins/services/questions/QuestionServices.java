@@ -26,16 +26,15 @@ public class QuestionServices {
         return returnedList.size() < 1 ? questionRepository.save(question) : null;
 
     }
-//
-//    protected List<Question> readAllQuestions() {
-//
-//        List<Question> returned = questionRepository.findAll();
-//
-//        return returned;
-//
-//    }
 
-    protected Question findByQuestionId(UUID skillId) {
+    public List<Question> readAllQuestions() {
+        List<Question> questionList = questionRepository.findAll();
+
+        return questionList;
+
+    }
+
+    public Question findByQuestionId(UUID skillId) {
 
         Question returned = questionRepository.findByQuestionid(skillId);
 
@@ -47,24 +46,28 @@ public class QuestionServices {
         List<Question> questionList = null;
         if(text != null) {
             questionList = findByText(text);
-        } else {
-  //          readAllQuestions();
         }
 
         return questionList;
     }
 
-    private List<Question> findByText(String text) {
-        List<Question> skillList = questionRepository.findByText(text);
+    protected List<Question> findByText(String text) {
+        String wildcard = "%" + text + "%" ;
+        List<Question> skillList = questionRepository.findByTextIlike(wildcard);
 
         return skillList;
     }
 
-//    public Question update(Question question) {
-//        Question returned = questionRepository.update(question);
-//
-//        return returned;
-//
-//    }
+    public Question update(Question question) {
+        Question returned = null;
+        Question questionInDatabase = findByQuestionId(question.getQuestionid());
+        if ((questionInDatabase != null)
+                && !questionInDatabase.getText().equals(question.getText())) {
+            returned = questionRepository.update(question);
+        }
+
+        return returned;
+
+    }
 
 }

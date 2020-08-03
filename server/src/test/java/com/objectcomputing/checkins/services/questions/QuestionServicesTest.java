@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.questions;
+package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.services.questions.Question;
 import com.objectcomputing.checkins.services.questions.QuestionController;
@@ -18,12 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
@@ -32,7 +31,7 @@ public class QuestionServicesTest {
     private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Inject
-    @Client("/questions")
+    @Client("/services/questions")
     private HttpClient client;
 
     @Inject
@@ -71,7 +70,6 @@ public class QuestionServicesTest {
     public void testSaveQuestion_question_not_found() {
 
         String fakeQuestionText = "this is such a fake question?";
-//        UUID uuid = UUID.fromString(fakeUuid);
         Question fakeQuestion = new Question();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
         fakeQuestion.setText(fakeQuestionText);
@@ -83,6 +81,64 @@ public class QuestionServicesTest {
         Question returned = itemUnderTest.saveQuestion(fakeQuestion);
 
         assertEquals(fakeQuestion.getQuestionid(), returned.getQuestionid());
+
+    }
+
+    @Test
+    public void testUpdate() {
+
+        String fakeQuestionText = "fake question text";
+        Question fakeQuestion = new Question();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestion.setText(fakeQuestionText);
+        Question updatedFakeQuestion = new Question();
+        updatedFakeQuestion.setQuestionid(UUID.fromString(fakeUuid2));
+        updatedFakeQuestion.setText(fakeQuestionText + "new stuff");
+
+        when(mockQuestionRepository.update(fakeQuestion)).thenReturn(updatedFakeQuestion);
+        when(itemUnderTest.findByQuestionId(fakeQuestion.getQuestionid())).thenReturn(updatedFakeQuestion);
+        Question returned = itemUnderTest.update(fakeQuestion);
+
+        assertEquals(updatedFakeQuestion.getQuestionid(), returned.getQuestionid());
+        assertEquals(updatedFakeQuestion.getText(), returned.getText());
+
+    }
+    @Test
+    public void testReadAllQuestions() {
+
+        Question fakeQuestion = new Question("this is such a fake question?");
+        UUID uuid = UUID.fromString(fakeUuid);
+        Question question = new Question();
+        question.setQuestionid(uuid);
+
+        List<Question> fakeQuestionList = new ArrayList<>();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestionList.add(fakeQuestion);
+
+        when(mockQuestionRepository.findAll()).thenReturn(fakeQuestionList);
+        List<Question> returned = itemUnderTest.readAllQuestions();
+
+        assertEquals(question.getQuestionid(), returned.get(0).getQuestionid());
+
+    }
+
+
+    @Test
+    public void testFindByQuestionId() {
+
+        Question fakeQuestion = new Question("this is such a fake question?");
+        UUID uuid = UUID.fromString(fakeUuid);
+        Question question = new Question();
+        question.setQuestionid(uuid);
+
+        List<Question> fakeQuestionList = new ArrayList<>();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestionList.add(fakeQuestion);
+
+        when(mockQuestionRepository.findByQuestionid(uuid)).thenReturn(fakeQuestion);
+        Question returned = itemUnderTest.findByQuestionId(uuid);
+
+        assertEquals(question.getQuestionid(), returned.getQuestionid());
 
     }
 
