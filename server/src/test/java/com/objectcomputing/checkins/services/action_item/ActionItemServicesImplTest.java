@@ -105,7 +105,7 @@ class ActionItemServicesImplTest {
     }
 
     @Test
-    void testSaveActionItemNullMemberId() {
+    void testSaveActionItemNullCreateById() {
         ActionItem actionItem = new ActionItem(UUID.randomUUID(), null, "dnc");
 
         ActionItemBadArgException exception = assertThrows(ActionItemBadArgException.class, () -> services.save(actionItem));
@@ -199,7 +199,7 @@ class ActionItemServicesImplTest {
     }
 
     @Test
-    void testUpdateActionItemNullMemberId() {
+    void testUpdateActionItemNullCreateById() {
         ActionItem actionItem = new ActionItem(UUID.randomUUID(), null, "dnc");
 
         ActionItemBadArgException exception = assertThrows(ActionItemBadArgException.class, () -> services.update(actionItem));
@@ -306,7 +306,7 @@ class ActionItemServicesImplTest {
     }
 
     @Test
-    void testFindByFieldsMemberId() {
+    void testFindByFieldsCreateById() {
         List<ActionItem> actionItems = List.of(
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),

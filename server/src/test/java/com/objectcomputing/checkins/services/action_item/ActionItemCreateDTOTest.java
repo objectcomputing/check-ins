@@ -43,13 +43,13 @@ class ActionItemCreateDTOTest {
         ActionItemCreateDTO dto = new ActionItemCreateDTO();
 
         UUID checkinId = UUID.randomUUID();
-        UUID memberId = UUID.randomUUID();
+        UUID createById = UUID.randomUUID();
 
         dto.setCheckinid(checkinId);
         assertEquals(dto.getCheckinid(), checkinId);
 
-        dto.setCreatedbyid(memberId);
-        assertEquals(dto.getCreatedbyid(), memberId);
+        dto.setCreatedbyid(createById);
+        assertEquals(dto.getCreatedbyid(), createById);
 
         dto.setDescription("DNC");
         assertEquals("DNC", dto.getDescription());

@@ -24,11 +24,11 @@ class ActionItemTest {
     @Test
     void testActionItemInstantiation() {
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem actionItem = new ActionItem(checkinId, memberId, description);
+        ActionItem actionItem = new ActionItem(checkinId, createById, description);
         assertEquals(checkinId, actionItem.getCheckinid());
-        assertEquals(memberId, actionItem.getCreatedbyid());
+        assertEquals(createById, actionItem.getCreatedbyid());
         assertEquals(description, actionItem.getDescription());
     }
 
@@ -36,12 +36,12 @@ class ActionItemTest {
     void testActionItemInstantiation2() {
         final UUID id = UUID.randomUUID();
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem actionItem = new ActionItem(id, checkinId, memberId, description);
+        ActionItem actionItem = new ActionItem(id, checkinId, createById, description);
         assertEquals(id, actionItem.getId());
         assertEquals(checkinId, actionItem.getCheckinid());
-        assertEquals(memberId, actionItem.getCreatedbyid());
+        assertEquals(createById, actionItem.getCreatedbyid());
         assertEquals(actionItem.getDescription(), description);
 
         Set<ConstraintViolation<ActionItem>> violations = validator.validate(actionItem);
@@ -53,9 +53,9 @@ class ActionItemTest {
     void testConstraintViolation() {
         final UUID id = UUID.randomUUID();
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem actionItem = new ActionItem(id, checkinId, memberId, description);
+        ActionItem actionItem = new ActionItem(id, checkinId, createById, description);
 
         actionItem.setCheckinid(null);
         actionItem.setCreatedbyid(null);
@@ -71,10 +71,10 @@ class ActionItemTest {
     void testEquals() {
         final UUID id = UUID.randomUUID();
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, memberId, description);
-        ActionItem g2 = new ActionItem(id, checkinId, memberId, description);
+        ActionItem g = new ActionItem(id, checkinId, createById, description);
+        ActionItem g2 = new ActionItem(id, checkinId, createById, description);
 
         assertEquals(g, g2);
 
@@ -96,9 +96,9 @@ class ActionItemTest {
         HashMap<ActionItem, Boolean> map = new HashMap<>();
         final UUID id = UUID.randomUUID();
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, memberId, description);
+        ActionItem g = new ActionItem(id, checkinId, createById, description);
 
         map.put(g, true);
 
@@ -109,14 +109,14 @@ class ActionItemTest {
     void testToString() {
         final UUID id = UUID.randomUUID();
         final UUID checkinId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
+        final UUID createById = UUID.randomUUID();
         final String description = "dnc";
-        ActionItem g = new ActionItem(id, checkinId, memberId, description);
+        ActionItem g = new ActionItem(id, checkinId, createById, description);
 
         String toString = g.toString();
         assertTrue(toString.contains(checkinId.toString()));
         assertTrue(toString.contains(id.toString()));
-        assertTrue(toString.contains(memberId.toString()));
+        assertTrue(toString.contains(createById.toString()));
         assertTrue(toString.contains(description));
     }
 }

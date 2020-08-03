@@ -22,15 +22,15 @@ public class ActionItemServicesImpl implements ActionItemServices {
         ActionItem actionItemRet = null;
         if (actionItem != null) {
             final UUID guildId = actionItem.getCheckinid();
-            final UUID memberId = actionItem.getCreatedbyid();
-            if (guildId == null || memberId == null) {
+            final UUID createById = actionItem.getCreatedbyid();
+            if (guildId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (actionItem.getId() != null) {
                 throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
             } else if (!checkinRepo.findById(guildId).isPresent()) {
                 throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", memberId));
+            } else if (!memberRepo.findById(createById).isPresent()) {
+                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
             }
 
             actionItemRet = actionItemRepo.save(actionItem);
@@ -54,15 +54,15 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (actionItem != null) {
             final UUID id = actionItem.getId();
             final UUID guildId = actionItem.getCheckinid();
-            final UUID memberId = actionItem.getCreatedbyid();
-            if (guildId == null || memberId == null) {
+            final UUID createById = actionItem.getCreatedbyid();
+            if (guildId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (id == null || !actionItemRepo.findById(id).isPresent()) {
                 throw new ActionItemBadArgException(String.format("Unable to locate actionItem to update with id %s", id));
             } else if (!checkinRepo.findById(guildId).isPresent()) {
                 throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", memberId));
+            } else if (!memberRepo.findById(createById).isPresent()) {
+                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
             }
 
             actionItemRet = actionItemRepo.update(actionItem);

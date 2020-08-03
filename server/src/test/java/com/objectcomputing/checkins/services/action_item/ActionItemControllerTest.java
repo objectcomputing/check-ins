@@ -127,7 +127,7 @@ class ActionItemControllerTest {
             return thisG;
         }).when(actionItemServices).save(any(ActionItem.class));
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
         final HttpResponse<List<ActionItem>> response = client.toBlocking().exchange(request, Argument.listOf(ActionItem.class));
 
         assertEquals(checkinList, response.body());
@@ -148,7 +148,7 @@ class ActionItemControllerTest {
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -189,7 +189,7 @@ class ActionItemControllerTest {
             throw new ActionItemBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("load", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -199,6 +199,41 @@ class ActionItemControllerTest {
         assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
 
         verify(actionItemServices, times(2)).save(any(ActionItem.class));
+    }
+
+    @Test
+    void deleteActionItem() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(actionItemServices).delete(any(UUID.class));
+
+        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(actionItemServices, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    void testReadAllActionItem() {
+        Set<ActionItem> actionItems = Set.of(
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc"),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc")
+        );
+
+        when(actionItemServices.readAll()).thenReturn(actionItems);
+
+        final HttpRequest<UUID> request = HttpRequest.GET("all");
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(actionItems, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(actionItemServices, times(1)).readAll();
     }
 
     @Test
