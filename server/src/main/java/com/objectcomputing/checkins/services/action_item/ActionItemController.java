@@ -46,10 +46,8 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItemCreateDTO}
      * @return {@link HttpResponse <ActionItem>}
      */
-
-    @Post(value = "/")
-    @Parameter()
-    public HttpResponse<ActionItem> createMembers(@Body @Valid ActionItemCreateDTO actionItem,
+    @Post()
+    public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                   HttpRequest<ActionItemCreateDTO> request) {
         ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
                 actionItem.getCreatedbyid(), actionItem.getDescription()));
@@ -65,8 +63,8 @@ public class ActionItemController {
      * @param actionItem, {@link ActionItem}
      * @return {@link HttpResponse< ActionItem >}
      */
-    @Put("/")
-    public HttpResponse<?> updateMembers(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
+    @Put()
+    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
         ActionItem updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
                 .ok()
@@ -74,6 +72,27 @@ public class ActionItemController {
                         URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))))
                 .body(updatedActionItem);
 
+    }
+
+    /**
+     * Delete actionItem
+     * @param id, id of {@link ActionItem} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteActionItem(UUID id) {
+        actionItemServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
+
+    /**
+     * Get all ActionItems
+     *
+     * @return {@link Set<ActionItem>}
+     */
+    @Get("/all")
+    public Set<ActionItem> readAll() {
+        return actionItemServices.readAll();
     }
 
     /**

@@ -348,4 +348,32 @@ class ActionItemServicesImplTest {
         verify(actionItemRepository, times(1)).findByCreatedbyid(any(UUID.class));
         verify(actionItemRepository, times(1)).findByCheckinid(any(UUID.class));
     }
+
+    @Test
+    void testReadAll() {
+        Set<ActionItem> actionItems = Set.of (
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
+        );
+
+        when(actionItemRepository.findAll()).thenReturn(actionItems);
+
+        assertEquals(actionItems, services.readAll());
+
+        verify(actionItemRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testDelete() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(actionItemRepository).deleteById(any(UUID.class));
+
+        services.delete(uuid);
+
+        verify(actionItemRepository, times(1)).deleteById(any(UUID.class));
+    }
 }
