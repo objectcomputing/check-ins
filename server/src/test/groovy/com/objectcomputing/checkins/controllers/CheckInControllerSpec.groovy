@@ -12,7 +12,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.uri.UriBuilder
 import spock.lang.Subject
 
-import java.sql.Date
+import java.time.LocalDate
 
 class CheckInControllerSpec extends EmbeddedServerSpecification implements CheckInFixture {
 
@@ -21,11 +21,12 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
 
     void 'find a checkIn name'() {
         UUID id = UUID.randomUUID()
-        Date testDate = new Date(System.currentTimeMillis())
+        LocalDate testDate = LocalDate.now()
+
         given: 'an existing checkIn'
         // the fkey in member profile is necessary to have a passing test for check-in,
         // so an insert is made to member-profile before inserting into check-in with the uuid from member-profile
-        MemberProfile memberProfile = new MemberProfile("testName", "testRole", id, "testLocation",
+        MemberProfile memberProfile = new MemberProfile("testName", "testRole", null, "testLocation",
                 "testEmail", "testInsperityId", testDate, "testBio")
         memberProfileRepository.save(memberProfile)
 
@@ -56,6 +57,7 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
         cleanup:
         checkInRepository.deleteAll()
         memberProfileRepository.deleteAll()
+        skillRepository.deleteAll()
 
     }
 

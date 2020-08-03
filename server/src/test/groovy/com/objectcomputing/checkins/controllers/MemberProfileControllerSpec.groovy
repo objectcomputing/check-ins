@@ -39,10 +39,11 @@ class MemberProfileControllerSpec extends EmbeddedServerSpecification implements
 
         then:
         teamMember.getName() == memberProfile.name
-        teamMember.getPdlId() == memberProfile.pdlId
+        teamMember.getPdlId() == null
 
         cleanup:
         memberProfileRepository.deleteAll()
+        skillRepository.deleteAll()
 
     }
 

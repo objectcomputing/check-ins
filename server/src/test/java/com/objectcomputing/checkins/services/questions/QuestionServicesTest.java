@@ -1,8 +1,16 @@
 package com.objectcomputing.checkins.services.questions;
 
+import com.objectcomputing.checkins.services.questions.Question;
+import com.objectcomputing.checkins.services.questions.QuestionController;
+import com.objectcomputing.checkins.services.questions.QuestionRepository;
+import com.objectcomputing.checkins.services.questions.QuestionServices;
 import com.objectcomputing.checkins.services.skills.SkillControllerTest;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +31,7 @@ public class QuestionServicesTest {
     private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Inject
-    @Client("/questions")
+    @Client("/services/questions")
     private HttpClient client;
 
     @Inject
@@ -76,6 +84,25 @@ public class QuestionServicesTest {
 
     }
 
+    @Test
+    public void testUpdate() {
+
+        String fakeQuestionText = "fake question text";
+        Question fakeQuestion = new Question();
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        fakeQuestion.setText(fakeQuestionText);
+        Question updatedFakeQuestion = new Question();
+        updatedFakeQuestion.setQuestionid(UUID.fromString(fakeUuid2));
+        updatedFakeQuestion.setText(fakeQuestionText + "new stuff");
+
+        when(mockQuestionRepository.update(fakeQuestion)).thenReturn(updatedFakeQuestion);
+        when(itemUnderTest.findByQuestionId(fakeQuestion.getQuestionid())).thenReturn(updatedFakeQuestion);
+        Question returned = itemUnderTest.update(fakeQuestion);
+
+        assertEquals(updatedFakeQuestion.getQuestionid(), returned.getQuestionid());
+        assertEquals(updatedFakeQuestion.getText(), returned.getText());
+
+    }
     @Test
     public void testReadAllQuestions() {
 

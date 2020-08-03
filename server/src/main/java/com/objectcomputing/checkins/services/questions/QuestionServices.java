@@ -34,7 +34,7 @@ public class QuestionServices {
 
     }
 
-    protected Question findByQuestionId(UUID skillId) {
+    public Question findByQuestionId(UUID skillId) {
 
         Question returned = questionRepository.findByQuestionid(skillId);
 
@@ -58,11 +58,16 @@ public class QuestionServices {
         return skillList;
     }
 
-//    public Question update(Question question) {
-//        Question returned = questionRepository.update(question);
-//
-//        return returned;
-//
-//    }
+    public Question update(Question question) {
+        Question returned = null;
+        Question questionInDatabase = findByQuestionId(question.getQuestionid());
+        if ((questionInDatabase != null)
+                && !questionInDatabase.getText().equals(question.getText())) {
+            returned = questionRepository.update(question);
+        }
+
+        return returned;
+
+    }
 
 }
