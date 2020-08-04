@@ -20,7 +20,8 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
-@Controller("/services/team")
+
+@Controller(TeamController.TEAM_CONTROLLER_PATH)
 @Secured(SecurityRule.IS_ANONYMOUS)
 // @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,6 +29,8 @@ import io.micronaut.security.rules.SecurityRule;
 public class TeamController {
 
     protected final TeamRepository teamRepository;
+
+    public static final String TEAM_CONTROLLER_PATH = "/services/team";
 
     public TeamController(TeamRepository teamRepository){
         this.teamRepository = teamRepository;
@@ -82,7 +85,7 @@ public class TeamController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/services/team/" + uuid);
+        return URI.create(TEAM_CONTROLLER_PATH + uuid);
     }
 }
 

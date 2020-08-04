@@ -20,12 +20,14 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
-@Controller("/services/team-member")
+@Controller(TeamMemberController.TEAM_MEMBER_CONTROLLER_PATH)
 @Secured(SecurityRule.IS_ANONYMOUS)
 // @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="team-member")
 public class TeamMemberController {
+    
+    public static final String TEAM_MEMBER_CONTROLLER_PATH = "/services/team-member";
 
     protected final TeamMemberRepository teamMemberRepository;
 
@@ -56,8 +58,6 @@ public class TeamMemberController {
      * @return
      */
     @Post("/")
-    // @Secured("VIEW")
-
     public HttpResponse<TeamMember> save(@Body @Valid TeamMember teamMember) {
         TeamMember newTeamMember = teamMemberRepository.save(teamMember);
         
@@ -87,7 +87,7 @@ public class TeamMemberController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/services/team-member/" + uuid);
+        return URI.create(TEAM_MEMBER_CONTROLLER_PATH + uuid);
     }
 }
 
