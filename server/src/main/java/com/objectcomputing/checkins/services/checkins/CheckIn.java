@@ -19,12 +19,10 @@ public class CheckIn {
 
     public CheckIn() {}
 
-    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate, String targetQtr, String targetYear) {
+    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate) {
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
         this.checkInDate=checkInDate;
-        this.targetQtr=targetQtr;
-        this.targetYear=targetYear;
     }
     
     @Id
@@ -45,12 +43,6 @@ public class CheckIn {
 
     @Column(name="checkInDate")
     private LocalDate checkInDate;
-
-    @Column(name="targetQtr")
-    private String targetQtr;
-
-    @Column(name="targetYear")
-    private String targetYear;
 
     public UUID getId() {
         return this.id;
@@ -84,20 +76,5 @@ public class CheckIn {
         this.checkInDate = checkInDate;
     }
 
-    public String getTargetQtr() {
-        return this.targetQtr;
-    }
-
-    public void setTargetQtr(String targetQtr) {
-        this.targetQtr = targetQtr;
-    }
-
-    public String getTargetYear() {
-        return this.targetYear;
-    }
-
-    public void setTargetYear(String targetYear) {
-        this.targetYear = targetYear;
-    }
 
 }

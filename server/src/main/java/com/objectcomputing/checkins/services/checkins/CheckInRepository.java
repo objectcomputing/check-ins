@@ -14,7 +14,6 @@ public interface CheckInRepository extends CrudRepository<CheckIn,UUID>{
 
     List<CheckIn> findByTeamMemberId(@NotNull UUID teamMemberId);
     List<CheckIn> findByPdlId(@NotNull UUID pdlId);
-    List<CheckIn> findByTargetYearAndTargetQtr(@NotNull String targetYear, @NotNull String targetQtr);
     List<CheckIn> findAll();
 
 }

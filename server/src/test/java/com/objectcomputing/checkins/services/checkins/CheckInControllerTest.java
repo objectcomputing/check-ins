@@ -111,24 +111,6 @@ public class CheckInControllerTest {
         assertEquals(0, response.size());
     }
 
-    // Find By TargetYearAndTargetQtr - when no user data exists
-    @Test
-    public void testGetFindByTargetYearAndTargetQtrReturnsEmptyBody() {
-
-        String testTargetYear = "2019";
-        String testTargetQuarter = "Q4";
-        CheckIn checkin = new CheckIn();
-        List<CheckIn> result = new ArrayList<CheckIn>();
-        result.add(checkin);
-
-        when(mockCheckInRepository.findByTargetYearAndTargetQtr(testTargetYear, testTargetQuarter)).thenReturn(result);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter));
-        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
-
-        assertEquals(0, response.size());
-    }
-
     // Find By PdlId - when no user data exists
     @Test
     public void testGetFindByPdlIdReturnsEmptyBody() {
@@ -174,21 +156,6 @@ public class CheckInControllerTest {
         assertEquals(testPdlId, responseFindByName.get(0).getPdlId());
     }
 
-    // test Find By TargetYearAndTargetQtr
-    @Test
-    public void testGetFindByTargetYearAndTargetQtr() {
-
-        setupTestData();
-
-        HttpRequest requestFindByTargetYearAndTargetQtr = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testYear, testQuarter));
-        List<CheckIn> responseFindByTargetYearAndTargetQtr = client.toBlocking().retrieve(requestFindByTargetYearAndTargetQtr, Argument.of(List.class, mockCheckIn.getClass()));
-        
-        assertEquals(1, responseFindByTargetYearAndTargetQtr.size());
-        assertEquals(testTeamMemberId, responseFindByTargetYearAndTargetQtr.get(0).getTeamMemberId());
-        assertEquals(testYear, responseFindByTargetYearAndTargetQtr.get(0).getTargetYear());
-        assertEquals(testQuarter, responseFindByTargetYearAndTargetQtr.get(0).getTargetQtr());
-    }
-
     // test Find By PdlId
     @Test
     public void testGetFindByPdlId() {
@@ -206,7 +173,7 @@ public class CheckInControllerTest {
     @Test
     public void testPostSave() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, "Q3", "2025");
+        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
 
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -221,15 +188,14 @@ public class CheckInControllerTest {
 
         setupTestData();
 
-        CheckIn testCheckInPut = new CheckIn(testTeamMemberId, testPdlId, testDate, "Q4", "2021");
+        CheckIn testCheckInPut = new CheckIn(testTeamMemberId, testPdlId, testDate);
         testCheckInPut.setId(testId);
 
         final HttpResponse<CheckIn> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testCheckInPut), CheckIn.class);
         assertEquals(HttpStatus.OK, responseFromPut.getStatus());
         assertNotNull(responseFromPut.body());
         assertEquals(testId, responseFromPut.body().getId());
-        assertEquals("Q4", responseFromPut.body().getTargetQtr());
-        assertEquals("2021", responseFromPut.body().getTargetYear());
+
     }
 
     // PUT - Request with empty body
@@ -247,7 +213,7 @@ public class CheckInControllerTest {
     @Test
     public void testPutUpdateWithMissingField() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, testQuarter, testYear);
+        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest.PUT("", testCheckin));
@@ -259,7 +225,7 @@ public class CheckInControllerTest {
 
     private void setupTestData() {
         if(!isDataSetupForTest) {
-            CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate, testQuarter, testYear);
+            CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
             final HttpResponse<CheckIn> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
 
             assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
