@@ -10,6 +10,7 @@ public class GuildCreateDTO {
     @NotBlank
     @Schema(required = true, description = "name of the guild")
     private String name;
+
     @NotBlank
     @Schema(required = true, description = "description of the guild")
     private String description;

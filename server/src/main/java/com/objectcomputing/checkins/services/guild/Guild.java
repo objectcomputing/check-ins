@@ -22,10 +22,12 @@ public class Guild {
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the id of the guild", required = true)
     private UUID guildid;
+
     @NotBlank
     @Column(name = "name", unique = true)
     @Schema(description = "name of the guild")
     private String name;
+
     @NotBlank
     @Column(name = "description")
     @Schema(description = "description of the guild")
