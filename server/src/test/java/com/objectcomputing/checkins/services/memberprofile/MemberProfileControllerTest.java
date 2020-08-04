@@ -41,7 +41,7 @@ public class MemberProfileControllerTest {
     private static LocalDate testDate = LocalDate.now();
     private static String testUser = "testName";
     private static String testRole = "testRole";
-    private static UUID testPdlId = UUID.randomUUID();
+    private static UUID testPdlId = null;
     private static boolean isDataSetupForTest = false;
 
     @BeforeEach
@@ -176,13 +176,21 @@ public class MemberProfileControllerTest {
 
         setupTestData();
 
-        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
+        // Insert a record with valid PdlId
+        MemberProfile testMemberProfile = new MemberProfile("user name", "engineer", testUuid, "testLocation", "testEmail", "testInsperityId", testDate, "testBio");
+        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(HttpRequest.POST("", testMemberProfile), MemberProfile.class);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertNotNull(response.body());
+        UUID pdlId = response.body().getPdlId();
+
+        // test getByPdlId for the inserted record
+        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", pdlId));
         List<MemberProfile> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockMemberProfile.getClass()));  
 
         assertEquals(1, responseFindByPdlId.size());
-        assertEquals(testUser, responseFindByPdlId.get(0).getName());
-        assertEquals(testRole, responseFindByPdlId.get(0).getRole());
-        assertEquals(testPdlId, responseFindByPdlId.get(0).getPdlId());
+        assertEquals("user name", responseFindByPdlId.get(0).getName());
+        assertEquals("engineer", responseFindByPdlId.get(0).getRole());
+        assertEquals(pdlId, responseFindByPdlId.get(0).getPdlId());
     }
 
     // POST - Valid Body

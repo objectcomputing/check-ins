@@ -8,22 +8,18 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-@Controller("/questions")
+@Controller("/services/questions")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="questions")
 public class QuestionController {
-
-    //    an endpoint is created for create
-    //    an endpoint is created for read all
-    //    an endpoint is created for update
 
     @Inject
     private QuestionServices questionService;
@@ -51,46 +47,65 @@ public class QuestionController {
                     .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
         }
     }
-    //  I know these are commented out - I added them before splitting the story and will
-    // need them in the future - please ignore for now
-//
-//    /**
-//     * Find and read a question or questions given its id or text.
-//     *
-//     * @param questionid
-//     * @param text
-//     * @return
-//     */
-//
-//    @Get("/{?questionid,text}")
-//    public List<Question> findByValue(@Nullable UUID questionid, @Nullable String text) {
-//
-//        List<Question> found = questionService.findByValue(questionid, text);
-//        return found;
-//
-//    }
-//
-//    /**
-//     * Update the pending status of a skill.
-//     * @param question
-//     * @return
-//     */
-//    @Put("/")
-//    public HttpResponse<?> update(@Body @Valid Question question) {
-//
-//        if(null != question.getQuestionid()) {
-//            Question updatedQuestion = questionService.update(question);
-//            return HttpResponse
-//                    .ok()
-//                    .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-//                    .body(updatedQuestion);
-//        }
-//
-//        return HttpResponse.badRequest();
-//    }
+
+    /**
+     * Find and read a question given its id.
+     *
+     * @param questionid
+     * @return
+     */
+
+    @Get("/{questionid}")
+    public Question getById(UUID questionid) {
+        Question found = questionService.findByQuestionId(questionid);
+        return found;
+
+    }
+
+    /**
+     * Find questions with a paticular string or read all questions.
+     *
+     * @param text
+     * * @return
+     */
+    @Get("/{?text}")
+    public List<Question> findByText(Optional<String> text) {
+        List<Question> found = null;
+        if(text.isPresent()) {
+            found = questionService.findByText(text.get());
+        } else {
+            found = questionService.readAllQuestions();
+        }
+        return found;
+
+    }
+
+    /**
+     * Update the text of a question.
+     * @param question
+     * @return
+     */
+    @Put("/")
+    public HttpResponse<?> update(@Body @Valid Question question) {
+
+        if(question.getQuestionid() != null) {
+            Question updatedQuestion = questionService.update(question);
+            if (updatedQuestion != null) {
+                return HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+                        .body(updatedQuestion);
+            } else {
+                return HttpResponse.badRequest();
+            }
+        }
+
+        return HttpResponse.badRequest();
+    }
+
 
     protected URI location(UUID uuid) {
-        return URI.create("/questions/" + uuid);
+        return URI.create("/services/questions/" + uuid);
     }
 
 }

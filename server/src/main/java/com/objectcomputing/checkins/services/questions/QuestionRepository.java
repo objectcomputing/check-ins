@@ -14,6 +14,7 @@ public interface QuestionRepository extends CrudRepository<Question, UUID> {
     @Nullable
     Question findByQuestionid(UUID questionid);
     List<Question> findByText(String name);
+    List<Question> findByTextIlike(String name);
     List<Question> findAll();
 
 }

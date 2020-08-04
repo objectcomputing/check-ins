@@ -66,11 +66,11 @@ public class PulseResponseControllerTest {
         if(memberProfileController != null) {
             MemberProfile testMemberProfile = new MemberProfile("TestName", 
                                                                 "TestRole", 
-                                                                UUID.randomUUID(), 
+                                                                null, 
                                                                 "TestLocation", 
                                                                 "TestEmail", 
                                                                 "TestInsperityId", 
-                                                                LocalDate.of(2019, 1, 01), 
+                                                                LocalDate.of(2019, 1, 01),
                                                                 "TestBio");
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
