@@ -36,19 +36,15 @@ public class CheckInController {
     /**
      * Find Check-in details by Member Id, Year, Quarter, PDL Id or find all. 
      * @param teamMemberId
-     * @param targetYear
      * @param pdlId
-     * @param targetQtr
      * @return
      */
-    @Get("/{?teamMemberId,targetYear,targetQtr,pdlId}")
-    public List<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable String targetYear,
-                                     @Nullable UUID  pdlId, @Nullable String targetQtr) {          
+    @Get("/{?teamMemberId,pdlId}")
+    public List<CheckIn> findByValue(@Nullable UUID teamMemberId,
+                                     @Nullable UUID  pdlId) {          
 
        if(teamMemberId != null) {
             return checkInRepository.findByTeamMemberId(teamMemberId);
-        } else if(targetYear != null) {
-            return checkInRepository.findByTargetYearAndTargetQtr(targetYear,targetQtr);
         } else if(pdlId != null) {
             return checkInRepository.findByPdlId(pdlId);
         } else {

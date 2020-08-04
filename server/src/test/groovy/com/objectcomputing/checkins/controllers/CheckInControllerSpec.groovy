@@ -99,27 +99,4 @@ class CheckInControllerSpec extends EmbeddedServerSpecification implements Check
 
     }
 
-    // void 'try to find a member by target year and quarter that does not exist returns empty body'() {
-    //     String testTargetYear = "2019"
-    //     String testTargetQuarter = "Q4"
-
-    //     given: 'an http request'
-    //     URI uri = UriBuilder.of('/check-in/?')
-    //             .queryParam('targetYear', testTargetYear)
-    //             .queryParam('targetQtr', testTargetQuarter)
-    //             .build()
-
-    //     HttpRequest request = HttpRequest.GET(uri)
-
-    //     when:
-    //     HttpResponse<?> response = client.exchange(request)
-
-    //     then:
-    //     response.status() == HttpStatus.OK
-    //     response.getContentLength() == 2
-
-    //     cleanup:
-    //     checkInRepository.deleteAll()
-
-    // }
 }

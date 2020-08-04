@@ -111,24 +111,6 @@ public class CheckInControllerTest {
         assertEquals(0, response.size());
     }
 
-    // // Find By TargetYearAndTargetQtr - when no user data exists
-    // @Test
-    // public void testGetFindByTargetYearAndTargetQtrReturnsEmptyBody() {
-
-    //     String testTargetYear = "2019";
-    //     String testTargetQuarter = "Q4";
-    //     CheckIn checkin = new CheckIn();
-    //     List<CheckIn> result = new ArrayList<CheckIn>();
-    //     result.add(checkin);
-
-    //     when(mockCheckInRepository.findByTargetYearAndTargetQtr(testTargetYear, testTargetQuarter)).thenReturn(result);
-
-    //     HttpRequest request = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testTargetYear, testTargetQuarter));
-    //     List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
-
-    //     assertEquals(0, response.size());
-    // }
-
     // Find By PdlId - when no user data exists
     @Test
     public void testGetFindByPdlIdReturnsEmptyBody() {
@@ -173,21 +155,6 @@ public class CheckInControllerTest {
         assertEquals(testTeamMemberId, responseFindByName.get(0).getTeamMemberId());
         assertEquals(testPdlId, responseFindByName.get(0).getPdlId());
     }
-
-    // // test Find By TargetYearAndTargetQtr
-    // @Test
-    // public void testGetFindByTargetYearAndTargetQtr() {
-
-    //     setupTestData();
-
-    //     HttpRequest requestFindByTargetYearAndTargetQtr = HttpRequest.GET(String.format("/?targetYear=%s&targetQtr=%s", testYear, testQuarter));
-    //     List<CheckIn> responseFindByTargetYearAndTargetQtr = client.toBlocking().retrieve(requestFindByTargetYearAndTargetQtr, Argument.of(List.class, mockCheckIn.getClass()));
-        
-    //     assertEquals(1, responseFindByTargetYearAndTargetQtr.size());
-    //     assertEquals(testTeamMemberId, responseFindByTargetYearAndTargetQtr.get(0).getTeamMemberId());
-    //     assertEquals(testYear, responseFindByTargetYearAndTargetQtr.get(0).getTargetYear());
-    //     assertEquals(testQuarter, responseFindByTargetYearAndTargetQtr.get(0).getTargetQtr());
-    // }
 
     // test Find By PdlId
     @Test
