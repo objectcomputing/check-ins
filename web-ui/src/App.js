@@ -11,7 +11,7 @@ import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
-import { SkillsContextProvider } from "./context/SkillsContext";
+import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
 
@@ -20,7 +20,7 @@ const customHistory = createBrowserHistory();
 function App() {
   return (
     <Router history={customHistory}>
-      <SkillsContextProvider>
+      <AppContextProvider>
         <div>
           <Menu />
           <div
@@ -63,7 +63,7 @@ function App() {
             </Switch>
           </div>
         </div>
-      </SkillsContextProvider>
+      </AppContextProvider>
     </Router>
   );
 }

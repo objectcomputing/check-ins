@@ -9,7 +9,7 @@ export const UPDATE_PDL = "update_pdl";
 export const UPDATE_PDLS = "update_pdls";
 export const UPDATE_CHECKIN = "update_checkin";
 
-const SkillsContext = React.createContext();
+const AppContext = React.createContext();
 
 let skillsFromDB = [];
 
@@ -201,18 +201,16 @@ const reducer = (state, action) => {
   return { ...state };
 };
 
-const SkillsContextProvider = (props) => {
+const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   let value = useMemo(() => {
     return { state, dispatch };
   }, [state]);
   return (
-    <SkillsContext.Provider value={value}>
-      {props.children}
-    </SkillsContext.Provider>
+    <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
   );
 };
 
-const SkillConsumer = SkillsContext.Consumer;
+const SkillConsumer = AppContext.Consumer;
 
-export { SkillConsumer, SkillsContext, SkillsContextProvider };
+export { SkillConsumer, AppContext, AppContextProvider };

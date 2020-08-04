@@ -4,18 +4,18 @@ import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Avatar from "@material-ui/core/Avatar";
 import {
-  SkillsContext,
+  AppContext,
   MY_SKILL_REMOVE,
   MY_SKILL_TOGGLE,
   MY_PROFILE_UPDATE,
-} from "../../context/SkillsContext";
+} from "../../context/AppContext";
 import Search from "./Search";
 import Input from "./Input";
 
 import "./Profile.css";
 
 const Profile = () => {
-  const { state, dispatch } = useContext(SkillsContext);
+  const { state, dispatch } = useContext(AppContext);
   const { mySkills, defaultProfile } = state;
 
   const { bio, email, image_url, name, pdl, role } = defaultProfile;

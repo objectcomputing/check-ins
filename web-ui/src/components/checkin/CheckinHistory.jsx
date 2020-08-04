@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { SkillsContext, UPDATE_CHECKIN } from "../../context/SkillsContext";
+import { AppContext, UPDATE_CHECKIN } from "../../context/AppContext";
 import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -10,7 +10,7 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import "./CheckinHistory.css";
 
 const CheckinsHistory = () => {
-  const { state, dispatch } = useContext(SkillsContext);
+  const { state, dispatch } = useContext(AppContext);
   const { defaultProfile } = state;
 
   const { email, image_url, name, pdl, role, checkins } = defaultProfile;
