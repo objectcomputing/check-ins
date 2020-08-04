@@ -15,7 +15,7 @@ const ResourcesPage = () => {
 
   const getPDF = async (name) => {
     try {
-      const res = await fetch("http://localhost:3000/pdfs/" + name + ".pdf");
+      const res = await fetch("/pdfs" + name + ".pdf");
       if (res.ok) return res.blob();
       const message = await res.text();
       throw new Error(message);
