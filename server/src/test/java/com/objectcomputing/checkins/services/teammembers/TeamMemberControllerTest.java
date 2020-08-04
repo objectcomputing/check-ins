@@ -1,7 +1,8 @@
-package com.objectcomputing.checkins.services.checkins;
+package com.objectcomputing.checkins.services.teammembers;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -18,6 +19,9 @@ import javax.inject.Inject;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
+
+import com.objectcomputing.checkins.services.team.Team;
+import com.objectcomputing.checkins.services.team.TeamController;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,24 +40,25 @@ import io.micronaut.test.annotation.MicronautTest;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @MicronautTest
-public class CheckInControllerTest {
+public class TeamMemberControllerTest {
 
     @Inject
-    @Client("/check-in")
+    @Client("/services/team-member")
     private HttpClient client;
 
     @Inject
     MemberProfileController memberProfileController;
 
-    CheckInRepository mockCheckInRepository = mock(CheckInRepository.class);
-    CheckIn mockCheckIn = mock(CheckIn.class);
+    @Inject
+    TeamController teamController;
+
+    TeamMemberRepository mockTeamMemberRepository = mock(TeamMemberRepository.class);
+    TeamMember mockTeamMember = mock(TeamMember.class);
 
     private static UUID testId;
     private static UUID testTeamMemberId;
-    private static UUID testPdlId;
-    private static LocalDate testDate = LocalDate.now();
-    private static String testQuarter = "Q2";
-    private static String testYear = "2020";
+    private static UUID testTeamId;
+    private static boolean isLead = false;
     private static boolean isDataSetupForTest = false;
 
     @BeforeAll
@@ -63,7 +68,7 @@ public class CheckInControllerTest {
         if(memberProfileController != null) {
             MemberProfile testMemberProfile = new MemberProfile("TestName", 
                                                                 "TestRole", 
-                                                                null, 
+                                                                UUID.randomUUID(), 
                                                                 "TestLocation", 
                                                                 "TestEmail", 
                                                                 "TestInsperityId", 
@@ -74,14 +79,23 @@ public class CheckInControllerTest {
             assertEquals(HttpStatus.CREATED, response.getStatus());
             assertNotNull(response.body());
             testTeamMemberId = ((MemberProfile) response.body()).getUuid();
-            testPdlId = testTeamMemberId;
+        }
+    
+        // setup a record in Team to satisfy foreign key constraint
+        if(teamController != null) {
+            Team testTeam = new Team("TestTeam", "TestDescription");
+
+            final HttpResponse<?> response = teamController.save(testTeam);
+            assertEquals(HttpStatus.CREATED, response.getStatus());
+            assertNotNull(response.body());
+            testTeamId = ((Team) response.body()).getUuid();
         }
     }
-    
+
     @BeforeEach
     void setup() {
-        reset(mockCheckInRepository);
-        reset(mockCheckIn);
+        reset(mockTeamMemberRepository);
+        reset(mockTeamMember);
     }
 
     @Test
@@ -99,31 +113,31 @@ public class CheckInControllerTest {
     public void testGetFindByTeamMemberIdReturnsEmptyBody() {
 
         UUID testTeamMemberId = UUID.randomUUID();
-        CheckIn checkin = new CheckIn();
-        List<CheckIn> result = new ArrayList<CheckIn>();
-        result.add(checkin);
+        TeamMember teammember = new TeamMember();
+        List<TeamMember> result = new ArrayList<TeamMember>();
+        result.add(teammember);
 
-        when(mockCheckInRepository.findByTeamMemberId(testTeamMemberId)).thenReturn(result);
+        when(mockTeamMemberRepository.findByMemberId(testTeamMemberId)).thenReturn(result);
 
-        HttpRequest request = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
-        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
+        HttpRequest request = HttpRequest.GET(String.format("/?memberId=%s", testTeamMemberId));
+        List<TeamMember> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
 
         assertEquals(0, response.size());
     }
 
-    // Find By PdlId - when no user data exists
+    // Find By TeamMId - when no user data exists
     @Test
-    public void testGetFindByPdlIdReturnsEmptyBody() {
+    public void testGetFindByTeamIdReturnsEmptyBody() {
 
-        UUID testId = UUID.randomUUID();
-        CheckIn checkin = new CheckIn();
-        List<CheckIn> result = new ArrayList<CheckIn>();
-        result.add(checkin);
+        UUID testTeamId = UUID.randomUUID();
+        TeamMember teammember = new TeamMember();
+        List<TeamMember> result = new ArrayList<TeamMember>();
+        result.add(teammember);
 
-        when(mockCheckInRepository.findByPdlId(testId)).thenReturn(result);
+        when(mockTeamMemberRepository.findByMemberId(testTeamId)).thenReturn(result);
 
-        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", testId));
-        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
+        HttpRequest request = HttpRequest.GET(String.format("/?teamId=%s", testTeamId));
+        List<TeamMember> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
 
         assertEquals(0, response.size());
     }
@@ -135,11 +149,8 @@ public class CheckInControllerTest {
         setupTestData();
 
         HttpRequest requestFindAll = HttpRequest.GET("");
-        List<CheckIn> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockCheckIn.getClass()));
-
-        assertEquals(1, responseFindAll.size());
-        assertEquals(testTeamMemberId, responseFindAll.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindAll.get(0).getPdlId());
+        List<TeamMember> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeamMember.getClass()));
+        assertTrue(responseFindAll.size()>0);
     }
 
     // test Find By TeamMemberId
@@ -148,38 +159,25 @@ public class CheckInControllerTest {
 
         setupTestData();
 
-        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
-        List<CheckIn> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockCheckIn.getClass()));
+        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?memberId=%s", testTeamMemberId));
+        List<TeamMember> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockTeamMember.getClass()));
 
         assertEquals(1, responseFindByName.size());
-        assertEquals(testTeamMemberId, responseFindByName.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindByName.get(0).getPdlId());
-    }
-
-    // test Find By PdlId
-    @Test
-    public void testGetFindByPdlId() {
-
-        setupTestData();
-
-        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
-        List<CheckIn> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockCheckIn.getClass()));  
-        assertEquals(1, responseFindByPdlId.size());
-        assertEquals(testTeamMemberId, responseFindByPdlId.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindByPdlId.get(0).getPdlId());
+        assertEquals(testTeamMemberId, responseFindByName.get(0).getMemberId());
+        assertEquals(testTeamId, responseFindByName.get(0).getTeamId());
     }
 
     // POST - Valid Body
     @Test
     public void testPostSave() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
+        TeamMember testTeamMember = new TeamMember(testTeamId ,testTeamMemberId, isLead);
 
-        final HttpResponse<CheckIn> response = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(HttpRequest.POST("", testTeamMember), TeamMember.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body());
-        assertNotNull(response.body().getId());
-        assertEquals(testTeamMemberId, response.body().getTeamMemberId());
+        assertNotNull(response.body().getUuid());
+        assertEquals(testTeamMemberId, response.body().getMemberId());
     }
 
     // PUT - Valid Body
@@ -188,22 +186,22 @@ public class CheckInControllerTest {
 
         setupTestData();
 
-        CheckIn testCheckInPut = new CheckIn(testTeamMemberId, testPdlId, testDate);
-        testCheckInPut.setId(testId);
+        TeamMember testTeamMemberPut = new TeamMember(testTeamId ,testTeamMemberId, true);
+        testTeamMemberPut.setUuid(testId);
 
-        final HttpResponse<CheckIn> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testCheckInPut), CheckIn.class);
+        final HttpResponse<TeamMember> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testTeamMemberPut), TeamMember.class);
         assertEquals(HttpStatus.OK, responseFromPut.getStatus());
         assertNotNull(responseFromPut.body());
-        assertEquals(testId, responseFromPut.body().getId());
-
+        assertEquals(testId, responseFromPut.body().getUuid());
+        assertEquals(true, responseFromPut.body().getIsLead());
     }
 
     // PUT - Request with empty body
     @Test
     public void testPutUpdateForEmptyInput() {
-        CheckIn testCheckIn = new CheckIn();
+        TeamMember testTeamMember = new TeamMember();
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testCheckIn));
+            client.toBlocking().exchange(HttpRequest.PUT("", testTeamMember));
         });
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
@@ -213,10 +211,10 @@ public class CheckInControllerTest {
     @Test
     public void testPutUpdateWithMissingField() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
+        TeamMember TeamMember = new TeamMember(testTeamId ,testTeamMemberId, isLead);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testCheckin));
+            client.toBlocking().exchange(HttpRequest.PUT("", TeamMember));
         });
 
         assertNotNull(thrown);
@@ -225,12 +223,12 @@ public class CheckInControllerTest {
 
     private void setupTestData() {
         if(!isDataSetupForTest) {
-            CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
-            final HttpResponse<CheckIn> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
+            TeamMember testTeamMember = new TeamMember(testTeamId ,testTeamMemberId, isLead);
+            final HttpResponse<TeamMember> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testTeamMember), TeamMember.class);
 
             assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
             assertNotNull(responseFromPost.body());
-            testId = responseFromPost.body().getId();
+            testId = responseFromPost.body().getUuid();
 
             isDataSetupForTest = true;
         }
