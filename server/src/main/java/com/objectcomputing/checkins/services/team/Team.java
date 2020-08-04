@@ -1,14 +1,11 @@
 package com.objectcomputing.checkins.services.team;
 
-import java.sql.Date;
 import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -18,9 +15,9 @@ import io.micronaut.data.model.DataType;
 public class Team {
 
     public Team(String name, String description) {
-                        this.name=name;
-                        this.description=description;
-                        }
+        this.name=name;
+        this.description=description;
+        }
 
     public Team() {
     }

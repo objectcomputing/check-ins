@@ -1,13 +1,11 @@
 package com.objectcomputing.checkins.services.teammembers;
 
-import java.sql.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -18,10 +16,10 @@ import io.micronaut.data.model.DataType;
 public class TeamMember {
 
     public TeamMember(UUID teamId, UUID memberId, boolean isLead) {
-                        this.teamId=teamId;
-                        this.memberId=memberId;
-                        this.isLead=isLead;
-                        }
+        this.teamId=teamId;
+        this.memberId=memberId;
+        this.isLead=isLead;
+        }
 
     public TeamMember() {
     }

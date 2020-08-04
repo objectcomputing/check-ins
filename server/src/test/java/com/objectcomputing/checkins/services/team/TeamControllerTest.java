@@ -33,7 +33,7 @@ import io.micronaut.test.annotation.MicronautTest;
 public class TeamControllerTest {
 
     @Inject
-    @Client("/team")
+    @Client("/services/team")
     private HttpClient client;
 
     TeamRepository mockTeamRepository = mock(TeamRepository.class);
