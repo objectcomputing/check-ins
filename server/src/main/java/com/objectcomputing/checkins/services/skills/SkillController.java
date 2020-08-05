@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -13,9 +14,10 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-@Controller("/skill")
+@Controller("/services/skill")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +64,16 @@ public class SkillController {
 
         skillServices.loadSkills(skillslist);
 
+    }
+
+    /**
+     * Get all Skills
+     *
+     * @return {@link Set < Skill >}
+     */
+    @Get("/all")
+    public Set<Skill> readAll() {
+        return skillServices.readAll();
     }
 
     /**

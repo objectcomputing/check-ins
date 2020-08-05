@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -34,6 +36,12 @@ public class SkillServices {
 
         return returned;
 
+    }
+
+    public Set<Skill> readAll() {
+        Set<Skill> actionItems = new HashSet<>();
+        skillRepository.findAll().forEach(actionItems::add);
+        return actionItems;
     }
 
     protected List<Skill> findByValue(String name, Boolean pending) {
