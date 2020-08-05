@@ -6,7 +6,6 @@ import MyTeamPage from "./pages/MyTeamPage";
 import EditPDLPage from "./pages/EditPDLPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import UploadNotesPage from "./pages/UploadNotesPage";
-import CheckinsPage from "./pages/CheckinsPage";
 import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
@@ -14,6 +13,7 @@ import Profile from "./components/profile/Profile";
 import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
+import MyPersonnelPage from "./pages/MyPersonnelPage";
 
 const customHistory = createBrowserHistory();
 
@@ -52,9 +52,9 @@ function App() {
                 <Header title="Profile" />
                 <Profile />
               </Route>
-              <Route path="/checkins">
-                <Header />
-                <CheckinsPage />
+              <Route path="/personnel">
+                <Header title="My Personnel" />
+                <MyPersonnelPage />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />

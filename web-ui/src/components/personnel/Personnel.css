@@ -1,0 +1,33 @@
+.personnel-container {
+  width: fit-content;
+  height: fit-content;
+  border: solid 3px black;
+}
+
+.member-image {
+  max-width: 64px;
+  max-height: 64px;
+  margin: auto;
+}
+
+.personnel-info, .personnel-info-hidden {
+  text-align: left;
+  margin-left: 15px;
+  display: block;
+}
+
+.personnel-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.image-div {
+  cursor: auto;
+  margin-left : 15px;
+  text-align: left;
+}
+
+.info-div {
+  display: block;
+}
