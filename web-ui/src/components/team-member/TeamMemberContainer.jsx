@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
-import { SkillsContext } from "../../context/SkillsContext";
+import { AppContext } from "../../context/AppContext";
 
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
-  const { state } = useContext(SkillsContext);
+  const { state } = useContext(AppContext);
   const { defaultTeamMembers } = state;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
