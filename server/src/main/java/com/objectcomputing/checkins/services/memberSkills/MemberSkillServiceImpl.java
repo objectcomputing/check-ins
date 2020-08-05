@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +66,10 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
 
         return skillList;
 
+    }
+
+    public void delete(@NotNull UUID id) {
+        memberSkillRepository.deleteById(id);
     }
 
     @Override

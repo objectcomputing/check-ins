@@ -11,4 +11,6 @@ public interface MemberSkillsServices {
     MemberSkill update(MemberSkill m);
 
     List<MemberSkill> findByFields(UUID memberid, UUID skillid);
+
+    void delete(UUID id);
 }

@@ -55,6 +55,18 @@ public class MemberSkillController {
         }
     }
 
+    /**
+     * Delete Member skill
+     *
+     * @param id, id of {@link MemberSkill} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteMemberSkill(UUID id) {
+        memberSkillsService.delete(id);
+        return HttpResponse
+                .ok();
+    }
+
     protected URI location(UUID uuid) {
         return URI.create("/services/member-skill/" + uuid);
     }
