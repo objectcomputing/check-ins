@@ -1,13 +1,16 @@
-name: Gradle Build - Production
+name: Gradle Build & Deploy - Production
 on:
   push:
     branches:
       - 'master'
       - 'release/*'
-  pull_request:
-    branches: [master]
+env:
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  SERVICE_NAME: checkins-develop
+  GITHUB_SHA: ${{ github.sha }}
+  GCE_INSTANCE_ZONE: us-central1-a
 jobs:
-  build:
+  build_deploy_gce_gcp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,3 +22,25 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew assemble
+      - name: Setup gcloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '290.0.1'
+          service_account_key: ${{ secrets.RUN_SA_KEY }}
+          project_id: ${{ secrets.RUN_PROJECT }}
+      - name: Build and push image to Google Container Registry
+        run: |-
+          gcloud builds submit \
+            --quiet \
+            --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      - name: Deploy image to Compute Engine Instance
+        run: |-
+          gcloud compute instances update-container "$SERVICE_NAME" \
+            --zone "$GCE_INSTANCE_ZONE" \
+            --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --container-env CLOUD_DB_CONNECTION_NAME=${{ secrets.DEV_DB_CONNECTION_NAME }}, \
+                            DB_NAME=${{ secrets.DEV_DB_NAME }}, \
+                            DATASOURCES_DEFAULT_PASSWORD=${{ secrets.DEV_DB_PASSWORD }}, \
+                            DATASOURCES_DEFAULT_USERNAME=${{ secrets.DEV_DB_USERNAME }}, \
+                            OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}, \
+                            OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}
