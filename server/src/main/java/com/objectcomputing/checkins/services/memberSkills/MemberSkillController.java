@@ -1,12 +1,13 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,15 @@ public class MemberSkillController {
 
     @Inject
     private MemberSkillsServices memberSkillsService;
+
+    @Error(exception = MemberSkillsBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillsBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
 
     /**
      * Create and save a new member skill.
