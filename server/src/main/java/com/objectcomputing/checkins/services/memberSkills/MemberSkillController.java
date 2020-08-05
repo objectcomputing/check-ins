@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/member-skill")
@@ -65,6 +67,16 @@ public class MemberSkillController {
         memberSkillsService.delete(id);
         return HttpResponse
                 .ok();
+    }
+
+    /**
+     * Get all MemberSkills
+     *
+     * @return {@link Set < MemberSkill >}
+     */
+    @Get("/all")
+    public Set<MemberSkill> readAll() {
+        return memberSkillsService.readAll();
     }
 
     protected URI location(UUID uuid) {

@@ -1,11 +1,14 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class MemberSkillServiceImpl implements MemberSkillsServices {
@@ -41,6 +44,12 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
         }
         return memberSkillRet;
 
+    }
+
+    public Set<MemberSkill> readAll() {
+        Set<MemberSkill> memberSkillList = new HashSet<>();
+        memberSkillRepository.findAll().forEach(memberSkillList::add);
+        return memberSkillList;
     }
 
     public List<MemberSkill> findByFields(UUID memberid, UUID skillid) {
