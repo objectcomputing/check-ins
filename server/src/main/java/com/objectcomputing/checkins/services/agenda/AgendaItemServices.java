@@ -1,0 +1,25 @@
+package com.objectcomputing.checkins.services.agenda;
+
+import java.util.Set;
+import java.util.UUID;
+
+public interface AgendaItemServices {
+
+    AgendaItem save(AgendaItem agendaItem);
+
+    AgendaItem read(UUID id);
+
+    Set<AgendaItem> readAll();
+
+    AgendaItem update(AgendaItem agendaItem);
+
+    Set<AgendaItem> findByFields(UUID checkinid, UUID createdbyid);
+
+    void delete(UUID id);
+}
+
+// package com.objectcomputing.checkins.services.agenda;
+
+// public class AgendaItemServices {
+    
+// }
