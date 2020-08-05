@@ -67,9 +67,6 @@ const HomePage = () => {
           Documents
         </h1>
         <form onSubmit={onSubmit}>
-          {/* <fieldset
-        id="upload-fs" className="fieldset" style={{ border: "none" }}
-        > */}
           <input
             type="file"
             name="file"
@@ -77,11 +74,6 @@ const HomePage = () => {
             className="uploader"
             onchange="updateName();"
           />
-          {/* <label for="file" id="filesName">
-            Choose a file
-          </label> */}
-          {/* </fieldset> */}
-          {/* <p> */}
           {loading ? (
             <CircularProgress />
           ) : (
@@ -104,7 +96,6 @@ const HomePage = () => {
               </button>
             </div>
           )}
-          {/* </p> */}
         </form>
         <Snackbar
           autoHideDuration={5000}
