@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import DescriptionIcon from "@material-ui/icons/Description";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -55,35 +57,19 @@ const HomePage = () => {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
+        marginLeft: "150px",
+        marginTop: "50px",
       }}
     >
-      <h2>Quarterly Development Check-ins</h2>
-      <p>
-        The role of Professional Development Lead is vital to the continued
-        growth of our organization and our team members. Thank you for your time
-        and dedication to our team!
-      </p>
-      <p>
-        You can submit any Check-in notes or other relevant documentation that
-        you would like to persist for future PDLs or for consideration in merit
-        discussions via the form below. Access to files uploaded here will be
-        restricted to the team member, as well as those who require them to
-        perform their role (HR personnel, PDLs, etc).
-      </p>
-      <p>
-        If you should require a copy of any of the documents that you have
-        submitted here, please email&nbsp;
-        <a href="mailto:hr@objectcomputing.com">hr@objectcomputing.com</a>
-      </p>
-
-      <p>
-        Please note that the following form can only upload one file at a time
-        (max size of 100MB).
-      </p>
-      <form onSubmit={onSubmit}>
-        <fieldset id="upload-fs" className="fieldset">
+      <div>
+        <h1 style={{ display: "flex", alignItems: "center" }}>
+          <DescriptionIcon />
+          Documents
+        </h1>
+        <form onSubmit={onSubmit}>
+          {/* <fieldset
+        id="upload-fs" className="fieldset" style={{ border: "none" }}
+        > */}
           <input
             type="file"
             name="file"
@@ -91,30 +77,43 @@ const HomePage = () => {
             className="uploader"
             onchange="updateName();"
           />
-          <label for="file" id="filesName">
+          {/* <label for="file" id="filesName">
             Choose a file
-          </label>
-        </fieldset>
-        <p>
+          </label> */}
+          {/* </fieldset> */}
+          {/* <p> */}
           {loading ? (
             <CircularProgress />
           ) : (
-            <button type="submit" name="submit">
-              Upload
-            </button>
+            <div style={{ display: "flex" }}>
+              <button
+                type="submit"
+                name="submit"
+                style={{
+                  background: "none",
+                  border: "none",
+                  minWidth: "50px",
+                  paddingLeft: "0px",
+                }}
+              >
+                <AddCircleIcon></AddCircleIcon>
+              </button>
+              <p>Upload</p>
+            </div>
           )}
-        </p>
-      </form>
-      <Snackbar
-        autoHideDuration={5000}
-        open={open}
-        onClose={handleClose}
-        style={{ left: "56%", bottom: "50px" }}
-      >
-        <Alert onClose={handleClose} severity={severity}>
-          {responseText}
-        </Alert>
-      </Snackbar>
+          {/* </p> */}
+        </form>
+        <Snackbar
+          autoHideDuration={5000}
+          open={open}
+          onClose={handleClose}
+          style={{ left: "56%", bottom: "50px" }}
+        >
+          <Alert onClose={handleClose} severity={severity}>
+            {responseText}
+          </Alert>
+        </Snackbar>
+      </div>
     </div>
   );
 };
