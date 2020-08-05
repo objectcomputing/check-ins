@@ -90,15 +90,18 @@ const HomePage = () => {
                 type="submit"
                 name="submit"
                 style={{
+                  alignItems: "center",
                   background: "none",
                   border: "none",
+                  display: "flex",
+                  cursor: "pointer",
                   minWidth: "50px",
                   paddingLeft: "0px",
                 }}
               >
                 <AddCircleIcon></AddCircleIcon>
+                Upload
               </button>
-              <p>Upload</p>
             </div>
           )}
           {/* </p> */}
