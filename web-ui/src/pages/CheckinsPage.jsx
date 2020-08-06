@@ -8,10 +8,10 @@ const CheckinsPage = () => {
   return (
     <div className="container">
       <div className="contents">
-        < CheckinsHistory />
+        <CheckinsHistory/>
       </div>
       <div className="right-sidebar">
-        < Personnel />
+        <Personnel/>
       </div>
     </div>
   );
