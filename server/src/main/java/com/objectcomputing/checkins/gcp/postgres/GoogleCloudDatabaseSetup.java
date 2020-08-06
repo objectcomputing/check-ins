@@ -32,10 +32,6 @@ public class GoogleCloudDatabaseSetup implements BeanCreatedEventListener<Dataso
             @Property(name = DATASOURCES_DEFAULT_USERNAME) String defaultUsername,
             @Property(name = DATASOURCES_DEFAULT_PASSWORD) String defaultPassword) {
         this.cloudSqlInstanceName = cloudSqlInstanceName;
-        LOG.warn("cloudSqlInstanceName = {}", cloudSqlInstanceName);
-        LOG.warn("defaultUsername = {}", defaultUsername);
-        LOG.warn("defaultPassword = {}", defaultPassword);
-        LOG.warn("DB_NAME = {}", DB_NAME);
     }
 
     @Override
@@ -45,7 +41,6 @@ public class GoogleCloudDatabaseSetup implements BeanCreatedEventListener<Dataso
         config.addDataSourceProperty("cloudSqlInstance", cloudSqlInstanceName);
         if (DB_NAME != null) {
             config.setJdbcUrl(String.format("jdbc:postgresql:///%s", DB_NAME));
-            LOG.warn("JDBC URL = {}", String.format("jdbc:postgresql:///%s", DB_NAME));
         }
         return config;
     }
