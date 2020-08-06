@@ -13,7 +13,9 @@
 .personnel-info, .personnel-info-hidden {
   text-align: left;
   margin-left: 15px;
-  display: block;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
 }
 
 .personnel-info-hidden {
@@ -26,6 +28,8 @@
   cursor: auto;
   margin-left : 15px;
   text-align: left;
+  margin-bottom: 25px;
+  margin-top: 25px;
 }
 
 .info-div {

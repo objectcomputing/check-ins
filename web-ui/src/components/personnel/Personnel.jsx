@@ -1,30 +1,32 @@
 import React, { useContext, useState } from "react";
 import { getMembersByPDL } from "../../api/member";
 import { getMemberCheckinsByPDL } from "../../api/checkins";
-import "./Personnel.css";
 import { AppContext } from "../../context/AppContext";
 
-const PersonnelComponent = () => {
+import "./Personnel.css";
+
+const Personnel = () => {
   const { state } = useContext(AppContext);
   const user = state.user;
   const [ personnel, setPersonnel ] = useState();
   const [ checkins, setCheckins ] = useState();
 
-  // Get team members 
+  // Get personnel 
   React.useEffect(() => {
     async function updatePersonnel() {
       if(user.uuid) {
         let res = await getMembersByPDL(user.uuid);
-        if(res.data && !res.error) {
-          let data = {pdlId: user.uuid, data: res.data}
-          setPersonnel(data);
+        let data = res && res.payload && res.payload.status === 200 ? res.payload.data : null
+        if(data && !res.error) {
+          let personnelData = {pdlId: user.uuid, data: data}
+          setPersonnel(personnelData);
         }
       }
     };
     updatePersonnel();
   }, [user.uuid]);
-
  
+  // Get checkins per personnel
   React.useEffect(() => {
     async function updateCheckins() {
       if(personnel && personnel.pdlId && personnel.data) {
@@ -32,9 +34,10 @@ const PersonnelComponent = () => {
         for(const person of personnel.data) {
           let res = await getMemberCheckinsByPDL(person.uuid, personnel.pdlId)
           let checkIn = undefined
-          if(res && res.data && res.data.length > 0 && !res.error) {
-            res.data.sort((a, b) => (a.checkInDate < b.checkInDate) ? 1 : -1)
-            checkIn = res.data[0]
+          let data = res && res.payload && res.payload.status === 200 ? res.payload.data : null
+          if(data && data.length > 0 && !res.error) {
+            data.sort((a, b) => (a.checkInDate < b.checkInDate) ? 1 : -1)
+            checkIn = data[0]
           }
           let personWithCheckin = Object.assign({}, person)
           personWithCheckin.checkIn = checkIn
@@ -46,8 +49,9 @@ const PersonnelComponent = () => {
     updateCheckins();
   },[personnel]);
 
-  function createEntry(person, checkIn) {
-    let key = undefined;
+  // Create entry of member and their last checkin
+  function createEntry(person, checkIn, key) {
+    key = key ? key : undefined;
     let name = "Team Member"
     let lastCheckIn = "Unknown"
     let infoClassName = "personnel-info-hidden"
@@ -58,14 +62,12 @@ const PersonnelComponent = () => {
         lastCheckIn = <a href={`/checkin/${checkIn.id}`}>{checkInDate}</a>
     }
 
-    console.log(person)
     if(person) {
       let id = person.id ? person.id : null
       name = person.name ? person.name : id ? id : name
-      key = id ? `${id}Personnel` : key
+      key = id && !key ? `${id}Personnel` : key
       infoClassName = "personnel-info"
     }
-    console.log(key)
 
     return (
       <div key={key} className="image-div">
@@ -78,15 +80,16 @@ const PersonnelComponent = () => {
     )
   }
 
+  // Create the entries for the personnel container
   const createPersonnelEntries = () => {
     if(checkins && checkins.length > 0) {
-      return checkins.map(person => createEntry(person, person.checkIn))
+      return checkins.map(person => createEntry(person, person.checkIn, null))
     }  else if(personnel && personnel.data && personnel.data.length > 0) {
-      return personnel.data.map(person => createEntry(person, null))
+      return personnel.data.map(person => createEntry(person, null, null))
     } else {
       let fake = Array(3);
       for(let i = 0; i < fake.length; i++) {
-        fake[i] = createEntry({id: i+1}, null)
+        fake[i] = createEntry(null, null, `${i+1}Personnel`)
       }
       return fake
     }
@@ -100,4 +103,4 @@ const PersonnelComponent = () => {
   )
 };
 
-export default PersonnelComponent;
+export default Personnel;

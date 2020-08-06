@@ -10,10 +10,10 @@ import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
+import CheckinsPage from "./pages/CheckinsPage";
 import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
-import MyPersonnelPage from "./pages/MyPersonnelPage";
 
 const customHistory = createBrowserHistory();
 
@@ -52,9 +52,9 @@ function App() {
                 <Header title="Profile" />
                 <Profile />
               </Route>
-              <Route path="/personnel">
-                <Header title="My Personnel" />
-                <MyPersonnelPage />
+              <Route path="/checkins">
+                <Header title="Check-ins" />
+                <CheckinsPage />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />

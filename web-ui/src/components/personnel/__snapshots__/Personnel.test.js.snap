@@ -19,36 +19,12 @@ exports[`renders correctly with null 1`] = `
       className="info-div"
     >
       <p
-        className="personnel-info"
+        className="personnel-info-hidden"
       >
-        1
+        Team Member
       </p>
       <p
-        className="personnel-info"
-      >
-        Last Check-in: 
-        Unknown
-      </p>
-    </div>
-  </div>
-  <div
-    className="image-div"
-  >
-    <img
-      alt="personnel pic"
-      className="member-image"
-      src="default_profile.jpg"
-    />
-    <div
-      className="info-div"
-    >
-      <p
-        className="personnel-info"
-      >
-        2
-      </p>
-      <p
-        className="personnel-info"
+        className="personnel-info-hidden"
       >
         Last Check-in: 
         Unknown
@@ -67,12 +43,36 @@ exports[`renders correctly with null 1`] = `
       className="info-div"
     >
       <p
-        className="personnel-info"
+        className="personnel-info-hidden"
       >
-        3
+        Team Member
       </p>
       <p
-        className="personnel-info"
+        className="personnel-info-hidden"
+      >
+        Last Check-in: 
+        Unknown
+      </p>
+    </div>
+  </div>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="personnel pic"
+      className="member-image"
+      src="default_profile.jpg"
+    />
+    <div
+      className="info-div"
+    >
+      <p
+        className="personnel-info-hidden"
+      >
+        Team Member
+      </p>
+      <p
+        className="personnel-info-hidden"
       >
         Last Check-in: 
         Unknown
