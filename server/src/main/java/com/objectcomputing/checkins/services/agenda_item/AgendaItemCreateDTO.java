@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.agenda;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,9 +44,3 @@ public class AgendaItemCreateDTO {
         this.description = description;
     }
 }
-
-// package com.objectcomputing.checkins.services.agenda;
-
-// public class AgendaCreateDTO {
-    
-// }

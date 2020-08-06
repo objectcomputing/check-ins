@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.agenda;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

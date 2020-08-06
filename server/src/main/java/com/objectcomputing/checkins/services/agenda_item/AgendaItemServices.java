@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.agenda;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import java.util.Set;
 import java.util.UUID;
@@ -17,9 +17,3 @@ public interface AgendaItemServices {
 
     void delete(UUID id);
 }
-
-// package com.objectcomputing.checkins.services.agenda;
-
-// public class AgendaItemServices {
-    
-// }

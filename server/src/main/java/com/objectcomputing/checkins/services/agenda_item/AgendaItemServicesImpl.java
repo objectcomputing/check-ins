@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.agenda;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -88,10 +88,3 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         agendaItemRepo.deleteById(id);
     }
 }
-
-
-// package com.objectcomputing.checkins.services.agenda;
-
-// public class AgendaItemServiceImple {
-    
-// }

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.agenda;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;
