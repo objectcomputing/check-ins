@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -78,6 +77,19 @@ public class MemberSkillController {
     public Set<MemberSkill> readAll() {
         return memberSkillsService.readAll();
     }
+
+    /**
+     * Get MemberSkill based off id
+     *
+     * @param id {@link UUID} of the member skill entry
+     * @return {@link MemberSkill}
+     */
+    @Get("/{id}")
+    public MemberSkill readMemberSkill(UUID id) {
+        return memberSkillsService.read(id);
+    }
+
+
 
     protected URI location(UUID uuid) {
         return URI.create("/services/member-skill/" + uuid);

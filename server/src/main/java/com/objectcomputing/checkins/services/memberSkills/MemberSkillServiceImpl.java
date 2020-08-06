@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
@@ -52,6 +51,10 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
         return memberSkillList;
     }
 
+    public MemberSkill read(UUID id) {
+        return memberSkillRepository.findById(id).orElse(null);
+    }
+
     public List<MemberSkill> findByFields(UUID memberid, UUID skillid) {
         List<MemberSkill> memberSkillList = null;
 
@@ -79,11 +82,6 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
 
     public void delete(@NotNull UUID id) {
         memberSkillRepository.deleteById(id);
-    }
-
-    @Override
-    public MemberSkill read(UUID uuid) {
-        return null;
     }
 
     @Override
