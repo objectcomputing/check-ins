@@ -50,8 +50,8 @@ const Personnel = () => {
   },[personnel]);
 
   // Create entry of member and their last checkin
-  function createEntry(person, checkIn, key) {
-    key = key ? key : undefined;
+  function createEntry(person, checkIn, keyInput) {
+    let key = keyInput ? keyInput : undefined;
     let name = "Team Member"
     let lastCheckIn = "Unknown"
     let infoClassName = "personnel-info-hidden"
