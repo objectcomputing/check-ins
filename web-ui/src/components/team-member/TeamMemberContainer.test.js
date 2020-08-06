@@ -1,6 +1,6 @@
 import React from "react";
 import TeamMemberContainer from "./TeamMemberContainer";
-import { SkillsContextProvider } from "../../context/SkillsContext";
+import { AppContextProvider } from "../../context/AppContext";
 
 const testProfile = [
   { name: "holmes", image_url: "" },
@@ -9,8 +9,8 @@ const testProfile = [
 
 it("renders correctly", () => {
   snapshot(
-    <SkillsContextProvider value={null}>
+    <AppContextProvider value={null}>
       <TeamMemberContainer profiles={testProfile} />
-    </SkillsContextProvider>
+    </AppContextProvider>
   );
 });

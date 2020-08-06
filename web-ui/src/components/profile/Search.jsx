@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { SkillsContext, MY_SKILL_ADD } from "../../context/SkillsContext";
+import { AppContext, MY_SKILL_ADD } from "../../context/AppContext";
 import axios from "axios";
 import Fuse from "fuse.js";
 
 import "./Search.css";
 
 const Search = ({ onClick }) => {
-  const { state, dispatch } = useContext(SkillsContext);
+  const { state, dispatch } = useContext(AppContext);
   const { skillsList, mySkills } = state;
   const [pattern, setPattern] = useState("");
 

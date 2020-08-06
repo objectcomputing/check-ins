@@ -13,9 +13,10 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-@Controller("/skill")
+@Controller("/services/skill")
 @Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -62,6 +63,16 @@ public class SkillController {
 
         skillServices.loadSkills(skillslist);
 
+    }
+
+    /**
+     * Get all Skills
+     *
+     * @return {@link Set < Skill >}
+     */
+    @Get("/all")
+    public Set<Skill> readAll() {
+        return skillServices.readAll();
     }
 
     /**
