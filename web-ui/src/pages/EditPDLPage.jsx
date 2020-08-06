@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import EditPDL from "../components/admin/EditPDL";
-import { SkillsContext, UPDATE_PDLS } from "../context/SkillsContext";
+import { AppContext, UPDATE_PDLS } from "../context/AppContext";
 
 const EditPDLPage = () => {
-  const { state, dispatch } = useContext(SkillsContext);
+  const { state, dispatch } = useContext(AppContext);
   const { defaultTeamMembers } = state;
 
   const [selectedProfiles, setSelectedProfiles] = useState([]);
