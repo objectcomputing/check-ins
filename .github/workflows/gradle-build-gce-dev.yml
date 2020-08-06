@@ -1,9 +1,8 @@
-name: Gradle Build & Deploy - Production
+name: Gradle Build & Deploy GCE
 on:
   push:
     branches:
-      - 'master'
-      - 'release/*'
+      - 'feature-**/*'
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   SERVICE_NAME: checkins-develop
