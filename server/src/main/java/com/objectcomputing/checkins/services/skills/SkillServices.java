@@ -39,9 +39,9 @@ public class SkillServices {
     }
 
     public Set<Skill> readAll() {
-        Set<Skill> actionItems = new HashSet<>();
-        skillRepository.findAll().forEach(actionItems::add);
-        return actionItems;
+        Set<Skill> skills = new HashSet<>();
+        skillRepository.findAll().forEach(skills::add);
+        return skills;
     }
 
     protected List<Skill> findByValue(String name, Boolean pending) {
