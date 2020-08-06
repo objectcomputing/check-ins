@@ -43,4 +43,4 @@ jobs:
           gcloud compute instances update-container $SERVICE_NAME \
             --zone $GCE_INSTANCE_ZONE \
             --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-            --container-env=["CLOUD_DB_CONNECTION_NAME"=${{ secrets.DEV_DB_CONNECTION_NAME }},"DB_NAME"=${{ secrets.DEV_DB_NAME }},"DATASOURCES_DEFAULT_PASSWORD"=${{ secrets.DEV_DB_PASSWORD }},"DATASOURCES_DEFAULT_USERNAME"=${{ secrets.DEV_DB_USERNAME }},"OAUTH_CLIENT_ID"=${{ secrets.OAUTH_CLIENT_ID }},"OAUTH_CLIENT_SECRET"=${{ secrets.OAUTH_CLIENT_SECRET }}]
+            --container-env=[CLOUD_DB_CONNECTION_NAME="${{ secrets.DEV_DB_CONNECTION_NAME }}",DB_NAME="${{ secrets.DEV_DB_NAME }}",DATASOURCES_DEFAULT_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}",DATASOURCES_DEFAULT_USERNAME="${{ secrets.DEV_DB_USERNAME }}",OAUTH_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}",OAUTH_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }}"]
