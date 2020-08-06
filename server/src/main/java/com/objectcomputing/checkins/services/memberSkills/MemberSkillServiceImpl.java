@@ -55,16 +55,18 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
         return memberSkillRepository.findById(id).orElse(null);
     }
 
-    public List<MemberSkill> findByFields(UUID memberid, UUID skillid) {
-        List<MemberSkill> memberSkillList = null;
+    public Set<MemberSkill> findByFields(UUID memberid, UUID skillid) {
+        Set<MemberSkill> memberSkills = new HashSet<>();
+        memberSkillRepository.findAll().forEach(memberSkills::add);
 
-        if(memberid != null) {
-            memberSkillList = findByMemberid(memberid);
-        }  else if(skillid != null) {
-            memberSkillList = findBySkillid(skillid);
+        if (memberid != null) {
+            memberSkills.retainAll(memberSkillRepository.findByMemberid(memberid));
+        }
+        if (skillid != null) {
+            memberSkills.retainAll(memberSkillRepository.findBySkillid(skillid));
         }
 
-        return memberSkillList;
+        return memberSkills;
     }
 
     private List<MemberSkill> findByMemberid(UUID memberid) {

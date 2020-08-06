@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberSkills;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,7 +13,7 @@ public interface MemberSkillsServices {
 
     MemberSkill update(MemberSkill m);
 
-    List<MemberSkill> findByFields(UUID memberid, UUID skillid);
+    Set<MemberSkill> findByFields(UUID memberid, UUID skillid);
 
     void delete(UUID id);
 }

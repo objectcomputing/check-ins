@@ -12,9 +12,11 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -89,6 +91,18 @@ public class MemberSkillController {
         return memberSkillsService.read(id);
     }
 
+    /**
+     * Find member skills that match all filled in parameters, return all results when given no params
+     *
+     * @param memberid   {@link UUID} of member profile
+     * @param skillid {@link UUID} of skills
+     * @return {@link List < CheckIn > list of checkins}
+     */
+    @Get("/{?memberid,skillid}")
+    public Set<MemberSkill> findMemberSkills(@Nullable UUID memberid,
+                                             @Nullable UUID skillid) {
+        return memberSkillsService.findByFields(memberid, skillid);
+    }
 
 
     protected URI location(UUID uuid) {
