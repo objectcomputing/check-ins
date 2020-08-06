@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import java.util.List;
+import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
@@ -12,5 +13,12 @@ import io.micronaut.data.repository.CrudRepository;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface CheckinDocumentRepository extends CrudRepository<CheckinDocument, UUID> {
     
-    List<CheckinDocument> findByCheckinsId(@NotBlank UUID checkinsId);
+    Set<CheckinDocument> findByCheckinsId(@NotBlank UUID checkinsId);
+    Optional<CheckinDocument> findByUploadDocId(@NotBlank String uploadDocId);
+
+    Boolean existsByCheckinsId(@NotBlank UUID checkinsId);
+    Boolean existsByUploadDocId(@NotBlank String uploadDocId);
+
+    void deleteByCheckinsId(@NotBlank UUID checkinsId);
+    void deleteByUploadDocId(@NotBlank String uploadDocId);
 }
