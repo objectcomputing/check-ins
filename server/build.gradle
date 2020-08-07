@@ -69,8 +69,6 @@ dependencies {
     implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
     implementation "io.micronaut.views:micronaut-views-thymeleaf"
 
-    implementation 'com.vladmihalcea:hibernate-types-52:2.9.13'
-    
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
 
