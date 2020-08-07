@@ -5,11 +5,11 @@ import { createBrowserHistory } from "history";
 import MyTeamPage from "./pages/MyTeamPage";
 import EditPDLPage from "./pages/EditPDLPage";
 import ResourcesPage from "./pages/ResourcesPage";
-import CheckinsPage from "./pages/CheckinsPage";
 import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
+import CheckinsPage from "./pages/CheckinsPage";
 import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
@@ -48,7 +48,7 @@ function App() {
                 <Profile />
               </Route>
               <Route path="/checkins">
-                <Header />
+                <Header title="Check-ins" />
                 <CheckinsPage />
               </Route>
               <Route path="/">

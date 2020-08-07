@@ -1,10 +1,11 @@
 import React, { useReducer, useMemo } from "react";
 import axios from "axios";
 
-export const MY_SKILL_ADD = "add";
-export const MY_SKILL_REMOVE = "remove";
-export const MY_SKILL_TOGGLE = "toggle";
-export const MY_PROFILE_UPDATE = "update";
+export const BECOME_USER = "be_user"
+export const MY_SKILL_ADD = "add_skill";
+export const MY_SKILL_REMOVE = "remove_skill";
+export const MY_SKILL_TOGGLE = "toggle_skill";
+export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_PDL = "update_pdl";
 export const UPDATE_PDLS = "update_pdls";
 export const UPDATE_CHECKIN = "update_checkin";
@@ -132,6 +133,21 @@ defaultTeamMembers.forEach((member) => (member.selected = false));
 
 const mySkills = [{ name: "Jquery" }, { name: "Go" }, { name: "Node" }];
 
+const defaultUser = {
+  "uuid": "770b632c-0710-47f7-bc55-3a2935bfc4a4",
+  "name": "string",
+  "role": "string",
+  "location": "string",
+  "workEmail": "string",
+  "insperityId": "string",
+  "startDate": [
+    2020,
+    8,
+    4
+  ],
+  "bioText": "string"
+}
+
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
@@ -139,10 +155,14 @@ const initialState = {
   isAdmin: false,
   mySkills: mySkills,
   teamMembers: teamMembers,
+  user: defaultUser
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case BECOME_USER:
+      state.user = action.payload;
+      break;
     case MY_SKILL_ADD:
       state.mySkills = state.mySkills.filter((i) => {
         return action.payload.name !== i.name;
@@ -202,7 +222,8 @@ const reducer = (state, action) => {
 };
 
 const AppContextProvider = (props) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  let iState = props && props.state ? props.state : initialState;
+  const [state, dispatch] = useReducer(reducer, iState);
   let value = useMemo(() => {
     return { state, dispatch };
   }, [state]);

@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with null 1`] = `
+<fieldset
+  className="personnel-container"
+>
+  <legend>
+    My Personnel
+  </legend>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="personnel pic"
+      className="member-image"
+      src="default_profile.jpg"
+    />
+    <div
+      className="info-div"
+    >
+      <p
+        className="personnel-info-hidden"
+      >
+        Team Member
+      </p>
+      <p
+        className="personnel-info-hidden"
+      >
+        Last Check-in: 
+        Unknown
+      </p>
+    </div>
+  </div>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="personnel pic"
+      className="member-image"
+      src="default_profile.jpg"
+    />
+    <div
+      className="info-div"
+    >
+      <p
+        className="personnel-info-hidden"
+      >
+        Team Member
+      </p>
+      <p
+        className="personnel-info-hidden"
+      >
+        Last Check-in: 
+        Unknown
+      </p>
+    </div>
+  </div>
+  <div
+    className="image-div"
+  >
+    <img
+      alt="personnel pic"
+      className="member-image"
+      src="default_profile.jpg"
+    />
+    <div
+      className="info-div"
+    >
+      <p
+        className="personnel-info-hidden"
+      >
+        Team Member
+      </p>
+      <p
+        className="personnel-info-hidden"
+      >
+        Last Check-in: 
+        Unknown
+      </p>
+    </div>
+  </div>
+</fieldset>
+`;
