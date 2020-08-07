@@ -10,7 +10,8 @@ import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
-import { SkillsContextProvider } from "./context/SkillsContext";
+import CheckinsPage from "./pages/CheckinsPage";
+import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
 
@@ -19,7 +20,7 @@ const customHistory = createBrowserHistory();
 function App() {
   return (
     <Router history={customHistory}>
-      <SkillsContextProvider>
+      <AppContextProvider>
         <div>
           <Menu />
           <div
@@ -51,6 +52,10 @@ function App() {
                 <Header title="Profile" />
                 <Profile />
               </Route>
+              <Route path="/checkins">
+                <Header title="Check-ins" />
+                <CheckinsPage />
+              </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />
                 <HomePage />
@@ -58,7 +63,7 @@ function App() {
             </Switch>
           </div>
         </div>
-      </SkillsContextProvider>
+      </AppContextProvider>
     </Router>
   );
 }

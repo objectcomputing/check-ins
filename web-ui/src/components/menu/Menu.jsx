@@ -16,7 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
-import { SkillsContext } from "../../context/SkillsContext";
+import { AppContext } from "../../context/AppContext";
 
 import "./Menu.css";
 
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  const { state } = useContext(SkillsContext);
+  const { state } = useContext(AppContext);
   const { isAdmin } = state;
   const classes = useStyles();
   const theme = useTheme();
@@ -118,6 +118,11 @@ function Menu() {
       <Button>
         <Link style={linkStyle} to="/upload">
           Uploads
+        </Link>
+      </Button>
+      <Button>
+        <Link style={linkStyle} to="/checkins">
+          Check-ins
         </Link>
       </Button>
       {isAdmin && (
