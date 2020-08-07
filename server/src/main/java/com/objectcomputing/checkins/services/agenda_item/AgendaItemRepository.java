@@ -15,7 +15,7 @@ public interface AgendaItemRepository extends CrudRepository<AgendaItem, UUID> {
 
     List<AgendaItem> findByCheckinid(UUID checkinid);
 
-    List<AgendaItem> findByCreatedbyid(UUID uuid);
+    List<AgendaItem> findByCreatedbyid(UUID id);
 
     @Override
     <S extends AgendaItem> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

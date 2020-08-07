@@ -40,7 +40,7 @@ public class AgendaItemController {
     }
 
     /**
-     * Create and save a new agendaItem.
+     * Create and save a new agenda item.
      *
      * @param agendaItem, {@link AgendaItemCreateDTO}
      * @return {@link HttpResponse <AgendaItem>}
@@ -57,7 +57,7 @@ public class AgendaItemController {
     }
 
     /**
-     * Update agendaItem.
+     * Update agenda item.
      *
      * @param agendaItem, {@link AgendaItem}
      * @return {@link HttpResponse< AgendaItem >}
@@ -74,7 +74,7 @@ public class AgendaItemController {
     }
 
     /**
-     * Delete agendaItem
+     * Delete agenda item
      *
      * @param id, id of {@link AgendaItem} to delete
      */
@@ -86,7 +86,7 @@ public class AgendaItemController {
     }
 
     /**
-     * Get all AgendaItems
+     * Get all agenda items
      *
      * @return {@link Set<AgendaItem>}
      */
@@ -96,7 +96,7 @@ public class AgendaItemController {
     }
 
     /**
-     * Get AgendaItem based off id
+     * Get agenda item based off id
      *
      * @param id {@link UUID} of the agenda item entry
      * @return {@link AgendaItem}
