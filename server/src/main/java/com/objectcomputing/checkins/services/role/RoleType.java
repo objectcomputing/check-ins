@@ -5,13 +5,9 @@ public enum RoleType {
     PDL,
     MEMBER;
 
-    public String getRole() {
-        return name();
-    }
-
     @Override
     public String toString() {
-        return getRole();
+        return name();
     }
 
     public static class Constants {
