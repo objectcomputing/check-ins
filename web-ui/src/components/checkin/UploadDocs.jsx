@@ -5,11 +5,13 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import DescriptionIcon from "@material-ui/icons/Description";
 
+import "./Checkin.css";
+
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const HomePage = () => {
+const UploadDocs = () => {
   const [responseText, setResponseText] = useState("");
   const [severity, setSeverity] = useState("");
   const [open, setOpen] = useState(false);
@@ -54,15 +56,9 @@ const HomePage = () => {
     }
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        marginLeft: "150px",
-        marginTop: "50px",
-      }}
-    >
+    <div className="documents">
       <div>
-        <h1 style={{ display: "flex", alignItems: "center" }}>
+        <h1 className="title">
           <DescriptionIcon />
           Documents
         </h1>
@@ -77,23 +73,11 @@ const HomePage = () => {
           {loading ? (
             <CircularProgress />
           ) : (
-            <div style={{ display: "flex" }}>
-              <button
-                type="submit"
-                name="submit"
-                style={{
-                  alignItems: "center",
-                  background: "none",
-                  border: "none",
-                  display: "flex",
-                  cursor: "pointer",
-                  minWidth: "50px",
-                  paddingLeft: "0px",
-                }}
-              >
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <button className="plus-button" type="submit" name="submit">
                 <AddCircleIcon></AddCircleIcon>
-                Upload
               </button>
+              Upload a document
             </div>
           )}
         </form>
@@ -112,4 +96,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default UploadDocs;

@@ -1,0 +1,48 @@
+.arrow.disabled {
+  opacity: 0.3;
+}
+
+.date-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.documents {
+  display: flex;
+  margin-left: 150px;
+  margin-top: 50px;
+}
+
+.info {
+  margin-bottom: auto;
+  margin-left: 25px;
+  margin-top: auto;
+  text-align: left;
+}
+
+.plus-button {
+  align-items: center;
+  background: none;
+  border: none;
+  display: flex;
+  cursor: pointer;
+  min-width: 50px;
+  padding-left: 0px;
+}
+
+.profile-section {
+  display: flex;
+  margin-left: 50px;
+}
+
+.react-datepicker-wrapper {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+}

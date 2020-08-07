@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 
-import "./CheckinHistory.css";
+import "./Checkin.css";
 
 const CheckinsHistory = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -37,7 +37,7 @@ const CheckinsHistory = () => {
       payload: { date, index: checkinIndex },
     });
   };
-  const ExampleCustomInput = ({ value, onClick }) => (
+  const DateInput = ({ value, onClick }) => (
     <div style={{ display: "flex", alignItems: "center" }}>
       <p style={{ margin: "0px" }}>{value}</p>
       <CalendarTodayIcon onClick={onClick}>stuff</CalendarTodayIcon>
@@ -61,15 +61,23 @@ const CheckinsHistory = () => {
         </div>
       </div>
       <div className="date-picker">
-        <ArrowBackIcon className={leftArrowClass} onClick={previousCheckin} />
+        <ArrowBackIcon
+          className={leftArrowClass}
+          onClick={previousCheckin}
+          style={{ fontSize: "50px" }}
+        />
         <DatePicker
-          customInput={<ExampleCustomInput />}
+          customInput={<DateInput />}
           dateFormat="MMMM dd, yyyy h:mm aa"
           selected={checkinDate}
           showTimeSelect
           onChange={pickDate}
         />
-        <ArrowForwardIcon className={rightArrowClass} onClick={nextCheckin} />
+        <ArrowForwardIcon
+          className={rightArrowClass}
+          onClick={nextCheckin}
+          style={{ fontSize: "50px" }}
+        />
       </div>
     </div>
   );
