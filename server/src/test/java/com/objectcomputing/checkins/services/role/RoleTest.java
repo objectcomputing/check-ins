@@ -50,7 +50,6 @@ class RoleTest {
         final UUID id = UUID.randomUUID();
         final RoleType roleType = RoleType.ADMIN;
         final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
         Role role = new Role(id, roleType, memberId);
 
         role.setRole(null);

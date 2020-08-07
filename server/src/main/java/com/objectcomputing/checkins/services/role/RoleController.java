@@ -32,11 +32,9 @@ public class RoleController {
 
     @Error(exception = RoleBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, RoleBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
 
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
+        return HttpResponse.<JsonError>badRequest().body(error);
     }
 
     /**
