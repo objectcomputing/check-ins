@@ -19,8 +19,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -166,7 +168,7 @@ class RoleControllerTest {
 
         List<Role> roles = List.of(r);
 
-        final HttpRequest<List<Role>> request = HttpRequest.PUT("roles", roles)
+        final HttpRequest<List<Role>> request = HttpRequest.POST("roles", roles)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));

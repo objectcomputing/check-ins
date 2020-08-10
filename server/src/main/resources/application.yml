@@ -42,6 +42,7 @@ micronaut:
         http-method: GET
         access:
           - isAnonymous()
+    reject-not-found: false
     session:
       enabled: true 
       login-success-target-url: '/'

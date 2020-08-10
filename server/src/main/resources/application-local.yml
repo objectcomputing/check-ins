@@ -1,6 +1,7 @@
 micronaut:
   security:
     enabled: true
+    reject-not-found: false
 
 datasources:
   default:
