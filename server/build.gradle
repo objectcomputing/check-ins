@@ -108,11 +108,17 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile){
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
     options.compilerArgs.add('-parameters')
     options.fork = true
-    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop'
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop' << '-Dmicronaut.openapi.property.naming.strategy=KEBAB_CASE'
+
+    if(System.getenv('MICRONAUT_ENVIRONMENTS').split(',').contains('local')) {
+        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
+    } else {
+        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'
+    }
 }
 
 processResources {

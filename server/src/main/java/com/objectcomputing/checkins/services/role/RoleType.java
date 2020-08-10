@@ -11,9 +11,9 @@ public enum RoleType {
     }
 
     public static class Constants {
-        static final String ADMIN_ROLE_STR = "ADMIN";
-        static final String PDL_ROLE_STR = "PDL";
-        static final String MEMBER_ROLE_STR = "MEMBER";
+        static final String ADMIN_ROLE = "ADMIN";
+        static final String PDL_ROLE = "PDL";
+        static final String MEMBER_ROLE = "MEMBER";
     }
 }
 

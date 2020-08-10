@@ -47,7 +47,7 @@ micronaut:
       login-success-target-url: '/'
       unauthorized-target-url: '/unauthorized'
       forbidden-target-url: '/forbidden'
----      
+---
 datasources:
   default:
     url: ${JDBC_URL:`jdbc:postgresql:///`}

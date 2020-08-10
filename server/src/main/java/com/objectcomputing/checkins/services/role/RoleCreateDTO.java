@@ -17,7 +17,7 @@ public class RoleCreateDTO {
     @Column(name = "role")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "role this member has", required = true,
-            allowableValues = {ADMIN_ROLE_STR, PDL_ROLE_STR, MEMBER_ROLE_STR})
+            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
     private RoleType role;
 
     @NotNull
