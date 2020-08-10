@@ -231,7 +231,7 @@ public class CheckinDocumentServiceImplTest {
     }
 
     @Test
-    void testUpdateNullActionItem() {
+    void testUpdateNullCheckinDocument() {
         assertNull(services.update(null));
 
         verify(checkinRepository, never()).findById(any(UUID.class));
