@@ -114,7 +114,7 @@ tasks.withType(JavaCompile) {
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop' << '-Dmicronaut.openapi.property.naming.strategy=KEBAB_CASE'
 
-    if(System.getenv('MICRONAUT_ENVIRONMENTS').split(',').contains('local')) {
+    if(System.getenv('MICRONAUT_ENVIRONMENTS') != null && System.getenv('MICRONAUT_ENVIRONMENTS').split(',').contains('local')) {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
     } else {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'
