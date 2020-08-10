@@ -122,9 +122,9 @@ class AgendaItemControllerTest {
         List<AgendaItem> checkinList = List.of(a, a2);
         AtomicInteger i = new AtomicInteger(0);
         doAnswer(ans -> {
-            AgendaItem thisG = checkinList.get(i.getAndAdd(1));
-            assertEquals(thisG, ans.getArgument(0));
-            return thisG;
+            AgendaItem thisC = checkinList.get(i.getAndAdd(1));
+            assertEquals(thisC, ans.getArgument(0));
+            return thisC;
         }).when(agendaItemServices).save(any(AgendaItem.class));
 
         final MutableHttpRequest<List<AgendaItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
