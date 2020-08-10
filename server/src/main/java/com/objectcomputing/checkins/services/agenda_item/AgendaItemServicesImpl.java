@@ -21,14 +21,14 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     public AgendaItem save(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
         if (agendaItem != null) {
-            final UUID guildId = agendaItem.getCheckinid();
+            final UUID checkinId = agendaItem.getCheckinid();
             final UUID createById = agendaItem.getCreatedbyid();
-            if (guildId == null || createById == null) {
+            if (checkinId == null || createById == null) {
                 throw new AgendaItemBadArgException(String.format("Invalid agendaItem %s", agendaItem));
             } else if (agendaItem.getId() != null) {
                 throw new AgendaItemBadArgException(String.format("Found unexpected id %s for agenda item", agendaItem.getId()));
-            } else if (!checkinRepo.findById(guildId).isPresent()) {
-                throw new AgendaItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
+            } else if (!checkinRepo.findById(checkinId).isPresent()) {
+                throw new AgendaItemBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
             } else if (!memberRepo.findById(createById).isPresent()) {
                 throw new AgendaItemBadArgException(String.format("Member %s doesn't exist", createById));
             }
@@ -53,14 +53,14 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         AgendaItem agendaItemRet = null;
         if (agendaItem != null) {
             final UUID id = agendaItem.getId();
-            final UUID guildId = agendaItem.getCheckinid();
+            final UUID checkinId = agendaItem.getCheckinid();
             final UUID createById = agendaItem.getCreatedbyid();
-            if (guildId == null || createById == null) {
+            if (checkinId == null || createById == null) {
                 throw new AgendaItemBadArgException(String.format("Invalid agendaItem %s", agendaItem));
             } else if (id == null || !agendaItemRepo.findById(id).isPresent()) {
                 throw new AgendaItemBadArgException(String.format("Unable to locate agendaItem to update with id %s", id));
-            } else if (!checkinRepo.findById(guildId).isPresent()) {
-                throw new AgendaItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
+            } else if (!checkinRepo.findById(checkinId).isPresent()) {
+                throw new AgendaItemBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
             } else if (!memberRepo.findById(createById).isPresent()) {
                 throw new AgendaItemBadArgException(String.format("Member %s doesn't exist", createById));
             }
