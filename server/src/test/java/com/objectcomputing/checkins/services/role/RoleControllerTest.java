@@ -60,7 +60,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void testCreateUnauthorized() {
+    void testCreateForbidden() {
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
         roleCreateDTO.setMemberid(UUID.randomUUID());
@@ -161,7 +161,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void testLoadUnauthorized() {
+    void testLoadForbidden() {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
 
         List<Role> roles = List.of(r);
@@ -256,7 +256,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void testReadUnauthorized() {
+    void testReadForbidden() {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
         when(roleServices.read(eq(r.getId()))).thenReturn(r);
 
@@ -304,7 +304,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void testFindRolesUnauthorized() {
+    void testFindRolesForbidden() {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
         Set<Role> roles = Collections.singleton(r);
 
@@ -374,7 +374,7 @@ class RoleControllerTest {
     }
 
     @Test
-    void testUpdateUnauthorized() {
+    void testUpdateForbidden() {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
 
         when(roleServices.update(eq(r))).thenReturn(r);
@@ -469,11 +469,29 @@ class RoleControllerTest {
             return null;
         }).when(roleServices).delete(any(UUID.class));
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(roleServices, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deleteRoleUnauthorized() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(roleServices).delete(any(UUID.class));
+
+        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+        verify(roleServices, never()).delete(any(UUID.class));
     }
 }
