@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.guild.member;
 
 import com.objectcomputing.checkins.services.guild.GuildBadArgException;
-import io.micronaut.context.annotation.Parameter;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
