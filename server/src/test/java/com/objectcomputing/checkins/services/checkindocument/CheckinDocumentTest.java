@@ -42,7 +42,7 @@ public class CheckinDocumentTest {
         Set<ConstraintViolation<CheckinDocument>> violations = validator.validate(checkinDocument);
         assertEquals(1, violations.size());
         for (ConstraintViolation<CheckinDocument> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be blank");
+            assertEquals(violation.getMessage(), "must not be null");
         }
     }
 

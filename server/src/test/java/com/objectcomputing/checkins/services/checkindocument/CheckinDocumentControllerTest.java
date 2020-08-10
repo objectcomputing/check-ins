@@ -168,7 +168,7 @@ public class CheckinDocumentControllerTest {
 
     @Test
     void testUpdateAnInvalidCheckinDocument() {
-        CheckinDocument checkinDocument = new CheckinDocument(UUID.randomUUID(), null, "exampleId");
+        CheckinDocument checkinDocument = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), null);
 
         when(checkinDocumentService.update(any(CheckinDocument.class))).thenReturn(checkinDocument);
 
@@ -176,14 +176,6 @@ public class CheckinDocumentControllerTest {
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
-        assertEquals("checkinDocument.checkinsid: must not be null", errorList.get(0));
-        assertEquals("checkinDocument.uploaddocid: must not be null", errorList.get(1));
-        assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
         verify(checkinDocumentService, never()).update(any(CheckinDocument.class));

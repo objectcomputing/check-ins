@@ -7,8 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.micronaut.data.annotation.AutoPopulated;
@@ -20,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name="checkin_document")
 public class CheckinDocument {
 
-    public CheckinDocument(@Valid @NotNull UUID checkinsId, @Valid @NotNull String uploadDocId) {
+    public CheckinDocument(UUID checkinsId, String uploadDocId) {
         this(null, checkinsId, uploadDocId);
     }
 
@@ -38,13 +36,13 @@ public class CheckinDocument {
     private UUID id;
 
     @Column(name="checkinsId")
-    @NotBlank
+    @NotNull
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of the checkIn this entry is associated with", required = true)
     private UUID checkinsId;
 
     @Column(name="uploadDocId", unique = true)
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the uploaded document", required = true)
     private String uploadDocId;
 
