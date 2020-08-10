@@ -12,4 +12,6 @@ public interface RoleServices {
     Role update(Role role);
 
     Set<Role> findByFields(RoleType role, UUID memberid);
+
+    void delete(UUID id);
 }
