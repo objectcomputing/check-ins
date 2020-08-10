@@ -7,9 +7,9 @@ public interface CheckinDocumentServices {
 
     Set<CheckinDocument> read(UUID checkinsId);
 
-    CheckinDocument save(CheckinDocument c);
+    CheckinDocument save(CheckinDocument checkinDocument);
 
-    CheckinDocument update(CheckinDocument c);
+    CheckinDocument update(CheckinDocument checkinDocument);
 
     void delete(UUID checkinsId);
 }

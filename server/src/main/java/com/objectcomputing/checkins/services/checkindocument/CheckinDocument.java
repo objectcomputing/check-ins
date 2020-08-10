@@ -1,13 +1,17 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -17,13 +21,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name="checkin_document")
 public class CheckinDocument {
     
-    public CheckinDocument() {}
+    public CheckinDocument(@JsonProperty("checkinsId") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID checkinsId,
+                           @JsonProperty("description") @Valid @NotNull String uploadDocId) {
+        this(null, checkinsId, uploadDocId);
+    }
 
-    public CheckinDocument(UUID checkinsId, String uploadDocId) {
+    public CheckinDocument(UUID id, UUID checkinsId, String uploadDocId) {
+        this.id = id;
         this.checkinsId = checkinsId;
         this.uploadDocId = uploadDocId;
     }
-    
+
     @Id
     @Column(name="id")
     @AutoPopulated
@@ -64,6 +72,16 @@ public class CheckinDocument {
 
     public void setUploadDocId(String uploadDocId) {
         this.uploadDocId = uploadDocId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CheckinDocument that = (CheckinDocument) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(checkinsId, that.checkinsId) &&
+                Objects.equals(uploadDocId, that.uploadDocId);
     }
 
     @Override

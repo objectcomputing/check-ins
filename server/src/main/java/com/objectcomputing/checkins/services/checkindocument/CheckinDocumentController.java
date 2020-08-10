@@ -64,7 +64,8 @@ public class CheckinDocumentController {
      */
 
     @Post(value = "/")
-    public HttpResponse<CheckinDocument> createACheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument, HttpRequest<CheckinDocumentCreateDTO> request) {
+    public HttpResponse<CheckinDocument> createACheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
+                                                                HttpRequest<CheckinDocumentCreateDTO> request) {
         CheckinDocument newCheckinDocument = checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(), checkinDocument.getUploadDocId()));
         return HttpResponse
                 .created(newCheckinDocument)

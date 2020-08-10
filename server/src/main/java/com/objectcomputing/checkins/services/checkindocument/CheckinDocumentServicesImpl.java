@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import io.micronaut.http.multipart.CompletedFileUpload;
+import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,6 +13,9 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     @Inject
     private CheckinDocumentRepository checkinDocumentRepo;
+
+    @Inject
+    private CheckInRepository checkinRepo;
 
     public Set<CheckinDocument> read(UUID checkinsId) {
 
@@ -29,9 +32,12 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         CheckinDocument newCheckinDocument = null;
 
         if (checkinDocument != null) {
-            if (checkinDocument.getId() != null) {
-                throw new CheckinDocumentBadArgException(String.format("Found unexpected CheckinDocument id %s, please try updating instead",
-                        checkinDocument.getId()));
+            if (checkinDocument.getCheckinsId() == null || checkinDocument.getUploadDocId() == null) {
+                throw new CheckinDocumentBadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
+            } else if (checkinDocument.getId() != null) {
+                throw new CheckinDocumentBadArgException(String.format("Found unexpected CheckinDocument id %s, please try updating instead", checkinDocument.getId()));
+            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+                throw new CheckinDocumentBadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else if (checkinDocumentRepo.findByUploadDocId(checkinDocument.getUploadDocId()).isPresent()) {
                 throw new CheckinDocumentBadArgException(String.format("CheckinDocument with document ID %s already exists", checkinDocument.getUploadDocId()));
             } else {
@@ -47,11 +53,13 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         CheckinDocument updatedCheckinDocument = null;
 
         if (checkinDocument != null) {
-            if (checkinDocument.getId() == null) {
+            if (checkinDocument.getCheckinsId() == null || checkinDocument.getUploadDocId() == null) {
+                throw new CheckinDocumentBadArgException(String.format("Invalid CheckinDocument %s", checkinDocument));
+            } else if (checkinDocument.getId() == null || !checkinDocumentRepo.findById(checkinDocument.getId()).isPresent()) {
                 throw new CheckinDocumentBadArgException(String.format("CheckinDocument id %s not found, please try inserting instead",
                         checkinDocument.getId()));
-            } else if (!checkinDocumentRepo.existsById(checkinDocument.getId())) {
-                throw new CheckinDocumentBadArgException(String.format("CheckinDocument with ID %s does not exists", checkinDocument.getId()));
+            } else if (!checkinRepo.findById(checkinDocument.getCheckinsId()).isPresent()) {
+                throw new CheckinDocumentBadArgException(String.format("CheckIn %s doesn't exist", checkinDocument.getCheckinsId()));
             } else {
                 updatedCheckinDocument = checkinDocumentRepo.update(checkinDocument);
             }
@@ -60,14 +68,12 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         return updatedCheckinDocument;
     }
 
-    public void delete(UUID checkinsId) {
+    public void delete(@NotNull UUID checkinsId) {
 
-        if (checkinsId != null) {
-            if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
-                throw new CheckinDocumentBadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
-            } else {
-                checkinDocumentRepo.deleteByCheckinsId(checkinsId);
-            }
+        if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
+            throw new CheckinDocumentBadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
+        } else {
+            checkinDocumentRepo.deleteByCheckinsId(checkinsId);
         }
     }
 }
