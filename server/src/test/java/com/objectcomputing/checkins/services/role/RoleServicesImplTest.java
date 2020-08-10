@@ -322,4 +322,18 @@ class RoleServicesImplTest {
         verify(roleRepository, times(1)).findByMemberid(any(UUID.class));
         verify(roleRepository, times(1)).findByRole(any(RoleType.class));
     }
+
+    @Test
+    void testDelete() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(roleRepository).deleteById(any(UUID.class));
+
+        services.delete(uuid);
+
+        verify(roleRepository, times(1)).deleteById(any(UUID.class));
+    }
 }

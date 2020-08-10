@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -124,4 +125,17 @@ public class RoleController {
                     .headers(headers -> headers.location(request.getUri()));
         }
     }
+
+    /**
+     * Delete role
+     *
+     * @param id, id of {@link Role} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteRole(UUID id) {
+        roleServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
+
 }

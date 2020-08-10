@@ -71,4 +71,8 @@ public class RoleServicesImpl implements RoleServices {
 
         return roles;
     }
+
+    public void delete(@NotNull UUID id) {
+        roleRepo.deleteById(id);
+    }
 }

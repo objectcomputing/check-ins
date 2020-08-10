@@ -459,4 +459,21 @@ class RoleControllerTest {
 
         verify(roleServices, times(1)).update(any(Role.class));
     }
+
+    @Test
+    void deleteRole() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(roleServices).delete(any(UUID.class));
+
+        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(roleServices, times(1)).delete(any(UUID.class));
+    }
 }
