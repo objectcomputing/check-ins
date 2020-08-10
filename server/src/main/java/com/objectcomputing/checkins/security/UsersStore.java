@@ -19,6 +19,6 @@ public class UsersStore {
     }
 
     public List<String> getUserRole(String username) {
-        return username != null ? roles.get(username) : new ArrayList<>();
+        return username != null ? roles.get(username) : List.of();
     }
 }
