@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.ArgumentUtils.Check;
