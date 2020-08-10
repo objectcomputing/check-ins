@@ -18,16 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name="checkin_document")
 public class CheckinDocument {
 
-    public CheckinDocument(UUID checkinsId, String uploadDocId) {
-        this(null, checkinsId, uploadDocId);
-    }
-
-    public CheckinDocument(UUID id, UUID checkinsId, String uploadDocId) {
-        this.id = id;
-        this.checkinsId = checkinsId;
-        this.uploadDocId = uploadDocId;
-    }
-
     @Id
     @Column(name="id")
     @AutoPopulated
@@ -45,6 +35,16 @@ public class CheckinDocument {
     @NotNull
     @Schema(description = "id of the uploaded document", required = true)
     private String uploadDocId;
+
+    public CheckinDocument(UUID checkinsId, String uploadDocId) {
+        this(null, checkinsId, uploadDocId);
+    }
+
+    public CheckinDocument(UUID id, UUID checkinsId, String uploadDocId) {
+        this.id = id;
+        this.checkinsId = checkinsId;
+        this.uploadDocId = uploadDocId;
+    }
 
     public UUID getId() {
         return id;
