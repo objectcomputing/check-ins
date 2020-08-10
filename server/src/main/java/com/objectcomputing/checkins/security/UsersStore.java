@@ -5,8 +5,7 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.convert.format.MapFormat;
 import io.micronaut.core.naming.conventions.StringConvention;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Requires(env = {"local"})
 @ConfigurationProperties("credentials")
@@ -20,6 +19,6 @@ public class UsersStore {
     }
 
     public List<String> getUserRole(String username) {
-        return username != null ? roles.get(username) : List.of();
+        return username != null ? roles.get(username) : new ArrayList<>();
     }
 }
