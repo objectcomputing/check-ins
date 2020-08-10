@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -11,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
@@ -44,9 +42,7 @@ public class ActionItem {
     @Schema(description = "description of the action item")
     private String description;
 
-    public ActionItem(@JsonProperty("checkinid") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID checkinid,
-                      @JsonProperty("createdbyid") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID createdbyid,
-                      @JsonProperty("description") String description) {
+    public ActionItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
     }
 
