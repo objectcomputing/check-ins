@@ -47,7 +47,7 @@ public class CheckinNoteControllerTest {
     private CheckinNoteServices checkinNoteServices;
 
     @MockBean(CheckinNoteServices.class)
-    public CheckinNoteServices actionItemServices() {
+    public CheckinNoteServices checkinNoteServices() {
         return mock(CheckinNoteServices.class);
     }
 
