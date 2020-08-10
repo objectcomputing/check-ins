@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import com.objectcomputing.checkins.services.action_item.ActionItemCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;

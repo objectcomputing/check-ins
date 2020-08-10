@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
