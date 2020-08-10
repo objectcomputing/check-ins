@@ -7,9 +7,13 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.http.annotation.Error;
+
 
 import java.net.URI;
 import java.util.Set;
@@ -32,6 +36,15 @@ public class CheckinNoteController {
 
     @Inject
     CheckinNoteServices checkinNoteServices;
+
+    @Error(exception = CheckinNotesBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckinNotesBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
 
     /**
      * Create and Save a new check in note

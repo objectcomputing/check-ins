@@ -2,9 +2,7 @@ package com.objectcomputing.checkins.services.checkinnotes;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 
 import io.micronaut.core.type.Argument;
-import io.micronaut.core.util.ArgumentUtils.Check;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -88,8 +85,8 @@ public class CheckinNoteControllerTest {
      JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
      List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
              .stream().sorted().collect(Collectors.toList());
-     assertEquals("checkinnote.checkinid: must not be null", errorList.get(0));
-     assertEquals("checkinnote.createdbyid: must not be null", errorList.get(1));
+     assertEquals("checkinNote.checkinid: must not be null", errorList.get(0));
+     assertEquals("checkinNote.createdbyid: must not be null", errorList.get(1));
      assertEquals(request.getPath(), href.asText());
      assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -106,10 +103,8 @@ public class CheckinNoteControllerTest {
         () -> client.toBlocking().exchange(request, Map.class));
    
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
 
         assertEquals("Required Body [checkinNote] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
@@ -161,7 +156,7 @@ public class CheckinNoteControllerTest {
     void testReadCheckinNoteNotFound(){
         CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
 
-        when(checkinNoteServices.read(cNote.getId())).thenReturn(cNote);
+        when(checkinNoteServices.read(cNote.getId())).thenReturn(null);
         final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s",cNote.getId().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, CheckinNote.class));
 
@@ -224,8 +219,8 @@ public class CheckinNoteControllerTest {
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                         .stream().sorted().collect(Collectors.toList());
-        assertEquals("CheckinNote.checkinid: must not be null", errorList.get(0));
-        assertEquals("CheckinNote.createdbyid: must not be null", errorList.get(1));
+        assertEquals("checkinNote.checkinid: must not be null", errorList.get(0));
+        assertEquals("checkinNote.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus()); 
     } 
@@ -240,7 +235,7 @@ public class CheckinNoteControllerTest {
               () -> client.toBlocking().exchange(request, Map.class));
   
       JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-      JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+      JsonNode errors = Objects.requireNonNull(body).get("message");
       JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
       assertEquals("Required Body [checkinNote] not specified", errors.asText());
       assertEquals(request.getPath(), href.asText());

@@ -19,7 +19,6 @@ public void testPopulateDTO(){
     UUID checkinid = UUID.randomUUID();
     UUID createdById = UUID.randomUUID();
     String description = "Test populated";
-    boolean privateNotes = false;
 
     checkinNoteCreateDTO.setCheckinid(checkinid);
     checkinNoteCreateDTO.setCreatedbyid(createdById);
