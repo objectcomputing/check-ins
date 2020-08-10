@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -23,20 +24,24 @@ public class AgendaItem {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of this agenda item", required = true)
     private UUID id;
 
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the checkin this entry is associated with", required = true)
     private UUID checkinid;
 
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
 
     @Nullable
     @Column(name = "description")
+    @Schema(description = "description of the agenda item")
     private String description;
 
     public AgendaItem(@JsonProperty("checkinid") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID checkinid,
