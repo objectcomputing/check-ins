@@ -39,10 +39,8 @@ public class UploadController {
     private static final String RSP_SERVER_ERROR_KEY = "serverError";
     private static final String RSP_COMPLETE_MESSAGE_KEY = "completeMessage";
 
-    @NotNull
     private final GoogleDriveAccessor googleDriveAccessor;
 
-    @NotNull
     private final EmailSender emailSender;
 
     /**
