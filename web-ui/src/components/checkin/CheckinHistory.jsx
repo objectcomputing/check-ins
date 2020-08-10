@@ -38,7 +38,7 @@ const CheckinsHistory = () => {
     });
   };
   const DateInput = ({ value, onClick }) => (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div className="date-input">
       <p style={{ margin: "0px" }}>{value}</p>
       <CalendarTodayIcon onClick={onClick}>stuff</CalendarTodayIcon>
     </div>

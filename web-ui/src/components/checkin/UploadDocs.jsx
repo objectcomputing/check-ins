@@ -73,7 +73,7 @@ const UploadDocs = () => {
           {loading ? (
             <CircularProgress />
           ) : (
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="upload-doc">
               <button className="plus-button" type="submit" name="submit">
                 <AddCircleIcon></AddCircleIcon>
               </button>
