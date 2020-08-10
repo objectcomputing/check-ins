@@ -29,8 +29,8 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             final UUID createById = checkinNote.getCreatedbyid();
             if (checkinId == null || createById == null) {
                 throw new CheckinNotesBadArgException(String.format("Invalid checkin note %s", checkinNote));
-            } else if (checkinNote.getUuid() != null) {
-                throw new CheckinNotesBadArgException(String.format("Found unexpected id %s for check in note", checkinNote.getUuid()));
+            } else if (checkinNote.getId() != null) {
+                throw new CheckinNotesBadArgException(String.format("Found unexpected id %s for check in note", checkinNote.getId()));
             } else if (!checkinRepo.findById(checkinId).isPresent()) {
                 throw new CheckinNotesBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
             } else if (!memberRepo.findById(createById).isPresent()) {
@@ -58,12 +58,13 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public CheckinNote update(CheckinNote checkinNote) {
         CheckinNote checkinNoteRet = null;
         if (checkinNote != null) {
+            final UUID id = checkinNote.getId();
             final UUID checkinId = checkinNote.getCheckinid();
             final UUID createById = checkinNote.getCreatedbyid();
             if (checkinId == null || createById == null) {
                 throw new CheckinNotesBadArgException(String.format("Invalid checkin note %s", checkinNote));
-            } else if (checkinNote.getUuid() != null) {
-                throw new CheckinNotesBadArgException(String.format("Found unexpected id %s for check in note", checkinNote.getUuid()));
+            } else if (id==null ||!checkinNoteRepository.findById(id).isPresent()) {
+                throw new CheckinNotesBadArgException(String.format("Unable to locate checkin note to update with id %s", checkinNote.getId()));
             } else if (!checkinRepo.findById(checkinId).isPresent()) {
                 throw new CheckinNotesBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
             } else if (!memberRepo.findById(createById).isPresent()) {

@@ -42,10 +42,10 @@ public class CheckinNoteController {
      */
     @Post("/")
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
-        CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(),checkinNote.getCreatedbyid(),checkinNote.getPrivateNotes()
+        CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(),checkinNote.getCreatedbyid()
         ,checkinNote.getDescription()));
         return HttpResponse.created(newCheckinNote)
-        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),newCheckinNote.getUuid()))));
+        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),newCheckinNote.getId()))));
         
     }
 
@@ -60,7 +60,7 @@ public class CheckinNoteController {
     public HttpResponse<CheckinNote> updateCheckinNote(@Body @Valid CheckinNote checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
         CheckinNote updateCheckinNote = checkinNoteServices.update(checkinNote);
         return HttpResponse.ok().headers(headers -> headers.location(
-                URI.create(String.format("%s/%s", request.getPath(), updateCheckinNote.getUuid()))))
+                URI.create(String.format("%s/%s", request.getPath(), updateCheckinNote.getId()))))
                 .body(updateCheckinNote);
     }
 
@@ -71,7 +71,7 @@ public class CheckinNoteController {
      * @return
      */
     @Get("/{?checkinid,createdbyid}")
-    public Set<CheckinNote> findActionItems(@Nullable UUID checkinid,
+    public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
         return checkinNoteServices.findByFields(checkinid, createdbyid);
     }
@@ -101,7 +101,7 @@ public class CheckinNoteController {
      * @return
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteActionItem(UUID id) {
+    public HttpResponse<?> deleteCheckinNote(UUID id) {
         checkinNoteServices.delete(id);
         return HttpResponse.ok();
     }

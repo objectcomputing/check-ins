@@ -20,10 +20,6 @@ public class CheckinNoteCreateDTO {
             nullable = true)
     private String description;
 
-    @NotNull
-    @Schema(description = "boolean flag to mark if notes are private", required = true)
-    boolean privateNotes ;
-
     public UUID getCheckinid() {
         return checkinid;
     }
@@ -48,11 +44,4 @@ public class CheckinNoteCreateDTO {
         this.description = description;
     }
 
-    public boolean getPrivateNotes() {
-        return privateNotes;
-    }
-
-    public void setPrivateNotes(boolean privateNotes) {
-        this.privateNotes = privateNotes;
-    }
 }

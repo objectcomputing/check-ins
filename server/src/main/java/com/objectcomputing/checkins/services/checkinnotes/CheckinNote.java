@@ -19,19 +19,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name="checkin_notes")
 public class CheckinNote {
 
-    public CheckinNote(UUID checkinid, UUID createdbyid, boolean privateNotes,String description){
+    public CheckinNote(UUID id,UUID checkinid, UUID createdbyid,String description){
+        this.id=id;
         this.checkinid=checkinid;
         this.createdbyid=createdbyid;
-        this.privateNotes=privateNotes;
         this.description=description;
     }
 
+    public CheckinNote(UUID checkinid, UUID createdbyid,String description){
+        this(null,checkinid,createdbyid,description);
+    }
+
     @Id
-    @Column(name = "uuid")
+    @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of checkin notes", required = true)
-    private UUID uuid;
+    private UUID id;
 
     @NotNull
     @Column(name = "checkinid")
@@ -45,23 +49,18 @@ public class CheckinNote {
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
 
-    @NotNull
-    @Column(name="privatenotes")
-    @Schema(description = "boolean flag to mark if notes are private", required = true)
-    boolean privateNotes ;
-
     @Nullable
     @Column(name = "description")
     @Schema(description = "description of the action item")
     private String description;
 
 
-    public UUID getUuid() {
-        return this.uuid;
+    public UUID getId() {
+        return this.id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getCheckinid() {
@@ -88,21 +87,12 @@ public class CheckinNote {
         this.description = description;
     }
 
-    public boolean getPrivateNotes() {
-        return privateNotes;
-    }
-
-    public void setPrivateNotes(boolean privateNotes) {
-        this.privateNotes = privateNotes;
-    }
-
     @Override
     public String toString() {
         return "CheckinNotes{" +
-                "id=" + uuid +
+                "id=" + id +
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
-                ", privateNotes=" + privateNotes +
                 ", description='" + description + '\'' +
                 '}';
     }
@@ -112,16 +102,15 @@ public class CheckinNote {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CheckinNote that = (CheckinNote) o;
-        return Objects.equals(uuid, that.uuid) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
-                Objects.equals(privateNotes, that.privateNotes)&&
                 Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, checkinid, createdbyid, privateNotes,description);
+        return Objects.hash(id, checkinid, createdbyid,description);
     }
 
 }
