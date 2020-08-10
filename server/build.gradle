@@ -88,7 +88,6 @@ dependencies {
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
-    testImplementation 'com.google.guava:guava:29.0-jre'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
 
@@ -114,7 +113,9 @@ tasks.withType(JavaCompile) {
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop' << '-Dmicronaut.openapi.property.naming.strategy=KEBAB_CASE'
 
-    if(System.getenv('MICRONAUT_ENVIRONMENTS') != null && System.getenv('MICRONAUT_ENVIRONMENTS').split(',').contains('local')) {
+    String envStr = System.getenv('MICRONAUT_ENVIRONMENTS')
+    List<String> envs = envStr != null ? Arrays.asList(envStr.split(',')) : List.of() as List<String>
+    if(!envs.disjoint(List.of('test', 'local'))) {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
     } else {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'

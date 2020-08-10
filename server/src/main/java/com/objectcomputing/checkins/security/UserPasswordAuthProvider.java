@@ -9,7 +9,7 @@ import org.reactivestreams.Publisher;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-@Requires(env = {"local"})
+@Requires(env = {"local", "test"})
 @Singleton
 public class UserPasswordAuthProvider implements AuthenticationProvider {
 

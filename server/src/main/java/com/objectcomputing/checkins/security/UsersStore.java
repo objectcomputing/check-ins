@@ -7,7 +7,7 @@ import io.micronaut.core.naming.conventions.StringConvention;
 
 import java.util.*;
 
-@Requires(env = {"local"})
+@Requires(env = {"local", "test"})
 @ConfigurationProperties("credentials")
 public class UsersStore {
 
