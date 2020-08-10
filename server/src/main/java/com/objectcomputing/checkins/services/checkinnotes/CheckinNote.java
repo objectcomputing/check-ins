@@ -51,7 +51,7 @@ public class CheckinNote {
 
     @Nullable
     @Column(name = "description")
-    @Schema(description = "description of the action item")
+    @Schema(description = "description of the check in note")
     private String description;
 
 

@@ -16,7 +16,7 @@ public class CheckinNoteCreateDTO {
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
 
-    @Schema(description = "description of the action item",
+    @Schema(description = "description of the check in note",
             nullable = true)
     private String description;
 

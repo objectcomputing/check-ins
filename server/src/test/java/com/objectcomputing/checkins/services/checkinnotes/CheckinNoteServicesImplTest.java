@@ -345,7 +345,7 @@ public class CheckinNoteServicesImplTest {
                 .findByFields(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()));
 
         verify(checkinNoteRepository, times(1)).findAll();
-        verify(checkinNoteRepository, times(1)).findByCreatedbyid(any(UUID.class));
+        verify(checkinNoteRepository, never()).findByCreatedbyid(any(UUID.class));
         verify(checkinNoteRepository, times(1)).findByCheckinid(any(UUID.class));
     }
 
