@@ -3,18 +3,18 @@ package com.objectcomputing.checkins.services.memberSkills;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
 public class MemberSkillCreateDTO {
 
-    @NotBlank
-    @Schema(description = "the id of the member profile")
+    @NotNull
+    @Schema(description = "the id of the member profile", required = true)
     private UUID memberid;
 
-    @Schema(description = "the id of the skill")
+    @NotNull
+    @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
 
     public UUID getMemberid() {

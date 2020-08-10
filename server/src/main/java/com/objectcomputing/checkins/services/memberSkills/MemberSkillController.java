@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class MemberSkillController {
      */
 
     @Post(value = "/")
-    public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid MemberSkillCreateDTO memberSkill) {
+    public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill) {
         MemberSkill newMemberSkill = memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid()));
 
         if (newMemberSkill == null) {
@@ -86,6 +87,7 @@ public class MemberSkillController {
      * @param id {@link UUID} of the member skill entry
      * @return {@link MemberSkill}
      */
+
     @Get("/{id}")
     public MemberSkill readMemberSkill(UUID id) {
         return memberSkillsService.read(id);
@@ -94,8 +96,8 @@ public class MemberSkillController {
     /**
      * Find member skills that match all filled in parameters, return all results when given no params
      *
-     * @param memberid   {@link UUID} of member profile
-     * @param skillid {@link UUID} of skills
+     * @param memberid {@link UUID} of member profile
+     * @param skillid  {@link UUID} of skills
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?memberid,skillid}")

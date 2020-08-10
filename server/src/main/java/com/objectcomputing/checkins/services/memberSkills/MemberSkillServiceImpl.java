@@ -51,7 +51,7 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
         return memberSkillList;
     }
 
-    public MemberSkill read(UUID id) {
+    public MemberSkill read(@NotNull UUID id) {
         return memberSkillRepository.findById(id).orElse(null);
     }
 

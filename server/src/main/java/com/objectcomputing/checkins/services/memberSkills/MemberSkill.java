@@ -18,19 +18,6 @@ import java.util.UUID;
 @Table(name ="member_skills")
 public class MemberSkill {
 
-    //    CREATE TABLE member_skills(
-//            id varchar PRIMARY KEY,
-//            memberid varchar REFERENCES member_profile(uuid),
-//    skillid varchar REFERENCES skills(skillid)
-
-    public MemberSkill() {
-    }
-
-    public MemberSkill(UUID memberid, UUID skillid) {
-        this.memberid = memberid;
-        this.skillid = skillid;
-    }
-
     @Id
     @Column(name="id")
     @AutoPopulated
@@ -38,16 +25,31 @@ public class MemberSkill {
     @Schema(description = "the id of the memberskill", required = true)
     private UUID id;
 
-    @NotBlank
+    @NotNull
     @Column(name="memberid")
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the id of the member profile")
+    @Schema(description = "the id of the member profile", required = true)
     private UUID memberid;
 
+    @NotNull
     @Column(name="skillid")
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the id of the skill")
+    @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
+
+    public MemberSkill() {
+    }
+
+    public MemberSkill(@NotNull UUID memberid, @NotNull UUID skillid) {
+        this.memberid = memberid;
+        this.skillid = skillid;
+    }
+
+    public MemberSkill(UUID id, @NotNull UUID memberid, @NotNull UUID skillid) {
+        this.id = id;
+        this.memberid = memberid;
+        this.skillid = skillid;
+    }
 
     public UUID getId() {
         return id;
@@ -90,7 +92,8 @@ public class MemberSkill {
 
     @Override
     public String toString() {
-        return "Skill {" +
+        return "MemberSkill {" +
+                "id='" + id + '\'' +
                 "memberid='" + memberid + '\'' +
                 ", skillid=" + skillid +
                 '}';
