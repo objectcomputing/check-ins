@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -20,9 +19,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Entity
 @Table(name="checkin_document")
 public class CheckinDocument {
-    
-    public CheckinDocument(@JsonProperty("checkinsId") @TypeDef(type = DataType.STRING) @Valid @NotNull UUID checkinsId,
-                           @JsonProperty("description") @Valid @NotNull String uploadDocId) {
+
+    public CheckinDocument(@Valid @NotNull UUID checkinsId, @Valid @NotNull String uploadDocId) {
         this(null, checkinsId, uploadDocId);
     }
 
