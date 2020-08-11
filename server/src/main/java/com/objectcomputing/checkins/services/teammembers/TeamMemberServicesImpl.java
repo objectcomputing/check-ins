@@ -10,7 +10,6 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     @Inject
     private TeamMemberRepository teamMemberRepository;
 
-
     @Override
     public List<TeamMember> findByTeamAndMember(UUID teamId, UUID memberId) {
         if (teamId != null && memberId != null) {

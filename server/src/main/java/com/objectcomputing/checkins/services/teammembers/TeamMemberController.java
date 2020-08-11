@@ -1,26 +1,23 @@
 package com.objectcomputing.checkins.services.teammembers;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-
-import com.objectcomputing.checkins.services.team.Team;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.http.annotation.Produces;
-
+import io.micronaut.http.annotation.Put;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller(TeamMemberController.TEAM_MEMBER_CONTROLLER_PATH)
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -30,12 +27,9 @@ public class TeamMemberController {
     
     public static final String TEAM_MEMBER_CONTROLLER_PATH = "/services/team-member";
 
-    //protected final TeamMemberRepository teamMemberRepository;
     protected final TeamMemberServices teamMemberServices;
 
-    public TeamMemberController(//TeamMemberRepository teamMemberRepository,
-                                TeamMemberServices teamMemberServices){
-        //this.teamMemberRepository = teamMemberRepository;
+    public TeamMemberController(TeamMemberServices teamMemberServices){
         this.teamMemberServices = teamMemberServices;
     }
     /**
@@ -50,14 +44,6 @@ public class TeamMemberController {
         return teamMemberServices.findByTeamAndMember(teamId, memberId).stream().map(teamMember ->
                 new TeamMemberDTO(teamMember.getUuid(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getIsLead()))
                 .collect(Collectors.toList());
-
-        /*if(teamId != null) {
-            return teamMemberRepository.findByTeamId(teamId);
-        } else if(memberId != null) {
-            return teamMemberRepository.findByMemberId(memberId);
-        } else {
-            return teamMemberRepository.findAll();
-        }*/
     }
 
     /**
@@ -67,7 +53,6 @@ public class TeamMemberController {
      */
     @Post
     public HttpResponse<TeamMemberDTO> save(@Body @Valid TeamMemberDTO teamMember) {
-        //TeamMember newTeamMember = teamMemberRepository.save(teamMember);
         TeamMember newTeamMember = teamMemberServices.saveTeamMember(new TeamMember(teamMember.getTeamId(), teamMember.getMemberId(), teamMember.isLead()));
         return HttpResponse
                 .created(new TeamMemberDTO(newTeamMember.getUuid(), newTeamMember.getTeamId(), newTeamMember.getMemberId(), newTeamMember.getIsLead()))
@@ -80,16 +65,15 @@ public class TeamMemberController {
      * @return
      */
     @Put
-    public HttpResponse<?> update(@Body @Valid TeamMemberDTO teamMember) {
-
+    public HttpResponse<TeamMemberDTO> update(@Body @Valid TeamMemberDTO teamMember) {
         if(null != teamMember.getUuid()) {
-            //TeamMember updatedTeamMember = teamMemberRepository.update(teamMember);
             TeamMember updatedTeamMember = teamMemberServices.updateTeamMember(new TeamMember(teamMember.getTeamId(),
                     teamMember.getMemberId(), teamMember.getUuid(), teamMember.isLead()));
+
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedTeamMember.getUuid())))
-                    .body(updatedTeamMember);
+                    .body(new TeamMemberDTO(updatedTeamMember.getUuid(), updatedTeamMember.getTeamId(), updatedTeamMember.getMemberId(), updatedTeamMember.getIsLead()));
                     
         }
         

@@ -22,6 +22,8 @@ public class TeamMemberDTO {
         this.lead = lead;
     }
 
+    public TeamMemberDTO() {}
+
     public UUID getTeamId() {
         return teamId;
     }

@@ -1,9 +1,5 @@
 package com.objectcomputing.checkins.services.teammembers;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
-import com.objectcomputing.checkins.services.team.Team;
-import com.objectcomputing.checkins.services.team.TeamController;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -12,82 +8,78 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
-import org.junit.jupiter.api.BeforeAll;
+import io.micronaut.test.annotation.MockBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static java.util.Collections.EMPTY_LIST;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @MicronautTest
 public class TeamMemberControllerTest {
 
+    @Inject
     TeamMemberServices mockTeamMemberServices = mock(TeamMemberServices.class);
+
+    @MockBean(TeamMemberServices.class)
+    public TeamMemberServices roleServices() {
+        return mock(TeamMemberServices.class);
+    }
+
     TeamMemberDTO mockTeamMember = mock(TeamMemberDTO.class);
 
-    private static UUID testId;
-    private static UUID testTeamMemberId;
-    private static UUID testTeamId;
+    private static UUID testTeamMemberId = UUID.fromString("44bd3ea6-ade7-428d-9630-e7e701f67d85");
+    private static UUID testTeamId = UUID.fromString("cdcd949c-d2cb-4f6a-b13b-08ed4836c608");
+    private static UUID testUuid = UUID.fromString("73e754f8-ae11-4467-acfc-20da64295d5b");
     private static boolean isLead = false;
-    private static boolean isDataSetupForTest = false;
-
-//    @Inject
-//    MemberProfileController memberProfileController;
-//    @Inject
-//    TeamController teamController;
 
     @Inject
     @Client("/services/team-member")
     private HttpClient client;
 
-//    @BeforeAll
-//    void setupMemberProfileRecord() {
-//
-//        // setup a record in Member-Profile to satisfy foreign key constraint
-//        if (memberProfileController != null) {
-//            MemberProfile testMemberProfile = new MemberProfile("TestName",
-//                    "TestRole",
-//                    null,
-//                    "TestLocation",
-//                    "TestEmail",
-//                    "TestInsperityId",
-//                    LocalDate.now(),
-//                    "TestBio");
-//
-//            final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
-//            assertEquals(HttpStatus.CREATED, response.getStatus());
-//            assertNotNull(response.body());
-//            testTeamMemberId = ((MemberProfile) response.body()).getUuid();
-//        }
-//
-//        // setup a record in Team to satisfy foreign key constraint
-//        if (teamController != null) {
-//            Team testTeam = new Team("TestTeam", "TestDescription");
-//
-//            final HttpResponse<?> response = teamController.save(testTeam);
-//            assertEquals(HttpStatus.CREATED, response.getStatus());
-//            assertNotNull(response.body());
-//            testTeamId = ((Team) response.body()).getUuid();
-//        }
-//    }
-
     @BeforeEach
     void setup() {
         reset(mockTeamMemberServices);
         reset(mockTeamMember);
+    }
+
+    @Test
+    public void testPOSTValidator() {
+        TeamMemberDTO invalid = new TeamMemberDTO(null, null, testTeamMemberId, isLead);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("", invalid).basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals("teamMember.teamId: must not be null", thrown.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    public void testPUTValidator() {
+        TeamMemberDTO invalid = new TeamMemberDTO(null, testTeamId, null, isLead);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("", invalid).basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals("teamMember.memberId: must not be null", thrown.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     @Test
@@ -105,16 +97,12 @@ public class TeamMemberControllerTest {
     public void testGetFindByTeamMemberIdReturnsEmptyBody() {
 
         UUID testTeamMemberId = UUID.randomUUID();
-        TeamMember teammember = new TeamMember();
-        List<TeamMember> result = new ArrayList<TeamMember>();
-        result.add(teammember);
 
         //when(mockTeamMemberRepository.findByMemberId(testTeamMemberId)).thenReturn(result);
-        when(mockTeamMemberServices.findByTeamAndMember(null, testTeamMemberId)).thenReturn(result);
-
+        when(mockTeamMemberServices.findByTeamAndMember(null, testTeamMemberId)).thenReturn(EMPTY_LIST);
         HttpRequest request = HttpRequest.GET(String.format("/?memberId=%s", testTeamMemberId))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<TeamMemberDTO> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
+        List<TeamMemberDTO> response = client.toBlocking().retrieve(request, Argument.listOf(TeamMemberDTO.class));
 
         assertEquals(0, response.size());
     }
@@ -123,16 +111,12 @@ public class TeamMemberControllerTest {
     @Test
     public void testGetFindByTeamIdReturnsEmptyBody() {
 
-        UUID testTeamId = UUID.randomUUID();
-        TeamMember teammember = new TeamMember();
-        List<TeamMember> result = new ArrayList<TeamMember>();
-        result.add(teammember);
+        when(mockTeamMemberServices.findByTeamAndMember(testTeamId, null))
+                .thenReturn(EMPTY_LIST);
 
-        when(mockTeamMemberServices.findByTeamAndMember(testTeamId, null)).thenReturn(result);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?teamId=%s", testTeamId)).basicAuth(MEMBER_ROLE, MEMBER_ROLE)
+        HttpRequest request = HttpRequest.GET(String.format("/?teamId=%s", testTeamId))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<TeamMember> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
+        List<TeamMemberDTO> response = client.toBlocking().retrieve(request, Argument.listOf(TeamMemberDTO.class));
 
         assertEquals(0, response.size());
     }
@@ -141,8 +125,9 @@ public class TeamMemberControllerTest {
     @Test
     public void testGetFindAll() {
 
-        setupTestData();
-
+        //setupTestData();
+        when (mockTeamMemberServices.findByTeamAndMember(null, null))
+                .thenReturn(List.of(new TeamMember(testUuid, testTeamId, testTeamMemberId, isLead)));
         HttpRequest requestFindAll = HttpRequest.GET("")
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         List<TeamMember> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeamMember.getClass()));
@@ -153,11 +138,12 @@ public class TeamMemberControllerTest {
     @Test
     public void testGetFindByTeamMemberId() {
 
-        setupTestData();
-
+        //setupTestData();
+        when(mockTeamMemberServices.findByTeamAndMember(null, testTeamMemberId))
+                .thenReturn(List.of(new TeamMember(testTeamId, testTeamMemberId, testUuid, isLead)));
         HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?memberId=%s", testTeamMemberId))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<TeamMember> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockTeamMember.getClass()));
+        List<TeamMemberDTO> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.listOf(TeamMemberDTO.class));
 
         assertEquals(1, responseFindByName.size());
         assertEquals(testTeamMemberId, responseFindByName.get(0).getMemberId());
@@ -168,10 +154,13 @@ public class TeamMemberControllerTest {
     @Test
     public void testPostSave() {
 
-        TeamMember testTeamMember = new TeamMember(testTeamId, testTeamMemberId, isLead);
+        TeamMemberDTO testTeamMember = new TeamMemberDTO(null, testTeamId, testTeamMemberId, isLead);
 
-        final HttpResponse<TeamMember> response = client.toBlocking().exchange(HttpRequest.POST("", testTeamMember)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), TeamMember.class);
+        when(mockTeamMemberServices.saveTeamMember(any(TeamMember.class)))
+                .thenReturn(new TeamMember(testTeamId, testTeamMemberId, testUuid, isLead));
+
+        final HttpResponse<TeamMemberDTO> response = client.toBlocking().exchange(HttpRequest.POST("", testTeamMember)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), TeamMemberDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body());
         assertNotNull(response.body().getUuid());
@@ -181,18 +170,15 @@ public class TeamMemberControllerTest {
     // PUT - Valid Body
     @Test
     public void testPutUpdate() {
-
-        setupTestData();
-
-        TeamMember testTeamMemberPut = new TeamMember(testTeamId, testTeamMemberId, true);
-        testTeamMemberPut.setUuid(testId);
-
-        final HttpResponse<TeamMember> responseFromPut = client.toBlocking().exchange(
-                HttpRequest.PUT("", testTeamMemberPut).basicAuth(MEMBER_ROLE, MEMBER_ROLE), TeamMember.class);
+        TeamMemberDTO testTeamMemberPut = new TeamMemberDTO(testUuid, testTeamId, testTeamMemberId, true);
+        when(mockTeamMemberServices.updateTeamMember(any()))
+                .thenReturn(new TeamMember(testTeamId, testTeamMemberId, testUuid, true));
+        final HttpResponse<TeamMemberDTO> responseFromPut = client.toBlocking().exchange(
+                HttpRequest.PUT("", testTeamMemberPut).basicAuth(MEMBER_ROLE, MEMBER_ROLE), TeamMemberDTO.class);
         assertEquals(HttpStatus.OK, responseFromPut.getStatus());
         assertNotNull(responseFromPut.body());
-        assertEquals(testId, responseFromPut.body().getUuid());
-        assertEquals(true, responseFromPut.body().getIsLead());
+        assertEquals(testUuid, responseFromPut.body().getUuid());
+        assertEquals(true, responseFromPut.body().isLead());
     }
 
     // PUT - Request with empty body
@@ -218,20 +204,6 @@ public class TeamMemberControllerTest {
 
         assertNotNull(thrown);
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-    }
-
-    private void setupTestData() {
-        if (!isDataSetupForTest) {
-            TeamMember testTeamMember = new TeamMember(testTeamId, testTeamMemberId, isLead);
-            final HttpResponse<TeamMember> responseFromPost = client.toBlocking().exchange(
-                    HttpRequest.POST("", testTeamMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE), TeamMember.class);
-
-            assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
-            assertNotNull(responseFromPost.body());
-            testId = responseFromPost.body().getUuid();
-
-            isDataSetupForTest = true;
-        }
     }
 
 }
