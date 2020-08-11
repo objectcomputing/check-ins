@@ -17,8 +17,6 @@ public interface MemberSkillRepository extends CrudRepository<MemberSkill, UUID>
 
     List<MemberSkill> findBySkillid(UUID skillid);
 
-    List<MemberSkill> findAll();
-
     Optional<MemberSkill> findByMemberidAndSkillid(UUID memberId,UUID skillid );
 
 }
