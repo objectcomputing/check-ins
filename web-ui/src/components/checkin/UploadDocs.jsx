@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
 import DescriptionIcon from "@material-ui/icons/Description";
+import FileUploader from "./FileUploader";
+import Button from "@material-ui/core/Button";
 
 import "./Checkin.css";
 
@@ -16,6 +16,7 @@ const UploadDocs = () => {
   const [severity, setSeverity] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [files, setFiles] = useState([]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -23,6 +24,13 @@ const UploadDocs = () => {
     }
     setOpen(false);
   };
+
+  const handleFile = (file) => {
+    console.log({ file });
+    setFiles([...files, file]);
+  };
+
+  console.log({ files });
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -55,6 +63,33 @@ const UploadDocs = () => {
       console.log(error);
     }
   }
+
+  const fileMapper = () => {
+    const divs = files.map((file) => {
+      if (file.name) {
+        return (
+          <div key={file.name}>
+            {file.name}
+            <Button
+              onClick={() =>
+                setFiles(
+                  files.filter((e) => {
+                    return e.name !== file.name;
+                  })
+                )
+              }
+            >
+              X
+            </Button>
+          </div>
+        );
+      }
+    });
+    return divs;
+  };
+
+  const hiddenFileInput = React.useRef(null);
+
   return (
     <div className="documents">
       <div>
@@ -62,25 +97,10 @@ const UploadDocs = () => {
           <DescriptionIcon />
           Documents
         </h1>
-        <form onSubmit={onSubmit}>
-          <input
-            type="file"
-            name="file"
-            id="file"
-            className="uploader"
-            onchange="updateName();"
-          />
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <div className="upload-doc">
-              <button className="plus-button" type="submit" name="submit">
-                <AddCircleIcon></AddCircleIcon>
-              </button>
-              Upload a document
-            </div>
-          )}
-        </form>
+        <div class="file-upload">
+          {fileMapper()}
+          <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
+        </div>
         <Snackbar
           autoHideDuration={5000}
           open={open}
