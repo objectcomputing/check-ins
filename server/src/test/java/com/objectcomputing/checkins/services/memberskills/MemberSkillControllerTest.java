@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberskills;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.memberSkills.MemberSkill;
 import com.objectcomputing.checkins.services.memberSkills.MemberSkillCreateDTO;
 import com.objectcomputing.checkins.services.memberSkills.MemberSkillsServices;
@@ -155,12 +154,12 @@ public class MemberSkillControllerTest {
 
         verify(memberSkillsServices, times(1)).read(any(UUID.class));
     }
-//cant get this to work
+
     @Test
     void testReadMemberSkillNotFound() {
         MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
 
-        when(memberSkillsServices.read(eq(m.getId()))).thenReturn(m);
+        when(memberSkillsServices.read(eq(m.getId()))).thenReturn(null);
 
         final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", m.getId().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, MemberSkill.class));
@@ -168,6 +167,38 @@ public class MemberSkillControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
         verify(memberSkillsServices, times(1)).read(any(UUID.class));
+    }
+
+    @Test
+    void testFindMemberSkills() {
+        MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+        Set<MemberSkill> memberSkillSet = Collections.singleton(m);
+
+        when(memberSkillsServices.findByFields(eq(m.getMemberid()), eq(m.getSkillid()))).thenReturn(memberSkillSet);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", m.getMemberid(),
+                m.getSkillid()));
+        final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
+
+        assertEquals(memberSkillSet, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(memberSkillsServices, times(1)).findByFields(any(UUID.class), any(UUID.class));
+    }
+
+    @Test
+    void testFindMemberSkillsNull() {
+        MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+
+        when(memberSkillsServices.findByFields(eq(m.getMemberid()), eq(null))).thenReturn(null);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", m.getMemberid()));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class)));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+
+        verify(memberSkillsServices, times(1)).findByFields(any(UUID.class), eq(null));
     }
 
 
