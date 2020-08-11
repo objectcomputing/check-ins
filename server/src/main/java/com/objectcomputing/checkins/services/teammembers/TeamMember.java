@@ -15,11 +15,18 @@ import io.micronaut.data.model.DataType;
 @Table(name ="team_member")
 public class TeamMember {
 
+    public TeamMember(UUID teamId, UUID memberId, UUID uuid, boolean isLead) {
+        this.teamId=teamId;
+        this.memberId=memberId;
+        this.uuid = uuid;
+        this.isLead=isLead;
+    }
+
     public TeamMember(UUID teamId, UUID memberId, boolean isLead) {
         this.teamId=teamId;
         this.memberId=memberId;
         this.isLead=isLead;
-        }
+    }
 
     public TeamMember() {
     }

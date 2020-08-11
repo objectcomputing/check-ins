@@ -46,14 +46,9 @@ public class TeamMemberControllerTest {
     @Client("/services/team-member")
     private HttpClient client;
 
-    @Inject
-    MemberProfileController memberProfileController;
-
-    @Inject
-    TeamController teamController;
-
     TeamMemberRepository mockTeamMemberRepository = mock(TeamMemberRepository.class);
-    TeamMember mockTeamMember = mock(TeamMember.class);
+    TeamMemberServices mockTeamMemberServices = mock(TeamMemberServices.class);
+    TeamMemberDTO mockTeamMember = mock(TeamMemberDTO.class);
 
     private static UUID testId;
     private static UUID testTeamMemberId;
@@ -61,40 +56,9 @@ public class TeamMemberControllerTest {
     private static boolean isLead = false;
     private static boolean isDataSetupForTest = false;
 
-    @BeforeAll
-    void setupMemberProfileRecord() {
-    
-        // setup a record in Member-Profile to satisfy foreign key constraint
-        if(memberProfileController != null) {
-            MemberProfile testMemberProfile = new MemberProfile("TestName", 
-                                                                "TestRole", 
-                                                                UUID.randomUUID(), 
-                                                                "TestLocation", 
-                                                                "TestEmail", 
-                                                                "TestInsperityId", 
-                                                                LocalDate.now(), 
-                                                                "TestBio");
-
-            final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
-            assertEquals(HttpStatus.CREATED, response.getStatus());
-            assertNotNull(response.body());
-            testTeamMemberId = ((MemberProfile) response.body()).getUuid();
-        }
-    
-        // setup a record in Team to satisfy foreign key constraint
-        if(teamController != null) {
-            Team testTeam = new Team("TestTeam", "TestDescription");
-
-            final HttpResponse<?> response = teamController.save(testTeam);
-            assertEquals(HttpStatus.CREATED, response.getStatus());
-            assertNotNull(response.body());
-            testTeamId = ((Team) response.body()).getUuid();
-        }
-    }
-
     @BeforeEach
     void setup() {
-        reset(mockTeamMemberRepository);
+        reset(mockTeamMemberServices);
         reset(mockTeamMember);
     }
 
@@ -117,10 +81,11 @@ public class TeamMemberControllerTest {
         List<TeamMember> result = new ArrayList<TeamMember>();
         result.add(teammember);
 
-        when(mockTeamMemberRepository.findByMemberId(testTeamMemberId)).thenReturn(result);
+        //when(mockTeamMemberRepository.findByMemberId(testTeamMemberId)).thenReturn(result);
+        when(mockTeamMemberServices.findByTeamAndMember(null, testTeamMemberId)).thenReturn(result);
 
         HttpRequest request = HttpRequest.GET(String.format("/?memberId=%s", testTeamMemberId));
-        List<TeamMember> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
+        List<TeamMemberDTO> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));
 
         assertEquals(0, response.size());
     }
@@ -134,7 +99,7 @@ public class TeamMemberControllerTest {
         List<TeamMember> result = new ArrayList<TeamMember>();
         result.add(teammember);
 
-        when(mockTeamMemberRepository.findByMemberId(testTeamId)).thenReturn(result);
+        when(mockTeamMemberServices.findByTeamAndMember(testTeamId, null)).thenReturn(result);
 
         HttpRequest request = HttpRequest.GET(String.format("/?teamId=%s", testTeamId));
         List<TeamMember> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockTeamMember.getClass()));

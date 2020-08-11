@@ -3,10 +3,12 @@ package com.objectcomputing.checkins.services.teammembers;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
+import com.objectcomputing.checkins.services.team.Team;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -29,10 +31,13 @@ public class TeamMemberController {
     
     public static final String TEAM_MEMBER_CONTROLLER_PATH = "/services/team-member";
 
-    protected final TeamMemberRepository teamMemberRepository;
+    //protected final TeamMemberRepository teamMemberRepository;
+    protected final TeamMemberServices teamMemberServices;
 
-    public TeamMemberController(TeamMemberRepository teamMemberRepository){
-        this.teamMemberRepository = teamMemberRepository;
+    public TeamMemberController(//TeamMemberRepository teamMemberRepository,
+                                TeamMemberServices teamMemberServices){
+        //this.teamMemberRepository = teamMemberRepository;
+        this.teamMemberServices = teamMemberServices;
     }
     /**
      * Find Team member by team, member or find all.
@@ -41,15 +46,19 @@ public class TeamMemberController {
      * @return
      */
     @Get("/{?teamId,memberId}")
-    public List<TeamMember> findByValue(@Nullable UUID teamId, @Nullable UUID memberId) {
+    public List<TeamMemberDTO> findByValue(@Nullable UUID teamId, @Nullable UUID memberId) {
 
-        if(teamId != null) {
+        return teamMemberServices.findByTeamAndMember(teamId, memberId).stream().map(teamMember ->
+                new TeamMemberDTO(teamMember.getUuid(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getIsLead()))
+                .collect(Collectors.toList());
+
+        /*if(teamId != null) {
             return teamMemberRepository.findByTeamId(teamId);
         } else if(memberId != null) {
             return teamMemberRepository.findByMemberId(memberId);
         } else {
             return teamMemberRepository.findAll();
-        }
+        }*/
     }
 
     /**
@@ -57,12 +66,12 @@ public class TeamMemberController {
      * @param teamMember
      * @return
      */
-    @Post("/")
-    public HttpResponse<TeamMember> save(@Body @Valid TeamMember teamMember) {
-        TeamMember newTeamMember = teamMemberRepository.save(teamMember);
-        
+    @Post
+    public HttpResponse<TeamMemberDTO> save(@Body @Valid TeamMemberDTO teamMember) {
+        //TeamMember newTeamMember = teamMemberRepository.save(teamMember);
+        TeamMember newTeamMember = teamMemberServices.saveTeamMember(new TeamMember(teamMember.getTeamId(), teamMember.getMemberId(), teamMember.isLead()));
         return HttpResponse
-                .created(newTeamMember)
+                .created(new TeamMemberDTO(newTeamMember.getUuid(), newTeamMember.getTeamId(), newTeamMember.getMemberId(), newTeamMember.getIsLead()))
                 .headers(headers -> headers.location(location(newTeamMember.getUuid())));
     }
 
@@ -71,11 +80,13 @@ public class TeamMemberController {
      * @param teamMember
      * @return
      */
-    @Put("/")
-    public HttpResponse<?> update(@Body @Valid TeamMember teamMember) {
+    @Put
+    public HttpResponse<?> update(@Body @Valid TeamMemberDTO teamMember) {
 
         if(null != teamMember.getUuid()) {
-            TeamMember updatedTeamMember = teamMemberRepository.update(teamMember);
+            //TeamMember updatedTeamMember = teamMemberRepository.update(teamMember);
+            TeamMember updatedTeamMember = teamMemberServices.updateTeamMember(new TeamMember(teamMember.getTeamId(),
+                    teamMember.getMemberId(), teamMember.getUuid(), teamMember.isLead()));
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedTeamMember.getUuid())))
