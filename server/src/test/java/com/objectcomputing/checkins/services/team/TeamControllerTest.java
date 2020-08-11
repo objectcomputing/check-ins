@@ -1,168 +1,343 @@
 package com.objectcomputing.checkins.services.team;
 
+
+import com.fasterxml.jackson.databind.JsonNode;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
-import org.junit.jupiter.api.BeforeEach;
+import io.micronaut.test.annotation.MockBean;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
-public class TeamControllerTest {
+class TeamControllerTest {
 
-    private static String testName = "testName";
-    private static final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-        put("name", testName);
-    }};
-    TeamRepository mockTeamRepository = mock(TeamRepository.class);
-    Team mockTeam = mock(Team.class);
     @Inject
     @Client("/services/team")
-    private HttpClient client;
+    HttpClient client;
+    @Inject
+    private TeamServices teamService;
 
-    @BeforeEach
-    void setup() {
-        reset(mockTeamRepository);
-        reset(mockTeam);
+    @MockBean(TeamServices.class)
+    public TeamServices teamService() {
+        return mock(TeamServices.class);
     }
 
     @Test
-    public void testFindNonExistingEndpointReturns404() {
+    void testCreateATeam() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
+        teamCreateDTO.setName("name");
+        teamCreateDTO.setDescription("description");
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99").basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
+        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
 
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
+        when(teamService.save(eq(g))).thenReturn(g);
 
-    @Test
-    public void testFindNonExistingEndpointReturnsNotFound() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(HttpRequest.GET("/bar?order=foo").basicAuth(MEMBER_ROLE, MEMBER_ROLE)));
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
+        final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    // Find By Name - when no user data exists
-    @Test
-    public void testGetFindByNameReturnsEmptyBody() {
-
-        String testName = "testName";
-        Team team = new Team();
-        List<Team> result = new ArrayList<Team>();
-        result.add(team);
-
-        when(mockTeamRepository.findByName(testName)).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest
-                        .GET(String.format("/?name=%s", testName)).basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    // test Find All
-    @Test
-    public void testGetFindAll() {
-
-        Team testTeam = new Team("testName", "testDescription");
-        final HttpResponse<?> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testTeam)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-
-
-        HttpRequest requestFindAll = HttpRequest.GET(String.format(""))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<Team> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockTeam.getClass()));
-        assertTrue(responseFindAll.size() > 0);
-    }
-
-    // test Find By Name
-    @Test
-    public void testGetFindByName() {
-        Team testTeam = new Team("testName", "testDescription");
-        HttpResponse<Team> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testTeam)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), Team.class);
-
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", testName))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<Team> responseFindByName = client.toBlocking().retrieve(requestFindByName, Argument.of(List.class, mockTeam.getClass()));
-        assertEquals(testName, responseFindByName.get(0).getName());
-
-    }
-
-
-    // POST - Valid Body
-    @Test
-    public void testPostSave() {
-
-        Team testTeam = new Team("testName", "testDescription");
-
-        when(mockTeamRepository.save(testTeam)).thenReturn(testTeam);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("", testTeam)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        assertEquals(g, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.getContentLength());
+        assertEquals(String.format("%s/%s", request.getPath(), g.getTeamid()), response.getHeaders().get("location"));
+
+        verify(teamService, times(1)).save(any(Team.class));
     }
 
-    // PUT - Valid Body
     @Test
-    public void testPutUpdate() {
+    void testCreateAnInvalidTeam() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
 
-        Team testTeam = new Team("testName", "testDescription");
-        HttpResponse<Team> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testTeam)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), Team.class);
+        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.save(any(Team.class))).thenReturn(g);
 
-        UUID testUuid = responseFromPost.body().getUuid();
-        testTeam.setUuid(testUuid);
-        //Team testTeam = new Team("testName","testDescription");
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        when(mockTeamRepository.update(testTeam)).thenReturn(testTeam);
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("team.description: must not be blank", errorList.get(0));
+        assertEquals("team.name: must not be blank", errorList.get(1));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.PUT("", testTeam)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        verify(teamService, never()).save(any(Team.class));
+    }
+
+    @Test
+    void testCreateANullTeam() {
+        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.save(any(Team.class))).thenReturn(g);
+
+        final HttpRequest<String> request = HttpRequest.POST("", "");
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Required Body [team] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(teamService, never()).save(any(Team.class));
+    }
+
+    @Test
+    void testLoadTeams() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
+        teamCreateDTO.setName("name");
+        teamCreateDTO.setDescription("description");
+
+        TeamCreateDTO teamCreateDTO2 = new TeamCreateDTO();
+        teamCreateDTO2.setName("name2");
+        teamCreateDTO2.setDescription("description3");
+
+        List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
+
+        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
+        Team g2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
+
+        List<Team> teamList = List.of(g, g2);
+        AtomicInteger i = new AtomicInteger(0);
+        doAnswer(a -> {
+            Team thisG = teamList.get(i.getAndAdd(1));
+            assertEquals(thisG, a.getArgument(0));
+            return thisG;
+        }).when(teamService).save(any(Team.class));
+
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        final HttpResponse<List<Team>> response = client.toBlocking().exchange(request, Argument.listOf(Team.class));
+
+        assertEquals(teamList, response.body());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(request.getPath(), response.getHeaders().get("location"));
+
+        verify(teamService, times(2)).save(any(Team.class));
+    }
+
+    @Test
+    void testLoadTeamsInvalidTeam() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
+        teamCreateDTO.setName("name2");
+        teamCreateDTO.setDescription("description");
+
+        TeamCreateDTO teamCreateDTO2 = new TeamCreateDTO();
+
+        List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
+
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("teamsList.description: must not be blank", errorList.get(0));
+        assertEquals("teamsList.name: must not be blank", errorList.get(1));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(teamService, never()).save(any(Team.class));
+    }
+
+    @Test
+    void testLoadTeamsThrowException() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
+        teamCreateDTO.setName("name");
+        teamCreateDTO.setDescription("description");
+
+        TeamCreateDTO teamCreateDTO2 = new TeamCreateDTO();
+        teamCreateDTO2.setName("name2");
+        teamCreateDTO2.setDescription("description3");
+
+        List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
+
+        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
+        Team g2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
+
+        final String errorMessage = "error message!";
+        when(teamService.save(eq(g))).thenReturn(g);
+
+        when(teamService.save(eq(g2))).thenAnswer(a -> {
+            throw new TeamBadArgException(errorMessage);
+        });
+
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(String.format("[\"Team name2 was not added because: %s\"]", errorMessage), responseException.getResponse().body());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
+
+        verify(teamService, times(2)).save(any(Team.class));
+    }
+
+    @Test
+    void testReadTeam() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+
+        when(teamService.read(eq(g.getTeamid()))).thenReturn(g);
+
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getTeamid().toString()));
+        final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
+
+        assertEquals(g, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
+
+        verify(teamService, times(1)).read(any(UUID.class));
     }
 
-    // PUT - Request with empty body
     @Test
-    public void testPutUpdateForEmptyInput() {
-        Team testTeam = new Team();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testTeam)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    void testReadTeamNotFound() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+
+        when(teamService.read(eq(g.getTeamid()))).thenReturn(null);
+
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getTeamid().toString()));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Team.class));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+
+        verify(teamService, times(1)).read(any(UUID.class));
     }
 
-    // PUT - Request with invalid body - missing ID
     @Test
-    public void testPutUpdateWithMissingField() {
+    void testFindTeams() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(g);
+        UUID member = UUID.randomUUID();
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", fakeBody)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        when(teamService.findByFields(eq(g.getName()), eq(member))).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", g.getName(),
+                member.toString()));
+        final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamService, times(1)).findByFields(any(String.class), any(UUID.class));
+    }
+
+    @Test
+    void testFindTeamsNull() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+
+        when(teamService.findByFields(eq(g.getName()), eq(null))).thenReturn(null);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", g.getName()));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(Team.class)));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+
+        verify(teamService, times(1)).findByFields(any(String.class), eq(null));
+    }
+
+
+    @Test
+    void testUpdateTeam() {
+        Team g = new Team(UUID.randomUUID(), "name", "description");
+
+        when(teamService.update(eq(g))).thenReturn(g);
+
+        final HttpRequest<Team> request = HttpRequest.PUT("", g);
+        final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
+
+        assertEquals(g, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), g.getTeamid()), response.getHeaders().get("location"));
+
+        verify(teamService, times(1)).update(any(Team.class));
+    }
+
+    @Test
+    void testUpdateAnInvalidTeam() {
+        Team g = new Team(UUID.randomUUID(), null, "");
+
+        when(teamService.update(any(Team.class))).thenReturn(g);
+
+        final HttpRequest<Team> request = HttpRequest.PUT("", g);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("team.description: must not be blank", errorList.get(0));
+        assertEquals("team.name: must not be blank", errorList.get(1));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(teamService, never()).update(any(Team.class));
+    }
+
+    @Test
+    void testUpdateANullTeam() {
+        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.update(any(Team.class))).thenReturn(g);
+
+        final HttpRequest<String> request = HttpRequest.PUT("", "");
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Required Body [team] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(teamService, never()).update(any(Team.class));
+    }
+
+
+    @Test
+    void testUpdateTeamThrowException() {
+        Team g = new Team(UUID.randomUUID(), "name", "description");
+
+        final String errorMessage = "error message!";
+
+        when(teamService.update(any(Team.class))).thenAnswer(a -> {
+            throw new TeamBadArgException(errorMessage);
         });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+
+        final MutableHttpRequest<Team> request = HttpRequest.PUT("", g);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals(errorMessage, errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(teamService, times(1)).update(any(Team.class));
     }
 
 }
