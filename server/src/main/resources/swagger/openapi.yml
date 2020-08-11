@@ -1,0 +1,11 @@
+components:
+  securitySchemes:
+    oAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth'
+          scopes:
+            openid: 'Google info'
+security:
+  - oAuth: [openid]

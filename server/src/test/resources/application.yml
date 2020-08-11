@@ -1,0 +1,17 @@
+micronaut:
+  security:
+    enabled: true
+    reject-not-found: false
+
+credentials:
+  roles:
+    SUPER:
+      - ADMIN
+      - PDL
+      - MEMBER
+    ADMIN:
+      - ADMIN
+    PDL:
+      - PDL
+    MEMBER:
+      - MEMBER

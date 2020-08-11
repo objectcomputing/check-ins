@@ -42,12 +42,13 @@ micronaut:
         http-method: GET
         access:
           - isAnonymous()
+    reject-not-found: false
     session:
       enabled: true 
       login-success-target-url: '/'
       unauthorized-target-url: '/unauthorized'
       forbidden-target-url: '/forbidden'
----      
+---
 datasources:
   default:
     url: ${JDBC_URL:`jdbc:postgresql:///`}
