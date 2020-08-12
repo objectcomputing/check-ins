@@ -1,16 +1,8 @@
 package com.objectcomputing.checkins.services.questions;
 
-import com.objectcomputing.checkins.services.questions.Question;
-import com.objectcomputing.checkins.services.questions.QuestionController;
-import com.objectcomputing.checkins.services.questions.QuestionRepository;
-import com.objectcomputing.checkins.services.questions.QuestionServices;
 import com.objectcomputing.checkins.services.skills.SkillControllerTest;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
-public class QuestionServicesTest {
+public class QuestionServicesImplTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkillControllerTest.class);
 
@@ -35,7 +27,8 @@ public class QuestionServicesTest {
     private HttpClient client;
 
     @Inject
-    QuestionServices itemUnderTest;
+    private QuestionServicesImpl itemUnderTest;
+
 
     QuestionRepository mockQuestionRepository = mock(QuestionRepository.class);
     Question mockQuestion = mock(Question.class);

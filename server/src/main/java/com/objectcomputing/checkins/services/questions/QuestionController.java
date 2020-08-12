@@ -1,9 +1,18 @@
 package com.objectcomputing.checkins.services.questions;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeCreator;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.objectcomputing.checkins.services.role.RoleBadArgException;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,9 +20,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller("/services/questions")
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -24,8 +35,26 @@ public class QuestionController {
     @Inject
     private QuestionServices questionService;
 
-    public void setQuestionService(QuestionServices questionService) {
-        this.questionService = questionService;
+    public QuestionController(QuestionServices questionServices) {
+        this.questionService = questionServices;
+    }
+
+    @Error(exception = QuestionNotFoundException.class)
+    public HttpResponse<?> handleDupe(HttpRequest<?> request, QuestionNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+        return HttpResponse.notFound().body(error);
+    }
+
+    @Error(exception = QuestionDuplicateException.class)
+    public HttpResponse<?> handleDupe(HttpRequest<?> request, QuestionDuplicateException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+        return HttpResponse.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @Error(exception = QuestionBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, QuestionBadArgException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+        return HttpResponse.badRequest().body(error);
     }
 
     /**
@@ -36,14 +65,15 @@ public class QuestionController {
      */
 
     @Post(value = "/")
-    public HttpResponse<Question> createAQuestion(@Body @Valid Question question) {
-        Question newQuestion = questionService.saveQuestion(question);
+    public HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
+        Question newQuestion = questionService.saveQuestion(toModel(question));
 
         if (newQuestion == null) {
-            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
+            throw new QuestionDuplicateException("Already exists");
+            //return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
         } else {
             return HttpResponse
-                    .created(newQuestion)
+                    .created(fromModel(newQuestion))
                     .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
         }
     }
@@ -56,27 +86,33 @@ public class QuestionController {
      */
 
     @Get("/{questionid}")
-    public Question getById(UUID questionid) {
+    public HttpResponse<QuestionResponseDTO> getById(UUID questionid) {
         Question found = questionService.findByQuestionId(questionid);
-        return found;
-
+        if (found == null) {
+            throw new QuestionNotFoundException("No question for uuid");
+        }
+        return HttpResponse.ok(fromModel(found));
     }
 
     /**
-     * Find questions with a paticular string or read all questions.
+     * Find questions with a particular string or read all questions.
      *
      * @param text
      * * @return
      */
     @Get("/{?text}")
-    public List<Question> findByText(Optional<String> text) {
+    public HttpResponse<List<QuestionResponseDTO>> findByText(Optional<String> text) {
         List<Question> found = null;
         if(text.isPresent()) {
             found = questionService.findByText(text.get());
         } else {
             found = questionService.readAllQuestions();
         }
-        return found;
+
+        List<QuestionResponseDTO> responseBody = found.stream()
+                .map(question -> fromModel(question))
+                .collect(Collectors.toList());
+        return HttpResponse.ok(responseBody);
 
     }
 
@@ -86,26 +122,40 @@ public class QuestionController {
      * @return
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid Question question) {
+    public HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionCreateDTO question) {
 
-        if(question.getQuestionid() != null) {
-            Question updatedQuestion = questionService.update(question);
+        if(question.getQuestionId() != null) {
+            Question updatedQuestion = questionService.update(toModel(question));
             if (updatedQuestion != null) {
                 return HttpResponse
                         .ok()
                         .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-                        .body(updatedQuestion);
+                        .body(fromModel(updatedQuestion));
             } else {
-                return HttpResponse.badRequest();
+                throw new QuestionBadArgException("No question found for this uuid");
             }
         }
 
-        return HttpResponse.badRequest();
+        throw new QuestionBadArgException("Question id is required");
     }
 
 
     protected URI location(UUID uuid) {
         return URI.create("/services/questions/" + uuid);
+    }
+
+    private QuestionResponseDTO fromModel(Question question) {
+        QuestionResponseDTO qrdto =  new QuestionResponseDTO();
+        qrdto.setQuestionId(question.getQuestionid());
+        qrdto.setText(question.getText());
+        return qrdto;
+    }
+
+    private Question toModel(QuestionCreateDTO dto) {
+        Question model =  new Question();
+        model.setQuestionid(dto.getQuestionId());
+        model.setText(dto.getText());
+        return model;
     }
 
 }

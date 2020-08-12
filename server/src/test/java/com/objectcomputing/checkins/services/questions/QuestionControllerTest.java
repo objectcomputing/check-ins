@@ -6,19 +6,23 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.annotation.MockBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -33,14 +37,19 @@ public class QuestionControllerTest {
     @Inject
     QuestionController itemUnderTest;
 
-    QuestionServices mockQuestionServices = mock(QuestionServices.class);
+    @Inject
+    QuestionServices mockQuestionServices;
+
+    @MockBean(QuestionServices.class)
+    public QuestionServices getMockQuestionServices() {
+        return mock(QuestionServices.class);
+    }
     Question mockQuestion = mock(Question.class);
 
     String fakeUuid = "12345678-9123-4567-abcd-123456789abc";
 
     @BeforeEach
     void setup() {
-        itemUnderTest.setQuestionService(mockQuestionServices);
         reset(mockQuestionServices);
         reset(mockQuestion);
     }
@@ -56,16 +65,72 @@ public class QuestionControllerTest {
     }
 
     @Test
+    public void testPUTSuccessfulUpdate() {
+        Question fakeQuestion = new Question("fake question");
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
+        when(mockQuestionServices.update(any(Question.class))).thenReturn(fakeQuestion);
+        QuestionCreateDTO requestBody = new QuestionCreateDTO();
+        requestBody.setText(fakeQuestion.getText());
+        requestBody.setQuestionId(fakeQuestion.getQuestionid());
+
+        final HttpResponse<?> response = client.toBlocking()
+                .exchange(HttpRequest.PUT("/", requestBody));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals("/services/questions/" + fakeQuestion.getQuestionid(),
+                response.getHeaders().get("location"));
+        assertNotNull(response.getContentLength());
+    }
+
+    @Test
+    public void testPUTNoIDSupplied() {
+        QuestionCreateDTO requestBody = new QuestionCreateDTO();
+        requestBody.setText("Fake Question");
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody));
+        });
+
+        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
+
+        assertEquals("Question id is required", responseBody.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    public void testPUTNoQuestionForID() {
+        when(mockQuestionServices.findByQuestionId(UUID.fromString(fakeUuid)))
+                .thenReturn(null);
+
+        QuestionCreateDTO requestBody = new QuestionCreateDTO();
+        requestBody.setText("Fake Question");
+        requestBody.setQuestionId(UUID.fromString(fakeUuid));
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody));
+        });
+
+        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
+
+        assertEquals("No question found for this uuid", responseBody.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
     public void testPOSTCreateAQuestion() {
 
         Question fakeQuestion = new Question("fake question");
+        fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
 
-        when(mockQuestionServices.saveQuestion(fakeQuestion)).thenReturn(fakeQuestion);
+        when(mockQuestionServices.saveQuestion(any(Question.class))).thenReturn(fakeQuestion);
 
+        QuestionCreateDTO requestBody = new QuestionCreateDTO();
+        requestBody.setText(fakeQuestion.getText());
         final HttpResponse<?> response = client.toBlocking()
-                .exchange(HttpRequest.POST("/", fakeQuestion));
+                .exchange(HttpRequest.POST("/", requestBody));
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals("/services/questions/" + fakeQuestion.getQuestionid(),
+                response.getHeaders().get("location"));
         assertNotNull(response.getContentLength());
     }
 
@@ -89,11 +154,9 @@ public class QuestionControllerTest {
     public void testGETreadAllQuestions() {
 
         Question fakeQuestion = new Question("fake question text");
-        List<Question> fakeQuestionList = new ArrayList<>();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
-        fakeQuestionList.add(fakeQuestion);
 
-        when(mockQuestionServices.readAllQuestions()).thenReturn(fakeQuestionList);
+        when(mockQuestionServices.readAllQuestions()).thenReturn(Collections.singletonList(fakeQuestion));
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest.GET("/"));
@@ -107,11 +170,9 @@ public class QuestionControllerTest {
     public void testGETFindQuestionsSimilar() {
 
         Question fakeQuestion = new Question("fake question text");
-        List<Question> fakeQuestionList = new ArrayList<>();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
-        fakeQuestionList.add(fakeQuestion);
 
-        when(mockQuestionServices.findByText("fake")).thenReturn(fakeQuestionList);
+        when(mockQuestionServices.findByText("fake")).thenReturn(Collections.singletonList(fakeQuestion));
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest.GET("/?text=fake"));

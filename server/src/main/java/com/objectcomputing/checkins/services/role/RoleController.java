@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.action_item.ActionItem;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
