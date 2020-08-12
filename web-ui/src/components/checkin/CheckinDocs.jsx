@@ -4,6 +4,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 import DescriptionIcon from "@material-ui/icons/Description";
 import FileUploader from "./FileUploader";
 import Button from "@material-ui/core/Button";
+import { CircularProgress } from "@material-ui/core";
+import { uploadFile } from "../../api/upload";
 
 import "./Checkin.css";
 
@@ -26,58 +28,71 @@ const UploadDocs = () => {
   };
 
   const handleFile = (file) => {
-    console.log({ file });
     setFiles([...files, file]);
+    addFile(file);
   };
 
-  console.log({ files });
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    try {
-      let input = document.querySelector('input[type="file"]');
-      if (!input.files[0]) {
-        //if user doesn't select a file
-        setResponseText("Please select a file before uploading.");
-        setSeverity("error");
-        setLoading(false);
-        setOpen(true);
-        return;
-      }
-
-      setLoading(true);
-      let body = new FormData();
-      body.append("file", input.files[0]);
-
-      const result = await fetch("/upload", { method: "POST", body });
-      const resJson = await result.json();
+  const addFile = async (file) => {
+    if (!file) {
+      //if user doesn't select a file
+      setResponseText("Please select a file before uploading.");
+      setSeverity("error");
+      setLoading(false);
+      setOpen(true);
+      return;
+    }
+    setLoading(true);
+    let res = await uploadFile(file);
+    if (res.error) {
+      setLoading(false);
+      setOpen(false);
+      console.log(res.error);
+    } else {
+      const resJson = res.payload.data();
+      console.log({ resJson });
       setResponseText(Object.values(resJson)[0]);
       Object.keys(resJson)[0] === "completeMessage"
         ? setSeverity("success")
         : setSeverity("error");
       setOpen(true);
       setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setOpen(false);
-      console.log(error);
     }
-  }
+  };
+
+  // const removeFile = async (file) => {
+  //   try {
+  //     setLoading(true);
+
+  //     let res = deleteFile(file);
+  //     const resJson = await res.json();
+  //     setResponseText(Object.values(resJson)[0]);
+  //     Object.keys(resJson)[0] === "completeMessage"
+  //       ? setSeverity("success")
+  //       : setSeverity("error");
+  //     setOpen(true);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     setOpen(false);
+  //     console.log(error);
+  //   }
+  // };
 
   const fileMapper = () => {
     const divs = files.map((file) => {
       if (file.name) {
         return (
-          <div key={file.name}>
+          <div className="file-name" key={file.name}>
             {file.name}
             <Button
-              onClick={() =>
+              className="remove-file"
+              onClick={() => {
                 setFiles(
                   files.filter((e) => {
                     return e.name !== file.name;
                   })
-                )
-              }
+                );
+              }}
             >
               X
             </Button>
@@ -97,9 +112,13 @@ const UploadDocs = () => {
           <DescriptionIcon />
           Documents
         </h1>
-        <div class="file-upload">
-          {fileMapper()}
-          <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
+        <div className="file-upload">
+          <div className="file-name-container">{fileMapper()}</div>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
+          )}
         </div>
         <Snackbar
           autoHideDuration={5000}

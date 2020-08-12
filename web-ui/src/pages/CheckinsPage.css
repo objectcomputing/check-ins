@@ -1,13 +1,19 @@
 .right-sidebar {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .container {
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
 }
 
 .contents {
-    width: 100%;
+  width: 100%;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

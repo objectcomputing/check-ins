@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
-import UploadDocs from "../components/checkin/UploadDocs";
+import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
+import Modal from "../components/modal/Modal";
 import Button from "@material-ui/core/Button";
 
 import "./CheckinsPage.css";
 
 const CheckinsPage = () => {
+  const [show, setShow] = useState(false);
+
+  const showModal = () => {
+    setShow(!show);
+  };
+
   return (
     <div>
       <div className="container">
@@ -17,13 +24,14 @@ const CheckinsPage = () => {
           <Personnel />
         </div>
       </div>
-      <UploadDocs />
-      <Button
-        onClick={() => alert("The checkin will no longer be able to be edited")}
-        style={{ backgroundColor: "#255aa8", color: "white" }}
-      >
-        Submit Check-in
-      </Button>
+      <CheckinDocs />
+      <div className="modal-container">
+        <Modal close={showModal} show={show}>
+          The checkin will no longer be able to be edited. Are you sure that you
+          are ready to close this check-in?
+        </Modal>
+        <Button onClick={() => showModal()}>Submit</Button>
+      </div>
     </div>
   );
 };

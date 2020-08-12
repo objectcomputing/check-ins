@@ -18,7 +18,9 @@ const FileUploader = (props) => {
   };
   return (
     <>
-      <Button onClick={handleClick}>
+      <Button
+        onClick={handleClick}
+      >
         <AddCircleIcon></AddCircleIcon>Upload a document
       </Button>
       <input

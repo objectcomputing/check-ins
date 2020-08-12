@@ -20,6 +20,16 @@
   margin-top: 50px;
 }
 
+.file-name {
+  color: green;
+}
+
+.file-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .info {
   margin-bottom: auto;
   margin-left: 25px;
@@ -45,6 +55,12 @@
 .react-datepicker-wrapper {
   margin-left: 25px;
   margin-right: 25px;
+}
+
+.remove-file {
+  margin-left: 10px;
+  min-width: 30px;
+  padding: 0px;
 }
 
 .title {
