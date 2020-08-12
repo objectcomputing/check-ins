@@ -10,10 +10,24 @@ const Modal = (props) => {
   }
   return (
     <div className="modal" id="modal">
-      <div>
-        <div className="content">{props.children}</div>
-        <Button onClick={close}>Okay</Button>
-        <Button onClick={close}>Cancel</Button>
+      <div className="content">{props.children}</div>
+      <div className="modal-wrapper">
+        <Button
+          style={{ backgroundColor: "lightgray", color: "white" }}
+          onClick={close}
+        >
+          Cancel
+        </Button>
+        <Button
+          style={{
+            backgroundColor: "#3f51b5",
+            color: "white",
+            marginLeft: "10px",
+          }}
+          onClick={close}
+        >
+          Okay
+        </Button>
       </div>
     </div>
   );
