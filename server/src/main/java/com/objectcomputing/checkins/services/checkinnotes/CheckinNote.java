@@ -1,28 +1,40 @@
-package com.objectcomputing.checkins.services.action_item;
+package com.objectcomputing.checkins.services.checkinnotes;
 
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
-import java.util.UUID;
+
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
-@Table(name = "action_items")
-public class ActionItem {
+@Table(name="checkin_notes")
+public class CheckinNote {
+
+    public CheckinNote(UUID id,UUID checkinid, UUID createdbyid,String description){
+        this.id=id;
+        this.checkinid=checkinid;
+        this.createdbyid=createdbyid;
+        this.description=description;
+    }
+
+    public CheckinNote(UUID checkinid, UUID createdbyid,String description){
+        this(null,checkinid,createdbyid,description);
+    }
 
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this action item", required = true)
+    @Schema(description = "UUID of checkin notes", required = true)
     private UUID id;
 
     @NotNull
@@ -39,22 +51,12 @@ public class ActionItem {
 
     @Nullable
     @Column(name = "description")
-    @Schema(description = "description of the action item")
+    @Schema(description = "description of the check in note")
     private String description;
 
-    public ActionItem(UUID checkinid, UUID createdbyid, String description) {
-        this(null, checkinid, createdbyid, description);
-    }
-
-    public ActionItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
-        this.id = id;
-        this.checkinid = checkinid;
-        this.createdbyid = createdbyid;
-        this.description = description;
-    }
 
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(UUID id) {
@@ -62,7 +64,7 @@ public class ActionItem {
     }
 
     public UUID getCheckinid() {
-        return checkinid;
+        return this.checkinid;
     }
 
     public void setCheckinid(UUID checkinid) {
@@ -70,7 +72,7 @@ public class ActionItem {
     }
 
     public UUID getCreatedbyid() {
-        return createdbyid;
+        return this.createdbyid;
     }
 
     public void setCreatedbyid(UUID createdbyid) {
@@ -78,7 +80,7 @@ public class ActionItem {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -87,7 +89,7 @@ public class ActionItem {
 
     @Override
     public String toString() {
-        return "ActionItem{" +
+        return "CheckinNotes{" +
                 "id=" + id +
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
@@ -99,7 +101,7 @@ public class ActionItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ActionItem that = (ActionItem) o;
+        CheckinNote that = (CheckinNote) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
@@ -108,6 +110,8 @@ public class ActionItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid, description);
+        return Objects.hash(id, checkinid, createdbyid,description);
     }
+
 }
+

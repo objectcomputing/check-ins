@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.action_item;
+package com.objectcomputing.checkins.services.agenda_item;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -15,14 +15,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "action_items")
-public class ActionItem {
+@Table(name = "agenda_items")
+public class AgendaItem {
 
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this action item", required = true)
+    @Schema(description = "id of this agenda item", required = true)
     private UUID id;
 
     @NotNull
@@ -39,14 +39,14 @@ public class ActionItem {
 
     @Nullable
     @Column(name = "description")
-    @Schema(description = "description of the action item")
+    @Schema(description = "description of the agenda item")
     private String description;
 
-    public ActionItem(UUID checkinid, UUID createdbyid, String description) {
+    public AgendaItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
     }
 
-    public ActionItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
@@ -87,7 +87,7 @@ public class ActionItem {
 
     @Override
     public String toString() {
-        return "ActionItem{" +
+        return "AgendaItem{" +
                 "id=" + id +
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
@@ -99,7 +99,7 @@ public class ActionItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ActionItem that = (ActionItem) o;
+        AgendaItem that = (AgendaItem) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
