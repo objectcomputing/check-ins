@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkills;
+package com.objectcomputing.checkins.services.memberSkill;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;

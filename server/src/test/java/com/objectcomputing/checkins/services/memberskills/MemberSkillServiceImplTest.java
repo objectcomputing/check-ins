@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.memberskills;
 
-import com.objectcomputing.checkins.services.memberSkills.MemberSkill;
-import com.objectcomputing.checkins.services.memberSkills.MemberSkillRepository;
-import com.objectcomputing.checkins.services.memberSkills.MemberSkillServiceImpl;
-import com.objectcomputing.checkins.services.memberSkills.MemberSkillsBadArgException;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillRepository;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillServiceImpl;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillBadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;
@@ -88,7 +88,7 @@ class MemberSkillServiceImplTest {
     void testSaveWithId() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
 
-        MemberSkillsBadArgException exception = assertThrows(MemberSkillsBadArgException.class, () -> memberSkillsServices.save(memberSkill));
+        MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Found unexpected id %s for member skill", memberSkill.getId()), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
@@ -100,7 +100,7 @@ class MemberSkillServiceImplTest {
     void testSaveActionItemNullMemberId() {
         MemberSkill memberSkill = new MemberSkill(null, UUID.randomUUID());
 
-        MemberSkillsBadArgException exception = assertThrows(MemberSkillsBadArgException.class, () -> memberSkillsServices.save(memberSkill));
+        MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Invalid member skill %s", memberSkill), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
@@ -112,7 +112,7 @@ class MemberSkillServiceImplTest {
     void testSaveActionItemNullSkillId() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), null);
 
-        MemberSkillsBadArgException exception = assertThrows(MemberSkillsBadArgException.class, () -> memberSkillsServices.save(memberSkill));
+        MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Invalid member skill %s", memberSkill), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
@@ -136,7 +136,7 @@ class MemberSkillServiceImplTest {
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.empty());
         when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
 
-        MemberSkillsBadArgException exception = assertThrows(MemberSkillsBadArgException.class, () -> memberSkillsServices.save(memberSkill));
+        MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Skill %s doesn't exist", memberSkill.getSkillid()), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));
@@ -151,7 +151,7 @@ class MemberSkillServiceImplTest {
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
         when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.empty());
 
-        MemberSkillsBadArgException exception = assertThrows(MemberSkillsBadArgException.class, () -> memberSkillsServices.save(memberSkill));
+        MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Member Profile %s doesn't exist", memberSkill.getMemberid()), exception.getMessage());
 
         verify(memberSkillRepository, never()).save(any(MemberSkill.class));

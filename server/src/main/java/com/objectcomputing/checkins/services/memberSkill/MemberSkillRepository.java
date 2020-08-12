@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkills;
+package com.objectcomputing.checkins.services.memberSkill;
 
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

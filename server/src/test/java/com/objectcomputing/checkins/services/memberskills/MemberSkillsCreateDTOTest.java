@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberskills;
 
-import com.objectcomputing.checkins.services.memberSkills.MemberSkillCreateDTO;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;

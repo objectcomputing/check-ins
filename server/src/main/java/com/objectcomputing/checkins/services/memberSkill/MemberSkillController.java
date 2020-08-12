@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkills;
+package com.objectcomputing.checkins.services.memberSkill;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -28,10 +28,10 @@ import java.util.UUID;
 public class MemberSkillController {
 
     @Inject
-    private MemberSkillsServices memberSkillsService;
+    private MemberSkillServices memberSkillsService;
 
-    @Error(exception = MemberSkillsBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillsBadArgException e) {
+    @Error(exception = MemberSkillBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillBadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 

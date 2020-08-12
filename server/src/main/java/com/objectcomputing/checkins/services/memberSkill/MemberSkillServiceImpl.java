@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkills;
+package com.objectcomputing.checkins.services.memberSkill;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class MemberSkillServiceImpl implements MemberSkillsServices {
+public class MemberSkillServiceImpl implements MemberSkillServices {
 
     @Inject
     private MemberSkillRepository memberSkillRepository;
@@ -27,16 +27,16 @@ public class MemberSkillServiceImpl implements MemberSkillsServices {
             final UUID memberId = memberSkill.getMemberid();
             final UUID skillId = memberSkill.getSkillid();
             if (skillId == null || memberId == null) {
-                throw new MemberSkillsBadArgException(String.format("Invalid member skill %s", memberSkill));
+                throw new MemberSkillBadArgException(String.format("Invalid member skill %s", memberSkill));
             } else if (memberSkill.getId() != null) {
-                throw new MemberSkillsBadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
+                throw new MemberSkillBadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
             } else if (!memberProfileRepository.findById(memberId).isPresent()) {
-                throw new MemberSkillsBadArgException(String.format("Member Profile %s doesn't exist", memberId));
+                throw new MemberSkillBadArgException(String.format("Member Profile %s doesn't exist", memberId));
             } else if (!skillRepository.findById(skillId).isPresent()) {
-                throw new MemberSkillsBadArgException(String.format("Skill %s doesn't exist", skillId));
+                throw new MemberSkillBadArgException(String.format("Skill %s doesn't exist", skillId));
             } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
                     memberSkill.getSkillid()).isPresent()) {
-                throw new MemberSkillsBadArgException(String.format("Member %s already has this skill %s", memberId, skillId));
+                throw new MemberSkillBadArgException(String.format("Member %s already has this skill %s", memberId, skillId));
             }
 
             memberSkillRet = memberSkillRepository.save(memberSkill);

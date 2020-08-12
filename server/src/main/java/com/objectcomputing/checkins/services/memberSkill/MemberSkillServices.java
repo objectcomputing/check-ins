@@ -1,9 +1,9 @@
-package com.objectcomputing.checkins.services.memberSkills;
+package com.objectcomputing.checkins.services.memberSkill;
 
 import java.util.Set;
 import java.util.UUID;
 
-public interface MemberSkillsServices {
+public interface MemberSkillServices {
 
     MemberSkill read(UUID uuid);
 
