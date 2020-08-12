@@ -28,7 +28,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller("/services/checkin-document")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin document")
 public class CheckinDocumentController {
