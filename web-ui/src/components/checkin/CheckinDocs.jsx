@@ -19,6 +19,7 @@ const UploadDocs = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
+  const [fileColor, setFileColor] = useState("");
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -45,15 +46,20 @@ const UploadDocs = () => {
     let res = await uploadFile(file);
     if (res.error) {
       setLoading(false);
-      setOpen(false);
+      setSeverity("error");
+      setResponseText("Unable to upload file");
+      setOpen(true);
+      setFileColor("red");
       console.log(res.error);
     } else {
       const resJson = res.payload.data();
       console.log({ resJson });
       setResponseText(Object.values(resJson)[0]);
       Object.keys(resJson)[0] === "completeMessage"
-        ? setSeverity("success")
-        : setSeverity("error");
+        ? setSeverity("success") &&
+          setFileColor("green") &&
+          setResponseText("Successfully uploaded file")
+        : setSeverity("error") && setFileColor("red");
       setOpen(true);
       setLoading(false);
     }
@@ -80,9 +86,11 @@ const UploadDocs = () => {
 
   const fileMapper = () => {
     const divs = files.map((file) => {
-      if (file.name) {
+      if (!file.name) {
+        return null;
+      } else {
         return (
-          <div className="file-name" key={file.name}>
+          <div key={file.name} style={{ color: fileColor }}>
             {file.name}
             <Button
               className="remove-file"
@@ -121,7 +129,7 @@ const UploadDocs = () => {
           )}
         </div>
         <Snackbar
-          autoHideDuration={5000}
+          autoHideDuration={4000}
           open={open}
           onClose={handleClose}
           style={{ left: "56%", bottom: "50px" }}

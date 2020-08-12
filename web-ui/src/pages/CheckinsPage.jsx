@@ -30,7 +30,16 @@ const CheckinsPage = () => {
           The checkin will no longer be able to be edited. Are you sure that you
           are ready to close this check-in?
         </Modal>
-        <Button onClick={() => showModal()}>Submit</Button>
+        <Button
+          style={{
+            backgroundColor: "#3f51b5",
+            color: "white",
+            display: show ? "none" : "",
+          }}
+          onClick={() => showModal()}
+        >
+          Submit
+        </Button>
       </div>
     </div>
   );
