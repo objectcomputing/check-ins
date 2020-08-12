@@ -14,8 +14,8 @@ plugins {
     id "groovy"
 }
 
-targetCompatibility = "1.8"
-sourceCompatibility = "1.8"
+targetCompatibility = "11"
+sourceCompatibility = "11"
 archivesBaseName = "check-ins-server"
 
 version "0.1"
@@ -68,7 +68,7 @@ dependencies {
     implementation "io.micronaut.security:micronaut-security-oauth2:$micronautSecurityVersion"
     implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
     implementation "io.micronaut.views:micronaut-views-thymeleaf"
-    
+
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
 
@@ -88,7 +88,6 @@ dependencies {
     testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
-    testImplementation 'com.google.guava:guava:29.0-jre'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
 
@@ -108,11 +107,19 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile){
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
     options.compilerArgs.add('-parameters')
     options.fork = true
-    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop'
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop' << '-Dmicronaut.openapi.property.naming.strategy=KEBAB_CASE'
+
+    String envStr = System.getenv('MICRONAUT_ENVIRONMENTS')
+    List<String> envs = envStr != null ? Arrays.asList(envStr.split(',')) : List.of() as List<String>
+    if(!envs.disjoint(List.of('test', 'local'))) {
+        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
+    } else {
+        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'
+    }
 }
 
 processResources {

@@ -1,0 +1,13 @@
+.right-sidebar {
+    margin-right: 5px;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+}
+
+.contents {
+    width: 100%;
+}
