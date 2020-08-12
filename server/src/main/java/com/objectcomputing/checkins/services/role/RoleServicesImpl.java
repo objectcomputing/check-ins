@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import io.micronaut.runtime.server.EmbeddedServer;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
