@@ -106,7 +106,7 @@ public class MemberSkillControllerTest {
     }
 
     @Test
-    void deleteMemberSkill() {
+    void deleteMemberSkill_as_admin() {
         UUID uuid = UUID.randomUUID();
 
         doAnswer(an -> {
@@ -114,12 +114,30 @@ public class MemberSkillControllerTest {
             return null;
         }).when(memberSkillServices).delete(any(UUID.class));
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth("ADMIN", "ADMIN");
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(memberSkillServices, times(1)).delete(any(UUID.class));
+    }
+    @Test
+    void deleteMemberSkill_not_as_admin() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(memberSkillServices).delete(any(UUID.class));
+
+        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth("MEMBER", "MEMBER");
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        verify(memberSkillServices, never()).delete(any(UUID.class));
+
     }
 
     @Test

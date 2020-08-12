@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberSkill;
 
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -65,6 +66,7 @@ public class MemberSkillController {
      * @param id, id of {@link MemberSkill} to delete
      */
     @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteMemberSkill(UUID id) {
         memberSkillsService.delete(id);
         return HttpResponse
