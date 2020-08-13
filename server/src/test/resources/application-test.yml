@@ -2,14 +2,12 @@ micronaut:
   security:
     enabled: true
     reject-not-found: false
-
+---
 datasources:
   default:
-    url:  jdbc:tc:postgresql:///checkinsdb
+    url:  jdbc:tc:postgresql:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
-    username: postgres
-    password: postgres
-
+---
 credentials:
   roles:
     SUPER:

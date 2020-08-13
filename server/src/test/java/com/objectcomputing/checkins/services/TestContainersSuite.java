@@ -4,23 +4,19 @@ import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.annotation.MicronautTest;
 import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 import javax.inject.Inject;
 
-@MicronautTest(transactional = false)
+@MicronautTest(environments = "test", transactional = false)
 @Testcontainers
-public abstract class TestcontainerSuite implements RepositoryFixture {
+public abstract class TestContainersSuite implements RepositoryFixture {
 
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6")
-                .withDatabaseName("checkinsdb")
-                .withUsername("postgres")
-                .withPassword("postgres")
-                .withReuse(true);
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6");
 
     @Inject
     private EmbeddedServer embeddedServer;
@@ -30,8 +26,12 @@ public abstract class TestcontainerSuite implements RepositoryFixture {
 
     @BeforeEach
     private void setup() {
-        flyway.clean();
         flyway.migrate();
+    }
+
+    @AfterEach
+    private void teardown() {
+        flyway.clean();
     }
 
     @Override
