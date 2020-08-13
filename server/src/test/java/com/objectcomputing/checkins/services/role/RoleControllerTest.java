@@ -14,6 +14,7 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -51,6 +52,28 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
     }
 
     @Test
+    void testCreateARoleAlreadyExists() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role alreadyExistingRole = createDefaultRoleRepository(RoleType.MEMBER, memberProfile);
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole(alreadyExistingRole.getRole());
+        roleCreateDTO.setMemberid(alreadyExistingRole.getMemberid());
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s already has role %s", roleCreateDTO.getMemberid(), roleCreateDTO.getRole()),
+                error);
+        assertEquals(request.getPath(), href);
+    }
+
+    @Test
     void testCreateForbidden() {
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
@@ -83,6 +106,26 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
         assertEquals("role.role: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testCreateNonExistingMember() {
+        RoleCreateDTO role = new RoleCreateDTO();
+        role.setMemberid(UUID.randomUUID());
+        role.setRole(RoleType.MEMBER);
+
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", role)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
+        assertEquals(request.getPath(), href);
     }
 
     @Test
@@ -245,7 +288,7 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
     }
 
     @Test
-    void testFindRolesNull() {
+    void testFindRolesDoesNotExist() {
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.ADMIN))
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
@@ -266,6 +309,86 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
         assertEquals(role, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), role.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdateNonExistingMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role role = createDefaultRoleRepository(memberProfile);
+
+        role.setMemberid(UUID.randomUUID());
+
+        final HttpRequest<Role> request = HttpRequest.PUT("", role)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
+        assertEquals(request.getPath(), href);
+    }
+
+    @Test
+    void testUpdateNonExistingRoleType() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role roleToUpdate = createDefaultRoleRepository(memberProfile);
+
+        Map<String, String> role = new HashMap<>();
+        role.put("id", roleToUpdate.getId().toString());
+        role.put("role", "ROLE_DOES_NOT_EXIST");
+        role.put("memberid", roleToUpdate.getMemberid().toString());
+
+        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", role)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertTrue(error.contains("not one of the values accepted for Enum class"));
+        assertEquals(request.getPath(), href);
+    }
+
+    @Test
+    void testUpdateNonExistingRole() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getUuid());
+
+        final HttpRequest<Role> request = HttpRequest.PUT("", role)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Unable to locate role to update with id %s", role.getId()), error);
+        assertEquals(request.getPath(), href);
+    }
+
+    @Test
+    void testUpdateWithoutId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role role = createDefaultRoleRepository(RoleType.MEMBER, memberProfile);
+        role.setId(null);
+
+        final HttpRequest<Role> request = HttpRequest.PUT("", role)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals("Unable to locate role to update with id null", error);
+        assertEquals(request.getPath(), href);
     }
 
     @Test
@@ -312,10 +435,10 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [role] not specified", errors.asText());
-        assertEquals(request.getPath(), href.asText());
+        String errors = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        assertEquals("Required Body [role] not specified", errors);
+        assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
@@ -332,6 +455,37 @@ class RoleControllerTest extends TestcontainerSuite implements MemberProfileFixt
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNull(findRole(role));
+    }
+
+    @Test
+    void deleteRoleNonExisting() {
+        UUID uuid = UUID.randomUUID();
+
+        assertNull(findRoleById(uuid));
+
+        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNull(findRoleById(uuid));
+    }
+
+    @Test
+    void deleteRoleBadId() {
+        String uuid = "Bill-Nye-The-Science-Guy";
+
+        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String errors = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        assertTrue(errors.contains(String.format("Failed to convert argument [id] for value [%s]", uuid)));
+        assertEquals(request.getPath(), href);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test

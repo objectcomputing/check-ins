@@ -5,8 +5,8 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 
 import javax.transaction.Transactional;
+import java.util.UUID;
 
-@Transactional(Transactional.TxType.NEVER)
 public interface RoleFixture extends RepositoryFixture {
     default Role createDefaultRoleRepository(MemberProfile memberProfile) {
        return createDefaultRoleRepository(RoleType.ADMIN, memberProfile);
@@ -17,6 +17,11 @@ public interface RoleFixture extends RepositoryFixture {
     }
 
     default Role findRole(Role role) {
-        return getRoleRepository().findById(role.getId()).orElse(null);
+        return findRoleById(role.getId());
     }
+
+    default Role findRoleById(UUID uuid) {
+        return getRoleRepository().findById(uuid).orElse(null);
+    }
+
 }

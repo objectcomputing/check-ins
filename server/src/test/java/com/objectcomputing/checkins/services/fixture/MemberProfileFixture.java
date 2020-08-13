@@ -2,10 +2,8 @@ package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
-@Transactional(Transactional.TxType.NEVER)
 public interface MemberProfileFixture extends RepositoryFixture {
 
     default MemberProfile createADefaultMemberProfile() {
