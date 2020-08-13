@@ -48,5 +48,7 @@ jobs:
             --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
       - name: Connect to the compute container
         run: |-
-          gcloud compute ssh $SERVICE_NAME --container "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          gcloud compute ssh $SERVICE_NAME \
+            --zone $GCE_INSTANCE_ZONE \
+            --container "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
             --command 'ls -l'
