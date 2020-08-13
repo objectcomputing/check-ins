@@ -44,12 +44,6 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
         return memberSkillRet;
 
     }
-//
-//    public Set<MemberSkill> readAll() {
-//        Set<MemberSkill> memberSkillList = new HashSet<>();
-//        memberSkillRepository.findAll().forEach(memberSkillList::add);
-//        return memberSkillList;
-//    }
 
     public MemberSkill read(@NotNull UUID id) {
         return memberSkillRepository.findById(id).orElse(null);

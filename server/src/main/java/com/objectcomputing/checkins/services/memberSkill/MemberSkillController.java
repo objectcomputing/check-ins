@@ -74,16 +74,6 @@ public class MemberSkillController {
     }
 
     /**
-     * Get all MemberSkills
-     *
-     * @return {@link Set < MemberSkill >}
-     */
-//    @Get("/all")
-//    public Set<MemberSkill> readAll() {
-//        return memberSkillsService.readAll();
-//    }
-
-    /**
      * Get MemberSkill based off id
      *
      * @param id {@link UUID} of the member skill entry
@@ -100,7 +90,7 @@ public class MemberSkillController {
      *
      * @param memberid {@link UUID} of member profile
      * @param skillid  {@link UUID} of skills
-     * @return {@link List < CheckIn > list of checkins}
+     * @return {@link List < MemberSkill > list of Member Skills}
      */
     @Get("/{?memberid,skillid}")
     public Set<MemberSkill> findMemberSkills(@Nullable UUID memberid,
