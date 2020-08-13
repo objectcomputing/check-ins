@@ -1,8 +1,11 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
@@ -40,12 +43,12 @@ public class MemberProfileController {
      * @return
      */
     @Get("/{uuid}")
-    public HttpResponse<MemberProfile> getByUuid(UUID uuid) {
+    public HttpResponse<MemberProfileResponseDTO> getByUuid(UUID uuid) {
 
         MemberProfile result = memberProfileServices.getById(uuid);
 
         return HttpResponse
-                .ok(result)
+                .ok(fromEntity(result))
                 .headers(headers -> headers.location(location(result.getUuid())));
     }
 
@@ -57,9 +60,11 @@ public class MemberProfileController {
      * @return
      */
     @Get("/{?name,role,pdlId}")
-    public HttpResponse<Set<MemberProfile>> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
+    public HttpResponse<List<MemberProfileResponseDTO>> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
+        List<MemberProfileResponseDTO> responseBody = memberProfileServices.findByValues(name, role, pdlId)
+                .stream().map(memberProfile -> fromEntity(memberProfile)).collect(Collectors.toList());
         return HttpResponse
-                .ok(memberProfileServices.findByValues(name, role, pdlId));
+                .ok(responseBody);
     }
 
     /**
@@ -68,11 +73,11 @@ public class MemberProfileController {
      * @return
      */
     @Post("/")
-    public HttpResponse<MemberProfile> save(@Body @Valid MemberProfile memberProfile) {
-        MemberProfile newMemberProfile = memberProfileServices.saveProfile(memberProfile);
+    public HttpResponse<MemberProfileResponseDTO> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
+        MemberProfile newMemberProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
 
         return HttpResponse
-                .created(newMemberProfile)
+                .created(fromEntity(newMemberProfile))
                 .headers(headers -> headers.location(location(newMemberProfile.getUuid())));
     }
 
@@ -82,14 +87,14 @@ public class MemberProfileController {
      * @return
      */
     @Put("/")
-    public HttpResponse<MemberProfile> update(@Body @Valid MemberProfile memberProfile) {
+    public HttpResponse<MemberProfileResponseDTO> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
-        if(null != memberProfile.getUuid()) {
-            MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(memberProfile);
+        if(null != memberProfile.getId()) {
+            MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
-                    .body(updatedMemberProfile);
+                    .body(fromEntity(updatedMemberProfile));
 
         }
 
@@ -98,5 +103,29 @@ public class MemberProfileController {
 
     protected URI location(UUID uuid) {
         return URI.create("/member-profile/" + uuid);
+    }
+
+    private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
+        MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
+        dto.setId(entity.getUuid());
+        dto.setBioText(entity.getBioText());
+        dto.setInsperityId(entity.getInsperityId());
+        dto.setLocation(entity.getLocation());
+        dto.setName(entity.getName());
+        dto.setPdlId(entity.getPdlId());
+        dto.setRole(entity.getRole());
+        dto.setStartDate(entity.getStartDate());
+        dto.setWorkEmail(entity.getWorkEmail());
+        return dto;
+    }
+
+    private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
+        return new MemberProfile(dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
+    }
+
+    private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
+        return new MemberProfile(dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 }
