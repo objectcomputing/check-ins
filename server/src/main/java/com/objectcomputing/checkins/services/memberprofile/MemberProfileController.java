@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -22,16 +22,16 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
 @Controller("/member-profile")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="member profile")
 public class MemberProfileController {
 
-    protected final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileServices memberProfileServices;
 
-    public MemberProfileController(MemberProfileRepository memberProfileRepository){
-        this.memberProfileRepository = memberProfileRepository;
+    public MemberProfileController(MemberProfileServices memberProfileServices){
+        this.memberProfileServices = memberProfileServices;
     }
 
     /**
@@ -41,15 +41,12 @@ public class MemberProfileController {
      */
     @Get("/{uuid}")
     public HttpResponse<MemberProfile> getByUuid(UUID uuid) {
-        
-        if(!memberProfileRepository.existsById(uuid)) {
-            return HttpResponse.notFound();
-        }
 
-        MemberProfile result = memberProfileRepository.findByUuid(uuid);
+        MemberProfile result = memberProfileServices.getById(uuid);
+
         return HttpResponse
-            .ok(result)
-            .headers(headers -> headers.location(location(result.getUuid())));
+                .ok(result)
+                .headers(headers -> headers.location(location(result.getUuid())));
     }
 
     /**
@@ -60,17 +57,9 @@ public class MemberProfileController {
      * @return
      */
     @Get("/{?name,role,pdlId}")
-    public List<MemberProfile> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
-
-        if(name != null) {
-            return memberProfileRepository.findByName(name);
-        } else if(role != null) {
-            return memberProfileRepository.findByRole(role);
-        } else if(pdlId != null) {
-            return memberProfileRepository.findByPdlId(pdlId);
-        } else {
-            return memberProfileRepository.findAll();
-        }
+    public HttpResponse<Set<MemberProfile>> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
+        return HttpResponse
+                .ok(memberProfileServices.findByValues(name, role, pdlId));
     }
 
     /**
@@ -80,8 +69,8 @@ public class MemberProfileController {
      */
     @Post("/")
     public HttpResponse<MemberProfile> save(@Body @Valid MemberProfile memberProfile) {
-        MemberProfile newMemberProfile = memberProfileRepository.save(memberProfile);
-        
+        MemberProfile newMemberProfile = memberProfileServices.saveProfile(memberProfile);
+
         return HttpResponse
                 .created(newMemberProfile)
                 .headers(headers -> headers.location(location(newMemberProfile.getUuid())));
@@ -96,15 +85,15 @@ public class MemberProfileController {
     public HttpResponse<MemberProfile> update(@Body @Valid MemberProfile memberProfile) {
 
         if(null != memberProfile.getUuid()) {
-            MemberProfile updatedMemberProfile = memberProfileRepository.update(memberProfile);
+            MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(memberProfile);
             return HttpResponse
                     .ok()
                     .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
                     .body(updatedMemberProfile);
-                    
+
         }
-        
-        return HttpResponse.badRequest();
+
+        throw new MemberProfileBadArgException("Member profile id is required");
     }
 
     protected URI location(UUID uuid) {
