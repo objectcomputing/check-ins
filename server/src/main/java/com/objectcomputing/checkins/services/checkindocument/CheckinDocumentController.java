@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -27,7 +28,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller("/services/checkin-document")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin document")
 public class CheckinDocumentController {
@@ -94,6 +95,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<?>}
      */
     @Delete("/{checkinsId}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.delete(checkinsId);
         return HttpResponse
