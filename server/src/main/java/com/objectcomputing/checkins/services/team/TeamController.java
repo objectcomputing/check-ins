@@ -51,7 +51,7 @@ public class TeamController {
         Team newTeam = teamService.save(new Team(team.getName(), team.getDescription()));
         return HttpResponse
                 .created(newTeam)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newTeam.getTeamid()))));
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newTeam.getUuid()))));
     }
 
     /**
@@ -85,13 +85,13 @@ public class TeamController {
     /**
      * Get team based on id
      *
-     * @param teamid {@link UUID} of team
+     * @param uuid {@link UUID} of team
      * @return {@link Team team matching id}
      */
 
-    @Get("/{teamid}")
-    public Team readTeam(UUID teamid) {
-        return teamService.read(teamid);
+    @Get("/{uuid}")
+    public Team readTeam(UUID uuid) {
+        return teamService.read(uuid);
     }
 
     /**
@@ -119,7 +119,7 @@ public class TeamController {
         Team updatedTeam = teamService.update(team);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getTeamid()))))
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getUuid()))))
                 .body(updatedTeam);
 
     }

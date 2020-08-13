@@ -17,11 +17,11 @@ import java.util.UUID;
 @Table(name = "team")
 public class Team {
     @Id
-    @Column(name = "teamid")
+    @Column(name = "uuid")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the id of the team", required = true)
-    private UUID teamid;
+    private UUID uuid;
 
     @NotBlank
     @Column(name = "name", unique = true)
@@ -37,18 +37,18 @@ public class Team {
         this(null, name, description);
     }
 
-    public Team(UUID teamid, String name, String description) {
-        this.teamid = teamid;
+    public Team(UUID uuid, String name, String description) {
+        this.uuid = uuid;
         this.name = name;
         this.description = description;
     }
 
-    public UUID getTeamid() {
-        return teamid;
+    public UUID getUuid() {
+        return uuid;
     }
 
-    public void setTeamid(UUID teamid) {
-        this.teamid = teamid;
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -72,20 +72,20 @@ public class Team {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(teamid, team.teamid) &&
+        return Objects.equals(uuid, team.uuid) &&
                 Objects.equals(name, team.name) &&
                 Objects.equals(description, team.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(teamid, name, description);
+        return Objects.hash(uuid, name, description);
     }
 
     @Override
     public String toString() {
         return "Team{" +
-                "teamid=" + teamid +
+                "uuid=" + uuid +
                 ", name='" + name + '\'' +
                 ", description='" + description +
                 '}';

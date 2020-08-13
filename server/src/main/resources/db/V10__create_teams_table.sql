@@ -1,15 +1,14 @@
-drop table if exists team;
+DROP TABLE IF EXISTS team;
 CREATE TABLE team (
-   teamid varchar PRIMARY KEY,
-   name varchar UNIQUE,
-   description varchar
+  uuid varchar PRIMARY KEY,
+  name varchar,
+  description varchar
 );
 
-drop table if exists team_member;
+DROP TABLE IF EXISTS team_member;
 CREATE TABLE team_member (
-   id varchar PRIMARY KEY,
-   teamid varchar REFERENCES team (teamid),
-   memberid varchar REFERENCES member_profile(uuid),
-   lead boolean default false,
-   UNIQUE(teamid, memberid)
+  uuid varchar PRIMARY KEY,
+  teamId varchar REFERENCES team(uuid),
+  memberId varchar REFERENCES member_profile(uuid),
+  isLead boolean default false
 );

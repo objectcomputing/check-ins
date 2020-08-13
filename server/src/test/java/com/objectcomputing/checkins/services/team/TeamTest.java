@@ -32,11 +32,11 @@ class TeamTest {
 
     @Test
     void testTeamInstantiation2() {
-        final UUID teamid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team team = new Team(teamid, name, description);
-        assertEquals(team.getTeamid(), teamid);
+        Team team = new Team(uuid, name, description);
+        assertEquals(team.getUuid(), uuid);
         assertEquals(team.getName(), name);
         assertEquals(team.getDescription(), description);
 
@@ -47,10 +47,10 @@ class TeamTest {
 
     @Test
     void testConstraintViolation() {
-        final UUID teamid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team team = new Team(teamid, name, description);
+        Team team = new Team(uuid, name, description);
 
         team.setName("");
         team.setDescription("");
@@ -64,15 +64,15 @@ class TeamTest {
 
     @Test
     void testEquals() {
-        final UUID teamid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team g = new Team(teamid, name, description);
-        Team g2 = new Team(teamid, name, description);
+        Team g = new Team(uuid, name, description);
+        Team g2 = new Team(uuid, name, description);
 
         assertEquals(g, g2);
 
-        g2.setTeamid(null);
+        g2.setUuid(null);
 
         assertNotEquals(g, g2);
     }
@@ -80,10 +80,10 @@ class TeamTest {
     @Test
     void testHash() {
         HashMap<Team, Boolean> map = new HashMap<>();
-        final UUID teamid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team g = new Team(teamid, name, description);
+        Team g = new Team(uuid, name, description);
 
         map.put(g, true);
 
@@ -92,13 +92,13 @@ class TeamTest {
 
     @Test
     void testToString() {
-        final UUID teamid = UUID.randomUUID();
+        final UUID uuid = UUID.randomUUID();
         final String name = "name------name";
         final String description = "description------description";
-        Team g = new Team(teamid, name, description);
+        Team g = new Team(uuid, name, description);
 
         assertTrue(g.toString().contains(name));
-        assertTrue(g.toString().contains(teamid.toString()));
+        assertTrue(g.toString().contains(uuid.toString()));
         assertTrue(g.toString().contains(description));
     }
 }

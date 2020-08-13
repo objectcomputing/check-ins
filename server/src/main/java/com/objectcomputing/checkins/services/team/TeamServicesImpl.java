@@ -20,9 +20,9 @@ public class TeamServicesImpl implements TeamServices {
     public Team save(Team team) {
         Team newTeam = null;
         if (team != null) {
-            if (team.getTeamid() != null) {
-                throw new TeamBadArgException(String.format("Found unexpected teamid %s, please try updating instead",
-                        team.getTeamid()));
+            if (team.getUuid() != null) {
+                throw new TeamBadArgException(String.format("Found unexpected uuid %s, please try updating instead",
+                        team.getUuid()));
             } else if (teamsRepo.findByName(team.getName()).isPresent()) {
                 throw new TeamBadArgException(String.format("Team with name %s already exists", team.getName()));
             } else {
@@ -40,10 +40,10 @@ public class TeamServicesImpl implements TeamServices {
     public Team update(Team team) {
         Team newTeam = null;
         if (team != null) {
-            if (team.getTeamid() != null && teamsRepo.findById(team.getTeamid()).isPresent()) {
+            if (team.getUuid() != null && teamsRepo.findById(team.getUuid()).isPresent()) {
                 newTeam = teamsRepo.update(team);
             } else {
-                throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", team.getTeamid()));
+                throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", team.getUuid()));
             }
         }
 

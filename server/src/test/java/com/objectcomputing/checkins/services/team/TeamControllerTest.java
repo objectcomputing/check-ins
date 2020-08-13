@@ -53,7 +53,7 @@ class TeamControllerTest {
 
         assertEquals(g, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getTeamid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), g.getUuid()), response.getHeaders().get("location"));
 
         verify(teamService, times(1)).save(any(Team.class));
     }
@@ -198,9 +198,9 @@ class TeamControllerTest {
     void testReadTeam() {
         Team g = new Team(UUID.randomUUID(), "Hello", "World");
 
-        when(teamService.read(eq(g.getTeamid()))).thenReturn(g);
+        when(teamService.read(eq(g.getUuid()))).thenReturn(g);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getTeamid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getUuid().toString()));
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
         assertEquals(g, response.body());
@@ -213,14 +213,65 @@ class TeamControllerTest {
     void testReadTeamNotFound() {
         Team g = new Team(UUID.randomUUID(), "Hello", "World");
 
-        when(teamService.read(eq(g.getTeamid()))).thenReturn(null);
+        when(teamService.read(eq(g.getUuid()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getTeamid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getUuid().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Team.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
         verify(teamService, times(1)).read(any(UUID.class));
+    }
+
+    @Test
+    void testFindAllTeams() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(g);
+
+        when(teamService.findByFields(null, null)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/"));
+        final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamService, times(1)).findByFields(null, null);
+    }
+
+
+
+    @Test
+    void testFindByName() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(g);
+
+        when(teamService.findByFields(g.getName(), null)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", g.getName()));
+        final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamService, times(1)).findByFields(g.getName(), null);
+    }
+
+    @Test
+    void testFindByMemberId() {
+        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(g);
+        UUID member = UUID.randomUUID();
+
+        when(teamService.findByFields(null,member)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", member.toString()));
+        final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamService, times(1)).findByFields(null,member);
     }
 
     @Test
@@ -268,7 +319,7 @@ class TeamControllerTest {
 
         assertEquals(g, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getTeamid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), g.getUuid()), response.getHeaders().get("location"));
 
         verify(teamService, times(1)).update(any(Team.class));
     }

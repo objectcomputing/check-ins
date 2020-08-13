@@ -232,6 +232,54 @@ class TeamMemberControllerTest {
     }
 
     @Test
+    void testFindAllTeamMembers() {
+        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(g);
+
+        when(teamMemberServices.findByFields(null, null, null)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/"));
+        final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamMemberServices, times(1)).findByFields(null, null, null);
+    }
+
+    @Test
+    void testFindByTeamId() {
+        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(g);
+
+        when(teamMemberServices.findByFields(g.getTeamid(), null, null)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", g.getTeamid()));
+        final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamMemberServices, times(1)).findByFields(g.getTeamid(), null, null);
+    }
+
+    @Test
+    void testFindByMemberId() {
+        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(g);
+
+        when(teamMemberServices.findByFields(null, g.getMemberid(), null)).thenReturn(teams);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", g.getMemberid()));
+        final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
+
+        assertEquals(teams, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(teamMemberServices, times(1)).findByFields(null, g.getMemberid(), null);
+    }
+
+    @Test
     void testFindTeamMembers() {
         TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
         Set<TeamMember> teams = Collections.singleton(g);

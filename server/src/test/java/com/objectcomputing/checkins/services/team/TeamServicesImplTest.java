@@ -48,8 +48,8 @@ class TeamServicesImplTest {
     @Test
     void testRead() {
         Team team = new Team(UUID.randomUUID(), "Hello", "World");
-        when(teamRepository.findById(team.getTeamid())).thenReturn(Optional.of(team));
-        assertEquals(team, services.read(team.getTeamid()));
+        when(teamRepository.findById(team.getUuid())).thenReturn(Optional.of(team));
+        assertEquals(team, services.read(team.getUuid()));
         verify(teamRepository, times(1)).findById(any(UUID.class));
     }
 
@@ -73,7 +73,7 @@ class TeamServicesImplTest {
     void testSaveWithId() {
         Team team = new Team(UUID.randomUUID(), "Wayne's", "World");
         TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.save(team));
-        assertTrue(exception.getMessage().contains(String.format("unexpected teamid %s", team.getTeamid())));
+        assertTrue(exception.getMessage().contains(String.format("unexpected uuid %s", team.getUuid())));
         verify(teamRepository, never()).findByName(any(String.class));
         verify(teamRepository, never()).save(any(Team.class));
     }
@@ -98,7 +98,7 @@ class TeamServicesImplTest {
     @Test
     void testUpdate() {
         Team team = new Team(UUID.randomUUID(), "Dog eat dog", "World");
-        when(teamRepository.findById(eq(team.getTeamid()))).thenReturn(Optional.of(team));
+        when(teamRepository.findById(eq(team.getUuid()))).thenReturn(Optional.of(team));
         when(teamRepository.update(eq(team))).thenReturn(team);
         assertEquals(team, services.update(team));
         verify(teamRepository, times(1)).findById(any(UUID.class));
@@ -109,7 +109,7 @@ class TeamServicesImplTest {
     void testUpdateWithoutId() {
         Team team = new Team("Bobby's", "World");
         TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(team));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getTeamid())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getUuid())));
         verify(teamRepository, never()).findById(any(UUID.class));
         verify(teamRepository, never()).update(any(Team.class));
     }
@@ -117,9 +117,9 @@ class TeamServicesImplTest {
     @Test
     void testUpdateTeamDoesNotExist() {
         Team team = new Team(UUID.randomUUID(), "Wayne's", "World 2");
-        when(teamRepository.findById(eq(team.getTeamid()))).thenReturn(Optional.empty());
+        when(teamRepository.findById(eq(team.getUuid()))).thenReturn(Optional.empty());
         TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(team));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getTeamid())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getUuid())));
         verify(teamRepository, times(1)).findById(any(UUID.class));
         verify(teamRepository, never()).update(any(Team.class));
     }
@@ -174,9 +174,9 @@ class TeamServicesImplTest {
         final UUID memberId = UUID.randomUUID();
         List<Team> teamToFind = List.of(team.get(0));
         when(teamRepository.findAll()).thenReturn(team);
-        when(teamRepository.findById(eq(teamToFind.get(0).getTeamid()))).thenReturn(Optional.of(teamToFind.get(0)));
+        when(teamRepository.findById(eq(teamToFind.get(0).getUuid()))).thenReturn(Optional.of(teamToFind.get(0)));
         when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getTeamid(), memberId, true)));
+                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getUuid(), memberId, true)));
         assertEquals(new HashSet<>(teamToFind), services.findByFields(null, memberId));
         verify(teamRepository, times(1)).findAll();
         verify(teamRepository, times(1)).findById(any(UUID.class));
@@ -196,9 +196,9 @@ class TeamServicesImplTest {
         List<Team> teamToFind = List.of(team.get(0));
         when(teamRepository.findAll()).thenReturn(team);
         when(teamRepository.findByNameIlike(eq(nameSearch))).thenReturn(teamToFind);
-        when(teamRepository.findById(eq(teamToFind.get(0).getTeamid()))).thenReturn(Optional.of(teamToFind.get(0)));
+        when(teamRepository.findById(eq(teamToFind.get(0).getUuid()))).thenReturn(Optional.of(teamToFind.get(0)));
         when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getTeamid(), memberId, true)));
+                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getUuid(), memberId, true)));
         assertEquals(new HashSet<>(teamToFind), services.findByFields(nameSearch, memberId));
         verify(teamRepository, times(1)).findAll();
         verify(teamRepository, times(1)).findById(any(UUID.class));
