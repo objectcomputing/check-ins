@@ -46,6 +46,9 @@ jobs:
           gcloud compute instances update-container $SERVICE_NAME \
             --zone $GCE_INSTANCE_ZONE \
             --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      - name: Run the docker container detached
+        run: |-
+          gcloud compute ssh $SERVICE_NAME --zone $GCE_INSTANCE_ZONE --command 'docker run -d gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA'
       - name: Connect to the compute container
         run: |-
           gcloud compute ssh $SERVICE_NAME \
