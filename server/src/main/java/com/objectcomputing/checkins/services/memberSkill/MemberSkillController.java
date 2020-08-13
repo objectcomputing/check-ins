@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/member-skill")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "member-skill")
 public class MemberSkillController {
@@ -78,10 +78,10 @@ public class MemberSkillController {
      *
      * @return {@link Set < MemberSkill >}
      */
-    @Get("/all")
-    public Set<MemberSkill> readAll() {
-        return memberSkillsService.readAll();
-    }
+//    @Get("/all")
+//    public Set<MemberSkill> readAll() {
+//        return memberSkillsService.readAll();
+//    }
 
     /**
      * Get MemberSkill based off id

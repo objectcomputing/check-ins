@@ -7,7 +7,7 @@ public interface MemberSkillServices {
 
     MemberSkill read(UUID uuid);
 
-    Set<MemberSkill> readAll();
+//    Set<MemberSkill> readAll();
 
     MemberSkill save(MemberSkill m);
 

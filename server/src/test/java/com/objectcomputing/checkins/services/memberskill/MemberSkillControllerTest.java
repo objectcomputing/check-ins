@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberskills;
+package com.objectcomputing.checkins.services.memberskill;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
@@ -52,7 +52,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.save(eq(m))).thenReturn(m);
 
-        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO);
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth("MEMBER", "MEMBER");
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
 
         assertEquals(m, response.body());
@@ -69,7 +69,7 @@ public class MemberSkillControllerTest {
         MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         when(memberSkillServices.save(any(MemberSkill.class))).thenReturn(m);
 
-        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO);
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth("MEMBER", "MEMBER");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -91,7 +91,7 @@ public class MemberSkillControllerTest {
         MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         when(memberSkillServices.save(any(MemberSkill.class))).thenReturn(m);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth("MEMBER", "MEMBER");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -121,6 +121,7 @@ public class MemberSkillControllerTest {
 
         verify(memberSkillServices, times(1)).delete(any(UUID.class));
     }
+
     @Test
     void deleteMemberSkill_not_as_admin() {
         UUID uuid = UUID.randomUUID();
@@ -147,15 +148,15 @@ public class MemberSkillControllerTest {
                 new MemberSkill(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())
         );
 
-        when(memberSkillServices.readAll()).thenReturn(memberSkills);
+        when(memberSkillServices.findByFields(null,null)).thenReturn(memberSkills);
 
-        final HttpRequest<UUID> request = HttpRequest.GET("all");
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s","","")).basicAuth("MEMBER", "MEMBER");
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
 
         assertEquals(memberSkills, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        verify(memberSkillServices, times(1)).readAll();
+        verify(memberSkillServices, times(1)).findByFields(null,null);
     }
 
     @Test
@@ -164,7 +165,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.read(eq(m.getId()))).thenReturn(m);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", m.getId().toString()));
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth("MEMBER", "MEMBER");
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
 
         assertEquals(m, response.body());
@@ -179,7 +180,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.read(eq(m.getId()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", m.getId().toString()));
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth("MEMBER", "MEMBER");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, MemberSkill.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -195,7 +196,7 @@ public class MemberSkillControllerTest {
         when(memberSkillServices.findByFields(eq(m.getMemberid()), eq(m.getSkillid()))).thenReturn(memberSkillSet);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", m.getMemberid(),
-                m.getSkillid()));
+                m.getSkillid())).basicAuth("MEMBER", "MEMBER");
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
 
         assertEquals(memberSkillSet, response.body());
@@ -210,7 +211,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.findByFields(eq(m.getMemberid()), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", m.getMemberid()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", m.getMemberid())).basicAuth("MEMBER", "MEMBER");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class)));
 

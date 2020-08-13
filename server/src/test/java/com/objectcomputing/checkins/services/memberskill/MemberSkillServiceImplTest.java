@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberskills;
+package com.objectcomputing.checkins.services.memberskill;
 
 import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
 import com.objectcomputing.checkins.services.memberSkill.MemberSkillRepository;
@@ -251,7 +251,7 @@ class MemberSkillServiceImplTest {
 
         when(memberSkillRepository.findAll()).thenReturn(memberSkillSet);
 
-        assertEquals(memberSkillSet, memberSkillsServices.readAll());
+        assertEquals(memberSkillSet, memberSkillsServices.findByFields(null,null));
 
         verify(memberSkillRepository, times(1)).findAll();
     }

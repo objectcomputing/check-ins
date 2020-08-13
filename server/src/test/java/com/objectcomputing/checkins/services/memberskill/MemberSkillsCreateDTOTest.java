@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberskills;
+package com.objectcomputing.checkins.services.memberskill;
 
 import com.objectcomputing.checkins.services.memberSkill.MemberSkillCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;

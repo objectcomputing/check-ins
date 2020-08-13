@@ -44,7 +44,7 @@ public class MemberSkill {
         this.skillid = skillid;
     }
 
-    public MemberSkill(UUID id, @NotNull UUID memberid, @NotNull UUID skillid) {
+    public MemberSkill(@NotNull UUID id, @NotNull UUID memberid, @NotNull UUID skillid) {
         this.id = id;
         this.memberid = memberid;
         this.skillid = skillid;
