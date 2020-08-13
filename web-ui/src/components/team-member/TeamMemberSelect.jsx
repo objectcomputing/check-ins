@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./TeamMemberSelect.css";
 
 const TeamMemberSelect = (props) => {
   const { teamMembers, onChange } = props;
+  const [filteredTeamMembers, setFilteredTeamMembers] = useState(teamMembers);
+
+  const filterTeamMembers = (e) => {
+    let searchInput = e.target.value;
+    let filtered = teamMembers.filter((member) => {
+      return member.name.includes(searchInput);
+    });
+    setFilteredTeamMembers(filtered);
+  };
 
   const selectTeamMember = (e, member) => {
     const { checked } = e.target;
@@ -36,7 +45,11 @@ const TeamMemberSelect = (props) => {
 
   return (
     <div className="team-member-select">
-      {teamMembers.map(renderTeamMember)}
+      <input
+        placeholder="Search team members"
+        onChange={(e) => filterTeamMembers(e)}
+      ></input>
+      {filteredTeamMembers.map(renderTeamMember)}
     </div>
   );
 };
