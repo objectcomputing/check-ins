@@ -1,0 +1,30 @@
+.team-member-select {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-member-select > .team-member {
+  display: flex;
+  align-items: center;
+  border-bottom: solid lightgray 1px;
+  padding: 0.5rem 0;
+}
+
+.team-member-select > .team-member-selected {
+  display: flex;
+  align-items: center;
+  background-color: blue;
+  border-bottom: solid lightgray 1px;
+  padding: 0.5rem 0;
+}
+
+.team-member-select > .team-member > .name {
+  flex-grow: 1;
+  margin: 0 1rem;
+  text-align: left;
+}
+
+.team-member-select > .team-member > input {
+  height: 1rem;
+  width: 1rem;
+}
