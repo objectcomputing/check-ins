@@ -10,13 +10,18 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
+import com.objectcomputing.checkins.services.role.RoleBadArgException;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Consumes;
@@ -35,6 +40,20 @@ public class MemberProfileController {
 
     public MemberProfileController(MemberProfileServices memberProfileServices){
         this.memberProfileServices = memberProfileServices;
+    }
+
+    @Error(exception = MemberProfileBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileBadArgException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest().body(error);
+    }
+
+    @Error(exception = MemberProfileDoesNotExistException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileDoesNotExistException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound().body(error);
     }
 
     /**
