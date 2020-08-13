@@ -22,8 +22,7 @@ import io.micronaut.security.rules.SecurityRule;
 
 
 @Controller(TeamController.TEAM_CONTROLLER_PATH)
-@Secured(SecurityRule.IS_ANONYMOUS)
-// @Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured({SecurityRule.IS_AUTHENTICATED})
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="team")
 public class TeamController {

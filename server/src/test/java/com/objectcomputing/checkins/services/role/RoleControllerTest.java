@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +50,8 @@ class RoleControllerTest {
 
         when(roleServices.save(eq(r))).thenReturn(r);
 
-        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO);
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(r, response.body());
@@ -59,13 +62,36 @@ class RoleControllerTest {
     }
 
     @Test
+    void testCreateForbidden() {
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole(RoleType.MEMBER);
+        roleCreateDTO.setMemberid(UUID.randomUUID());
+
+        Role r = new Role(roleCreateDTO.getRole(), roleCreateDTO.getMemberid());
+
+        when(roleServices.save(eq(r))).thenReturn(r);
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(roleServices, never()).read(any(UUID.class));
+    }
+
+
+    @Test
     void testCreateAnInvalidRole() {
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
 
         Role r = new Role(RoleType.MEMBER, UUID.randomUUID());
         when(roleServices.save(any(Role.class))).thenReturn(r);
 
-        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO);
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -87,7 +113,8 @@ class RoleControllerTest {
         Role r = new Role(RoleType.MEMBER, UUID.randomUUID());
         when(roleServices.save(any(Role.class))).thenReturn(r);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -124,7 +151,8 @@ class RoleControllerTest {
             return thisG;
         }).when(roleServices).save(any(Role.class));
 
-        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList);
+        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<List<Role>> response = client.toBlocking().exchange(request, Argument.listOf(Role.class));
 
         assertEquals(roleList, response.body());
@@ -132,6 +160,23 @@ class RoleControllerTest {
         assertEquals(request.getPath(), response.getHeaders().get("location"));
 
         verify(roleServices, times(2)).save(any(Role.class));
+    }
+
+    @Test
+    void testLoadForbidden() {
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
+
+        List<Role> roles = List.of(r);
+
+        final HttpRequest<List<Role>> request = HttpRequest.POST("roles", roles)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(roleServices, never()).save(any(Role.class));
     }
 
     @Test
@@ -144,7 +189,8 @@ class RoleControllerTest {
 
         List<RoleCreateDTO> dtoList = List.of(roleCreateDTO, roleCreateDTO2);
 
-        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList);
+        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -183,7 +229,8 @@ class RoleControllerTest {
             throw new RoleBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList);
+        final MutableHttpRequest<List<RoleCreateDTO>> request = HttpRequest.POST("roles", dtoList)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -201,7 +248,7 @@ class RoleControllerTest {
 
         when(roleServices.read(eq(r.getId()))).thenReturn(r);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", r.getId().toString()));
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", r.getId().toString())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(r, response.body());
@@ -211,12 +258,29 @@ class RoleControllerTest {
     }
 
     @Test
+    void testReadForbidden() {
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
+        when(roleServices.read(eq(r.getId()))).thenReturn(r);
+
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", r.getId().toString()))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(roleServices, never()).read(any(UUID.class));
+    }
+
+    @Test
     void testReadRoleNotFound() {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
 
         when(roleServices.read(eq(r.getId()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", r.getId().toString()));
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", r.getId().toString()))
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Role.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -232,13 +296,31 @@ class RoleControllerTest {
         when(roleServices.findByFields(eq(r.getRole()), eq(r.getMemberid()))).thenReturn(roles);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", r.getRole(),
-                r.getMemberid()));
+                r.getMemberid())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
         assertEquals(roles, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(roleServices, times(1)).findByFields(any(RoleType.class), any(UUID.class));
+    }
+
+    @Test
+    void testFindRolesForbidden() {
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
+        Set<Role> roles = Collections.singleton(r);
+
+        when(roleServices.findByFields(eq(r.getRole()), eq(r.getMemberid()))).thenReturn(roles);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", r.getRole(),
+                r.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(roleServices, never()).findByFields(any(RoleType.class), any(UUID.class));
     }
 
     @Test
@@ -249,7 +331,7 @@ class RoleControllerTest {
         when(roleServices.findByFields(eq(r.getRole()), eq(r.getMemberid()))).thenReturn(roles);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", r.getRole(),
-                r.getMemberid()));
+                r.getMemberid())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
         assertEquals(roles, response.body());
@@ -265,7 +347,8 @@ class RoleControllerTest {
 
         when(roleServices.findByFields(eq(r.getRole()), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", r.getRole()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", r.getRole()))
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(Role.class)));
 
@@ -281,7 +364,8 @@ class RoleControllerTest {
 
         when(roleServices.update(eq(r))).thenReturn(r);
 
-        final HttpRequest<Role> request = HttpRequest.PUT("", r);
+        final HttpRequest<Role> request = HttpRequest.PUT("", r)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(r, response.body());
@@ -292,12 +376,30 @@ class RoleControllerTest {
     }
 
     @Test
+    void testUpdateForbidden() {
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
+
+        when(roleServices.update(eq(r))).thenReturn(r);
+
+        final HttpRequest<Role> request = HttpRequest.PUT("", r)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(roleServices, never()).update(any(Role.class));
+    }
+
+    @Test
     void testUpdateAnInvalidRole() {
         Role r = new Role(UUID.randomUUID(), null, null);
 
         when(roleServices.update(any(Role.class))).thenReturn(r);
 
-        final HttpRequest<Role> request = HttpRequest.PUT("", r);
+        final HttpRequest<Role> request = HttpRequest.PUT("", r)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -319,7 +421,8 @@ class RoleControllerTest {
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
         when(roleServices.update(any(Role.class))).thenReturn(r);
 
-        final HttpRequest<String> request = HttpRequest.PUT("", "");
+        final HttpRequest<String> request = HttpRequest.PUT("", "")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -344,7 +447,8 @@ class RoleControllerTest {
             throw new RoleBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<Role> request = HttpRequest.PUT("", r);
+        final MutableHttpRequest<Role> request = HttpRequest.PUT("", r)
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -367,11 +471,29 @@ class RoleControllerTest {
             return null;
         }).when(roleServices).delete(any(UUID.class));
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(roleServices, times(1)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deleteRoleUnauthorized() {
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(roleServices).delete(any(UUID.class));
+
+        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+        verify(roleServices, never()).delete(any(UUID.class));
     }
 }
