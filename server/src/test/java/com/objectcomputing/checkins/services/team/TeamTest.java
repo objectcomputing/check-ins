@@ -67,14 +67,14 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team g = new Team(uuid, name, description);
-        Team g2 = new Team(uuid, name, description);
+        Team tm = new Team(uuid, name, description);
+        Team tm2 = new Team(uuid, name, description);
 
-        assertEquals(g, g2);
+        assertEquals(tm, tm2);
 
-        g2.setUuid(null);
+        tm2.setUuid(null);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(tm, tm2);
     }
 
     @Test
@@ -83,11 +83,11 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team g = new Team(uuid, name, description);
+        Team tm = new Team(uuid, name, description);
 
-        map.put(g, true);
+        map.put(tm, true);
 
-        assertTrue(map.get(g));
+        assertTrue(map.get(tm));
     }
 
     @Test
@@ -95,10 +95,10 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name------name";
         final String description = "description------description";
-        Team g = new Team(uuid, name, description);
+        Team tm = new Team(uuid, name, description);
 
-        assertTrue(g.toString().contains(name));
-        assertTrue(g.toString().contains(uuid.toString()));
-        assertTrue(g.toString().contains(description));
+        assertTrue(tm.toString().contains(name));
+        assertTrue(tm.toString().contains(uuid.toString()));
+        assertTrue(tm.toString().contains(description));
     }
 }

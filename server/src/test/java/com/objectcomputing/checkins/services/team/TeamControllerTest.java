@@ -44,16 +44,16 @@ class TeamControllerTest {
         teamCreateDTO.setName("name");
         teamCreateDTO.setDescription("description");
 
-        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
+        Team tm = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
 
-        when(teamService.save(eq(g))).thenReturn(g);
+        when(teamService.save(eq(tm))).thenReturn(tm);
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getUuid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), tm.getUuid()), response.getHeaders().get("location"));
 
         verify(teamService, times(1)).save(any(Team.class));
     }
@@ -62,8 +62,8 @@ class TeamControllerTest {
     void testCreateAnInvalidTeam() {
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
 
-        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
-        when(teamService.save(any(Team.class))).thenReturn(g);
+        Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.save(any(Team.class))).thenReturn(tm);
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -84,8 +84,8 @@ class TeamControllerTest {
 
     @Test
     void testCreateANullTeam() {
-        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
-        when(teamService.save(any(Team.class))).thenReturn(g);
+        Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.save(any(Team.class))).thenReturn(tm);
 
         final HttpRequest<String> request = HttpRequest.POST("", "");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -113,10 +113,10 @@ class TeamControllerTest {
 
         List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
 
-        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
-        Team g2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
+        Team tm = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
+        Team tm2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
 
-        List<Team> teamList = List.of(g, g2);
+        List<Team> teamList = List.of(tm, tm2);
         AtomicInteger i = new AtomicInteger(0);
         doAnswer(a -> {
             Team thisG = teamList.get(i.getAndAdd(1));
@@ -173,13 +173,13 @@ class TeamControllerTest {
 
         List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
 
-        Team g = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
-        Team g2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
+        Team tm = new Team(teamCreateDTO.getName(), teamCreateDTO.getDescription());
+        Team tm2 = new Team(teamCreateDTO2.getName(), teamCreateDTO2.getDescription());
 
         final String errorMessage = "error message!";
-        when(teamService.save(eq(g))).thenReturn(g);
+        when(teamService.save(eq(tm))).thenReturn(tm);
 
-        when(teamService.save(eq(g2))).thenAnswer(a -> {
+        when(teamService.save(eq(tm2))).thenAnswer(a -> {
             throw new TeamBadArgException(errorMessage);
         });
 
@@ -196,14 +196,14 @@ class TeamControllerTest {
 
     @Test
     void testReadTeam() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
 
-        when(teamService.read(eq(g.getUuid()))).thenReturn(g);
+        when(teamService.read(eq(tm.getUuid()))).thenReturn(tm);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getUuid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString()));
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(teamService, times(1)).read(any(UUID.class));
@@ -211,11 +211,11 @@ class TeamControllerTest {
 
     @Test
     void testReadTeamNotFound() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
 
-        when(teamService.read(eq(g.getUuid()))).thenReturn(null);
+        when(teamService.read(eq(tm.getUuid()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getUuid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Team.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -225,8 +225,8 @@ class TeamControllerTest {
 
     @Test
     void testFindAllTeams() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
-        Set<Team> teams = Collections.singleton(g);
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(tm);
 
         when(teamService.findByFields(null, null)).thenReturn(teams);
 
@@ -243,24 +243,24 @@ class TeamControllerTest {
 
     @Test
     void testFindByName() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
-        Set<Team> teams = Collections.singleton(g);
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(tm);
 
-        when(teamService.findByFields(g.getName(), null)).thenReturn(teams);
+        when(teamService.findByFields(tm.getName(), null)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", g.getName()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName()));
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
         assertEquals(teams, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        verify(teamService, times(1)).findByFields(g.getName(), null);
+        verify(teamService, times(1)).findByFields(tm.getName(), null);
     }
 
     @Test
     void testFindByMemberId() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
-        Set<Team> teams = Collections.singleton(g);
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(tm);
         UUID member = UUID.randomUUID();
 
         when(teamService.findByFields(null,member)).thenReturn(teams);
@@ -276,13 +276,13 @@ class TeamControllerTest {
 
     @Test
     void testFindTeams() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
-        Set<Team> teams = Collections.singleton(g);
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
+        Set<Team> teams = Collections.singleton(tm);
         UUID member = UUID.randomUUID();
 
-        when(teamService.findByFields(eq(g.getName()), eq(member))).thenReturn(teams);
+        when(teamService.findByFields(eq(tm.getName()), eq(member))).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", g.getName(),
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", tm.getName(),
                 member.toString()));
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
@@ -294,11 +294,11 @@ class TeamControllerTest {
 
     @Test
     void testFindTeamsNull() {
-        Team g = new Team(UUID.randomUUID(), "Hello", "World");
+        Team tm = new Team(UUID.randomUUID(), "Hello", "World");
 
-        when(teamService.findByFields(eq(g.getName()), eq(null))).thenReturn(null);
+        when(teamService.findByFields(eq(tm.getName()), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", g.getName()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(Team.class)));
 
@@ -310,27 +310,27 @@ class TeamControllerTest {
 
     @Test
     void testUpdateTeam() {
-        Team g = new Team(UUID.randomUUID(), "name", "description");
+        Team tm = new Team(UUID.randomUUID(), "name", "description");
 
-        when(teamService.update(eq(g))).thenReturn(g);
+        when(teamService.update(eq(tm))).thenReturn(tm);
 
-        final HttpRequest<Team> request = HttpRequest.PUT("", g);
+        final HttpRequest<Team> request = HttpRequest.PUT("", tm);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getUuid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), tm.getUuid()), response.getHeaders().get("location"));
 
         verify(teamService, times(1)).update(any(Team.class));
     }
 
     @Test
     void testUpdateAnInvalidTeam() {
-        Team g = new Team(UUID.randomUUID(), null, "");
+        Team tm = new Team(UUID.randomUUID(), null, "");
 
-        when(teamService.update(any(Team.class))).thenReturn(g);
+        when(teamService.update(any(Team.class))).thenReturn(tm);
 
-        final HttpRequest<Team> request = HttpRequest.PUT("", g);
+        final HttpRequest<Team> request = HttpRequest.PUT("", tm);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -349,8 +349,8 @@ class TeamControllerTest {
 
     @Test
     void testUpdateANullTeam() {
-        Team g = new Team(UUID.randomUUID(), "DNC", "DNC");
-        when(teamService.update(any(Team.class))).thenReturn(g);
+        Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
+        when(teamService.update(any(Team.class))).thenReturn(tm);
 
         final HttpRequest<String> request = HttpRequest.PUT("", "");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -369,7 +369,7 @@ class TeamControllerTest {
 
     @Test
     void testUpdateTeamThrowException() {
-        Team g = new Team(UUID.randomUUID(), "name", "description");
+        Team tm = new Team(UUID.randomUUID(), "name", "description");
 
         final String errorMessage = "error message!";
 
@@ -377,7 +377,7 @@ class TeamControllerTest {
             throw new TeamBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<Team> request = HttpRequest.PUT("", g);
+        final MutableHttpRequest<Team> request = HttpRequest.PUT("", tm);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 

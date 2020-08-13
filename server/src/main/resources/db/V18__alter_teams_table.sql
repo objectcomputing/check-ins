@@ -9,7 +9,3 @@ RENAME COLUMN isLead TO lead;
 
 ALTER TABLE team_member
 ADD CONSTRAINT team_member_uniqueconstraint UNIQUE (teamid, memberid);
-
-
--- ALTER TABLE team
--- RENAME COLUMN uuid TO id;

@@ -73,22 +73,22 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember g = new TeamMember(id, teamId, memberId, lead);
-        TeamMember g2 = new TeamMember(id, teamId, memberId, lead);
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+        TeamMember tm2 = new TeamMember(id, teamId, memberId, lead);
 
-        assertEquals(g, g2);
+        assertEquals(tm, tm2);
 
-        g2.setId(null);
+        tm2.setId(null);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(tm, tm2);
 
-        g2.setId(g.getId());
+        tm2.setId(tm.getId());
 
-        assertEquals(g, g2);
+        assertEquals(tm, tm2);
 
-        g2.setLead(false);
+        tm2.setLead(false);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(tm, tm2);
     }
 
     @Test
@@ -98,11 +98,11 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember g = new TeamMember(id, teamId, memberId, lead);
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
 
-        map.put(g, true);
+        map.put(tm, true);
 
-        assertTrue(map.get(g));
+        assertTrue(map.get(tm));
     }
 
     @Test
@@ -111,9 +111,9 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember g = new TeamMember(id, teamId, memberId, lead);
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
 
-        String toString = g.toString();
+        String toString = tm.toString();
         assertTrue(toString.contains(teamId.toString()));
         assertTrue(toString.contains(id.toString()));
         assertTrue(toString.contains(memberId.toString()));

@@ -46,16 +46,16 @@ class TeamMemberControllerTest {
         teamMemberCreateDTO.setMemberid(UUID.randomUUID());
         teamMemberCreateDTO.setLead(true);
 
-        TeamMember g = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
 
-        when(teamMemberServices.save(eq(g))).thenReturn(g);
+        when(teamMemberServices.save(eq(tm))).thenReturn(tm);
 
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getId()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), tm.getId()), response.getHeaders().get("location"));
 
         verify(teamMemberServices, times(1)).save(any(TeamMember.class));
     }
@@ -64,8 +64,8 @@ class TeamMemberControllerTest {
     void testCreateAnInvalidTeamMember() {
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
 
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), true);
-        when(teamMemberServices.save(any(TeamMember.class))).thenReturn(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), true);
+        when(teamMemberServices.save(any(TeamMember.class))).thenReturn(tm);
 
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -86,8 +86,8 @@ class TeamMemberControllerTest {
 
     @Test
     void testCreateANullTeamMember() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), true);
-        when(teamMemberServices.save(any(TeamMember.class))).thenReturn(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), true);
+        when(teamMemberServices.save(any(TeamMember.class))).thenReturn(tm);
 
         final HttpRequest<String> request = HttpRequest.POST("", "");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -117,10 +117,10 @@ class TeamMemberControllerTest {
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);
 
-        TeamMember g = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
-        TeamMember g2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
+        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
 
-        List<TeamMember> teamList = List.of(g, g2);
+        List<TeamMember> teamList = List.of(tm, tm2);
         AtomicInteger i = new AtomicInteger(0);
         doAnswer(a -> {
             TeamMember thisG = teamList.get(i.getAndAdd(1));
@@ -180,13 +180,13 @@ class TeamMemberControllerTest {
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);
 
-        TeamMember g = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
-        TeamMember g2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
+        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
 
         final String errorMessage = "error message!";
-        when(teamMemberServices.save(eq(g))).thenReturn(g);
+        when(teamMemberServices.save(eq(tm))).thenReturn(tm);
 
-        when(teamMemberServices.save(eq(g2))).thenAnswer(a -> {
+        when(teamMemberServices.save(eq(tm2))).thenAnswer(a -> {
             throw new TeamBadArgException(errorMessage);
         });
 
@@ -195,7 +195,7 @@ class TeamMemberControllerTest {
                 client.toBlocking().exchange(request, String.class));
 
         assertEquals(String.format("[\"Member %s was not added to Team %s because: %s\"]",
-                g2.getMemberid(), g2.getTeamid(), errorMessage), responseException.getResponse().body());
+                tm2.getMemberid(), tm2.getTeamid(), errorMessage), responseException.getResponse().body());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
 
@@ -204,14 +204,14 @@ class TeamMemberControllerTest {
 
     @Test
     void testReadTeamMember() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
 
-        when(teamMemberServices.read(eq(g.getId()))).thenReturn(g);
+        when(teamMemberServices.read(eq(tm.getId()))).thenReturn(tm);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getId().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getId().toString()));
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
         verify(teamMemberServices, times(1)).read(any(UUID.class));
@@ -219,11 +219,11 @@ class TeamMemberControllerTest {
 
     @Test
     void testReadTeamMemberNotFound() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
 
-        when(teamMemberServices.read(eq(g.getTeamid()))).thenReturn(g);
+        when(teamMemberServices.read(eq(tm.getTeamid()))).thenReturn(tm);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getId().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getId().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, TeamMember.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -233,8 +233,8 @@ class TeamMemberControllerTest {
 
     @Test
     void testFindAllTeamMembers() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        Set<TeamMember> teams = Collections.singleton(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(tm);
 
         when(teamMemberServices.findByFields(null, null, null)).thenReturn(teams);
 
@@ -249,45 +249,45 @@ class TeamMemberControllerTest {
 
     @Test
     void testFindByTeamId() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        Set<TeamMember> teams = Collections.singleton(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(tm);
 
-        when(teamMemberServices.findByFields(g.getTeamid(), null, null)).thenReturn(teams);
+        when(teamMemberServices.findByFields(tm.getTeamid(), null, null)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", g.getTeamid()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", tm.getTeamid()));
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
 
         assertEquals(teams, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        verify(teamMemberServices, times(1)).findByFields(g.getTeamid(), null, null);
+        verify(teamMemberServices, times(1)).findByFields(tm.getTeamid(), null, null);
     }
 
     @Test
     void testFindByMemberId() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        Set<TeamMember> teams = Collections.singleton(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(tm);
 
-        when(teamMemberServices.findByFields(null, g.getMemberid(), null)).thenReturn(teams);
+        when(teamMemberServices.findByFields(null, tm.getMemberid(), null)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", g.getMemberid()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", tm.getMemberid()));
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
 
         assertEquals(teams, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        verify(teamMemberServices, times(1)).findByFields(null, g.getMemberid(), null);
+        verify(teamMemberServices, times(1)).findByFields(null, tm.getMemberid(), null);
     }
 
     @Test
     void testFindTeamMembers() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        Set<TeamMember> teams = Collections.singleton(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(tm);
 
-        when(teamMemberServices.findByFields(eq(g.getTeamid()), eq(g.getMemberid()), eq(null))).thenReturn(teams);
+        when(teamMemberServices.findByFields(eq(tm.getTeamid()), eq(tm.getMemberid()), eq(null))).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s", g.getTeamid(),
-                g.getMemberid()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s", tm.getTeamid(),
+                tm.getMemberid()));
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
 
         assertEquals(teams, response.body());
@@ -298,13 +298,13 @@ class TeamMemberControllerTest {
 
     @Test
     void testFindTeamMembersAllParams() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        Set<TeamMember> teams = Collections.singleton(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        Set<TeamMember> teams = Collections.singleton(tm);
 
-        when(teamMemberServices.findByFields(eq(g.getTeamid()), eq(g.getMemberid()), eq(g.isLead()))).thenReturn(teams);
+        when(teamMemberServices.findByFields(eq(tm.getTeamid()), eq(tm.getMemberid()), eq(tm.isLead()))).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s&lead=%s", g.getTeamid(),
-                g.getMemberid(), g.isLead()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s&lead=%s", tm.getTeamid(),
+                tm.getMemberid(), tm.isLead()));
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
 
         assertEquals(teams, response.body());
@@ -316,11 +316,11 @@ class TeamMemberControllerTest {
 
     @Test
     void testFindTeamMembersNull() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
 
-        when(teamMemberServices.findByFields(eq(g.getTeamid()), eq(null), eq(null))).thenReturn(null);
+        when(teamMemberServices.findByFields(eq(tm.getTeamid()), eq(null), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", g.getTeamid()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", tm.getTeamid()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(TeamMember.class)));
 
@@ -332,27 +332,27 @@ class TeamMemberControllerTest {
 
     @Test
     void testUpdateTeamMember() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
 
-        when(teamMemberServices.update(eq(g))).thenReturn(g);
+        when(teamMemberServices.update(eq(tm))).thenReturn(tm);
 
-        final HttpRequest<TeamMember> request = HttpRequest.PUT("", g);
+        final HttpRequest<TeamMember> request = HttpRequest.PUT("", tm);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
-        assertEquals(g, response.body());
+        assertEquals(tm, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getId()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), tm.getId()), response.getHeaders().get("location"));
 
         verify(teamMemberServices, times(1)).update(any(TeamMember.class));
     }
 
     @Test
     void testUpdateAnInvalidTeamMember() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), null, null, true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), null, null, true);
 
-        when(teamMemberServices.update(any(TeamMember.class))).thenReturn(g);
+        when(teamMemberServices.update(any(TeamMember.class))).thenReturn(tm);
 
-        final HttpRequest<TeamMember> request = HttpRequest.PUT("", g);
+        final HttpRequest<TeamMember> request = HttpRequest.PUT("", tm);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -371,8 +371,8 @@ class TeamMemberControllerTest {
 
     @Test
     void testUpdateANullTeamMember() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
-        when(teamMemberServices.update(any(TeamMember.class))).thenReturn(g);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        when(teamMemberServices.update(any(TeamMember.class))).thenReturn(tm);
 
         final HttpRequest<String> request = HttpRequest.PUT("", "");
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -391,7 +391,7 @@ class TeamMemberControllerTest {
 
     @Test
     void testUpdateTeamMemberThrowException() {
-        TeamMember g = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
+        TeamMember tm = new TeamMember(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), true);
 
         final String errorMessage = "error message!";
 
@@ -399,7 +399,7 @@ class TeamMemberControllerTest {
             throw new TeamBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<TeamMember> request = HttpRequest.PUT("", g);
+        final MutableHttpRequest<TeamMember> request = HttpRequest.PUT("", tm);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
