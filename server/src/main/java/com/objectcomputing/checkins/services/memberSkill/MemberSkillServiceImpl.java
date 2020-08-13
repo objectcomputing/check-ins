@@ -63,19 +63,6 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
         return memberSkills;
     }
 
-    private List<MemberSkill> findByMemberid(UUID memberid) {
-        List<MemberSkill> memberSkillList = memberSkillRepository.findByMemberid(memberid);
-
-        return memberSkillList;
-    }
-
-    private List<MemberSkill> findBySkillid(UUID skillid) {
-        List<MemberSkill> skillList = memberSkillRepository.findBySkillid(skillid);
-
-        return skillList;
-
-    }
-
     public void delete(@NotNull UUID id) {
         memberSkillRepository.deleteById(id);
     }

@@ -48,7 +48,7 @@ public class MemberSkillController {
      */
 
     @Post(value = "/")
-    public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill) {
+    public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
         MemberSkill newMemberSkill = memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid()));
 
         if (newMemberSkill == null) {
@@ -56,7 +56,8 @@ public class MemberSkillController {
         } else {
             return HttpResponse
                     .created(newMemberSkill)
-                    .headers(headers -> headers.location(location(newMemberSkill.getId())));
+                    .headers(headers -> headers.location(
+                            URI.create(String.format("%s/%s", request.getPath(), newMemberSkill.getId()))));
         }
     }
 
@@ -96,11 +97,6 @@ public class MemberSkillController {
     public Set<MemberSkill> findMemberSkills(@Nullable UUID memberid,
                                              @Nullable UUID skillid) {
         return memberSkillsService.findByFields(memberid, skillid);
-    }
-
-
-    protected URI location(UUID uuid) {
-        return URI.create("/services/member-skill/" + uuid);
     }
 
 }
