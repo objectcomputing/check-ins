@@ -29,9 +29,9 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
                 throw new MemberSkillBadArgException(String.format("Invalid member skill %s", memberSkill));
             } else if (memberSkill.getId() != null) {
                 throw new MemberSkillBadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
-            } else if (!memberProfileRepository.findById(memberId).isPresent()) {
+            } else if (memberProfileRepository.findById(memberId).isEmpty()) {
                 throw new MemberSkillBadArgException(String.format("Member Profile %s doesn't exist", memberId));
-            } else if (!skillRepository.findById(skillId).isPresent()) {
+            } else if (skillRepository.findById(skillId).isEmpty()) {
                 throw new MemberSkillBadArgException(String.format("Skill %s doesn't exist", skillId));
             } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
                     memberSkill.getSkillid()).isPresent()) {

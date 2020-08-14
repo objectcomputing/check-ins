@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.services.memberskill;
 
-import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillBadArgException;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillRepository;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillServiceImpl;
+import com.objectcomputing.checkins.services.memberSkill.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;
@@ -130,6 +127,25 @@ class MemberSkillServiceImplTest {
     }
 
     @Test
+    void testSaveMemberSkillAlreadyExistingSkill() {
+        MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
+
+        when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
+        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberSkillRepository.findByMemberidAndSkillid(eq(memberSkill.getMemberid()), eq(memberSkill.getSkillid())))
+        .thenReturn(Optional.of(memberSkill));
+
+        MemberSkillAlreadyExistsException exception = assertThrows(MemberSkillAlreadyExistsException.class, () -> memberSkillsServices.save(memberSkill));
+        assertEquals(String.format("Member %s already has this skill %s",
+                memberSkill.getMemberid(), memberSkill.getSkillid()), exception.getMessage());
+
+        verify(memberSkillRepository, never()).save(any(MemberSkill.class));
+        verify(skillRepository, times(1)).findById(any(UUID.class));
+        verify(memberProfileRepository, times(1)).findById(any(UUID.class));
+        verify(memberSkillRepository, times(1)).findByMemberidAndSkillid(any(UUID.class), any(UUID.class));
+    }
+
+    @Test
     void testSaveMemberSkillNonExistingSkill() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
@@ -145,7 +161,7 @@ class MemberSkillServiceImplTest {
     }
 
     @Test
-    void testSaveActionItemNonExistingMember() {
+    void testSaveMemberSkillNonExistingMember() {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));

@@ -219,24 +219,6 @@ class ActionItemControllerTest {
     }
 
     @Test
-    void testReadAllActionItem() {
-        Set<ActionItem> actionItems = Set.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
-
-        when(actionItemServices.readAll()).thenReturn(actionItems);
-
-        final HttpRequest<UUID> request = HttpRequest.GET("all");
-        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
-
-        assertEquals(actionItems, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        verify(actionItemServices, times(1)).readAll();
-    }
-
-    @Test
     void testReadActionItem() {
         ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
 

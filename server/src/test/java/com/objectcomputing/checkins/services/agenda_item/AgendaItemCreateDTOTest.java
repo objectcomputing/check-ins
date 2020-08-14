@@ -13,7 +13,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AgendaItemCreateDTOTest {
 
     @Inject

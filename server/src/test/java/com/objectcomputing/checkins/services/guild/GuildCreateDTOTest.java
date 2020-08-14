@@ -12,7 +12,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GuildCreateDTOTest {
 
     @Inject

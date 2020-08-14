@@ -10,7 +10,6 @@ import org.junit.jupiter.api.TestInstance;
 import io.micronaut.test.annotation.MicronautTest;
 
 @MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CheckinNoteCreateDTOTest {
     
 @Test

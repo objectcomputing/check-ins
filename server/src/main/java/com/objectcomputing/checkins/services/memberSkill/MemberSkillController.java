@@ -45,8 +45,7 @@ public class MemberSkillController {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
-//        return HttpResponse.<JsonError>badRequest().body(error);
-        return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
+        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
     }
 
     /**
@@ -60,14 +59,10 @@ public class MemberSkillController {
     public HttpResponse<MemberSkill> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
         MemberSkill newMemberSkill = memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid()));
 
-        if (newMemberSkill == null) {
-            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
-        } else {
-            return HttpResponse
-                    .created(newMemberSkill)
-                    .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), newMemberSkill.getId()))));
-        }
+        return HttpResponse
+                .created(newMemberSkill)
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), newMemberSkill.getId()))));
     }
 
     /**
