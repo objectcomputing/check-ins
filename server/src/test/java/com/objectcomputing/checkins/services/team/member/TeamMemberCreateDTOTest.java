@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guild.member;
+package com.objectcomputing.checkins.services.team.member;
 
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
@@ -14,39 +14,39 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GuildMemberCreateDTOTest {
+class TeamMemberCreateDTOTest {
 
     @Inject
     private Validator validator;
 
     @Test
     void testDTOInstantiation() {
-        GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
-        assertNull(dto.getGuildid());
+        TeamMemberCreateDTO dto = new TeamMemberCreateDTO();
+        assertNull(dto.getTeamid());
         assertNull(dto.getMemberid());
         assertNull(dto.isLead());
     }
 
     @Test
     void testConstraintViolation() {
-        GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
+        TeamMemberCreateDTO dto = new TeamMemberCreateDTO();
 
-        Set<ConstraintViolation<GuildMemberCreateDTO>> violations = validator.validate(dto);
+        Set<ConstraintViolation<TeamMemberCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
-        for (ConstraintViolation<GuildMemberCreateDTO> violation : violations) {
+        for (ConstraintViolation<TeamMemberCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
     }
 
     @Test
     void testPopulatedDTO() {
-        GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
+        TeamMemberCreateDTO dto = new TeamMemberCreateDTO();
 
-        UUID guildId = UUID.randomUUID();
+        UUID teamId = UUID.randomUUID();
         UUID memberId = UUID.randomUUID();
 
-        dto.setGuildid(guildId);
-        assertEquals(dto.getGuildid(), guildId);
+        dto.setTeamid(teamId);
+        assertEquals(dto.getTeamid(), teamId);
 
         dto.setMemberid(memberId);
         assertEquals(dto.getMemberid(), memberId);
@@ -54,7 +54,7 @@ class GuildMemberCreateDTOTest {
         dto.setLead(true);
         assertTrue(dto.isLead());
 
-        Set<ConstraintViolation<GuildMemberCreateDTO>> violations = validator.validate(dto);
+        Set<ConstraintViolation<TeamMemberCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
 }

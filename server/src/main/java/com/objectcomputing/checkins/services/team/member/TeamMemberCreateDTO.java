@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.guild.member;
+package com.objectcomputing.checkins.services.team.member;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class GuildMemberCreateDTO {
+public class TeamMemberCreateDTO {
     @NotNull
-    @Schema(description = "id of the guild this entry is associated with", required = true)
-    private UUID guildid;
+    @Schema(description = "id of the team this entry is associated with", required = true)
+    private UUID teamid;
 
     @NotNull
     @Schema(description = "id of the member this entry is associated with", required = true)
@@ -20,12 +20,12 @@ public class GuildMemberCreateDTO {
             nullable = true)
     private Boolean lead;
 
-    public UUID getGuildid() {
-        return guildid;
+    public UUID getTeamid() {
+        return teamid;
     }
 
-    public void setGuildid(UUID guildid) {
-        this.guildid = guildid;
+    public void setTeamid(UUID teamid) {
+        this.teamid = teamid;
     }
 
     public UUID getMemberid() {
