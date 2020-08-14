@@ -4,7 +4,7 @@ import Avatar from "@material-ui/core/Avatar";
 import "./TeamMemberSelect.css";
 
 const TeamMemberSelect = (props) => {
-  const { teamMembers, onChange } = props;
+  const { teamMembers, onChange, singleSelect = false } = props;
   const [filteredTeamMembers, setFilteredTeamMembers] = useState(teamMembers);
 
   const filterTeamMembers = (e) => {
@@ -15,16 +15,16 @@ const TeamMemberSelect = (props) => {
     setFilteredTeamMembers(filtered);
   };
 
-  const selectTeamMember = (e, member) => {
-    const { checked } = e.target;
-
-    member.selected = checked;
-    onChange(member);
+  const selectTeamMember = (member) => {
+    member.selected = !member.selected;
+    onChange(filteredTeamMembers.filter((m) => m.selected));
+    setFilteredTeamMembers([...filteredTeamMembers]);
   };
 
   const renderTeamMember = (member) => {
+    const className = "team-member" + (member.selected ? " selected" : "");
     return (
-      <div className="team-member">
+      <div className={className} onClick={() => selectTeamMember(member)}>
         <Avatar
           alt="Team Member"
           src={
@@ -32,13 +32,9 @@ const TeamMemberSelect = (props) => {
               ? member.image_url
               : require("../../images/default_profile.jpg")
           }
+          style={{ marginLeft: "10px" }}
         />
         <div className="name">{member.name}</div>
-        <input
-          type="checkbox"
-          checked={member.selected}
-          onChange={(e) => selectTeamMember(e, member)}
-        ></input>
       </div>
     );
   };

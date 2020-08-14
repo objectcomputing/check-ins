@@ -10,10 +10,18 @@
   padding: 0.5rem 0;
 }
 
+.team-member-select > .team-member.selected {
+  background-color: #255aa8;
+}
+
+.team-member:hover {
+  cursor: pointer;
+  background-color: #255aa8;
+}
+
 .team-member-select > .team-member > .name {
   flex-grow: 1;
   margin: 0 1rem;
-  text-align: left;
 }
 
 .team-member-select > .team-member > input {
