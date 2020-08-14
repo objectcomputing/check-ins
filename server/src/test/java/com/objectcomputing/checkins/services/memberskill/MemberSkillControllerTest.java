@@ -1,9 +1,7 @@
 package com.objectcomputing.checkins.services.memberskill;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillCreateDTO;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillServices;
+import com.objectcomputing.checkins.services.memberSkill.*;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -29,8 +27,7 @@ import static org.mockito.Mockito.*;
 
 @MicronautTest
 public class MemberSkillControllerTest {
-
-
+    
     @Inject
     @Client("/services/member-skill")
     HttpClient client;
@@ -108,7 +105,7 @@ public class MemberSkillControllerTest {
     }
 
     @Test
-    void deleteMemberSkill_as_admin() {
+    void deleteMemberSkillAsAdmin() {
         UUID uuid = UUID.randomUUID();
 
         doAnswer(an -> {
@@ -125,7 +122,7 @@ public class MemberSkillControllerTest {
     }
 
     @Test
-    void deleteMemberSkill_not_as_admin() {
+    void deleteMemberSkillNotAsAdmin() {
         UUID uuid = UUID.randomUUID();
 
         doAnswer(an -> {
@@ -221,6 +218,60 @@ public class MemberSkillControllerTest {
 
         verify(memberSkillServices, times(1)).findByFields(any(UUID.class), eq(null));
     }
+
+    @Test
+    void testCreateMemberSkillThrowExceptionAlreadyExists() {
+        MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
+        memberSkillCreateDTO.setMemberid(UUID.randomUUID());
+        memberSkillCreateDTO.setSkillid(UUID.randomUUID());
+
+        String error = "some random error message";
+        when(memberSkillServices.save(any(MemberSkill.class))).thenAnswer(a -> {
+            throw new MemberSkillAlreadyExistsException(error);
+        });
+
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals(error, errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
+
+        verify(memberSkillServices, times(1)).save(any(MemberSkill.class));
+
+    }
+
+    @Test
+    void testCreateMemberSkillThrowExceptionBadArgument() {
+        MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
+        memberSkillCreateDTO.setMemberid(UUID.randomUUID());
+        memberSkillCreateDTO.setSkillid(UUID.randomUUID());
+
+        String error = "some random error message";
+        when(memberSkillServices.save(any(MemberSkill.class))).thenAnswer(a -> {
+            throw new MemberSkillBadArgException(error);
+        });
+
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals(error, errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(memberSkillServices, times(1)).save(any(MemberSkill.class));
+
+    }
+
+
 
 
 }
