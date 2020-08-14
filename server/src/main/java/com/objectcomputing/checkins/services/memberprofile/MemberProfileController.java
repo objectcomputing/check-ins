@@ -107,17 +107,11 @@ public class MemberProfileController {
      */
     @Put("/")
     public HttpResponse<MemberProfileResponseDTO> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
-
-        if(null != memberProfile.getId()) {
-            MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
-                    .body(fromEntity(updatedMemberProfile));
-
-        }
-
-        throw new MemberProfileBadArgException("Member profile id is required");
+        MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
+        return HttpResponse
+                .ok()
+                .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
+                .body(fromEntity(updatedMemberProfile));
     }
 
     protected URI location(UUID uuid) {

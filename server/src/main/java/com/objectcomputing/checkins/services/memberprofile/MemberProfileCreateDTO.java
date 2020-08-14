@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
@@ -7,8 +8,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
+@Introspected
 public class MemberProfileCreateDTO {
 
     @NotBlank
@@ -109,5 +112,25 @@ public class MemberProfileCreateDTO {
 
     public void setBioText(@Nullable String bioText) {
         this.bioText = bioText;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberProfileCreateDTO that = (MemberProfileCreateDTO) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(role, that.role) &&
+                Objects.equals(pdlId, that.pdlId) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(workEmail, that.workEmail) &&
+                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(bioText, that.bioText);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 }

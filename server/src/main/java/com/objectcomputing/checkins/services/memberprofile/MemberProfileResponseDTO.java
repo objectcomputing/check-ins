@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Introspected
 public class MemberProfileResponseDTO {
 
     @NotNull

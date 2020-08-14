@@ -39,8 +39,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
-        if (memberProfile.getUuid() != null) {
+        if (memberProfile.getUuid() == null) {
             return memberProfileRepository.save(memberProfile);
+        }
+        if (memberProfileRepository.findByUuid(memberProfile.getUuid()) == null) {
+            throw new MemberProfileBadArgException("No profile exists for this ID");
         }
         return memberProfileRepository.update(memberProfile);
     }

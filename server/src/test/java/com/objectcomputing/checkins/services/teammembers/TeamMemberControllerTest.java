@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.teammembers;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamController;
 import io.micronaut.core.type.Argument;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkCreateMemberProfileDTO;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -55,14 +57,7 @@ public class TeamMemberControllerTest {
 
         // setup a record in Member-Profile to satisfy foreign key constraint
         if (memberProfileController != null) {
-            MemberProfile testMemberProfile = new MemberProfile("TestName",
-                    "TestRole",
-                    null,
-                    "TestLocation",
-                    "TestEmail",
-                    "TestInsperityId",
-                    LocalDate.now(),
-                    "TestBio");
+            MemberProfileCreateDTO testMemberProfile = mkCreateMemberProfileDTO();
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
             assertEquals(HttpStatus.CREATED, response.getStatus());
