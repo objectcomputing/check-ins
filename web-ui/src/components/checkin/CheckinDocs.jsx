@@ -50,10 +50,8 @@ const UploadDocs = () => {
       setResponseText("Unable to upload file");
       setOpen(true);
       setFileColor("red");
-      console.log(res.error);
     } else {
       const resJson = res.payload.data();
-      console.log({ resJson });
       setResponseText(Object.values(resJson)[0]);
       Object.keys(resJson)[0] === "completeMessage"
         ? setSeverity("success") &&
@@ -64,25 +62,6 @@ const UploadDocs = () => {
       setLoading(false);
     }
   };
-
-  // const removeFile = async (file) => {
-  //   try {
-  //     setLoading(true);
-
-  //     let res = deleteFile(file);
-  //     const resJson = await res.json();
-  //     setResponseText(Object.values(resJson)[0]);
-  //     Object.keys(resJson)[0] === "completeMessage"
-  //       ? setSeverity("success")
-  //       : setSeverity("error");
-  //     setOpen(true);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setLoading(false);
-  //     setOpen(false);
-  //     console.log(error);
-  //   }
-  // };
 
   const fileMapper = () => {
     const divs = files.map((file) => {

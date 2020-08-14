@@ -11,15 +11,3 @@ export const uploadFile = async (file) => {
     })
   );
 };
-
-export const deleteFile = async (file) => {
-  return undefined;
-//   return await resolve(
-//     axios({
-//       method: "delete",
-//       url: `${BASE_API_URL}/upload`,
-//       responseType: "json",
-//       body: { file: file },
-//     })
-//   );
-};
