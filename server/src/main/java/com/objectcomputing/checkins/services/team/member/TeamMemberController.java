@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/team/member")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "team-member")
 public class TeamMemberController {

@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+
 @MicronautTest
 class TeamControllerTest {
 
@@ -48,7 +50,7 @@ class TeamControllerTest {
 
         when(teamService.save(eq(tm))).thenReturn(tm);
 
-        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
         assertEquals(tm, response.body());
@@ -65,7 +67,7 @@ class TeamControllerTest {
         Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
         when(teamService.save(any(Team.class))).thenReturn(tm);
 
-        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO);
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -87,7 +89,7 @@ class TeamControllerTest {
         Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
         when(teamService.save(any(Team.class))).thenReturn(tm);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -124,7 +126,7 @@ class TeamControllerTest {
             return thisG;
         }).when(teamService).save(any(Team.class));
 
-        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<List<Team>> response = client.toBlocking().exchange(request, Argument.listOf(Team.class));
 
         assertEquals(teamList, response.body());
@@ -144,7 +146,7 @@ class TeamControllerTest {
 
         List<TeamCreateDTO> dtoList = List.of(teamCreateDTO, teamCreateDTO2);
 
-        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -183,7 +185,7 @@ class TeamControllerTest {
             throw new TeamBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList);
+        final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -200,7 +202,7 @@ class TeamControllerTest {
 
         when(teamService.read(eq(tm.getUuid()))).thenReturn(tm);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
         assertEquals(tm, response.body());
@@ -215,7 +217,7 @@ class TeamControllerTest {
 
         when(teamService.read(eq(tm.getUuid()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", tm.getUuid().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Team.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -230,7 +232,7 @@ class TeamControllerTest {
 
         when(teamService.findByFields(null, null)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/"));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
         assertEquals(teams, response.body());
@@ -248,7 +250,7 @@ class TeamControllerTest {
 
         when(teamService.findByFields(tm.getName(), null)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
         assertEquals(teams, response.body());
@@ -265,7 +267,7 @@ class TeamControllerTest {
 
         when(teamService.findByFields(null,member)).thenReturn(teams);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", member.toString()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", member.toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
         assertEquals(teams, response.body());
@@ -283,7 +285,7 @@ class TeamControllerTest {
         when(teamService.findByFields(eq(tm.getName()), eq(member))).thenReturn(teams);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", tm.getName(),
-                member.toString()));
+                member.toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
 
         assertEquals(teams, response.body());
@@ -298,7 +300,7 @@ class TeamControllerTest {
 
         when(teamService.findByFields(eq(tm.getName()), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", tm.getName())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(Team.class)));
 
@@ -314,7 +316,7 @@ class TeamControllerTest {
 
         when(teamService.update(eq(tm))).thenReturn(tm);
 
-        final HttpRequest<Team> request = HttpRequest.PUT("", tm);
+        final HttpRequest<Team> request = HttpRequest.PUT("", tm).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
 
         assertEquals(tm, response.body());
@@ -330,7 +332,7 @@ class TeamControllerTest {
 
         when(teamService.update(any(Team.class))).thenReturn(tm);
 
-        final HttpRequest<Team> request = HttpRequest.PUT("", tm);
+        final HttpRequest<Team> request = HttpRequest.PUT("", tm).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -352,7 +354,7 @@ class TeamControllerTest {
         Team tm = new Team(UUID.randomUUID(), "DNC", "DNC");
         when(teamService.update(any(Team.class))).thenReturn(tm);
 
-        final HttpRequest<String> request = HttpRequest.PUT("", "");
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -377,7 +379,7 @@ class TeamControllerTest {
             throw new TeamBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<Team> request = HttpRequest.PUT("", tm);
+        final MutableHttpRequest<Team> request = HttpRequest.PUT("", tm).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
