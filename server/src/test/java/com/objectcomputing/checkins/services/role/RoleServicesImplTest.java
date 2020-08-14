@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RoleServicesImplTest {
 
     @Mock

@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

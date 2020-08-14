@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.guild.member;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
