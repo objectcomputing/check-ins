@@ -1,16 +1,11 @@
 package com.objectcomputing.checkins.services.questions;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeCreator;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.objectcomputing.checkins.services.role.RoleBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
 import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
@@ -20,14 +15,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller("/services/questions")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name="questions")
 public class QuestionController {
@@ -35,12 +29,8 @@ public class QuestionController {
     @Inject
     private QuestionServices questionService;
 
-    public QuestionController(QuestionServices questionServices) {
-        this.questionService = questionServices;
-    }
-
     @Error(exception = QuestionNotFoundException.class)
-    public HttpResponse<?> handleDupe(HttpRequest<?> request, QuestionNotFoundException e) {
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, QuestionNotFoundException e) {
         JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
         return HttpResponse.notFound().body(error);
     }
@@ -68,14 +58,9 @@ public class QuestionController {
     public HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
         Question newQuestion = questionService.saveQuestion(toModel(question));
 
-        if (newQuestion == null) {
-            throw new QuestionDuplicateException("Already exists");
-            //return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
-        } else {
-            return HttpResponse
-                    .created(fromModel(newQuestion))
-                    .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
-        }
+        return HttpResponse
+                .created(fromModel(newQuestion))
+                .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
     }
 
     /**
@@ -88,9 +73,7 @@ public class QuestionController {
     @Get("/{questionid}")
     public HttpResponse<QuestionResponseDTO> getById(UUID questionid) {
         Question found = questionService.findByQuestionId(questionid);
-        if (found == null) {
-            throw new QuestionNotFoundException("No question for uuid");
-        }
+
         return HttpResponse.ok(fromModel(found));
     }
 
@@ -122,21 +105,14 @@ public class QuestionController {
      * @return
      */
     @Put("/")
-    public HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionCreateDTO question) {
+    public HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionUpdateDTO question) {
 
-        if(question.getQuestionId() != null) {
-            Question updatedQuestion = questionService.update(toModel(question));
-            if (updatedQuestion != null) {
-                return HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
-                        .body(fromModel(updatedQuestion));
-            } else {
-                throw new QuestionBadArgException("No question found for this uuid");
-            }
-        }
+        Question updatedQuestion = questionService.update(toModel(question));
 
-        throw new QuestionBadArgException("Question id is required");
+        return HttpResponse
+                .ok()
+                .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+                .body(fromModel(updatedQuestion));
     }
 
 
@@ -151,9 +127,15 @@ public class QuestionController {
         return qrdto;
     }
 
-    private Question toModel(QuestionCreateDTO dto) {
+    private Question toModel(QuestionUpdateDTO dto) {
         Question model =  new Question();
         model.setQuestionid(dto.getQuestionId());
+        model.setText(dto.getText());
+        return model;
+    }
+
+    private Question toModel(QuestionCreateDTO dto) {
+        Question model =  new Question();
         model.setText(dto.getText());
         return model;
     }

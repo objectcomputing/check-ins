@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 public class QuestionResponseDTO {
-    @Schema(description = "id of the member this entry is associated with")
+    @Schema(description = "id of the question this entry is associated with")
     private UUID questionId;
 
     @NotBlank

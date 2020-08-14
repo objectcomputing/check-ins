@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -19,7 +20,6 @@ import java.util.UUID;
 public class Question {
 
     public Question(@NotBlank String text) {
-        this.questionid = questionid;
         this.text = text;
     }
 
@@ -30,7 +30,7 @@ public class Question {
     @Column(name="questionid")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with")
+    @Schema(description = "id of the question this entry is associated with")
     private UUID questionid;
 
     @NotBlank

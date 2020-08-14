@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.questions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
@@ -10,8 +7,6 @@ import java.util.UUID;
 
 @Singleton
 public class QuestionServicesImpl implements QuestionServices {
-
-    private static final Logger LOG = LoggerFactory.getLogger(QuestionServicesImpl.class);
 
     @Inject
     private QuestionRepository questionRepository;
@@ -23,7 +18,10 @@ public class QuestionServicesImpl implements QuestionServices {
     public Question saveQuestion(Question question) {
 
         List<Question> returnedList = findByValue(question.getText());
-        return returnedList.size() < 1 ? questionRepository.save(question) : null;
+        if (returnedList.size() >= 1) {
+            throw new QuestionDuplicateException("Already exists");
+        }
+        return questionRepository.save(question);
 
     }
 
@@ -36,7 +34,8 @@ public class QuestionServicesImpl implements QuestionServices {
 
     public Question findByQuestionId(UUID skillId) {
 
-        Question returned = questionRepository.findByQuestionid(skillId);
+        Question returned = questionRepository.findByQuestionid(skillId)
+                .orElseThrow(() -> new QuestionNotFoundException("No question for uuid"));
 
         return returned;
 
@@ -60,11 +59,12 @@ public class QuestionServicesImpl implements QuestionServices {
 
     public Question update(Question question) {
         Question returned = null;
-        Question questionInDatabase = findByQuestionId(question.getQuestionid());
-        if ((questionInDatabase != null)
-                && !questionInDatabase.getText().equals(question.getText())) {
-            returned = questionRepository.update(question);
+        try {
+            findByQuestionId(question.getQuestionid());
+        } catch (QuestionNotFoundException qnfe) {
+            throw new QuestionBadArgException("No question found for this uuid");
         }
+        returned = questionRepository.update(question);
 
         return returned;
 

@@ -12,7 +12,6 @@ plugins {
     id "application"
     id "idea"
     id "groovy"
-    id "org.flywaydb.flyway" version "6.5.4"
 }
 
 targetCompatibility = "11"
@@ -32,14 +31,6 @@ configurations {
     // for dependencies that are needed for development only
     developmentOnly
     publicResources
-}
-
-flyway {
-    driver = 'org.postgresql.Driver'
-    url = 'jdbc:postgresql://localhost:5432/checkinsdb'
-    user = 'postgres'
-    password = 'postgres'
-    locations = ['classpath:db']
 }
 
 dependencies {
