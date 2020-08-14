@@ -1,90 +1,51 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.annotation.Nullable;
-
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Entity
-@Table(name ="member_profile")
-public class MemberProfile {
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
-    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                        String workEmail, String insperityId, LocalDate startDate,
-                        String bioText) {
-                        this.name=name;
-                        this.role=role;
-                        this.pdlId=pdlId;
-                        this.location=location;
-                        this.workEmail=workEmail;
-                        this.insperityId=insperityId;
-                        this.startDate=startDate;
-                        this.bioText=bioText;
-                        }
+@Introspected
+public class MemberProfileCreateDTO {
 
-    public MemberProfile() {
-    }
-
-    @Id
-    @Column(name="uuid")
-    @AutoPopulated
-    @TypeDef(type=DataType.STRING)
-    @Schema(description = "id of the member profile this entry is associated with", required = true)
-    private UUID uuid;
-
-    @NotNull
-    @Column(name = "name", nullable = false)
+    @NotBlank
     @Schema(description = "full name of the employee", required = true)
     private String name;
 
-    @Column(name="role")
+    @NotBlank
     @Schema(description = "employee's role at the company", required = true)
     private String role ;
-    
-    @Column(name="pdlId")
-    @TypeDef(type=DataType.STRING)
+
     @Nullable
     @Schema(description = "employee's professional development lead")
     private UUID pdlId;
 
-    @Column(name="location")
+    @NotBlank
     @Schema(description = "where the employee is geographically located", required = true)
     private String location;
 
-    @NotNull
-    @Column(name="workEmail")
+    @NotBlank
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
     private String workEmail;
 
-    @Column(name="insperityId")
+    @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId; 
+    private String insperityId;
 
-    @Column(name="startDate")
+    @NotNull
+    @Past
     @Schema(description = "employee's date of hire", required = true)
     private LocalDate startDate;
 
-    @Column(name="bioText")
+    @Nullable
     @Schema(description = "employee's biography")
     private String bioText;
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
 
     public String getName() {
         return name;
@@ -102,11 +63,12 @@ public class MemberProfile {
         this.role = role;
     }
 
+    @Nullable
     public UUID getPdlId() {
         return pdlId;
     }
 
-    public void setPdlId(UUID pdlId) {
+    public void setPdlId(@Nullable UUID pdlId) {
         this.pdlId = pdlId;
     }
 
@@ -126,11 +88,12 @@ public class MemberProfile {
         this.workEmail = workEmail;
     }
 
+    @Nullable
     public String getInsperityId() {
         return insperityId;
     }
 
-    public void setInsperityId(String insperityId) {
+    public void setInsperityId(@Nullable String insperityId) {
         this.insperityId = insperityId;
     }
 
@@ -142,11 +105,32 @@ public class MemberProfile {
         this.startDate = startDate;
     }
 
+    @Nullable
     public String getBioText() {
         return bioText;
     }
 
-    public void setBioText(String bioText) {
+    public void setBioText(@Nullable String bioText) {
         this.bioText = bioText;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberProfileCreateDTO that = (MemberProfileCreateDTO) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(role, that.role) &&
+                Objects.equals(pdlId, that.pdlId) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(workEmail, that.workEmail) &&
+                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(bioText, that.bioText);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 }

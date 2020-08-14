@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +51,7 @@ public class CheckinDocumentControllerTest {
 
         when(checkinDocumentService.save(eq(cd))).thenReturn(cd);
 
-        final HttpRequest<CheckinDocumentCreateDTO> request = HttpRequest.POST("", checkinDocumentCreateDTO);
+        final HttpRequest<CheckinDocumentCreateDTO> request = HttpRequest.POST("", checkinDocumentCreateDTO).basicAuth(PDL_ROLE, PDL_ROLE);
         final HttpResponse<CheckinDocument> response = client.toBlocking().exchange(request, CheckinDocument.class);
 
         assertEquals(cd, response.body());
@@ -67,7 +68,7 @@ public class CheckinDocumentControllerTest {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "exampleId");
         when(checkinDocumentService.save(any(CheckinDocument.class))).thenReturn(cd);
 
-        final HttpRequest<CheckinDocumentCreateDTO> request = HttpRequest.POST("", checkinDocumentCreateDTO);
+        final HttpRequest<CheckinDocumentCreateDTO> request = HttpRequest.POST("", checkinDocumentCreateDTO).basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -89,7 +90,7 @@ public class CheckinDocumentControllerTest {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(),"exampleId");
         when(checkinDocumentService.save(any(CheckinDocument.class))).thenReturn(cd);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -104,13 +105,30 @@ public class CheckinDocumentControllerTest {
     }
 
     @Test
+    void testCreateCheckinDocumentThrowsExceptionForMemberRole() {
+
+        CheckinDocumentCreateDTO checkinDocumentCreateDTO = new CheckinDocumentCreateDTO();
+        checkinDocumentCreateDTO.setCheckinsId(UUID.randomUUID());
+        checkinDocumentCreateDTO.setUploadDocId("doc1");
+
+        final HttpRequest<?> request = HttpRequest.POST("", checkinDocumentCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(CheckinDocument.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(checkinDocumentService, times(0)).save(any(CheckinDocument.class));
+    }
+
+    @Test
     void testFindCheckinDocument() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "ExampleDocId");
         Set<CheckinDocument> checkinDocuments = Collections.singleton(cd);
 
         when(checkinDocumentService.read(eq(cd.getCheckinsId()))).thenReturn(checkinDocuments);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinsId=%s", cd.getCheckinsId()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinsId=%s", cd.getCheckinsId())).basicAuth(PDL_ROLE, PDL_ROLE);
         final HttpResponse<Set<CheckinDocument>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinDocument.class));
 
         assertEquals(checkinDocuments, response.body());
@@ -124,7 +142,7 @@ public class CheckinDocumentControllerTest {
 
         when(checkinDocumentService.read(eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinsId=" + null));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinsId=" + null)).basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(CheckinDocument.class)));
 
@@ -132,21 +150,18 @@ public class CheckinDocumentControllerTest {
     }
 
     @Test
-    void deleteCheckinDocument() {
+    void testFindCheckinDocumentThrowsExceptionForMemberRole() {
 
-        UUID uuid = UUID.randomUUID();
+        CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "ExampleDocId");
 
-        doAnswer(an -> {
-            assertEquals(uuid, an.getArgument(0));
-            return null;
-        }).when(checkinDocumentService).delete(any(UUID.class));
+        final MutableHttpRequest<?> request = HttpRequest.GET(String.format("/?checkinsId=" + cd.getCheckinsId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(CheckinDocument.class)));
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
-        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
-
-        verify(checkinDocumentService, times(1)).delete(any(UUID.class));
+        verify(checkinDocumentService, times(0)).read(any(UUID.class));
     }
 
     @Test
@@ -156,7 +171,7 @@ public class CheckinDocumentControllerTest {
 
         when(checkinDocumentService.update(eq(cd))).thenReturn(cd);
 
-        final HttpRequest<CheckinDocument> request = HttpRequest.PUT("", cd);
+        final HttpRequest<CheckinDocument> request = HttpRequest.PUT("", cd).basicAuth(PDL_ROLE, PDL_ROLE);
         final HttpResponse<CheckinDocument> response = client.toBlocking().exchange(request, CheckinDocument.class);
 
         assertEquals(cd, response.body());
@@ -172,7 +187,7 @@ public class CheckinDocumentControllerTest {
 
         when(checkinDocumentService.update(any(CheckinDocument.class))).thenReturn(checkinDocument);
 
-        final HttpRequest<CheckinDocument> request = HttpRequest.PUT("", checkinDocument);
+        final HttpRequest<CheckinDocument> request = HttpRequest.PUT("", checkinDocument).basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -186,7 +201,7 @@ public class CheckinDocumentControllerTest {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "exampleId");
         when(checkinDocumentService.update(any(CheckinDocument.class))).thenReturn(cd);
 
-        final HttpRequest<String> request = HttpRequest.PUT("", "");
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -210,7 +225,7 @@ public class CheckinDocumentControllerTest {
             throw new CheckinDocumentBadArgException(errorMessage);
         });
 
-        final MutableHttpRequest<CheckinDocument> request = HttpRequest.PUT("", cd);
+        final MutableHttpRequest<CheckinDocument> request = HttpRequest.PUT("", cd).basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -222,5 +237,83 @@ public class CheckinDocumentControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
         verify(checkinDocumentService, times(1)).update(any(CheckinDocument.class));
+    }
+
+    @Test
+    void testUpdateCheckinDocumentThrowsExceptionForMemberRole() {
+
+        CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "ExampleDocId");
+
+        final HttpRequest<CheckinDocument> request = HttpRequest.PUT("", cd).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(CheckinDocument.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(checkinDocumentService, times(0)).update(any(CheckinDocument.class));
+    }
+
+    @Test
+    void deleteCheckinDocumentThrowsException() {
+
+        UUID uuid = UUID.randomUUID();
+
+        final MutableHttpRequest<CheckinDocument> request = HttpRequest.DELETE(uuid.toString());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+
+        verify(checkinDocumentService, times(0)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deleteCheckinDocumentThrowsExceptionForPdlRole() {
+
+        UUID uuid = UUID.randomUUID();
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(checkinDocumentService, times(0)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deleteCheckinDocumentThrowsExceptionForMemberRole() {
+
+        UUID uuid = UUID.randomUUID();
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(checkinDocumentService, times(0)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deleteCheckinDocumentIfAdmin() {
+
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(checkinDocumentService).delete(any(UUID.class));
+
+        final HttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+        verify(checkinDocumentService, times(1)).delete(any(UUID.class));
     }
 }
