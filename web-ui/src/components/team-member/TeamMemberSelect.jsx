@@ -26,7 +26,7 @@ const TeamMemberSelect = (props) => {
       m.name !== member.name ? (m.selected = false) : null
     );
     member.selected = !member.selected;
-    onChange(member);
+    onChange([member]);
     setFilteredTeamMembers([...filteredTeamMembers]);
   };
 
@@ -35,6 +35,7 @@ const TeamMemberSelect = (props) => {
     return (
       <div
         className={className}
+        key={member.name}
         onClick={() =>
           singleSelect
             ? selectSingleTeamMember(member)
