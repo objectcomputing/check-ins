@@ -50,7 +50,7 @@ public class TeamMemberController {
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                    HttpRequest<TeamMemberCreateDTO> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
-                teamMember.getMemberid(), teamMember.getLead()));
+                teamMember.getMemberid(), teamMember.isLead()));
         return HttpResponse
                 .created(newTeamMember)
                 .headers(headers -> headers.location(
@@ -113,7 +113,7 @@ public class TeamMemberController {
         List<TeamMember> membersCreated = new ArrayList<>();
         for (TeamMemberCreateDTO teamMemberDTO : teamMembers) {
             TeamMember teamMember = new TeamMember(teamMemberDTO.getTeamid(),
-                    teamMemberDTO.getMemberid(), teamMemberDTO.getLead());
+                    teamMemberDTO.getMemberid(), teamMemberDTO.isLead());
             try {
                 teamMemberServices.save(teamMember);
                 membersCreated.add(teamMember);

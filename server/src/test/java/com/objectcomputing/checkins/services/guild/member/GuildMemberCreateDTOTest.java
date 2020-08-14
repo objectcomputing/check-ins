@@ -24,7 +24,7 @@ class GuildMemberCreateDTOTest {
         GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
         assertNull(dto.getGuildid());
         assertNull(dto.getMemberid());
-        assertNull(dto.getLead());
+        assertNull(dto.isLead());
     }
 
     @Test
@@ -52,7 +52,7 @@ class GuildMemberCreateDTOTest {
         assertEquals(dto.getMemberid(), memberId);
 
         dto.setLead(true);
-        assertTrue(dto.getLead());
+        assertTrue(dto.isLead());
 
         Set<ConstraintViolation<GuildMemberCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

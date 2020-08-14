@@ -48,7 +48,7 @@ class TeamMemberControllerTest {
         teamMemberCreateDTO.setMemberid(UUID.randomUUID());
         teamMemberCreateDTO.setLead(true);
 
-        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.isLead());
 
         when(teamMemberServices.save(eq(tm))).thenReturn(tm);
 
@@ -119,8 +119,8 @@ class TeamMemberControllerTest {
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);
 
-        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
-        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.isLead());
+        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.isLead());
 
         List<TeamMember> teamList = List.of(tm, tm2);
         AtomicInteger i = new AtomicInteger(0);
@@ -182,8 +182,8 @@ class TeamMemberControllerTest {
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);
 
-        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.getLead());
-        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.getLead());
+        TeamMember tm = new TeamMember(teamMemberCreateDTO.getTeamid(), teamMemberCreateDTO.getMemberid(), teamMemberCreateDTO.isLead());
+        TeamMember tm2 = new TeamMember(teamMemberCreateDTO2.getTeamid(), teamMemberCreateDTO2.getMemberid(), teamMemberCreateDTO2.isLead());
 
         final String errorMessage = "error message!";
         when(teamMemberServices.save(eq(tm))).thenReturn(tm);

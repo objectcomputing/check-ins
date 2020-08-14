@@ -36,7 +36,7 @@ public class TeamMemberCreateDTO {
         this.memberid = memberid;
     }
 
-    public Boolean getLead() {
+    public Boolean isLead() {
         return lead;
     }
 

@@ -24,7 +24,7 @@ class TeamMemberCreateDTOTest {
         TeamMemberCreateDTO dto = new TeamMemberCreateDTO();
         assertNull(dto.getTeamid());
         assertNull(dto.getMemberid());
-        assertNull(dto.getLead());
+        assertNull(dto.isLead());
     }
 
     @Test
@@ -52,7 +52,7 @@ class TeamMemberCreateDTOTest {
         assertEquals(dto.getMemberid(), memberId);
 
         dto.setLead(true);
-        assertTrue(dto.getLead());
+        assertTrue(dto.isLead());
 
         Set<ConstraintViolation<TeamMemberCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
