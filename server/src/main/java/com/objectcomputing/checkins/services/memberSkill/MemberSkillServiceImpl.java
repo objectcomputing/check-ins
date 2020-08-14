@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.skills.SkillRepository;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,7 +35,7 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
                 throw new MemberSkillBadArgException(String.format("Skill %s doesn't exist", skillId));
             } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
                     memberSkill.getSkillid()).isPresent()) {
-                throw new MemberSkillBadArgException(String.format("Member %s already has this skill %s", memberId, skillId));
+                throw new MemberSkillAlreadyExistsException(String.format("Member %s already has this skill %s", memberId, skillId));
             }
 
             memberSkillRet = memberSkillRepository.save(memberSkill);
@@ -67,8 +66,4 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
         memberSkillRepository.deleteById(id);
     }
 
-    @Override
-    public MemberSkill update(MemberSkill m) {
-        return null;
-    }
 }

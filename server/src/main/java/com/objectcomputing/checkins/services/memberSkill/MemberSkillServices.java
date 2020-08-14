@@ -7,11 +7,7 @@ public interface MemberSkillServices {
 
     MemberSkill read(UUID uuid);
 
-//    Set<MemberSkill> readAll();
-
     MemberSkill save(MemberSkill m);
-
-    MemberSkill update(MemberSkill m);
 
     Set<MemberSkill> findByFields(UUID memberid, UUID skillid);
 

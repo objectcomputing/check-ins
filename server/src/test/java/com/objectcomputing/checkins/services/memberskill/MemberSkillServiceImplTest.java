@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.memberskill;
 
 import com.objectcomputing.checkins.services.memberSkill.MemberSkill;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillBadArgException;
 import com.objectcomputing.checkins.services.memberSkill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberSkill.MemberSkillServiceImpl;
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillBadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;

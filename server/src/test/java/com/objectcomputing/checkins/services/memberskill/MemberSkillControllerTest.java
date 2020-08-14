@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +54,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.save(eq(m))).thenReturn(m);
 
-        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
 
         assertEquals(m, response.body());
@@ -69,7 +71,7 @@ public class MemberSkillControllerTest {
         MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         when(memberSkillServices.save(any(MemberSkill.class))).thenReturn(m);
 
-        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -91,7 +93,7 @@ public class MemberSkillControllerTest {
         MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
         when(memberSkillServices.save(any(MemberSkill.class))).thenReturn(m);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -114,7 +116,7 @@ public class MemberSkillControllerTest {
             return null;
         }).when(memberSkillServices).delete(any(UUID.class));
 
-        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth("ADMIN", "ADMIN");
+        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -131,7 +133,7 @@ public class MemberSkillControllerTest {
             return null;
         }).when(memberSkillServices).delete(any(UUID.class));
 
-        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<Object> request = HttpRequest.DELETE(uuid.toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, String.class));
@@ -150,7 +152,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.findByFields(null,null)).thenReturn(memberSkills);
 
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s","","")).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s","","")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
 
         assertEquals(memberSkills, response.body());
@@ -165,7 +167,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.read(eq(m.getId()))).thenReturn(m);
 
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
 
         assertEquals(m, response.body());
@@ -180,7 +182,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.read(eq(m.getId()))).thenReturn(null);
 
-        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", m.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, MemberSkill.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -196,7 +198,7 @@ public class MemberSkillControllerTest {
         when(memberSkillServices.findByFields(eq(m.getMemberid()), eq(m.getSkillid()))).thenReturn(memberSkillSet);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", m.getMemberid(),
-                m.getSkillid())).basicAuth("MEMBER", "MEMBER");
+                m.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
 
         assertEquals(memberSkillSet, response.body());
@@ -211,7 +213,7 @@ public class MemberSkillControllerTest {
 
         when(memberSkillServices.findByFields(eq(m.getMemberid()), eq(null))).thenReturn(null);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", m.getMemberid())).basicAuth("MEMBER", "MEMBER");
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", m.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class)));
 

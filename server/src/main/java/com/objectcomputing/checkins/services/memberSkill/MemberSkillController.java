@@ -40,6 +40,15 @@ public class MemberSkillController {
                 .body(error);
     }
 
+    @Error(exception = MemberSkillAlreadyExistsException.class)
+    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, MemberSkillAlreadyExistsException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+//        return HttpResponse.<JsonError>badRequest().body(error);
+        return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
+    }
+
     /**
      * Create and save a new member skill.
      *
@@ -68,7 +77,7 @@ public class MemberSkillController {
      */
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<?> deleteMemberSkill(UUID id) {
+    public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
         memberSkillsService.delete(id);
         return HttpResponse
                 .ok();
@@ -82,7 +91,7 @@ public class MemberSkillController {
      */
 
     @Get("/{id}")
-    public MemberSkill readMemberSkill(UUID id) {
+    public MemberSkill readMemberSkill(@NotNull UUID id) {
         return memberSkillsService.read(id);
     }
 
