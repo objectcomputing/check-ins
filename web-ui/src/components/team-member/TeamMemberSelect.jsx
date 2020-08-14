@@ -15,16 +15,32 @@ const TeamMemberSelect = (props) => {
     setFilteredTeamMembers(filtered);
   };
 
-  const selectTeamMember = (member) => {
+  const selectMultipleTeamMembers = (member) => {
     member.selected = !member.selected;
     onChange(filteredTeamMembers.filter((m) => m.selected));
+    setFilteredTeamMembers([...filteredTeamMembers]);
+  };
+
+  const selectSingleTeamMember = (member) => {
+    filteredTeamMembers.map((m) =>
+      m.name !== member.name ? (m.selected = false) : null
+    );
+    member.selected = !member.selected;
+    onChange(member);
     setFilteredTeamMembers([...filteredTeamMembers]);
   };
 
   const renderTeamMember = (member) => {
     const className = "team-member" + (member.selected ? " selected" : "");
     return (
-      <div className={className} onClick={() => selectTeamMember(member)}>
+      <div
+        className={className}
+        onClick={() =>
+          singleSelect
+            ? selectSingleTeamMember(member)
+            : selectMultipleTeamMembers(member)
+        }
+      >
         <Avatar
           alt="Team Member"
           src={
