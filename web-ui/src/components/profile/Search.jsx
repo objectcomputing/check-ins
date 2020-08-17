@@ -2,13 +2,30 @@ import React, { useContext, useState } from "react";
 import { AppContext, MY_SKILL_ADD } from "../../context/AppContext";
 import axios from "axios";
 import Fuse from "fuse.js";
+import { getSkills } from "../../api/skill.js";
 
 import "./Search.css";
 
 const Search = ({ onClick }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { skillsList, mySkills } = state;
+  const { mySkills } = state;
   const [pattern, setPattern] = useState("");
+  const [skillsList, setSkillsList] = useState([]);
+
+  // Get skills list
+  React.useEffect(() => {
+    async function updateSkillsList() {
+      let skillsRes = await getSkills();
+      setSkillsList(
+        skillsRes.payload && skillsRes.payload.data
+          ? skillsRes.payload.data
+          : []
+      );
+    }
+    updateSkillsList();
+  }, []);
+
+  console.log({ skillsList });
 
   const options = {
     includeScore: true,

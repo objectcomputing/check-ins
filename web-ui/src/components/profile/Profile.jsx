@@ -134,25 +134,27 @@ const Profile = () => {
         </div>
       </div>
       <div>
-        <Search onClick={onClick} />
-        <h2>Skills</h2>
-        {mySkills.map(({ name }) => {
-          return (
-            <div className="current-skills" key={name}>
-              {name}
-              <CancelIcon
-                onClick={() => {
-                  removeSkill(name);
-                }}
-                style={{
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                  marginLeft: "5px",
-                }}
-              />
-            </div>
-          );
-        })}
+        <div className="skills-section">
+          <h2>Skills</h2>
+          {mySkills.map(({ name }) => {
+            return (
+              <div className="current-skills" key={name}>
+                {name}
+                <CancelIcon
+                  onClick={() => {
+                    removeSkill(name);
+                  }}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    marginLeft: "5px",
+                  }}
+                />
+              </div>
+            );
+          })}
+          <Search onClick={onClick} />
+        </div>
       </div>
     </div>
   );

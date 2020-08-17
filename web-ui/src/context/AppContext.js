@@ -12,34 +12,6 @@ export const UPDATE_CHECKIN = "update_checkin";
 
 const AppContext = React.createContext();
 
-let skillsFromDB = [];
-
-const getSkills = async () => {
-  try {
-    const res = await axios({
-      method: "get",
-      url: "/skill/?pending=false",
-      responseType: "json",
-    });
-    res.data.forEach((skill) => skillsFromDB.push(skill));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-getSkills();
-
-const skillsList = [
-  { name: "JavaScript" },
-  { name: "Java" },
-  { name: "C++" },
-  { name: "Jquery" },
-  { name: "Node" },
-  { name: "Machine Learning" },
-  { name: "Go" },
-  { name: "Micronaut" },
-];
-
 let teamMembers = [];
 
 const getTeamMembers = async () => {
@@ -147,7 +119,6 @@ const defaultUser = {
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
-  skillsList: skillsFromDB.length > 0 ? skillsFromDB : skillsList,
   isAdmin: false,
   mySkills: mySkills,
   teamMembers: teamMembers,
