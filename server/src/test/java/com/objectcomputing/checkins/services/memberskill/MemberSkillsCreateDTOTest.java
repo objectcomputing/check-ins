@@ -1,5 +1,6 @@
-package com.objectcomputing.checkins.services.role;
+package com.objectcomputing.checkins.services.memberskill;
 
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -12,43 +13,44 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-class RoleCreateDTOTest {
+public class MemberSkillsCreateDTOTest {
 
     @Inject
     private Validator validator;
 
     @Test
     void testDTOInstantiation() {
-        RoleCreateDTO dto = new RoleCreateDTO();
-        assertNull(dto.getRole());
+        MemberSkillCreateDTO dto = new MemberSkillCreateDTO();
         assertNull(dto.getMemberid());
+        assertNull(dto.getSkillid());
     }
 
     @Test
     void testConstraintViolation() {
-        RoleCreateDTO dto = new RoleCreateDTO();
+        MemberSkillCreateDTO dto = new MemberSkillCreateDTO();
 
-        Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
+        Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertEquals(violations.size(), 2);
-        for (ConstraintViolation<RoleCreateDTO> violation : violations) {
+        for (ConstraintViolation<MemberSkillCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
     }
 
     @Test
     void testPopulatedDTO() {
-        RoleCreateDTO dto = new RoleCreateDTO();
+        MemberSkillCreateDTO dto = new MemberSkillCreateDTO();
 
-        RoleType roleType = RoleType.ADMIN;
         UUID memberId = UUID.randomUUID();
-
-        dto.setRole(roleType);
-        assertEquals(dto.getRole(), roleType);
+        UUID skillId = UUID.randomUUID();
 
         dto.setMemberid(memberId);
         assertEquals(dto.getMemberid(), memberId);
 
-        Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
+        dto.setSkillid(skillId);
+        assertEquals(dto.getSkillid(), skillId);
+
+        Set<ConstraintViolation<MemberSkillCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
+
 }

@@ -219,24 +219,6 @@ class AgendaItemControllerTest {
     }
 
     @Test
-    void testReadAllAgendaItem() {
-        Set<AgendaItem> agendaItems = Set.of(
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
-
-        when(agendaItemServices.readAll()).thenReturn(agendaItems);
-
-        final HttpRequest<UUID> request = HttpRequest.GET("all");
-        final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
-
-        assertEquals(agendaItems, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        verify(agendaItemServices, times(1)).readAll();
-    }
-
-    @Test
     void testReadAgendaItem() {
         AgendaItem a = new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
 

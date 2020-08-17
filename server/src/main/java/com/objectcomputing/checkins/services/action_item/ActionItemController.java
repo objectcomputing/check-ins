@@ -86,16 +86,6 @@ public class ActionItemController {
     }
 
     /**
-     * Get all ActionItems
-     *
-     * @return {@link Set<ActionItem>}
-     */
-    @Get("/all")
-    public Set<ActionItem> readAll() {
-        return actionItemServices.readAll();
-    }
-
-    /**
      * Get ActionItem based off id
      *
      * @param id {@link UUID} of the action item entry
