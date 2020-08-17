@@ -9,8 +9,6 @@ public interface CheckinNoteServices {
 
     CheckinNote read(UUID id);
 
-    Set<CheckinNote> readAll();
-
     CheckinNote update(CheckinNote checkinNote);
 
     Set<CheckinNote> findByFields(UUID checkinid, UUID createdbyid);

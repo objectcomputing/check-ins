@@ -90,15 +90,6 @@ public class CheckinNoteController {
     }
 
     /**
-     * Get all checkin notes
-     * @return
-     */
-    @Get("/all")
-    public Set<CheckinNote> readAll() {
-        return checkinNoteServices.readAll();
-    }
-
-    /**
      * Get checkin note from id
      * @param id
      * @return
