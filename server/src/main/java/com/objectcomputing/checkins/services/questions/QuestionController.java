@@ -103,7 +103,6 @@ public class QuestionController {
         return HttpResponse.badRequest();
     }
 
-
     protected URI location(UUID uuid) {
         return URI.create("/services/questions/" + uuid);
     }

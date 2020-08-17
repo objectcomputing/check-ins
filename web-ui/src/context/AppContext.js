@@ -1,7 +1,7 @@
 import React, { useReducer, useMemo } from "react";
 import axios from "axios";
 
-export const BECOME_USER = "be_user"
+export const BECOME_USER = "be_user";
 export const MY_SKILL_ADD = "add_skill";
 export const MY_SKILL_REMOVE = "remove_skill";
 export const MY_SKILL_TOGGLE = "toggle_skill";
@@ -134,19 +134,15 @@ defaultTeamMembers.forEach((member) => (member.selected = false));
 const mySkills = [{ name: "Jquery" }, { name: "Go" }, { name: "Node" }];
 
 const defaultUser = {
-  "uuid": "770b632c-0710-47f7-bc55-3a2935bfc4a4",
-  "name": "string",
-  "role": "string",
-  "location": "string",
-  "workEmail": "string",
-  "insperityId": "string",
-  "startDate": [
-    2020,
-    8,
-    4
-  ],
-  "bioText": "string"
-}
+  uuid: "770b632c-0710-47f7-bc55-3a2935bfc4a4",
+  name: "string",
+  role: "string",
+  location: "string",
+  workEmail: "string",
+  insperityId: "string",
+  startDate: [2020, 8, 4],
+  bioText: "string",
+};
 
 const initialState = {
   defaultProfile: defaultProfile,
@@ -155,7 +151,7 @@ const initialState = {
   isAdmin: false,
   mySkills: mySkills,
   teamMembers: teamMembers,
-  user: defaultUser
+  user: defaultUser,
 };
 
 const reducer = (state, action) => {

@@ -1,39 +1,47 @@
 package com.objectcomputing.checkins.services.team;
 
-import java.util.UUID;
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import io.micronaut.data.annotation.AutoPopulated;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
+import javax.validation.constraints.NotBlank;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
-@Table(name ="team")
+@Table(name = "team")
 public class Team {
-
-    public Team(String name, String description) {
-        this.name=name;
-        this.description=description;
-        }
-
-    public Team() {
-    }
-
     @Id
-    @Column(name="uuid")
+    @Column(name = "uuid")
     @AutoPopulated
-    @TypeDef(type=DataType.STRING)
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "the id of the team", required = true)
     private UUID uuid;
 
-    @NotNull
-    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Column(name = "name", unique = true)
+    @Schema(description = "name of the team")
     private String name;
 
-    @Column(name="description")
+    @NotBlank
+    @Column(name = "description")
+    @Schema(description = "description of the team")
     private String description;
+
+    public Team(String name, String description) {
+        this(null, name, description);
+    }
+
+    public Team(UUID uuid, String name, String description) {
+        this.uuid = uuid;
+        this.name = name;
+        this.description = description;
+    }
 
     public UUID getUuid() {
         return uuid;
@@ -57,5 +65,29 @@ public class Team {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Team team = (Team) o;
+        return Objects.equals(uuid, team.uuid) &&
+                Objects.equals(name, team.name) &&
+                Objects.equals(description, team.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, name, description);
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", description='" + description +
+                '}';
     }
 }

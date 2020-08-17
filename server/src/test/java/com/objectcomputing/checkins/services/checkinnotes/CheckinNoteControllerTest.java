@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
 @MicronautTest
 public class CheckinNoteControllerTest {
 
@@ -120,22 +119,6 @@ public class CheckinNoteControllerTest {
         final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testReadAllCheckinNote(){
-      Set<CheckinNote> checkinNote = Set.of(
-        new CheckinNote(UUID.randomUUID(),UUID.randomUUID(), "test") ,
-        new CheckinNote(UUID.randomUUID(),UUID.randomUUID(), "test")    
-        );
-
-        when(checkinNoteServices.readAll()).thenReturn(checkinNote);
-        final HttpRequest<UUID> request = HttpRequest.GET("all");
-        final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
-
-        assertEquals(checkinNote, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
     }
