@@ -25,8 +25,6 @@ const Search = ({ onClick }) => {
     updateSkillsList();
   }, []);
 
-  console.log({ skillsList });
-
   const options = {
     includeScore: true,
     ignoreLocation: true,

@@ -14,19 +14,6 @@ const AppContext = React.createContext();
 
 let teamMembers = [];
 
-const getTeamMembers = async () => {
-  try {
-    const res = await axios({
-      method: "get",
-      url: "/member-profile/?pdlId=fb6424a0-b429-4edf-8f05-6927689bec5f",
-      responseType: "json",
-    });
-    res.data.forEach((profile) => teamMembers.push(profile));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 let checkins = [];
 
 const getCheckIns = async () => {
@@ -42,7 +29,6 @@ const getCheckIns = async () => {
   }
 };
 
-getTeamMembers();
 getCheckIns();
 
 const defaultProfile = {

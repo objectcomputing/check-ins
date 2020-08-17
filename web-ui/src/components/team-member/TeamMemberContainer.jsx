@@ -1,16 +1,55 @@
 import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { AppContext } from "../../context/AppContext";
+import { getMembersByTeam, getTeamsByMember } from "../../api/team";
 
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
+  const user = state.user;
   const { defaultTeamMembers } = state;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
   });
+  const [teamMembers, setTeamMembers] = useState();
+  const [teams, setTeams] = useState();
+
+  // Get member teams
+  React.useEffect(() => {
+    async function updateTeams() {
+      if (user.uuid) {
+        let res = await getTeamsByMember(user.uuid);
+        let data =
+          res && res.payload && res.payload.status === 200
+            ? res.payload.data
+            : null;
+        if (data && !res.error) {
+          let memberTeams = { memberTeams: data };
+          setTeams(memberTeams);
+        }
+      }
+    }
+    updateTeams();
+  }, [user.uuid]);
+
+  React.useEffect(() => {
+    async function updateTeamMembers() {
+      if (teams) {
+        const teamMemberMap = await teams.map(async (teamId) => {
+          let res = await getMembersByTeam(teamId);
+          let data =
+            res && res.payload && res.payload.status === 200
+              ? res.payload.data
+              : null;
+          return data && !res.error ? { [teamId]: data } : { [teamId]: [] };
+        });
+        setTeamMembers(teamMemberMap);
+      }
+    }
+    updateTeamMembers();
+  }, [teams]);
 
   const {
     bioText,
@@ -22,6 +61,8 @@ const TeamMemberContainer = () => {
     startDate,
     workEmail,
   } = selectedProfile;
+
+  console.log({ teamMembers });
 
   const [PDL, setPDL] = useState(pdl);
 
