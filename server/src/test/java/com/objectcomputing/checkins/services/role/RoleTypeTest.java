@@ -9,18 +9,18 @@ public class RoleTypeTest {
 
     @Test
     void testConstants() {
-       RoleType.Constants dnc = new RoleType.Constants(); // Test coverage hack to get to 100%
-        assertEquals(RoleType.Constants.PDL_ROLE_STR, RoleType.PDL.name());
-        assertEquals(RoleType.Constants.MEMBER_ROLE_STR, RoleType.MEMBER.name());
-        assertEquals(RoleType.Constants.ADMIN_ROLE_STR, RoleType.ADMIN.name());
+        RoleType.Constants dnc = new RoleType.Constants(); // Test coverage hack to get to 100%
+        assertEquals(RoleType.Constants.PDL_ROLE, RoleType.PDL.name());
+        assertEquals(RoleType.Constants.MEMBER_ROLE, RoleType.MEMBER.name());
+        assertEquals(RoleType.Constants.ADMIN_ROLE, RoleType.ADMIN.name());
     }
 
     @Test
     void testValues() {
         RoleType[] roles = RoleType.values();
         assertEquals(roles.length, 3);
-        for(RoleType roleType : roles) {
-            switch(roleType) {
+        for (RoleType roleType : roles) {
+            switch (roleType) {
                 case PDL:
                     assertEquals("PDL", roleType.toString());
                     break;

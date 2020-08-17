@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.guild.member;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -13,7 +12,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GuildMemberCreateDTOTest {
 
     @Inject
@@ -24,7 +22,7 @@ class GuildMemberCreateDTOTest {
         GuildMemberCreateDTO dto = new GuildMemberCreateDTO();
         assertNull(dto.getGuildid());
         assertNull(dto.getMemberid());
-        assertNull(dto.getLead());
+        assertNull(dto.isLead());
     }
 
     @Test
@@ -52,7 +50,7 @@ class GuildMemberCreateDTOTest {
         assertEquals(dto.getMemberid(), memberId);
 
         dto.setLead(true);
-        assertTrue(dto.getLead());
+        assertTrue(dto.isLead());
 
         Set<ConstraintViolation<GuildMemberCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

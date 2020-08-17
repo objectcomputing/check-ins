@@ -46,7 +46,7 @@ class GuildMemberControllerTest {
         guildMemberCreateDTO.setMemberid(UUID.randomUUID());
         guildMemberCreateDTO.setLead(true);
 
-        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.getLead());
+        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.isLead());
 
         when(guildMemberServices.save(eq(g))).thenReturn(g);
 
@@ -117,8 +117,8 @@ class GuildMemberControllerTest {
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);
 
-        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.getLead());
-        GuildMember g2 = new GuildMember(guildMemberCreateDTO2.getGuildid(), guildMemberCreateDTO2.getMemberid(), guildMemberCreateDTO2.getLead());
+        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.isLead());
+        GuildMember g2 = new GuildMember(guildMemberCreateDTO2.getGuildid(), guildMemberCreateDTO2.getMemberid(), guildMemberCreateDTO2.isLead());
 
         List<GuildMember> guildList = List.of(g, g2);
         AtomicInteger i = new AtomicInteger(0);
@@ -180,8 +180,8 @@ class GuildMemberControllerTest {
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);
 
-        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.getLead());
-        GuildMember g2 = new GuildMember(guildMemberCreateDTO2.getGuildid(), guildMemberCreateDTO2.getMemberid(), guildMemberCreateDTO2.getLead());
+        GuildMember g = new GuildMember(guildMemberCreateDTO.getGuildid(), guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.isLead());
+        GuildMember g2 = new GuildMember(guildMemberCreateDTO2.getGuildid(), guildMemberCreateDTO2.getMemberid(), guildMemberCreateDTO2.isLead());
 
         final String errorMessage = "error message!";
         when(guildMemberServices.save(eq(g))).thenReturn(g);

@@ -9,7 +9,8 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
@@ -23,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/role")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(RoleType.Constants.ADMIN_ROLE)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "role")
 public class RoleController {

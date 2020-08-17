@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkCreateMemberProfileDTO;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,14 +63,7 @@ public class CheckInControllerTest {
     
         // setup a record in Member-Profile to satisfy foreign key constraint
         if(memberProfileController != null) {
-            MemberProfile testMemberProfile = new MemberProfile("TestName", 
-                                                                "TestRole", 
-                                                                null, 
-                                                                "TestLocation", 
-                                                                "TestEmail", 
-                                                                "TestInsperityId", 
-                                                                LocalDate.now(), 
-                                                                "TestBio");
+            MemberProfileCreateDTO testMemberProfile = mkCreateMemberProfileDTO();
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
             assertEquals(HttpStatus.CREATED, response.getStatus());

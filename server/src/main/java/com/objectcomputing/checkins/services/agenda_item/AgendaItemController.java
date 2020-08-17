@@ -86,16 +86,6 @@ public class AgendaItemController {
     }
 
     /**
-     * Get all agenda items
-     *
-     * @return {@link Set<AgendaItem>}
-     */
-    @Get("/all")
-    public Set<AgendaItem> readAll() {
-        return agendaItemServices.readAll();
-    }
-
-    /**
      * Get agenda item based off id
      *
      * @param id {@link UUID} of the agenda item entry

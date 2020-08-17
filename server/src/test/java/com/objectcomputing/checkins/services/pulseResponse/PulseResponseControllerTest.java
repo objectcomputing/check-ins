@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.pulseResponse;
 
+import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkCreateMemberProfileDTO;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponse;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 
@@ -64,14 +66,7 @@ public class PulseResponseControllerTest {
         // setup a record in Member-Profile to satisfy foreign key constraint
 
         if(memberProfileController != null) {
-            MemberProfile testMemberProfile = new MemberProfile("TestName", 
-                                                                "TestRole", 
-                                                                null, 
-                                                                "TestLocation", 
-                                                                "TestEmail", 
-                                                                "TestInsperityId", 
-                                                                LocalDate.of(2019, 1, 01),
-                                                                "TestBio");
+            MemberProfileCreateDTO testMemberProfile = mkCreateMemberProfileDTO();
 
             final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
             assertEquals(HttpStatus.CREATED, response.getStatus());
