@@ -1,11 +1,11 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
-export const getSkills = async () => {
+export const getMemberSkills = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/skill/?pending=false`,
+      url: `${BASE_API_URL}/services/member-skill/?memberid=${id}`,
       responseType: "json",
       auth: {
         username: "ADMIN",
@@ -15,11 +15,11 @@ export const getSkills = async () => {
   );
 };
 
-export const getSkillById = async (id) => {
+export const deleteMemberSkill = async (id) => {
   return await resolve(
     axios({
-      method: "get",
-      url: `${BASE_API_URL}/services/skill/${id}`,
+      method: "DELETE",
+      url: `${BASE_API_URL}/services/member-skill/${id}`,
       responseType: "json",
       auth: {
         username: "ADMIN",
@@ -29,13 +29,13 @@ export const getSkillById = async (id) => {
   );
 };
 
-export const createSkill = async (skill) => {
+export const createMemberSkill = async (memberskill) => {
   return await resolve(
     axios({
       method: "post",
-      url: `${BASE_API_URL}/services/skill`,
+      url: `${BASE_API_URL}/services/member-skill`,
       responseType: "json",
-      data: skill,
+      data: memberskill,
       auth: {
         username: "ADMIN",
         password: "ADMIN",

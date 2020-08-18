@@ -27,8 +27,9 @@ const CheckinsHistory = () => {
           res && res.payload && res.payload.status === 200
             ? res.payload.data
             : null;
-        let checkin = data && !res.error ? data : [];
-        setCheckins(checkin);
+        let checkinList = data && !res.error ? data : [];
+        checkinList.sort((a, b) => (a.checkInDate > b.checkInDate ? -1 : 1));
+        setCheckins(checkinList);
       }
     }
     updateCheckins();
@@ -39,16 +40,17 @@ const CheckinsHistory = () => {
       ? new Date(checkins[checkinIndex].checkInDate)
       : undefined;
   const lastIndex = checkins.length - 1;
-  const leftArrowClass = "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
-  const rightArrowClass =
+  const leftArrowClass =
     "arrow " + (checkinIndex < lastIndex ? "enabled" : "disabled");
+  const rightArrowClass =
+    "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
 
   const previousCheckin = () => {
-    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
+    setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
   };
 
   const nextCheckin = () => {
-    setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
+    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
   };
 
   const pickDate = (date) => {

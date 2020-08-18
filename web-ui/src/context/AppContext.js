@@ -1,10 +1,6 @@
 import React, { useReducer, useMemo } from "react";
-import axios from "axios";
 
 export const BECOME_USER = "be_user";
-export const MY_SKILL_ADD = "add_skill";
-export const MY_SKILL_REMOVE = "remove_skill";
-export const MY_SKILL_TOGGLE = "toggle_skill";
 export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_PDL = "update_pdl";
 export const UPDATE_PDLS = "update_pdls";
@@ -13,7 +9,6 @@ export const UPDATE_CHECKIN = "update_checkin";
 const AppContext = React.createContext();
 
 let teamMembers = [];
-
 
 const defaultProfile = {
   bio: "It was all a dream, I used to read Word Up magazine",
@@ -51,10 +46,8 @@ const defaultTeamMembers = [
 ];
 defaultTeamMembers.forEach((member) => (member.selected = false));
 
-const mySkills = [{ name: "Jquery" }, { name: "Go" }, { name: "Node" }];
-
 const defaultUser = {
-  uuid: "88da6ccc-1b9c-449d-89f2-466d78ded4ee",
+  uuid: "89057028-810c-4b6c-a3e8-6e6b5039722c",
   name: "string",
   role: "string",
   location: "string",
@@ -67,8 +60,7 @@ const defaultUser = {
 const initialState = {
   defaultProfile: defaultProfile,
   defaultTeamMembers: defaultTeamMembers,
-  isAdmin: false,
-  mySkills: mySkills,
+  isAdmin: true,
   teamMembers: teamMembers,
   user: defaultUser,
 };
@@ -77,29 +69,6 @@ const reducer = (state, action) => {
   switch (action.type) {
     case BECOME_USER:
       state.user = action.payload;
-      break;
-    case MY_SKILL_ADD:
-      state.mySkills = state.mySkills.filter((i) => {
-        return action.payload.name !== i.name;
-      });
-      state.mySkills.push(action.payload);
-      break;
-    case MY_SKILL_REMOVE:
-      state.mySkills = state.mySkills.filter((i) => {
-        return action.payload.name !== i.name;
-      });
-      break;
-    case MY_SKILL_TOGGLE:
-      const found = state.mySkills.find((i) => {
-        return i.name === action.payload.name;
-      });
-      if (found) {
-        state.mySkills = state.mySkills.filter((i) => {
-          return i.name !== action.payload.name;
-        });
-      } else {
-        state.mySkills.push(action.payload);
-      }
       break;
     case MY_PROFILE_UPDATE:
       state.defaultProfile = action.payload;
