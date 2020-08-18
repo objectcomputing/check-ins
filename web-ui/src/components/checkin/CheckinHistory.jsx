@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AppContext, UPDATE_CHECKIN } from "../../context/AppContext";
+import { getCheckinByPdlId } from "../../api/checkins";
+
 import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -11,13 +13,31 @@ import "./Checkin.css";
 
 const CheckinsHistory = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { defaultProfile } = state;
+  const { defaultProfile, user } = state;
+  const { email, image_url, name, pdl, role } = defaultProfile;
+  const [checkins, setCheckins] = useState([]);
+  const [checkinIndex, setCheckinIndex] = useState(0);
 
-  const { email, image_url, name, pdl, role, checkins } = defaultProfile;
+  // Get checkins
+  React.useEffect(() => {
+    async function updateCheckins() {
+      if (user.uuid) {
+        let res = await getCheckinByPdlId(user.uuid);
+        let data =
+          res && res.payload && res.payload.status === 200
+            ? res.payload.data
+            : null;
+        let checkin = data && !res.error ? data : [];
+        setCheckins(checkin);
+      }
+    }
+    updateCheckins();
+  }, [user.uuid]);
 
-  const [checkinIndex, setCheckinIndex] = useState(checkins.length - 1);
-
-  let checkinDate = new Date(checkins[checkinIndex].checkInDate);
+  let checkinDate =
+    checkins.length > 0
+      ? new Date(checkins[checkinIndex].checkInDate)
+      : undefined;
   const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
   const rightArrowClass =

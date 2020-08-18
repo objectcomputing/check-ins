@@ -2,19 +2,20 @@ import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { AppContext } from "../../context/AppContext";
 import { getMembersByTeam, getTeamsByMember } from "../../api/team";
+import { getMemberById } from "../../api/member";
 
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
   const user = state.user;
-  const { defaultTeamMembers } = state;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
   });
-  const [teamMembers, setTeamMembers] = useState();
-  const [teams, setTeams] = useState();
+  const [teamMembers, setTeamMembers] = useState({});
+  const [teams, setTeams] = useState([]);
+  const [currentTeam, setCurrentTeam] = useState([]);
 
   // Get member teams
   React.useEffect(() => {
@@ -25,10 +26,8 @@ const TeamMemberContainer = () => {
           res && res.payload && res.payload.status === 200
             ? res.payload.data
             : null;
-        if (data && !res.error) {
-          let memberTeams = { memberTeams: data };
-          setTeams(memberTeams);
-        }
+        let memberTeams = data && !res.error ? data : [];
+        setTeams(memberTeams);
       }
     }
     updateTeams();
@@ -37,14 +36,37 @@ const TeamMemberContainer = () => {
   React.useEffect(() => {
     async function updateTeamMembers() {
       if (teams) {
-        const teamMemberMap = await teams.map(async (teamId) => {
-          let res = await getMembersByTeam(teamId);
-          let data =
-            res && res.payload && res.payload.status === 200
-              ? res.payload.data
-              : null;
-          return data && !res.error ? { [teamId]: data } : { [teamId]: [] };
-        });
+        const teamMemberMap = Object.assign(
+          {},
+          ...(await Promise.all(
+            teams.map(async (team) => {
+              let res = await getMembersByTeam(team.uuid);
+              let data =
+                res && res.payload && res.payload.status === 200
+                  ? res.payload.data
+                  : null;
+              if (data && !res.error) {
+                return {
+                  [team.uuid]: await Promise.all(
+                    data.map(async (member) => {
+                      let res = await getMemberById(member.memberid);
+                      let data =
+                        res &&
+                        res.payload &&
+                        res.payload.status === 200 &&
+                        !res.error
+                          ? res.payload.data
+                          : null;
+                      return data;
+                    })
+                  ),
+                };
+              } else {
+                return { [team.uuid]: [] };
+              }
+            })
+          ))
+        );
         setTeamMembers(teamMemberMap);
       }
     }
@@ -61,8 +83,6 @@ const TeamMemberContainer = () => {
     startDate,
     workEmail,
   } = selectedProfile;
-
-  console.log({ teamMembers });
 
   const [PDL, setPDL] = useState(pdl);
 
@@ -100,10 +120,22 @@ const TeamMemberContainer = () => {
 
     return team;
   };
-  let team = teamProfile(defaultTeamMembers);
+  let team = teamProfile(currentTeam);
+
+  const mapTeams = teams.map((team) => {
+    return (
+      <div
+        key={team.name}
+        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
+      >
+        {team.name.toUpperCase()}
+      </div>
+    );
+  });
 
   return (
     <div>
+      <div className="team-names">{mapTeams}</div>
       {name && (
         <div className="flex-row" style={{ minWidth: "800px" }}>
           <div className="image-div">
@@ -141,7 +173,7 @@ const TeamMemberContainer = () => {
         </div>
       )}
       <div className="flex-row" style={{ flexWrap: "wrap" }}>
-        {team.length === 0 ? <p>No team members :/</p> : team}
+        {team}
       </div>
     </div>
   );

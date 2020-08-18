@@ -10,3 +10,23 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
     })
   );
 };
+
+export const getCheckinByMemberId = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/check-in?teamMemberId=${id}`,
+      responseType: "json",
+    })
+  );
+};
+
+export const getCheckinByPdlId = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/check-in?pdlId=${id}`,
+      responseType: "json",
+    })
+  );
+};

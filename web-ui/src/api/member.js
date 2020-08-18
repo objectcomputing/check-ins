@@ -10,3 +10,13 @@ export const getMembersByPDL = async (id) => {
     })
   );
 };
+
+export const getMemberById = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/member-profile/${id}`,
+      responseType: "json",
+    })
+  );
+};

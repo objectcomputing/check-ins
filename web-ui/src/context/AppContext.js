@@ -14,22 +14,6 @@ const AppContext = React.createContext();
 
 let teamMembers = [];
 
-let checkins = [];
-
-const getCheckIns = async () => {
-  try {
-    const res = await axios({
-      method: "get",
-      url: "/check-in/?teamMemberId=3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      responseType: "json",
-    });
-    res.data.forEach((checkin) => checkins.push(checkin));
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-getCheckIns();
 
 const defaultProfile = {
   bio: "It was all a dream, I used to read Word Up magazine",
@@ -37,28 +21,6 @@ const defaultProfile = {
   name: "Christopher Wallace",
   pdl: "Tupac Shakur",
   role: "Lyrical Poet",
-  nextCheckinDate: 1573551461820,
-  checkins:
-    checkins.length > 0
-      ? checkins
-      : [
-          {
-            id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            teamMemberId: "3fa85g64-5717-4562-b3fc-2c963f66afa6",
-            pdlId: "3fa85f64-5747-4562-b3fc-2c963f66afa6",
-            checkInDate: "2020-07-31",
-            targetQtr: "Q3",
-            targetYear: "2019",
-          },
-          {
-            id: "3fa85f64-5717-4562-b3fc-2c963f66afa8",
-            teamMemberId: "3fa85g64-5717-4562-b3fc-2c963f66afa6",
-            pdlId: "3fa85f64-5747-4562-b3fc-2c963f66afa6",
-            checkInDate: "2020-08-31",
-            targetQtr: "Q3",
-            targetYear: "2020",
-          },
-        ],
 };
 
 const defaultTeamMembers = [
@@ -92,7 +54,7 @@ defaultTeamMembers.forEach((member) => (member.selected = false));
 const mySkills = [{ name: "Jquery" }, { name: "Go" }, { name: "Node" }];
 
 const defaultUser = {
-  uuid: "770b632c-0710-47f7-bc55-3a2935bfc4a4",
+  uuid: "88da6ccc-1b9c-449d-89f2-466d78ded4ee",
   name: "string",
   role: "string",
   location: "string",
