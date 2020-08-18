@@ -24,7 +24,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Set<MemberProfile> findByValues(String name, String role, UUID pdlId) {
-        Set<MemberProfile> foundProfiles = new HashSet<>(memberProfileRepository.findAll());
+        /*Set<MemberProfile> foundProfiles = new HashSet<>(memberProfileRepository.findAll());
         if (!StringUtils.isEmpty(name)) {
             foundProfiles.retainAll(memberProfileRepository.findByName(name));
         }
@@ -34,7 +34,10 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (pdlId != null) {
             foundProfiles.retainAll(memberProfileRepository.findByPdlId(pdlId));
         }
-        return foundProfiles;
+        return foundProfiles;*/
+        return new HashSet<>(
+                memberProfileRepository.search(name, role, (pdlId == null ? null : pdlId.toString()))
+        );
     }
 
     @Override
