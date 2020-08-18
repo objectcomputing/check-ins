@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.questions;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Singleton
@@ -17,7 +18,7 @@ public class QuestionServicesImpl implements QuestionServices {
 
     public Question saveQuestion(Question question) {
 
-        List<Question> returnedList = findByValue(question.getText());
+        Set<Question> returnedList = findByValue(question.getText());
         if (returnedList.size() >= 1) {
             throw new QuestionDuplicateException("Already exists");
         }
@@ -25,8 +26,8 @@ public class QuestionServicesImpl implements QuestionServices {
 
     }
 
-    public List<Question> readAllQuestions() {
-        List<Question> questionList = questionRepository.findAll();
+    public Set<Question> readAllQuestions() {
+        Set<Question> questionList = questionRepository.findAll();
 
         return questionList;
 
@@ -41,18 +42,18 @@ public class QuestionServicesImpl implements QuestionServices {
 
     }
 
-    protected List<Question> findByValue(String text) {
-        List<Question> questionList = null;
+    protected Set<Question> findByValue(String text) {
+        Set<Question> questionList = questionRepository.findAll();
         if(text != null) {
-            questionList = findByText(text);
+            questionList.retainAll(findByText(text));
         }
 
         return questionList;
     }
 
-    public List<Question> findByText(String text) {
+    public Set<Question> findByText(String text) {
         String wildcard = "%" + text + "%" ;
-        List<Question> skillList = questionRepository.findByTextIlike(wildcard);
+        Set<Question> skillList = questionRepository.findByTextIlike(wildcard);
 
         return skillList;
     }

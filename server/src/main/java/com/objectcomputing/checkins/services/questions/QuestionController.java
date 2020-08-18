@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,7 @@ public class QuestionController {
      */
     @Get("/{?text}")
     public HttpResponse<List<QuestionResponseDTO>> findByText(Optional<String> text) {
-        List<Question> found = null;
+        Set<Question> found = null;
         if(text.isPresent()) {
             found = questionService.findByText(text.get());
         } else {

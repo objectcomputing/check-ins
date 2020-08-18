@@ -12,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,8 +64,9 @@ public class QuestionServicesImplTest {
     @Test
     public void testSaveQuestionAlreadyExists() {
         Question fakeQuestion = new Question("fake question");
+        when(mockQuestionRepository.findAll()).thenReturn(Collections.singleton(fakeQuestion));
         when(mockQuestionRepository.findByTextIlike("%" + fakeQuestion.getText() + "%"))
-                .thenReturn(List.of(fakeQuestion));
+                .thenReturn(Set.of(fakeQuestion));
 
         QuestionDuplicateException thrown = assertThrows(QuestionDuplicateException.class, () -> {
             itemUnderTest.saveQuestion(fakeQuestion);
@@ -139,14 +137,15 @@ public class QuestionServicesImplTest {
         Question question = new Question();
         question.setQuestionid(uuid);
 
-        List<Question> fakeQuestionList = new ArrayList<>();
+        Set<Question> fakeQuestionList = new HashSet<>();
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
         fakeQuestionList.add(fakeQuestion);
 
         when(mockQuestionRepository.findAll()).thenReturn(fakeQuestionList);
-        List<Question> returned = itemUnderTest.readAllQuestions();
+        Set<Question> returned = itemUnderTest.readAllQuestions();
 
-        assertEquals(question.getQuestionid(), returned.get(0).getQuestionid());
+        assertEquals(1, returned.size());
+        assertEquals(question.getQuestionid(), returned.iterator().next().getQuestionid());
 
     }
 

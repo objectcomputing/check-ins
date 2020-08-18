@@ -163,7 +163,7 @@ public class QuestionControllerTest {
         Question fakeQuestion = new Question("fake question text");
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
 
-        when(mockQuestionServices.readAllQuestions()).thenReturn(Collections.singletonList(fakeQuestion));
+        when(mockQuestionServices.readAllQuestions()).thenReturn(Collections.singleton(fakeQuestion));
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest.GET("/")
@@ -180,7 +180,7 @@ public class QuestionControllerTest {
         Question fakeQuestion = new Question("fake question text");
         fakeQuestion.setQuestionid(UUID.fromString(fakeUuid));
 
-        when(mockQuestionServices.findByText("fake")).thenReturn(Collections.singletonList(fakeQuestion));
+        when(mockQuestionServices.findByText("fake")).thenReturn(Collections.singleton(fakeQuestion));
 
         final HttpResponse<?> response = client.toBlocking()
                 .exchange(HttpRequest.GET("/?text=fake")
