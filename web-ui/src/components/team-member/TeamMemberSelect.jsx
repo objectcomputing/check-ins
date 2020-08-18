@@ -8,9 +8,9 @@ const TeamMemberSelect = (props) => {
   const [filteredTeamMembers, setFilteredTeamMembers] = useState(teamMembers);
 
   const filterTeamMembers = (e) => {
-    let searchInput = e.target.value;
+    let searchInput = e.target.value.toLowerCase();
     let filtered = teamMembers.filter((member) => {
-      return member.name.includes(searchInput);
+      return member.name.toLowerCase().includes(searchInput);
     });
     setFilteredTeamMembers(filtered);
   };
