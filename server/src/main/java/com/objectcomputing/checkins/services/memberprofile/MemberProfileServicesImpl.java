@@ -1,11 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 
-import io.micronaut.core.util.StringUtils;
-
 import javax.inject.Inject;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public class MemberProfileServicesImpl implements MemberProfileServices {
@@ -23,21 +20,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(String name, String role, UUID pdlId) {
-        /*Set<MemberProfile> foundProfiles = new HashSet<>(memberProfileRepository.findAll());
-        if (!StringUtils.isEmpty(name)) {
-            foundProfiles.retainAll(memberProfileRepository.findByName(name));
-        }
-        if (!StringUtils.isEmpty(role)) {
-            foundProfiles.retainAll(memberProfileRepository.findByRole(role));
-        }
-        if (pdlId != null) {
-            foundProfiles.retainAll(memberProfileRepository.findByPdlId(pdlId));
-        }
-        return foundProfiles;*/
-        return new HashSet<>(
-                memberProfileRepository.search(name, role, (pdlId == null ? null : pdlId.toString()))
-        );
+    public List<MemberProfile> findByValues(String name, String role, UUID pdlId) {
+        return memberProfileRepository
+                .search(name, role, (pdlId == null ? null : pdlId.toString()));
     }
 
     @Override

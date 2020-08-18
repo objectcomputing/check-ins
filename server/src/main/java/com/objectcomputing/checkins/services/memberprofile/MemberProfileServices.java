@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public interface MemberProfileServices {
     MemberProfile getById(UUID id);
 
-    Set<MemberProfile> findByValues(String name, String role, UUID pdlId);
+    List<MemberProfile> findByValues(String name, String role, UUID pdlId);
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 }
