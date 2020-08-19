@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -148,5 +149,41 @@ public class MemberProfile {
 
     public void setBioText(String bioText) {
         this.bioText = bioText;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberProfile that = (MemberProfile) o;
+        return Objects.equals(uuid, that.uuid) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(role, that.role) &&
+                Objects.equals(pdlId, that.pdlId) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(workEmail, that.workEmail) &&
+                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(bioText, that.bioText);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+    }
+
+    @Override
+    public String toString() {
+        return "MemberProfile{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
+                ", pdlId=" + pdlId +
+                ", location='" + location + '\'' +
+                ", workEmail='" + workEmail + '\'' +
+                ", insperityId='" + insperityId + '\'' +
+                ", startDate=" + startDate +
+                ", bioText='" + bioText + '\'' +
+                '}';
     }
 }

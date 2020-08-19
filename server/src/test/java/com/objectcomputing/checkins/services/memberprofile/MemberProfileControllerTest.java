@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.services.role.RoleCreateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -9,7 +8,6 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Resource;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.test.annotation.MockBean;
@@ -21,7 +19,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -108,7 +105,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setName(memberProfile.getName());
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null))
+        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?name=%s", testUser))
@@ -125,7 +122,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setName(memberProfile.getName());
 
-        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null))
+        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?role=%s", testRole))
@@ -142,7 +139,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setPdlId(testPdlId);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId()))
+        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
@@ -157,7 +154,7 @@ public class MemberProfileControllerTest {
     public void testGetFindAll() {
         MemberProfile profileOne = mkMemberProfile();
         MemberProfile profileTwo = mkMemberProfile("2");
-        when(mockMemberServices.findByValues(null, null, null))
+        when(mockMemberServices.findByValues(null, null, null, null))
                 .thenReturn(Set.of(profileOne, profileTwo));
 
         HttpRequest requestFindAll = HttpRequest.GET("")
@@ -191,7 +188,7 @@ public class MemberProfileControllerTest {
 
         MemberProfile memberProfile = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null))
+        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", memberProfile.getName()))
@@ -211,7 +208,7 @@ public class MemberProfileControllerTest {
     public void testGetFindByRole() {
         MemberProfile memberProfile = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null))
+        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?role=%s", memberProfile.getRole()))
@@ -232,7 +229,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setPdlId(testUuid);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId()))
+        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))

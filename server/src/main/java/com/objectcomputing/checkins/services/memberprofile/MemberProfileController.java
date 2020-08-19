@@ -29,7 +29,7 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
-@Controller("/member-profile")
+@Controller("/services/member-profile")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -76,11 +76,13 @@ public class MemberProfileController {
      * @param name
      * @param role
      * @param pdlId
+     * @param workEmail
      * @return
      */
-    @Get("/{?name,role,pdlId}")
-    public HttpResponse<List<MemberProfileResponseDTO>> findByValue(@Nullable String name, @Nullable String role, @Nullable UUID pdlId) {
-        List<MemberProfileResponseDTO> responseBody = memberProfileServices.findByValues(name, role, pdlId)
+    @Get("/{?name,role,pdlId,workEmail}")
+    public HttpResponse<List<MemberProfileResponseDTO>> findByValue(@Nullable String name, @Nullable String role,
+                                                                    @Nullable UUID pdlId, @Nullable String workEmail) {
+        List<MemberProfileResponseDTO> responseBody = memberProfileServices.findByValues(name, role, pdlId, workEmail)
                 .stream().map(memberProfile -> fromEntity(memberProfile)).collect(Collectors.toList());
         return HttpResponse
                 .ok(responseBody);
