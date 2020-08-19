@@ -135,7 +135,7 @@ public class MemberProfileController {
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
+        return new MemberProfile(dto.getId(), dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
                 dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 

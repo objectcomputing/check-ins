@@ -20,22 +20,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name ="member_profile")
 public class MemberProfile {
 
-    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                        String workEmail, String insperityId, LocalDate startDate,
-                        String bioText) {
-                        this.name=name;
-                        this.role=role;
-                        this.pdlId=pdlId;
-                        this.location=location;
-                        this.workEmail=workEmail;
-                        this.insperityId=insperityId;
-                        this.startDate=startDate;
-                        this.bioText=bioText;
-                        }
-
-    public MemberProfile() {
-    }
-
     @Id
     @Column(name="uuid")
     @AutoPopulated
@@ -78,6 +62,29 @@ public class MemberProfile {
     @Column(name="bioText")
     @Schema(description = "employee's biography")
     private String bioText;
+
+    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
+                         String workEmail, String insperityId, LocalDate startDate,
+                         String bioText) {
+       this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+    }
+
+    public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
+                         String workEmail, String insperityId, LocalDate startDate,
+                         String bioText) {
+        this.uuid = id;
+        this.name=name;
+        this.role=role;
+        this.pdlId=pdlId;
+        this.location=location;
+        this.workEmail=workEmail;
+        this.insperityId=insperityId;
+        this.startDate=startDate;
+        this.bioText=bioText;
+    }
+
+    public MemberProfile() {
+    }
 
     public UUID getUuid() {
         return uuid;
