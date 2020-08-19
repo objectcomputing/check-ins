@@ -18,7 +18,10 @@ const Personnel = () => {
       if (id) {
         let res = await getMembersByPDL(id);
         let data =
-          res.payload.data && res.payload.status === 200 && !res.error
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
             ? res.payload.data
             : null;
         if (data) {

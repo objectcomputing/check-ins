@@ -4,6 +4,7 @@ import Fuse from "fuse.js";
 import "./Search.css";
 
 const Search = ({ skillsList, mySkills, addSkill }) => {
+  skillsList = skillsList.filter(({ pending }) => !pending);
   const [pattern, setPattern] = useState("");
 
   const options = {
