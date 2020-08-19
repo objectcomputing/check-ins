@@ -8,7 +8,7 @@ const GuideLink = (props) => {
     return (
         <li>
             <PdfIcon />
-            <a href={fullPath} target="_blank">
+            <a href={fullPath} target="_blank" rel="noopener noreferrer">
                 {fileName}
             </a>
         </li>
