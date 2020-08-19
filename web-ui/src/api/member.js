@@ -7,6 +7,10 @@ export const getMembersByPDL = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/member-profile/?pdlId=${id}`,
       responseType: "json",
+      auth: {
+        username: "ADMIN",
+        password: "ADMIN",
+      },
     })
   );
 };

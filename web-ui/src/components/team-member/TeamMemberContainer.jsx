@@ -17,6 +17,31 @@ const TeamMemberContainer = () => {
   const [teamMembers, setTeamMembers] = useState({});
   const [teams, setTeams] = useState([]);
   const [currentTeam, setCurrentTeam] = useState([]);
+  const {
+    bioText,
+    image_url,
+    location,
+    name,
+    pdlId,
+    role,
+    startDate,
+    workEmail,
+  } = selectedProfile;
+
+  const [pdl, setPDL] = useState();
+
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      if (pdlId) {
+        let res = await getMember(pdlId);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
+    }
+    getPDLName();
+  }, [pdlId]);
 
   // Get member teams
   React.useEffect(() => {
@@ -24,9 +49,7 @@ const TeamMemberContainer = () => {
       if (id) {
         let res = await getTeamsByMember(id);
         let data =
-          res && res.payload && res.payload.status === 200
-            ? res.payload.data
-            : null;
+          res.payload && res.payload.status === 200 ? res.payload.data : null;
         let memberTeams = data && !res.error ? data : [];
         setTeams(memberTeams);
       }
@@ -41,14 +64,14 @@ const TeamMemberContainer = () => {
           {},
           ...(await Promise.all(
             teams.map(async (team) => {
-              let res = await getMembersByTeam(team.id);
+              let res = await getMembersByTeam(team.uuid);
               let data =
                 res && res.payload && res.payload.status === 200
                   ? res.payload.data
                   : null;
               if (data && !res.error) {
                 return {
-                  [team.id]: await Promise.all(
+                  [team.uuid]: await Promise.all(
                     data.map(async (member) => {
                       let res = await getMember(member.memberid);
                       let data =
@@ -63,7 +86,7 @@ const TeamMemberContainer = () => {
                   ),
                 };
               } else {
-                return { [team.id]: [] };
+                return { [team.uuid]: [] };
               }
             })
           ))
@@ -74,44 +97,11 @@ const TeamMemberContainer = () => {
     updateTeamMembers();
   }, [teams]);
 
-  const {
-    bioText,
-    image_url,
-    location,
-    name,
-    pdl,
-    role,
-    startDate,
-    workEmail,
-  } = selectedProfile;
-
-  const [PDL, setPDL] = useState(pdl);
-
-  let now = Date.now();
-
-  const monthsandYears = (date, now) => {
-    if (!date) {
-      return;
-    }
-    let diff = Math.floor(now - date);
-    let day = 1000 * 60 * 60 * 24;
-
-    let days = Math.floor(diff / day);
-    let months = Math.floor(days / 31);
-    let years = Math.floor(months / 12);
-    months %= 12;
-    const time = { months: months, years: years };
-
-    return time;
-  };
-
-  const time = monthsandYears(startDate, now);
-
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
       return (
         <MemberIcon
-          key={profile.name}
+          key={`profile-${profile.workEmail}`}
           profile={profile}
           onSelect={setSelectedProfile}
           onSelectPDL={setPDL}
@@ -126,8 +116,8 @@ const TeamMemberContainer = () => {
   const mapTeams = teams.map((team) => {
     return (
       <div
-        key={team.name}
-        onClick={async () => setCurrentTeam(teamMembers[team.id])}
+        key={`team-${team.uuid}`}
+        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
       >
         {team.name.toUpperCase()}
       </div>
@@ -155,15 +145,17 @@ const TeamMemberContainer = () => {
               <div style={{ display: "flex" }}>
                 <div style={{ marginRight: "50px", textAlign: "left" }}>
                   <p>Role: {role}</p>
-                  <p>PDL: {PDL}</p>
+                  <p>PDL: {pdl}</p>
                   <p>Location: {location}</p>
                 </div>
                 <div>
                   <p>
-                    Length of Service:
-                    {`${time.years > 0 ? time.years + " year(s), " : ""} ${
-                      time.months
-                    } month(s)`}
+                    Start Date:{" "}
+                    {new Date(
+                      startDate[0],
+                      startDate[1] - 1,
+                      startDate[2]
+                    ).toLocaleDateString()}
                   </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>

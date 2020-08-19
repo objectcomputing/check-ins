@@ -31,17 +31,12 @@ const Profile = () => {
   // Get PDL's name
   React.useEffect(() => {
     async function getPDLName() {
-      console.log("pdl");
-      let pdlName;
       if (userProfile.pdlId) {
         let res = await getMember(userProfile.pdlId);
         let pdlProfile =
-          res.payload.data && res.payload.data.length > 0 && !res.error
-            ? res.payload.data
-            : undefined;
-        pdlName = pdlProfile.name ? pdlProfile.name : "";
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
       }
-      setPDL(pdlName);
     }
     getPDLName();
   }, [userProfile]);
@@ -49,7 +44,6 @@ const Profile = () => {
   // Get skills list
   React.useEffect(() => {
     async function updateSkillsList() {
-      console.log("skills");
       let res = await getSkills();
       setSkillsList(res.payload && res.payload.data ? res.payload.data : []);
     }
@@ -58,7 +52,6 @@ const Profile = () => {
 
   React.useEffect(() => {
     async function updateBio() {
-      console.log("bio");
       setBio(bioText);
     }
     updateBio();
@@ -66,7 +59,6 @@ const Profile = () => {
 
   React.useEffect(() => {
     async function updateMySkills() {
-      console.log("MYskills");
       let updatedMySkills = {};
       if (id) {
         let res = await getMemberSkills(id);

@@ -39,7 +39,6 @@ const AppContextProvider = (props) => {
 
   React.useEffect(() => {
     async function updateUserProfile() {
-      console.log("Update profile");
       if (state.userData.email) {
         let res = await getMemberByEmail(state.userData.email);
         let profile =
