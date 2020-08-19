@@ -24,18 +24,18 @@ const reducer = (state, action) => {
   return { ...state };
 };
 
-const AppContextProvider = (props) => {
-  const [state, dispatch] = useReducer(reducer, {
-    userProfile: {},
-    userData: {
-      email: "string",
-      image_url:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/SNL_MrBill_Doll.jpg/220px-SNL_MrBill_Doll.jpg",
-      role: "ADMIN",
-    },
-  });
+const initialState = {
+  userProfile: {},
+  userData: {
+    email: "string",
+    image_url:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/SNL_MrBill_Doll.jpg/220px-SNL_MrBill_Doll.jpg",
+    role: "ADMIN",
+  },
+};
 
-  console.log(state.userProfile.bioText);
+const AppContextProvider = (props) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   React.useEffect(() => {
     async function updateUserProfile() {

@@ -28,10 +28,6 @@ const Profile = () => {
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
 
-  if (!bio && bioText) {
-    setBio(bioText);
-  }
-
   // Get PDL's name
   React.useEffect(() => {
     async function getPDLName() {
@@ -59,6 +55,14 @@ const Profile = () => {
     }
     updateSkillsList();
   }, []);
+
+  React.useEffect(() => {
+    async function updateBio() {
+      console.log("bio");
+      setBio(bioText);
+    }
+    updateBio();
+  }, [bioText]);
 
   React.useEffect(() => {
     async function updateMySkills() {
