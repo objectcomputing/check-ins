@@ -5,7 +5,7 @@ export const getSkills = async () => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/skill/?pending=false`,
+      url: `${BASE_API_URL}/services/skill/all`,
       responseType: "json",
       auth: {
         username: "ADMIN",
@@ -15,7 +15,7 @@ export const getSkills = async () => {
   );
 };
 
-export const getSkillById = async (id) => {
+export const getSkill = async (id) => {
   return await resolve(
     axios({
       method: "get",

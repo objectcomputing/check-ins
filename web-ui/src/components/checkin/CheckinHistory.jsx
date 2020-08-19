@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { AppContext, UPDATE_CHECKIN } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 import { getCheckinByPdlId } from "../../api/checkins";
 
 import Avatar from "@material-ui/core/Avatar";
@@ -12,17 +12,17 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import "./Checkin.css";
 
 const CheckinsHistory = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { defaultProfile, user } = state;
-  const { email, image_url, name, pdl, role } = defaultProfile;
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const { workEmail, image_url, name, pdl, role, id } = userProfile;
   const [checkins, setCheckins] = useState([]);
   const [checkinIndex, setCheckinIndex] = useState(0);
 
   // Get checkins
   React.useEffect(() => {
     async function updateCheckins() {
-      if (user.uuid) {
-        let res = await getCheckinByPdlId(user.uuid);
+      if (id) {
+        let res = await getCheckinByPdlId(id);
         let data =
           res && res.payload && res.payload.status === 200
             ? res.payload.data
@@ -33,7 +33,7 @@ const CheckinsHistory = () => {
       }
     }
     updateCheckins();
-  }, [user.uuid]);
+  }, [id]);
 
   let checkinDate =
     checkins.length > 0
@@ -53,12 +53,8 @@ const CheckinsHistory = () => {
     setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
   };
 
-  const pickDate = (date) => {
-    dispatch({
-      type: UPDATE_CHECKIN,
-      payload: { date, index: checkinIndex },
-    });
-  };
+  const pickDate = (date) => {};
+
   const DateInput = ({ value, onClick }) => (
     <div className="date-input">
       <p style={{ margin: "0px" }}>{value}</p>
@@ -79,7 +75,7 @@ const CheckinsHistory = () => {
           <p>{name}</p>
           <p>{role}</p>
           <p>PDL: {pdl}</p>
-          <p>Company Email: {email}</p>
+          <p>Company Email: {workEmail}</p>
         </div>
       </div>
       <div className="date-picker">

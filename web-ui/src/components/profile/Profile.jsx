@@ -3,30 +3,48 @@ import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Avatar from "@material-ui/core/Avatar";
-import { AppContext, MY_PROFILE_UPDATE } from "../../context/AppContext";
+import { AppContext, UPDATE_USER_BIO } from "../../context/AppContext";
 import Search from "./Search";
 import Input from "./Input";
-import { getSkills, getSkillById, createSkill } from "../../api/skill.js";
+import { getSkills, getSkill, createSkill } from "../../api/skill.js";
 import {
   getMemberSkills,
   createMemberSkill,
   deleteMemberSkill,
 } from "../../api/memberskill.js";
+import { getMember } from "../../api/member.js";
 
 import "./Profile.css";
 
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { defaultProfile, user } = state;
+  const { userProfile, userData } = state;
   const [mySkills, setMySkills] = useState([]);
-  const { bio, email, image_url, name, pdl, role } = defaultProfile;
+  const { bio, workEmail, name, role, id } = userProfile;
+  const { image_url } = { userData };
 
-  const [Role, setRole] = useState(role);
-  const [Email, setEmail] = useState(email);
+  const [pdl, setPDL] = useState();
   const [Bio, setBio] = useState(bio);
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
+
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      let pdlName;
+      if (userProfile.pdlId) {
+        let res = await getMember(userProfile.pdlId);
+        let pdlProfile =
+          res.payload.data && res.payload.data.length > 0 && !res.error
+            ? res.payload.data
+            : undefined;
+        pdlName = pdlProfile.name ? pdlProfile.name : "";
+      }
+      setPDL(pdlName);
+    }
+    getPDLName();
+  }, [userProfile]);
 
   // Get skills list
   React.useEffect(() => {
@@ -39,43 +57,43 @@ const Profile = () => {
 
   React.useEffect(() => {
     async function updateMySkills() {
-      let res = await getMemberSkills(user.uuid);
+      let updatedMySkills = {};
+      if (id) {
+        let res = await getMemberSkills(id);
 
-      let data =
-        res && res.payload && res.payload.status === 200
-          ? res.payload.data
-          : null;
+        let data =
+          res.payload && res.payload.status === 200 ? res.payload.data : null;
 
-      let updatedMySkills =
-        data && !res.error && data.length > 0
-          ? Object.assign(
-              ...(await Promise.all(
-                data.map(async (memberSkill) => {
-                  let res = await getSkillById(memberSkill.skillid);
-                  let data =
-                    res &&
-                    res.payload &&
-                    res.payload.status === 200 &&
-                    !res.error
-                      ? res.payload.data
-                      : null;
-                  return { [memberSkill.id]: data };
-                })
-              ))
-            )
-          : [];
+        updatedMySkills =
+          data && !res.error && data.length > 0
+            ? Object.assign(
+                ...(await Promise.all(
+                  data.map(async (memberSkill) => {
+                    let res = await getSkill(memberSkill.skillid);
+                    let data =
+                      res &&
+                      res.payload &&
+                      res.payload.status === 200 &&
+                      !res.error
+                        ? res.payload.data
+                        : null;
+                    return { [memberSkill.id]: data };
+                  })
+                ))
+              )
+            : {};
+      }
 
       setMySkills(updatedMySkills);
     }
     updateMySkills();
-  }, [user.uuid]);
+  }, [id]);
 
   const addSkill = async (name) => {
     const inSkillsList = skillsList.find(
       (skill) => skill.name.toUpperCase() === name.toUpperCase()
     );
 
-    let mySkillsTemp = { ...mySkills };
     let curSkill = inSkillsList;
     if (!inSkillsList) {
       let res = await createSkill({ name: name, pending: true });
@@ -86,7 +104,8 @@ const Profile = () => {
       curSkill = data;
     }
 
-    if (curSkill && curSkill.skillid) {
+    let mySkillsTemp = { ...mySkills };
+    if (curSkill && curSkill.skillid && id) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
@@ -94,7 +113,7 @@ const Profile = () => {
       ) {
         let res = await createMemberSkill({
           skillid: curSkill.skillid,
-          memberid: user.uuid,
+          memberid: id,
         });
         let data =
           res && res.payload && res.payload.status === 201
@@ -110,16 +129,9 @@ const Profile = () => {
   };
 
   const updateProfile = () => {
-    const updatedProfile = {
-      role: Role,
-      email: Email,
-      name: name,
-      pdl: pdl,
-      bio: Bio,
-    };
     dispatch({
-      type: MY_PROFILE_UPDATE,
-      payload: updatedProfile,
+      type: UPDATE_USER_BIO,
+      payload: Bio,
     });
   };
 
@@ -177,18 +189,14 @@ const Profile = () => {
                 />
               )}
             </h2>
-            <Input
-              disabled={disabled}
-              label="Role: "
-              value={Role}
-              setValue={setRole}
-            />
-            <Input
-              disabled={disabled}
-              label="Email: "
-              value={Email}
-              setValue={setEmail}
-            />
+            <div>
+              <span>Role: </span>
+              {role}
+            </div>
+            <div>
+              <span>Email: </span>
+              {workEmail}
+            </div>
             <div>
               <span>PDL: </span>
               {pdl}

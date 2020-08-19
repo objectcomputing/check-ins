@@ -2,13 +2,14 @@ import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { AppContext } from "../../context/AppContext";
 import { getMembersByTeam, getTeamsByMember } from "../../api/team";
-import { getMemberById } from "../../api/member";
+import { getMember } from "../../api/member";
 
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
-  const user = state.user;
+  const { userProfile } = state;
+  const { id } = userProfile;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,
@@ -20,8 +21,8 @@ const TeamMemberContainer = () => {
   // Get member teams
   React.useEffect(() => {
     async function updateTeams() {
-      if (user.uuid) {
-        let res = await getTeamsByMember(user.uuid);
+      if (id) {
+        let res = await getTeamsByMember(id);
         let data =
           res && res.payload && res.payload.status === 200
             ? res.payload.data
@@ -31,7 +32,7 @@ const TeamMemberContainer = () => {
       }
     }
     updateTeams();
-  }, [user.uuid]);
+  }, [id]);
 
   React.useEffect(() => {
     async function updateTeamMembers() {
@@ -40,16 +41,16 @@ const TeamMemberContainer = () => {
           {},
           ...(await Promise.all(
             teams.map(async (team) => {
-              let res = await getMembersByTeam(team.uuid);
+              let res = await getMembersByTeam(team.id);
               let data =
                 res && res.payload && res.payload.status === 200
                   ? res.payload.data
                   : null;
               if (data && !res.error) {
                 return {
-                  [team.uuid]: await Promise.all(
+                  [team.id]: await Promise.all(
                     data.map(async (member) => {
-                      let res = await getMemberById(member.memberid);
+                      let res = await getMember(member.memberid);
                       let data =
                         res &&
                         res.payload &&
@@ -62,7 +63,7 @@ const TeamMemberContainer = () => {
                   ),
                 };
               } else {
-                return { [team.uuid]: [] };
+                return { [team.id]: [] };
               }
             })
           ))
@@ -126,7 +127,7 @@ const TeamMemberContainer = () => {
     return (
       <div
         key={team.name}
-        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
+        onClick={async () => setCurrentTeam(teamMembers[team.id])}
       >
         {team.name.toUpperCase()}
       </div>
