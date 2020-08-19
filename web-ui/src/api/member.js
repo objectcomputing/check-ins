@@ -38,3 +38,18 @@ export const getMember = async (id) => {
     })
   );
 };
+
+export const updateMember = async (member) => {
+  return await resolve(
+    axios({
+      method: "put",
+      url: `${BASE_API_URL}/services/member-profile/`,
+      responseType: "json",
+      data: member,
+      auth: {
+        username: "ADMIN",
+        password: "ADMIN",
+      },
+    })
+  );
+};

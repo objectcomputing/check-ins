@@ -5,7 +5,6 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import Avatar from "@material-ui/core/Avatar";
 import { AppContext, UPDATE_USER_BIO } from "../../context/AppContext";
 import Search from "./Search";
-import Input from "./Input";
 import { getSkills, getSkill, createSkill } from "../../api/skill.js";
 import {
   getMemberSkills,
@@ -20,18 +19,23 @@ const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile, userData } = state;
   const [mySkills, setMySkills] = useState([]);
-  const { bio, workEmail, name, role, id } = userProfile;
-  const { image_url } = { userData };
+  const { bioText, workEmail, name, role, id } = userProfile;
+  const { image_url } = userData;
 
   const [pdl, setPDL] = useState();
-  const [Bio, setBio] = useState(bio);
+  const [bio, setBio] = useState();
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
 
+  if (!bio && bioText) {
+    setBio(bioText);
+  }
+
   // Get PDL's name
   React.useEffect(() => {
     async function getPDLName() {
+      console.log("pdl");
       let pdlName;
       if (userProfile.pdlId) {
         let res = await getMember(userProfile.pdlId);
@@ -49,6 +53,7 @@ const Profile = () => {
   // Get skills list
   React.useEffect(() => {
     async function updateSkillsList() {
+      console.log("skills");
       let res = await getSkills();
       setSkillsList(res.payload && res.payload.data ? res.payload.data : []);
     }
@@ -57,6 +62,7 @@ const Profile = () => {
 
   React.useEffect(() => {
     async function updateMySkills() {
+      console.log("MYskills");
       let updatedMySkills = {};
       if (id) {
         let res = await getMemberSkills(id);
@@ -131,7 +137,7 @@ const Profile = () => {
   const updateProfile = () => {
     dispatch({
       type: UPDATE_USER_BIO,
-      payload: Bio,
+      payload: bio,
     });
   };
 
@@ -201,13 +207,12 @@ const Profile = () => {
               <span>PDL: </span>
               {pdl}
             </div>
-            <Input
+            <textarea
               disabled={disabled}
-              label="Bio: "
-              rows={2}
-              value={Bio}
-              setValue={setBio}
-            />
+              id="Bio"
+              onChange={(e) => setBio(e.target.value)}
+              value={bio}
+            ></textarea>
           </div>
         </div>
       </div>

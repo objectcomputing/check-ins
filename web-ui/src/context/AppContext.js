@@ -1,5 +1,5 @@
 import React, { useReducer, useMemo } from "react";
-import { getMemberByEmail } from "../api/member.js";
+import { getMemberByEmail, updateMember } from "../api/member.js";
 
 export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_USER_BIO = "update_bio";
@@ -16,8 +16,8 @@ const reducer = (state, action) => {
       state.userData = action.payload;
       break;
     case UPDATE_USER_BIO:
-      state.userProfile.bio = action.payload;
-      // SEND API UPDATE
+      state.userProfile.bioText = action.payload;
+      updateMember(state.userProfile);
       break;
     default:
   }
@@ -27,26 +27,19 @@ const reducer = (state, action) => {
 const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, {
     userProfile: {},
-    userData: {},
+    userData: {
+      email: "string",
+      image_url:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/SNL_MrBill_Doll.jpg/220px-SNL_MrBill_Doll.jpg",
+      role: "ADMIN",
+    },
   });
 
-  React.useEffect(() => {
-    async function updateUserData() {
-      dispatch({
-        type: UPDATE_USER_DATA,
-        payload: {
-          email: "string",
-          image_url:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/SNL_MrBill_Doll.jpg/220px-SNL_MrBill_Doll.jpg",
-          role: "ADMIN",
-        },
-      });
-    }
-    updateUserData();
-  }, []);
+  console.log(state.userProfile.bioText);
 
   React.useEffect(() => {
     async function updateUserProfile() {
+      console.log("Update profile");
       if (state.userData.email) {
         let res = await getMemberByEmail(state.userData.email);
         let profile =
@@ -60,7 +53,7 @@ const AppContextProvider = (props) => {
       }
     }
     updateUserProfile();
-  }, [state.userData.email]);
+  }, [state.userData, state.userData.email]);
 
   let value = useMemo(() => {
     return { state, dispatch };
