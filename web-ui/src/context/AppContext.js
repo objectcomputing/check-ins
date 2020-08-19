@@ -63,6 +63,4 @@ const AppContextProvider = (props) => {
   );
 };
 
-const SkillConsumer = AppContext.Consumer;
-
-export { SkillConsumer, AppContext, AppContextProvider };
+export { AppContext, AppContextProvider };
