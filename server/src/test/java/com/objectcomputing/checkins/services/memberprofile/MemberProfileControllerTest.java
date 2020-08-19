@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class MemberProfileControllerTest {
 
     @Inject
-    @Client("/member-profile")
+    @Client("/services/member-profile")
     private HttpClient client;
 
     @Inject

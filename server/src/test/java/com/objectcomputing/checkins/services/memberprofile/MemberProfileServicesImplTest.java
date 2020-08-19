@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -120,6 +121,7 @@ public class MemberProfileServicesImplTest {
     @Test
     public void testSaveMemberSameEmail() {
         MemberProfile alreadyExists = mkMemberProfile();
+        alreadyExists.setUuid(UUID.randomUUID());
 
         when(mockMemberProfileRepository.findByWorkEmail(eq(alreadyExists.getWorkEmail()))).thenReturn(java.util.Optional.of(alreadyExists));
 

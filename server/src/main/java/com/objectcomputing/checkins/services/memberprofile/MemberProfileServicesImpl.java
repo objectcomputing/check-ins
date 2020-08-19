@@ -43,7 +43,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
-        if(emailProfile != null && !emailProfile.getUuid().equals(memberProfile.getUuid())) {
+        if(emailProfile != null && emailProfile.getUuid() != null && !Objects.equals(memberProfile.getUuid(), emailProfile.getUuid())) {
             throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
                     memberProfile.getWorkEmail()));
         }
