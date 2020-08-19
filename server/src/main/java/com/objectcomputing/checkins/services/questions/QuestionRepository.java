@@ -5,16 +5,17 @@ import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 import javax.annotation.Nullable;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface QuestionRepository extends CrudRepository<Question, UUID> {
 
     @Nullable
-    Question findByQuestionid(UUID questionid);
-    List<Question> findByText(String name);
-    List<Question> findByTextIlike(String name);
-    List<Question> findAll();
+    Optional<Question> findByQuestionid(UUID questionid);
+    Set<Question> findByText(String name);
+    Set<Question> findByTextIlike(String name);
+    Set<Question> findAll();
 
 }
