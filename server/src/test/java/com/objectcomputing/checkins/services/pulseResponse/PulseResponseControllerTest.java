@@ -1,264 +1,325 @@
-package com.objectcomputing.checkins.services.pulseResponse;
+package com.objectcomputing.checkins.services.pulseresponse;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkCreateMemberProfileDTO;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
-import com.objectcomputing.checkins.services.pulseresponse.PulseResponse;
-import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
-
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.annotation.MockBean;
+import org.junit.jupiter.api.Test;
 
-@TestInstance(Lifecycle.PER_CLASS)
+import javax.inject.Inject;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+
+import java.time.LocalDate;
+
 @MicronautTest
 public class PulseResponseControllerTest {
-    
-    @Inject
-    @Client("/pulse-response")
-    private HttpClient client;
 
     @Inject
-    MemberProfileController memberProfileController;
-    
-    PulseResponseRepository mockPulseResponseRepository = mock(PulseResponseRepository.class);
-    
-    private static LocalDate testsubmissionDate = LocalDate.of(2020, 1, 01);
-    private static LocalDate testUpdatedDate = LocalDate.of(2020, 2, 01);
-    private static UUID testTeamMemberId;
-    private static boolean isDataSetupForTest = false;
-    
-    @Before
-    void setup() {
-        reset(mockPulseResponseRepository);
-    }
-    
-    @BeforeAll
-    void setupMemberProfileRecord() {
-        // setup a record in Member-Profile to satisfy foreign key constraint
+    @Client("/services/pulse-response")
+    HttpClient client;
 
-        if(memberProfileController != null) {
-            MemberProfileCreateDTO testMemberProfile = mkCreateMemberProfileDTO();
+    @Inject
+    private PulseResponseService pulseResponseService;
 
-            final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
-            assertEquals(HttpStatus.CREATED, response.getStatus());
-            assertNotNull(response.body());
-            testTeamMemberId = ((MemberProfile) response.body()).getUuid();
-        }
+    @MockBean(PulseResponseService.class)
+    public PulseResponseService pulseResponseService() {
+        return mock(PulseResponseService.class);
     }
 
     @Test
-    public void testFindNonExistingEndpointReturns404() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99"));
-        });
+    void testCreateAPulseResponse() {
+        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
+        pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(2019, 1, 01));
+        pulseResponseCreateDTO.setUpdatedDate(LocalDate.of(2019, 1, 01));
+        pulseResponseCreateDTO.setTeamMemberId(UUID.randomUUID());
+        pulseResponseCreateDTO.setInternalFeelings("doc1");
+        pulseResponseCreateDTO.setExternalFeelings("doc2");
 
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
+        PulseResponse cd = new PulseResponse(pulseResponseCreateDTO.getSubmissionDate(),pulseResponseCreateDTO.getUpdatedDate(), pulseResponseCreateDTO.getTeamMemberId(), pulseResponseCreateDTO.getInternalFeelings(), pulseResponseCreateDTO.getExternalFeelings());
 
-    // Find By TeamMemberId returns empty array - when no data exists
-    @Test
-    public void testGetFindByTeamMemberIdReturnsEmptyBody() {
+        when(pulseResponseService.save(eq(cd))).thenReturn(cd);
 
-        UUID testUser = UUID.randomUUID();
-        PulseResponse pulseResponse = new PulseResponse();
-        List<PulseResponse> result = new ArrayList<PulseResponse>();
-        result.add(pulseResponse);
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
 
-        when(mockPulseResponseRepository.findByTeamMemberId(testUser)).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?teamMemberId=%s", testUser)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
-
-    // Find By findBySubmissionDateBetween returns empty array - when no data exists
-    @Test
-    public void testGetFindByfindBySubmissionDateBetweenReturnsEmptyBody() {
-
-        LocalDate testDateFrom = LocalDate.of(2019, 1, 01);
-        LocalDate testDateTo = LocalDate.of(2019, 2, 01);
-        PulseResponse pulseResponse = new PulseResponse();
-        List<PulseResponse> result = new ArrayList<PulseResponse>();
-        result.add(pulseResponse);
-
-        when(mockPulseResponseRepository.findBySubmissionDateBetween(testDateFrom, testDateTo)).thenReturn(result);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
-
-    // Find By TeamMemberId
-    @Test
-    public void testGetFindByTeamMemberId() {
-
-        setupTestData();
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId)));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotEquals(2, response.getContentLength());
-    }
- 
-    // Find By findBySubmissionDateBetween
-    @Test
-    public void testGetFindByfindBySubmissionDateBetween() {
-
-        setupTestData();
-
-        LocalDate testDateFrom = LocalDate.of(2019, 1, 01);
-        LocalDate testDateTo = LocalDate.of(2021, 1, 01);
-
-        final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)));
-        
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotEquals(2, response.getContentLength());
-    }
-
-    // POST - Valid Body
-    @Test
-    public void testPostSave() {
-
-        final Map<String, Object> testBody = new HashMap<String, Object>() {{
-            put("submissionDate", testsubmissionDate);
-            put("updatedDate", testUpdatedDate);
-            put("teamMemberId", testTeamMemberId);
-            put("internalFeelings", "operation");
-            put("externalFeelings", "successful");
-        }};
-
-        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(HttpRequest.POST("", testBody));
+        assertEquals(cd, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.getContentLength());
+        assertEquals(String.format("%s/%s", request.getPath(), cd.getId()), response.getHeaders().get("location"));
+
+        verify(pulseResponseService, times(1)).save(any(PulseResponse.class));
     }
 
-    // PUT - Valid Body
     @Test
-    public void testPutUpdate() {
+    void testCreateAnInvalidPulseResponse() {
+        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
 
-        // Insert value for PulseResponse
-        final Map<String, Object> testBody = new HashMap<String, Object>() {{
-            put("submissionDate", testsubmissionDate);
-            put("updatedDate", testUpdatedDate);
-            put("teamMemberId", testTeamMemberId);
-            put("internalFeelings", "operation");
-            put("externalFeelings", "successful");
-        }};
+        PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "exampleId", "exampleId");
+        when(pulseResponseService.save(any(PulseResponse.class))).thenReturn(cd);
 
-        final HttpResponse<PulseResponse> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testBody), PulseResponse.class);
-        assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
-        assertNotNull(responseFromPost.body());
-        UUID testId = responseFromPost.body().getId();
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        // Update value of PulseResponse
-        PulseResponse testPulseResponse = new PulseResponse(testsubmissionDate, testUpdatedDate, testTeamMemberId, "Internal Feeling", "External Feeling");
-        testPulseResponse.setId(testId);
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("pulseResponse.internalFeelings: must not be null", errorList.get(0));
+        assertEquals("pulseResponse.teamMemberId: must not be null", errorList.get(1));
+        assertEquals("pulseResponse.externalFeelings: must not be null", errorList.get(2));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
-        final HttpResponse<PulseResponse> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testPulseResponse), PulseResponse.class);
-        assertEquals(HttpStatus.OK, responseFromPut.getStatus());
-        assertNotNull(responseFromPut.body());
-        assertEquals(testId, responseFromPut.body().getId());
-        assertEquals("Internal Feeling", responseFromPut.body().getInternalFeelings());
-        assertEquals("External Feeling", responseFromPut.body().getExternalFeelings());
+        verify(pulseResponseService, never()).save(any(PulseResponse.class));
     }
 
-    // PUT - Request with non-existent id
     @Test
-    public void testPutUpdateForNonExistentID() {
+    void testCreateANullPulseResponse() {
+        PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(),"exampleId","exampleId");
+        when(pulseResponseService.save(any(PulseResponse.class))).thenReturn(cd);
 
-        UUID testId = UUID.randomUUID();
-        final Map<String, Object> testBody = new HashMap<String, Object>() {{
-            put("id", testId);
-            put("submissionDate", testsubmissionDate);
-            put("updatedDate", testUpdatedDate);
-            put("teamMemberId", testTeamMemberId);
-            put("internalFeelings", "operation");
-            put("externalFeelings", "successful");
-        }};
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testBody));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Required Body [pulseResponse] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(pulseResponseService, never()).save(any(PulseResponse.class));
+    }
+
+    @Test
+    void testCreatePulseResponseThrowsExceptionForMemberRole() {
+
+        PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
+        pulseResponseCreateDTO.setTeamMemberId(UUID.randomUUID());
+        pulseResponseCreateDTO.setInternalFeelings("doc1");
+
+        final HttpRequest<?> request = HttpRequest.POST("", pulseResponseCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).save(any(PulseResponse.class));
+    }
+
+    @Test
+    void testFindPulseResponse() {
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "ExampleDocId", "ExampleDocId");
+        Set<PulseResponse> pulseResponses = Collections.singleton(cd);
+
+        when(pulseResponseService.read(eq(cd.getTeamMemberId()))).thenReturn(pulseResponses);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", cd.getTeamMemberId())).basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+
+        assertEquals(pulseResponses, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        verify(pulseResponseService, times(1)).read(any(UUID.class));
+    }
+
+    @Test
+    void testFindPulseResponseNull() {
+
+        when(pulseResponseService.read(eq(null))).thenReturn(null);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=" + null)).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class)));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testFindPulseResponseThrowsExceptionForMemberRole() {
+
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "ExampleDocId", "ExampleDocId");
+
+        final MutableHttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=" + cd.getTeamMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).read(any(UUID.class));
+    }
+
+    @Test
+    void testUpdatePulseResponse() {
+
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "exampleId", "exampleId");
+
+        when(pulseResponseService.update(eq(cd))).thenReturn(cd);
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", cd).basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request, PulseResponse.class);
+
+        assertEquals(cd, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), cd.getId()), response.getHeaders().get("location"));
+
+        verify(pulseResponseService, times(1)).update(any(PulseResponse.class));
+    }
+
+    @Test
+    void testUpdateAnInvalidPulseResponse() {
+        PulseResponse pulseResponse = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
+
+        when(pulseResponseService.update(any(PulseResponse.class))).thenReturn(pulseResponse);
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(pulseResponseService, never()).update(any(PulseResponse.class));
+    }
+
+    @Test
+    void testUpdateANullPulseResponse() {
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "exampleId", "exampleId");
+        when(pulseResponseService.update(any(PulseResponse.class))).thenReturn(cd);
+
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Required Body [pulseResponse] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(pulseResponseService, never()).update(any(PulseResponse.class));
+    }
+
+    @Test
+    void testUpdatePulseResponseThrowException() {
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "exampleId", "exampleId");
+
+        final String errorMessage = "error message!";
+
+        when(pulseResponseService.update(any(PulseResponse.class))).thenAnswer(ans -> {
+            throw new PulseResponseBadArgException(errorMessage);
         });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+
+        final MutableHttpRequest<PulseResponse> request = HttpRequest.PUT("", cd).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals(errorMessage, errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+        verify(pulseResponseService, times(1)).update(any(PulseResponse.class));
     }
 
-    // PUT - Request with empty body
     @Test
-    public void testPutUpdateForEmptyInput() {
-        PulseResponse testPulseResponse = new PulseResponse();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testPulseResponse));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    void testUpdatePulseResponseThrowsExceptionForMemberRole() {
+
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "ExampleDocId", "ExampleDocId");
+
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", cd).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class)));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).update(any(PulseResponse.class));
     }
 
-    // PUT - Request with invalid body - missing ID
     @Test
-    public void testPutUpdateWithMissingField() {
+    void deletePulseResponseThrowsException() {
 
-        setupTestData();
+        UUID uuid = UUID.randomUUID();
 
-        final Map<String, Object> testBody = new HashMap<String, Object>() {{
-            put("submissionDate", testsubmissionDate);
-            put("updatedDate", testUpdatedDate);
-            put("teamMemberId", testTeamMemberId);
-            put("internalFeelings", "Operation");
-            put("externalFeelings", "Fails");
-        }};
-        
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testBody));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+        final MutableHttpRequest<PulseResponse> request = HttpRequest.DELETE(uuid.toString());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).delete(any(UUID.class));
     }
 
-    private void setupTestData() {
+    @Test
+    void deletePulseResponseThrowsExceptionForPdlRole() {
 
-        if(!isDataSetupForTest) {
+        UUID uuid = UUID.randomUUID();
 
-            final Map<String, Object> fakeBody = new HashMap<String, Object>() {{
-                put("submissionDate", testsubmissionDate);
-                put("updatedDate", testUpdatedDate);
-                put("teamMemberId", testTeamMemberId);
-                put("internalFeelings", "Test Value for Internal Feeling");
-                put("externalFeelings", "Test Value for External Feeling");
-            }};
-            
-            client.toBlocking().exchange(HttpRequest.POST("", fakeBody));
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(PDL_ROLE, PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-            isDataSetupForTest = true;
-        }
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deletePulseResponseThrowsExceptionForMemberRole() {
+
+        UUID uuid = UUID.randomUUID();
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("Forbidden", responseException.getMessage());
+
+        verify(pulseResponseService, times(0)).delete(any(UUID.class));
+    }
+
+    @Test
+    void deletePulseResponseIfAdmin() {
+
+        UUID uuid = UUID.randomUUID();
+
+        doAnswer(an -> {
+            assertEquals(uuid, an.getArgument(0));
+            return null;
+        }).when(pulseResponseService).delete(any(UUID.class));
+
+        final HttpRequest<?> request = HttpRequest.DELETE(uuid.toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+
+        verify(pulseResponseService, times(1)).delete(any(UUID.class));
     }
 }
