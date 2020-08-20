@@ -23,9 +23,9 @@ public class UserDetailsController {
      * @return {@link HttpResponse<Map>}
      */
     @Get
-    public HttpResponse<Map> userDetails(@Nullable Authentication authentication) {
+    public HttpResponse<Map<String, Object>> userDetails(@Nullable Authentication authentication) {
 
-        Map userinfo = new LinkedHashMap();
+        Map<String, Object> userinfo = new HashMap<>();
 
         if (authentication == null) {
             return HttpResponse
