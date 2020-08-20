@@ -5,8 +5,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+
 
 public class CheckInServicesImpl implements CheckInServices {
 
@@ -22,15 +24,12 @@ public class CheckInServicesImpl implements CheckInServices {
         if(checkIn!=null){
             final UUID memberId = checkIn.getTeamMemberId();
             final UUID pdlId = checkIn.getPdlId();
-        if(memberId==null){
-            throw new CheckInBadArgException(String.format("Inavlid check in %s", checkIn));
-        } else if(checkIn.getId()!=null){
+        if(checkIn.getId()!=null){
             throw new CheckInBadArgException(String.format("Found unexpected id for checkin  %s", checkIn.getId()));
         } else if(memberId.equals(pdlId)){
             throw new CheckInBadArgException(String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
         } else if(!memberRepo.findById(memberId).isPresent()){
             throw new CheckInBadArgException(String.format("Member %s doesn't exists", memberId));
-
         }
         checkInRet = checkinRepo.save(checkIn);
         }
@@ -39,15 +38,9 @@ public class CheckInServicesImpl implements CheckInServices {
 
 
     @Override
-    public CheckIn read(UUID id) {
-        return checkinRepo.findById(id).orElse(null);
-    }
+    public CheckIn read(@NotNull UUID id) {
 
-    @Override
-    public Set<CheckIn> readAll() {
-        Set<CheckIn> checkIn = new HashSet<>();
-        checkinRepo.findAll().forEach(checkIn::add);
-        return checkIn ;
+        return checkinRepo.findById(id).orElse(null);
     }
 
     @Override
@@ -70,13 +63,15 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId) {
+    public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         Set<CheckIn> checkIn = new HashSet<>();
         checkinRepo.findAll().forEach(checkIn::add);
         if(teamMemberId!=null){
             checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
         } else if(pdlId!=null) {
             checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
+        } else if(completed!=null) {
+            checkIn.retainAll(checkinRepo.findByCompleted(completed));
         }
         return checkIn;
     }

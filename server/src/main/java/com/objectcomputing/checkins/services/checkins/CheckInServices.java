@@ -9,11 +9,9 @@ public interface CheckInServices {
 
     CheckIn read(UUID id);
 
-    Set<CheckIn> readAll();
-
     CheckIn update(CheckIn checkinNote);
 
-    Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId);
+    Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed);
 
     
 }

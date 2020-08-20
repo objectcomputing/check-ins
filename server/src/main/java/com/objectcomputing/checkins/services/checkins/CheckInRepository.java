@@ -14,8 +14,9 @@ import io.micronaut.data.repository.CrudRepository;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface CheckInRepository extends CrudRepository<CheckIn,UUID>{
 
-    List<CheckIn> findByTeamMemberId(@NotNull UUID teamMemberId);
-    List<CheckIn> findByPdlId(@NotNull UUID pdlId);
+    List<CheckIn> findByTeamMemberId(UUID teamMemberId);
+    List<CheckIn> findByPdlId(UUID pdlId);
+    List<CheckIn> findByCompleted(Boolean completed);
     List<CheckIn> findAll();
 
     @Override

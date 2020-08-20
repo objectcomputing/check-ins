@@ -1,13 +1,13 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -29,7 +29,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.http.annotation.Error;
 
 @Controller("/services/check-in")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="check-ins")
@@ -54,10 +54,10 @@ public class CheckInController {
      * @param pdlId
      * @return
      */
-    @Get("/{?teamMemberId,pdlId}")
+    @Get("/{?teamMemberId,pdlId,completed}")
     public Set<CheckIn> findByValue(@Nullable UUID teamMemberId,
-                                     @Nullable UUID  pdlId) {          
-            return checkInservices.findByFields(teamMemberId, pdlId);
+                                     @Nullable UUID  pdlId, @Nullable Boolean completed) {          
+            return checkInservices.findByFields(teamMemberId, pdlId,completed);
     }
 
     /**
@@ -65,9 +65,9 @@ public class CheckInController {
      * @param checkIn
      * @return
      */
-    @Post("/")
+    @Post()
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<CheckInCreateDTO> request) {
-        CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getPdlId(),checkIn.getTeamMemberId(),checkIn.getCheckInDate()));     
+        CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getTeamMemberId(),checkIn.getPdlId(),checkIn.getCheckInDate(),checkIn.isCompleted()));
         return HttpResponse.created(newMemberCheckIn)
         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),newMemberCheckIn.getId()))));
     }
@@ -87,15 +87,6 @@ public class CheckInController {
                     .body(updatedMemberCheckIn);
                          
     }
-    
-    /**
-     * 
-     * @return
-     */
-    @Get("/all") 
-    public Set<CheckIn> readAll() {
-        return checkInservices.readAll();
-    }
 
     /**
      * 
@@ -103,7 +94,7 @@ public class CheckInController {
      * @return
      */
     @Get("/{id}")
-    public CheckIn readCheckIn(UUID id){
+    public CheckIn readCheckIn(@NotNull UUID id){
         return checkInservices.read(id);
     }
 
