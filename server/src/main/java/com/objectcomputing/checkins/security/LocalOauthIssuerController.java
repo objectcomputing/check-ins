@@ -8,11 +8,9 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.oauth2.endpoint.authorization.state.persistence.StatePersistence;
 import io.micronaut.security.oauth2.endpoint.token.response.TokenErrorResponse;
 import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.security.token.jwt.generator.claims.JWTClaimsSetGenerator;
 import io.micronaut.views.View;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.json.JSONObject;
@@ -31,12 +29,6 @@ public class LocalOauthIssuerController {
 
     @Inject
     private UsersStore usersStore;
-
-    @Inject
-    private JWTClaimsSetGenerator jwtClaimsSetGenerator;
-
-    @Inject
-    private StatePersistence statePersistence;
 
     @View("login")
     @Get("/auth")
