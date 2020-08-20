@@ -21,7 +21,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemble
       - name: Gradle runs tests
-      run: ./gradlew check
+        run: ./gradlew check
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
