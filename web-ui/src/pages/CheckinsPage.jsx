@@ -4,6 +4,7 @@ import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
 import Button from "@material-ui/core/Button";
+import Notes from "../components/notes/Notes";
 
 import "./CheckinsPage.css";
 
@@ -24,6 +25,7 @@ const CheckinsPage = () => {
           <Personnel />
         </div>
       </div>
+      <Notes />
       <CheckinDocs />
       <div className="modal-container">
         <Modal close={showModal} show={show}>

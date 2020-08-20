@@ -42,3 +42,17 @@ export const getCheckinByPdlId = async (id) => {
     })
   );
 };
+
+export const getNoteByCheckinId = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/services/checkin-note?=${id}`,
+      responseType: "json",
+      auth: {
+        username: "ADMIN",
+        password: "ADMIN",
+      },
+    })
+  );
+};
