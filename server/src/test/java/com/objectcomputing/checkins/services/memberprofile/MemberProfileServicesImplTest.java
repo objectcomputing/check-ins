@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillAlreadyExistsException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,10 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.verification.VerificationMode;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -45,7 +44,7 @@ public class MemberProfileServicesImplTest {
                 .thenReturn(List.of(profileOne, profileTwo, profileThree));
         Mockito.verifyNoMoreInteractions(mockMemberProfileRepository);
 
-        Set<MemberProfile> actual = testObject.findByValues(null, null, null);
+        Set<MemberProfile> actual = testObject.findByValues(null, null, null, MEMBER_ROLE);
 
         assertEquals(3, actual.size());
         assertTrue(actual.contains(profileOne));
@@ -73,7 +72,7 @@ public class MemberProfileServicesImplTest {
         when(mockMemberProfileRepository.findByPdlId(profileOne.getPdlId()))
                 .thenReturn(List.of(profileOne, profileThree));
 
-        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId());
+        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId(), MEMBER_ROLE);
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(profileOne));
@@ -117,6 +116,21 @@ public class MemberProfileServicesImplTest {
         MemberProfile actual = testObject.saveProfile(in);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testSaveMemberSameEmail() {
+        MemberProfile alreadyExists = mkMemberProfile();
+        alreadyExists.setUuid(UUID.randomUUID());
+
+        when(mockMemberProfileRepository.findByWorkEmail(eq(alreadyExists.getWorkEmail()))).thenReturn(java.util.Optional.of(alreadyExists));
+
+        MemberProfile in = mkMemberProfile("3");
+        in.setWorkEmail(alreadyExists.getWorkEmail());
+
+        MemberSkillAlreadyExistsException response = assertThrows(MemberSkillAlreadyExistsException.class, () -> testObject.saveProfile(in));
+
+        assertEquals(String.format("Email %s already exists in database", in.getWorkEmail()), response.getMessage());
     }
 
     @Test

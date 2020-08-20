@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
-import { AppContext, UPDATE_CHECKIN } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { getCheckinByPdlId } from "../../api/checkins";
+
 import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -10,33 +12,49 @@ import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import "./Checkin.css";
 
 const CheckinsHistory = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { defaultProfile } = state;
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const { workEmail, image_url, name, pdl, role, id } = userProfile;
+  const [checkins, setCheckins] = useState([]);
+  const [checkinIndex, setCheckinIndex] = useState(0);
 
-  const { email, image_url, name, pdl, role, checkins } = defaultProfile;
+  // Get checkins
+  React.useEffect(() => {
+    async function updateCheckins() {
+      if (id) {
+        let res = await getCheckinByPdlId(id);
+        let data =
+          res && res.payload && res.payload.status === 200
+            ? res.payload.data
+            : null;
+        let checkinList = data && !res.error ? data : [];
+        checkinList.sort((a, b) => (a.checkInDate > b.checkInDate ? -1 : 1));
+        setCheckins(checkinList);
+      }
+    }
+    updateCheckins();
+  }, [id]);
 
-  const [checkinIndex, setCheckinIndex] = useState(checkins.length - 1);
-
-  let checkinDate = new Date(checkins[checkinIndex].checkInDate);
+  let checkinDate =
+    checkins.length > 0
+      ? new Date(checkins[checkinIndex].checkInDate)
+      : undefined;
   const lastIndex = checkins.length - 1;
-  const leftArrowClass = "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
-  const rightArrowClass =
+  const leftArrowClass =
     "arrow " + (checkinIndex < lastIndex ? "enabled" : "disabled");
+  const rightArrowClass =
+    "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
 
   const previousCheckin = () => {
-    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
-  };
-
-  const nextCheckin = () => {
     setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
   };
 
-  const pickDate = (date) => {
-    dispatch({
-      type: UPDATE_CHECKIN,
-      payload: { date, index: checkinIndex },
-    });
+  const nextCheckin = () => {
+    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
   };
+
+  const pickDate = (date) => {};
+
   const DateInput = ({ value, onClick }) => (
     <div className="date-input">
       <p style={{ margin: "0px" }}>{value}</p>
@@ -57,7 +75,7 @@ const CheckinsHistory = () => {
           <p>{name}</p>
           <p>{role}</p>
           <p>PDL: {pdl}</p>
-          <p>Company Email: {email}</p>
+          <p>Company Email: {workEmail}</p>
         </div>
       </div>
       <div className="date-picker">
