@@ -42,7 +42,10 @@ const AppContextProvider = (props) => {
       if (state.userData.email) {
         let res = await getMemberByEmail(state.userData.email);
         let profile =
-          res.payload.data && res.payload.data.length > 0 && !res.error
+          res.payload &&
+          res.payload.data &&
+          res.payload.data.length > 0 &&
+          !res.error
             ? res.payload.data[0]
             : undefined;
 

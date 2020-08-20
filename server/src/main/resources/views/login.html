@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>Local Login</h1>
+<form action="#" th:action="@{/oauth/auth}"  method="post">
+    <p>Email: <input type="text" name="email"/></p>
+    <p>Role Override: <input type="text" name="role"/></p>
+    <input type="hidden" th:value="${redirectUri}" name="redirectUri" />
+    <input type="hidden" th:value="${state}" name="state" />
+    <p><input type="submit" value="Submit" /> </p>
+</form>
+</body>
+</html>
