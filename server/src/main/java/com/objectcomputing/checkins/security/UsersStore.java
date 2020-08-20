@@ -15,7 +15,7 @@ public class UsersStore {
     @MapFormat(keyFormat = StringConvention.UNDER_SCORE_SEPARATED, transformation = MapFormat.MapTransformation.FLAT)
     HashMap<String, List<String>> roles;
 
-    public List<String> getUserRole(String username) {
-        return username != null ? roles.get(username) : List.of();
+    public List<String> getUserRole(String roleCred) {
+        return roleCred != null ? roles.get(roleCred) : List.of();
     }
 }

@@ -21,9 +21,9 @@ public class UserPasswordAuthProvider implements AuthenticationProvider {
 
     @Override
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
-        String username = authReq.getIdentity().toString();
-        String password = authReq.getSecret().toString();
-        UserDetails details = new UserDetails(username, store.getUserRole(password));
+        String email = authReq.getIdentity().toString();
+        String roleCred = authReq.getSecret().toString();
+        UserDetails details = new UserDetails(email, store.getUserRole(roleCred));
         return Flowable.just(details);
     }
 }
