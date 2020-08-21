@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture {
+public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture {
 
     @Inject
     @Client("/services/check-in")

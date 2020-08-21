@@ -20,19 +20,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name="checkins")
 public class CheckIn {
 
-        public CheckIn() {}
-
-        public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
-        this.id=id;
-        this.teamMemberId= teamMemberId;
-        this.pdlId=pdlId;
-        this.checkInDate=checkInDate;
-        this.completed=completed;
-    }
-    
-    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
-        this(null, teamMemberId, pdlId, checkInDate,completed);
-    }
     @Id
     @Column(name="id")
     @AutoPopulated
@@ -62,6 +49,20 @@ public class CheckIn {
             nullable = true)
     private Boolean completed;
 
+    public CheckIn() {}
+
+    public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
+        this.id=id;
+        this.teamMemberId= teamMemberId;
+        this.pdlId=pdlId;
+        this.checkInDate=checkInDate;
+        this.completed=completed;
+    }
+    
+    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
+        this(null, teamMemberId, pdlId, checkInDate,completed);
+    }
+    
     public boolean isCompleted() {
         return completed != null && completed;
     }
