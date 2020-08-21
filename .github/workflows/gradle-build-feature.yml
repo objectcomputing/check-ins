@@ -20,4 +20,4 @@ jobs:
       - name: Gradle package
         run: ./gradlew assemble
       - name: Gradle runs tests
-        run: ./gradlew check
+        run: MICRONAUT_ENVIRONMENTS=local ./gradlew check
