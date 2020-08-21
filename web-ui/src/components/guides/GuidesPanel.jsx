@@ -1,10 +1,9 @@
-
 import React, { useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import "./GuidesPage.css";
-import GuideLink from "../components/guides/GuideLink"
+import { AppContext } from "../../context/AppContext";
+import "./GuidesPanel.css";
+import GuideLink from "./GuideLink"
 
-const GuidesPage = () => {
+const GuidesPanel = () => {
     const { state } = useContext(AppContext);
     const isPdl = state.user.role === "pdl";
 
@@ -37,18 +36,22 @@ const GuidesPage = () => {
             name: "Feedback Discussion Guide for PDLs",
         },
     ];
-    return (<div>
-                <ul align="left">
-                    {teamMemberPDFs.map((memberPDF) =>
-                        <GuideLink name={memberPDF.name} />
-                    )}
-                    {isPdl &&
-                        pdlPDFs.map((pdlPDF) =>
-                            <GuideLink name={pdlPDF.name} />
-                        )
-                    }
-                </ul>
-            </div>);
+
+    return(
+        <fieldset className="guide-container">
+            <legend>Check-In Guides</legend>
+            <div>
+                {teamMemberPDFs.map((memberPDF) =>
+                    <GuideLink name={memberPDF.name} />
+                )}
+                {isPdl &&
+                    pdlPDFs.map((pdlPDF) =>
+                        <GuideLink name={pdlPDF.name} />
+                    )
+                }
+            </div>
+        </fieldset> 
+    )
 };
 
-export default GuidesPage;
+export default GuidesPanel;

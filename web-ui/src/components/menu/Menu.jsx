@@ -121,11 +121,6 @@ function Menu() {
         </Link>
       </Button>
       <br />
-      <Button>
-        <Link style={linkStyle} to="/guides">
-          Guides
-        </Link>
-      </Button>
       {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">

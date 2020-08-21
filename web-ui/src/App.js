@@ -10,7 +10,6 @@ import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import CheckinsPage from "./pages/CheckinsPage";
-import GuidesPage from "./pages/GuidesPage";
 import { AppContextProvider } from "./context/AppContext";
 
 import "./App.css";
@@ -51,10 +50,6 @@ function App() {
               <Route path="/checkins">
                 <Header title="Check-ins" />
                 <CheckinsPage />
-              </Route>
-              <Route path="/guides">
-                <Header title="Check-in Guides" />
-                <GuidesPage />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />
