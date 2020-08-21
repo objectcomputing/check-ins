@@ -14,8 +14,20 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name ="skills")
+@Table(name = "skills")
 public class Skill {
+
+    @Id
+    @Column(name = "skillid")
+    @AutoPopulated
+    @TypeDef(type = DataType.STRING)
+    private UUID skillid;
+    @NotBlank
+    @NotNull
+    @Column(name = "name", unique = true)
+    private String name;
+    @Column(name = "pending")
+    private boolean pending = true;
 
     public Skill() {
     }
@@ -29,19 +41,10 @@ public class Skill {
         this.pending = pending;
     }
 
-    @Id
-    @Column(name="skillid")
-    @AutoPopulated
-    @TypeDef(type= DataType.STRING)
-    private UUID skillid;
-
-    @NotBlank
-    @NotNull
-    @Column(name="name", unique = true)
-    private String name;
-
-    @Column(name="pending")
-    private boolean pending = true;
+    public Skill(UUID skillid, String name, boolean pending) {
+        this.name = name;
+        this.pending = pending;
+    }
 
     public UUID getSkillid() {
         return skillid;
