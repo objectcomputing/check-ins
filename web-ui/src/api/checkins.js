@@ -56,3 +56,18 @@ export const getNoteByCheckinId = async (id) => {
     })
   );
 };
+
+export const updateCheckinNote = ({
+  id,
+  checkinid,
+  createdbyid,
+  description,
+}) => {
+  return resolve(
+    axios.put(
+      `${BASE_API_URL}/services/checkin-note`,
+      { id, checkinid, createdbyid, description },
+      { auth: { username: "ADMIN", password: "ADMIN" } }
+    )
+  );
+};

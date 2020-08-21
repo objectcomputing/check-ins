@@ -1,18 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import {getCheckinByMemberId} from '../../api/checkins'
+import React, { useEffect, useState } from "react";
+import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
+import useDebounce from "../../hooks/useDebounce";
 
-const Notes = () => {
-  const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { id } = userProfile;
-  const [notes, setNotes] = useState([])
-  const [checkin, setCheckin] = useState({})
-  
+const Notes = (props) => {
+  const { checkin } = props;
+  const { checkinid, createdbyid, id, description } = checkin;
+  const [note, setNote] = useState(description);
+
   useEffect(() => {
-    async function updateCheckin() {
-      if (id) {
-        let res = await getCheckinByMemberId(id);
+    async function getNotes() {
+      if (description) {
+        let res = await getNoteByCheckinId(checkinid);
         let data =
           res.payload &&
           res.payload.data &&
@@ -21,33 +19,42 @@ const Notes = () => {
             ? res.payload.data
             : null;
         if (data) {
-          setCheckin(data);
+          setNote(data[0].description);
         }
       }
     }
-    updateCheckin();
-  }, [id]);
+    getNotes();
+  }, [description, checkinid]);
+
+  let debouncedNote = useDebounce(note, 2000);
 
   useEffect(() => {
     async function updateNotes() {
-      if (checkin.id) {
-        let res = await getCheckinByMemberId(id);
-        let data =
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data) {
-          setCheckin(data);
+      if (id && checkinid) {
+        let res = await updateCheckinNote({
+          ...checkin,
+          description: debouncedNote,
+        });
+        if (res.error) {
+          console.error(res.error);
         }
       }
     }
     updateNotes();
-  }, [checkin]);
+  }, [debouncedNote]);
 
-  return <div>Notes</div>;
+  const handleChange = (e) => {
+    setNote(e.target.value);
+  };
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <textarea onChange={handleChange} value={note}></textarea>
+      </div>
+    </div>
+  );
 };
 
 export default Notes;

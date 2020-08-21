@@ -25,7 +25,9 @@ const reducer = (state, action) => {
 };
 
 const initialState = {
+  // TODO: add teamMember in view (from PDL perspective)
   userProfile: {},
+  // TODO: add checkins for user 
   userData: {
     email: "string",
     image_url:
