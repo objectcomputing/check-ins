@@ -21,5 +21,3 @@ jobs:
         run: ./gradlew assemble
       - name: Gradle runs tests
         run: ./gradlew check
-        env:
-          MICRONAUT_ENVIRONMENTS: local
