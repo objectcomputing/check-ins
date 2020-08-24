@@ -7,10 +7,6 @@ export const getSkills = async () => {
       method: "get",
       url: `${BASE_API_URL}/services/skill/all`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -21,10 +17,6 @@ export const getSkill = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/skill/${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -36,10 +28,6 @@ export const createSkill = async (skill) => {
       url: `${BASE_API_URL}/services/skill`,
       responseType: "json",
       data: skill,
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
