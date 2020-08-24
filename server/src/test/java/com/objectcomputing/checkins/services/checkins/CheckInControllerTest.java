@@ -134,6 +134,29 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
+    void testCreateACheckInForInvalidDate() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
+        checkInCreateDTO.setTeamMemberId(memberProfile.getUuid());
+        checkInCreateDTO.setPdlId(memberProfileForPDL.getUuid());
+        checkInCreateDTO.setCheckInDate(LocalDate.of(1965,11,12));
+        checkInCreateDTO.setCompleted(true);
+
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Invalid date for checkin %s",checkInCreateDTO.getTeamMemberId()),error);
+
+    }
+
+    @Test
     public void testGetFindByTeamMemberId() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -353,6 +376,28 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         assertEquals("Required Body [checkIn] not specified",errors.asText());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
+
+    @Test
+    void testUpdateInvalidDateCheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setCheckInDate(LocalDate.of(1965,12,11));
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Invalid date for checkin %s", checkIn.getTeamMemberId()), error);
+        assertEquals(request.getPath(), href);
 
     }
 
