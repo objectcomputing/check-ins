@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 @Introspected
 public class SkillCreateDTO {
     @NotBlank
-    @Schema(required = true, description = "name of the guild")
+    @Schema(required = true, description = "name of the skill")
     private String name;
 
     @NotBlank
-    @Schema(required = true, description = "description of the guild")
+    @Schema(required = true, description = "whether the skill is accepted or not")
     private boolean pending;
 
     public String getName() {
