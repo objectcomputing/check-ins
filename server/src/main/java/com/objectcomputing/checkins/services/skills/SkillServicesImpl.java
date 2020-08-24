@@ -33,7 +33,7 @@ public class SkillServicesImpl implements SkillServices {
                 throw new SkillBadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
                         skill.getSkillid()));
             } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new MemberSkillAlreadyExistsException(String.format("Member %s already has this skill %s", name));
+                throw new MemberSkillAlreadyExistsException(String.format("Member %s already has this skill %s", skill.getSkillid(), name));
             }
 
             newSkill = skillRepository.save(skill);

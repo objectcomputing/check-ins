@@ -10,11 +10,14 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -109,30 +112,35 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 
         Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
-        skillCreateDTO.setName(skill.getName());
+        skillCreateDTO.setName("reincarnation");
         skillCreateDTO.setPending(skill.isPending());
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
                 POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Skill> response = client.toBlocking().exchange(request,Skill.class);
 
-//        assertEquals(skill, response.body());
-//        assertEquals(HttpStatus.CREATED,response.getStatus());
-//        assertEquals(skillCreateDTO.getName(), response.body().getName());
-
-        // old =====================================================================
-
-//        Skill testSkill = new Skill("testName2", pending);
-//
-//        when(mockSkillServices.saveSkill(testSkill)).thenReturn(testSkill);
-//
-//        final HttpResponse<?> response = client.toBlocking()
-//                .exchange(HttpRequest.POST("/", testSkill));
-//
-//        assertEquals(HttpStatus.CREATED, response.getStatus());
-//        assertNotNull(response.getContentLength());
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(skillCreateDTO.getName(), response.body().getName());
+        assertEquals(String.format("%s/%s", request.getPath(), response.body().getSkillid()), response.getHeaders().get("location"));
     }
 
+    @Test
+    public void testPOSTCreateASkillAlreadyExists() {
+
+        Skill skill = createADefaultSkill();
+        SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
+        skillCreateDTO.setName(skill.getName());
+        skillCreateDTO.setPending(skill.isPending());
+
+        final HttpRequest<SkillCreateDTO> request = HttpRequest.
+                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
+
+    }
 //    @Test
 //    public void testPOSTCreateASkill_Null_Skill() {
 //
@@ -144,10 +152,14 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 //        assertNotNull(thrown.getResponse());
 //        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
 //    }
-//
-//    @Test
-//    public void testPUTupdate() {
-//
+
+    @Test
+    public void testPUTupdate() {
+
+        Skill skill = createADefaultSkill();
+
+
+        // old
 //        Skill fakeSkill = new Skill("fakeName", pending);
 //        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
 //
@@ -158,8 +170,8 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 //
 //        assertEquals(HttpStatus.OK, response.getStatus());
 //        assertNotNull(response.getContentLength());
-//    }
-//
+    }
+
 //    @Test
 //    public void testPUTupdate_nonexistent_skill() {
 //
