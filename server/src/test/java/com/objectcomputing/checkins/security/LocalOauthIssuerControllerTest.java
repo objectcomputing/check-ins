@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MicronautTest(environments = "local")
 public class LocalOauthIssuerControllerTest extends TestContainersSuite {
@@ -78,19 +79,26 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
 
     @Test
     void testPostToken() throws JsonProcessingException {
-        String code = new ObjectMapper().writeValueAsString(Map.of("email", "email",
-                "role", "ADMIN"));
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("email", "email");
+        map.put("role", "ADMIN");
+        String code = new ObjectMapper().writeValueAsString(map);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("/token", Map.of("code", code)).contentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpResponse<TokenResponse> response = client.toBlocking().exchange(request, TokenResponse.class);
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(code, Objects.requireNonNull(response.body()).getAccessToken());
-        assertEquals("bearer", Objects.requireNonNull(response.body()).getTokenType());
+        TokenResponse tr = response.body();
+        assertNotNull(tr);
+        Map<?,?> cmpMap = new ObjectMapper().readValue(tr.getAccessToken(), Map.class);
+        assertEquals(map, cmpMap);
+        assertEquals("bearer", tr.getTokenType());
     }
 
     @Test
     void testPostTokenInvalidRole() throws JsonProcessingException {
-        String code = new ObjectMapper().writeValueAsString(Map.of("email", "email",
-                "role", "DNE"));
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        map.put("email", "email");
+        map.put("role", "DNE");
+        String code = new ObjectMapper().writeValueAsString(map);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("/token", Map.of("code", code)).contentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpClientResponseException response = Assertions.assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
