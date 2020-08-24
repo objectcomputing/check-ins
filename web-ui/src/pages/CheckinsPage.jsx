@@ -32,6 +32,8 @@ const CheckinsPage = () => {
           createdbyid: "5425d835-dcd1-4d91-9540-200c06f18f28",
           description: "updated string",
         }}
+        memberName={"Tester"}
+        // TODO: get name of checkin member
       />
       <CheckinDocs />
       <div className="modal-container">

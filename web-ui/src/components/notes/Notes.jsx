@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
 import useDebounce from "../../hooks/useDebounce";
+import NotesIcon from "@material-ui/icons/Notes";
+import LockIcon from "@material-ui/icons/Lock";
 
 import "./Notes.css";
 
 const Notes = (props) => {
-  const { checkin } = props;
+  const { checkin, memberName } = props;
   const { checkinid, description } = checkin;
   const [note, setNote] = useState(description);
   // TODO: get private note and determine if user is PDL
-  const isPDL = false;
+  const isPDL = true;
   const [privateNote, setPrivateNote] = useState("Private note");
 
   useEffect(() => {
@@ -59,7 +61,10 @@ const Notes = (props) => {
   return (
     <div className="notes">
       <div>
-        <h1>Notes</h1>
+        <h1>
+          <NotesIcon style={{ marginRight: "10px" }} />
+          Notes for {memberName}
+        </h1>
         <div className="container">
           <textarea onChange={handleNoteChange} value={note}>
             <p></p>
@@ -68,7 +73,10 @@ const Notes = (props) => {
       </div>
       {isPDL && (
         <div>
-          <h1>Private Notes</h1>
+          <h1>
+            <LockIcon style={{ marginRight: "10px" }} />
+            Private Notes
+          </h1>
           <div className="container">
             <textarea onChange={handlePrivateNoteChange} value={privateNote}>
               <p></p>
