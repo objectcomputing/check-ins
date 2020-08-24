@@ -5,7 +5,7 @@ import GuideLink from "./GuideLink"
 
 const GuidesPanel = () => {
     const { state } = useContext(AppContext);
-    const isPdl = state.user.role === "pdl";
+    const isPdl = true;//state.user.role === "pdl";
 
     const teamMemberPDFs = [
         {
@@ -50,7 +50,7 @@ const GuidesPanel = () => {
                     )
                 }
             </div>
-        </fieldset> 
+        </fieldset>
     )
 };
 
