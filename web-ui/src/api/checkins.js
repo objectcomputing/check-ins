@@ -71,3 +71,5 @@ export const updateCheckinNote = ({
     )
   );
 };
+
+// TODO: write get/update private note api call

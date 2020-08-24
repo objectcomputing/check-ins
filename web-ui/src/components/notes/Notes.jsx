@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
 import useDebounce from "../../hooks/useDebounce";
 
+import "./Notes.css";
+
 const Notes = (props) => {
   const { checkin } = props;
-  const { checkinid, createdbyid, id, description } = checkin;
+  const { checkinid, description } = checkin;
   const [note, setNote] = useState(description);
+  // TODO: get private note and determine if user is PDL
+  const isPDL = false;
+  const [privateNote, setPrivateNote] = useState("Private note");
 
   useEffect(() => {
     async function getNotes() {
@@ -30,7 +35,7 @@ const Notes = (props) => {
 
   useEffect(() => {
     async function updateNotes() {
-      if (id && checkinid) {
+      if (checkin) {
         let res = await updateCheckinNote({
           ...checkin,
           description: debouncedNote,
@@ -41,18 +46,36 @@ const Notes = (props) => {
       }
     }
     updateNotes();
-  }, [debouncedNote]);
+  }, [debouncedNote, checkin]);
 
-  const handleChange = (e) => {
+  const handleNoteChange = (e) => {
     setNote(e.target.value);
   };
 
+  const handlePrivateNoteChange = (e) => {
+    setPrivateNote(e.target.value);
+  };
+
   return (
-    <div>
-      <h1>Notes</h1>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <textarea onChange={handleChange} value={note}></textarea>
+    <div className="notes">
+      <div>
+        <h1>Notes</h1>
+        <div className="container">
+          <textarea onChange={handleNoteChange} value={note}>
+            <p></p>
+          </textarea>
+        </div>
       </div>
+      {isPDL && (
+        <div>
+          <h1>Private Notes</h1>
+          <div className="container">
+            <textarea onChange={handlePrivateNoteChange} value={privateNote}>
+              <p></p>
+            </textarea>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

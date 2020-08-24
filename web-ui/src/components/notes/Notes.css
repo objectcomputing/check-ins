@@ -1,0 +1,14 @@
+.notes {
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.container textarea {
+  border: 2px solid black;
+  min-height: 150px;
+  padding: 5px;
+  width: 50%;
+}
