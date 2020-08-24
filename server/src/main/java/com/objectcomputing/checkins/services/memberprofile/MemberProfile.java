@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -18,22 +19,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Entity
 @Table(name ="member_profile")
 public class MemberProfile {
-
-    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                        String workEmail, String insperityId, LocalDate startDate,
-                        String bioText) {
-                        this.name=name;
-                        this.role=role;
-                        this.pdlId=pdlId;
-                        this.location=location;
-                        this.workEmail=workEmail;
-                        this.insperityId=insperityId;
-                        this.startDate=startDate;
-                        this.bioText=bioText;
-                        }
-
-    public MemberProfile() {
-    }
 
     @Id
     @Column(name="uuid")
@@ -77,6 +62,29 @@ public class MemberProfile {
     @Column(name="bioText")
     @Schema(description = "employee's biography")
     private String bioText;
+
+    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
+                         String workEmail, String insperityId, LocalDate startDate,
+                         String bioText) {
+       this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+    }
+
+    public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
+                         String workEmail, String insperityId, LocalDate startDate,
+                         String bioText) {
+        this.uuid = id;
+        this.name=name;
+        this.role=role;
+        this.pdlId=pdlId;
+        this.location=location;
+        this.workEmail=workEmail;
+        this.insperityId=insperityId;
+        this.startDate=startDate;
+        this.bioText=bioText;
+    }
+
+    public MemberProfile() {
+    }
 
     public UUID getUuid() {
         return uuid;
@@ -148,5 +156,41 @@ public class MemberProfile {
 
     public void setBioText(String bioText) {
         this.bioText = bioText;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberProfile that = (MemberProfile) o;
+        return Objects.equals(uuid, that.uuid) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(role, that.role) &&
+                Objects.equals(pdlId, that.pdlId) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(workEmail, that.workEmail) &&
+                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(bioText, that.bioText);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+    }
+
+    @Override
+    public String toString() {
+        return "MemberProfile{" +
+                "uuid=" + uuid +
+                ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
+                ", pdlId=" + pdlId +
+                ", location='" + location + '\'' +
+                ", workEmail='" + workEmail + '\'' +
+                ", insperityId='" + insperityId + '\'' +
+                ", startDate=" + startDate +
+                ", bioText='" + bioText + '\'' +
+                '}';
     }
 }

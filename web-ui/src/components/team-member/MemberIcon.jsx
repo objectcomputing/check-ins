@@ -4,9 +4,7 @@ import "./TeamMember.css";
 const MemberIcon = (props) => {
   const { profile, onSelect, onSelectPDL } = props;
   const { image_url } = profile;
-  let image = image_url
-    ? image_url
-    : require("../../images/default_profile.jpg");
+  let image = image_url ? image_url : "/default_profile.jpg";
 
   return (
     <div

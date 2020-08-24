@@ -1,11 +1,11 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
-export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
+export const getSkills = async () => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in/?teamMemberId=${memberId}&pdlId=${pdlId}`,
+      url: `${BASE_API_URL}/services/skill/all`,
       responseType: "json",
       auth: {
         username: "ADMIN",
@@ -15,11 +15,11 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
   );
 };
 
-export const getCheckinByMemberId = async (id) => {
+export const getSkill = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in?teamMemberId=${id}`,
+      url: `${BASE_API_URL}/services/skill/${id}`,
       responseType: "json",
       auth: {
         username: "ADMIN",
@@ -29,12 +29,13 @@ export const getCheckinByMemberId = async (id) => {
   );
 };
 
-export const getCheckinByPdlId = async (id) => {
+export const createSkill = async (skill) => {
   return await resolve(
     axios({
-      method: "get",
-      url: `${BASE_API_URL}/check-in?pdlId=${id}`,
+      method: "post",
+      url: `${BASE_API_URL}/services/skill`,
       responseType: "json",
+      data: skill,
       auth: {
         username: "ADMIN",
         password: "ADMIN",
