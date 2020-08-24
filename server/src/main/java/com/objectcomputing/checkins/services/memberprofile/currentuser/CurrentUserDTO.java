@@ -4,7 +4,6 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
@@ -22,7 +21,7 @@ public class CurrentUserDTO {
     private String name;
 
     @Nullable
-    @Schema(description = "employee's role at the company", required = true)
+    @Schema(description = "employee's role at the company")
     private String role ;
 
     @Nullable
@@ -30,7 +29,7 @@ public class CurrentUserDTO {
     private UUID pdlId;
 
     @Nullable
-    @Schema(description = "where the employee is geographically located", required = true)
+    @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotNull
@@ -43,7 +42,7 @@ public class CurrentUserDTO {
 
     @Nullable
     @Past
-    @Schema(description = "employee's date of hire", required = true)
+    @Schema(description = "employee's date of hire")
     private LocalDate startDate;
 
     @Nullable

@@ -29,7 +29,7 @@ public class CurrentUserController {
      * @return {@link HttpResponse<CurrentUserDTO>}
      */
     @Get
-    public HttpResponse<CurrentUserDTO> CurrentUser(@Nullable Authentication authentication) {
+    public HttpResponse<CurrentUserDTO> currentUser(@Nullable Authentication authentication) {
 
         if (authentication == null) {
             return HttpResponse

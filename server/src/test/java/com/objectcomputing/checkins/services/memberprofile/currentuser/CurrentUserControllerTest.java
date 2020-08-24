@@ -48,7 +48,7 @@ public class CurrentUserControllerTest {
     @Test
     public void testCurrentUserReturnsNotFoundWhenAuthenticationFails() {
 
-        HttpResponse<CurrentUserDTO> response = currentUserController.CurrentUser(null);
+        HttpResponse<CurrentUserDTO> response = currentUserController.currentUser(null);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
     }
 
@@ -72,7 +72,7 @@ public class CurrentUserControllerTest {
 
         when(currentUserServices.findOrSaveUser(userName, userEmail)).thenReturn(expected);
 
-        HttpResponse<CurrentUserDTO> actual = currentUserController.CurrentUser(auth);
+        HttpResponse<CurrentUserDTO> actual = currentUserController.currentUser(auth);
 
         assertEquals(HttpStatus.OK, actual.getStatus());
         assertEquals(userEmail, actual.body().getWorkEmail());

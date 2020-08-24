@@ -56,7 +56,7 @@ public class MemberProfile {
     private String insperityId; 
 
     @Column(name="startDate")
-    @Schema(description = "employee's date of hire", required = true)
+    @Schema(description = "employee's date of hire")
     @Nullable
     private LocalDate startDate;
 
