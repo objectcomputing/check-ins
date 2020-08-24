@@ -1,16 +1,14 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.validation.constraints.NotBlank;
-
-import javax.annotation.Nullable;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {

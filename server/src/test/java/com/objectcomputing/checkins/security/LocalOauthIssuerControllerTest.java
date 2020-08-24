@@ -19,7 +19,6 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,27 +60,6 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
                 "</html>", response);
     }
 
-
-
-    @Controller("fakeoauth")
-    public static class FakeAuthCallback {
-
-        @Get
-        public Map<String, String> callback(@Nullable String code, @Nullable String state, @Nullable String error) {
-            Map<String, String> map = new LinkedHashMap<>();
-            if (state != null) {
-                map.put("state", state);
-            }
-            if (code != null) {
-                map.put("code", code);
-            }
-            if (error != null) {
-                map.put("error", error);
-            }
-            return map;
-        }
-    }
-
     @Test
     void testPostAuth() {
         HttpRequest<Map<String, String>> request = HttpRequest.POST("/auth", Map.of("email", "email",
@@ -116,5 +94,24 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
         HttpRequest<Map<String, String>> request = HttpRequest.POST("/token", Map.of("code", code)).contentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpClientResponseException response = Assertions.assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
+    }
+
+    @Controller("fakeoauth")
+    public static class FakeAuthCallback {
+
+        @Get
+        public Map<String, String> callback(@Nullable String code, @Nullable String state, @Nullable String error) {
+            Map<String, String> map = new LinkedHashMap<>();
+            if (state != null) {
+                map.put("state", state);
+            }
+            if (code != null) {
+                map.put("code", code);
+            }
+            if (error != null) {
+                map.put("error", error);
+            }
+            return map;
+        }
     }
 }
