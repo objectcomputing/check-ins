@@ -349,19 +349,6 @@ public class CheckinNoteServicesImplTest {
         verify(checkinNoteRepository, times(1)).findByCheckinid(any(UUID.class));
     }
 
-    @Test
-    void testReadAll() {
-        Set<CheckinNote> checkinNotes = Set.of(
-                new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), "test"),
-                new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), "test")
-        );
-
-        when(checkinNoteRepository.findAll()).thenReturn(checkinNotes);
-
-        assertEquals(checkinNotes, services.readAll());
-
-        verify(checkinNoteRepository, times(1)).findAll();
-    }
 
     @Test
     void testDelete() {
