@@ -1,13 +1,10 @@
-import React, { useContext, useState } from "react";
-import { AppContext, MY_SKILL_ADD } from "../../context/AppContext";
-import axios from "axios";
+import React, { useState } from "react";
 import Fuse from "fuse.js";
 
 import "./Search.css";
 
-const Search = ({ onClick }) => {
-  const { state, dispatch } = useContext(AppContext);
-  const { skillsList, mySkills } = state;
+const Search = ({ skillsList, mySkills, addSkill }) => {
+  skillsList = skillsList.filter(({ pending }) => !pending);
   const [pattern, setPattern] = useState("");
 
   const options = {
@@ -24,27 +21,6 @@ const Search = ({ onClick }) => {
     });
   };
 
-  const addSkill = (e) => {
-    const value = e.target.value;
-    const pending = skillsList.filter((i) => {
-      return i.name.toUpperCase() === value.toUpperCase();
-    });
-
-    dispatch({
-      type: MY_SKILL_ADD,
-      payload: { name: value, pending: pending.length < 1 },
-    });
-
-    const inSkillsList = skillsList.find(({ name }) => {
-      return name.toUpperCase() === value.toUpperCase();
-    });
-    if (!inSkillsList) {
-      axios
-        .post("/skill", { name: value, pending: "true" })
-        .catch((err) => console.log(err));
-    }
-  };
-
   const filtered = filter(skillsList, options);
 
   return (
@@ -54,16 +30,20 @@ const Search = ({ onClick }) => {
           className="search-input"
           onChange={(e) => setPattern(e.target.value)}
           onKeyPress={(e) => {
-            const inMySkills = mySkills.find(({ name }) => {
-              return name.toUpperCase() === pattern.toUpperCase();
-            });
+            const inMySkills =
+              mySkills.length > 0
+                ? mySkills.find(
+                    (skill) =>
+                      skill.name.toUpperCase() === pattern.toUpperCase()
+                  )
+                : undefined;
             if (e.key === "Enter") {
               if (inMySkills) {
                 setPattern("");
-                return;
+              } else {
+                setPattern("");
+                addSkill(e.target.value);
               }
-              setPattern("");
-              addSkill(e);
             }
           }}
           placeholder="Search Skills"
@@ -76,7 +56,7 @@ const Search = ({ onClick }) => {
                 className="skill"
                 key={name}
                 onClick={() => {
-                  onClick(name);
+                  addSkill(name);
                   setPattern("");
                 }}
               >

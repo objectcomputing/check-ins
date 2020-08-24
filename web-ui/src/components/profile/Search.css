@@ -5,18 +5,22 @@
 
 .search-input {
   padding: 5px;
-  width: 200px;
+  width: 20rem;
 }
 
 .skill {
   cursor: pointer;
   padding: 5px;
-  width: 200px;
+  width: 20rem;
 }
+
 .skill:hover {
   background-color: green;
 }
 .skills-parent {
   background-color: white;
   position: absolute;
+  max-height: 15rem;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

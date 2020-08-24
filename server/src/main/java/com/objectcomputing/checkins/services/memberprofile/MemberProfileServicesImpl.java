@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.memberSkill.MemberSkillAlreadyExistsException;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class MemberProfileServicesImpl implements MemberProfileServices {
@@ -20,13 +22,18 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public List<MemberProfile> findByValues(String name, String role, UUID pdlId) {
+    public Set<MemberProfile> findByValues(String name, String role, String pdlId, String workEmail) {
         return memberProfileRepository
-                .search(name, role, (pdlId == null ? null : pdlId.toString()));
+                .search(name, role, pdlId, workEmail);
     }
 
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
+        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
+        if(emailProfile != null && emailProfile.getUuid() != null && !Objects.equals(memberProfile.getUuid(), emailProfile.getUuid())) {
+            throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
+                    memberProfile.getWorkEmail()));
+        }
         if (memberProfile.getUuid() == null) {
             return memberProfileRepository.save(memberProfile);
         }
