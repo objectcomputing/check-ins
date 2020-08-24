@@ -66,9 +66,7 @@ const CheckinsHistory = () => {
     <div>
       <div className="profile-section">
         <Avatar
-          src={
-            image_url ? image_url : require("../../images/default_profile.jpg")
-          }
+          src={image_url ? image_url : "/default_profile.jpg"}
           style={{ height: "220px", width: "200px" }}
         />
         <div className="info">

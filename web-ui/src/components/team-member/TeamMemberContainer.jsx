@@ -132,11 +132,7 @@ const TeamMemberContainer = () => {
           <div className="image-div">
             <img
               alt="Profile"
-              src={
-                image_url
-                  ? image_url
-                  : require("../../images/default_profile.jpg")
-              }
+              src={image_url ? image_url : "/default_profile.jpg"}
             />
           </div>
           <div className="team-member-info">

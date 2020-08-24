@@ -93,7 +93,7 @@ const Personnel = () => {
         <img
           className="member-image"
           alt="personnel pic"
-          src={require("../../images/default_profile.jpg")}
+          src={"/default_profile.jpg"}
         />
         <div className="info-div">
           <p className={infoClassName}>{name}</p>
