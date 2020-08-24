@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import EditPDL from "../components/admin/EditPDL";
-import { AppContext, UPDATE_PDLS } from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
 
 const EditPDLPage = () => {
-  const { state, dispatch } = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const { defaultTeamMembers } = state;
 
   const [selectedProfiles, setSelectedProfiles] = useState([]);
@@ -19,7 +19,7 @@ const EditPDLPage = () => {
     profile.selected = false;
   };
   const handleEdit = (pdl) => {
-    dispatch({ type: UPDATE_PDLS, payload: { selectedProfiles, pdl } });
+    // TODO Edit
     setSelectedProfiles([]);
   };
 

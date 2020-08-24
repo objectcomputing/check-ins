@@ -25,7 +25,7 @@ public class SkillServices {
 
     protected Skill saveSkill(Skill skill) {
 
-        List<Skill> returnedList = findByValue(skill.getName(), null);
+        List<Skill> returnedList = skillRepository.findByName(skill.getName());
         return returnedList.size() < 1 ? skillRepository.save(skill) : null;
 
     }
