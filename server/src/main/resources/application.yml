@@ -41,8 +41,11 @@ micronaut:
         pattern: /**
         http-method: GET
         access:
-          - isAnonymous()
+          - isAuthenticated()
     reject-not-found: false
+    redirect:
+      unauthorized:
+        url: /oauth/login/google
     session:
       enabled: true 
       login-success-target-url: '/'
