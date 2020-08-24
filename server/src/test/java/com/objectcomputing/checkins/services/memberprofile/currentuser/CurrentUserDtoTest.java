@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -20,35 +19,46 @@ public class CurrentUserDtoTest {
 
     @Test
     void testDTOInstantiation() {
-        CheckinDocumentCreateDTO dto = new CheckinDocumentCreateDTO();
-        assertNull(dto.getCheckinsId());
-        assertNull(dto.getUploadDocId());
+        CurrentUserDTO dto = new CurrentUserDTO();
+        assertNull(dto.getId());
+        assertNull(dto.getName());
+        assertNull(dto.getRole());
+        assertNull(dto.getPdlId());
+        assertNull(dto.getLocation());
+        assertNull(dto.getWorkEmail());
+        assertNull(dto.getInsperityId());
+        assertNull(dto.getStartDate());
+        assertNull(dto.getBioText());
+        assertNull(dto.getImageUrl());
     }
 
     @Test
     void testConstraintViolation() {
-        CheckinDocumentCreateDTO dto = new CheckinDocumentCreateDTO();
+        CurrentUserDTO dto = new CurrentUserDTO();
 
-        Set<ConstraintViolation<CheckinDocumentCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
-        for (ConstraintViolation<CheckinDocumentCreateDTO> violation : violations) {
+        Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
+        assertEquals(violations.size(), 3);
+        for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
     }
 
     @Test
     void testPopulatedDTO() {
-        CheckinDocumentCreateDTO dto = new CheckinDocumentCreateDTO();
+        CurrentUserDTO dto = new CurrentUserDTO();
 
-        UUID checkinsId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
 
-        dto.setCheckinsId(checkinsId);
-        assertEquals(dto.getCheckinsId(), checkinsId);
+        dto.setId(id);
+        assertEquals(dto.getId(), id);
 
-        dto.setUploadDocId("ExampleId");
-        assertEquals("ExampleId", dto.getUploadDocId());
+        dto.setName("some.name");
+        assertEquals("some.name", dto.getName());
 
-        Set<ConstraintViolation<CheckinDocumentCreateDTO>> violations = validator.validate(dto);
+        dto.setWorkEmail("some.email");
+        assertEquals("some.email", dto.getWorkEmail());
+
+        Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());
     }
 }

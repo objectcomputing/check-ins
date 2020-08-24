@@ -17,7 +17,7 @@ public class CurrentUserDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "full name of the employee", required = true)
     private String name;
 
@@ -33,7 +33,7 @@ public class CurrentUserDTO {
     @Schema(description = "where the employee is geographically located", required = true)
     private String location;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
     private String workEmail;
 

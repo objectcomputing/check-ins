@@ -11,10 +11,10 @@ import java.util.Optional;
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Inject
-    MemberProfileRepository memberProfileRepo;
+    MemberProfileServicesImpl memberProfileServicesImpl;
 
     @Inject
-    MemberProfileServicesImpl memberProfileServicesImpl;
+    MemberProfileRepository memberProfileRepo;
 
     @Override
     public MemberProfile findOrSaveUser(@NotNull String name, @NotNull String workEmail) {

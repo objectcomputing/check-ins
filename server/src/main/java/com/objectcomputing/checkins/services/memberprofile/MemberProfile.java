@@ -57,6 +57,7 @@ public class MemberProfile {
 
     @Column(name="startDate")
     @Schema(description = "employee's date of hire", required = true)
+    @Nullable
     private LocalDate startDate;
 
     @Column(name="bioText")
@@ -64,13 +65,13 @@ public class MemberProfile {
     private String bioText;
 
     public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, LocalDate startDate,
+                         String workEmail, String insperityId, @Nullable LocalDate startDate,
                          String bioText) {
        this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
     public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, LocalDate startDate,
+                         String workEmail, String insperityId, @Nullable LocalDate startDate,
                          String bioText) {
         this.uuid = id;
         this.name=name;
