@@ -61,9 +61,8 @@ public class LocalOauthIssuerController {
         String email = fakeCodeAsJson.getString("email");
         if ((role == null || usersStore.getUserRole(role) != null)
                 && email != null) {
-            JSONObject fakeAccessToken = new JSONObject(Map.of("role", role == null ? "" : role, "email", email));
             TokenResponse response = new TokenResponse();
-            response.setAccessToken(fakeAccessToken.toString());
+            response.setAccessToken(fakeCodeAsJson.toString());
             response.setTokenType("bearer");
 
             return HttpResponse.ok(response);

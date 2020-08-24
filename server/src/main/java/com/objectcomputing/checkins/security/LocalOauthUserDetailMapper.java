@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.async.publisher.Publishers;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.security.authentication.AuthenticationFailed;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
@@ -16,7 +17,6 @@ import io.micronaut.security.token.jwt.generator.claims.JWTClaimsSetGenerator;
 import io.micronaut.security.token.jwt.signature.SignatureGeneratorConfiguration;
 import org.json.JSONObject;
 import org.reactivestreams.Publisher;
-import org.thymeleaf.util.StringUtils;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -50,7 +50,11 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
 
     @Override
     public Publisher<UserDetails> createUserDetails(TokenResponse tokenResponse) {
-        UserDetails details = new UserDetails(tokenResponse.getAccessToken(), usersStore.getUserRole(tokenResponse.getAccessToken()));
+        String fakeAccessTokenAsJson = tokenResponse.getAccessToken();
+        JSONObject fakeAccessToken = new JSONObject(fakeAccessTokenAsJson);
+        String email = fakeAccessToken.getString("email");
+        String role = fakeAccessToken.getString("role");
+        UserDetails details = new UserDetails(email, usersStore.getUserRole(role));
         return Publishers.just(details);
     }
 
@@ -59,9 +63,9 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
         String fakeAccessTokenAsJson = tokenResponse.getAccessToken();
         JSONObject fakeAccessToken = new JSONObject(fakeAccessTokenAsJson);
         String email = fakeAccessToken.getString("email");
-        String role = fakeAccessToken.getString("role");
         List<String> roles;
-        if (!StringUtils.isEmpty(role)) {
+        String role;
+        if (fakeAccessToken.has("role") && StringUtils.isNotEmpty(role = fakeAccessToken.getString("role"))) {
             roles = usersStore.getUserRole(role);
         } else {
             MemberProfile memberProfile = memberProfileRepository.findByWorkEmail(email).orElse(null);
