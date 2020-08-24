@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,4 +22,5 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<MemberProfile> findByRole(@NotBlank String name);
     List<MemberProfile> findByPdlId(@NotBlank UUID pdlId);
     List<MemberProfile> findAll();
+
 }
