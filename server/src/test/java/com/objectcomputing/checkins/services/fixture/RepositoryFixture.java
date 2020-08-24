@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
@@ -18,5 +19,8 @@ public interface RepositoryFixture {
 
     default PulseResponseRepository getPulseResponseRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(PulseResponseRepository.class);
+    }
+    default CheckInRepository getCheckInRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(CheckInRepository.class);
     }
 }

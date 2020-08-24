@@ -47,12 +47,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         return checkinNoteRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public Set<CheckinNote> readAll() {
-        Set<CheckinNote> checkinNote = new HashSet<>();
-         checkinNoteRepository.findAll().forEach(checkinNote::add);
-         return checkinNote;
-    }
 
     @Override
     public CheckinNote update(CheckinNote checkinNote) {
