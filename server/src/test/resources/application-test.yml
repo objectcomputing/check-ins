@@ -2,6 +2,8 @@ micronaut:
   security:
     enabled: true
     reject-not-found: false
+    oauth2:
+      enabled: false
 ---
 datasources:
   default:
