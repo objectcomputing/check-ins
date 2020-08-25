@@ -41,3 +41,13 @@ export const updateMember = async (member) => {
     })
   );
 };
+
+export const getCurrentUser = async () => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/services/member-profile/current`,
+      responseType: "json",
+    })
+  );
+};

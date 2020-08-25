@@ -20,11 +20,8 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     public MemberProfile findOrSaveUser(@NotNull String name, @NotNull String workEmail) {
 
         Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
-        if (userProfile.isPresent()) {
-            return userProfile.get();
-        }
+        return userProfile.orElseGet(() -> memberProfileServicesImpl.saveProfile(new MemberProfile(name, "", null,
+                "", workEmail, "", null, "")));
 
-        return memberProfileServicesImpl.saveProfile(new MemberProfile(name,"",null,
-                "", workEmail,"", null,""));
     }
 }

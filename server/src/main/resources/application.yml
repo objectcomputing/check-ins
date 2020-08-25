@@ -2,7 +2,6 @@ micronaut:
   application:
     name: check-ins
 
-  server:
     cors:
       enabled: true
     max-request-size: 100MB
@@ -44,8 +43,12 @@ micronaut:
           - isAuthenticated()
     reject-not-found: false
     redirect:
+      login-success: /
+      on-rejection: /oauth/login/google
       unauthorized:
         url: /oauth/login/google
+      forbidden:
+        url: /forbidden
     session:
       enabled: true 
       login-success-target-url: '/'

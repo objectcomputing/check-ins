@@ -9,7 +9,11 @@ import "./TeamMember.css";
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile;
+  const id =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.uuid
+      : undefined;
+
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     image_url: null,

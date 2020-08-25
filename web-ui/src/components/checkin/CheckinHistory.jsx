@@ -14,15 +14,19 @@ import "./Checkin.css";
 const CheckinsHistory = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail, image_url, name, pdl, role, id } = userProfile;
+  const { workEmail, role, uuid } =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile
+      : undefined;
+  const { image_url, name, pdl } = userProfile;
   const [checkins, setCheckins] = useState([]);
   const [checkinIndex, setCheckinIndex] = useState(0);
 
   // Get checkins
   React.useEffect(() => {
     async function updateCheckins() {
-      if (id) {
-        let res = await getCheckinByPdlId(id);
+      if (uuid) {
+        let res = await getCheckinByPdlId(uuid);
         let data =
           res && res.payload && res.payload.status === 200
             ? res.payload.data
@@ -33,7 +37,7 @@ const CheckinsHistory = () => {
       }
     }
     updateCheckins();
-  }, [id]);
+  }, [uuid]);
 
   let checkinDate =
     checkins.length > 0

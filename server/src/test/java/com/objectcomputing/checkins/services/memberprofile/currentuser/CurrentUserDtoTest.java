@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -20,16 +21,10 @@ public class CurrentUserDtoTest {
     @Test
     void testDTOInstantiation() {
         CurrentUserDTO dto = new CurrentUserDTO();
-        assertNull(dto.getId());
         assertNull(dto.getName());
         assertNull(dto.getRole());
-        assertNull(dto.getPdlId());
-        assertNull(dto.getLocation());
-        assertNull(dto.getWorkEmail());
-        assertNull(dto.getInsperityId());
-        assertNull(dto.getStartDate());
-        assertNull(dto.getBioText());
         assertNull(dto.getImageUrl());
+        assertNull(dto.getMemberProfile());
     }
 
     @Test
@@ -37,7 +32,7 @@ public class CurrentUserDtoTest {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 3);
+        assertEquals(violations.size(), 2);
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -47,16 +42,10 @@ public class CurrentUserDtoTest {
     void testPopulatedDTO() {
         CurrentUserDTO dto = new CurrentUserDTO();
 
-        UUID id = UUID.randomUUID();
-
-        dto.setId(id);
-        assertEquals(dto.getId(), id);
-
         dto.setName("some.name");
         assertEquals("some.name", dto.getName());
 
-        dto.setWorkEmail("some.email");
-        assertEquals("some.email", dto.getWorkEmail());
+        dto.setMemberProfile(new MemberProfile());
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

@@ -54,16 +54,10 @@ public class CurrentUserController {
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl) {
         CurrentUserDTO dto = new CurrentUserDTO();
-        dto.setId(entity.getUuid());
         dto.setName(entity.getName());
         dto.setRole(entity.getRole());
-        dto.setPdlId(entity.getPdlId());
-        dto.setLocation(entity.getLocation());
-        dto.setWorkEmail(entity.getWorkEmail());
-        dto.setInsperityId(entity.getInsperityId());
-        dto.setStartDate(entity.getStartDate());
-        dto.setBioText(entity.getBioText());
         dto.setImageUrl(imageUrl);
+        dto.setMemberProfile(entity);
         return dto;
     }
 }

@@ -8,7 +8,10 @@ import "./Personnel.css";
 const Personnel = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile;
+  const { id } =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.uuid
+      : undefined;
   const [personnel, setPersonnel] = useState();
   const [checkins, setCheckins] = useState();
 

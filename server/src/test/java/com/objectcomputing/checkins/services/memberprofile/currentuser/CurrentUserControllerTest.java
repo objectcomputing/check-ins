@@ -75,9 +75,11 @@ public class CurrentUserControllerTest {
         HttpResponse<CurrentUserDTO> actual = currentUserController.currentUser(auth);
 
         assertEquals(HttpStatus.OK, actual.getStatus());
-        assertEquals(userEmail, actual.body().getWorkEmail());
-        assertEquals(userName, actual.body().getName());
-        assertEquals(imageUrl, actual.body().getImageUrl());
+        CurrentUserDTO currentUserDTO = actual.body();
+        assertNotNull(currentUserDTO);
+        assertEquals(userEmail, currentUserDTO.getMemberProfile().getWorkEmail());
+        assertEquals(userName, currentUserDTO.getName());
+        assertEquals(imageUrl, currentUserDTO.getImageUrl());
         assertNotNull(actual.getHeaders().get("location"));
     }
 }
