@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import java.util.Set;
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
 
@@ -12,10 +12,7 @@ import io.micronaut.data.repository.CrudRepository;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface PulseResponseRepository extends CrudRepository<PulseResponse, UUID> {
-    
-    Set<PulseResponse> findByTeamMemberId(@NotBlank UUID teamMemberId);
-    Optional<PulseResponse> findByInternalFeelings(@NotBlank String internalFeelings);
-    Optional<PulseResponse> findByExternalFeelings(@NotBlank String externalFeelings);
-    Boolean existsByTeamMemberId(@NotBlank UUID teamMemberId);
-    void deleteByTeamMemberId(@NotBlank UUID teamMemberId);
+
+    List<PulseResponse> findByTeamMemberId(@NotBlank UUID teamMemberId);
+    List<PulseResponse> findBySubmissionDateBetween(@NotBlank LocalDate dateFrom, @NotBlank LocalDate dateTo);
 }

@@ -1,16 +1,16 @@
-package com.objectcomputing.checkins.services.guild;
+// package com.objectcomputing.checkins.services.guild;
 
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class GuildBadArgExceptionTest {
+// class GuildBadArgExceptionTest {
 
-    @Test
-    void testExceptionMessage() {
-        final String message = "Hello world";
-        GuildBadArgException argException = new GuildBadArgException(message);
-        assertEquals(argException.getMessage(), message);
-    }
+//     @Test
+//     void testExceptionMessage() {
+//         final String message = "Hello world";
+//         GuildBadArgException argException = new GuildBadArgException(message);
+//         assertEquals(argException.getMessage(), message);
+//     }
 
-}
+// }

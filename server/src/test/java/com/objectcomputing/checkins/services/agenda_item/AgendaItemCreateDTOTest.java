@@ -1,58 +1,58 @@
-package com.objectcomputing.checkins.services.agenda_item;
+// package com.objectcomputing.checkins.services.agenda_item;
 
-import io.micronaut.test.annotation.MicronautTest;
-import io.micronaut.validation.validator.Validator;
-import org.junit.jupiter.api.Test;
+// import io.micronaut.test.annotation.MicronautTest;
+// import io.micronaut.validation.validator.Validator;
+// import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import java.util.Set;
-import java.util.UUID;
+// import javax.inject.Inject;
+// import javax.validation.ConstraintViolation;
+// import java.util.Set;
+// import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-class AgendaItemCreateDTOTest {
+// @MicronautTest
+// class AgendaItemCreateDTOTest {
 
-    @Inject
-    private Validator validator;
+//     @Inject
+//     private Validator validator;
 
-    @Test
-    void testDTOInstantiation() {
-        AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
-        assertNull(dto.getCheckinid());
-        assertNull(dto.getCreatedbyid());
-        assertNull(dto.getDescription());
-    }
+//     @Test
+//     void testDTOInstantiation() {
+//         AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
+//         assertNull(dto.getCheckinid());
+//         assertNull(dto.getCreatedbyid());
+//         assertNull(dto.getDescription());
+//     }
 
-    @Test
-    void testConstraintViolation() {
-        AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
+//     @Test
+//     void testConstraintViolation() {
+//         AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
 
-        Set<ConstraintViolation<AgendaItemCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
-        for (ConstraintViolation<AgendaItemCreateDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
-        }
-    }
+//         Set<ConstraintViolation<AgendaItemCreateDTO>> violations = validator.validate(dto);
+//         assertEquals(violations.size(), 2);
+//         for (ConstraintViolation<AgendaItemCreateDTO> violation : violations) {
+//             assertEquals(violation.getMessage(), "must not be null");
+//         }
+//     }
 
-    @Test
-    void testPopulatedDTO() {
-        AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
+//     @Test
+//     void testPopulatedDTO() {
+//         AgendaItemCreateDTO dto = new AgendaItemCreateDTO();
 
-        UUID checkinId = UUID.randomUUID();
-        UUID createById = UUID.randomUUID();
+//         UUID checkinId = UUID.randomUUID();
+//         UUID createById = UUID.randomUUID();
 
-        dto.setCheckinid(checkinId);
-        assertEquals(dto.getCheckinid(), checkinId);
+//         dto.setCheckinid(checkinId);
+//         assertEquals(dto.getCheckinid(), checkinId);
 
-        dto.setCreatedbyid(createById);
-        assertEquals(dto.getCreatedbyid(), createById);
+//         dto.setCreatedbyid(createById);
+//         assertEquals(dto.getCreatedbyid(), createById);
 
-        dto.setDescription("DNC");
-        assertEquals("DNC", dto.getDescription());
+//         dto.setDescription("DNC");
+//         assertEquals("DNC", dto.getDescription());
 
-        Set<ConstraintViolation<AgendaItemCreateDTO>> violations = validator.validate(dto);
-        assertTrue(violations.isEmpty());
-    }
-}
+//         Set<ConstraintViolation<AgendaItemCreateDTO>> violations = validator.validate(dto);
+//         assertTrue(violations.isEmpty());
+//     }
+// }

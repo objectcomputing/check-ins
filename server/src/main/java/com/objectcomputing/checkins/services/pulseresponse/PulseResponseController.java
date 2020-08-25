@@ -1,40 +1,43 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Controller("/services/pulse-response")
-@Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
-@Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "pulse response")
-public class PulseResponseController {
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 
+import io.micronaut.http.annotation.Error;
+import java.time.LocalDate;
+
+@Controller("/services/pulse-response")
+@Secured(SecurityRule.IS_AUTHENTICATED)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Tag(name="pulse-response")
+public class PulseResponseController {
+    
     @Inject
-    PulseResponseService pulseResponseServices;
+    PulseResponseService pulseResponseServices ;
 
     @Error(exception = PulseResponseBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
@@ -46,15 +49,16 @@ public class PulseResponseController {
     }
 
     /**
-     * Find PulseResponse(s) based on teamMemberId
-     *
+     * Find Pulse Response by Team Member or Date Range.
+     * 
      * @param teamMemberId
-     * @return {@link List<PulseResponse> list of PulseResponse(s) associated with the teamMemberId}
+     * @param dateFrom
+     * @param dateTo
+     * @return
      */
-
-    @Get("/{?teamMemberId}")
-    public Set<PulseResponse> findPulseResponses(@Nullable UUID teamMemberId) {
-        return pulseResponseServices.read(teamMemberId);
+    @Get("/{?teamMemberId,dateFrom,dateTo}")
+    public Set<PulseResponse> findByValue(@Nullable LocalDate dateFrom, @Nullable LocalDate dateTo,@Nullable UUID teamMemberId) {          
+            return pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo);
     }
 
     /**
@@ -67,38 +71,34 @@ public class PulseResponseController {
     @Post(value = "/")
     public HttpResponse<PulseResponse> createAPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                 HttpRequest<PulseResponseCreateDTO> request) {
-        PulseResponse newPulseResponse = pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings()));
+        PulseResponse newMemberPulseResponse = pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings()));
         return HttpResponse
-                .created(newPulseResponse)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newPulseResponse.getId()))));
+                .created(newMemberPulseResponse)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newMemberPulseResponse.getId()))));
     }
 
     /**
-     * Update a PulseResponse
-     *
-     * @param pulseResponse, {@link PulseResponse}
-     * @return {@link HttpResponse<PulseResponse>}
+     * Update pulseresponse details
+     * @param pulseResponse
+     * @return
      */
     @Put("/")
-    public HttpResponse<PulseResponse> update(@Body @Valid PulseResponse pulseResponse, HttpRequest<PulseResponse> request) {
-        PulseResponse updatedPulseResponse = pulseResponseServices.update(pulseResponse);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), updatedPulseResponse.getId()))))
-                .body(updatedPulseResponse);
+    public HttpResponse<?> update(@Body @Valid PulseResponse pulseResponse,HttpRequest<PulseResponseCreateDTO> request) {
+
+            PulseResponse updatedMemberPulseResponse = pulseResponseServices.update(pulseResponse);
+            return HttpResponse
+                    .ok()
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),updatedMemberPulseResponse.getId()))))
+                    .body(updatedMemberPulseResponse);                  
     }
 
     /**
-     * Delete a PulseResponse
-     *
-     * @param teamMemberId, id of the pulseresponse record you wish to delete
-     * @return {@link HttpResponse<?>}
+     * 
+     * @param id
+     * @return
      */
-    @Delete("/{teamMemberId}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<?> delete(UUID teamMemberId) {
-        pulseResponseServices.delete(teamMemberId);
-        return HttpResponse
-                .noContent();
+    @Get("/{id}")
+    public PulseResponse readPulseResponse(@NotNull UUID id){
+        return pulseResponseServices.read(id);
     }
 }

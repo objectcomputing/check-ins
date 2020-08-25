@@ -1,16 +1,16 @@
-package com.objectcomputing.checkins.services.agenda_item;
+// package com.objectcomputing.checkins.services.agenda_item;
 
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+// import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class AgendaItemBadArgExceptionTest {
+// class AgendaItemBadArgExceptionTest {
 
-    @Test
-    void testExceptionMessage() {
-        final String message = "Hello world";
-        AgendaItemBadArgException argException = new AgendaItemBadArgException(message);
-        assertEquals(argException.getMessage(), message);
-    }
+//     @Test
+//     void testExceptionMessage() {
+//         final String message = "Hello world";
+//         AgendaItemBadArgException argException = new AgendaItemBadArgException(message);
+//         assertEquals(argException.getMessage(), message);
+//     }
 
-}
+// }

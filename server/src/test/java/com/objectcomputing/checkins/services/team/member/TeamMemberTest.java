@@ -1,122 +1,122 @@
-package com.objectcomputing.checkins.services.team.member;
+// package com.objectcomputing.checkins.services.team.member;
 
-import io.micronaut.test.annotation.MicronautTest;
-import io.micronaut.validation.validator.Validator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+// import io.micronaut.test.annotation.MicronautTest;
+// import io.micronaut.validation.validator.Validator;
+// import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.TestInstance;
 
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+// import javax.inject.Inject;
+// import javax.validation.ConstraintViolation;
+// import java.util.HashMap;
+// import java.util.Set;
+// import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-@MicronautTest
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TeamMemberTest {
+// @MicronautTest
+// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+// class TeamMemberTest {
 
-    @Inject
-    private Validator validator;
-
-
-    @Test
-    void testTeamMemberInstantiation() {
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember teamMember = new TeamMember(teamId, memberId, lead);
-        assertEquals(teamId, teamMember.getTeamid());
-        assertEquals(memberId, teamMember.getMemberid());
-        assertEquals(lead, teamMember.isLead());
-    }
-
-    @Test
-    void testTeamMemberInstantiation2() {
-        final UUID id = UUID.randomUUID();
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
-        assertEquals(id, teamMember.getId());
-        assertEquals(teamId, teamMember.getTeamid());
-        assertEquals(memberId, teamMember.getMemberid());
-        assertEquals(teamMember.isLead(), lead);
-
-        Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
-        assertTrue(violations.isEmpty());
-    }
+//     @Inject
+//     private Validator validator;
 
 
-    @Test
-    void testConstraintViolation() {
-        final UUID id = UUID.randomUUID();
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
+//     @Test
+//     void testTeamMemberInstantiation() {
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember teamMember = new TeamMember(teamId, memberId, lead);
+//         assertEquals(teamId, teamMember.getTeamid());
+//         assertEquals(memberId, teamMember.getMemberid());
+//         assertEquals(lead, teamMember.isLead());
+//     }
 
-        teamMember.setTeamid(null);
-        teamMember.setMemberid(null);
+//     @Test
+//     void testTeamMemberInstantiation2() {
+//         final UUID id = UUID.randomUUID();
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
+//         assertEquals(id, teamMember.getId());
+//         assertEquals(teamId, teamMember.getTeamid());
+//         assertEquals(memberId, teamMember.getMemberid());
+//         assertEquals(teamMember.isLead(), lead);
 
-        Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
-        assertEquals(2, violations.size());
-        for (ConstraintViolation<TeamMember> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
-        }
-    }
+//         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
+//         assertTrue(violations.isEmpty());
+//     }
 
-    @Test
-    void testEquals() {
-        final UUID id = UUID.randomUUID();
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
-        TeamMember tm2 = new TeamMember(id, teamId, memberId, lead);
 
-        assertEquals(tm, tm2);
+//     @Test
+//     void testConstraintViolation() {
+//         final UUID id = UUID.randomUUID();
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
 
-        tm2.setId(null);
+//         teamMember.setTeamid(null);
+//         teamMember.setMemberid(null);
 
-        assertNotEquals(tm, tm2);
+//         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
+//         assertEquals(2, violations.size());
+//         for (ConstraintViolation<TeamMember> violation : violations) {
+//             assertEquals(violation.getMessage(), "must not be null");
+//         }
+//     }
 
-        tm2.setId(tm.getId());
+//     @Test
+//     void testEquals() {
+//         final UUID id = UUID.randomUUID();
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+//         TeamMember tm2 = new TeamMember(id, teamId, memberId, lead);
 
-        assertEquals(tm, tm2);
+//         assertEquals(tm, tm2);
 
-        tm2.setLead(false);
+//         tm2.setId(null);
 
-        assertNotEquals(tm, tm2);
-    }
+//         assertNotEquals(tm, tm2);
 
-    @Test
-    void testHash() {
-        HashMap<TeamMember, Boolean> map = new HashMap<>();
-        final UUID id = UUID.randomUUID();
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+//         tm2.setId(tm.getId());
 
-        map.put(tm, true);
+//         assertEquals(tm, tm2);
 
-        assertTrue(map.get(tm));
-    }
+//         tm2.setLead(false);
 
-    @Test
-    void testToString() {
-        final UUID id = UUID.randomUUID();
-        final UUID teamId = UUID.randomUUID();
-        final UUID memberId = UUID.randomUUID();
-        final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+//         assertNotEquals(tm, tm2);
+//     }
 
-        String toString = tm.toString();
-        assertTrue(toString.contains(teamId.toString()));
-        assertTrue(toString.contains(id.toString()));
-        assertTrue(toString.contains(memberId.toString()));
-        assertTrue(toString.contains(String.valueOf(lead)));
-    }
-}
+//     @Test
+//     void testHash() {
+//         HashMap<TeamMember, Boolean> map = new HashMap<>();
+//         final UUID id = UUID.randomUUID();
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+
+//         map.put(tm, true);
+
+//         assertTrue(map.get(tm));
+//     }
+
+//     @Test
+//     void testToString() {
+//         final UUID id = UUID.randomUUID();
+//         final UUID teamId = UUID.randomUUID();
+//         final UUID memberId = UUID.randomUUID();
+//         final boolean lead = true;
+//         TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+
+//         String toString = tm.toString();
+//         assertTrue(toString.contains(teamId.toString()));
+//         assertTrue(toString.contains(id.toString()));
+//         assertTrue(toString.contains(memberId.toString()));
+//         assertTrue(toString.contains(String.valueOf(lead)));
+//     }
+// }

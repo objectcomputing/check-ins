@@ -2,14 +2,15 @@ package com.objectcomputing.checkins.services.pulseresponse;
 
 import java.util.UUID;
 import java.util.Set;
+import java.time.LocalDate;
 
 public interface PulseResponseService {
 
-    Set<PulseResponse> read(UUID checkinsId);
+    PulseResponse read(UUID id);
 
     PulseResponse save(PulseResponse pulseResponse);
 
     PulseResponse update(PulseResponse pulseResponse);
 
-    void delete(UUID checkinsId);
+    Set<PulseResponse> findByFields(UUID teamMemberId, LocalDate dateFrom, LocalDate dateTo);
 }
