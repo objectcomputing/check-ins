@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +13,6 @@ import java.util.UUID;
 
 @Singleton
 public class SkillServicesImpl implements SkillServices {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SkillServicesImpl.class);
 
     @Inject
     private SkillRepository skillRepository;
@@ -33,7 +30,7 @@ public class SkillServicesImpl implements SkillServices {
                 throw new SkillBadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
                         skill.getSkillid()));
             } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new MemberSkillAlreadyExistsException(String.format("Member %s already has this skill %s", skill.getSkillid(), name));
+                throw new SkillAlreadyExistsException(String.format("Member %s already has this skill %s", skill.getSkillid(), name));
             }
 
             newSkill = skillRepository.save(skill);
@@ -50,17 +47,6 @@ public class SkillServicesImpl implements SkillServices {
 
     }
 
-    public Set<Skill> readAll() {
-        Set<Skill> skills = new HashSet<>();
-        skillRepository.findAll().forEach(skills::add);
-        return skills;
-    }
-
-    @Override
-    public Skill read(UUID uuid) {
-        return null;
-    }
-
     public Set<Skill> findByValue(String name, Boolean pending) {
         Set<Skill> skillList = new HashSet<>();
         skillRepository.findAll().forEach(skillList::add);
@@ -75,9 +61,8 @@ public class SkillServicesImpl implements SkillServices {
         return skillList;
     }
 
-    @Override
-    public void delete(UUID id) {
-
+    public void delete(@NotNull UUID id) {
+        skillRepository.deleteById(id);
     }
 
     protected List<Skill> findByNameLike(String name) {
@@ -90,14 +75,17 @@ public class SkillServicesImpl implements SkillServices {
 
     protected Skill update(Skill skill) {
 
-        Skill returned = null;
-        Skill skillInDatabase = readSkill(skill.getSkillid());
-        if ((skillInDatabase != null)
-                && skillInDatabase.getName().equals(skill.getName())) {
-            returned = skillRepository.update(skill);
+        Skill newSkill = null;
+
+        if (skill != null) {
+            if (skill.getSkillid() != null && skillRepository.findBySkillid(skill.getSkillid()).isPresent()) {
+                newSkill = skillRepository.update(skill);
+            } else {
+                throw new SkillBadArgException(String.format("Skill %s does not exist, cannot update", skill.getSkillid()));
+            }
         }
 
-        return returned;
+        return newSkill;
 
     }
 

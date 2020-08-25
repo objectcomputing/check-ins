@@ -10,16 +10,15 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +29,9 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Inject
     @Client("/services/skill")
     private HttpClient client;
+
+    @Inject
+    private SkillServices skillServices;
 
     private String encodeValue(String value) {
         try {
@@ -138,76 +140,98 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
+        assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
 
     }
-//    @Test
-//    public void testPOSTCreateASkill_Null_Skill() {
-//
-//        Skill testSkill = new Skill("testName", pending);
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.POST("/", testSkill));
-//        });
-//
-//        assertNotNull(thrown.getResponse());
-//        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
-//    }
+    @Test
+    public void testPOSTCreateANullSkill() {
+
+        Skill skill = createADefaultSkill();
+        SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
+
+        final HttpRequest<SkillCreateDTO> request = HttpRequest.
+                POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
 
     @Test
-    public void testPUTupdate() {
+    public void testPUTUpdateSkill() {
 
         Skill skill = createADefaultSkill();
 
+        final HttpRequest<Skill> request = HttpRequest.PUT("/", skill)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
-        // old
-//        Skill fakeSkill = new Skill("fakeName", pending);
-//        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
-//
-//        when(mockSkillServices.update(fakeSkill)).thenReturn(fakeSkill);
-//
-//        final HttpResponse<?> response = client.toBlocking()
-//                .exchange(HttpRequest.PUT("/", fakeSkill));
-//
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertNotNull(response.getContentLength());
+        assertEquals(skill, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), skill.getSkillid()),
+                response.getHeaders().get("location"));
     }
 
-//    @Test
-//    public void testPUTupdate_nonexistent_skill() {
-//
-//        Skill fakeSkill = new Skill("fakeName", pending);
-//        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
-//        Skill fakeSkill2 = new Skill("fakeName2", pending);
-//        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
-//
-//        when(mockSkillServices.update(fakeSkill2)).thenReturn(fakeSkill2);
-//
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.POST("/", fakeSkill));
-//        });
-//
-//        assertNotNull(thrown.getResponse());
-//        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
-//
-//    }
-//
-//    @Test
-//    public void testPUTupdate_null_skill() {
-//
-//        Skill fakeSkill = new Skill("fakeName", pending);
-//        fakeSkill.setSkillid(UUID.fromString(fakeUuid));
-//        Skill fakeSkill2 = new Skill("fakeName2", pending);
-//        fakeSkill2.setSkillid(UUID.fromString(fakeUuid2));
-//
-//        when(mockSkillServices.update(fakeSkill2)).thenReturn(null);
-//
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.PUT("/", fakeSkill));
-//        });
-//
-//        assertNotNull(thrown.getResponse());
-//
-//    }
+    @Test
+    public void testPUTUpdateNonexistentSkill() {
+
+        SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
+        skillCreateDTO.setName("reincarnation");
+        skillCreateDTO.setPending(true);
+
+        final HttpRequest<SkillCreateDTO> request = HttpRequest.
+                PUT("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
+
+    @Test
+    public void testPUTUpdateNullSkill() {
+
+        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
+
+    @Test
+    void deleteMemberSkillAsAdmin() {
+
+        Skill skill = createADefaultSkill();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", skill.getSkillid())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+
+        final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void deleteMemberSkillNotAsAdmin() {
+
+        Skill skill = createADefaultSkill();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", skill.getSkillid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
+
+    }
 
 
 }

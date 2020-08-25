@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -64,7 +65,7 @@ public class SkillController {
         Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending()));
 
         if (newSkill == null) {
-            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
+            return HttpResponse.status(HttpStatus.valueOf(String.valueOf(HttpStatus.CONFLICT)), "already exists");
         } else {
             return HttpResponse
                     .created(newSkill)
@@ -120,5 +121,17 @@ public class SkillController {
 
     }
 
+    /**
+     * Delete A skill
+     *
+     * @param id, id of {@link Skill} to delete
+     */
+    @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public HttpResponse<?> deleteSkill(@NotNull UUID id) {
+        skillServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 
 }

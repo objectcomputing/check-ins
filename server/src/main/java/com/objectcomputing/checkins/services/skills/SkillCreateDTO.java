@@ -11,7 +11,6 @@ public class SkillCreateDTO {
     @Schema(required = true, description = "name of the skill")
     private String name;
 
-    @NotBlank
     @Schema(required = true, description = "whether the skill is accepted or not")
     private boolean pending;
 

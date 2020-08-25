@@ -5,8 +5,6 @@ import java.util.UUID;
 
 public interface SkillServices {
 
-    Skill read(UUID uuid);
-
     Skill save(Skill skill);
 
     Set<Skill> findByValue(String name, Boolean pending);
