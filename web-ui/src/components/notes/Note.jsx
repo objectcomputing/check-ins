@@ -4,20 +4,20 @@ import useDebounce from "../../hooks/useDebounce";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
 
-import "./Notes.css";
+import "./Note.css";
 
 const Notes = (props) => {
   const { checkin, memberName } = props;
-  const { checkinid, description } = checkin;
-  const [note, setNote] = useState(description);
+  const { id } = checkin;
+  const [note, setNote] = useState({});
   // TODO: get private note and determine if user is PDL
   const isPDL = true;
   const [privateNote, setPrivateNote] = useState("Private note");
 
   useEffect(() => {
     async function getNotes() {
-      if (description) {
-        let res = await getNoteByCheckinId(checkinid);
+      if (id) {
+        let res = await getNoteByCheckinId(id);
         let data =
           res.payload &&
           res.payload.data &&
@@ -26,21 +26,21 @@ const Notes = (props) => {
             ? res.payload.data
             : null;
         if (data) {
-          setNote(data[0].description);
+          setNote(data[0]);
         }
       }
     }
     getNotes();
-  }, [description, checkinid]);
+  }, [id]);
 
-  let debouncedNote = useDebounce(note, 2000);
+  let debouncedDescription = useDebounce(note.description, 2000);
 
   useEffect(() => {
     async function updateNotes() {
-      if (checkin) {
+      if (note.id) {
         let res = await updateCheckinNote({
-          ...checkin,
-          description: debouncedNote,
+          ...note,
+          description: debouncedDescription,
         });
         if (res.error) {
           console.error(res.error);
@@ -48,10 +48,10 @@ const Notes = (props) => {
       }
     }
     updateNotes();
-  }, [debouncedNote, checkin]);
+  }, [debouncedDescription, note.id]);
 
   const handleNoteChange = (e) => {
-    setNote(e.target.value);
+    setNote({ ...note, description: e.target.value });
   };
 
   const handlePrivateNoteChange = (e) => {
@@ -66,7 +66,7 @@ const Notes = (props) => {
           Notes for {memberName}
         </h1>
         <div className="container">
-          <textarea onChange={handleNoteChange} value={note}>
+          <textarea onChange={handleNoteChange} value={note.description}>
             <p></p>
           </textarea>
         </div>

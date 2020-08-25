@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.checkinnotes;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -16,8 +17,8 @@ public class CheckinNoteCreateDTO {
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
 
-    @Schema(description = "description of the check in note",
-            nullable = true)
+    @Nullable
+    @Schema(description = "description of the check in note", nullable = true)
     private String description;
 
     public UUID getCheckinid() {
