@@ -9,9 +9,7 @@ const EditPDL = ({ onDeselect, onEdit, onSelect, profile }) => {
   const [disabled, setDisabled] = useState(true);
   const inputRef = useRef();
 
-  let image = image_url
-    ? image_url
-    : require("../../images/default_profile.jpg");
+  let image = image_url ? image_url : "/default_profile.jpg";
 
   return (
     <div style={{ border: "1px solid black", margin: "10px" }}>

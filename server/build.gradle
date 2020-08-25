@@ -113,9 +113,9 @@ tasks.withType(JavaCompile) {
 
     String envStr = System.getenv('MICRONAUT_ENVIRONMENTS')
     List<String> envs = envStr != null ? Arrays.asList(envStr.split(',')) : List.of() as List<String>
-    if(!envs.disjoint(List.of('test', 'local'))) {
-        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-local'
-    } else {
+    if(envs.contains("test")) {
+        options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger-test'
+    } else if(!envs.contains("local")) {
         options.forkOptions.jvmArgs << '-Dmicronaut.openapi.additional.files=src/main/resources/swagger'
     }
 }

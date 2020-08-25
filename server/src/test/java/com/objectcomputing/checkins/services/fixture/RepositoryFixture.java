@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -18,5 +19,9 @@ public interface RepositoryFixture {
 
     default SkillRepository getSkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillRepository.class);
+    }
+
+    default CheckInRepository getCheckInRepository(){
+        return getEmbeddedServer().getApplicationContext().getBean(CheckInRepository.class);
     }
 }
