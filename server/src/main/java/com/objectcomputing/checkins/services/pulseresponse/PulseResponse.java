@@ -39,7 +39,6 @@ public class PulseResponse {
     private LocalDate updatedDate;
 
     @Column(name="teamMemberId")
-    @NotNull
     @TypeDef(type=DataType.STRING)
     @NotNull
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
