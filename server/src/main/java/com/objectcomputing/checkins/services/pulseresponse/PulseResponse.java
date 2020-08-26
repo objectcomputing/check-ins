@@ -24,7 +24,6 @@ public class PulseResponse {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @NotNull
     @Schema(description = "the id of the pulse_response", required = true)
     private UUID id;
 
