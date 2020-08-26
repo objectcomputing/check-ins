@@ -6,7 +6,12 @@ import GuideLink from "./GuideLink";
 const GuidesPanel = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const isPdl = userProfile && userProfile.role === "PDL";
+  console.log(userProfile);
+  const isPdl =
+    userProfile &&
+    userProfile.role &&
+    userProfile.role.length > 0 &&
+    userProfile.role.includes("PDL");
 
   const teamMemberPDFs = [
     {

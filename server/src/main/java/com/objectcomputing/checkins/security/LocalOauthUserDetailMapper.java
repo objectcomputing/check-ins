@@ -16,7 +16,6 @@ import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
 import io.micronaut.security.token.jwt.generator.JwtTokenGenerator;
 import io.micronaut.security.token.jwt.generator.claims.JWTClaimsSetGenerator;
 import io.micronaut.security.token.jwt.signature.SignatureGeneratorConfiguration;
-import io.opencensus.trace.Link;
 import org.json.JSONObject;
 import org.reactivestreams.Publisher;
 
@@ -24,10 +23,13 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.micronaut.security.oauth2.endpoint.token.response.OpenIdUserDetailsMapper.OPENID_TOKEN_KEY;
+
 @Singleton
 @Named("oauth")
 @Requires(env = {"local"})

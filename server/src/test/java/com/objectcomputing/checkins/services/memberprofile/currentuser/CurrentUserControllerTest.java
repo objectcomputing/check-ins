@@ -13,28 +13,26 @@ import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CurrentUserControllerTest {
 
-    @Inject
-    CurrentUserController currentUserController;
-
-    @Mock
-    CurrentUserServices currentUserServices;
-
     private static Map<String, Object> userAttributes = new HashMap<>();
     private static String userName = "some.user.name";
     private static String userEmail = "some.email.address";
     private static String imageUrl = "some.picture.url";
+    @Inject
+    CurrentUserController currentUserController;
+    @Mock
+    CurrentUserServices currentUserServices;
 
     @BeforeAll
     void setup() {

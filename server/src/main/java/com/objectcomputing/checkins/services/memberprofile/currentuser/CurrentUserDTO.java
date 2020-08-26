@@ -6,18 +6,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
 @Introspected
 public class CurrentUserDTO {
 
     @NotNull
-    @Schema(description = "full name of the employee", required = true)
+    @Schema(description = "full name of the user", required = true)
     private String name;
 
     @Nullable
-    @Schema(description = "employee's role at the company")
-    private String role ;
+    @Schema(description = "User's roles")
+    private List<String> role;
 
     @Nullable
     @Schema(description = "Image URL of the user")
@@ -36,11 +37,11 @@ public class CurrentUserDTO {
     }
 
     @Nullable
-    public String getRole() {
+    public List<String> getRole() {
         return role;
     }
 
-    public void setRole(@Nullable String role) {
+    public void setRole(@Nullable List<String> role) {
         this.role = role;
     }
 
