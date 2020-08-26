@@ -6,7 +6,6 @@ import GuideLink from "./GuideLink";
 const GuidesPanel = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  console.log(userProfile);
   const isPdl =
     userProfile &&
     userProfile.role &&
