@@ -41,9 +41,6 @@ micronaut:
         url: /forbidden
     session:
       enabled: true
-      login-success-target-url: '/'
-      unauthorized-target-url: '/unauthorized'
-      forbidden-target-url: '/forbidden'
 ---
 datasources:
   default:

@@ -23,12 +23,11 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@MicronautTest(environments = "local")
+@MicronautTest(environments = {"local", "localtest"})
 public class LocalOauthIssuerControllerTest extends TestContainersSuite {
 
     @Client("/oauth")
@@ -90,7 +89,7 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
         assertEquals(HttpStatus.OK, response.getStatus());
         TokenResponse tr = response.body();
         assertNotNull(tr);
-        Map<?,?> cmpMap = new ObjectMapper().readValue(tr.getAccessToken(), Map.class);
+        Map<?, ?> cmpMap = new ObjectMapper().readValue(tr.getAccessToken(), Map.class);
         assertEquals(map, cmpMap);
         assertEquals("bearer", tr.getTokenType());
     }

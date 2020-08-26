@@ -77,7 +77,7 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
             currentRoles.removeAll(roles);
 
             // Create the roles if they don't already exist, delete roles not asked for
-            for(String curRole : currentRoles) {
+            for (String curRole : currentRoles) {
                 roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getUuid());
             }
 
