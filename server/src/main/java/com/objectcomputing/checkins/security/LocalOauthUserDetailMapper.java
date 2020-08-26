@@ -73,7 +73,14 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
         String role;
         if (fakeAccessToken.has("role") && StringUtils.isNotEmpty(role = fakeAccessToken.getString("role"))) {
             roles = usersStore.getUserRole(role);
-            // Create the roles if they don't already exist
+            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
+            currentRoles.removeAll(roles);
+
+            // Create the roles if they don't already exist, delete roles not asked for
+            for(String curRole : currentRoles) {
+                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getUuid());
+            }
+
             for (String curRole : roles) {
                 try {
                     RoleType roleType = RoleType.valueOf(curRole);
