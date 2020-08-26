@@ -24,31 +24,35 @@ public class PulseResponse {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
+    @NotNull
     @Schema(description = "the id of the pulse_response", required = true)
     private UUID id;
 
     @Column(name="submissionDate")
-    @Schema(description = "id of the submissionDate", required = true)
+    @NotNull
+    @Schema(description = "date for submissionDate", required = true)
     private LocalDate submissionDate;
 
     @Column(name="updatedDate")
-    @Schema(description = "id of the updatedDate", required = true)
+    @NotNull
+    @Schema(description = "date for updatedDate", required = true)
     private LocalDate updatedDate;
 
     @Column(name="teamMemberId")
     @NotNull
     @TypeDef(type=DataType.STRING)
+    @NotNull
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
     private UUID teamMemberId;
 
     @Column(name="internalFeelings")
     @NotNull
-    @Schema(description = "id of the internalfeelings", required = true)
+    @Schema(description = "description of internalfeelings", required = true)
     private String internalFeelings;
 
     @Column(name="externalFeelings")
     @NotNull
-    @Schema(description = "id of the externalfeelings", required = true)
+    @Schema(description = "description of externalfeelings", required = true)
     private String externalFeelings;
 
     public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {

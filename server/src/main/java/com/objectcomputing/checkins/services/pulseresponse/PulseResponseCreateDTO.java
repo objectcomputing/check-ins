@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public class PulseResponseCreateDTO {
 
     @NotNull
-    @Schema(required = true, description = "id of the associated submissionDate")
+    @Schema(required = true, description = "date for submissionDate")
     private LocalDate submissionDate;
 
     @NotNull
-    @Schema(required = true, description = "id of the associated updatedDate")
+    @Schema(required = true, description = "date for updatedDate")
     private LocalDate updatedDate;
     
     @NotNull
@@ -23,11 +23,11 @@ public class PulseResponseCreateDTO {
     private UUID teamMemberId;
 
     @NotNull
-    @Schema(required = true, description = "id of the internalFeelings")
+    @Schema(required = true, description = "description of internal feelings")
     private String internalFeelings;
 
     @NotNull
-    @Schema(required = true, description = "id of the externalFeelings")
+    @Schema(required = true, description = "description of external feelings")
     private String externalFeelings;
 
     public LocalDate getSubmissionDate() {
