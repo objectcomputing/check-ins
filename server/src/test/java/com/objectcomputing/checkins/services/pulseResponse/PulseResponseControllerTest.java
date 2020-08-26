@@ -312,33 +312,6 @@ public void testGetFindByfindBySubmissionDateBetween() {
     }
 
     @Test
-    void testUpdateInvalidPulseResponse() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
-        
-        pulseResponse.setSubmissionDate(null);
-        pulseResponse.setUpdatedDate(null);
-        pulseResponse.setTeamMemberId(null);
-        pulseResponse.setInternalFeelings(null);
-        pulseResponse.setExternalFeelings(null);
-
-        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
-        assertEquals("pulseResponse.teamMemberId: must not be null", errorList.get(1));
-        assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-    }
-
-    @Test
     void testUpdateANullPulseResponse() {
         final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
