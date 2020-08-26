@@ -13,7 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
-import java.util.Set;
+
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,27 +47,20 @@ public class PulseResponseServiceImplTest {
 
     }
 
-    // @Test
-    // void testRead() {
-    //     PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01),UUID.randomUUID(),"examplePRId" , "examplePRId2");
+    @Test
+    void testRead() {
+        PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01),UUID.randomUUID(),"examplePRId" , "examplePRId2");
 
-    //     Set<PulseResponse> pulseResponseSet = Set.of(
-    //             new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PR1", "PR1"),
-    //             new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PR2", "PR2"),
-    //             new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PR3", "PR3")
-    //     );
+        when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));
 
-    //     when(pulseResponseRepository.findByTeamMemberId(cd.getTeamMemberId())).thenReturn(pulseResponseSet);
+        assertEquals(cd, services.read(cd.getId()));
 
-    //     assertEquals(pulseResponseSet, services.read(cd.getTeamMemberId()));
-
-    //     verify(pulseResponseRepository, times(1)).findByTeamMemberId(any(UUID.class));
-    // }
+        verify(pulseResponseRepository, times(1)).findById(any(UUID.class));
+    }
 
     @Test
     void testReadNullId() {
-        // assertTrue(services.read(null).isEmpty());
-
+        assertNull(services.read(null));
         verify(pulseResponseRepository, never()).findByTeamMemberId(any(UUID.class));
     }
 
@@ -107,16 +100,15 @@ public class PulseResponseServiceImplTest {
         verify(memberprofileRepository, never()).findById(any(UUID.class));
     }
 
-    // @Test
-    // void testSavePulseResponseNullPRId() {
-    //     PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
+    @Test
+    void testSavePulseResponseNullPRId() {
+        PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
 
-    //     PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
-    //     assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
+        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
+        assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
 
-    //     verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
-    //     verify(memberprofileRepository, never()).findById(any(UUID.class));
-    // }
+        verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
+    }
 
     @Test
     void testSaveNullPulseResponse() {

@@ -28,6 +28,7 @@ import io.micronaut.security.rules.SecurityRule;
 
 import io.micronaut.http.annotation.Error;
 import java.time.LocalDate;
+import io.micronaut.core.convert.format.Format;
 
 @Controller("/services/pulse-response")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -57,7 +58,7 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{?teamMemberId,dateFrom,dateTo}")
-    public Set<PulseResponse> findByValue(@Nullable LocalDate dateFrom, @Nullable LocalDate dateTo,@Nullable UUID teamMemberId) {          
+    public Set<PulseResponse> findByValue(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom, @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,@Nullable UUID teamMemberId) {          
             return pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo);
     }
 

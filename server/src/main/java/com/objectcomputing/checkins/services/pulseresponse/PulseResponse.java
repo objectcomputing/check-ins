@@ -41,19 +41,15 @@ public class PulseResponse {
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
     private UUID teamMemberId;
 
-    @Column(name="internalFeelings", unique = true)
+    @Column(name="internalFeelings")
     @NotNull
     @Schema(description = "id of the internalfeelings", required = true)
     private String internalFeelings;
 
-    @Column(name="externalFeelings", unique = true)
+    @Column(name="externalFeelings")
     @NotNull
     @Schema(description = "id of the externalfeelings", required = true)
     private String externalFeelings;
-
-    public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
-        this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
-    }
 
     public PulseResponse(UUID id,LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
         this.id = id;
@@ -64,8 +60,12 @@ public class PulseResponse {
         this.externalFeelings = externalFeelings;
     }
 
+    public PulseResponse(LocalDate submissionDate,LocalDate updatedDate, UUID teamMemberId, String internalFeelings, String externalFeelings) {
+        this(null,submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
+    }
+
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(UUID id) {
@@ -89,7 +89,7 @@ public class PulseResponse {
     }
 
     public UUID getTeamMemberId() {
-        return teamMemberId;
+        return this.teamMemberId;
     }
 
     public void setTeamMemberId(UUID teamMemberId) {
@@ -134,6 +134,10 @@ public class PulseResponse {
                 ", internalFeelings=" + internalFeelings +
                 ", externalFeelings=" + externalFeelings +
                 '}';
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, submissionDate, updatedDate, teamMemberId, internalFeelings, externalFeelings);
     }
 }
 

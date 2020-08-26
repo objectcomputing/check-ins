@@ -64,7 +64,7 @@ public class PulseResponseServicesImpl implements PulseResponseService {
         } else if(pulseSubDate.isBefore(LocalDate.EPOCH) || pulseSubDate.isAfter(LocalDate.MAX)) {
             throw new PulseResponseBadArgException(String.format("Invalid date for pulseresponse submission date %s",memberId));
         } else if(pulseUpDate.isBefore(LocalDate.EPOCH) || pulseUpDate.isAfter(LocalDate.MAX)) {
-            throw new PulseResponseBadArgException(String.format("Invalid date for checkin %s",memberId));
+            throw new PulseResponseBadArgException(String.format("Invalid date for pulseresponse %s",memberId));
         }
 
         pulseResponseRet = pulseResponseRepo.update(pulseResponse);

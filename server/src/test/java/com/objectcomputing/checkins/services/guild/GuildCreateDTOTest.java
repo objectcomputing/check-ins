@@ -1,55 +1,55 @@
-// package com.objectcomputing.checkins.services.guild;
+package com.objectcomputing.checkins.services.guild;
 
-// import io.micronaut.test.annotation.MicronautTest;
-// import io.micronaut.validation.validator.Validator;
-// import org.junit.jupiter.api.Test;
+import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.validation.validator.Validator;
+import org.junit.jupiter.api.Test;
 
-// import javax.inject.Inject;
-// import javax.validation.ConstraintViolation;
-// import java.util.Set;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import java.util.Set;
 
-// import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-// @MicronautTest
-// class GuildCreateDTOTest {
+@MicronautTest
+class GuildCreateDTOTest {
 
-//     @Inject
-//     private Validator validator;
+    @Inject
+    private Validator validator;
 
 
-//     @Test
-//     void testDTOInstantiation() {
-//         GuildCreateDTO dto = new GuildCreateDTO();
-//         assertNull(dto.getDescription());
-//         assertNull(dto.getName());
-//     }
+    @Test
+    void testDTOInstantiation() {
+        GuildCreateDTO dto = new GuildCreateDTO();
+        assertNull(dto.getDescription());
+        assertNull(dto.getName());
+    }
 
-//     @Test
-//     void testConstraintViolation() {
-//         GuildCreateDTO dto = new GuildCreateDTO();
+    @Test
+    void testConstraintViolation() {
+        GuildCreateDTO dto = new GuildCreateDTO();
 
-//         dto.setName("");
+        dto.setName("");
 
-//         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
-//         assertEquals(violations.size(), 2);
-//         for (ConstraintViolation<GuildCreateDTO> violation : violations) {
-//             assertEquals(violation.getMessage(), "must not be blank");
-//         }
-//     }
+        Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
+        assertEquals(violations.size(), 2);
+        for (ConstraintViolation<GuildCreateDTO> violation : violations) {
+            assertEquals(violation.getMessage(), "must not be blank");
+        }
+    }
 
-//     @Test
-//     void testPopulatedDTO() {
-//         GuildCreateDTO dto = new GuildCreateDTO();
+    @Test
+    void testPopulatedDTO() {
+        GuildCreateDTO dto = new GuildCreateDTO();
 
-//         final String name = "Melt man";
-//         dto.setName(name);
-//         assertEquals(dto.getName(), name);
+        final String name = "Melt man";
+        dto.setName(name);
+        assertEquals(dto.getName(), name);
 
-//         final String description = "with the power to melt";
-//         dto.setDescription(description);
-//         assertEquals(dto.getDescription(), description);
+        final String description = "with the power to melt";
+        dto.setDescription(description);
+        assertEquals(dto.getDescription(), description);
 
-//         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
-//         assertTrue(violations.isEmpty());
-//     }
-// }
+        Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
+        assertTrue(violations.isEmpty());
+    }
+}

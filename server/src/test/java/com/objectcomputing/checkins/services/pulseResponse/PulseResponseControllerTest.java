@@ -35,7 +35,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     public void testCreateAPulseResponse(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
@@ -52,7 +51,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         assertNotNull(pulseResponseResponse);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(pulseResponseCreateDTO.getTeamMemberId(),pulseResponseResponse.getTeamMemberId());
-        // assertEquals(pulseResponseCreateDTO.getPdlId(),pulseResponseResponse.getPdlId());
         assertEquals(String.format("%s/%s", request.getPath(), pulseResponseResponse.getId()), response.getHeaders().get("location"));
     }
 
@@ -67,11 +65,10 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText(),
+        errors.get(2).get("message").asText(), errors.get(3).get("message").asText(), errors.get(4).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        // assertEquals("pulseResponse.pdlId: must not be null",errorList.get(0));
-        assertEquals("pulseResponse.internalFeelings: must not be null",errorList.get(0));
-        assertEquals("pulseResponse.updatedDate: must not be null",errorList.get(1));
+        assertEquals(5,errorList.size());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -149,56 +146,45 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     }
 
+// Find By findBySubmissionDateBetween returns empty array - when no data exists
+@Test
+public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 
+    LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
+    LocalDate testDateTo = LocalDate.of(2019, 02, 01);
 
+    MemberProfile memberProfile = createADefaultMemberProfile();
 
-// // Find By findBySubmissionDateBetween returns empty array - when no data exists
-// @Test
-// public void testGetFindByfindBySubmissionDateBetweenReturnsEmptyBody() {
+    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
 
-//     LocalDate testDateFrom = LocalDate.of(2019, 1, 01);
-//     LocalDate testDateTo = LocalDate.of(2019, 2, 01);
+    final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+    final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+    assertEquals(HttpStatus.OK, response.getStatus());
+    assertEquals(2, response.getContentLength());
+}
 
-//     MemberProfile memberProfile = createADefaultMemberProfile();
+// Find By findBySubmissionDateBetwe en
+@Test
+public void testGetFindByfindBySubmissionDateBetween() {
 
-//     PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+    MemberProfile memberProfile = createADefaultMemberProfile();
 
-// //     final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)));
-//     final HttpRequest<?> request = HttpRequest.GET(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-//     final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
-//     assertEquals(HttpStatus.OK, response.getStatus());
-//     assertEquals(2, response.getContentLength());
-// }
+    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
 
+    LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
+    LocalDate testDateTo = LocalDate.of(2021, 01, 01);
 
-
-// // Find By findBySubmissionDateBetween
-// @Test
-// public void testGetFindByfindBySubmissionDateBetween() {
-
-//     MemberProfile memberProfile = createADefaultMemberProfile();
-//     // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-//     PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
-
-//     LocalDate testDateFrom = LocalDate.of(2019, 1, 01);
-//     LocalDate testDateTo = LocalDate.of(2021, 1, 01);
-
-// //     final HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)));
-//     final HttpRequest<?> request = HttpRequest.GET(HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-//     final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
+    final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+    final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
     
-//     assertEquals(HttpStatus.OK, response.getStatus());
-//     assertNotEquals(2, response.getContentLength());
-// }
-
-
+    assertEquals(HttpStatus.OK, response.getStatus());
+    assertNotEquals(2, response.getContentLength());
+}
 
     @Test
     public void testGetFindById() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
 
@@ -212,7 +198,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testFindPulseResponseAllParams(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
 
@@ -238,7 +223,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdatePulseResponse(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
 
@@ -254,7 +238,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNonExistingPulseResponse(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
         pulseResponse.setId(UUID.randomUUID());
@@ -276,7 +259,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotExistingMemberPulseResponse(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
         pulseResponse.setTeamMemberId(UUID.randomUUID());
@@ -298,7 +280,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotMemberPulseResponseWithoutId(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
         pulseResponse.setId(null);
@@ -330,30 +311,32 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     }
 
-//     @Test
-//     void testUpdateInvalidPulseResponse() {
-//         MemberProfile memberProfile = createADefaultMemberProfile();
-//         // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    @Test
+    void testUpdateInvalidPulseResponse() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
-//         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
-//         pulseResponse.setTeamMemberId(null);
-//         // pulseResponse.setPdlId(null);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        
+        pulseResponse.setSubmissionDate(null);
+        pulseResponse.setUpdatedDate(null);
+        pulseResponse.setTeamMemberId(null);
+        pulseResponse.setInternalFeelings(null);
+        pulseResponse.setExternalFeelings(null);
 
-//         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
-//                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-//         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                 () -> client.toBlocking().exchange(request, Map.class));
+        final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-//         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
-//         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-//         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-//                 .stream().sorted().collect(Collectors.toList());
-//         assertEquals("pulseResponse.teamMemberId: must not be null", errorList.get(0));
-//         assertEquals("pulseResponse.updatedDate: must not be null", errorList.get(1));
-//         assertEquals(request.getPath(), href.asText());
-//         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//     }
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("pulseResponse.teamMemberId: must not be null", errorList.get(1));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 
     @Test
     void testUpdateANullPulseResponse() {
@@ -373,7 +356,6 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateInvalidDatePulseResponse(){
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
         pulseResponse.setSubmissionDate(LocalDate.of(1965,12,11));
