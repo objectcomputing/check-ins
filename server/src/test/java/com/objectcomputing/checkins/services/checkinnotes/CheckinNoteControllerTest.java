@@ -94,6 +94,53 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
     }
 
+    @Test
+    void testCreateACheckInNoteForExistingCheckInId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(UUID.randomUUID());
+        checkinNoteCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("",checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("CheckIn %s doesn't exist",checkinNoteCreateDTO.getCheckinid()),error);
+
+    }
+
+    @Test
+    void testCreateACheckInNoteForExistingMemberIdId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(UUID.randomUUID());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("",checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Member %s doesn't exist",checkinNoteCreateDTO.getCreatedbyid()),error);
+
+    }
 
     @Test
     void testDeleteCheckinNote(){
@@ -147,6 +194,25 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s",checkinNote.getCheckinid(),checkinNote.getCreatedbyid()))
+                .basicAuth(PDL_ROLE,PDL_ROLE);
+        final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
+
+        assertEquals(Set.of(checkinNote), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+
+    @Test
+    void testFindCheckinNoteByMemberId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s",checkinNote.getCreatedbyid()))
                 .basicAuth(PDL_ROLE,PDL_ROLE);
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
@@ -226,4 +292,75 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
        assertEquals("Unauthorized", responseException.getMessage());
    }
 
+    @Test
+    void testUpdateNonExistingCheckInNote(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+        checkinNote.setId(UUID.randomUUID());
+
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Unable to locate checkin note to update with id %s", checkinNote.getId()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNonExistingCheckInNoteForCheckInId(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+        checkinNote.setCheckinid(UUID.randomUUID());
+
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("CheckIn %s doesn't exist", checkinNote.getCheckinid()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNonExistingCheckInNoteForMemberId(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+        checkinNote.setCreatedbyid(UUID.randomUUID());
+
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s doesn't exist", checkinNote.getCreatedbyid()), error);
+        assertEquals(request.getPath(), href);
+
+    }
 }
