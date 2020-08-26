@@ -120,7 +120,6 @@ tasks.withType(JavaCompile) {
     }
 }
 
-
 if(System.getenv("SKIP_WEB_UI") == null) {
     processResources {
         into('public') {
