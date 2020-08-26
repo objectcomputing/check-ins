@@ -49,7 +49,6 @@ public class CurrentUserController {
         MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
         List<String> roles = roleRepository.findByMemberid(user.getUuid()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
 
-
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(location(user.getUuid())))

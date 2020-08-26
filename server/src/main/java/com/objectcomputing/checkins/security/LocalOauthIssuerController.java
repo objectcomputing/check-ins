@@ -59,7 +59,7 @@ public class LocalOauthIssuerController {
         JSONObject fakeCodeAsJson = new JSONObject(grantMap.get("code"));
         String role = fakeCodeAsJson.getString("role");
         String email = fakeCodeAsJson.getString("email");
-        if ((StringUtils.isEmpty(role)|| usersStore.getUserRole(role) != null)
+        if ((StringUtils.isEmpty(role) || usersStore.getUserRole(role) != null)
                 && email != null) {
             TokenResponse response = new TokenResponse();
             response.setAccessToken(fakeCodeAsJson.toString());

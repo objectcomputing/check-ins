@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Requires;
@@ -44,7 +45,7 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
     private SignatureGeneratorConfiguration signatureGeneratorConfiguration;
 
     @Inject
-    private MemberProfileRepository memberProfileRepository;
+    private CurrentUserServices currentUserServices;
 
     @Inject
     private RoleRepository roleRepository;
@@ -65,16 +66,23 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
         JSONObject fakeAccessToken = new JSONObject(fakeAccessTokenAsJson);
         String email = fakeAccessToken.getString("email");
 
-        MemberProfile memberProfile = memberProfileRepository.findByWorkEmail(email).orElse(null);
+        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
+        String name = memberProfile.getName();
 
-        String name = memberProfile != null && memberProfile.getName() != null ? memberProfile.getName() : email;
         List<String> roles;
         String role;
         if (fakeAccessToken.has("role") && StringUtils.isNotEmpty(role = fakeAccessToken.getString("role"))) {
             roles = usersStore.getUserRole(role);
-        } else if (memberProfile == null || memberProfile.getUuid() == null) {
-            // Default member if this user doesn't exist yet
-            roles = List.of(RoleType.Constants.MEMBER_ROLE);
+            // Create the roles if they don't already exist
+            for (String curRole : roles) {
+                try {
+                    RoleType roleType = RoleType.valueOf(curRole);
+                    if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getUuid()).isEmpty()) {
+                        roleRepository.save(new Role(roleType, memberProfile.getUuid()));
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
         } else {
             roles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map((r) -> r.getRole().toString())
                     .collect(Collectors.toList());
