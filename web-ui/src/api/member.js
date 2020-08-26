@@ -53,7 +53,7 @@ export const getCurrentUser = async () => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/member-profile/current`,
+      url: `${memberProfileUrl}/current`,
       responseType: "json",
     })
   );
