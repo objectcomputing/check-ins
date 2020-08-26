@@ -8,19 +8,34 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import { getMember } from "../../api/member";
 
 import "./Checkin.css";
 
 const CheckinsHistory = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail, role, uuid } =
+  const { workEmail, role, uuid, pdlId } =
     userProfile && userProfile.memberProfile
       ? userProfile.memberProfile
       : undefined;
-  const { image_url, name, pdl } = userProfile;
+  const { image_url, name } = userProfile;
   const [checkins, setCheckins] = useState([]);
   const [checkinIndex, setCheckinIndex] = useState(0);
+  const [pdl, setPDL] = useState();
+
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      if (pdlId) {
+        let res = await getMember(pdlId);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
+    }
+    getPDLName();
+  }, [pdlId]);
 
   // Get checkins
   React.useEffect(() => {

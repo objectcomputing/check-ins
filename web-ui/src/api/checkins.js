@@ -5,7 +5,7 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in/?teamMemberId=${memberId}&pdlId=${pdlId}`,
+      url: `${BASE_API_URL}/services/check-in/?teamMemberId=${memberId}&pdlId=${pdlId}`,
       responseType: "json",
     })
   );
@@ -15,7 +15,7 @@ export const getCheckinByMemberId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in?teamMemberId=${id}`,
+      url: `${BASE_API_URL}/services/check-in?teamMemberId=${id}`,
       responseType: "json",
     })
   );
@@ -25,7 +25,7 @@ export const getCheckinByPdlId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in?pdlId=${id}`,
+      url: `${BASE_API_URL}/services/check-in?pdlId=${id}`,
       responseType: "json",
     })
   );

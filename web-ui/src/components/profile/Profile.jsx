@@ -18,13 +18,13 @@ import "./Profile.css";
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
+  const { imageUrl } = userProfile;
 
   const [mySkills, setMySkills] = useState([]);
   const { bioText, workEmail, name, role, uuid, pdlId } =
     userProfile && userProfile.memberProfile
       ? userProfile.memberProfile
       : undefined;
-  const { image_url } = { userProfile };
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();
@@ -154,7 +154,7 @@ const Profile = () => {
         <div className="profile-image">
           <Avatar
             alt="Profile"
-            src={image_url ? image_url : "/default_profile.jpg"}
+            src={imageUrl ? imageUrl : "/default_profile.jpg"}
             style={{ width: "200px", height: "220px" }}
           />
         </div>
