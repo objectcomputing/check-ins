@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -26,9 +25,8 @@ public class Skill {
     private UUID id;
 
     @NotBlank
-    @NotNull
     @Column(name = "name", unique = true)
-    @Schema(description = "the name of the skill")
+    @Schema(description = "the name of the skill", required = true)
     private String name;
 
     @Column(name = "pending")

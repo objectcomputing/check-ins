@@ -60,14 +60,11 @@ public class SkillController {
     public HttpResponse<Skill> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
         Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending()));
 
-        if (newSkill == null) {
-            return HttpResponse.status(HttpStatus.valueOf(String.valueOf(HttpStatus.CONFLICT)), "already exists");
-        } else {
-            return HttpResponse
-                    .created(newSkill)
-                    .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), newSkill.getId()))));
-        }
+        return HttpResponse
+                .created(newSkill)
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), newSkill.getId()))));
+
     }
 
     /**
