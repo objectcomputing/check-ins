@@ -7,10 +7,6 @@ export const getMembersByPDL = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/member-profile/?pdlId=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -21,10 +17,6 @@ export const getMemberByEmail = async (email) => {
       method: "get",
       url: `${BASE_API_URL}/services/member-profile/?workEmail=${email}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -35,10 +27,6 @@ export const getMember = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/member-profile/${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -50,10 +38,6 @@ export const updateMember = async (member) => {
       url: `${BASE_API_URL}/services/member-profile/`,
       responseType: "json",
       data: member,
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };

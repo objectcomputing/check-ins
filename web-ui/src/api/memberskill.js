@@ -7,10 +7,6 @@ export const getMemberSkills = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/member-skill/?memberid=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -21,10 +17,6 @@ export const deleteMemberSkill = async (id) => {
       method: "DELETE",
       url: `${BASE_API_URL}/services/member-skill/${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -36,10 +28,6 @@ export const createMemberSkill = async (memberskill) => {
       url: `${BASE_API_URL}/services/member-skill`,
       responseType: "json",
       data: memberskill,
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };

@@ -7,10 +7,6 @@ export const getMembersByTeam = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/team/member?teamid=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -21,10 +17,6 @@ export const getTeamsByMember = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/services/team?memberid=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };

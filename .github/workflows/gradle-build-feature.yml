@@ -19,3 +19,5 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
+      - name: Gradle runs tests
+        run: ./gradlew check

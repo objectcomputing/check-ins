@@ -7,10 +7,6 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
       method: "get",
       url: `${BASE_API_URL}/check-in/?teamMemberId=${memberId}&pdlId=${pdlId}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -21,10 +17,6 @@ export const getCheckinByMemberId = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/check-in?teamMemberId=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -35,10 +27,6 @@ export const getCheckinByPdlId = async (id) => {
       method: "get",
       url: `${BASE_API_URL}/check-in?pdlId=${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
