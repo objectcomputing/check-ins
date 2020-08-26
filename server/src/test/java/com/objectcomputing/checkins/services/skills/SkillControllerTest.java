@@ -100,7 +100,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/%s", skill.getSkillid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -112,10 +112,9 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     public void testPOSTCreateASkill() {
 
-        Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
-        skillCreateDTO.setPending(skill.isPending());
+        skillCreateDTO.setPending(true);
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
                 POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -124,7 +123,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED,response.getStatus());
         assertEquals(skillCreateDTO.getName(), response.body().getName());
-        assertEquals(String.format("%s/%s", request.getPath(), response.body().getSkillid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
     }
 
     @Test
@@ -147,7 +146,6 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     public void testPOSTCreateANullSkill() {
 
-        Skill skill = createADefaultSkill();
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
@@ -171,7 +169,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 
         assertEquals(skill, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), skill.getSkillid()),
+        assertEquals(String.format("%s/%s", request.getPath(), skill.getId()),
                 response.getHeaders().get("location"));
     }
 
@@ -210,7 +208,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", skill.getSkillid())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                DELETE(String.format("/%s", skill.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -224,7 +222,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", skill.getSkillid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                DELETE(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 

@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.skills;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,15 +19,20 @@ import java.util.UUID;
 public class Skill {
 
     @Id
-    @Column(name = "skillid")
+    @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    private UUID skillid;
+    @Schema(description = "the id of the skill", required = true)
+    private UUID id;
+
     @NotBlank
     @NotNull
     @Column(name = "name", unique = true)
+    @Schema(description = "the name of the skill")
     private String name;
+
     @Column(name = "pending")
+    @Schema(description = "the pending status (approved or not) of the skill")
     private boolean pending = true;
 
     public Skill() {
@@ -41,17 +47,17 @@ public class Skill {
         this.pending = pending;
     }
 
-    public Skill(UUID skillid, String name, boolean pending) {
+    public Skill(UUID id, String name, boolean pending) {
         this.name = name;
         this.pending = pending;
     }
 
-    public UUID getSkillid() {
-        return skillid;
+    public UUID getId() {
+        return id;
     }
 
-    public void setSkillid(UUID skillid) {
-        this.skillid = skillid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -76,13 +82,13 @@ public class Skill {
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
         return pending == skill.pending &&
-                Objects.equals(skillid, skill.skillid) &&
+                Objects.equals(id, skill.id) &&
                 Objects.equals(name, skill.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(skillid, name, pending);
+        return Objects.hash(id, name, pending);
     }
 
     @Override

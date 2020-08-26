@@ -12,9 +12,9 @@ micronaut:
           client-id: TEST
           client-secret: TEST
           authorization:
-            url: "http://localhost:${PORT}/oauth/auth"
+             url: http://localhost:${micronaut.server.port:8080}/oauth/auth
           token:
-            url: "http://localhost:${PORT}/oauth/token"
+             url: http://localhost:${micronaut.server.port:8080}/oauth/token
     token:
       jwt:
         signatures:

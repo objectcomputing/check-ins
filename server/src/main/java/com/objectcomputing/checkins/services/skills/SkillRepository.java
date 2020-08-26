@@ -11,8 +11,6 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SkillRepository extends CrudRepository<Skill, UUID> {
 
-    Optional<Skill> findBySkillid(UUID skillid);
-
     Optional<Skill> findByName(String name);
 
     List<Skill> findByNameIlike(String name);

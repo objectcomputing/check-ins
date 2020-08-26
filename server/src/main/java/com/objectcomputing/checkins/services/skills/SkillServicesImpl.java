@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -24,13 +21,12 @@ public class SkillServicesImpl implements SkillServices {
     public Skill save(Skill skill) {
         Skill newSkill = null;
         if (skill != null) {
-            final String name = skill.getName();
 
-            if (skill.getSkillid() != null) {
+            if (skill.getId() != null) {
                 throw new SkillBadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
-                        skill.getSkillid()));
+                        skill.getId()));
             } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new SkillAlreadyExistsException(String.format("Member %s already has this skill %s", skill.getSkillid(), name));
+                throw new SkillAlreadyExistsException(String.format("Skill %s already exists. ",  skill.getName()));
             }
 
             newSkill = skillRepository.save(skill);
@@ -39,9 +35,9 @@ public class SkillServicesImpl implements SkillServices {
 
     }
 
-    protected Skill readSkill(@NotNull UUID skillId) {
+    public Skill readSkill(@NotNull UUID id) {
 
-        Skill returned = skillRepository.findBySkillid(skillId).orElse(null);
+        Skill returned = skillRepository.findById(id).orElse(null);
 
         return returned;
 
@@ -73,15 +69,15 @@ public class SkillServicesImpl implements SkillServices {
 
     }
 
-    protected Skill update(Skill skill) {
+    public Skill update(Skill skill) {
 
         Skill newSkill = null;
 
         if (skill != null) {
-            if (skill.getSkillid() != null && skillRepository.findBySkillid(skill.getSkillid()).isPresent()) {
+            if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
                 newSkill = skillRepository.update(skill);
             } else {
-                throw new SkillBadArgException(String.format("Skill %s does not exist, cannot update", skill.getSkillid()));
+                throw new SkillBadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
             }
         }
 

@@ -30,11 +30,7 @@ import java.util.UUID;
 public class SkillController {
 
     @Inject
-    private SkillServicesImpl skillServices;
-
-    public void setSkillServices(SkillServicesImpl skillServices) {
-        this.skillServices = skillServices;
-    }
+    private SkillServices skillServices;
 
     @Error(exception = SkillBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
@@ -70,21 +66,21 @@ public class SkillController {
             return HttpResponse
                     .created(newSkill)
                     .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), newSkill.getSkillid()))));
+                            URI.create(String.format("%s/%s", request.getPath(), newSkill.getId()))));
         }
     }
 
     /**
      * Find and read a skill given its id.
      *
-     * @param skillid {@link UUID} of the skill entry
+     * @param id {@link UUID} of the skill entry
      * @return
      */
 
-    @Get("/{skillid}")
-    public Skill getById(@NotNull UUID skillid) {
-        Skill found = skillServices.readSkill(skillid);
-        return found;
+    @Get("/{id}")
+    public Skill getById(@NotNull UUID id) {
+
+        return skillServices.readSkill(id);
 
     }
 
@@ -116,7 +112,7 @@ public class SkillController {
         Skill updatedSkill = skillServices.update(skill);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), skill.getSkillid()))))
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), skill.getId()))))
                 .body(updatedSkill);
 
     }
