@@ -1,81 +1,67 @@
 package com.objectcomputing.checkins.services.checkinnotes;
 
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.junit.jupiter.api.Test;
-
+import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.CheckInNoteFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
-import io.micronaut.test.annotation.MockBean;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@MicronautTest
-public class CheckinNoteControllerTest {
+
+public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture {
 
     @Inject
     @Client("/services/checkin-note")
     HttpClient client ;
 
-    @Inject
-    private CheckinNoteServices checkinNoteServices;
-
-    @MockBean(CheckinNoteServices.class)
-    public CheckinNoteServices checkinNoteServices() {
-        return mock(CheckinNoteServices.class);
-    }
 
     @Test
     void testCreateCheckinNote(){
+     MemberProfile memberProfile = createADefaultMemberProfile();
+     MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+     CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
      CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
-     checkinNoteCreateDTO.setCheckinid(UUID.randomUUID());
-     checkinNoteCreateDTO.setCreatedbyid(UUID.randomUUID());
+     checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+     checkinNoteCreateDTO.setCreatedbyid(memberProfile.getUuid());
      checkinNoteCreateDTO.setDescription("test");
 
-     CheckinNote cNote = new CheckinNote(checkinNoteCreateDTO.getCheckinid(), checkinNoteCreateDTO.getCreatedbyid(), checkinNoteCreateDTO.getDescription());
-
-     when(checkinNoteServices.save(eq(cNote))).thenReturn(cNote);
-
-     final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO);
+     final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);
      final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
-     assertEquals(cNote, response.body());
-     assertEquals(HttpStatus.CREATED, response.getStatus());
-     assertEquals(String.format("%s/%s", request.getPath(), cNote.getId()), response.getHeaders().get("location"));
+     CheckinNote checkinNote = response.body();
 
+     assertNotNull(response);
+     assertEquals(HttpStatus.CREATED, response.getStatus());
+     assertEquals(checkinNoteCreateDTO.getCheckinid(),checkinNote.getCheckinid());
+     assertEquals(checkinNoteCreateDTO.getCreatedbyid(),checkinNote.getCreatedbyid());
+     assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
     }
 
     @Test
     void testCreateInvalidCheckinNote(){
      CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
 
-     CheckinNote cNote = new CheckinNote(UUID.randomUUID(),UUID.randomUUID(), "test");
-
-     when(checkinNoteServices.save(eq(cNote))).thenReturn(cNote);
-
-     final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO);
+     final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);
      HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
      () -> client.toBlocking().exchange(request, Map.class));
 
@@ -93,14 +79,11 @@ public class CheckinNoteControllerTest {
 
     @Test
     void testCreateNullCheckinNote(){
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(),UUID.randomUUID(), "test");
 
-        when(checkinNoteServices.save(eq(cNote))).thenReturn(cNote);
-   
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE,PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
         () -> client.toBlocking().exchange(request, Map.class));
-   
+
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
@@ -108,15 +91,20 @@ public class CheckinNoteControllerTest {
         assertEquals("Required Body [checkinNote] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-     
+
     }
 
 
     @Test
     void testDeleteCheckinNote(){
-        UUID uuid = UUID.randomUUID();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s",checkinNote.getId())).basicAuth(PDL_ROLE,PDL_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -125,22 +113,24 @@ public class CheckinNoteControllerTest {
 
     @Test
     void testReadCheckinNote(){
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(checkinNoteServices.read(cNote.getId())).thenReturn(cNote);
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s",cNote.getId().toString()));
-        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        assertEquals(cNote, response.body());
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",checkinNote.getId())).basicAuth(PDL_ROLE,PDL_ROLE);
+        final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
+
+        assertEquals(Set.of(checkinNote), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
     void testReadCheckinNoteNotFound(){
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
 
-        when(checkinNoteServices.read(cNote.getId())).thenReturn(null);
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s",cNote.getId().toString()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",UUID.randomUUID())).basicAuth(PDL_ROLE,PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, CheckinNote.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -149,54 +139,55 @@ public class CheckinNoteControllerTest {
 
     @Test
     void testFindCheckinNote() {
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
-        Set<CheckinNote> checkinNote = Collections.singleton(cNote);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(checkinNoteServices.findByFields(cNote.getCheckinid(), cNote.getCreatedbyid())).thenReturn(checkinNote);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s",cNote.getCheckinid(),cNote.getCreatedbyid()));
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s",checkinNote.getCheckinid(),checkinNote.getCreatedbyid()))
+                .basicAuth(PDL_ROLE,PDL_ROLE);
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
-        assertEquals(checkinNote, response.body());
+        assertEquals(Set.of(checkinNote), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
-    @Test
-    void testFindCheckinNoteNull() {
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
-        when(checkinNoteServices.findByFields(eq(cNote.getCheckinid()),eq(null))).thenReturn(null);
-        
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s",cNote.getCheckinid()));
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class)));
-
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-
-    }
 
     @Test
     void testUpdateCheckinNote(){
-    CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-    when(checkinNoteServices.update(eq(cNote))).thenReturn(cNote);
-  
-    final HttpRequest<?> request = HttpRequest.PUT("",cNote);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+
+    final HttpRequest<?> request = HttpRequest.PUT("",checkinNote).basicAuth(PDL_ROLE,PDL_ROLE);
     final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
-    assertEquals(cNote, response.body());
+    assertEquals(checkinNote, response.body());
     assertEquals(HttpStatus.OK, response.getStatus());
     }
-    
+
     @Test
     void testUpdateInvalidCheckinNote(){
-        CheckinNote cNote = new CheckinNote(UUID.randomUUID(), null, null,"test");
-        when(checkinNoteServices.update(any(CheckinNote.class))).thenReturn(cNote);
-        
-        final HttpRequest<?> request = HttpRequest.PUT("",cNote);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn,memberProfile);
+        checkinNote.setCreatedbyid(null);
+        checkinNote.setCheckinid(null);
+
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("",checkinNote).basicAuth(PDL_ROLE,PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-                
+
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
@@ -205,46 +196,34 @@ public class CheckinNoteControllerTest {
         assertEquals("checkinNote.checkinid: must not be null", errorList.get(0));
         assertEquals("checkinNote.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus()); 
-    } 
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 
     @Test
     void testUpdateNullCheckinNote(){
-      CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
-      when(checkinNoteServices.update(any(CheckinNote.class))).thenReturn(cNote);
-      
-      final HttpRequest<?> request = HttpRequest.PUT("","");
+      final HttpRequest<?> request = HttpRequest.PUT("","").basicAuth(PDL_ROLE,PDL_ROLE);
       HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
               () -> client.toBlocking().exchange(request, Map.class));
-  
+
       JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
       JsonNode errors = Objects.requireNonNull(body).get("message");
       JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
       assertEquals("Required Body [checkinNote] not specified", errors.asText());
       assertEquals(request.getPath(), href.asText());
       assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-  
+
     }
 
    @Test
-   void testUpdateCheckinNoteThrowException() {
+   void testUpdateUnAuthorized() {
     CheckinNote cNote = new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
 
-    final String errorMessage = "error message";
-    when(checkinNoteServices.update(any(CheckinNote.class))).thenAnswer(ans -> {
-        throw new CheckinNotesBadArgException(errorMessage);
-    });
+       final HttpRequest<CheckinNote> request = HttpRequest.PUT("", cNote);
+       HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+               client.toBlocking().exchange(request, String.class));
 
-    final MutableHttpRequest<CheckinNote> request = HttpRequest.PUT("", cNote);
-    HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-            client.toBlocking().exchange(request, Map.class));
-
-    JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-    JsonNode errors = Objects.requireNonNull(body).get("message");
-    JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-    assertEquals(errorMessage, errors.asText());
-    assertEquals(request.getPath(), href.asText());
-    assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+       assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+       assertEquals("Unauthorized", responseException.getMessage());
    }
 
 }

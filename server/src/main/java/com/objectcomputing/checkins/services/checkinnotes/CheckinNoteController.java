@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.checkinnotes;
 
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -11,7 +12,6 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.http.annotation.Error;
 
 
@@ -22,6 +22,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -29,7 +30,7 @@ import io.micronaut.http.MediaType;
 
 
 @Controller("/services/checkin-note")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(RoleType.Constants.PDL_ROLE)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-note")
 public class CheckinNoteController {
@@ -95,7 +96,7 @@ public class CheckinNoteController {
      * @return
      */
     @Get("/{id}")
-    public CheckinNote readCheckinNote(UUID id) {
+    public CheckinNote readCheckinNote(@NotNull UUID id) {
         return checkinNoteServices.read(id);
     }
 
