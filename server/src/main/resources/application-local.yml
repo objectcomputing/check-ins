@@ -5,7 +5,7 @@ micronaut:
       configurations:
         web:
           allowedOrigins:
-            - ^http(|s):\/\/localhost$
+            - ^http(|s):\/\/localhost:.*$
   security:
     enabled: true
     oauth2:
