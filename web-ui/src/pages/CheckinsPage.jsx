@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";

@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
 import useDebounce from "../../hooks/useDebounce";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
+import { AppContext } from "../../context/AppContext";
 
 import "./Note.css";
 
 const Notes = (props) => {
+  const { state } = useContext(AppContext);
+  const { userData } = state;
+  const canViewPrivateNote =
+    userData.role === "PDL" || userData.role === "ADMIN";
   const { checkin, memberName } = props;
   const { id } = checkin;
   const [note, setNote] = useState({});
   // TODO: get private note and determine if user is PDL
-  const isPDL = true;
   const [privateNote, setPrivateNote] = useState("Private note");
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const Notes = (props) => {
           ></textarea>
         </div>
       </div>
-      {isPDL && (
+      {canViewPrivateNote && (
         <div>
           <h1>
             <LockIcon style={{ marginRight: "10px" }} />
