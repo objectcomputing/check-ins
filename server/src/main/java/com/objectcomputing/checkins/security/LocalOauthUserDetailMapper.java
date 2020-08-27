@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.core.util.StringUtils;
@@ -31,7 +33,7 @@ import static io.micronaut.security.oauth2.endpoint.token.response.OpenIdUserDet
 
 @Singleton
 @Named("oauth")
-@Requires(env = "local")
+@Requires(env = {"local"})
 public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
     @Inject
     private UsersStore usersStore;
@@ -43,7 +45,7 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
     private SignatureGeneratorConfiguration signatureGeneratorConfiguration;
 
     @Inject
-    private MemberProfileRepository memberProfileRepository;
+    private CurrentUserServices currentUserServices;
 
     @Inject
     private RoleRepository roleRepository;
@@ -63,15 +65,32 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
         String fakeAccessTokenAsJson = tokenResponse.getAccessToken();
         JSONObject fakeAccessToken = new JSONObject(fakeAccessTokenAsJson);
         String email = fakeAccessToken.getString("email");
+
+        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
+        String name = memberProfile.getName();
+
         List<String> roles;
         String role;
         if (fakeAccessToken.has("role") && StringUtils.isNotEmpty(role = fakeAccessToken.getString("role"))) {
             roles = usersStore.getUserRole(role);
-        } else {
-            MemberProfile memberProfile = memberProfileRepository.findByWorkEmail(email).orElse(null);
-            if (memberProfile == null || memberProfile.getUuid() == null) {
-                return Publishers.just(new AuthenticationFailed(String.format("Email %s doesn't exist in DB", email)));
+            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
+            currentRoles.removeAll(roles);
+
+            // Create the roles if they don't already exist, delete roles not asked for
+            for (String curRole : currentRoles) {
+                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getUuid());
             }
+
+            for (String curRole : roles) {
+                try {
+                    RoleType roleType = RoleType.valueOf(curRole);
+                    if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getUuid()).isEmpty()) {
+                        roleRepository.save(new Role(roleType, memberProfile.getUuid()));
+                    }
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+        } else {
             roles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map((r) -> r.getRole().toString())
                     .collect(Collectors.toList());
         }
@@ -80,7 +99,11 @@ public class LocalOauthUserDetailMapper implements OauthUserDetailsMapper {
         Optional<String> idToken = new JwtTokenGenerator(signatureGeneratorConfiguration, null, claimsGenerator)
                 .generateToken(Map.of("exp", System.currentTimeMillis() / 1000 + 60 * 60,
                         "sub", email,
-                        "roles", roles));
+                        "roles", roles,
+                        "email", email,
+                        "name", name,
+                        "picture", "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg"));
+
         if (idToken.isPresent()) {
             details.setAttributes(Map.of(OPENID_TOKEN_KEY, idToken.get()));
             return Publishers.just(details);

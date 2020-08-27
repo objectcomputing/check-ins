@@ -1,13 +1,4 @@
-package com.objectcomputing.checkins.services.checkinnotes;
-
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
@@ -15,20 +6,17 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.UUID;
+
 @Entity
-@Table(name="checkin_notes")
+@Table(name = "checkin_notes")
 public class CheckinNote {
-
-    public CheckinNote(UUID id,UUID checkinid, UUID createdbyid,String description){
-        this.id=id;
-        this.checkinid=checkinid;
-        this.createdbyid=createdbyid;
-        this.description=description;
-    }
-
-    public CheckinNote(UUID checkinid, UUID createdbyid,String description){
-        this(null,checkinid,createdbyid,description);
-    }
 
     @Id
     @Column(name = "id")
@@ -36,24 +24,31 @@ public class CheckinNote {
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of checkin notes", required = true)
     private UUID id;
-
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the checkin this entry is associated with", required = true)
     private UUID checkinid;
-
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
-
     @Nullable
     @Column(name = "description")
     @Schema(description = "description of the check in note")
     private String description;
 
+    public CheckinNote(UUID id, UUID checkinid, UUID createdbyid, String description) {
+        this.id = id;
+        this.checkinid = checkinid;
+        this.createdbyid = createdbyid;
+        this.description = description;
+    }
+
+    public CheckinNote(UUID checkinid, UUID createdbyid, String description) {
+        this(null, checkinid, createdbyid, description);
+    }
 
     public UUID getId() {
         return this.id;
@@ -110,7 +105,7 @@ public class CheckinNote {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid,description);
+        return Objects.hash(id, checkinid, createdbyid, description);
     }
 
 }
