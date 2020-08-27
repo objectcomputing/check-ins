@@ -1,5 +1,5 @@
 import React from "react";
-import Notes from "./Notes";
+import Notes from "./Note";
 // import { render, fireEvent, screen } from "@testing-library/react";
 
 let checkin = {

@@ -24,7 +24,7 @@ const CheckinsPage = () => {
     <div>
       <div className="container">
         <div className="contents">
-          <CheckinsHistory />
+          <CheckinsHistory setIndex={setIndex} />
         </div>
         <div className="right-sidebar">
           <Personnel />

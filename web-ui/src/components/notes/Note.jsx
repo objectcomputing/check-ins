@@ -66,9 +66,10 @@ const Notes = (props) => {
           Notes for {memberName}
         </h1>
         <div className="container">
-          <textarea onChange={handleNoteChange} value={note.description}>
-            <p></p>
-          </textarea>
+          <textarea
+            onChange={handleNoteChange}
+            value={note.description}
+          ></textarea>
         </div>
       </div>
       {isPDL && (
