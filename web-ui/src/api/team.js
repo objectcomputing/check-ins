@@ -1,12 +1,16 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
 export const getMembersByTeam = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/team/member?teamid=${id}`,
+      url: teamMemberUrl,
       responseType: "json",
+      params: {
+        teamid: id,
+      },
     })
   );
 };
@@ -15,8 +19,11 @@ export const getTeamsByMember = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/team?memberid=${id}`,
+      url: teamMemberUrl,
       responseType: "json",
+      params: {
+        memberid: id,
+      },
     })
   );
 };
