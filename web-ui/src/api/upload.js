@@ -9,6 +9,7 @@ export const uploadFile = async (file) => {
       url: uploadUrl,
       responseType: "json",
       body: { file: file },
+      withCredentials: true,
     })
   );
 };
