@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.checkinnotes;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;

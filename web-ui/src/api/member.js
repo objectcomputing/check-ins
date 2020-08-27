@@ -1,15 +1,15 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const memberProfileUrl = `${BASE_API_URL}/services/member-profile`;
 export const getMembersByPDL = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/member-profile/?pdlId=${id}`,
+      url: memberProfileUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        pdlId: id,
       },
     })
   );
@@ -19,11 +19,10 @@ export const getMemberByEmail = async (email) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/member-profile/?workEmail=${email}`,
+      url: memberProfileUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        workEmail: email,
       },
     })
   );
@@ -33,12 +32,8 @@ export const getMember = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/member-profile/${id}`,
+      url: `${memberProfileUrl}/${id}`,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
     })
   );
 };
@@ -47,13 +42,19 @@ export const updateMember = async (member) => {
   return await resolve(
     axios({
       method: "put",
-      url: `${BASE_API_URL}/services/member-profile/`,
+      url: memberProfileUrl,
       responseType: "json",
       data: member,
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
-      },
+    })
+  );
+};
+
+export const getCurrentUser = async () => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${memberProfileUrl}/current`,
+      responseType: "json",
     })
   );
 };

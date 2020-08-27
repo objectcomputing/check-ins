@@ -72,7 +72,7 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by Name, Role, PdlId or find all.
+     * Find Team Member profile by Name, Role, PdlId, workEmail or find all.
      * @param name
      * @param role
      * @param pdlId

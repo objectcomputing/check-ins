@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
 import Button from "@material-ui/core/Button";
+import GuidesPanel from "../components/guides/GuidesPanel";
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
-
 import "./CheckinsPage.css";
 
 const CheckinsPage = () => {
@@ -28,6 +28,7 @@ const CheckinsPage = () => {
         </div>
         <div className="right-sidebar">
           <Personnel />
+          <GuidesPanel />
         </div>
       </div>
       {checkin && checkin.id && (
