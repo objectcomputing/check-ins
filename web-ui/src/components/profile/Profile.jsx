@@ -18,7 +18,7 @@ import "./Profile.css";
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { imageUrl } = userProfile;
+  const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
   const { bioText, workEmail, name, role, uuid, pdlId } =
