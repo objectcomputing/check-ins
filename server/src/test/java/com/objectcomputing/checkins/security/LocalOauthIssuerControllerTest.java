@@ -10,7 +10,9 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
+import io.micronaut.security.rules.SecuredAnnotationRule;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,12 +23,11 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@MicronautTest(environments = "local")
+@MicronautTest(environments = {"local", "localtest"})
 public class LocalOauthIssuerControllerTest extends TestContainersSuite {
 
     @Client("/oauth")
@@ -88,7 +89,7 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
         assertEquals(HttpStatus.OK, response.getStatus());
         TokenResponse tr = response.body();
         assertNotNull(tr);
-        Map<?,?> cmpMap = new ObjectMapper().readValue(tr.getAccessToken(), Map.class);
+        Map<?, ?> cmpMap = new ObjectMapper().readValue(tr.getAccessToken(), Map.class);
         assertEquals(map, cmpMap);
         assertEquals("bearer", tr.getTokenType());
     }
@@ -105,6 +106,7 @@ public class LocalOauthIssuerControllerTest extends TestContainersSuite {
     }
 
     @Controller("fakeoauth")
+    @Secured(SecuredAnnotationRule.IS_ANONYMOUS)
     public static class FakeAuthCallback {
 
         @Get

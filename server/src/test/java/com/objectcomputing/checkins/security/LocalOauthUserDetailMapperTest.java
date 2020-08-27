@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@MicronautTest(environments = "local", transactional = false)
+@MicronautTest(environments = {"local", "localtest"}, transactional = false)
 public class LocalOauthUserDetailMapperTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject

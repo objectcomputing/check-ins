@@ -1,32 +1,22 @@
-package com.objectcomputing.checkins.services.checkinnotes;
-
-import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
-import io.micronaut.security.annotation.Secured;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.micronaut.http.annotation.Error;
-
-
-import java.net.URI;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.Set;
+import java.util.UUID;
 
 
 @Controller("/services/checkin-note")
@@ -49,23 +39,23 @@ public class CheckinNoteController {
 
     /**
      * Create and Save a new check in note
-     * 
+     *
      * @param checkinNote
      * @param request
      * @return
      */
     @Post("/")
     public HttpResponse<CheckinNote> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote, HttpRequest<CheckinNoteCreateDTO> request) {
-        CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(),checkinNote.getCreatedbyid()
-        ,checkinNote.getDescription()));
+        CheckinNote newCheckinNote = checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(), checkinNote.getCreatedbyid()
+                , checkinNote.getDescription()));
         return HttpResponse.created(newCheckinNote)
-        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),newCheckinNote.getId()))));
-        
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newCheckinNote.getId()))));
+
     }
 
     /**
      * Update a check in note
-     * 
+     *
      * @param checkinNote
      * @param request
      * @return
@@ -80,18 +70,20 @@ public class CheckinNoteController {
 
     /**
      * Get notes by checkind or createbyid
+     *
      * @param checkinid
      * @param createdbyid
      * @return
      */
     @Get("/{?checkinid,createdbyid}")
     public Set<CheckinNote> findCheckinNote(@Nullable UUID checkinid,
-                                           @Nullable UUID createdbyid) {
+                                            @Nullable UUID createdbyid) {
         return checkinNoteServices.findByFields(checkinid, createdbyid);
     }
 
     /**
      * Get checkin note from id
+     *
      * @param id
      * @return
      */
@@ -100,17 +92,4 @@ public class CheckinNoteController {
         return checkinNoteServices.read(id);
     }
 
-    /**
-     * Delete checkin notes
-     * @param id
-     * @return
-     */
-    @Delete("/{id}")
-    public HttpResponse<?> deleteCheckinNote(UUID id) {
-        checkinNoteServices.delete(id);
-        return HttpResponse.ok();
-    }
-
-    
-    
 }

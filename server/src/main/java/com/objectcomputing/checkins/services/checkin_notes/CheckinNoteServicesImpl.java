@@ -1,14 +1,13 @@
-package com.objectcomputing.checkins.services.checkinnotes;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
@@ -31,9 +30,9 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
                 throw new CheckinNotesBadArgException(String.format("Invalid checkin note %s", checkinNote));
             } else if (checkinNote.getId() != null) {
                 throw new CheckinNotesBadArgException(String.format("Found unexpected id %s for check in note", checkinNote.getId()));
-            } else if (!checkinRepo.findById(checkinId).isPresent()) {
+            } else if (checkinRepo.findById(checkinId).isEmpty()) {
                 throw new CheckinNotesBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
+            } else if (memberRepo.findById(createById).isEmpty()) {
                 throw new CheckinNotesBadArgException(String.format("Member %s doesn't exist", createById));
             }
 
@@ -57,11 +56,11 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             final UUID createById = checkinNote.getCreatedbyid();
             if (checkinId == null || createById == null) {
                 throw new CheckinNotesBadArgException(String.format("Invalid checkin note %s", checkinNote));
-            } else if (id==null ||!checkinNoteRepository.findById(id).isPresent()) {
+            } else if (id == null || checkinNoteRepository.findById(id).isEmpty()) {
                 throw new CheckinNotesBadArgException(String.format("Unable to locate checkin note to update with id %s", checkinNote.getId()));
-            } else if (!checkinRepo.findById(checkinId).isPresent()) {
+            } else if (checkinRepo.findById(checkinId).isEmpty()) {
                 throw new CheckinNotesBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
+            } else if (memberRepo.findById(createById).isEmpty()) {
                 throw new CheckinNotesBadArgException(String.format("Member %s doesn't exist", createById));
             }
 
@@ -69,23 +68,17 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         }
         return checkinNoteRet;
     }
-    
+
 
     @Override
     public Set<CheckinNote> findByFields(UUID checkinid, UUID createbyid) {
         Set<CheckinNote> checkinNote = new HashSet<>();
         checkinNoteRepository.findAll().forEach(checkinNote::add);
-        if(checkinid!=null){
+        if (checkinid != null) {
             checkinNote.retainAll(checkinNoteRepository.findByCheckinid(checkinid));
-        } else if(createbyid!=null){
+        } else if (createbyid != null) {
             checkinNote.retainAll(checkinNoteRepository.findByCreatedbyid(createbyid));
         }
         return checkinNote;
     }
-
-    @Override
-    public void delete(@NotNull UUID uuid) {
-        checkinNoteRepository.deleteById(uuid);
-    }
-    
 }
