@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.checkinnotes;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
@@ -31,7 +31,7 @@ public class CheckinNoteServicesImplTest {
     private MemberProfileRepository memberProfileRepository;
 
     @Mock
-    private CheckinNoteRepository  checkinNoteRepository;
+    private CheckinNoteRepository checkinNoteRepository;
 
     @InjectMocks
     private CheckinNoteServicesImpl services;
@@ -43,7 +43,7 @@ public class CheckinNoteServicesImplTest {
 
     @BeforeEach
     void resetMocks() {
-      Mockito.reset(checkinRepository,checkinNoteRepository,memberProfileRepository);
+        Mockito.reset(checkinRepository, checkinNoteRepository, memberProfileRepository);
     }
 
     @Test
@@ -347,33 +347,5 @@ public class CheckinNoteServicesImplTest {
         verify(checkinNoteRepository, times(1)).findAll();
         verify(checkinNoteRepository, never()).findByCreatedbyid(any(UUID.class));
         verify(checkinNoteRepository, times(1)).findByCheckinid(any(UUID.class));
-    }
-
-    @Test
-    void testReadAll() {
-        Set<CheckinNote> checkinNotes = Set.of(
-                new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), "test"),
-                new CheckinNote(UUID.randomUUID(), UUID.randomUUID(), "test")
-        );
-
-        when(checkinNoteRepository.findAll()).thenReturn(checkinNotes);
-
-        assertEquals(checkinNotes, services.readAll());
-
-        verify(checkinNoteRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testDelete() {
-        UUID uuid = UUID.randomUUID();
-
-        doAnswer(an -> {
-            assertEquals(uuid, an.getArgument(0));
-            return null;
-        }).when(checkinNoteRepository).deleteById(any(UUID.class));
-
-        services.delete(uuid);
-
-        verify(checkinNoteRepository, times(1)).deleteById(any(UUID.class));
     }
 }

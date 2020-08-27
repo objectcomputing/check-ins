@@ -20,6 +20,8 @@ public interface RoleRepository extends CrudRepository<Role, UUID> {
 
     Optional<Role> findByRoleAndMemberid(RoleType role, UUID memberId);
 
+    void deleteByRoleAndMemberid(RoleType role, UUID memberId);
+
     @Override
     <S extends Role> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 

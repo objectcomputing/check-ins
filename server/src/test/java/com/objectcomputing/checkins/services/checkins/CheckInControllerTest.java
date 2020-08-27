@@ -1,32 +1,11 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkCreateMemberProfileDTO;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileController;
-
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileCreateDTO;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -34,201 +13,392 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
+import org.junit.jupiter.api.Test;
 
-@TestInstance(Lifecycle.PER_CLASS)
-@MicronautTest
-public class CheckInControllerTest {
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
+public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture {
 
     @Inject
-    @Client("/check-in")
+    @Client("/services/check-in")
     private HttpClient client;
 
-    @Inject
-    MemberProfileController memberProfileController;
+    @Test
+    public void testCreateACheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-    CheckInRepository mockCheckInRepository = mock(CheckInRepository.class);
-    CheckIn mockCheckIn = mock(CheckIn.class);
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
+        checkInCreateDTO.setTeamMemberId(memberProfile.getUuid());
+        checkInCreateDTO.setPdlId(memberProfileForPDL.getUuid());
+        checkInCreateDTO.setCheckInDate(LocalDate.now());
+        checkInCreateDTO.setCompleted(true);
 
-    private static UUID testId;
-    private static UUID testTeamMemberId;
-    private static UUID testPdlId;
-    private static LocalDate testDate = LocalDate.now();
-    private static String testQuarter = "Q2";
-    private static String testYear = "2020";
-    private static boolean isDataSetupForTest = false;
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<CheckIn> response = client.toBlocking().exchange(request,CheckIn.class);
 
-    @BeforeAll
-    void setupMemberProfileRecord() {
-    
-        // setup a record in Member-Profile to satisfy foreign key constraint
-        if(memberProfileController != null) {
-            MemberProfileCreateDTO testMemberProfile = mkCreateMemberProfileDTO();
+        CheckIn checkInResponse = response.body();
 
-            final HttpResponse<?> response = memberProfileController.save(testMemberProfile);
-            assertEquals(HttpStatus.CREATED, response.getStatus());
-            assertNotNull(response.body());
-            testTeamMemberId = ((MemberProfile) response.body()).getUuid();
-            testPdlId = testTeamMemberId;
-        }
-    }
-    
-    @BeforeEach
-    void setup() {
-        reset(mockCheckInRepository);
-        reset(mockCheckIn);
+        assertNotNull(checkInResponse);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkInCreateDTO.getTeamMemberId(),checkInResponse.getTeamMemberId());
+        assertEquals(checkInCreateDTO.getPdlId(),checkInResponse.getPdlId());
+        assertEquals(String.format("%s/%s", request.getPath(), checkInResponse.getId()), response.getHeaders().get("location"));
     }
 
     @Test
-    public void testFindNonExistingEndpointReturns404() {
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/99"));
-        });
+    void testCreateACheckInForSamePDLAndMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        assertNotNull(thrown.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        CheckIn existingCheckIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
+        checkInCreateDTO.setTeamMemberId(existingCheckIn.getTeamMemberId());
+        checkInCreateDTO.setPdlId(existingCheckIn.getTeamMemberId());
+        checkInCreateDTO.setCheckInDate(existingCheckIn.getCheckInDate());
+        checkInCreateDTO.setCompleted(existingCheckIn.isCompleted());
+
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Team member id %s can't be same as PDL id",checkInCreateDTO.getTeamMemberId()),error);
+
     }
 
-    // Find By TeamMemberId - when no user data exists
     @Test
-    public void testGetFindByTeamMemberIdReturnsEmptyBody() {
+    void testCreateAnInvalidCheckIn() {
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
 
-        UUID testTeamMemberId = UUID.randomUUID();
-        CheckIn checkin = new CheckIn();
-        List<CheckIn> result = new ArrayList<CheckIn>();
-        result.add(checkin);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        when(mockCheckInRepository.findByTeamMemberId(testTeamMemberId)).thenReturn(result);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
-        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
-
-        assertEquals(0, response.size());
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("checkIn.pdlId: must not be null",errorList.get(0));
+        assertEquals("checkIn.teamMemberId: must not be null",errorList.get(1));
+        assertEquals(request.getPath(),href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
-    // Find By PdlId - when no user data exists
     @Test
-    public void testGetFindByPdlIdReturnsEmptyBody() {
+    void testCreateCheckInForNonExistingMember(){
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
+        checkInCreateDTO.setTeamMemberId(UUID.randomUUID());
+        checkInCreateDTO.setPdlId(UUID.randomUUID());
+        checkInCreateDTO.setCompleted(true);
+        checkInCreateDTO.setCheckInDate(LocalDate.now());
 
-        UUID testId = UUID.randomUUID();
-        CheckIn checkin = new CheckIn();
-        List<CheckIn> result = new ArrayList<CheckIn>();
-        result.add(checkin);
+        HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        when(mockCheckInRepository.findByPdlId(testId)).thenReturn(result);
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", testId));
-        List<CheckIn> response = client.toBlocking().retrieve(request, Argument.of(List.class, mockCheckIn.getClass()));
-
-        assertEquals(0, response.size());
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Member %s doesn't exists",checkInCreateDTO.getTeamMemberId()),error);
     }
 
-    // test Find All
     @Test
-    public void testGetFindAll() {
+    void testCreateANullCheckIn() {
+        final HttpRequest<String> request = HttpRequest.POST("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        setupTestData();
+        assertEquals("Required Body [checkIn] not specified",errors.asText());
+        assertEquals(request.getPath(),href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
 
-        HttpRequest requestFindAll = HttpRequest.GET("");
-        List<CheckIn> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.of(List.class, mockCheckIn.getClass()));
-
-        assertEquals(1, responseFindAll.size());
-        assertEquals(testTeamMemberId, responseFindAll.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindAll.get(0).getPdlId());
     }
 
-    // test Find By TeamMemberId
+    @Test
+    void testCreateACheckInForInvalidDate() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
+        checkInCreateDTO.setTeamMemberId(memberProfile.getUuid());
+        checkInCreateDTO.setPdlId(memberProfileForPDL.getUuid());
+        checkInCreateDTO.setCheckInDate(LocalDate.of(1965,11,12));
+        checkInCreateDTO.setCompleted(true);
+
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Invalid date for checkin %s",checkInCreateDTO.getTeamMemberId()),error);
+
+    }
+
     @Test
     public void testGetFindByTeamMemberId() {
 
-        setupTestData();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        HttpRequest requestFindByTeamMemberId = HttpRequest.GET(String.format("/?teamMemberId=%s", testTeamMemberId));
-        List<CheckIn> responseFindByName = client.toBlocking().retrieve(requestFindByTeamMemberId, Argument.of(List.class, mockCheckIn.getClass()));
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        assertEquals(1, responseFindByName.size());
-        assertEquals(testTeamMemberId, responseFindByName.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindByName.get(0).getPdlId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+        assertEquals(Set.of(checkIn), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
     }
 
-    // test Find By PdlId
     @Test
     public void testGetFindByPdlId() {
 
-        setupTestData();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        HttpRequest requestFindByPdlId = HttpRequest.GET(String.format("/?pdlId=%s", testPdlId));
-        List<CheckIn> responseFindByPdlId = client.toBlocking().retrieve(requestFindByPdlId, Argument.of(List.class, mockCheckIn.getClass()));  
-        assertEquals(1, responseFindByPdlId.size());
-        assertEquals(testTeamMemberId, responseFindByPdlId.get(0).getTeamMemberId());
-        assertEquals(testPdlId, responseFindByPdlId.get(0).getPdlId());
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+        assertEquals(Set.of(checkIn), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
     }
 
-    // POST - Valid Body
     @Test
-    public void testPostSave() {
+    public void testGetFindByCompleted() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        final HttpResponse<CheckIn> response = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.body());
-        assertNotNull(response.body().getId());
-        assertEquals(testTeamMemberId, response.body().getTeamMemberId());
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn.isCompleted())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        assertEquals(Set.of(checkIn), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
     }
 
-    // PUT - Valid Body
     @Test
-    public void testPutUpdate() {
+    public void testGetFindById() {
 
-        setupTestData();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn testCheckInPut = new CheckIn(testTeamMemberId, testPdlId, testDate);
-        testCheckInPut.setId(testId);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpResponse<CheckIn> responseFromPut = client.toBlocking().exchange(HttpRequest.PUT("", testCheckInPut), CheckIn.class);
-        assertEquals(HttpStatus.OK, responseFromPut.getStatus());
-        assertNotNull(responseFromPut.body());
-        assertEquals(testId, responseFromPut.body().getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkIn.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+        assertEquals(Set.of(checkIn), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
 
     }
 
-    // PUT - Request with empty body
     @Test
-    public void testPutUpdateForEmptyInput() {
-        CheckIn testCheckIn = new CheckIn();
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testCheckIn));
-        });
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    void testFindCheckInAllParams(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s&pdlId=%s&completed=%s", checkIn.getTeamMemberId(),
+                checkIn.getTeamMemberId(),checkIn.isCompleted())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        assertEquals(Set.of(checkIn), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
     }
 
-    // PUT - Request with invalid body - missing ID
     @Test
-    public void testPutUpdateWithMissingField() {
+    void testCheckInDoesNotExist() {
 
-        CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s",UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testCheckin));
-        });
+        assertEquals(Set.of(), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
 
-        assertNotNull(thrown);
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    private void setupTestData() {
-        if(!isDataSetupForTest) {
-            CheckIn testCheckin = new CheckIn(testTeamMemberId, testPdlId, testDate);
-            final HttpResponse<CheckIn> responseFromPost = client.toBlocking().exchange(HttpRequest.POST("", testCheckin), CheckIn.class);
+    @Test
+    void testUpdateCheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-            assertEquals(HttpStatus.CREATED, responseFromPost.getStatus());
-            assertNotNull(responseFromPost.body());
-            testId = responseFromPost.body().getId();
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-            isDataSetupForTest = true;
-        }
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
+
+        assertEquals(checkIn, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), checkIn.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdateNonExistingCheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setId(UUID.randomUUID());
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Unable to find checkin record with id %s", checkIn.getId()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNotExistingMemberCheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setTeamMemberId(UUID.randomUUID());
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s doesn't exist", checkIn.getTeamMemberId()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNotMemberCheckInWithoutId(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setId(null);
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Unable to find checkin record with id null", checkIn.getId()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateUnAuthorized() {
+        CheckIn checkIn = new CheckIn(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),LocalDate.now(),true);
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+
+    }
+
+    @Test
+    void testUpdateInvalidCheckIn() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setTeamMemberId(null);
+        checkIn.setPdlId(null);
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
+                .stream().sorted().collect(Collectors.toList());
+        assertEquals("checkIn.pdlId: must not be null", errorList.get(0));
+        assertEquals("checkIn.teamMemberId: must not be null", errorList.get(1));
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testUpdateANullCheckIn() {
+        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
+        assertEquals("Required Body [checkIn] not specified",errors.asText());
+        assertEquals(request.getPath(),href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
+
+    @Test
+    void testUpdateInvalidDateCheckIn(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        checkIn.setCheckInDate(LocalDate.of(1965,12,11));
+
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Invalid date for checkin %s", checkIn.getTeamMemberId()), error);
+        assertEquals(request.getPath(), href);
+
     }
 
 }

@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +43,7 @@ public class MemberProfileServicesImplTest {
                 .thenReturn(List.of(profileOne, profileTwo, profileThree));
         Mockito.verifyNoMoreInteractions(mockMemberProfileRepository);
 
-        Set<MemberProfile> actual = testObject.findByValues(null, null, null, MEMBER_ROLE);
+        Set<MemberProfile> actual = testObject.findByValues(null, null, null, null);
 
         assertEquals(3, actual.size());
         assertTrue(actual.contains(profileOne));
@@ -71,8 +70,10 @@ public class MemberProfileServicesImplTest {
                 .thenReturn(List.of(profileOne, profileTwo));
         when(mockMemberProfileRepository.findByPdlId(profileOne.getPdlId()))
                 .thenReturn(List.of(profileOne, profileThree));
+        when(mockMemberProfileRepository.findByWorkEmail(profileOne.getWorkEmail()))
+                .thenReturn(java.util.Optional.of(profileOne));
 
-        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId(), MEMBER_ROLE);
+        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId(), profileOne.getWorkEmail());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(profileOne));

@@ -1,15 +1,17 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const checkinsUrl = `${BASE_API_URL}/services/check-in`;
+const checkinsNoteUrl = `${BASE_API_URL}/services/checkin-note`;
 export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in/?teamMemberId=${memberId}&pdlId=${pdlId}`,
+      url: checkinsUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        teamMemberId: memberId,
+        pdlId: pdlId,
       },
     })
   );
@@ -19,11 +21,10 @@ export const getCheckinByMemberId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in?teamMemberId=${id}`,
+      url: checkinsUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        teamMemberId: id,
       },
     })
   );
@@ -33,11 +34,10 @@ export const getCheckinByPdlId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/check-in?pdlId=${id}`,
+      url: checkinsUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        pdlId: id,
       },
     })
   );
@@ -47,11 +47,10 @@ export const getNoteByCheckinId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/checkin-note?=${id}`,
+      url: checkinsNoteUrl,
       responseType: "json",
-      auth: {
-        username: "ADMIN",
-        password: "ADMIN",
+      params: {
+        checkinid: id,
       },
     })
   );
@@ -64,11 +63,12 @@ export const updateCheckinNote = ({
   description,
 }) => {
   return resolve(
-    axios.put(
-      `${BASE_API_URL}/services/checkin-note`,
-      { id, checkinid, createdbyid, description },
-      { auth: { username: "ADMIN", password: "ADMIN" } }
-    )
+    axios({
+      method: "put",
+      url: checkinsNoteUrl,
+      responseType: "json",
+      data: { id, checkinid, createdbyid, description },
+    })
   );
 };
 

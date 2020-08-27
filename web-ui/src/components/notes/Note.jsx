@@ -52,7 +52,7 @@ const Notes = (props) => {
       }
     }
     updateNotes();
-  }, [debouncedDescription, note.id]);
+  }, [debouncedDescription, note, note.id]);
 
   const handleNoteChange = (e) => {
     setNote({ ...note, description: e.target.value });

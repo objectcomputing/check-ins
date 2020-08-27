@@ -122,6 +122,7 @@ function Menu() {
           Check-ins
         </Link>
       </Button>
+      <br />
       {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">
@@ -181,14 +182,6 @@ function Menu() {
                     <MenuItem onClick={() => window.location.reload()}>
                       <Link style={{ textDecoration: "none" }} to={`/logout`}>
                         Logout
-                      </Link>
-                    </MenuItem>
-                    <MenuItem onClick={() => window.location.reload()}>
-                      <Link
-                        style={{ textDecoration: "none" }}
-                        to={`/oauth/login/google`}
-                      >
-                        Login
                       </Link>
                     </MenuItem>
                   </MenuList>

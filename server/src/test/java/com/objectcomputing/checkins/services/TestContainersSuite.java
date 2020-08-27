@@ -24,6 +24,16 @@ public abstract class TestContainersSuite implements RepositoryFixture {
     @Inject
     private Flyway flyway;
 
+    private final boolean shouldResetDBAfterEachTest;
+
+    public TestContainersSuite() {
+        this(true);
+    }
+
+    public TestContainersSuite(boolean shouldResetDBAfterEachTest) {
+        this.shouldResetDBAfterEachTest = shouldResetDBAfterEachTest;
+    }
+
     @BeforeEach
     private void setup() {
         flyway.migrate();
@@ -31,7 +41,9 @@ public abstract class TestContainersSuite implements RepositoryFixture {
 
     @AfterEach
     private void teardown() {
-        flyway.clean();
+        if(shouldResetDBAfterEachTest) {
+            flyway.clean();
+        }
     }
 
     @Override
