@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -29,9 +30,6 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Inject
     @Client("/services/skill")
     private HttpClient client;
-
-    @Inject
-    private SkillServices skillServices;
 
     private String encodeValue(String value) {
         try {
@@ -106,6 +104,20 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 
         assertEquals(skill, response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
+
+    }
+
+    @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
 
     }
 
