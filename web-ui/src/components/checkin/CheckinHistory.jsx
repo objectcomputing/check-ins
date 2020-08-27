@@ -16,10 +16,8 @@ const CheckinsHistory = ({ setIndex }) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { workEmail, role, uuid, pdlId } =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile
-      : undefined;
-  const { image_url, name } = userProfile;
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+  const { imageUrl, name } = userProfile ? userProfile : {};
   const [checkins, setCheckins] = useState([]);
   const [checkinIndex, setCheckinIndex] = useState(0);
   const [pdl, setPDL] = useState();
@@ -57,7 +55,7 @@ const CheckinsHistory = ({ setIndex }) => {
   let checkinDate =
     checkins.length > 0
       ? new Date(checkins[checkinIndex].checkInDate)
-      : undefined;
+      : new Date();
   const lastIndex = checkins.length - 1;
   const leftArrowClass =
     "arrow " + (checkinIndex < lastIndex ? "enabled" : "disabled");
@@ -88,7 +86,7 @@ const CheckinsHistory = ({ setIndex }) => {
     <div>
       <div className="profile-section">
         <Avatar
-          src={image_url ? image_url : "/default_profile.jpg"}
+          src={imageUrl ? imageUrl : "/default_profile.jpg"}
           style={{ height: "220px", width: "200px" }}
         />
         <div className="info">

@@ -1,7 +1,7 @@
 micronaut:
   application:
     name: check-ins
-
+  server:
     cors:
       enabled: true
     max-request-size: 100MB

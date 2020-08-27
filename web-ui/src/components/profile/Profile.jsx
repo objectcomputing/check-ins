@@ -18,13 +18,11 @@ import "./Profile.css";
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { imageUrl } = userProfile;
+  const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
   const { bioText, workEmail, name, role, uuid, pdlId } =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile
-      : undefined;
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();
@@ -111,14 +109,14 @@ const Profile = () => {
     }
 
     let mySkillsTemp = { ...mySkills };
-    if (curSkill && curSkill.skillid && uuid) {
+    if (curSkill && curSkill.id && uuid) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
         )
       ) {
         let res = await createMemberSkill({
-          skillid: curSkill.skillid,
+          skillid: curSkill.id,
           memberid: uuid,
         });
         let data =

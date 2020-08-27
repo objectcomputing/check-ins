@@ -1,9 +1,14 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,125 +16,115 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/skill")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name="skill")
+@Tag(name = "skill")
 public class SkillController {
 
     @Inject
     private SkillServices skillServices;
 
-    public void setSkillServices(SkillServices skillServices) {
-        this.skillServices = skillServices;
+    @Error(exception = SkillBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = SkillAlreadyExistsException.class)
+    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, SkillAlreadyExistsException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
     }
 
     /**
      * Create and save a new skill.
      *
-     * @param skill
-     * @return
+     * @param skill, {@link SkillCreateDTO}
+     * @return {@link HttpResponse< Skill >}
      */
 
     @Post(value = "/")
-    public HttpResponse<Skill> createASkill(@Body @Valid Skill skill) {
-        Skill newSkill = skillServices.saveSkill(skill);
+    public HttpResponse<Skill> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
+        Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending()));
 
-        if (newSkill == null) {
-            return HttpResponse.status(HttpStatus.valueOf(409), "already exists");
-        } else {
-            return HttpResponse
-                    .created(newSkill)
-                    .headers(headers -> headers.location(location(newSkill.getSkillid())));
-        }
-    }
+        return HttpResponse
+                .created(newSkill)
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), newSkill.getId()))));
 
-    /**
-     * Load the current skills into checkinsdb.
-     *
-     * @param skillslist
-     * @return
-     */
-
-    @Post("/loadskills")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void loadSkills(@Body Skill[] skillslist) {
-
-        skillServices.loadSkills(skillslist);
-
-    }
-
-    /**
-     * Get all Skills
-     *
-     * @return {@link Set < Skill >}
-     */
-    @Get("/all")
-    public Set<Skill> readAll() {
-        return skillServices.readAll();
     }
 
     /**
      * Find and read a skill given its id.
      *
-     * @param skillid
+     * @param id {@link UUID} of the skill entry
      * @return
      */
 
-    @Get("/{skillid}")
-    public Skill getById(UUID skillid) {
-        Skill found = skillServices.readSkill(skillid);
-        return found;
+    @Get("/{id}")
+    public Skill getById(@NotNull UUID id) {
+
+        return skillServices.readSkill(id);
 
     }
 
     /**
-     * Find and read a skill or skills given its id, name, or pending status.
+     * Find and read a skill or skills given its name, or pending status, if both are blank get all skills.
      *
-     * @param name
-     * @param pending
-     * @return
+     * @param name,    name of the skill
+     * @param pending, whether or not the skill has been officially accepted
+     * @return {@link List < Skill > list of Skills}
      */
 
     @Get("/{?name,pending}")
-    public List<Skill> findByValue(@Nullable String name, @Nullable Boolean pending) {
+    public Set<Skill> findByValue(@Nullable String name,
+                                  @Nullable Boolean pending) {
 
-        List<Skill> found = skillServices.findByValue(name, pending);
-        return found;
+        return skillServices.findByValue(name, pending);
 
     }
 
     /**
      * Update the pending status of a skill.
-     * @param skill
-     * @return
+     *
+     * @param skill, {@link Skill}
+     * @return {@link HttpResponse< Skill >}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid Skill skill) {
-        
-        if (skill.getSkillid() != null) {
-            Skill updatedSkill = skillServices.update(skill);
-            if (updatedSkill != null) {
-                HttpResponse response = HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(location(updatedSkill.getSkillid())))
-                        .body(updatedSkill);
-                return response;
-            } else {
-                return HttpResponse.badRequest();
-            }
-        }
-            return HttpResponse.badRequest();
+    public HttpResponse<?> update(@Body @Valid Skill skill, HttpRequest<Skill> request) {
+
+        Skill updatedSkill = skillServices.update(skill);
+        return HttpResponse
+                .ok()
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), skill.getId()))))
+                .body(updatedSkill);
+
     }
 
-        protected URI location (UUID uuid){
-            return URI.create("/skill/" + uuid);
-        }
+    /**
+     * Delete A skill
+     *
+     * @param id, id of {@link Skill} to delete
+     */
+    @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public HttpResponse<?> deleteSkill(@NotNull UUID id) {
+        skillServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 
 }

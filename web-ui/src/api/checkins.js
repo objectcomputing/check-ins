@@ -39,6 +39,7 @@ export const getCheckinByPdlId = async (id) => {
       params: {
         pdlId: id,
       },
+      withCredentials: true,
     })
   );
 };

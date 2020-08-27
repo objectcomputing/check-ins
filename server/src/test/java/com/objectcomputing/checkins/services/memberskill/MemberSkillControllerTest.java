@@ -31,6 +31,7 @@ public class MemberSkillControllerTest {
     @Inject
     @Client("/services/member-skill")
     HttpClient client;
+
     @Inject
     private MemberSkillServices memberSkillServices;
 
