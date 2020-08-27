@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.checkinnotes.CheckinNote;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
