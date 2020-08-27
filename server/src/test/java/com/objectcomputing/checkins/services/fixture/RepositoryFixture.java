@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkinnotes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -24,4 +25,9 @@ public interface RepositoryFixture {
     default CheckinNoteRepository getCheckInNoteRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(CheckinNoteRepository.class);
     }
+
+    default CheckinDocumentRepository getCheckInDocumentRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(CheckinDocumentRepository.class);
+    }
+
 }
