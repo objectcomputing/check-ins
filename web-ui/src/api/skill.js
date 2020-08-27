@@ -8,7 +8,7 @@ export const getSkills = async () => {
       method: "get",
       url: skillUrl,
       responseType: "json",
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
@@ -19,7 +19,7 @@ export const getSkill = async (id) => {
       method: "get",
       url: `${skillUrl}/${id}`,
       responseType: "json",
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
@@ -31,7 +31,7 @@ export const createSkill = async (skill) => {
       url: skillUrl,
       responseType: "json",
       data: skill,
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };

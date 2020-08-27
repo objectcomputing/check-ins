@@ -35,7 +35,6 @@ const CheckinsPage = () => {
         <Note
           checkin={checkin}
           memberName={userProfile.name}
-          // TODO: get name of checkin member
         />
       )}
       <CheckinDocs />

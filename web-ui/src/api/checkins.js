@@ -13,6 +13,7 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
         teamMemberId: memberId,
         pdlId: pdlId,
       },
+      withCredentials: true
     })
   );
 };
@@ -26,6 +27,7 @@ export const getCheckinByMemberId = async (id) => {
       params: {
         teamMemberId: id,
       },
+      withCredentials: true
     })
   );
 };
@@ -39,7 +41,7 @@ export const getCheckinByPdlId = async (id) => {
       params: {
         pdlId: id,
       },
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
@@ -53,6 +55,7 @@ export const getNoteByCheckinId = async (id) => {
       params: {
         checkinid: id,
       },
+      withCredentials: true
     })
   );
 };
@@ -69,6 +72,7 @@ export const updateCheckinNote = ({
       url: checkinsNoteUrl,
       responseType: "json",
       data: { id, checkinid, createdbyid, description },
+      withCredentials: true
     })
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
 import useDebounce from "../../hooks/useDebounce";
 import NotesIcon from "@material-ui/icons/Notes";
@@ -9,14 +9,25 @@ import "./Note.css";
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
-  const { userData } = state;
+  const { userProfile } = state;
   const canViewPrivateNote =
-    userData.role === "PDL" || userData.role === "ADMIN";
+    userProfile.role === "PDL" || userProfile.role === "ADMIN";
   const { checkin, memberName } = props;
   const { id } = checkin;
   const [note, setNote] = useState({});
   // TODO: get private note and determine if user is PDL
   const [privateNote, setPrivateNote] = useState("Private note");
+
+  const canvasRef = useRef();
+
+  // to draw empty sections when loading
+  useEffect(() => {
+    const context = canvasRef.current.getContext("2d");
+    context.fillStyle = "lightgrey";
+    for (let i = 1; i < 5; i++) {
+      context.fillRect(5, 15 * i, 500, 10);
+    }
+  }, []);
 
   useEffect(() => {
     async function getNotes() {
@@ -31,6 +42,11 @@ const Notes = (props) => {
             : null;
         if (data) {
           setNote(data[0]);
+          const canvas = canvasRef.current;
+          if (canvas) {
+            // to remove canvas if there is data
+            canvas.parentElement.removeChild(canvas);
+          }
         }
       }
     }
@@ -74,6 +90,7 @@ const Notes = (props) => {
             onChange={handleNoteChange}
             value={note.description}
           ></textarea>
+          <canvas ref={canvasRef}></canvas>
         </div>
       </div>
       {canViewPrivateNote && (

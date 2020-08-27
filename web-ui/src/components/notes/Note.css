@@ -10,6 +10,14 @@
 .container {
   display: flex;
   justify-content: center;
+  position: relative;
+}
+
+.container > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 98%;
 }
 
 .container textarea {

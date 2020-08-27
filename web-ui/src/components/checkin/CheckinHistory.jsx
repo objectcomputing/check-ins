@@ -65,7 +65,7 @@ const CheckinsHistory = ({ setIndex }) => {
   const previousCheckin = () => {
     setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
     setIndex(checkinIndex);
-  // TODO: change checkin on click 
+    // TODO: change checkin on click
   };
 
   const nextCheckin = () => {

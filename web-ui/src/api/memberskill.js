@@ -11,7 +11,7 @@ export const getMemberSkills = async (id) => {
       params: {
         memberid: id,
       },
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
@@ -22,7 +22,7 @@ export const deleteMemberSkill = async (id) => {
       method: "DELETE",
       url: `${memberSkillUrl}/${id}`,
       responseType: "json",
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
@@ -34,7 +34,7 @@ export const createMemberSkill = async (memberskill) => {
       url: memberSkillUrl,
       responseType: "json",
       data: memberskill,
-      withCredentials: true,
+      withCredentials: true
     })
   );
 };
