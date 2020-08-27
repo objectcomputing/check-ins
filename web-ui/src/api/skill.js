@@ -1,11 +1,12 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const skillUrl = `${BASE_API_URL}/services/skill`;
 export const getSkills = async () => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/skill/all`,
+      url: `${skillUrl}/all`,
       responseType: "json",
     })
   );
@@ -15,7 +16,7 @@ export const getSkill = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/skill/${id}`,
+      url: `${skillUrl}/${id}`,
       responseType: "json",
     })
   );
@@ -25,7 +26,7 @@ export const createSkill = async (skill) => {
   return await resolve(
     axios({
       method: "post",
-      url: `${BASE_API_URL}/services/skill`,
+      url: skillUrl,
       responseType: "json",
       data: skill,
     })

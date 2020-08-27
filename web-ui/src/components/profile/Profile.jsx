@@ -11,35 +11,26 @@ import {
   createMemberSkill,
   deleteMemberSkill,
 } from "../../api/memberskill.js";
-import { getMember } from "../../api/member.js";
+import { getMember } from "../../api/member";
 
 import "./Profile.css";
 
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile, userData } = state;
+  const { userProfile } = state;
+  const { imageUrl } = userProfile;
+
   const [mySkills, setMySkills] = useState([]);
-  const { bioText, workEmail, name, role, id } = userProfile;
-  const { image_url } = userData;
+  const { bioText, workEmail, name, role, uuid, pdlId } =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile
+      : undefined;
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
-
-  // Get PDL's name
-  React.useEffect(() => {
-    async function getPDLName() {
-      if (userProfile.pdlId) {
-        let res = await getMember(userProfile.pdlId);
-        let pdlProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
-      }
-    }
-    getPDLName();
-  }, [userProfile]);
 
   // Get skills list
   React.useEffect(() => {
@@ -57,11 +48,24 @@ const Profile = () => {
     updateBio();
   }, [bioText]);
 
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      if (pdlId) {
+        let res = await getMember(pdlId);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
+    }
+    getPDLName();
+  }, [pdlId]);
+
   React.useEffect(() => {
     async function updateMySkills() {
       let updatedMySkills = {};
-      if (id) {
-        let res = await getMemberSkills(id);
+      if (uuid) {
+        let res = await getMemberSkills(uuid);
 
         let data =
           res.payload && res.payload.status === 200 ? res.payload.data : null;
@@ -89,7 +93,7 @@ const Profile = () => {
       setMySkills(updatedMySkills);
     }
     updateMySkills();
-  }, [id]);
+  }, [uuid]);
 
   const addSkill = async (name) => {
     const inSkillsList = skillsList.find(
@@ -107,7 +111,7 @@ const Profile = () => {
     }
 
     let mySkillsTemp = { ...mySkills };
-    if (curSkill && curSkill.skillid && id) {
+    if (curSkill && curSkill.skillid && uuid) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
@@ -115,7 +119,7 @@ const Profile = () => {
       ) {
         let res = await createMemberSkill({
           skillid: curSkill.skillid,
-          memberid: id,
+          memberid: uuid,
         });
         let data =
           res && res.payload && res.payload.status === 201
@@ -150,7 +154,7 @@ const Profile = () => {
         <div className="profile-image">
           <Avatar
             alt="Profile"
-            src={image_url ? image_url : "/default_profile.jpg"}
+            src={imageUrl ? imageUrl : "/default_profile.jpg"}
             style={{ width: "200px", height: "220px" }}
           />
         </div>
