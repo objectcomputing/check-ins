@@ -32,6 +32,19 @@ const Profile = () => {
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
 
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      if (userProfile.pdlId) {
+        let res = await getMember(userProfile.pdlId);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
+    }
+    getPDLName();
+  }, [userProfile]);
+
   // Get skills list
   React.useEffect(() => {
     async function updateSkillsList() {
@@ -111,14 +124,14 @@ const Profile = () => {
     }
 
     let mySkillsTemp = { ...mySkills };
-    if (curSkill && curSkill.skillid && uuid) {
+    if (curSkill && curSkill.id && uuid) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
         )
       ) {
         let res = await createMemberSkill({
-          skillid: curSkill.skillid,
+          skillid: curSkill.id,
           memberid: uuid,
         });
         let data =
