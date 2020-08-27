@@ -109,14 +109,14 @@ const Profile = () => {
     }
 
     let mySkillsTemp = { ...mySkills };
-    if (curSkill && curSkill.skillid && uuid) {
+    if (curSkill && curSkill.id && uuid) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
         )
       ) {
         let res = await createMemberSkill({
-          skillid: curSkill.skillid,
+          skillid: curSkill.id,
           memberid: uuid,
         });
         let data =

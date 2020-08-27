@@ -6,7 +6,7 @@ export const getSkills = async () => {
   return await resolve(
     axios({
       method: "get",
-      url: `${skillUrl}/all`,
+      url: skillUrl,
       responseType: "json",
       withCredentials: true,
     })
