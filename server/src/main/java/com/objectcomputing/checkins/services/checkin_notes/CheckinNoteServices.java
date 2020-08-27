@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.checkinnotes;
+package com.objectcomputing.checkins.services.checkin_notes;
 
 import java.util.Set;
 import java.util.UUID;
@@ -12,6 +12,4 @@ public interface CheckinNoteServices {
     CheckinNote update(CheckinNote checkinNote);
 
     Set<CheckinNote> findByFields(UUID checkinid, UUID createdbyid);
-
-    void delete(UUID id);
 }
