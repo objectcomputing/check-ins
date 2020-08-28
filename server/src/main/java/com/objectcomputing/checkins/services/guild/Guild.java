@@ -17,11 +17,11 @@ import java.util.UUID;
 @Table(name = "guilds")
 public class Guild {
     @Id
-    @Column(name = "guildid")
+    @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the id of the guild", required = true)
-    private UUID guildid;
+    private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
@@ -37,18 +37,18 @@ public class Guild {
         this(null, name, description);
     }
 
-    public Guild(UUID guildid, String name, String description) {
-        this.guildid = guildid;
+    public Guild(UUID id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public UUID getGuildid() {
-        return guildid;
+    public UUID getId() {
+        return id;
     }
 
-    public void setGuildid(UUID guildid) {
-        this.guildid = guildid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -72,20 +72,20 @@ public class Guild {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Guild guild = (Guild) o;
-        return Objects.equals(guildid, guild.guildid) &&
+        return Objects.equals(id, guild.id) &&
                 Objects.equals(name, guild.name) &&
                 Objects.equals(description, guild.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(guildid, name, description);
+        return Objects.hash(id, name, description);
     }
 
     @Override
     public String toString() {
         return "Guild{" +
-                "guildid=" + guildid +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description +
                 '}';

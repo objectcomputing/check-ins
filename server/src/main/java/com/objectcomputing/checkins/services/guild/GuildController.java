@@ -51,7 +51,7 @@ public class GuildController {
         Guild newGuild = guildService.save(new Guild(guild.getName(), guild.getDescription()));
         return HttpResponse
                 .created(newGuild)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newGuild.getGuildid()))));
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newGuild.getId()))));
     }
 
     /**
@@ -85,13 +85,13 @@ public class GuildController {
     /**
      * Get guild based on id
      *
-     * @param guildid {@link UUID} of guild
+     * @param id {@link UUID} of guild
      * @return {@link Guild guild matching id}
      */
 
-    @Get("/{guildid}")
-    public Guild readGuild(UUID guildid) {
-        return guildService.read(guildid);
+    @Get("/{id}")
+    public Guild readGuild(UUID id) {
+        return guildService.read(id);
     }
 
     /**
@@ -119,7 +119,7 @@ public class GuildController {
         Guild updatedGuild = guildService.update(guild);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getGuildid()))))
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getId()))))
                 .body(updatedGuild);
 
     }

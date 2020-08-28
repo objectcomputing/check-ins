@@ -40,7 +40,7 @@ public class TeamController {
     }
 
     /**
-     * Create and save a new team.
+     * Create and save a new team
      *
      * @param team, {@link TeamCreateDTO}
      * @return {@link HttpResponse<Team>}
@@ -51,13 +51,14 @@ public class TeamController {
         Team newTeam = teamService.save(new Team(team.getName(), team.getDescription()));
         return HttpResponse
                 .created(newTeam)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newTeam.getUuid()))));
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newTeam.getId()))));
     }
 
     /**
-     * Load the current teams into checkinsdb.
+     * Create and save multiple teams
      *
      * @param teamsList, array of {@link TeamCreateDTO team create dto} to load {@link Team team(s)}
+     * @return
      */
 
     @Post("/teams")
@@ -85,13 +86,13 @@ public class TeamController {
     /**
      * Get team based on id
      *
-     * @param uuid {@link UUID} of team
+     * @param id of team
      * @return {@link Team team matching id}
      */
 
-    @Get("/{uuid}")
-    public Team readTeam(UUID uuid) {
-        return teamService.read(uuid);
+    @Get("/{id}")
+    public Team readTeam(UUID id) {
+        return teamService.read(id);
     }
 
     /**
@@ -119,7 +120,7 @@ public class TeamController {
         Team updatedTeam = teamService.update(team);
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getUuid()))))
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
                 .body(updatedTeam);
 
     }
