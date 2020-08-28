@@ -60,6 +60,24 @@ export const getNoteByCheckinId = async (id) => {
   );
 };
 
+export const updateCheckin = ({
+  completed,
+  id,
+  teamMemberId,
+  pdlId,
+  checkInDate
+}) => {
+  return resolve(
+    axios({
+      method: "put",
+      url: checkinsUrl,
+      responseType: "json",
+      data: { completed,id, teamMemberId, pdlId, checkInDate },
+      withCredentials: true
+    })
+  );
+};
+
 export const updateCheckinNote = ({
   id,
   checkinid,

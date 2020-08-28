@@ -36,6 +36,7 @@ const Notes = (props) => {
         let data =
           res.payload &&
           res.payload.data &&
+          res.payload.data.length > 0 &&
           res.payload.status === 200 &&
           !res.error
             ? res.payload.data

@@ -1,6 +1,4 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { getCheckinByPdlId } from "../../api/checkins";
+import React, { useEffect, useState } from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -9,21 +7,21 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import { getMember } from "../../api/member";
+import { updateCheckin } from "../../api/checkins";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ setIndex }) => {
-  const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { workEmail, role, uuid, pdlId } =
+const CheckinsHistory = ({ checkins, index, setIndex, userProfile }) => {
+  const { workEmail, role, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const { imageUrl, name } = userProfile ? userProfile : {};
-  const [checkins, setCheckins] = useState([]);
-  const [checkinIndex, setCheckinIndex] = useState(0);
+  const [checkinIndex, setCheckinIndex] = useState(index);
   const [pdl, setPDL] = useState();
+  console.log("current checkin", checkins[checkinIndex]);
+  console.log("checkin history index:", index);
 
   // Get PDL's name
-  React.useEffect(() => {
+  useEffect(() => {
     async function getPDLName() {
       if (pdlId) {
         let res = await getMember(pdlId);
@@ -34,23 +32,6 @@ const CheckinsHistory = ({ setIndex }) => {
     }
     getPDLName();
   }, [pdlId]);
-
-  // Get checkins
-  React.useEffect(() => {
-    async function updateCheckins() {
-      if (uuid) {
-        let res = await getCheckinByPdlId(uuid);
-        let data =
-          res && res.payload && res.payload.status === 200
-            ? res.payload.data
-            : null;
-        let checkinList = data && !res.error ? data : [];
-        checkinList.sort((a, b) => (a.checkInDate > b.checkInDate ? -1 : 1));
-        setCheckins(checkinList);
-      }
-    }
-    updateCheckins();
-  }, [uuid]);
 
   let checkinDate =
     checkins.length > 0
@@ -73,7 +54,10 @@ const CheckinsHistory = ({ setIndex }) => {
     setIndex(checkinIndex);
   };
 
-  const pickDate = (date) => {};
+  const pickDate = (date) => {
+    console.log({ date });
+    // update checkin with new date
+  };
 
   const DateInput = ({ value, onClick }) => (
     <div className="date-input">

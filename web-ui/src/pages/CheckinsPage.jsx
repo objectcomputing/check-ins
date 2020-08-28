@@ -15,6 +15,8 @@ const CheckinsPage = () => {
   const { checkins, userProfile } = state;
   const [index, setIndex] = useState(0);
   const checkin = checkins[index];
+  console.log("checkin page index: ", index);
+  console.log("checkin: ", checkin);
 
   const showModal = () => {
     setShow(!show);
@@ -24,7 +26,12 @@ const CheckinsPage = () => {
     <div>
       <div className="container">
         <div className="contents">
-          <CheckinsHistory setIndex={setIndex} />
+          <CheckinsHistory
+            checkins={checkins}
+            index={index}
+            setIndex={setIndex}
+            userProfile={userProfile}
+          />
         </div>
         <div className="right-sidebar">
           <Personnel />
@@ -32,10 +39,7 @@ const CheckinsPage = () => {
         </div>
       </div>
       {checkin && checkin.id && (
-        <Note
-          checkin={checkin}
-          memberName={userProfile.name}
-        />
+        <Note checkin={checkin} memberName={userProfile.name} />
       )}
       <CheckinDocs />
       <div className="modal-container">
