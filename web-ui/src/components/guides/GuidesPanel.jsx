@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { /*useContext*/ } from "react";
+//import { AppContext } from "../../context/AppContext";
 import "./GuidesPanel.css";
 import GuideLink from "./GuideLink"
 
 const GuidesPanel = () => {
-    const { state } = useContext(AppContext);
+    //const { state } = useContext(AppContext);
     const isPdl = true;//state.user.role === "pdl";
 
     const teamMemberPDFs = [

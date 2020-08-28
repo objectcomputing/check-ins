@@ -1,7 +1,29 @@
-.guide-container {
-    width: fit-content;
-    height: fit-content;
-    border: solid 3px black;
-    margin-top: 1rem;
-  }
-  
+.action-items-container {
+  width: fit-content;
+  height: fit-content;
+  border: solid 3px black;
+}
+
+.action-items-info, .action-items-info-hidden {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.action-items-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.image-div {
+  cursor: auto;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.info-div {
+  display: block;
+}
