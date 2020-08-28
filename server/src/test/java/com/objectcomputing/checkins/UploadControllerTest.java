@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Optional;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 @MicronautTest
 class UploadControllerTest {
 
-    private static final String FILE_TO_UPLOAD = "micronaut.png";
+    private static final String FILE_TO_UPLOAD = "application-test.yml";
 
     @Inject
     @Client("/upload")
@@ -89,7 +90,10 @@ class UploadControllerTest {
     void testDriveCantConnect() throws URISyntaxException, IOException {
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
-        final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
+        final URL resourceUrl = resourceLoader.getResource(FILE_TO_UPLOAD).orElse(null);
+        assertNotNull(resourceUrl);
+        final java.io.File file = new java.io.File(resourceUrl.toURI());
+
         final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build()).basicAuth(MEMBER_ROLE, MEMBER_ROLE)
                 .contentType(MediaType.MULTIPART_FORM_DATA);
         final Flowable<?> flowable = client.retrieve(req);
@@ -114,10 +118,11 @@ class UploadControllerTest {
 
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
 
-        URL fileToUpload = resourceLoader.getResource(FILE_TO_UPLOAD).orElse(null);
-        assertNotNull(fileToUpload);
 
-        final java.io.File file = new java.io.File(fileToUpload.toURI());
+        final URL resourceUrl = resourceLoader.getResource(FILE_TO_UPLOAD).orElse(null);
+        assertNotNull(resourceUrl);
+        final java.io.File file = new java.io.File(resourceUrl.toURI());
+
         final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build()).basicAuth(MEMBER_ROLE, MEMBER_ROLE)
                 .contentType(MediaType.MULTIPART_FORM_DATA);
         final Flowable<?> flowable = client.exchange(req);
