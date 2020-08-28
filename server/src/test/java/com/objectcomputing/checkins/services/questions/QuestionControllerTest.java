@@ -95,7 +95,7 @@ public class QuestionControllerTest {
 
         JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
 
-        assertEquals("question.questionId: must not be null", responseBody.getMessage());
+        assertEquals("question.id: must not be null", responseBody.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
