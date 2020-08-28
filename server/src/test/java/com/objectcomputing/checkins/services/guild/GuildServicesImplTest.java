@@ -48,8 +48,8 @@ class GuildServicesImplTest {
     @Test
     void testRead() {
         Guild guild = new Guild(UUID.randomUUID(), "Hello", "World");
-        when(guildRepository.findById(guild.getGuildid())).thenReturn(Optional.of(guild));
-        assertEquals(guild, services.read(guild.getGuildid()));
+        when(guildRepository.findById(guild.getId())).thenReturn(Optional.of(guild));
+        assertEquals(guild, services.read(guild.getId()));
         verify(guildRepository, times(1)).findById(any(UUID.class));
     }
 
@@ -73,7 +73,7 @@ class GuildServicesImplTest {
     void testSaveWithId() {
         Guild guild = new Guild(UUID.randomUUID(), "Wayne's", "World");
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.save(guild));
-        assertTrue(exception.getMessage().contains(String.format("unexpected guildid %s", guild.getGuildid())));
+        assertTrue(exception.getMessage().contains(String.format("unexpected id %s", guild.getId())));
         verify(guildRepository, never()).findByName(any(String.class));
         verify(guildRepository, never()).save(any(Guild.class));
     }
@@ -98,7 +98,7 @@ class GuildServicesImplTest {
     @Test
     void testUpdate() {
         Guild guild = new Guild(UUID.randomUUID(), "Dog eat dog", "World");
-        when(guildRepository.findById(eq(guild.getGuildid()))).thenReturn(Optional.of(guild));
+        when(guildRepository.findById(eq(guild.getId()))).thenReturn(Optional.of(guild));
         when(guildRepository.update(eq(guild))).thenReturn(guild);
         assertEquals(guild, services.update(guild));
         verify(guildRepository, times(1)).findById(any(UUID.class));
@@ -109,7 +109,7 @@ class GuildServicesImplTest {
     void testUpdateWithoutId() {
         Guild guild = new Guild("Bobby's", "World");
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.update(guild));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", guild.getGuildid())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", guild.getId())));
         verify(guildRepository, never()).findById(any(UUID.class));
         verify(guildRepository, never()).update(any(Guild.class));
     }
@@ -117,9 +117,9 @@ class GuildServicesImplTest {
     @Test
     void testUpdateGuildDoesNotExist() {
         Guild guild = new Guild(UUID.randomUUID(), "Wayne's", "World 2");
-        when(guildRepository.findById(eq(guild.getGuildid()))).thenReturn(Optional.empty());
+        when(guildRepository.findById(eq(guild.getId()))).thenReturn(Optional.empty());
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.update(guild));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", guild.getGuildid())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", guild.getId())));
         verify(guildRepository, times(1)).findById(any(UUID.class));
         verify(guildRepository, never()).update(any(Guild.class));
     }
@@ -174,9 +174,9 @@ class GuildServicesImplTest {
         final UUID memberId = UUID.randomUUID();
         List<Guild> guildToFind = List.of(guild.get(0));
         when(guildRepository.findAll()).thenReturn(guild);
-        when(guildRepository.findById(eq(guildToFind.get(0).getGuildid()))).thenReturn(Optional.of(guildToFind.get(0)));
+        when(guildRepository.findById(eq(guildToFind.get(0).getId()))).thenReturn(Optional.of(guildToFind.get(0)));
         when(guildMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getGuildid(), memberId, true)));
+                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getId(), memberId, true)));
         assertEquals(new HashSet<>(guildToFind), services.findByFields(null, memberId));
         verify(guildRepository, times(1)).findAll();
         verify(guildRepository, times(1)).findById(any(UUID.class));
@@ -196,9 +196,9 @@ class GuildServicesImplTest {
         List<Guild> guildToFind = List.of(guild.get(0));
         when(guildRepository.findAll()).thenReturn(guild);
         when(guildRepository.findByNameIlike(eq(nameSearch))).thenReturn(guildToFind);
-        when(guildRepository.findById(eq(guildToFind.get(0).getGuildid()))).thenReturn(Optional.of(guildToFind.get(0)));
+        when(guildRepository.findById(eq(guildToFind.get(0).getId()))).thenReturn(Optional.of(guildToFind.get(0)));
         when(guildMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getGuildid(), memberId, true)));
+                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getId(), memberId, true)));
         assertEquals(new HashSet<>(guildToFind), services.findByFields(nameSearch, memberId));
         verify(guildRepository, times(1)).findAll();
         verify(guildRepository, times(1)).findById(any(UUID.class));
