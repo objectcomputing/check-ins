@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Optional;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -117,7 +116,6 @@ class UploadControllerTest {
         when(create.execute()).thenReturn(null);
 
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
-
 
         final URL resourceUrl = resourceLoader.getResource(FILE_TO_UPLOAD).orElse(null);
         assertNotNull(resourceUrl);
