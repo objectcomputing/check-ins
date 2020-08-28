@@ -78,7 +78,9 @@ const AppContextProvider = (props) => {
     return { state, dispatch };
   }, [state]);
   return (
-    <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
+    <AppContext.Provider value={props.value || value}>
+      {props.children}
+    </AppContext.Provider>
   );
 };
 

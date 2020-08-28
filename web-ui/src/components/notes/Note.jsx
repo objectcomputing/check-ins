@@ -11,7 +11,7 @@ const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const canViewPrivateNote =
-    userProfile.role === "PDL" || userProfile.role === "ADMIN";
+    userProfile.role.includes("PDL") || userProfile.role.includes("ADMIN");
   const { checkin, memberName } = props;
   const { id } = checkin;
   const [note, setNote] = useState({});
