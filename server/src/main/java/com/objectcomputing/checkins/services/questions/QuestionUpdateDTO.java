@@ -11,7 +11,7 @@ import java.util.UUID;
 public class QuestionUpdateDTO {
     @Schema(description = "id of the question this entry is associated with")
     @NotNull
-    private UUID questionId;
+    private UUID id;
 
     @NotBlank
     @Schema(description = "text of the question being asked", required = true)
@@ -25,11 +25,11 @@ public class QuestionUpdateDTO {
         this.text = text;
     }
 
-    public UUID getQuestionId() {
-        return questionId;
+    public UUID getId() {
+        return id;
     }
 
-    public void setQuestionId(UUID questionId) {
-        this.questionId = questionId;
+    public void setId(UUID id) {
+        this.id = id;
     }
 }
