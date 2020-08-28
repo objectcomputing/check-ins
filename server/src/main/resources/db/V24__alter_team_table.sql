@@ -1,0 +1,2 @@
+ALTER TABLE team
+RENAME COLUMN uuid TO id;

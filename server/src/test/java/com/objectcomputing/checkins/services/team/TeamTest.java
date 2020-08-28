@@ -36,7 +36,7 @@ class TeamTest {
         final String name = "name";
         final String description = "description";
         Team team = new Team(uuid, name, description);
-        assertEquals(team.getUuid(), uuid);
+        assertEquals(team.getId(), uuid);
         assertEquals(team.getName(), name);
         assertEquals(team.getDescription(), description);
 
@@ -72,7 +72,7 @@ class TeamTest {
 
         assertEquals(tm, tm2);
 
-        tm2.setUuid(null);
+        tm2.setId(null);
 
         assertNotEquals(tm, tm2);
     }
