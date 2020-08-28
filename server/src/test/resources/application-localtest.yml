@@ -1,3 +1,7 @@
+micronaut:
+  security:
+    authentication: bearer
+
 datasources:
   default:
     url:  jdbc:tc:postgresql:///
