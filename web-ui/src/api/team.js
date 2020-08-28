@@ -11,6 +11,7 @@ export const getMembersByTeam = async (id) => {
       params: {
         teamid: id,
       },
+      withCredentials: true,
     })
   );
 };
@@ -24,6 +25,7 @@ export const getTeamsByMember = async (id) => {
       params: {
         memberid: id,
       },
+      withCredentials: true,
     })
   );
 };

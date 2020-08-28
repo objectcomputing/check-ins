@@ -142,9 +142,9 @@ const TeamMemberContainer = () => {
               <h2 style={{ margin: 0 }}>{name}</h2>
               <div style={{ display: "flex" }}>
                 <div style={{ marginRight: "50px", textAlign: "left" }}>
-                  <p>Role: {role ? role : ""}</p>
-                  <p>PDL: {pdl ? pdl : ""}</p>
-                  <p>Location: {location ? location : ""}</p>
+                  <p>Role: {role}</p>
+                  <p>PDL: {pdl}</p>
+                  <p>Location: {location}</p>
                 </div>
                 <div>
                   <p>
@@ -157,8 +157,8 @@ const TeamMemberContainer = () => {
                         ).toLocaleDateString()
                       : ""}
                   </p>
-                  <p>Email: {workEmail ? workEmail : ""}</p>
-                  <p>Bio: {bioText ? bioText : ""}</p>
+                  <p>Email: {workEmail}</p>
+                  <p>Bio: {bioText}</p>
                 </div>
               </div>
             </div>

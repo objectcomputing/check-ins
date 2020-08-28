@@ -1,4 +1,11 @@
 micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - ^http(|s):\/\/localhost:.*$
   security:
     enabled: true
     oauth2:
