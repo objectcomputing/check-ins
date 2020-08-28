@@ -18,6 +18,7 @@ import org.openqa.selenium.support.PageFactory;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TC01_Verify_Upload_File_Success_Msg {
+   /*
     WebDriver driver;
     HomePage homePage;
 
@@ -47,4 +48,5 @@ public class TC01_Verify_Upload_File_Success_Msg {
         BrowserFactory.quitBrowser(driver);
 
     }
+    */
 }
