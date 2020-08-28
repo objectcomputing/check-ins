@@ -1,12 +1,17 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const memberSkillUrl = `${BASE_API_URL}/services/member-skill`;
 export const getMemberSkills = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: `${BASE_API_URL}/services/member-skill/?memberid=${id}`,
+      url: memberSkillUrl,
       responseType: "json",
+      params: {
+        memberid: id,
+      },
+      withCredentials: true,
     })
   );
 };
@@ -15,8 +20,9 @@ export const deleteMemberSkill = async (id) => {
   return await resolve(
     axios({
       method: "DELETE",
-      url: `${BASE_API_URL}/services/member-skill/${id}`,
+      url: `${memberSkillUrl}/${id}`,
       responseType: "json",
+      withCredentials: true,
     })
   );
 };
@@ -25,9 +31,10 @@ export const createMemberSkill = async (memberskill) => {
   return await resolve(
     axios({
       method: "post",
-      url: `${BASE_API_URL}/services/member-skill`,
+      url: memberSkillUrl,
       responseType: "json",
       data: memberskill,
+      withCredentials: true,
     })
   );
 };

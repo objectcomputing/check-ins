@@ -8,7 +8,10 @@ import "./Personnel.css";
 const Personnel = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile;
+  const id =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.uuid
+      : undefined;
   const [personnel, setPersonnel] = useState();
   const [checkins, setCheckins] = useState();
 
@@ -78,7 +81,9 @@ const Personnel = () => {
         checkInDate[1] - 1,
         checkInDate[2]
       ).toLocaleDateString();
-      lastCheckIn = <a href={`/checkin/${checkIn.id}`}>{checkInDate}</a>;
+      lastCheckIn = (
+        <a href={`/services/check-in/${checkIn.id}`}>{checkInDate}</a>
+      );
     }
 
     if (person) {

@@ -9,17 +9,20 @@ import "./TeamMember.css";
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile;
+  const id =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.uuid
+      : undefined;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
-    image_url: null,
+    imageUrl: null,
   });
   const [teamMembers, setTeamMembers] = useState({});
   const [teams, setTeams] = useState([]);
   const [currentTeam, setCurrentTeam] = useState([]);
   const {
     bioText,
-    image_url,
+    imageUrl,
     location,
     name,
     pdlId,
@@ -104,7 +107,6 @@ const TeamMemberContainer = () => {
           key={`profile-${profile.workEmail}`}
           profile={profile}
           onSelect={setSelectedProfile}
-          onSelectPDL={setPDL}
         ></MemberIcon>
       );
     });
@@ -132,7 +134,7 @@ const TeamMemberContainer = () => {
           <div className="image-div">
             <img
               alt="Profile"
-              src={image_url ? image_url : "/default_profile.jpg"}
+              src={imageUrl ? imageUrl : "/default_profile.jpg"}
             />
           </div>
           <div className="team-member-info">
@@ -147,11 +149,13 @@ const TeamMemberContainer = () => {
                 <div>
                   <p>
                     Start Date:{" "}
-                    {new Date(
-                      startDate[0],
-                      startDate[1] - 1,
-                      startDate[2]
-                    ).toLocaleDateString()}
+                    {startDate && startDate.length === 3
+                      ? new Date(
+                          startDate[0],
+                          startDate[1] - 1,
+                          startDate[2]
+                        ).toLocaleDateString()
+                      : ""}
                   </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>

@@ -1,42 +1,28 @@
 micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - ^http(|s):\/\/localhost:.*$
   security:
-    enabled: true
+    authentication: cookie
     oauth2:
-      default-provider: oauth
-      login-uri: "/{provider}/login/google"
-      callback-uri: "/{provider}/callback/google"
-      clients:
-        google:
-          enabled: false
-        oauth:
-          client-id: TEST
-          client-secret: TEST
-          authorization:
-            url: "http://localhost:${PORT}/oauth/auth"
-          token:
-            url: "http://localhost:${PORT}/oauth/token"
+      enabled: false
     token:
       jwt:
-        signatures:
-          secret:
-            generator:
-              secret: pleaseChangeThisSecretForANewOne
-              jws-algorithm: HS256
-    endpoints:
-      logout:
-        get-allowed: true
+        enabled: true
+        generator:
+          access-token:
+            expiration: 60000
+          secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
       -
-        pattern: /**
+        pattern: /swagger-ui/**
         http-method: GET
         access:
           - isAnonymous()
-    reject-not-found: false
-    session:
-      enabled: true
-      login-success-target-url: '/'
-      unauthorized-target-url: '/unauthorized'
-      forbidden-target-url: '/forbidden'
 ---
 datasources:
   default:

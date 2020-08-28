@@ -1,7 +1,6 @@
 micronaut:
   application:
     name: check-ins
-
   server:
     cors:
       enabled: true
@@ -41,13 +40,17 @@ micronaut:
         pattern: /**
         http-method: GET
         access:
-          - isAnonymous()
+          - isAuthenticated()
     reject-not-found: false
+    redirect:
+      login-success: /
+      on-rejection: /oauth/login/google
+      unauthorized:
+        url: /oauth/login/google
+      forbidden:
+        url: /forbidden
     session:
       enabled: true 
-      login-success-target-url: '/'
-      unauthorized-target-url: '/unauthorized'
-      forbidden-target-url: '/forbidden'
 ---
 datasources:
   default:
@@ -62,7 +65,6 @@ check-ins:
     name: "OCI Check-ins"
     scopes:
       - "https://www.googleapis.com/auth/drive.file"
-      - "https://www.googleapis.com/auth/gmail.send"
 ---
 flyway:
   enabled: enabled
