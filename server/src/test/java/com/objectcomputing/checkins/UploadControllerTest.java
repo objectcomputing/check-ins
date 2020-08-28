@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,7 +46,7 @@ class UploadControllerTest {
 
     @Test
     void testGetUpload() {
-        final HttpRequest<?> req = HttpRequest.GET("");
+        final HttpRequest<?> req = HttpRequest.GET("").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final Flowable<?> flowable = client.exchange(req);
         final HttpResponse<?> response = (HttpResponse<?>) flowable.blockingFirst();
         Assertions.assertEquals(response.getStatus(), HttpStatus.OK);
@@ -54,7 +55,7 @@ class UploadControllerTest {
     // Wrong media type
     @Test
     void testUploadControllerWrongType() {
-        final HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null));
+        final HttpRequest<?> req = HttpRequest.POST("", CollectionUtils.mapOf("file", null)).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final Flowable<?> flowable = client.retrieve(req);
 
         final HttpClientResponseException exception = Assertions.assertThrows(HttpClientResponseException.class,
@@ -68,7 +69,7 @@ class UploadControllerTest {
     // Null File
     @Test
     void testUploadNullFile() {
-        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("dnc", "dnc").build())
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("dnc", "dnc").build()).basicAuth(ADMIN_ROLE, ADMIN_ROLE)
                 .contentType(MediaType.MULTIPART_FORM_DATA);
         final Flowable<?> flowable = client.retrieve(req);
 
@@ -83,7 +84,7 @@ class UploadControllerTest {
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
         final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
-        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build()).basicAuth(ADMIN_ROLE, ADMIN_ROLE)
                 .contentType(MediaType.MULTIPART_FORM_DATA);
         final Flowable<?> flowable = client.retrieve(req);
 
@@ -108,7 +109,7 @@ class UploadControllerTest {
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
 
         final java.io.File file = new java.io.File(this.getClass().getResource(FILE_TO_UPLOAD).toURI());
-        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build())
+        final HttpRequest<?> req = HttpRequest.POST("", MultipartBody.builder().addPart("file", file).build()).basicAuth(ADMIN_ROLE, ADMIN_ROLE)
                 .contentType(MediaType.MULTIPART_FORM_DATA);
         final Flowable<?> flowable = client.exchange(req);
 
