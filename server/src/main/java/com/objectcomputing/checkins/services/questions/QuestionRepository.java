@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface QuestionRepository extends CrudRepository<Question, UUID> {
 
     @Nullable
-    Optional<Question> findByQuestionid(UUID questionid);
+    Optional<Question> findById(UUID id);
     Set<Question> findByText(String name);
     Set<Question> findByTextIlike(String name);
     Set<Question> findAll();

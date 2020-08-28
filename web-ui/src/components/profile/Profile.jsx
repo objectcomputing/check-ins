@@ -18,32 +18,17 @@ import "./Profile.css";
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { imageUrl } = userProfile;
+  const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
   const { bioText, workEmail, name, role, uuid, pdlId } =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile
-      : undefined;
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [skillsList, setSkillsList] = useState([]);
-
-  // Get PDL's name
-  React.useEffect(() => {
-    async function getPDLName() {
-      if (userProfile.pdlId) {
-        let res = await getMember(userProfile.pdlId);
-        let pdlProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
-      }
-    }
-    getPDLName();
-  }, [userProfile]);
 
   // Get skills list
   React.useEffect(() => {

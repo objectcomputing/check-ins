@@ -61,19 +61,19 @@ public class QuestionController {
 
         return HttpResponse
                 .created(fromModel(newQuestion))
-                .headers(headers -> headers.location(location(newQuestion.getQuestionid())));
+                .headers(headers -> headers.location(location(newQuestion.getId())));
     }
 
     /**
      * Find and read a question given its id.
      *
-     * @param questionid
+     * @param id
      * @return
      */
 
-    @Get("/{questionid}")
-    public HttpResponse<QuestionResponseDTO> getById(UUID questionid) {
-        Question found = questionService.findByQuestionId(questionid);
+    @Get("/{id}")
+    public HttpResponse<QuestionResponseDTO> getById(UUID id) {
+        Question found = questionService.findById(id);
 
         return HttpResponse.ok(fromModel(found));
     }
@@ -112,7 +112,7 @@ public class QuestionController {
 
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(location(updatedQuestion.getQuestionid())))
+                .headers(headers -> headers.location(location(updatedQuestion.getId())))
                 .body(fromModel(updatedQuestion));
     }
 
@@ -122,14 +122,14 @@ public class QuestionController {
 
     private QuestionResponseDTO fromModel(Question question) {
         QuestionResponseDTO qrdto =  new QuestionResponseDTO();
-        qrdto.setQuestionId(question.getQuestionid());
+        qrdto.setQuestionId(question.getId());
         qrdto.setText(question.getText());
         return qrdto;
     }
 
     private Question toModel(QuestionUpdateDTO dto) {
         Question model =  new Question();
-        model.setQuestionid(dto.getQuestionId());
+        model.setId(dto.getId());
         model.setText(dto.getText());
         return model;
     }

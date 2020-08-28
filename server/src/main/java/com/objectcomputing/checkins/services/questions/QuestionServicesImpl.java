@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.questions;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,9 +32,9 @@ public class QuestionServicesImpl implements QuestionServices {
 
     }
 
-    public Question findByQuestionId(UUID skillId) {
+    public Question findById(UUID skillId) {
 
-        Question returned = questionRepository.findByQuestionid(skillId)
+        Question returned = questionRepository.findById(skillId)
                 .orElseThrow(() -> new QuestionNotFoundException("No question for uuid"));
 
         return returned;
@@ -61,7 +60,7 @@ public class QuestionServicesImpl implements QuestionServices {
     public Question update(Question question) {
         Question returned = null;
         try {
-            findByQuestionId(question.getQuestionid());
+            findById(question.getId());
         } catch (QuestionNotFoundException qnfe) {
             throw new QuestionBadArgException("No question found for this uuid");
         }

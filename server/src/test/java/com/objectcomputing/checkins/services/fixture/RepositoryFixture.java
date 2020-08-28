@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 
@@ -20,6 +21,9 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(RoleRepository.class);
     }
 
+    default PulseResponseRepository getPulseResponseRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(PulseResponseRepository.class);
+    }
     default SkillRepository getSkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillRepository.class);
     }
