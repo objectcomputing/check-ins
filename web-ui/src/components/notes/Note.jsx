@@ -43,7 +43,7 @@ const Notes = (props) => {
         if (data) {
           setNote(data[0]);
           const canvas = canvasRef.current;
-          if (canvas) {
+          if (canvas && data[0].description) {
             // to remove canvas if there is data
             canvas.parentElement.removeChild(canvas);
           }
