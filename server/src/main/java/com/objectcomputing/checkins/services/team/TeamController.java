@@ -55,7 +55,7 @@ public class TeamController {
     }
 
     /**
-     * Create and save a multiple teams
+     * Create and save multiple teams
      *
      * @param teamsList, array of {@link TeamCreateDTO team create dto} to load {@link Team team(s)}
      * @return
