@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,23 +26,23 @@ public class Question {
     }
 
     @Id
-    @Column(name="questionid")
+    @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of the question this entry is associated with")
-    private UUID questionid;
+    private UUID id;
 
     @NotBlank
     @Column(name="text")
     @Schema(description = "text of the question being asked", required = true)
     private String text;
 
-    public UUID getQuestionid() {
-        return questionid;
+    public UUID getId() {
+        return id;
     }
 
-    public void setQuestionid(UUID questionid) {
-        this.questionid = questionid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getText() {
@@ -59,19 +58,19 @@ public class Question {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return Objects.equals(questionid, question.questionid) &&
+        return Objects.equals(id, question.id) &&
                 Objects.equals(text, question.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(questionid, text);
+        return Objects.hash(id, text);
     }
 
     @Override
     public String toString() {
         return "Question {" +
-                "questionid='" + questionid + '\'' +
+                "id='" + id + '\'' +
                 "text='" + text + '\'' +
                 '}';
     }
