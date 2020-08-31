@@ -39,7 +39,10 @@ const CheckinsPage = () => {
         </div>
       </div>
       {checkin && checkin.id && (
-        <Note checkin={checkin} memberName={userProfile.name} />
+        <Note
+          checkin={checkin}
+          memberName={userProfile.name}
+        />
       )}
       <CheckinDocs />
       <div className="modal-container">

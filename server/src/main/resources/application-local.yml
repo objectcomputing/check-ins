@@ -7,46 +7,22 @@ micronaut:
           allowedOrigins:
             - ^http(|s):\/\/localhost:3000$
   security:
-    enabled: true
+    authentication: cookie
     oauth2:
-      default-provider: oauth
-      login-uri: "/{provider}/login/google"
-      callback-uri: "/{provider}/callback/google"
-      clients:
-        google:
-          enabled: false
-        oauth:
-          client-id: TEST
-          client-secret: TEST
-          authorization:
-            url: http://localhost:${micronaut.server.port:8080}/oauth/auth
-          token:
-            url: http://localhost:${micronaut.server.port:8080}/oauth/token
+      enabled: false
     token:
       jwt:
-        signatures:
-          secret:
-            generator:
-              secret: pleaseChangeThisSecretForANewOne
-              jws-algorithm: HS256
-    endpoints:
-      logout:
-        get-allowed: true
+        enabled: true
+        generator:
+          access-token:
+            expiration: 60000
+          secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
-      - pattern: /**
+      -
+        pattern: /swagger-ui/**
         http-method: GET
         access:
-          - isAuthenticated()
-    reject-not-found: false
-    redirect:
-      login-success: /
-      on-rejection: /oauth/login/google
-      unauthorized:
-        url: /oauth/login/google
-      forbidden:
-        url: /forbidden
-    session:
-      enabled: true
+          - isAnonymous()
 ---
 datasources:
   default:
