@@ -154,6 +154,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
 
     }
+
     @Test
     public void testPOSTCreateANullSkill() {
 

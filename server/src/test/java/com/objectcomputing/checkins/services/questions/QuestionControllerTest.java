@@ -9,22 +9,22 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.http.hateoas.JsonError;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@MicronautTest
 public class QuestionControllerTest extends TestContainersSuite implements QuestionFixture {
 
     @Inject
@@ -84,123 +84,126 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     public void testGETGetByIdHappyPath() {
 
         Question question = createADefaultQuestion();
-        System.out.println("question id =      " + question.getId());
+
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", question.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<Question> response = client.toBlocking().exchange(request, Question.class);
 
-  //      assertEquals(question, response.body());
+        assertEquals(question.getText(), response.body().getText());
         assertEquals(HttpStatus.OK,response.getStatus());
 
-//        UUID uuid = UUID.fromString(fakeUuid);
-//        Question fakeQuestion = new Question("Fake question text?");
-//
-//        fakeQuestion.setId(uuid);
-//        List<Question> result = new ArrayList<>();
-//        result.add(fakeQuestion);
-//
-//        fakeQuestion.setId(UUID.fromString(fakeUuid));
-//        when(mockQuestionServices.findById(uuid)).thenReturn(fakeQuestion);
-//
-//        final HttpResponse<?> response = client.toBlocking()
-//                .exchange(HttpRequest
-//                        .GET(String.format("/%s", fakeQuestion.getId()))
-//                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        response.equals(fakeQuestion);
     }
 
-//    @Test
-//    public void testPUTSuccessfulUpdate() {
-//        Question fakeQuestion = new Question("fake question");
-//        fakeQuestion.setId(UUID.fromString(fakeUuid));
-//        when(mockQuestionServices.update(any(Question.class))).thenReturn(fakeQuestion);
-//        QuestionUpdateDTO requestBody = new QuestionUpdateDTO();
-//        requestBody.setText(fakeQuestion.getText());
-//        requestBody.setId(fakeQuestion.getId());
-//
-//        final HttpResponse<?> response = client.toBlocking()
-//                .exchange(HttpRequest.PUT("/", requestBody)
-//                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertEquals("/services/questions/" + fakeQuestion.getId(),
-//                response.getHeaders().get("location"));
-//        assertNotNull(response.getContentLength());
-//    }
+    @Test
+    public void testGETGetByIdNotFound() {
 
-//    @Test
-//    public void testPUTNoIDSupplied() {
-//        QuestionCreateDTO requestBody = new QuestionCreateDTO();
-//        requestBody.setText("Fake Question");
-//
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-//                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//        });
-//
-//        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
-//
-//        assertEquals("question.id: must not be null", responseBody.getMessage());
-//        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-//    }
-//
-//    @Test
-//    public void testPUTNoQuestionForID() {
-//        when(mockQuestionServices.update(any(Question.class)))
-//                .thenThrow(new QuestionBadArgException("fake exception message"));
-//
-//        QuestionUpdateDTO requestBody = new QuestionUpdateDTO();
-//        requestBody.setText("Fake Question");
-//        requestBody.setId(UUID.fromString(fakeUuid));
-//
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
-//                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//        });
-//
-//        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
-//
-//        assertEquals("fake exception message", responseBody.getMessage());
-//        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-//    }
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+
+    }
+
+    @Test
+    public void testPUTSuccessfulUpdate() {
+
+        Question question = createADefaultQuestion();
+
+        final HttpRequest<Question> request = HttpRequest.
+                PUT("/", question).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Question> response = client.toBlocking().exchange(request, Question.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), question.getId()),
+                response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPUTNoIDSupplied() {
+
+        QuestionCreateDTO requestBody = new QuestionCreateDTO();
+        requestBody.setText("Fake Question");
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
+                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        });
+
+        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
+
+        assertEquals("question.id: must not be null", responseBody.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    public void testPUTQuestionNotFound() {
+
+        QuestionUpdateDTO requestBody = new QuestionUpdateDTO();
+        requestBody.setId(UUID.randomUUID());
+        requestBody.setText("Fake Question");
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.PUT("/", requestBody)
+                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        });
+
+        JsonError responseBody = thrown.getResponse().getBody(JsonError.class).get();
+
+        assertEquals("No question found for this id", responseBody.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
 
     @Test
     public void testPOSTCreateAQuestion() {
 
-//        Question fakeQuestion = new Question("fake question");
-//        fakeQuestion.setId(UUID.fromString(fakeUuid));
-//
-//        when(mockQuestionServices.saveQuestion(any(Question.class))).thenReturn(fakeQuestion);
-//
-//        QuestionCreateDTO requestBody = new QuestionCreateDTO();
-//        requestBody.setText(fakeQuestion.getText());
-//        final HttpResponse<?> response = client.toBlocking()
-//                .exchange(HttpRequest.POST("/", requestBody)
-//                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//
-//        assertEquals(HttpStatus.CREATED, response.getStatus());
-//        assertEquals("/services/questions/" + fakeQuestion.getId(),
-//                response.getHeaders().get("location"));
-//        assertNotNull(response.getContentLength());
+        Question question = createADefaultQuestion();
+        QuestionCreateDTO newQuestion = new QuestionCreateDTO();
+        newQuestion.setText("How do you like working with Mr. Hands?");
+
+        final HttpRequest<QuestionCreateDTO> request = HttpRequest.
+                POST("/", newQuestion).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Question> response = client.toBlocking().exchange(request,Question.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(newQuestion.getText(), response.body().getText());
     }
 
-//    @Test
-//    public void testPOSTCreateAQuestionNullQuestion() {
-//
-//        Question fakeQuestion = new Question("fake question");
-//
-//        when(mockQuestionServices.saveQuestion(fakeQuestion))
-//                .thenThrow(new QuestionDuplicateException("fake dupe exception"));
-//
-//        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-//            client.toBlocking().exchange(HttpRequest.POST("/", fakeQuestion)
-//                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-//        });
-//
-//        assertEquals("fake dupe exception", thrown.getMessage());
-//        assertEquals(HttpStatus.CONFLICT, thrown.getStatus());
-//
-//    }
+    @Test
+    public void testPOSTCreateAQuestionAlreadyExists() {
+
+        Question question = createADefaultQuestion();
+        QuestionCreateDTO newQuestion = new QuestionCreateDTO();
+        newQuestion.setText(question.getText());
+
+        final HttpRequest<QuestionCreateDTO> request = HttpRequest.
+                POST("/", newQuestion).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
+
+    }
+
+    @Test
+    public void testPOSTCreateAQuestionNullQuestion() {
+
+        QuestionCreateDTO newQuestion = new QuestionCreateDTO();
+
+        final HttpRequest<QuestionCreateDTO> request = HttpRequest.
+                POST("/", newQuestion).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+
+    }
 
 }

@@ -11,10 +11,6 @@ public class QuestionServicesImpl implements QuestionServices {
     @Inject
     private QuestionRepository questionRepository;
 
-    public void setQuestionRepository(QuestionRepository questionRepository) {
-        this.questionRepository = questionRepository;
-    }
-
     public Question saveQuestion(Question question) {
 
         Set<Question> returnedList = findByValue(question.getText());
@@ -37,8 +33,6 @@ public class QuestionServicesImpl implements QuestionServices {
         Question returned = null;
         returned = questionRepository.findById(id)
                 .orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
-//        Question returned = questionRepository.findById(id)
-//                .orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
 
         return returned;
 
@@ -65,7 +59,7 @@ public class QuestionServicesImpl implements QuestionServices {
         try {
             findById(question.getId());
         } catch (QuestionNotFoundException qnfe) {
-            throw new QuestionBadArgException("No question found for this uuid");
+            throw new QuestionBadArgException("No question found for this id");
         }
         returned = questionRepository.update(question);
 
