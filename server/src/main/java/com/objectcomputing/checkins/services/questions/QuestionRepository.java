@@ -12,8 +12,9 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface QuestionRepository extends CrudRepository<Question, UUID> {
 
-    @Nullable
-    Optional<Question> findById(UUID id);
+  //  @Nullable
+//    Optional<Question> findById(UUID id);
+
     Set<Question> findByText(String name);
     Set<Question> findByTextIlike(String name);
     Set<Question> findAll();

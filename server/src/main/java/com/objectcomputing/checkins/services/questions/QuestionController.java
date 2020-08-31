@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.questions;
 
+import com.objectcomputing.checkins.services.skills.SkillCreateDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -56,12 +57,18 @@ public class QuestionController {
      */
 
     @Post(value = "/")
-    public HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question) {
+    public HttpResponse<Question> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
         Question newQuestion = questionService.saveQuestion(toModel(question));
 
         return HttpResponse
-                .created(fromModel(newQuestion))
-                .headers(headers -> headers.location(location(newQuestion.getId())));
+                .created(newQuestion)
+                .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), newQuestion.getId()))));
+
+
+        //        return HttpResponse
+//                .created(fromModel(newQuestion))
+//                .headers(headers -> headers.location(location(newQuestion.getId())));
     }
 
     /**

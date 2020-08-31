@@ -32,10 +32,13 @@ public class QuestionServicesImpl implements QuestionServices {
 
     }
 
-    public Question findById(UUID skillId) {
+    public Question findById(UUID id) {
 
-        Question returned = questionRepository.findById(skillId)
-                .orElseThrow(() -> new QuestionNotFoundException("No question for uuid"));
+        Question returned = null;
+        returned = questionRepository.findById(id)
+                .orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
+//        Question returned = questionRepository.findById(id)
+//                .orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
 
         return returned;
 
