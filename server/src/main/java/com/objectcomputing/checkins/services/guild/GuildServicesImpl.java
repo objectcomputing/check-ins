@@ -20,9 +20,9 @@ public class GuildServicesImpl implements GuildServices {
     public Guild save(Guild guild) {
         Guild newGuild = null;
         if (guild != null) {
-            if (guild.getGuildid() != null) {
-                throw new GuildBadArgException(String.format("Found unexpected guildid %s, please try updating instead",
-                        guild.getGuildid()));
+            if (guild.getId() != null) {
+                throw new GuildBadArgException(String.format("Found unexpected id %s, please try updating instead",
+                        guild.getId()));
             } else if (guildsRepo.findByName(guild.getName()).isPresent()) {
                 throw new GuildBadArgException(String.format("Guild with name %s already exists", guild.getName()));
             } else {
@@ -40,10 +40,10 @@ public class GuildServicesImpl implements GuildServices {
     public Guild update(Guild guild) {
         Guild newGuild = null;
         if (guild != null) {
-            if (guild.getGuildid() != null && guildsRepo.findById(guild.getGuildid()).isPresent()) {
+            if (guild.getId() != null && guildsRepo.findById(guild.getId()).isPresent()) {
                 newGuild = guildsRepo.update(guild);
             } else {
-                throw new GuildBadArgException(String.format("Guild %s does not exist, can't update.", guild.getGuildid()));
+                throw new GuildBadArgException(String.format("Guild %s does not exist, can't update.", guild.getId()));
             }
         }
 
@@ -58,7 +58,7 @@ public class GuildServicesImpl implements GuildServices {
         }
         if (memberid != null) {
             guilds.retainAll(guildMemberRepo.findByMemberid(memberid)
-                    .stream().map(GuildMember::getGuildid).map(gid -> guildsRepo.findById(gid).orElse(null))
+                    .stream().map(GuildMember::getGuildid).map(id -> guildsRepo.findById(id).orElse(null))
                     .filter(Objects::nonNull).collect(Collectors.toSet()));
         }
         return guilds;

@@ -53,7 +53,7 @@ class GuildControllerTest {
 
         assertEquals(g, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getGuildid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), g.getId()), response.getHeaders().get("location"));
 
         verify(guildService, times(1)).save(any(Guild.class));
     }
@@ -198,9 +198,9 @@ class GuildControllerTest {
     void testReadGuild() {
         Guild g = new Guild(UUID.randomUUID(), "Hello", "World");
 
-        when(guildService.read(eq(g.getGuildid()))).thenReturn(g);
+        when(guildService.read(eq(g.getId()))).thenReturn(g);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getGuildid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getId().toString()));
         final HttpResponse<Guild> response = client.toBlocking().exchange(request, Guild.class);
 
         assertEquals(g, response.body());
@@ -213,9 +213,9 @@ class GuildControllerTest {
     void testReadGuildNotFound() {
         Guild g = new Guild(UUID.randomUUID(), "Hello", "World");
 
-        when(guildService.read(eq(g.getGuildid()))).thenReturn(null);
+        when(guildService.read(eq(g.getId()))).thenReturn(null);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getGuildid().toString()));
+        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", g.getId().toString()));
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Guild.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -268,7 +268,7 @@ class GuildControllerTest {
 
         assertEquals(g, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), g.getGuildid()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), g.getId()), response.getHeaders().get("location"));
 
         verify(guildService, times(1)).update(any(Guild.class));
     }

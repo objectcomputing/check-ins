@@ -32,11 +32,11 @@ class GuildTest {
 
     @Test
     void testGuildInstantiation2() {
-        final UUID guildid = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(guildid, name, description);
-        assertEquals(guild.getGuildid(), guildid);
+        Guild guild = new Guild(id, name, description);
+        assertEquals(guild.getId(), id);
         assertEquals(guild.getName(), name);
         assertEquals(guild.getDescription(), description);
 
@@ -47,10 +47,10 @@ class GuildTest {
 
     @Test
     void testConstraintViolation() {
-        final UUID guildid = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild guild = new Guild(guildid, name, description);
+        Guild guild = new Guild(id, name, description);
 
         guild.setName("");
         guild.setDescription("");
@@ -64,15 +64,15 @@ class GuildTest {
 
     @Test
     void testEquals() {
-        final UUID guildid = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild g = new Guild(guildid, name, description);
-        Guild g2 = new Guild(guildid, name, description);
+        Guild g = new Guild(id, name, description);
+        Guild g2 = new Guild(id, name, description);
 
         assertEquals(g, g2);
 
-        g2.setGuildid(null);
+        g2.setId(null);
 
         assertNotEquals(g, g2);
     }
@@ -80,10 +80,10 @@ class GuildTest {
     @Test
     void testHash() {
         HashMap<Guild, Boolean> map = new HashMap<>();
-        final UUID guildid = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Guild g = new Guild(guildid, name, description);
+        Guild g = new Guild(id, name, description);
 
         map.put(g, true);
 
@@ -92,13 +92,13 @@ class GuildTest {
 
     @Test
     void testToString() {
-        final UUID guildid = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         final String name = "name------name";
         final String description = "description------description";
-        Guild g = new Guild(guildid, name, description);
+        Guild g = new Guild(id, name, description);
 
         assertTrue(g.toString().contains(name));
-        assertTrue(g.toString().contains(guildid.toString()));
+        assertTrue(g.toString().contains(id.toString()));
         assertTrue(g.toString().contains(description));
     }
 }

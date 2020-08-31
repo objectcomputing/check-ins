@@ -4,7 +4,7 @@ import { AppContextProvider } from "../../context/AppContext";
 
 it("renders correctly", () => {
   snapshot(
-    <AppContextProvider value={null}>
+    <AppContextProvider>
       <Profile />
     </AppContextProvider>
   );
@@ -12,7 +12,7 @@ it("renders correctly", () => {
 
 it("renders image_url", () => {
   snapshot(
-    <AppContextProvider value={null}>
+    <AppContextProvider>
       <Profile image_url="http://someurl.com/das.png" />
     </AppContextProvider>
   );

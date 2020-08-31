@@ -24,29 +24,32 @@ public class CheckinNote {
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of checkin notes", required = true)
     private UUID id;
+
     @NotNull
     @Column(name = "checkinid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the checkin this entry is associated with", required = true)
     private UUID checkinid;
+
     @NotNull
     @Column(name = "createdbyid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID createdbyid;
+
     @Nullable
     @Column(name = "description")
     @Schema(description = "description of the check in note")
     private String description;
 
-    public CheckinNote(UUID id, UUID checkinid, UUID createdbyid, String description) {
+    public CheckinNote(UUID id, UUID checkinid, UUID createdbyid, @Nullable String description) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
     }
 
-    public CheckinNote(UUID checkinid, UUID createdbyid, String description) {
+    public CheckinNote(UUID checkinid, UUID createdbyid, @Nullable String description) {
         this(null, checkinid, createdbyid, description);
     }
 

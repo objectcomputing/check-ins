@@ -47,7 +47,7 @@ const TeamMemberSelect = (props) => {
           src={
             member.image_url
               ? member.image_url
-              : require("../../images/default_profile.jpg")
+              : "../../images/default_profile.jpg"
           }
           style={{ marginLeft: "10px" }}
         />

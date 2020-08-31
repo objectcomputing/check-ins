@@ -12,6 +12,8 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecuredAnnotationRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Validated
 @Controller("/upload")
 @Tag(name = "upload")
-
+@Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
 public class UploadController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UploadController.class);
