@@ -4,7 +4,7 @@ on:
     branches:
       - 'feature-38/deploy-gce'
 env:
-  PROJECT_ID: ${{ secrets.PROD_RUN_PROJECT }}
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   SERVICE_NAME: checkins-master
   GITHUB_SHA: ${{ github.sha }}
   RUN_REGION: us-central1
