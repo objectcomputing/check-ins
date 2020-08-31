@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkill;
+package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
