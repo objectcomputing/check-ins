@@ -23,7 +23,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
@@ -47,7 +47,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
@@ -71,7 +71,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
@@ -95,7 +95,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
@@ -119,7 +119,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
@@ -143,7 +143,7 @@ exports[`renders correctly 1`] = `
       <img
         alt="Team Member"
         className="MuiAvatar-img"
-        src="default_profile.jpg"
+        src="../../images/default_profile.jpg"
       />
     </div>
     <div
