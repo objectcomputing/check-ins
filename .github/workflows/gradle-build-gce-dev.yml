@@ -1,13 +1,13 @@
-name: Gradle Build & Deploy GCE
+name: Gradle Build & Deploy - Master
 on:
   push:
     branches:
       - 'feature-38/deploy-gce'
 env:
-  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
-  SERVICE_NAME: checkins-develop
+  PROJECT_ID: ${{ secrets.PROD_RUN_PROJECT }}
+  SERVICE_NAME: checkins-master
   GITHUB_SHA: ${{ github.sha }}
-  GCE_INSTANCE_ZONE: us-central1-a
+  RUN_REGION: us-central1
 jobs:
   build_deploy_gce_gcp:
     runs-on: ubuntu-latest
@@ -38,13 +38,19 @@ jobs:
         run: |-
           cd server
           docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-      - name: Deploy image to Compute Engine Instance
+      - name: Deploy image to Cloud Run
         run: |-
-          gcloud compute instances update-container $SERVICE_NAME \
-            --zone $GCE_INSTANCE_ZONE \
-            --container-image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-            --container-env CLOUD_DB_CONNECTION_NAME="${{ secrets.DEV_DB_CONNECTION_NAME }}",DB_NAME="${{ secrets.DEV_DB_NAME }}",DATASOURCES_DEFAULT_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}",DATASOURCES_DEFAULT_USERNAME="${{ secrets.DEV_DB_USERNAME }}",OAUTH_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}",OAUTH_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }},MICRONAUT_SERVER_PORT=80"
-
-      - name: Start the docker image with ENV
-        run: |-
-          gcloud compute ssh $SERVICE_NAME --zone $GCE_INSTANCE_ZONE --command "docker run -d gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+          gcloud run deploy "$SERVICE_NAME" \
+            --quiet \
+            --region "$RUN_REGION" \
+            --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+            --memory 1Gi \
+            --add-cloudsql-instances ${{ secrets.PROD_DB_CONNECTION_NAME }} \
+            --set-env-vars "CLOUD_DB_CONNECTION_NAME=${{ secrets.PROD_DB_CONNECTION_NAME }}" \
+            --set-env-vars "DB_NAME=${{ secrets.PROD_DB_NAME }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" \
+            --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.PROD_DB_USERNAME }}" \
+            --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
+            --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+            --platform "managed" \
+            --allow-unauthenticated
