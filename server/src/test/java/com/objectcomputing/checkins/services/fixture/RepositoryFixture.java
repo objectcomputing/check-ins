@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
+import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
@@ -45,6 +46,10 @@ public interface RepositoryFixture {
 
     default ActionItemRepository getActionItemRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(ActionItemRepository.class);
+    }
+
+    default AgendaItemRepository getAgendaItemRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(AgendaItemRepository.class);
     }
 
     default TeamRepository getTeamRepository() {
