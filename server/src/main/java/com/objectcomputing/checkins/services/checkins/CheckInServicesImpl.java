@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.security.utils.SecurityService;
 
 
 public class CheckInServicesImpl implements CheckInServices {
@@ -18,7 +20,10 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Inject
     private MemberProfileRepository memberRepo;
-    
+
+    @Inject
+    SecurityService securityService;
+
     @Override
     public CheckIn save(CheckIn checkIn) {
         CheckIn checkInRet = null;
@@ -43,29 +48,35 @@ public class CheckInServicesImpl implements CheckInServices {
 
     @Override
     public CheckIn read(@NotNull UUID id) {
-
         return checkinRepo.findById(id).orElse(null);
     }
 
     @Override
     public CheckIn update(CheckIn checkIn) {
+
         CheckIn checkInRet = null;
-        if(checkIn!=null){
-        final UUID id = checkIn.getId();
-        final UUID memberId = checkIn.getTeamMemberId();
-        LocalDate chkInDate = checkIn.getCheckInDate();
-        if(id==null||!checkinRepo.findById(id).isPresent()){
-            throw new CheckInBadArgException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
-        }else if(!memberRepo.findById(memberId).isPresent()){
-            throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(memberId==null) {
-            throw new CheckInBadArgException(String.format("Invalid checkin %s", checkIn));
-        } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
-            throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
+
+        if(checkIn!=null) {
+            final UUID id = checkIn.getId();
+            final UUID memberId = checkIn.getTeamMemberId();
+            LocalDate chkInDate = checkIn.getCheckInDate();
+            Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+
+            if(id==null||!checkinRepo.findById(id).isPresent()) {
+                throw new CheckInBadArgException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
+            } else if(!memberRepo.findById(memberId).isPresent()) {
+                throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
+            } else if(memberId==null) {
+                throw new CheckInBadArgException(String.format("Invalid checkin %s", checkIn));
+            } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
+                throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
+            } else if(checkinRepo.findById(id).get().isCompleted() && !isAdmin) {
+                throw new CheckInCompleteException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
+            }
+
+            checkInRet = checkinRepo.update(checkIn);
         }
 
-        checkInRet = checkinRepo.update(checkIn);
-        }        
         return checkInRet;
     }
 
@@ -73,7 +84,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         Set<CheckIn> checkIn = new HashSet<>();
         checkinRepo.findAll().forEach(checkIn::add);
-        if(teamMemberId!=null){
+        if(teamMemberId!=null) {
             checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
         } else if(pdlId!=null) {
             checkIn.retainAll(checkinRepo.findByPdlId(pdlId));

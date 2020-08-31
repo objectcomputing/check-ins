@@ -43,10 +43,10 @@ public class CheckIn {
     @Schema(description = "date of checkin")
     private LocalDate checkInDate;
 
-    @Nullable
+    @NotNull
     @Column(name = "completed")
     @Schema(description = "whether checkin is completed or not",
-            nullable = true)
+            required = true)
     private Boolean completed;
 
     public CheckIn() {}

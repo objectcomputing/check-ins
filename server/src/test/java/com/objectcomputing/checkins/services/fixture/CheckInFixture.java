@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public interface CheckInFixture extends RepositoryFixture {
 
     default CheckIn createADefaultCheckIn(MemberProfile memberprofile, MemberProfile memberProfileForPDL) {
-        return getCheckInRepository().save(new CheckIn(memberprofile.getUuid(), memberProfileForPDL.getUuid(),LocalDate.now(),true));
+        return getCheckInRepository().save(new CheckIn(memberprofile.getUuid(), memberProfileForPDL.getUuid(),LocalDate.now(),false));
     }
 
 }

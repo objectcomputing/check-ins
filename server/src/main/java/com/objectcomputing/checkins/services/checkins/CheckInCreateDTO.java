@@ -22,7 +22,8 @@ public class CheckInCreateDTO {
     @Schema(description = "date of checkin")
     private LocalDate checkInDate;
 
-    @Schema(description = "whether checkin is completed or not", nullable = true)
+    @NotNull
+    @Schema(description = "whether checkin is completed or not")
     private Boolean completed;
 
     public UUID getTeamMemberId() {

@@ -12,6 +12,4 @@ public interface CheckInServices {
     CheckIn update(CheckIn checkinNote);
 
     Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed);
-
-    
 }
