@@ -5,6 +5,7 @@ import { getCheckinByMemberId } from "../api/checkins";
 export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_USER_BIO = "update_bio";
 export const UPDATE_CHECKINS = "update_checkins";
+export const UPDATE_INDEX = "update_index";
 
 const AppContext = React.createContext();
 
@@ -19,6 +20,10 @@ const reducer = (state, action) => {
       break;
     case UPDATE_CHECKINS:
       state.checkins = action.payload;
+      state.index = state.checkins.length - 1;
+      break;
+    case UPDATE_INDEX:
+      state.index = action.payload;
       break;
     default:
   }
@@ -28,6 +33,7 @@ const reducer = (state, action) => {
 const initialState = {
   userProfile: undefined,
   checkins: [],
+  index: -1,
 };
 
 const AppContextProvider = (props) => {

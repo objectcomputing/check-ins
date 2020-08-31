@@ -12,11 +12,8 @@ import "./CheckinsPage.css";
 const CheckinsPage = () => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
-  const { checkins, userProfile } = state;
-  const [index, setIndex] = useState(0);
+  const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
-  console.log("checkin page index: ", index);
-  console.log("checkin: ", checkin);
 
   const showModal = () => {
     setShow(!show);
@@ -29,7 +26,6 @@ const CheckinsPage = () => {
           <CheckinsHistory
             checkins={checkins}
             index={index}
-            setIndex={setIndex}
             userProfile={userProfile}
           />
         </div>
@@ -39,10 +35,7 @@ const CheckinsPage = () => {
         </div>
       </div>
       {checkin && checkin.id && (
-        <Note
-          checkin={checkin}
-          memberName={userProfile.name}
-        />
+        <Note checkin={checkin} memberName={userProfile.name} />
       )}
       <CheckinDocs />
       <div className="modal-container">

@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import { UPDATE_INDEX } from "../../context/AppContext";
 import { getMember } from "../../api/member";
+import { AppContext } from "../../context/AppContext";
 import { updateCheckin } from "../../api/checkins";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ checkins, index, setIndex, userProfile }) => {
+const CheckinsHistory = ({ checkins, index, userProfile }) => {
+  const { dispatch } = useContext(AppContext);
   const { workEmail, role, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const { imageUrl, name } = userProfile ? userProfile : {};
-  const [checkinIndex, setCheckinIndex] = useState(index);
   const [pdl, setPDL] = useState();
-  console.log("current checkin", checkins[checkinIndex]);
-  console.log("checkin history index:", index);
 
   // Get PDL's name
   useEffect(() => {
@@ -34,24 +33,22 @@ const CheckinsHistory = ({ checkins, index, setIndex, userProfile }) => {
   }, [pdlId]);
 
   let checkinDate =
-    checkins.length > 0
-      ? new Date(checkins[checkinIndex].checkInDate)
-      : new Date();
+    checkins.length > 0 ? new Date(checkins[index].checkInDate) : new Date();
   const lastIndex = checkins.length - 1;
-  const leftArrowClass =
-    "arrow " + (checkinIndex < lastIndex ? "enabled" : "disabled");
+  const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
   const rightArrowClass =
-    "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
+    "arrow " + (index < lastIndex ? "enabled" : "disabled");
 
   const previousCheckin = () => {
-    setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
-    setIndex(checkinIndex);
-    // TODO: change checkin on click
+    if (index !== 0) {
+      dispatch({ type: UPDATE_INDEX, payload: index - 1 });
+    }
   };
 
   const nextCheckin = () => {
-    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
-    setIndex(checkinIndex);
+    if (index !== lastIndex) {
+      dispatch({ type: UPDATE_INDEX, payload: index + 1 });
+    }
   };
 
   const pickDate = (date) => {

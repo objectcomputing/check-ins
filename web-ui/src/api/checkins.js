@@ -13,7 +13,7 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
         teamMemberId: memberId,
         pdlId: pdlId,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -27,7 +27,7 @@ export const getCheckinByMemberId = async (id) => {
       params: {
         teamMemberId: id,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -41,7 +41,7 @@ export const getCheckinByPdlId = async (id) => {
       params: {
         pdlId: id,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -55,7 +55,7 @@ export const getNoteByCheckinId = async (id) => {
       params: {
         checkinid: id,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -65,15 +65,15 @@ export const updateCheckin = ({
   id,
   teamMemberId,
   pdlId,
-  checkInDate
+  checkInDate,
 }) => {
   return resolve(
     axios({
       method: "put",
       url: checkinsUrl,
       responseType: "json",
-      data: { completed,id, teamMemberId, pdlId, checkInDate },
-      withCredentials: true
+      data: { completed, id, teamMemberId, pdlId, checkInDate },
+      withCredentials: true,
     })
   );
 };
@@ -90,7 +90,7 @@ export const updateCheckinNote = ({
       url: checkinsNoteUrl,
       responseType: "json",
       data: { id, checkinid, createdbyid, description },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };

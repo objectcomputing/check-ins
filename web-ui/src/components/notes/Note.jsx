@@ -13,7 +13,6 @@ const Notes = (props) => {
   const canViewPrivateNote =
     userProfile.role.includes("PDL") || userProfile.role.includes("ADMIN");
   const { checkin, memberName } = props;
-  const { id } = checkin;
   const [note, setNote] = useState({});
   // TODO: get private note and determine if user is PDL
   const [privateNote, setPrivateNote] = useState("Private note");
@@ -31,8 +30,8 @@ const Notes = (props) => {
 
   useEffect(() => {
     async function getNotes() {
-      if (id) {
-        let res = await getNoteByCheckinId(id);
+      if (checkin) {
+        let res = await getNoteByCheckinId(checkin.id);
         let data =
           res.payload &&
           res.payload.data &&
@@ -44,7 +43,7 @@ const Notes = (props) => {
         if (data) {
           setNote(data[0]);
           const canvas = canvasRef.current;
-          if (canvas && data[0].description) {
+          if (canvas && canvas.parentElement && data[0].description) {
             // to remove canvas if there is data
             canvas.parentElement.removeChild(canvas);
           }
@@ -52,7 +51,7 @@ const Notes = (props) => {
       }
     }
     getNotes();
-  }, [id]);
+  }, [checkin]);
 
   let debouncedDescription = useDebounce(note.description, 2000);
 
@@ -88,7 +87,7 @@ const Notes = (props) => {
         </h1>
         <div className="container">
           <textarea
-            onChange={handleNoteChange}
+            onKeyPress={handleNoteChange}
             value={note.description}
           ></textarea>
           <canvas ref={canvasRef}></canvas>
