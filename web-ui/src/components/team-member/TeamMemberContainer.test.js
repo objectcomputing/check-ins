@@ -9,7 +9,7 @@ const testProfile = [
 
 it("renders correctly", () => {
   snapshot(
-    <AppContextProvider value={null}>
+    <AppContextProvider >
       <TeamMemberContainer profiles={testProfile} />
     </AppContextProvider>
   );
