@@ -1,78 +1,140 @@
 import React, { useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { AppContext } from "../../context/AppContext";
+import { getMembersByTeam, getTeamsByMember } from "../../api/team";
+import { getMember } from "../../api/member";
 
 import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
-  const { defaultTeamMembers } = state;
+  const { userProfile } = state;
+  const id =
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.uuid
+      : undefined;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
-    image_url: null,
+    imageUrl: null,
   });
-
+  const [teamMembers, setTeamMembers] = useState({});
+  const [teams, setTeams] = useState([]);
+  const [currentTeam, setCurrentTeam] = useState([]);
   const {
     bioText,
-    image_url,
+    imageUrl,
     location,
     name,
-    pdl,
+    pdlId,
     role,
     startDate,
     workEmail,
   } = selectedProfile;
 
-  const [PDL, setPDL] = useState(pdl);
+  const [pdl, setPDL] = useState();
 
-  let now = Date.now();
-
-  const monthsandYears = (date, now) => {
-    if (!date) {
-      return;
+  // Get PDL's name
+  React.useEffect(() => {
+    async function getPDLName() {
+      if (pdlId) {
+        let res = await getMember(pdlId);
+        let pdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setPDL(pdlProfile ? pdlProfile.name : "");
+      }
     }
-    let diff = Math.floor(now - date);
-    let day = 1000 * 60 * 60 * 24;
+    getPDLName();
+  }, [pdlId]);
 
-    let days = Math.floor(diff / day);
-    let months = Math.floor(days / 31);
-    let years = Math.floor(months / 12);
-    months %= 12;
-    const time = { months: months, years: years };
+  // Get member teams
+  React.useEffect(() => {
+    async function updateTeams() {
+      if (id) {
+        let res = await getTeamsByMember(id);
+        let data =
+          res.payload && res.payload.status === 200 ? res.payload.data : null;
+        let memberTeams = data && !res.error ? data : [];
+        setTeams(memberTeams);
+      }
+    }
+    updateTeams();
+  }, [id]);
 
-    return time;
-  };
-
-  const time = monthsandYears(startDate, now);
+  React.useEffect(() => {
+    async function updateTeamMembers() {
+      if (teams) {
+        const teamMemberMap = Object.assign(
+          {},
+          ...(await Promise.all(
+            teams.map(async (team) => {
+              let res = await getMembersByTeam(team.uuid);
+              let data =
+                res && res.payload && res.payload.status === 200
+                  ? res.payload.data
+                  : null;
+              if (data && !res.error) {
+                return {
+                  [team.uuid]: await Promise.all(
+                    data.map(async (member) => {
+                      let res = await getMember(member.memberid);
+                      let data =
+                        res &&
+                        res.payload &&
+                        res.payload.status === 200 &&
+                        !res.error
+                          ? res.payload.data
+                          : null;
+                      return data;
+                    })
+                  ),
+                };
+              } else {
+                return { [team.uuid]: [] };
+              }
+            })
+          ))
+        );
+        setTeamMembers(teamMemberMap);
+      }
+    }
+    updateTeamMembers();
+  }, [teams]);
 
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
       return (
         <MemberIcon
-          key={profile.name}
+          key={`profile-${profile.workEmail}`}
           profile={profile}
           onSelect={setSelectedProfile}
-          onSelectPDL={setPDL}
         ></MemberIcon>
       );
     });
 
     return team;
   };
-  let team = teamProfile(defaultTeamMembers);
+  let team = teamProfile(currentTeam);
+
+  const mapTeams = teams.map((team) => {
+    return (
+      <div
+        key={`team-${team.uuid}`}
+        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
+      >
+        {team.name.toUpperCase()}
+      </div>
+    );
+  });
 
   return (
     <div>
+      <div className="team-names">{mapTeams}</div>
       {name && (
         <div className="flex-row" style={{ minWidth: "800px" }}>
           <div className="image-div">
             <img
               alt="Profile"
-              src={
-                image_url
-                  ? image_url
-                  : require("../../images/default_profile.jpg")
-              }
+              src={imageUrl ? imageUrl : "/default_profile.jpg"}
             />
           </div>
           <div className="team-member-info">
@@ -81,15 +143,19 @@ const TeamMemberContainer = () => {
               <div style={{ display: "flex" }}>
                 <div style={{ marginRight: "50px", textAlign: "left" }}>
                   <p>Role: {role}</p>
-                  <p>PDL: {PDL}</p>
+                  <p>PDL: {pdl}</p>
                   <p>Location: {location}</p>
                 </div>
                 <div>
                   <p>
-                    Length of Service:
-                    {`${time.years > 0 ? time.years + " year(s), " : ""} ${
-                      time.months
-                    } month(s)`}
+                    Start Date:{" "}
+                    {startDate && startDate.length === 3
+                      ? new Date(
+                          startDate[0],
+                          startDate[1] - 1,
+                          startDate[2]
+                        ).toLocaleDateString()
+                      : ""}
                   </p>
                   <p>Email: {workEmail}</p>
                   <p>Bio: {bioText}</p>
@@ -100,7 +166,7 @@ const TeamMemberContainer = () => {
         </div>
       )}
       <div className="flex-row" style={{ flexWrap: "wrap" }}>
-        {team.length === 0 ? <p>No team members :/</p> : team}
+        {team}
       </div>
     </div>
   );

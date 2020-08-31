@@ -9,6 +9,11 @@
   padding: 5px;
 }
 
+.skills-section {
+  max-width: 50%;
+  margin: auto;
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;

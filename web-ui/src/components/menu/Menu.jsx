@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useContext, useState } from "react";
+import React, { /*useContext,*/ useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,7 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
-import { AppContext } from "../../context/AppContext";
+//import { AppContext } from "../../context/AppContext";
 
 import "./Menu.css";
 
@@ -57,8 +57,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  const { state } = useContext(AppContext);
-  const { isAdmin } = state;
+  //const { state } = useContext(AppContext);
+  //const { userProfile } = state;
+
+  //const isAdmin = userProfile.role === "ADMIN";
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -116,22 +118,18 @@ function Menu() {
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to="/upload">
-          Uploads
-        </Link>
-      </Button>
-      <Button>
         <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
       </Button>
-      {isAdmin && (
+      <br />
+      {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">
             Edit PDLs
           </Link>
         </Button>
-      )}
+      )} */}
     </div>
   );
 
@@ -184,14 +182,6 @@ function Menu() {
                     <MenuItem onClick={() => window.location.reload()}>
                       <Link style={{ textDecoration: "none" }} to={`/logout`}>
                         Logout
-                      </Link>
-                    </MenuItem>
-                    <MenuItem onClick={() => window.location.reload()}>
-                      <Link
-                        style={{ textDecoration: "none" }}
-                        to={`/oauth/login/google`}
-                      >
-                        Login
                       </Link>
                     </MenuItem>
                   </MenuList>

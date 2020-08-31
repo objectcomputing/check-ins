@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/action-item")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "action-item")
 public class ActionItemController {
@@ -83,16 +83,6 @@ public class ActionItemController {
         actionItemServices.delete(id);
         return HttpResponse
                 .ok();
-    }
-
-    /**
-     * Get all ActionItems
-     *
-     * @return {@link Set<ActionItem>}
-     */
-    @Get("/all")
-    public Set<ActionItem> readAll() {
-        return actionItemServices.readAll();
     }
 
     /**

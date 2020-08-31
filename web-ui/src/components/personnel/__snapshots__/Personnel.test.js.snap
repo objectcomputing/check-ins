@@ -13,7 +13,7 @@ exports[`renders correctly with null 1`] = `
     <img
       alt="personnel pic"
       className="member-image"
-      src="default_profile.jpg"
+      src="/default_profile.jpg"
     />
     <div
       className="info-div"
@@ -37,7 +37,7 @@ exports[`renders correctly with null 1`] = `
     <img
       alt="personnel pic"
       className="member-image"
-      src="default_profile.jpg"
+      src="/default_profile.jpg"
     />
     <div
       className="info-div"
@@ -61,7 +61,7 @@ exports[`renders correctly with null 1`] = `
     <img
       alt="personnel pic"
       className="member-image"
-      src="default_profile.jpg"
+      src="/default_profile.jpg"
     />
     <div
       className="info-div"

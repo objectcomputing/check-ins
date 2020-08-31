@@ -3,33 +3,15 @@
 exports[`renders correctly 1`] = `
 <div>
   <div
+    className="team-names"
+  />
+  <div
     className="flex-row"
     style={
       Object {
         "flexWrap": "wrap",
       }
     }
-  >
-    <div
-      className="image-div"
-      onClick={[Function]}
-    >
-      <img
-        alt="Profile"
-        className="member-image"
-        src="default_profile.jpg"
-      />
-    </div>
-    <div
-      className="image-div"
-      onClick={[Function]}
-    >
-      <img
-        alt="Profile"
-        className="member-image"
-        src="default_profile.jpg"
-      />
-    </div>
-  </div>
+  />
 </div>
 `;

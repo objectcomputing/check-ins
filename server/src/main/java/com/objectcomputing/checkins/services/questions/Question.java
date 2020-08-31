@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.questions;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +19,6 @@ import java.util.UUID;
 public class Question {
 
     public Question(@NotBlank String text) {
-        this.questionid = questionid;
         this.text = text;
     }
 
@@ -26,21 +26,23 @@ public class Question {
     }
 
     @Id
-    @Column(name="questionid")
+    @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    private UUID questionid;
+    @Schema(description = "id of the question this entry is associated with")
+    private UUID id;
 
     @NotBlank
     @Column(name="text")
+    @Schema(description = "text of the question being asked", required = true)
     private String text;
 
-    public UUID getQuestionid() {
-        return questionid;
+    public UUID getId() {
+        return id;
     }
 
-    public void setQuestionid(UUID questionid) {
-        this.questionid = questionid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getText() {
@@ -56,19 +58,19 @@ public class Question {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Question question = (Question) o;
-        return Objects.equals(questionid, question.questionid) &&
+        return Objects.equals(id, question.id) &&
                 Objects.equals(text, question.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(questionid, text);
+        return Objects.hash(id, text);
     }
 
     @Override
     public String toString() {
         return "Question {" +
-                "questionid='" + questionid + '\'' +
+                "id='" + id + '\'' +
                 "text='" + text + '\'' +
                 '}';
     }

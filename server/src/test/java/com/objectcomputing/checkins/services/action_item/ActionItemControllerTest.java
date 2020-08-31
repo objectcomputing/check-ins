@@ -2,6 +2,12 @@ package com.objectcomputing.checkins.services.action_item;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.fixture.ActionItemFixture;
+import com.objectcomputing.checkins.services.fixture.CheckInFixture;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -10,63 +16,56 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
-import io.micronaut.test.annotation.MockBean;
+
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@MicronautTest
-class ActionItemControllerTest {
+
+class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, ActionItemFixture {
 
     @Inject
     @Client("/services/action-item")
     HttpClient client;
-    @Inject
-    private ActionItemServices actionItemServices;
 
-    @MockBean(ActionItemServices.class)
-    public ActionItemServices actionItemServices() {
-        return mock(ActionItemServices.class);
-    }
 
     @Test
     void testCreateAnActionItem() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
-        actionItemCreateDTO.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
         actionItemCreateDTO.setDescription("dnc");
 
-        ActionItem a = new ActionItem(actionItemCreateDTO.getCheckinid(), actionItemCreateDTO.getCreatedbyid(), actionItemCreateDTO.getDescription());
-
-        when(actionItemServices.save(eq(a))).thenReturn(a);
-
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        assertEquals(a, response.body());
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), a.getId()), response.getHeaders().get("location"));
+        ActionItem actionItem= response.body();
 
-        verify(actionItemServices, times(1)).save(any(ActionItem.class));
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(actionItemCreateDTO.getCheckinid(),actionItem.getCheckinid());
+        assertEquals(actionItemCreateDTO.getCreatedbyid(),actionItem.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
     }
 
     @Test
     void testCreateAnInvalidActionItem() {
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
 
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
-        when(actionItemServices.save(any(ActionItem.class))).thenReturn(a);
-
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -79,16 +78,12 @@ class ActionItemControllerTest {
         assertEquals("actionItem.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
-        verify(actionItemServices, never()).save(any(ActionItem.class));
     }
 
     @Test
     void testCreateANullActionItem() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
-        when(actionItemServices.save(any(ActionItem.class))).thenReturn(a);
 
-        final HttpRequest<String> request = HttpRequest.POST("", "");
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -99,42 +94,83 @@ class ActionItemControllerTest {
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
-        verify(actionItemServices, never()).save(any(ActionItem.class));
     }
 
     @Test
-    void testLoadActionItems() {
+    void testCreateAnActionItemForExistingCheckInId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(UUID.randomUUID());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO.setDescription("test");
+
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("CheckIn %s doesn't exist",actionItemCreateDTO.getCheckinid()),error);
+
+    }
+
+    @Test
+    void testCreateAnActionItemForExistingMemberIdId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
         actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
+        actionItemCreateDTO.setDescription("test");
+
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Member %s doesn't exist",actionItemCreateDTO.getCreatedbyid()),error);
+
+    }
+
+
+    @Test
+    void testLoadActionItems() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
-        actionItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO2.setCreatedbyid(UUID.randomUUID());
+        actionItemCreateDTO2.setCheckinid(checkIn.getId());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        ActionItem a = new ActionItem(actionItemCreateDTO.getCheckinid(), actionItemCreateDTO.getCreatedbyid(), actionItemCreateDTO.getDescription());
-        ActionItem a2 = new ActionItem(actionItemCreateDTO2.getCheckinid(), actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getDescription());
-
-        List<ActionItem> checkinList = List.of(a, a2);
-        AtomicInteger i = new AtomicInteger(0);
-        doAnswer(ans -> {
-            ActionItem thisG = checkinList.get(i.getAndAdd(1));
-            assertEquals(thisG, ans.getArgument(0));
-            return thisG;
-        }).when(actionItemServices).save(any(ActionItem.class));
-
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<List<ActionItem>> response = client.toBlocking().exchange(request, Argument.listOf(ActionItem.class));
 
-        assertEquals(checkinList, response.body());
+        List<ActionItem> actionItem= response.body();
+
+        assertNotNull(response);
+        assertEquals(actionItem.get(0).getCheckinid(), actionItemCreateDTO.getCheckinid());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(request.getPath(), response.getHeaders().get("location"));
 
-        verify(actionItemServices, times(2)).save(any(ActionItem.class));
     }
 
     @Test
@@ -148,7 +184,7 @@ class ActionItemControllerTest {
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -162,165 +198,126 @@ class ActionItemControllerTest {
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
-        verify(actionItemServices, never()).save(any(ActionItem.class));
     }
 
     @Test
     void testLoadActionItemsThrowException() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
-        actionItemCreateDTO.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO2.setCreatedbyid(UUID.randomUUID());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        ActionItem a = new ActionItem(actionItemCreateDTO.getCheckinid(), actionItemCreateDTO.getCreatedbyid(), actionItemCreateDTO.getDescription());
-        ActionItem a2 = new ActionItem(actionItemCreateDTO2.getCheckinid(), actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getDescription());
-
-        final String errorMessage = "error message!";
-        when(actionItemServices.save(eq(a))).thenReturn(a);
-
-        when(actionItemServices.save(eq(a2))).thenAnswer(ans -> {
-            throw new ActionItemBadArgException(errorMessage);
-        });
-
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
-        assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
-                a2.getCreatedbyid(), a2.getCheckinid(), errorMessage), responseException.getResponse().body());
+        final String errorMessage = String.format("CheckIn %s doesn't exist",actionItemCreateDTO2.getCheckinid());
+
+       assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
+               actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
 
-        verify(actionItemServices, times(2)).save(any(ActionItem.class));
     }
 
     @Test
     void deleteActionItem() {
-        UUID uuid = UUID.randomUUID();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        doAnswer(an -> {
-            assertEquals(uuid, an.getArgument(0));
-            return null;
-        }).when(actionItemServices).delete(any(UUID.class));
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
-        verify(actionItemServices, times(1)).delete(any(UUID.class));
-    }
-
-    @Test
-    void testReadAllActionItem() {
-        Set<ActionItem> actionItems = Set.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
-
-        when(actionItemServices.readAll()).thenReturn(actionItems);
-
-        final HttpRequest<UUID> request = HttpRequest.GET("all");
-        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
-
-        assertEquals(actionItems, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        verify(actionItemServices, times(1)).readAll();
     }
 
     @Test
     void testReadActionItem() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(actionItemServices.read(eq(a.getId()))).thenReturn(a);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", a.getId().toString()));
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        assertEquals(a, response.body());
+        assertEquals(actionItem, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
-        verify(actionItemServices, times(1)).read(any(UUID.class));
     }
 
     @Test
     void testReadActionItemNotFound() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        when(actionItemServices.read(eq(a.getCheckinid()))).thenReturn(a);
-
-        final HttpRequest<UUID> request = HttpRequest.GET(String.format("/%s", a.getId().toString()));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, ActionItem.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-
-        verify(actionItemServices, times(1)).read(any(UUID.class));
     }
 
     @Test
     void testFindActionItems() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
-        Set<ActionItem> checkins = Collections.singleton(a);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(actionItemServices.findByFields(eq(a.getCheckinid()), eq(a.getCreatedbyid()))).thenReturn(checkins);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", a.getCheckinid(),
-                a.getCreatedbyid()));
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
+                actionItem.getCreatedbyid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
-        assertEquals(checkins, response.body());
+        assertEquals(Set.of(actionItem), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
-        verify(actionItemServices, times(1)).findByFields(any(UUID.class), any(UUID.class));
     }
-
-    @Test
-    void testFindActionItemsNull() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
-
-        when(actionItemServices.findByFields(eq(a.getCheckinid()), eq(null))).thenReturn(null);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", a.getCheckinid()));
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Argument.setOf(ActionItem.class)));
-
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-
-        verify(actionItemServices, times(1)).findByFields(any(UUID.class), eq(null));
-    }
-
 
     @Test
     void testUpdateActionItem() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(actionItemServices.update(eq(a))).thenReturn(a);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<ActionItem> request = HttpRequest.PUT("", a);
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        assertEquals(a, response.body());
+        assertEquals(actionItem, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), a.getId()), response.getHeaders().get("location"));
-
-        verify(actionItemServices, times(1)).update(any(ActionItem.class));
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
     }
 
     @Test
     void testUpdateAnInvalidActionItem() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), null, null, "dnc");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        when(actionItemServices.update(any(ActionItem.class))).thenReturn(a);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        final HttpRequest<ActionItem> request = HttpRequest.PUT("", a);
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        actionItem.setCreatedbyid(null);
+        actionItem.setCheckinid(null);
+
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -333,16 +330,12 @@ class ActionItemControllerTest {
         assertEquals("actionItem.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
-        verify(actionItemServices, never()).update(any(ActionItem.class));
     }
 
     @Test
     void testUpdateANullActionItem() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
-        when(actionItemServices.update(any(ActionItem.class))).thenReturn(a);
 
-        final HttpRequest<String> request = HttpRequest.PUT("", "");
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -352,33 +345,90 @@ class ActionItemControllerTest {
         assertEquals("Required Body [actionItem] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
-        verify(actionItemServices, never()).update(any(ActionItem.class));
     }
 
+    @Test
+    void testUpdateUnAuthorized() {
+        ActionItem actionItem = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
+
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, String.class));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("Unauthorized", responseException.getMessage());
+    }
 
     @Test
-    void testUpdateActionItemThrowException() {
-        ActionItem a = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "dnc");
+    void testUpdateNonExistingActionItem(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        final String errorMessage = "error message!";
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
 
-        when(actionItemServices.update(any(ActionItem.class))).thenAnswer(ans -> {
-            throw new ActionItemBadArgException(errorMessage);
-        });
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        actionItem.setId(UUID.randomUUID());
 
-        final MutableHttpRequest<ActionItem> request = HttpRequest.PUT("", a);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals(errorMessage, errors.asText());
-        assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        verify(actionItemServices, times(1)).update(any(ActionItem.class));
+        assertEquals(String.format("Unable to locate actionItem to update with id %s", actionItem.getId()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNonExistingActionItemForCheckInId(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        actionItem.setCheckinid(UUID.randomUUID());
+
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("CheckIn %s doesn't exist", actionItem.getCheckinid()), error);
+        assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void testUpdateNonExistingActionItemForMemberId(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        actionItem.setCreatedbyid(UUID.randomUUID());
+
+        final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(String.format("Member %s doesn't exist", actionItem.getCreatedbyid()), error);
+        assertEquals(request.getPath(), href);
+
     }
 
 }

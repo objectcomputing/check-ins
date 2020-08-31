@@ -24,7 +24,7 @@ public class RoleServicesImpl implements RoleServices {
                 throw new RoleBadArgException(String.format("Invalid role %s", role));
             } else if (role.getId() != null) {
                 throw new RoleBadArgException(String.format("Found unexpected id %s for role", role.getId()));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new RoleBadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (roleRepo.findByRoleAndMemberid(roleType, role.getMemberid()).isPresent()) {
                 throw new RoleBadArgException(String.format("Member %s already has role %s", memberId, roleType));
@@ -47,9 +47,9 @@ public class RoleServicesImpl implements RoleServices {
             final RoleType roleType = role.getRole();
             if (roleType == null || memberId == null) {
                 throw new RoleBadArgException(String.format("Invalid role %s", role));
-            } else if (id == null || !roleRepo.findById(id).isPresent()) {
+            } else if (id == null || roleRepo.findById(id).isEmpty()) {
                 throw new RoleBadArgException(String.format("Unable to locate role to update with id %s", id));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new RoleBadArgException(String.format("Member %s doesn't exist", memberId));
             }
 

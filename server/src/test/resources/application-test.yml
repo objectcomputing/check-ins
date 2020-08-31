@@ -1,0 +1,24 @@
+micronaut:
+  security:
+    enabled: true
+    reject-not-found: false
+    oauth2:
+      enabled: false
+---
+datasources:
+  default:
+    url:  jdbc:tc:postgresql:///
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+---
+credentials:
+  roles:
+    SUPER:
+      - ADMIN
+      - PDL
+      - MEMBER
+    ADMIN:
+      - ADMIN
+    PDL:
+      - PDL
+    MEMBER:
+      - MEMBER
