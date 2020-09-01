@@ -1,6 +1,6 @@
 .notes {
   margin: 0 auto;
-  width: 50%;
+  width: 75%;
 }
 
 .notes h1 {
@@ -14,6 +14,8 @@
 }
 
 .container > canvas {
+  height: fit-content;
+  /* pointer-events: none; */
   position: absolute;
   top: 0;
   left: 0;

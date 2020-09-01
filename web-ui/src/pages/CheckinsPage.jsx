@@ -28,16 +28,16 @@ const CheckinsPage = () => {
             index={index}
             userProfile={userProfile}
           />
+          {checkin && checkin.id && (
+            <Note checkin={checkin} memberName={userProfile.name} />
+          )}
+          <CheckinDocs />
         </div>
         <div className="right-sidebar">
           <Personnel />
           <GuidesPanel />
         </div>
       </div>
-      {checkin && checkin.id && (
-        <Note checkin={checkin} memberName={userProfile.name} />
-      )}
-      <CheckinDocs />
       <div className="modal-container">
         <Modal close={showModal} show={show}>
           The checkin will no longer be able to be edited. Are you sure that you

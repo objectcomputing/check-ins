@@ -51,9 +51,17 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
     }
   };
 
-  const pickDate = (date) => {
-    console.log({ date });
-    // update checkin with new date
+  const pickDate = async (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const checkin = checkins[index];
+    // const stringDate = `${year}-${month}-${day}`;
+    const dateArray = [year, month, day];
+    await updateCheckin({
+      ...checkin,
+      checkInDate: dateArray,
+    });
   };
 
   const DateInput = ({ value, onClick }) => (
@@ -84,11 +92,13 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
           style={{ fontSize: "50px" }}
         />
         <DatePicker
+          closeOnScroll
           customInput={<DateInput />}
           dateFormat="MMMM dd, yyyy h:mm aa"
+          onChange={pickDate}
           selected={checkinDate}
           showTimeSelect
-          onChange={pickDate}
+          withPortal
         />
         <ArrowForwardIcon
           className={rightArrowClass}

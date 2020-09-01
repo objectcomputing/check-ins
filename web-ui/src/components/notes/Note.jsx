@@ -1,11 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
-import useDebounce from "../../hooks/useDebounce";
+import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
 import { AppContext } from "../../context/AppContext";
 
 import "./Note.css";
+
+async function realUpdate(note) {
+  let res = await updateCheckinNote(note);
+  if (res.error) {
+    console.error(res.error);
+  }
+}
+
+const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
@@ -24,7 +33,7 @@ const Notes = (props) => {
     const context = canvasRef.current.getContext("2d");
     context.fillStyle = "lightgrey";
     for (let i = 1; i < 5; i++) {
-      context.fillRect(5, 15 * i, 500, 10);
+      context.fillRect(5, 30 * i, 500, 15);
     }
   }, []);
 
@@ -53,25 +62,9 @@ const Notes = (props) => {
     getNotes();
   }, [checkin]);
 
-  let debouncedDescription = useDebounce(note.description, 2000);
-
-  useEffect(() => {
-    async function updateNotes() {
-      if (note.id) {
-        let res = await updateCheckinNote({
-          ...note,
-          description: debouncedDescription,
-        });
-        if (res.error) {
-          console.error(res.error);
-        }
-      }
-    }
-    updateNotes();
-  }, [debouncedDescription, note, note.id]);
-
   const handleNoteChange = (e) => {
     setNote({ ...note, description: e.target.value });
+    updateNote(note);
   };
 
   const handlePrivateNoteChange = (e) => {
@@ -87,7 +80,7 @@ const Notes = (props) => {
         </h1>
         <div className="container">
           <textarea
-            onKeyPress={handleNoteChange}
+            onChange={handleNoteChange}
             value={note.description}
           ></textarea>
           <canvas ref={canvasRef}></canvas>
