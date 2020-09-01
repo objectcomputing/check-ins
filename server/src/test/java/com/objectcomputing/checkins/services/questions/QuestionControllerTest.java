@@ -43,7 +43,7 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
     public void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
+            client.toBlocking().exchange(HttpRequest.GET((String.format("/%s", UUID.randomUUID().toString())))
             .basicAuth(MEMBER_ROLE,MEMBER_ROLE));
         });
 
