@@ -1,6 +1,6 @@
-package com.objectcomputing.checkins.services.checkinnotes;
+package com.objectcomputing.checkins.services.checkin_notes;
 
-public class CheckinNotesBadArgException extends RuntimeException{
+public class CheckinNotesBadArgException extends RuntimeException {
     /**
      *
      */

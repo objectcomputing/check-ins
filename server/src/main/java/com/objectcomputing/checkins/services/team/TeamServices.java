@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface TeamServices {
-    Team read(UUID uuid);
+    Team read(UUID id);
 
     Team save(Team g);
 

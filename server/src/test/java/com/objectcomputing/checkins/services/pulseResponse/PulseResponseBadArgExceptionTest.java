@@ -1,13 +1,15 @@
-package com.objectcomputing.checkins.services.checkinnotes;
+package com.objectcomputing.checkins.services.pulseresponse;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CheckinNotesBadArgExceptionTest {
+public class PulseResponseBadArgExceptionTest {
+
     @Test
     void testExceptionMessage() {
         final String message = "Hello world";
-        CheckinNotesBadArgException argException = new CheckinNotesBadArgException(message);
+        PulseResponseBadArgException argException = new PulseResponseBadArgException(message);
         assertEquals(argException.getMessage(), message);
     }
 }
