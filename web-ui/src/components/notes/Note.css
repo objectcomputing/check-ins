@@ -1,0 +1,28 @@
+.notes {
+  margin: 0 auto;
+  width: 50%;
+}
+
+.notes h1 {
+  text-align: left;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.container > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 98%;
+}
+
+.container textarea {
+  border: 2px solid black;
+  min-height: 150px;
+  padding: 5px;
+  width: 100%;
+}

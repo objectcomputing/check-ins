@@ -16,7 +16,7 @@
 
 .documents {
   display: flex;
-  margin-left: 150px;
+  justify-content: center;
   margin-top: 50px;
 }
 
