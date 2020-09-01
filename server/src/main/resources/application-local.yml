@@ -5,7 +5,7 @@ micronaut:
       configurations:
         web:
           allowedOrigins:
-            - ^http(|s):\/\/localhost:3000$
+            - ^http(|s):\/\/localhost:.*$
   security:
     authentication: cookie
     oauth2:
@@ -18,8 +18,7 @@ micronaut:
             expiration: 60000
           secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
-      -
-        pattern: /swagger-ui/**
+      - pattern: /swagger-ui/**
         http-method: GET
         access:
           - isAnonymous()
