@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
@@ -57,5 +58,8 @@ public interface RepositoryFixture {
     }
     default QuestionRepository getQuestionRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(QuestionRepository.class);
+    }
+    default MemberSkillRepository getMemberSkillRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberSkillRepository.class);
     }
 }

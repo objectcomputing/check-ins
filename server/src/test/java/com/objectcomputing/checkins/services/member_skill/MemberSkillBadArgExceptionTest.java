@@ -1,8 +1,6 @@
-package com.objectcomputing.checkins.services.memberskill;
+package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillBadArgException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
