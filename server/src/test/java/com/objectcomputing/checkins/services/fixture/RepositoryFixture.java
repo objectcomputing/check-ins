@@ -4,12 +4,13 @@ import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
+import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 
@@ -54,9 +55,10 @@ public interface RepositoryFixture {
     default TeamMemberRepository getTeamMemberRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TeamMemberRepository.class);
     }
-
+    default QuestionRepository getQuestionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(QuestionRepository.class);
+    }
     default MemberSkillRepository getMemberSkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(MemberSkillRepository.class);
     }
-
 }

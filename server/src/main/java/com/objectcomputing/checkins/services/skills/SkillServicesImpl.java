@@ -14,10 +14,6 @@ public class SkillServicesImpl implements SkillServices {
     @Inject
     private SkillRepository skillRepository;
 
-    public void setSkillRepository(SkillRepository skillsRepository) {
-        this.skillRepository = skillsRepository;
-    }
-
     public Skill save(Skill skill) {
         Skill newSkill = null;
         if (skill != null) {
