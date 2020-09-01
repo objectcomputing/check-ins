@@ -23,23 +23,14 @@ const Notes = (props) => {
     userProfile.role.includes("PDL") || userProfile.role.includes("ADMIN");
   const { checkin, memberName } = props;
   const [note, setNote] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note and determine if user is PDL
   const [privateNote, setPrivateNote] = useState("Private note");
-
-  const canvasRef = useRef();
-
-  // to draw empty sections when loading
-  useEffect(() => {
-    const context = canvasRef.current.getContext("2d");
-    context.fillStyle = "lightgrey";
-    for (let i = 1; i < 5; i++) {
-      context.fillRect(5, 30 * i, 500, 15);
-    }
-  }, []);
 
   useEffect(() => {
     async function getNotes() {
       if (checkin) {
+        setIsLoading(true);
         let res = await getNoteByCheckinId(checkin.id);
         let data =
           res.payload &&
@@ -51,11 +42,7 @@ const Notes = (props) => {
             : null;
         if (data) {
           setNote(data[0]);
-          const canvas = canvasRef.current;
-          if (canvas && canvas.parentElement && data[0].description) {
-            // to remove canvas if there is data
-            canvas.parentElement.removeChild(canvas);
-          }
+          setIsLoading(false);
         }
       }
     }
@@ -63,8 +50,12 @@ const Notes = (props) => {
   }, [checkin]);
 
   const handleNoteChange = (e) => {
-    setNote({ ...note, description: e.target.value });
-    updateNote(note);
+    const { value } = e.target;
+    setNote((note) => {
+      const newNote = { ...note, description: value };
+      updateNote(newNote);
+      return newNote;
+    });
   };
 
   const handlePrivateNoteChange = (e) => {
@@ -79,11 +70,14 @@ const Notes = (props) => {
           Notes for {memberName}
         </h1>
         <div className="container">
-          <textarea
-            onChange={handleNoteChange}
-            value={note.description}
-          ></textarea>
-          <canvas ref={canvasRef}></canvas>
+          {isLoading ? (
+            <div className="is-loading"></div>
+          ) : (
+            <textarea
+              onChange={handleNoteChange}
+              value={note.description ? note.description : ""}
+            ></textarea>
+          )}
         </div>
       </div>
       {canViewPrivateNote && (
