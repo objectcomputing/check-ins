@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -86,7 +85,7 @@ public class SkillController {
      *
      * @param name,    name of the skill
      * @param pending, whether or not the skill has been officially accepted
-     * @return {@link List < Skill > list of Skills}
+     * @return {@link Set < Skill > list of Skills}
      */
 
     @Get("/{?name,pending}")
