@@ -73,7 +73,6 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testCreateANullMemberSkill() {
-        MemberSkill m = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -90,7 +89,6 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void createAMemeberSkillForExistingMemberProfileO() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
@@ -113,7 +111,6 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     @Test
     void createAMemeberSkillForExistingSkill() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Skill skill = createADefaultSkill();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
         memberSkillCreateDTO.setMemberid(memberProfile.getUuid());
