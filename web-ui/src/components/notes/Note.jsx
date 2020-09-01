@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
