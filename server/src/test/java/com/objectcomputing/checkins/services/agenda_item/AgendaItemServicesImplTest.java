@@ -350,20 +350,6 @@ class AgendaItemServicesImplTest {
     }
 
     @Test
-    void testReadAll() {
-        Set<AgendaItem> agendaItems = Set.of(
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
-
-        when(agendaItemRepository.findAll()).thenReturn(agendaItems);
-
-        assertEquals(agendaItems, services.readAll());
-
-        verify(agendaItemRepository, times(1)).findAll();
-    }
-
-    @Test
     void testDelete() {
         UUID uuid = UUID.randomUUID();
 
