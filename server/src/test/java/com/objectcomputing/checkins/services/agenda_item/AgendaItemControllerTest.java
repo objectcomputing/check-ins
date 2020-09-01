@@ -97,7 +97,7 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
-    void testCreateAnAgendaItemForExistingCheckInId() {
+    void testCreateAnAgendaItemForNonExistingCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
@@ -118,7 +118,7 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
-    void testCreateAnAgendaItemForExistingMemberIdId() {
+    void testCreateAnAgendaItemForNonExistingMemberIdId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
