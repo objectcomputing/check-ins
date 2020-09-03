@@ -42,6 +42,11 @@ public class ActionItem {
     @Schema(description = "description of the action item")
     private String description;
 
+    @Column(name = "priority")
+    @TypeDef(type = DataType.DOUBLE)
+    @Schema(description = "Allow for a user defined display order")
+    private double priority;
+
     public ActionItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
     }
@@ -109,5 +114,13 @@ public class ActionItem {
     @Override
     public int hashCode() {
         return Objects.hash(id, checkinid, createdbyid, description);
+    }
+
+    public double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(double priority) {
+        this.priority = priority;
     }
 }

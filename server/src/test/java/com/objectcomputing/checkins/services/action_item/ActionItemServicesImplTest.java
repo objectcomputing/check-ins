@@ -65,6 +65,49 @@ class ActionItemServicesImplTest {
     }
 
     @Test
+    void testSaveWithExistingDisplayOrder() {
+        ActionItem currentActionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "I was already here!");
+        currentActionItem.setPriority(6.0);
+        ActionItem actionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        actionItem.setPriority(7.0);
+
+        when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.of(currentActionItem.getPriority()));
+        when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
+
+        ActionItem result = actionItemRepository.save(actionItem);
+
+        assertEquals(7, result.getPriority());
+    }
+
+    @Test
+    void testSaveNoExistingDisplayOrder() {
+        ActionItem actionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        actionItem.setPriority(1.0);
+
+        when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.empty());
+        when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
+
+        ActionItem result = actionItemRepository.save(actionItem);
+
+        assertEquals(1.0, result.getPriority());
+    }
+
+    @Test
     void testSave() {
         ActionItem actionItem = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
         CheckIn checkin = new CheckIn();
@@ -280,8 +323,8 @@ class ActionItemServicesImplTest {
         assertEquals(actionItemSet, services.findByFields(null, null));
 
         verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, never()).findByCheckinid(any(UUID.class));
-        verify(actionItemRepository, never()).findByCreatedbyid(any(UUID.class));
+        verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
+        verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
     }
 
     @Test
@@ -296,13 +339,13 @@ class ActionItemServicesImplTest {
         ActionItem actionItem = actionItemsToFind.get(0);
 
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.findByCheckinid(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
+        when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
 
         assertEquals(new HashSet<>(actionItemsToFind), services.findByFields(actionItem.getCheckinid(), null));
 
         verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCheckinid(any(UUID.class));
-        verify(actionItemRepository, never()).findByCreatedbyid(any(UUID.class));
+        verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
+        verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
     }
 
     @Test
@@ -317,13 +360,13 @@ class ActionItemServicesImplTest {
         ActionItem actionItem = actionItemsToFind.get(0);
 
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.findByCreatedbyid(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
+        when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
 
         assertEquals(new HashSet<>(actionItemsToFind), services.findByFields(null, actionItem.getCreatedbyid()));
 
         verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCreatedbyid(any(UUID.class));
-        verify(actionItemRepository, never()).findByCheckinid(any(UUID.class));
+        verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
+        verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
     }
 
     @Test
@@ -338,15 +381,15 @@ class ActionItemServicesImplTest {
 
         ActionItem actionItem = actionItemsToFind.get(0);
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.findByCreatedbyid(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
-        when(actionItemRepository.findByCheckinid(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
+        when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
+        when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
 
         assertEquals(new HashSet<>(actionItemsToFind), services
                 .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));
 
         verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCreatedbyid(any(UUID.class));
-        verify(actionItemRepository, times(1)).findByCheckinid(any(UUID.class));
+        verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
+        verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
     }
 
     @Test

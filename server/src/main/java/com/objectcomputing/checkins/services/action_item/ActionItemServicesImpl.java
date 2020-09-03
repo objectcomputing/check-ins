@@ -23,6 +23,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (actionItem != null) {
             final UUID guildId = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
+            double lastDisplayOrder = 0;
+            try {
+                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+            } catch (NullPointerException npe) {
+                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+                //nothing needs to happen here.
+            }
+            actionItem.setPriority(lastDisplayOrder+1);
             if (guildId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (actionItem.getId() != null) {
@@ -75,10 +83,10 @@ public class ActionItemServicesImpl implements ActionItemServices {
         actionItemRepo.findAll().forEach(actionItems::add);
 
         if (checkinid != null) {
-            actionItems.retainAll(actionItemRepo.findByCheckinid(checkinid));
+            actionItems.retainAll(actionItemRepo.findByCheckinidOrderByPriority(checkinid));
         }
         if (createdbyid != null) {
-            actionItems.retainAll(actionItemRepo.findByCreatedbyid(createdbyid));
+            actionItems.retainAll(actionItemRepo.findByCreatedbyidOrderByPriority(createdbyid));
         }
 
         return actionItems;
