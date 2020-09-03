@@ -262,7 +262,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testReadTeamMemberNotFound() {
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);;
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, TeamMember.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());

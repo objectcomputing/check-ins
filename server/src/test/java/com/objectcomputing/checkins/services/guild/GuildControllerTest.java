@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.GuildFixture;
