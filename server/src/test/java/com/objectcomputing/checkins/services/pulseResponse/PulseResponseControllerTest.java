@@ -39,7 +39,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
         pulseResponseCreateDTO.setUpdatedDate(LocalDate.now());
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getUuid());
+        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
@@ -115,7 +115,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965,11,12));
         pulseResponseCreateDTO.setUpdatedDate(LocalDate.of(1965,11,12));
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getUuid());
+        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 

@@ -169,11 +169,11 @@ public class MemberProfileControllerTest {
     public void testGetFindById() {
 
         MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setUuid(testUuid);
+        memberProfile.setId(testUuid);
 
-        when(mockMemberServices.getById(memberProfile.getUuid())).thenReturn(memberProfile);
+        when(mockMemberServices.getById(memberProfile.getId())).thenReturn(memberProfile);
 
-        HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfile.getUuid()))
+        HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfile.getId()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(requestFindById, MemberProfileResponseDTO.class);
         
@@ -270,7 +270,7 @@ public class MemberProfileControllerTest {
         MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
 
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(requestBody.getId());
+        expected.setId(requestBody.getId());
 
         when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
 

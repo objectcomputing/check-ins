@@ -80,24 +80,24 @@ public class MemberProfileServicesImplTest {
     }
 
     @Test
-    public void testFindByUUIDSuccess() {
+    public void testFindByIdSuccess() {
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(testUuid);
+        expected.setId(testUuid);
 
-        when(mockMemberProfileRepository.findByUuid(expected.getUuid())).thenReturn(expected);
+        when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(java.util.Optional.of(expected));
 
-        MemberProfile actual = testObject.getById(expected.getUuid());
+        MemberProfile actual = testObject.getById(expected.getId());
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testFindByUUIDNotFound() {
+    public void testFindByIdNotFound() {
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(testUuid);
+        expected.setId(testUuid);
 
-        when(mockMemberProfileRepository.findByUuid(expected.getUuid())).thenReturn(null);
-        verify(mockMemberProfileRepository, atLeastOnce()).findByUuid(testUuid);
+        when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(null);
+        verify(mockMemberProfileRepository, atLeastOnce()).findById(testUuid);
 
         MemberProfileDoesNotExistException thrown = assertThrows(MemberProfileDoesNotExistException.class, () -> {
             testObject.getById(testUuid);
@@ -110,7 +110,7 @@ public class MemberProfileServicesImplTest {
     public void testSaveNew() {
         MemberProfile in = mkMemberProfile();
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(testUuid);
+        expected.setId(testUuid);
 
         when(mockMemberProfileRepository.save(in)).thenReturn(expected);
 
@@ -122,7 +122,7 @@ public class MemberProfileServicesImplTest {
     @Test
     public void testSaveMemberSameEmail() {
         MemberProfile alreadyExists = mkMemberProfile();
-        alreadyExists.setUuid(UUID.randomUUID());
+        alreadyExists.setId(UUID.randomUUID());
 
         when(mockMemberProfileRepository.findByWorkEmail(eq(alreadyExists.getWorkEmail()))).thenReturn(java.util.Optional.of(alreadyExists));
 
@@ -137,9 +137,9 @@ public class MemberProfileServicesImplTest {
     @Test
     public void testSaveUpdate() {
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(testUuid);
+        expected.setId(testUuid);
 
-        when(mockMemberProfileRepository.findByUuid(testUuid)).thenReturn(expected);
+        when(mockMemberProfileRepository.findById(testUuid)).thenReturn(java.util.Optional.of(expected));
         when(mockMemberProfileRepository.update(expected)).thenReturn(expected);
 
         MemberProfile actual = testObject.saveProfile(expected);
@@ -150,14 +150,14 @@ public class MemberProfileServicesImplTest {
     @Test
     public void testSaveUpdateNoExistingRecord() {
         MemberProfile expected = mkMemberProfile();
-        expected.setUuid(testUuid);
+        expected.setId(testUuid);
 
-        when(mockMemberProfileRepository.findByUuid(testUuid)).thenReturn(null);
+        when(mockMemberProfileRepository.findById(testUuid)).thenReturn(null);
 
         MemberProfileBadArgException thrown = assertThrows(MemberProfileBadArgException.class, () -> {
             testObject.saveProfile(expected);
         });
 
-        assertEquals("No profile exists for this ID", thrown.getMessage());
+        assertEquals("No member profile exists for the ID", thrown.getMessage());
     }
 }

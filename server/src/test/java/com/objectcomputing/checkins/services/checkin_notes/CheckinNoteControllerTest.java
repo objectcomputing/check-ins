@@ -42,7 +42,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
 
        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();		
       checkinNoteCreateDTO.setCheckinid(checkIn.getId());		
-      checkinNoteCreateDTO.setCreatedbyid(memberProfile.getUuid());		
+      checkinNoteCreateDTO.setCreatedbyid(memberProfile.getId());
       checkinNoteCreateDTO.setDescription("test");		
 
        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);		
@@ -103,7 +103,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
 
           CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();		
          checkinNoteCreateDTO.setCheckinid(UUID.randomUUID());		
-         checkinNoteCreateDTO.setCreatedbyid(memberProfile.getUuid());		
+         checkinNoteCreateDTO.setCreatedbyid(memberProfile.getId());
          checkinNoteCreateDTO.setDescription("test");		
 
           final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("",checkinNoteCreateDTO).basicAuth(PDL_ROLE,PDL_ROLE);		

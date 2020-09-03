@@ -13,7 +13,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {
     @Nullable
-    MemberProfile findByUuid(@NotBlank UUID uuid);
+    Optional<MemberProfile> findById(@NotBlank UUID id);
 
     Optional<MemberProfile> findByWorkEmail(String workEmail);
     List<MemberProfile> findByName(@NotBlank String name);
