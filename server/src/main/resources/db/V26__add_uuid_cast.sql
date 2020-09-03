@@ -1,0 +1,3 @@
+CREATE CAST (varchar AS uuid)
+  WITH INOUT
+  AS IMPLICIT;

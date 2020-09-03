@@ -71,15 +71,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<ActionItem> actionItems = new HashSet<>();
-        actionItemRepo.findAll().forEach(actionItems::add);
-
-        if (checkinid != null) {
-            actionItems.retainAll(actionItemRepo.findByCheckinid(checkinid));
-        }
-        if (createdbyid != null) {
-            actionItems.retainAll(actionItemRepo.findByCreatedbyid(createdbyid));
-        }
+        Set<ActionItem> actionItems = new HashSet<>(actionItemRepo.search(checkinid, createdbyid));
 
         return actionItems;
     }
