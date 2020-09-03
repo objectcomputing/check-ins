@@ -9,11 +9,14 @@ import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
 import "./CheckinsPage.css";
 
-const CheckinsPage = () => {
+const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
+  if (checkin && checkin.id) {
+    history.push(`/checkins/${checkin.id}`);
+  }
 
   const showModal = () => {
     setShow(!show);

@@ -46,6 +46,23 @@ export const getCheckinByPdlId = async (id) => {
   );
 };
 
+export const createCheckin = async ({
+  teamMemberId,
+  pdlId,
+  checkInDate,
+  completed,
+}) => {
+  return await resolve(
+    axios({
+      method: "post",
+      url: checkinsUrl,
+      responseType: "json",
+      data: { teamMemberId, pdlId, checkInDate, completed },
+      withCredentials: true,
+    })
+  );
+};
+
 export const getNoteByCheckinId = async (id) => {
   return await resolve(
     axios({

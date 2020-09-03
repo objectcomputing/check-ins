@@ -33,7 +33,7 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
   }, [pdlId]);
 
   let checkinDate =
-    checkins.length > 0 ? new Date(checkins[index].checkInDate) : new Date();
+    checkins.length > 0 ? new Date(checkins[index].checkInDate) : null;
   const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
   const rightArrowClass =
@@ -85,27 +85,29 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
           <p>Company Email: {workEmail}</p>
         </div>
       </div>
-      <div className="date-picker">
-        <ArrowBackIcon
-          className={leftArrowClass}
-          onClick={previousCheckin}
-          style={{ fontSize: "50px" }}
-        />
-        <DatePicker
-          closeOnScroll
-          customInput={<DateInput />}
-          dateFormat="MMMM dd, yyyy h:mm aa"
-          onChange={pickDate}
-          selected={checkinDate}
-          showTimeSelect
-          withPortal
-        />
-        <ArrowForwardIcon
-          className={rightArrowClass}
-          onClick={nextCheckin}
-          style={{ fontSize: "50px" }}
-        />
-      </div>
+      {checkinDate && (
+        <div className="date-picker">
+          <ArrowBackIcon
+            className={leftArrowClass}
+            onClick={previousCheckin}
+            style={{ fontSize: "50px" }}
+          />
+          <DatePicker
+            closeOnScroll
+            customInput={<DateInput />}
+            dateFormat="MMMM dd, yyyy h:mm aa"
+            onChange={pickDate}
+            selected={checkinDate}
+            showTimeSelect
+            withPortal
+          />
+          <ArrowForwardIcon
+            className={rightArrowClass}
+            onClick={nextCheckin}
+            style={{ fontSize: "50px" }}
+          />
+        </div>
+      )}
     </div>
   );
 };

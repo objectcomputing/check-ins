@@ -49,7 +49,7 @@ function App() {
               </Route>
               <Route path="/checkins">
                 <Header title="Check-ins" />
-                <CheckinsPage />
+                <CheckinsPage history={customHistory} />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { /*useContext,*/ useState } from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,7 +16,6 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
-//import { AppContext } from "../../context/AppContext";
 
 import "./Menu.css";
 
@@ -57,10 +56,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  //const { state } = useContext(AppContext);
-  //const { userProfile } = state;
-
-  //const isAdmin = userProfile.role === "ADMIN";
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);

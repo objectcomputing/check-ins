@@ -20,7 +20,9 @@ const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const canViewPrivateNote =
-    userProfile.role.includes("PDL") || userProfile.role.includes("ADMIN");
+    userProfile.memberProfile.role &&
+    (userProfile.memberProfile.role.includes("PDL") ||
+      userProfile.memberProfile.role.includes("ADMIN"));
   const { checkin, memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -42,8 +44,8 @@ const Notes = (props) => {
             : null;
         if (data) {
           setNote(data[0]);
-          setIsLoading(false);
         }
+        setIsLoading(false);
       }
     }
     getNotes();

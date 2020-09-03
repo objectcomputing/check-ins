@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember } from "../api/member.js";
-import { getCheckinByMemberId } from "../api/checkins";
+import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 
 export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_USER_BIO = "update_bio";
@@ -44,6 +44,8 @@ const AppContextProvider = (props) => {
       : undefined;
   const id = memberProfile ? memberProfile.uuid : undefined;
 
+  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
+
   useEffect(() => {
     async function updateUserProfile() {
       if (initialState.userProfile === undefined) {
@@ -61,26 +63,68 @@ const AppContextProvider = (props) => {
     updateUserProfile();
   }, []);
 
+  const date = (months, prevCheckinDate) => {
+    console.log({ prevCheckinDate });
+    let newDate = prevCheckinDate ? new Date(...prevCheckinDate) : new Date();
+    newDate.setMonth(newDate.getMonth() + months);
+    const year = newDate.getFullYear();
+    const month = newDate.getMonth() + 1;
+    const day = newDate.getDate();
+    const monthArray = [year, month, day];
+    console.log({ monthArray });
+    return monthArray;
+  };
+
   useEffect(() => {
     async function getCheckins() {
       if (id) {
-        let res = await getCheckinByMemberId(id);
-        let data =
+        console.log("Called", { id, pdlId });
+        const res = await getCheckinByMemberId(id);
+        const data =
           res.payload &&
           res.payload.data &&
           res.payload.status === 200 &&
           !res.error
             ? res.payload.data
             : null;
-        if (data) {
-          dispatch({ type: UPDATE_CHECKINS, payload: data });
+        if (data && data.length > 0) {
+          const allIncomplete = data.every(
+            (checkin) => checkin.completed === true
+          );
+          if (allIncomplete) {
+            const prevCheckinDate = data[data.length - 1].checkInDate;
+            const res = await createCheckin({
+              teamMemberId: id,
+              pdlId: pdlId,
+              checkInDate: date(3, prevCheckinDate),
+              completed: false,
+            });
+            const checkin =
+              res.payload && res.payload.data && !res.error
+                ? res.payload.data
+                : null;
+            data.push(checkin);
+          }
+        } else if (data.length === 0) {
+          const res = await createCheckin({
+            teamMemberId: id,
+            pdlId: pdlId,
+            checkInDate: date(1),
+            completed: false,
+          });
+          const checkin =
+            res.payload && res.payload.data && !res.error
+              ? res.payload.data
+              : null;
+          data = [checkin];
         }
+        dispatch({ type: UPDATE_CHECKINS, payload: data });
       }
     }
     getCheckins();
-  }, [id]);
+  }, [id, pdlId]);
 
-  let value = useMemo(() => {
+  const value = useMemo(() => {
     return { state, dispatch };
   }, [state]);
   return (
