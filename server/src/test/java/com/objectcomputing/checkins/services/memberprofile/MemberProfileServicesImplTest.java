@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

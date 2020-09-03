@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
@@ -6,11 +6,16 @@ import Modal from "../components/modal/Modal";
 import Button from "@material-ui/core/Button";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel"
-
+import Note from "../components/notes/Note";
+import { AppContext } from "../context/AppContext";
 import "./CheckinsPage.css";
 
 const CheckinsPage = () => {
   const [show, setShow] = useState(false);
+  const { state } = useContext(AppContext);
+  const { checkins, userProfile } = state;
+  const [index, setIndex] = useState(0);
+  const checkin = checkins[index];
 
   const showModal = () => {
     setShow(!show);
@@ -19,13 +24,19 @@ const CheckinsPage = () => {
     <div>
       <div className="container">
         <div className="contents">
-          <CheckinsHistory />
+          <CheckinsHistory setIndex={setIndex} />
         </div>
         <div className="right-sidebar">
           <Personnel />
           <GuidesPanel />
         </div>
       </div>
+      {checkin && checkin.id && (
+        <Note
+          checkin={checkin}
+          memberName={userProfile.name}
+        />
+      )}
       <CheckinDocs />
       <div className="modal-container">
         <ActionItemsPanel checkinId="b92b2499-0951-4e9c-bfe4-a62f314f3fd2" />

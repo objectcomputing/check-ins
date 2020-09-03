@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkill;
+package com.objectcomputing.checkins.services.member_skill;
 
 public class MemberSkillBadArgException extends RuntimeException {
     public MemberSkillBadArgException(String message) {
