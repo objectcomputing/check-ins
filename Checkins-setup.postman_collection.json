@@ -1,0 +1,502 @@
+{
+	"info": {
+		"_postman_id": "26ed49c2-069e-4617-a4b6-ae6c82747334",
+		"name": "Checkins-setup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "pdl setup",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Hubert J Farnsworth\", \"role\": \"Professor\", \"location\":\"New New York\", \"workEmail\":\"farnsworthh@PlanetExpress.biz\", \"insperityId\":\"123\", \"startDate\":\"1950-01-01\", \"bioText\":\"Good news, everyone!\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				},
+				"description": "Pdl setup"
+			},
+			"response": []
+		},
+		{
+			"name": "member setup",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Phillip J Fry\", \"role\": \"Delivery Boy\", \"location\":\"New New York\", \"workEmail\":\"fryj@PlanetExpress.biz\", \"insperityId\":\"4\", \"startDate\":\"2000-01-01\", \"bioText\":\"Like Fry! Like fry!\", \"pdlId\":\"a30e25d6-2cde-4b3d-a02a-10e9ccba8032\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				},
+				"description": "team member setup"
+			},
+			"response": []
+		},
+		{
+			"name": "member setup 2",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Turanga Leela\", \"role\": \"Spaceship Captain\", \"location\":\"New New York\", \"workEmail\":\"turangal@PlanetExpress.biz\", \"insperityId\":\"1bdi\", \"startDate\":\"2000-01-01\", \"bioText\":\"I intend to do as little dying as possible\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				},
+				"description": "team member setup"
+			},
+			"response": []
+		},
+		{
+			"name": "member update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Phillip J Fry\", \"role\": \"Delivery Boy\", \"location\":\"New New York\", \"workEmail\":\"fryj@PlanetExpress.biz\", \"insperityId\":\"4\", \"startDate\":\"2000-01-01\", \"bioText\":\"Like Fry! Like fry!\", \"pdlId\":\"c0ace34f-3376-4171-86cf-eea43d9d0350\", \"id\":\"33d6110b-a468-41f7-9b69-feadaa6fe0e1\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				},
+				"description": "team member setup"
+			},
+			"response": []
+		},
+		{
+			"name": "member update 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Turanga Leela\", \"role\": \"Spaceship Captain\", \"location\":\"New New York\", \"workEmail\":\"leelat@PlanetExpress.biz\", \"insperityId\":\"1bdi\", \"startDate\":\"2000-01-01\", \"bioText\":\"I intend to do as little dying as possible\", \"id\":\"\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				},
+				"description": "team member setup"
+			},
+			"response": []
+		},
+		{
+			"name": "checkin setup",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"teamMemberId\":\"07e27e9b-55f3-4331-a4ec-c868c58c5b8b\", \r\n    \"pdlId\":\"a30e25d6-2cde-4b3d-a02a-10e9ccba8032\", \r\n    \"checkInDate\":\"2021-04-13\", \r\n    \"completed\":false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/check-in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"check-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "action item setup",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"checkinid\":\"4c8eea79-e4c6-40de-aa28-a4220a1a4f9a\", \r\n    \"createdbyid\":\"07e27e9b-55f3-4331-a4ec-c868c58c5b8b\", \r\n    \"description\":\"Space honey mission retrospective\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/action-item/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"action-item",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get action items",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"checkinid\":\"4c8eea79-e4c6-40de-aa28-a4220a1a4f9a\", \r\n    \"createdbyid\":\"07e27e9b-55f3-4331-a4ec-c868c58c5b8b\", \r\n    \"description\":\"Space honey mission retrospective\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/action-item/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"action-item",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "agenda item setup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"checkinid\":\"3717de74-2659-4314-90ae-274acf55e9f9\",\r\n    \"createdbyid\":\"c0ace34f-3376-4171-86cf-eea43d9d0350\",\r\n    \"description\":\"Discussion of Nibbler's feeding schedule.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/agenda-item",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"agenda-item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get agenda items",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"checkinid\":\"3717de74-2659-4314-90ae-274acf55e9f9\",\r\n    \"createdbyid\":\"c0ace34f-3376-4171-86cf-eea43d9d0350\",\r\n    \"description\":\"Discussion of Nibbler's feeding schedule.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/services/agenda-item",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"agenda-item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get checkins",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/services/check-in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"check-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get members",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/services/member-profile/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"member-profile",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get checkin notes 403",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/services/checkin-note/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"checkin-note",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkin notes setup",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/services/checkin-note/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"services",
+						"checkin-note",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get pdl auth",
+			"protocolProfileBehavior": {
+				"followRedirects": false
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "meyerinj@objectcomputing.com",
+							"type": "text"
+						},
+						{
+							"key": "role",
+							"value": "PDL",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/oauth/login/google",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"oauth",
+						"login",
+						"google"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZXllcmluakBvYmplY3Rjb21wdXRpbmcuY29tIiwicm9sZXMiOlsiUERMIl0sIm5hbWUiOiJtZXllcmluakBvYmplY3Rjb21wdXRpbmcuY29tIiwiZXhwIjoxNTk4NjQwMDkzLCJlbWFpbCI6Im1leWVyaW5qQG9iamVjdGNvbXB1dGluZy5jb20iLCJwaWN0dXJlIjoiaHR0cHM6XC9cL3VwbG9hZC53aWtpbWVkaWEub3JnXC93aWtpcGVkaWFcL2NvbW1vbnNcLzdcLzc0XC9TTkxfTXJCaWxsX0RvbGwuanBnIn0.Z37HxHf5E4Aq_H6AN2wdzTaSAsxsBuL3-YbP6FvXVzc",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "c0b2adf6-884d-4d05-b7ca-16691d5cbd18",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "90594bf5-1182-4dc7-8bc9-f47df454d969",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
