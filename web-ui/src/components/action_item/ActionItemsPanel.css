@@ -4,6 +4,18 @@
   border: solid 3px black;
 }
 
+.description-field {
+     text-align: left;
+     width: 200px;
+     align-items: center;
+     display: flex;
+     flex-direction: row;
+ }
+
+ .delete-button {
+    background: red;
+ }
+
 .action-items-info, .action-items-info-hidden {
   text-align: left;
   display: inline-block;

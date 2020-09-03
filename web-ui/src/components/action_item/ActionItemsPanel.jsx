@@ -1,103 +1,75 @@
 import React, { useState } from "react";
-//import { AppContext } from "../../context/AppContext";
 import "./ActionItemsPanel.css";
 import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd"
-import {  //findActionItem,
-          //getActionItem,
-          //deleteActionItem,
-          //updateActionItem,
-          //createMassActionItem,
-          /*createActionItem*/ } from "../../api/actionitem.js";
-//import { useDrag } from 'react-dnd';
-/*
-export interface ActionItemProps {
-    id: string
-    description: string
-}
+import {  findActionItem,
+          deleteActionItem,
+          updateActionItem,} from "../../api/actionitem.js";
+import DragIndicator from "@material-ui/icons/DragIndicator";
 
-interface DragItem {
-    index: number
-    id: string
-    type: string
-}
-*/
 const ActionItemsPanel = (params) => {
-  //let thisCheckinId = params.checkinId;
+  let thisCheckinId = params.checkinId;
 
-  let [actionItems/*, setActionItems*/] = useState();
-  //let infoClassName = "action-items-info-hidden";
-//createSingleEntry(this.props.item);
-  /*var actionItemListEntry = React.createFactory(
-    React.createClass({
-      render: function () {
-        return
-        React.createElement('div', {
-          className: 'inner',
-          style: {
-            color: this.props.item.color
-          }
-        }, this.props.sharedProps ? this.props.sharedProps.prefix : undefined, this.props.item.name);
+  let [actionItems, setActionItems] = useState();
+
+  async function doDelete(id) {
+    if (id) {
+      await deleteActionItem(id);
+    }
+  }
+
+  async function doUpdate(actionItem) {
+    if (actionItem) {
+      await updateActionItem(actionItem);
+    }
+  }
+
+  let [prevActionItems, setPrevActionItems] = useState();
+
+  const actionItemsCompare = (currItems) => {
+    if (!prevActionItems) {
+      console.log("no previous");
+      setPrevActionItems(currItems);
+      return true;
+    }
+    if (prevActionItems.length !== currItems.length) {
+      console.log("length change")
+      setPrevActionItems(currItems);
+      return true;
+    }
+    for (var i = 0; i < prevActionItems.length; i++) {
+      if (prevActionItems[i].id !== currItems[i].id) {
+        setPrevActionItems(currItems);
+        return true;
       }
-    })
-  );*/
-
-  actionItems = [
-    {
-        "id":"1",
-        "description":"What's up?"
-    },
-    {
-        "id":"2",
-        "description":"asdf"
-    },
-    {
-        "id":"3",
-        "description":"Oh no"
-    },
-    {
-        "id":"4",
-        "description":"Bacon"
-    },
-  ]
-
-  /*React.useEffect(() => {
-    async function getActionItems() {
-      if (thisCheckinId) {
-        let res = await findActionItem(thisCheckinId, null);
-        let actionItemList =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-          setActionItems(actionItemList);      }
     }
-    getActionItems();
-  }, [thisCheckinId]);*/
+    return false;
+  }
 
-  /*const createSingleEntry = (actionItem) => {
-    var useInfoClass = infoClassName;
-    var actionItemText = "Lorem Ipsum Etcetera";
-    if (actionItem && actionItem.description) {
-      useInfoClass = "action-items-info";
-      actionItemText = actionItem.description;
+  async function getActionItems() {
+    let res = await findActionItem(thisCheckinId, null);
+    if (res && res.payload) {
+      let actionItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+        setActionItems(actionItemList);
     }
-    return (
-      <div key={actionItem.id} className="image-div">
-        <div className="info-div">
-          <p className={useInfoClass}>{actionItemText}</p>
-        </div>
-        <button align="right">-</button>
-      </div>
-    );
-  };*/
+  }
+
+  React.useEffect(() => {
+    if (actionItemsCompare(actionItems)) {
+      getActionItems();
+    }
+  });
 
   const getActionItemStyle = (actionItem) => {
     if (actionItem && actionItem.description) {
-        return "action-items-info";
+      return "action-items-info";
     }
     return "action-items-info-hidden";
   }
 
   const getActionItemText = (actionItem) => {
     if (actionItem && actionItem.description) {
-        return actionItem.description;
+      return actionItem.description;
     }
     return "Lorem Ipsum Etcetera";
 
@@ -113,126 +85,136 @@ const ActionItemsPanel = (params) => {
   const grid = 8;
 
   const getListStyle = (isDraggingOver) => ({
-    //background: (isDraggingOver ? "lightblue" : "lightgrey"),
     padding: grid,
-    //width: 250,,
   });
 
   const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: "none",
     padding: grid*2,
     margin: '0 0 {grid}px 0',
+    textAlign: 'left',
+    marginBottom: '1px',
+    marginTop: '1px',
+    display: 'flex',
+    flexDirection: 'row',
 
-    background: isDragging ? "lightgreen" : "grey",
+    background: isDragging ? "lightgreen" : "#fafafa",
 
     ...draggableStyle
   });
-
-  const getContainerStyle = (listLength) => ({
-    height : 'fit-content',
-    border: 'solid 3px black',
-  });
-
-  /*const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: "none",
-    padding: grid*2,
-    margin: '0 0 ${grid}px 0',
-
-    background: isDragging ? "lightgreen" : "grey",
-
-    ...draggableStyle
-  });*/
 
   const onDragEnd = (result) => {
-    console.log("DONE DRAGGING!");
-    console.log(result);
-        if (!result || !result.destination) {
-            return;
-        }
+      if (!result || !result.destination) {
+        return;
+      }
 
-        actionItems = reorder(
-            actionItems,
-            result.source.index,
-            result.destination.index
-        );
+      actionItems = reorder(
+        actionItems,
+        result.source.index,
+        result.destination.index
+      );
 
-        /*this.setState({
-            items
-        });*/
+      let precedingPriority = 0;
+      if (result.destination.index > 0) {
+        precedingPriority = actionItems[result.destination.index-1].priority;
+      }
+
+      let followingPriority = actionItems[actionItems.length-1].priority+1;
+      if (result.destination.index < (actionItems.length-1)) {
+        followingPriority = actionItems[result.destination.index+1].priority;
+      }
+
+      let newPriority = (precedingPriority+followingPriority)/2;
+
+      actionItems[result.destination.index].priority = newPriority;
+
+      doUpdate(actionItems[result.destination.index]);
+      getActionItems();
     };
 
-  /*const createActionItemEntries = () => {
+  const killActionItem = (id, event) => {
+    doDelete(id);
+    console.log("BEFORE");
+    console.log(actionItems);
+    var arrayDupe = actionItems;
+    for (var i = 0; i < arrayDupe.length; i++) {
+      console.log(arrayDupe[i].id + "===" + id);
+      if (arrayDupe[i].id === id) {
+        arrayDupe.splice(i, 1);
+        break;
+      }
+    }
+    setActionItems(arrayDupe);
+    getActionItems();
+  }
+
+  const createFakeEntry = (item) => {
+    return (
+      <div key={item.id} className="image-div">
+        <span>
+          <DragIndicator/>
+        </span>
+        <div className="description-field">
+          <p className="action-items-info-hidden">Lorem Ipsum etc</p>
+        </div>
+      </div>
+    );
+  };
+
+  const createActionItemEntries = () => {
     if (actionItems && actionItems.length > 0) {
-      return actionItems.map((actionItem) => createSingleEntry(actionItem));
+      return actionItems.map((actionItem, index) => (
+        <Draggable key={actionItem.id} draggableId={actionItem.id} index={index}>
+          {(provided, snapshot) => (
+            <div key={actionItem.id}
+              ref={provided.innerRef}
+                {...provided.draggableProps}
+                style={getItemStyle(
+                  snapshot.isDragging,
+                  provided.draggableProps.style
+                )}
+            >
+              <div className="description-field">
+                <span {...provided.dragHandleProps}>
+                  <DragIndicator/>
+                </span>
+                <p className={getActionItemStyle(actionItem)}>{getActionItemText(actionItem)}</p>
+              </div>
+              <div>
+                <button className="delete-button" onClick={(e) => killActionItem(actionItem.id, e)}>-</button>
+              </div>
+            </div>
+          )}
+        </Draggable>
+     ));
     } else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
-        fake[i] = createSingleEntry({id: `${i+1}Action`});
+        fake[i] = createFakeEntry({id: `${i+1}Action`});
       }
       return fake;
     }
-  };*/
-
-/*
-                                <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={getItemStyle(
-                                        snapshot.isDragging,
-                                        provided.draggableProps.style
-                                    )}
-                                >
-                                    {item.content}
-                                </div>
-
-                                style={getListStyle(snapshot.isDraggingOver)}*/
+  };
 
   return (
-    <fieldset style={getContainerStyle(actionItems.length)}>
-      <legend>My Action Items</legend>
-        <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-                {(provided, snapshot) =>(
-                    <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={getListStyle(snapshot.isDraggingOver)}
-                    >
-                        {actionItems.map((actionItem, index) => (
-                            <Draggable key={actionItem.id} draggableId={actionItem.id} index={index}>
-                                {(provided, snapshot) => (
-                                  <div key={actionItem.id}
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={getItemStyle(
-                                        snapshot.isDragging,
-                                        provided.draggableProps.style
-                                    )}
-                                  >
-                                    <div >
-                                      <p className={getActionItemStyle(actionItem)}>{getActionItemText(actionItem)}</p>
-                                      <button align="right">-</button>
-                                    </div>
-                                  </div>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </div>
-                )}
-            </Droppable>
-        </DragDropContext>
-    </fieldset>
-  )
-
-  /*return(
     <fieldset className="action-items-container">
       <legend>My Action Items</legend>
-      {createActionItemEntries()}
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) =>(
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                {createActionItemEntries()}
+                {provided.placeholder}
+              </div>
+            )}
+        </Droppable>
+      </DragDropContext>
     </fieldset>
-  )*/
+  )
 };
 
 export default ActionItemsPanel;

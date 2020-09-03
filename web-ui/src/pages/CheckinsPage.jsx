@@ -6,7 +6,6 @@ import Modal from "../components/modal/Modal";
 import Button from "@material-ui/core/Button";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel"
-//import { Container } from "../components/card/Container"
 
 import "./CheckinsPage.css";
 
@@ -16,7 +15,6 @@ const CheckinsPage = () => {
   const showModal = () => {
     setShow(!show);
   };
-//<ActionItemsPanel checkinId="195f8c06-17b4-442c-9aad-1eae2cfbd41c" />
   return (
     <div>
       <div className="container">
@@ -30,7 +28,7 @@ const CheckinsPage = () => {
       </div>
       <CheckinDocs />
       <div className="modal-container">
-        <ActionItemsPanel checkinId="195f8c06-17b4-442c-9aad-1eae2cfbd41c" />
+        <ActionItemsPanel checkinId="febb8a7b-f6bf-4c4c-b626-e86b07438f94" />
         <Modal close={showModal} show={show}>
           The checkin will no longer be able to be edited. Are you sure that you
           are ready to close this check-in?

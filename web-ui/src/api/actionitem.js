@@ -27,7 +27,7 @@ export const deleteActionItem = async(id) => {
     return await resolve(
         axios({
             method: "delete",
-            url: `${BASE_API_URL}/services/action-item/?id=${id}`,
+            url: `${BASE_API_URL}/services/action-item/${id}`,
             responseType: "json",
         })
     );
@@ -42,7 +42,8 @@ export const findActionItem = async(checkinId, createdById) => {
             params: {
                 checkinid: checkinId,
                 createdbyid: createdById,
-            }
+            },
+            withCredentials: true,
         })
     );
 };
