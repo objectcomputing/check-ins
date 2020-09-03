@@ -28,7 +28,7 @@ const CheckinsPage = () => {
       </div>
       <CheckinDocs />
       <div className="modal-container">
-        <ActionItemsPanel checkinId="febb8a7b-f6bf-4c4c-b626-e86b07438f94" />
+        <ActionItemsPanel checkinId="b92b2499-0951-4e9c-bfe4-a62f314f3fd2" />
         <Modal close={showModal} show={show}>
           The checkin will no longer be able to be edited. Are you sure that you
           are ready to close this check-in?
