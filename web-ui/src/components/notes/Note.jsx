@@ -24,6 +24,7 @@ const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const canViewPrivateNote =
+    userProfile.memberProfile &&
     userProfile.memberProfile.role &&
     (userProfile.memberProfile.role.includes("PDL") ||
       userProfile.memberProfile.role.includes("ADMIN"));
