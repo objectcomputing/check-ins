@@ -9,8 +9,8 @@ import io.micronaut.data.repository.CrudRepository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -24,7 +24,7 @@ public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
             "FROM action_items item " +
             "WHERE (cast(:checkinId as uuid) IS NULL OR item.checkinid = :checkinId) " +
             "AND (cast(:createdById as uuid) IS NULL OR item.createdbyid = :createdById)")
-    List<ActionItem> search(@Nullable UUID checkinId, @Nullable UUID createdById);
+    Set<ActionItem> search(@Nullable UUID checkinId, @Nullable UUID createdById);
 
     @Override
     <S extends ActionItem> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

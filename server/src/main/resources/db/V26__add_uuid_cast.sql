@@ -1,3 +1,5 @@
+DROP CAST IF EXISTS (varchar AS uuid);
+
 CREATE CAST (varchar AS uuid)
   WITH INOUT
   AS IMPLICIT;
