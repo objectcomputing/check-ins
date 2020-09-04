@@ -85,10 +85,10 @@ const AppContextProvider = (props) => {
             ? res.payload.data
             : null;
         if (data && data.length > 0) {
-          const allIncomplete = data.every(
+          const allComplete = data.every(
             (checkin) => checkin.completed === true
           );
-          if (allIncomplete) {
+          if (allComplete) {
             const prevCheckinDate = data[data.length - 1].checkInDate;
             const res = await createCheckin({
               teamMemberId: id,
