@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,7 +42,6 @@ public class MemberProfileServicesImplTest {
 
         when(mockMemberProfileRepository.findAll())
                 .thenReturn(List.of(profileOne, profileTwo, profileThree));
-        Mockito.verifyNoMoreInteractions(mockMemberProfileRepository);
 
         Set<MemberProfile> actual = testObject.findByValues(null, null, null, null);
 
@@ -49,6 +49,7 @@ public class MemberProfileServicesImplTest {
         assertTrue(actual.contains(profileOne));
         assertTrue(actual.contains(profileTwo));
         assertTrue(actual.contains(profileThree));
+        verify(mockMemberProfileRepository, times(1)).findAll();
     }
 
     @Test
@@ -96,14 +97,14 @@ public class MemberProfileServicesImplTest {
         MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
-        when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(null);
-        verify(mockMemberProfileRepository, atLeastOnce()).findById(testUuid);
+        when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(Optional.empty());
 
         MemberProfileDoesNotExistException thrown = assertThrows(MemberProfileDoesNotExistException.class, () -> {
             testObject.getById(testUuid);
         });
 
         assertEquals("No member profile for id", thrown.getMessage());
+        verify(mockMemberProfileRepository, atLeastOnce()).findById(testUuid);
     }
 
     @Test
