@@ -51,7 +51,6 @@ it('handles drag and drop', () => {
 
   // Get the DOM element for the first and second action items.
   let [firstActionItem, secondActionItem] = draggables;
-
   // Get the text in the first and second action items.
   const firstText = firstActionItem.querySelector('p').textContent;
   const secondText = secondActionItem.querySelector('p').textContent;
@@ -99,6 +98,6 @@ it('handles drag and drop', () => {
   // the first action item is now the second.
   const newFirstText = firstActionItem.querySelector('p').textContent;
   const newSecondText = secondActionItem.querySelector('p').textContent;
-  //expect(newFirstText).toBe(secondText);
-  //expect(newSecondText).toBe(firstText);
+  expect(newFirstText).toBe(actionItems[0].description);
+  expect(newSecondText).toBe(actionItems[1].description);
 });
