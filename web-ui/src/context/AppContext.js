@@ -64,23 +64,20 @@ const AppContextProvider = (props) => {
   }, []);
 
   const date = (months, prevCheckinDate) => {
-    console.log({ prevCheckinDate });
     let newDate = prevCheckinDate ? new Date(...prevCheckinDate) : new Date();
     newDate.setMonth(newDate.getMonth() + months);
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const day = newDate.getDate();
     const monthArray = [year, month, day];
-    console.log({ monthArray });
     return monthArray;
   };
 
   useEffect(() => {
     async function getCheckins() {
       if (id) {
-        console.log("Called", { id, pdlId });
         const res = await getCheckinByMemberId(id);
-        const data =
+        let data =
           res.payload &&
           res.payload.data &&
           res.payload.status === 200 &&

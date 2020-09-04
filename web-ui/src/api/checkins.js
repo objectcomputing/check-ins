@@ -95,6 +95,18 @@ export const updateCheckin = ({
   );
 };
 
+export const createCheckinNote = ({ checkinid, createdbyid, description }) => {
+  return resolve(
+    axios({
+      method: "post",
+      url: checkinsNoteUrl,
+      responseType: "json",
+      data: { checkinid, createdbyid, description },
+      withCredentials: true,
+    })
+  );
+};
+
 export const updateCheckinNote = ({
   id,
   checkinid,

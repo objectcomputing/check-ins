@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
+import {
+  getNoteByCheckinId,
+  createCheckinNote,
+  updateCheckinNote,
+} from "../../api/checkins";
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
@@ -30,20 +34,26 @@ const Notes = (props) => {
   const [privateNote, setPrivateNote] = useState("Private note");
 
   useEffect(() => {
+    const id = checkin.id;
+    const createdby = checkin.teamMemberId;
     async function getNotes() {
       if (checkin) {
         setIsLoading(true);
-        let res = await getNoteByCheckinId(checkin.id);
+        let res = await getNoteByCheckinId(id);
+        if (res.payload.data.length === 0) {
+          res = await createCheckinNote({
+            checkinid: id,
+            createdbyid: createdby,
+            description: "",
+          });
+        }
         let data =
-          res.payload &&
-          res.payload.data &&
-          res.payload.data.length > 0 &&
-          res.payload.status === 200 &&
-          !res.error
+          res.payload && res.payload.data && !res.error
             ? res.payload.data
             : null;
         if (data) {
-          setNote(data[0]);
+          data.length === undefined ? setNote(data) : setNote(data[0]);
+          //shouldn't have to do this, need to only return objects for checkin-notes
         }
         setIsLoading(false);
       }
