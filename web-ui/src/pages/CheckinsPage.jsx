@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
@@ -14,9 +14,15 @@ const CheckinsPage = ({ history }) => {
   const { state } = useContext(AppContext);
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
-  if (checkin && checkin.id) {
-    history.push(`/checkins/${checkin.id}`);
-  }
+
+  useEffect(
+    (checkin) => {
+      if (checkin && checkin.id) {
+        history.push(`/checkins/${checkin.id}`);
+      }
+    },
+    [checkin, history]
+  );
 
   const showModal = () => {
     setShow(!show);
