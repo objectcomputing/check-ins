@@ -8,9 +8,7 @@ import {
 } from '../../api/actionitem.js';
 import DragIndicator from '@material-ui/icons/DragIndicator';
 
-const ActionItemsPanel = params => {
-  let thisCheckinId = params.checkinId;
-
+const ActionItemsPanel = ({checkInId, mockActionItems}) => {
   let [actionItems, setActionItems] = useState();
 
   async function doDelete(id) {
@@ -48,7 +46,12 @@ const ActionItemsPanel = params => {
   };
 
   async function getActionItems() {
-    let res = await findActionItem(thisCheckinId, null);
+    if (mockActionItems) {
+      setActionItems(mockActionItems);
+      return;
+    }
+
+    let res = await findActionItem(checkInId, null);
     if (res && res.payload) {
       let actionItemList =
         res.payload.data && !res.error ? res.payload.data : undefined;

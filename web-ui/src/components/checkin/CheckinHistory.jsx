@@ -12,7 +12,7 @@ import { getMember } from "../../api/member";
 
 import "./Checkin.css";
 
-const CheckinsHistory = () => {
+const CheckinsHistory = ({ setIndex }) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { workEmail, role, uuid, pdlId } =
@@ -64,10 +64,13 @@ const CheckinsHistory = () => {
 
   const previousCheckin = () => {
     setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
+    setIndex(checkinIndex);
+    // TODO: change checkin on click
   };
 
   const nextCheckin = () => {
     setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
+    setIndex(checkinIndex);
   };
 
   const pickDate = (date) => {};

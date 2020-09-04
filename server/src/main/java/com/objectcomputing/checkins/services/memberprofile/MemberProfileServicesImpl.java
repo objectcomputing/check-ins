@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 
-import com.objectcomputing.checkins.services.memberSkill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
 import io.micronaut.core.util.StringUtils;
 
 import javax.inject.Inject;
