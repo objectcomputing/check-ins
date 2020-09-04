@@ -6,13 +6,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.utils.SecurityService;
 
-
+@Singleton
 public class CheckInServicesImpl implements CheckInServices {
 
     @Inject
@@ -25,30 +26,25 @@ public class CheckInServicesImpl implements CheckInServices {
     SecurityService securityService;
 
     @Override
-    public CheckIn save(CheckIn checkIn) {
-        CheckIn checkInRet = null;
+    public CheckIn save(@NotNull CheckIn checkIn) {
 
-        if(checkIn!=null) {
+        final UUID memberId = checkIn.getTeamMemberId();
+        final UUID pdlId = checkIn.getPdlId();
+        LocalDate chkInDate = checkIn.getCheckInDate();
 
-            final UUID memberId = checkIn.getTeamMemberId();
-            final UUID pdlId = checkIn.getPdlId();
-            LocalDate chkInDate = checkIn.getCheckInDate();
-
-            if(checkIn.getId()!=null) {
-                throw new CheckInBadArgException(String.format("Found unexpected id for checkin  %s", checkIn.getId()));
-            } else if(memberId.equals(pdlId)) {
-                throw new CheckInBadArgException(String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
-            } else if(!memberRepo.findById(memberId).isPresent()) {
-                throw new CheckInBadArgException(String.format("Member %s doesn't exists", memberId));
-            } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
-                throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-            } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
-                throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-            }
-            checkInRet = checkinRepo.save(checkIn);
+        if(checkIn.getId()!=null) {
+            throw new CheckInBadArgException(String.format("Found unexpected id for checkin  %s", checkIn.getId()));
+        } else if(memberId.equals(pdlId)) {
+            throw new CheckInBadArgException(String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
+        } else if(!memberRepo.findById(memberId).isPresent()) {
+            throw new CheckInBadArgException(String.format("Member %s doesn't exists", memberId));
+        } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
+            throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
+        } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
+            throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
         }
 
-        return checkInRet ;
+        return checkinRepo.save(checkIn);
     }
 
 
@@ -58,35 +54,29 @@ public class CheckInServicesImpl implements CheckInServices {
     }
 
     @Override
-    public CheckIn update(CheckIn checkIn) {
+    public CheckIn update(@NotNull CheckIn checkIn) {
 
-        CheckIn checkInRet = null;
+        final UUID id = checkIn.getId();
+        final UUID memberId = checkIn.getTeamMemberId();
+        final UUID pdlId = checkIn.getPdlId();
+        LocalDate chkInDate = checkIn.getCheckInDate();
+        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
-        if(checkIn!=null) {
-            final UUID id = checkIn.getId();
-            final UUID memberId = checkIn.getTeamMemberId();
-            final UUID pdlId = checkIn.getPdlId();
-            LocalDate chkInDate = checkIn.getCheckInDate();
-            Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
-            if(id==null||!checkinRepo.findById(id).isPresent()) {
-                throw new CheckInBadArgException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
-            } else if(memberId==null) {
-                throw new CheckInBadArgException(String.format("Invalid checkin %s", checkIn));
-            } else if(!memberRepo.findById(memberId).isPresent()) {
-                throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
-            } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
-                throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-            } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
-                throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-            } else if(checkinRepo.findById(id).get().isCompleted() && !isAdmin) {
-                throw new CheckInCompleteException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
-            }
-
-            checkInRet = checkinRepo.update(checkIn);
+        if(id==null||!checkinRepo.findById(id).isPresent()) {
+            throw new CheckInBadArgException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
+        } else if(memberId==null) {
+            throw new CheckInBadArgException(String.format("Invalid checkin %s", checkIn));
+        } else if(!memberRepo.findById(memberId).isPresent()) {
+            throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
+        } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
+            throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
+        } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
+            throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
+        } else if(checkinRepo.findById(id).get().isCompleted() && !isAdmin) {
+            throw new CheckInCompleteException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
         }
 
-        return checkInRet;
+        return checkinRepo.update(checkIn);
     }
 
     @Override
@@ -102,5 +92,4 @@ public class CheckInServicesImpl implements CheckInServices {
         }
         return checkIn;
     }
-    
 }

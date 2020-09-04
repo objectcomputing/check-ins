@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.security.CheckinsOpenIdUserDetailMapper;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServicesImpl;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -25,6 +27,8 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.authentication.Authentication;
+import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.utils.SecurityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -38,16 +42,20 @@ import io.micronaut.http.annotation.Error;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="check-ins")
+@Singleton
 public class CheckInController {
-    
-    @Inject
-    CheckInServices checkInservices ;
 
-    @Inject
-    CurrentUserServicesImpl currentUserServices;
+    private CheckInServices checkInservices;
+    private CurrentUserServicesImpl currentUserServices;
+    private SecurityService securityService;
+    private Authentication authentication;
 
-    @Inject
-    SecurityService securityService;
+    public CheckInController(CurrentUserServicesImpl currentUserServices, CheckInServices checkInservices, SecurityService securityService) {
+        this.currentUserServices = currentUserServices;
+        this.checkInservices = checkInservices;
+        this.securityService = securityService;
+        this.authentication = securityService.getAuthentication().get();
+    }
 
     @Error(exception = CheckInBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckInBadArgException e) {
@@ -67,7 +75,7 @@ public class CheckInController {
     @Get("/{?teamMemberId,pdlId,completed}")
     public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails();
+        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
         Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         Set<CheckIn> checkInResult = checkInservices.findByFields(teamMemberId, pdlId,completed);
@@ -89,7 +97,7 @@ public class CheckInController {
     @Post()
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails();
+        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
         Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         if(currentUser.getUuid().equals(checkIn.getTeamMemberId()) || currentUser.getUuid().equals(checkIn.getPdlId()) || isAdmin) {
@@ -109,7 +117,7 @@ public class CheckInController {
     @Put("/")
     public HttpResponse<?> update(@Body @Valid CheckIn checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails();
+        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
         Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         if(currentUser.getUuid().equals(checkIn.getTeamMemberId()) || currentUser.getUuid().equals(checkIn.getPdlId()) || isAdmin) {
@@ -125,14 +133,14 @@ public class CheckInController {
     }
 
     /**
-     * 
+     *
      * @param id
      * @return
      */
     @Get("/{id}")
     public CheckIn readCheckIn(@NotNull UUID id){
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails();
+        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
         Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
         CheckIn checkin = checkInservices.read(id);
 

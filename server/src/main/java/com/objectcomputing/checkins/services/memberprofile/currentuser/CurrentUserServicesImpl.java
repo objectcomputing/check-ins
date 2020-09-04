@@ -1,11 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.checkins.CheckInBadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import io.micronaut.security.authentication.Authentication;
-import io.micronaut.security.utils.SecurityService;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -19,9 +16,6 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     @Inject
     MemberProfileRepository memberProfileRepo;
 
-    @Inject
-    SecurityService securityService;
-
     @Override
     public MemberProfile findOrSaveUser(@NotNull String name, @NotNull String workEmail) {
 
@@ -31,14 +25,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     }
 
-    public MemberProfile currentUserDetails() {
-
-        if(securityService != null && securityService.getAuthentication().isPresent()) {
-            Authentication authentication = securityService.getAuthentication().get();
-            String workEmail = authentication.getAttributes().get("email").toString();
+    public MemberProfile currentUserDetails(@NotNull String workEmail) {
             return memberProfileRepo.findByWorkEmail(workEmail).get();
-        }
-
-        throw new CheckInBadArgException("Unauthorized user");
     }
 }
