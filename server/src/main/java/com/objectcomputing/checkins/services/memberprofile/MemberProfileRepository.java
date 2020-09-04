@@ -12,13 +12,10 @@ import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {
-    @Nullable
-    Optional<MemberProfile> findById(@NotBlank UUID id);
 
     Optional<MemberProfile> findByWorkEmail(String workEmail);
     List<MemberProfile> findByName(@NotBlank String name);
     List<MemberProfile> findByRole(@NotBlank String name);
     List<MemberProfile> findByPdlId(@NotBlank UUID pdlId);
     List<MemberProfile> findAll();
-
 }
