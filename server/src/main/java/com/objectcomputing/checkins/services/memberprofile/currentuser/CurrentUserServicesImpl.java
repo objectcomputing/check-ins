@@ -3,18 +3,18 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    @Inject
-    MemberProfileServices memberProfileServices;
+    private MemberProfileServices memberProfileServices;
+    private MemberProfileRepository memberProfileRepo;
 
-    @Inject
-    MemberProfileRepository memberProfileRepo;
+    public CurrentUserServicesImpl(MemberProfileServices memberProfileServices, MemberProfileRepository memberProfileRepository) {
+        this.memberProfileServices = memberProfileServices;
+        this.memberProfileRepo = memberProfileRepository;
+    }
 
     @Override
     public MemberProfile findOrSaveUser(@NotNull String name, @NotNull String workEmail) {

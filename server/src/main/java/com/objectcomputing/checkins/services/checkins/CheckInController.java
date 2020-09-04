@@ -5,18 +5,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.objectcomputing.checkins.security.CheckinsOpenIdUserDetailMapper;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServicesImpl;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -27,9 +22,6 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
-import io.micronaut.security.authentication.Authentication;
-import io.micronaut.security.authentication.UserDetails;
-import io.micronaut.security.utils.SecurityService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.security.annotation.Secured;
@@ -46,15 +38,9 @@ import io.micronaut.http.annotation.Error;
 public class CheckInController {
 
     private CheckInServices checkInservices;
-    private CurrentUserServicesImpl currentUserServices;
-    private SecurityService securityService;
-    private Authentication authentication;
 
-    public CheckInController(CurrentUserServicesImpl currentUserServices, CheckInServices checkInservices, SecurityService securityService) {
-        this.currentUserServices = currentUserServices;
+    public CheckInController(CurrentUserServicesImpl currentUserServices, CheckInServices checkInservices) {
         this.checkInservices = checkInservices;
-        this.securityService = securityService;
-        this.authentication = securityService.getAuthentication().get();
     }
 
     @Error(exception = CheckInBadArgException.class)
@@ -75,18 +61,8 @@ public class CheckInController {
     @Get("/{?teamMemberId,pdlId,completed}")
     public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
-        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
         Set<CheckIn> checkInResult = checkInservices.findByFields(teamMemberId, pdlId,completed);
-
-        if(isAdmin ||
-                checkInResult.stream().allMatch(checkIn -> checkIn.getTeamMemberId().equals(currentUser.getUuid())) ||
-                checkInResult.stream().anyMatch(checkIn -> checkIn.getPdlId().equals(currentUser.getUuid()))) {
-            return checkInResult;
-        }
-
-        return null;
+        return checkInResult;
     }
 
     /**
@@ -97,16 +73,9 @@ public class CheckInController {
     @Post()
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
-        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
-        if(currentUser.getUuid().equals(checkIn.getTeamMemberId()) || currentUser.getUuid().equals(checkIn.getPdlId()) || isAdmin) {
-            CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
-            return HttpResponse.created(newMemberCheckIn)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newMemberCheckIn.getId()))));
-        }
-
-        return HttpResponse.status(HttpStatus.FORBIDDEN);
+        CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
+        return HttpResponse.created(newMemberCheckIn)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newMemberCheckIn.getId()))));
     }
 
     /**
@@ -117,19 +86,11 @@ public class CheckInController {
     @Put("/")
     public HttpResponse<?> update(@Body @Valid CheckIn checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
-        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
-        if(currentUser.getUuid().equals(checkIn.getTeamMemberId()) || currentUser.getUuid().equals(checkIn.getPdlId()) || isAdmin) {
-
-            CheckIn updatedMemberCheckIn = checkInservices.update(checkIn);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberCheckIn.getId()))))
-                    .body(updatedMemberCheckIn);
-        }
-
-        return HttpResponse.status(HttpStatus.FORBIDDEN);
+        CheckIn updatedMemberCheckIn = checkInservices.update(checkIn);
+        return HttpResponse
+                .ok()
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberCheckIn.getId()))))
+                .body(updatedMemberCheckIn);
     }
 
     /**
@@ -139,15 +100,6 @@ public class CheckInController {
      */
     @Get("/{id}")
     public CheckIn readCheckIn(@NotNull UUID id){
-
-        MemberProfile currentUser = currentUserServices.currentUserDetails(authentication.getAttributes().get("email").toString());
-        Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-        CheckIn checkin = checkInservices.read(id);
-
-        if(currentUser.getUuid().equals(checkin.getTeamMemberId()) || currentUser.getUuid().equals(checkin.getPdlId()) || isAdmin) {
-            return checkin;
-        }
-
-        return null;
+        return checkInservices.read(id);
     }
 }
