@@ -3,10 +3,13 @@ import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
-import Button from "@material-ui/core/Button";
 import GuidesPanel from "../components/guides/GuidesPanel";
+import CheckinProfile from "../components/checkin/CheckinProfile";
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
+
+import Button from "@material-ui/core/Button";
+
 import "./CheckinsPage.css";
 
 const CheckinsPage = ({ history }) => {
@@ -32,11 +35,8 @@ const CheckinsPage = ({ history }) => {
     <div>
       <div className="container">
         <div className="contents">
-          <CheckinsHistory
-            checkins={checkins}
-            index={index}
-            userProfile={userProfile}
-          />
+          <CheckinProfile />
+          <CheckinsHistory checkins={checkins} index={index} />
           {checkin && checkin.id && (
             <Note checkin={checkin} memberName={userProfile.name} />
           )}

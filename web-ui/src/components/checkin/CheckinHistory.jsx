@@ -1,39 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
-import Avatar from "@material-ui/core/Avatar";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import { UPDATE_INDEX } from "../../context/AppContext";
-import { getMember } from "../../api/member";
 import { AppContext } from "../../context/AppContext";
 import { updateCheckin } from "../../api/checkins";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ checkins, index, userProfile }) => {
+const CheckinsHistory = ({ checkins, index }) => {
   const { dispatch } = useContext(AppContext);
-  const { workEmail, role, pdlId } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const { imageUrl, name } = userProfile ? userProfile : {};
-  const [pdl, setPDL] = useState();
+  const [checkinDate, setCheckinDate] = useState(null);
 
-  // Get PDL's name
   useEffect(() => {
-    async function getPDLName() {
-      if (pdlId) {
-        let res = await getMember(pdlId);
-        let pdlProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
-      }
+    if (checkins[index]) {
+      setCheckinDate(new Date(checkins[index].checkInDate));
     }
-    getPDLName();
-  }, [pdlId]);
+  }, [checkins]);
 
-  let checkinDate =
-    checkins.length > 0 ? new Date(checkins[index].checkInDate) : null;
   const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
   const rightArrowClass =
@@ -56,12 +42,12 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const checkin = checkins[index];
-    // const stringDate = `${year}-${month}-${day}`;
     const dateArray = [year, month, day];
     await updateCheckin({
       ...checkin,
       checkInDate: dateArray,
     });
+    setCheckinDate(new Date(dateArray));
   };
 
   const DateInput = ({ value, onClick }) => (
@@ -73,18 +59,6 @@ const CheckinsHistory = ({ checkins, index, userProfile }) => {
 
   return (
     <div>
-      <div className="profile-section">
-        <Avatar
-          src={imageUrl ? imageUrl : "/default_profile.jpg"}
-          style={{ height: "220px", width: "200px" }}
-        />
-        <div className="info">
-          <p>{name}</p>
-          <p>{role}</p>
-          <p>PDL: {pdl}</p>
-          <p>Company Email: {workEmail}</p>
-        </div>
-      </div>
       {checkinDate && (
         <div className="date-picker">
           <ArrowBackIcon
