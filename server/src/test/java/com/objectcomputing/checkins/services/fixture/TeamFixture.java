@@ -9,4 +9,7 @@ public interface TeamFixture extends RepositoryFixture{
         return getTeamRepository().save(new Team(UUID.randomUUID(),"Ninja","Warriors"));
     }
 
+    default Team createAnotherDeafultTeam() {
+        return getTeamRepository().save(new Team(UUID.randomUUID(),"Coding","Warriors"));
+    }
 }

@@ -66,7 +66,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) ->
-                        roles.addAll(roleRepository.findByMemberid(memberProfile.getUuid())
+                        roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
                                 .collect(Collectors.toList())));

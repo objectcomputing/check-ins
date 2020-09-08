@@ -10,7 +10,7 @@ const Personnel = () => {
   const { userProfile } = state;
   const id =
     userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile.uuid
+      ? userProfile.memberProfile.id
       : undefined;
   const [personnel, setPersonnel] = useState();
   const [checkins, setCheckins] = useState();

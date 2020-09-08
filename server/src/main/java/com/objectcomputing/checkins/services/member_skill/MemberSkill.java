@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkill;
+package com.objectcomputing.checkins.services.member_skill;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
