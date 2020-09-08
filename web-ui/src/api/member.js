@@ -11,7 +11,7 @@ export const getMembersByPDL = async (id) => {
       params: {
         pdlId: id,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -25,7 +25,7 @@ export const getMemberByEmail = async (email) => {
       params: {
         workEmail: email,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -36,7 +36,7 @@ export const getMember = async (id) => {
       method: "get",
       url: `${memberProfileUrl}/${id}`,
       responseType: "json",
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -47,8 +47,8 @@ export const updateMember = async (member) => {
       method: "put",
       url: memberProfileUrl,
       responseType: "json",
-      data: member,
-      withCredentials: true
+      data: { ...member, id: member.uuid },
+      withCredentials: true,
     })
   );
 };
@@ -59,7 +59,7 @@ export const getCurrentUser = async () => {
       method: "get",
       url: `${memberProfileUrl}/current`,
       responseType: "json",
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
