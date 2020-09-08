@@ -39,7 +39,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
         Skill skill = createADefaultSkill() ;
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
-        memberSkillCreateDTO.setMemberid(memberProfile.getUuid());
+        memberSkillCreateDTO.setMemberid(memberProfile.getId());
         memberSkillCreateDTO.setSkillid(skill.getId());
 
         final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -113,7 +113,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
-        memberSkillCreateDTO.setMemberid(memberProfile.getUuid());
+        memberSkillCreateDTO.setMemberid(memberProfile.getId());
         memberSkillCreateDTO.setSkillid(UUID.randomUUID());
 
         final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);

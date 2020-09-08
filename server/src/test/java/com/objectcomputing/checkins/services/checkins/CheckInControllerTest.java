@@ -38,8 +38,8 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfile.getUuid());
-        checkInCreateDTO.setPdlId(memberProfileForPDL.getUuid());
+        checkInCreateDTO.setTeamMemberId(memberProfile.getId());
+        checkInCreateDTO.setPdlId(memberProfileForPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDate.now());
         checkInCreateDTO.setCompleted(true);
 
@@ -139,8 +139,8 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfile.getUuid());
-        checkInCreateDTO.setPdlId(memberProfileForPDL.getUuid());
+        checkInCreateDTO.setTeamMemberId(memberProfile.getId());
+        checkInCreateDTO.setPdlId(memberProfileForPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDate.of(1965,11,12));
         checkInCreateDTO.setCompleted(true);
 
@@ -400,5 +400,4 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         assertEquals(request.getPath(), href);
 
     }
-
 }
