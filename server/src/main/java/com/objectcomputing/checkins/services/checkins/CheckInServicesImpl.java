@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
@@ -21,18 +20,17 @@ public class CheckInServicesImpl implements CheckInServices {
     private CheckInRepository checkinRepo;
     private MemberProfileRepository memberRepo;
     private SecurityService securityService;
+    private CurrentUserServices currentUserServices;
 
-    @Inject
-    CurrentUserServices currentUserServices;
-
-    public CheckInServicesImpl(CheckInRepository checkinRepo, MemberProfileRepository memberRepo, SecurityService securityService) {
+    public CheckInServicesImpl(CheckInRepository checkinRepo, MemberProfileRepository memberRepo, SecurityService securityService, CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.securityService = securityService;
-//        this.currentUserServices = currentUserServices;
+        this.currentUserServices = currentUserServices;
     }
 
-    MemberProfile currentUser = currentUserServices.currentUserDetails(securityService.getAuthentication().get().getAttributes().get("email").toString());
+    String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+    MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
     Boolean isAdmin = securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
     @Override

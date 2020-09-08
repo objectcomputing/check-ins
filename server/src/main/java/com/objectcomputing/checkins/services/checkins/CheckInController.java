@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServicesImpl;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -37,10 +36,10 @@ import io.micronaut.http.annotation.Error;
 @Singleton
 public class CheckInController {
 
-    private CheckInServices checkInservices;
+    private CheckInServices checkInServices;
 
-    public CheckInController(CurrentUserServicesImpl currentUserServices, CheckInServices checkInservices) {
-        this.checkInservices = checkInservices;
+    public CheckInController(CheckInServices checkInServices) {
+        this.checkInServices = checkInServices;
     }
 
     @Error(exception = CheckInBadArgException.class)
@@ -61,7 +60,7 @@ public class CheckInController {
     @Get("/{?teamMemberId,pdlId,completed}")
     public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
 
-        Set<CheckIn> checkInResult = checkInservices.findByFields(teamMemberId, pdlId,completed);
+        Set<CheckIn> checkInResult = checkInServices.findByFields(teamMemberId, pdlId, completed);
         return checkInResult;
     }
 
@@ -73,7 +72,7 @@ public class CheckInController {
     @Post()
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
+        CheckIn newMemberCheckIn = checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
         return HttpResponse.created(newMemberCheckIn)
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newMemberCheckIn.getId()))));
     }
@@ -86,7 +85,7 @@ public class CheckInController {
     @Put("/")
     public HttpResponse<?> update(@Body @Valid CheckIn checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-        CheckIn updatedMemberCheckIn = checkInservices.update(checkIn);
+        CheckIn updatedMemberCheckIn = checkInServices.update(checkIn);
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberCheckIn.getId()))))
@@ -100,6 +99,6 @@ public class CheckInController {
      */
     @Get("/{id}")
     public CheckIn readCheckIn(@NotNull UUID id){
-        return checkInservices.read(id);
+        return checkInServices.read(id);
     }
 }
