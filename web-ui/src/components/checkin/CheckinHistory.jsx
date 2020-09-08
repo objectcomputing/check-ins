@@ -18,7 +18,7 @@ const CheckinsHistory = ({ checkins, index }) => {
     if (checkins[index]) {
       setCheckinDate(new Date(checkins[index].checkInDate));
     }
-  }, [checkins]);
+  }, [checkins, index]);
 
   const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
