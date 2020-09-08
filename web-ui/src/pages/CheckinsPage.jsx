@@ -18,14 +18,11 @@ const CheckinsPage = ({ history }) => {
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
 
-  useEffect(
-    (checkin) => {
-      if (checkin && checkin.id) {
-        history.push(`/checkins/${checkin.id}`);
-      }
-    },
-    [checkin, history]
-  );
+  useEffect(() => {
+    if (checkin && checkin.id) {
+      history.push(`/checkins/${checkin.id}`);
+    }
+  }, [checkin, history]);
 
   const showModal = () => {
     setShow(!show);
