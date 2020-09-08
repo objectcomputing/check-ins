@@ -21,11 +21,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MemberProfile {
 
     @Id
-    @Column(name="uuid")
+    @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of the member profile this entry is associated with", required = true)
-    private UUID uuid;
+    private UUID id;
 
     @NotNull
     @Column(name = "name", nullable = false)
@@ -73,7 +73,7 @@ public class MemberProfile {
     public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
                          String workEmail, String insperityId, @Nullable LocalDate startDate,
                          String bioText) {
-        this.uuid = id;
+        this.id = id;
         this.name=name;
         this.role=role;
         this.pdlId=pdlId;
@@ -87,12 +87,12 @@ public class MemberProfile {
     public MemberProfile() {
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -164,7 +164,7 @@ public class MemberProfile {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MemberProfile that = (MemberProfile) o;
-        return Objects.equals(uuid, that.uuid) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(role, that.role) &&
                 Objects.equals(pdlId, that.pdlId) &&
@@ -177,13 +177,13 @@ public class MemberProfile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+        return Objects.hash(id, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
     @Override
     public String toString() {
         return "MemberProfile{" +
-                "uuid=" + uuid +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", role='" + role + '\'' +
                 ", pdlId=" + pdlId +

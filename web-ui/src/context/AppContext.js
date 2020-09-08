@@ -42,7 +42,7 @@ const AppContextProvider = (props) => {
     state && state.userProfile && state.userProfile.memberProfile
       ? state.userProfile.memberProfile
       : undefined;
-  const id = memberProfile ? memberProfile.uuid : undefined;
+  const id = memberProfile ? memberProfile.id : undefined;
 
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
 

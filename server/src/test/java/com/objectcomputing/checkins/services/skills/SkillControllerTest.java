@@ -54,7 +54,6 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     public void testGETFindByNameReturnsEmptyBody() {
 
-        Skill skill = new Skill();
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
@@ -155,6 +154,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
 
     }
+
     @Test
     public void testPOSTCreateANullSkill() {
 

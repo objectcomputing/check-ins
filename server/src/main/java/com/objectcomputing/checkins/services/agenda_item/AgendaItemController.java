@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/agenda-item")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-item")
 public class AgendaItemController {

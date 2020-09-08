@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.memberSkill;
+package com.objectcomputing.checkins.services.member_skill;
 
 import java.util.Set;
 import java.util.UUID;
