@@ -22,9 +22,9 @@ public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
 
     @Query("SELECT * " +
             "FROM action_items item " +
-            "WHERE (cast(:checkinId as uuid) IS NULL OR item.checkinid = :checkinId) " +
-            "AND (cast(:createdById as uuid) IS NULL OR item.createdbyid = :createdById)")
-    Set<ActionItem> search(@Nullable UUID checkinId, @Nullable UUID createdById);
+            "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
+            "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
+    Set<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
 
     @Override
     <S extends ActionItem> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

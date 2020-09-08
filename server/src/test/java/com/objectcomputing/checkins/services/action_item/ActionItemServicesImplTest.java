@@ -284,12 +284,8 @@ class ActionItemServicesImplTest {
     @Test
     void testFindByFieldsCheckInId() {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
-        Set<ActionItem> actionItems = Set.of(actionItemToFind,
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
 
-        when(actionItemRepository.search(actionItemToFind.getCheckinid(), null)).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(actionItemToFind.getCheckinid(), null));
 
@@ -305,7 +301,7 @@ class ActionItemServicesImplTest {
         );
 
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid())).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(null, actionItemToFind.getCreatedbyid()));
 
@@ -317,7 +313,7 @@ class ActionItemServicesImplTest {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
         ActionItem actionItem = actionItemToFind;
-        when(actionItemRepository.search(actionItem.getCheckinid(), actionItem.getCreatedbyid())).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services
                 .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));
