@@ -39,7 +39,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -97,7 +97,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -120,7 +120,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(UUID.randomUUID());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(false);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -167,14 +167,14 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         MemberProfile memberProfile1 = createADefaultMemberProfileForPdl(memberProfile);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
         guildMemberCreateDTO2.setGuildid(guild.getId());
-        guildMemberCreateDTO2.setMemberid(memberProfile1.getUuid());
+        guildMemberCreateDTO2.setMemberid(memberProfile1.getId());
         guildMemberCreateDTO2.setLead(true);
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);
@@ -196,7 +196,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
@@ -226,12 +226,12 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
         guildMemberCreateDTO2.setGuildid(guild.getId());
-        guildMemberCreateDTO2.setMemberid(memberProfile.getUuid());
+        guildMemberCreateDTO2.setMemberid(memberProfile.getId());
         guildMemberCreateDTO2.setLead(true);
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);

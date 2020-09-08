@@ -36,7 +36,7 @@ const AppContextProvider = (props) => {
     state && state.userProfile && state.userProfile.memberProfile
       ? state.userProfile.memberProfile
       : undefined;
-  const id = memberProfile ? memberProfile.uuid : undefined;
+  const id = memberProfile ? memberProfile.id : undefined;
 
   useEffect(() => {
     async function updateUserProfile() {
