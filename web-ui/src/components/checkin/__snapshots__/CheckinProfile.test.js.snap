@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="profile-section"
+>
+  <div
+    className="MuiAvatar-root MuiAvatar-circle"
+    style={
+      Object {
+        "height": "220px",
+        "width": "200px",
+      }
+    }
+  >
+    <img
+      className="MuiAvatar-img"
+      src="/default_profile.jpg"
+    />
+  </div>
+  <div
+    className="info"
+  >
+    <p>
+      Senior Test
+    </p>
+    <p>
+      Role: 
+      Tester
+    </p>
+    <p>
+      PDL: 
+    </p>
+    <p>
+      Company Email: 
+      test@tester.com
+    </p>
+  </div>
+</div>
+`;
