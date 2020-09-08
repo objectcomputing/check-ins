@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+import React, { useEffect, useState } from "react";
 import { getMember } from "../../api/member";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./Checkin.css";
 
-const CheckinProfile = () => {
-  const { state } = useContext(AppContext);
+const CheckinProfile = ({ state }) => {
   const { userProfile } = state;
   const { workEmail, role, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
@@ -34,7 +32,7 @@ const CheckinProfile = () => {
       />
       <div className="info">
         <p>{name}</p>
-        <p>{role}</p>
+        <p>Role: {role}</p>
         <p>PDL: {pdl}</p>
         <p>Company Email: {workEmail}</p>
       </div>

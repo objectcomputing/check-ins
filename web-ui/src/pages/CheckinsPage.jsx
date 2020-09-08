@@ -35,7 +35,7 @@ const CheckinsPage = ({ history }) => {
     <div>
       <div className="container">
         <div className="contents">
-          <CheckinProfile />
+          <CheckinProfile state={state} />
           <CheckinsHistory checkins={checkins} index={index} />
           {checkin && checkin.id && (
             <Note checkin={checkin} memberName={userProfile.name} />
