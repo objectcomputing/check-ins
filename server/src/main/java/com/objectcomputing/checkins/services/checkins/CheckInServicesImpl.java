@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -12,6 +12,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.security.utils.SecurityService;
 
 @Singleton
@@ -34,7 +35,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
-        LocalDate chkInDate = checkIn.getCheckInDate();
+        LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -44,16 +45,16 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new CheckInBadArgException(String.format("Found unexpected id for checkin  %s", checkIn.getId()));
         } else if(memberId.equals(pdlId)) {
             throw new CheckInBadArgException(String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
-        } else if(!memberRepo.findById(memberId).isPresent()) {
-            throw new CheckInBadArgException(String.format("Member %s doesn't exists", memberId));
+        } else if(memberRepo.findById(memberId).isEmpty()) {
+            throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
         } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
             throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
+        } else if(chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)) {
             throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-        } else if(!currentUser.getUuid().equals(checkIn.getTeamMemberId()) && !isAdmin) {
-            throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
-        } else if(!currentUser.getUuid().equals(checkIn.getPdlId()) && !isAdmin) {
-            throw new CheckInBadArgException(String.format("PDL %s is unauthorized to do this operation", currentUser.getUuid()));
+        } else if(!isAdmin) {
+            if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
+                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+            }
         }
 
         return checkinRepo.save(checkIn);
@@ -66,11 +67,17 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        if(currentUser.getUuid().equals(id) || currentUser.getUuid().equals(memberRepo.findById(id).get().getPdlId()) || isAdmin) {
-            return checkinRepo.findById(id).orElse(null);
+        CheckIn result = checkinRepo.findById(id).orElse(null);
+
+        if (result == null) {
+            throw new CheckInBadArgException(String.format("Invalid checkin id %s", id));
+        } else if(!isAdmin) {
+            if(!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())) {
+                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+            }
         }
 
-        throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
+        return result;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class CheckInServicesImpl implements CheckInServices {
         final UUID id = checkIn.getId();
         final UUID memberId = checkIn.getTeamMemberId();
         final UUID pdlId = checkIn.getPdlId();
-        LocalDate chkInDate = checkIn.getCheckInDate();
+        LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -93,14 +100,14 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
         } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
             throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        } else if(chkInDate.isBefore(LocalDate.EPOCH) || chkInDate.isAfter(LocalDate.MAX)) {
+        } else if(chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)) {
             throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-        } else if(!currentUser.getUuid().equals(checkIn.getTeamMemberId()) && !isAdmin) {
-            throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
-        } else if(!currentUser.getUuid().equals(checkIn.getPdlId()) && !isAdmin) {
-            throw new CheckInBadArgException(String.format("PDL %s is unauthorized to do this operation", currentUser.getUuid()));
-        } else if(checkinRepo.findById(id).get().isCompleted() && !isAdmin) {
-            throw new CheckInCompleteException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
+        } else if(!isAdmin) {
+            if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
+                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+            } else if(checkinRepo.findById(id).get().isCompleted()) {
+                throw new CheckInCompleteException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
+            }
         }
 
         return checkinRepo.update(checkIn);
@@ -113,8 +120,8 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        if(isAdmin || currentUser.getUuid().equals(teamMemberId) || currentUser.getUuid().equals(pdlId) ||
-                currentUser.getUuid().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
+        if(isAdmin || currentUser.getId().equals(teamMemberId) || currentUser.getId().equals(pdlId) ||
+                currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
 
             checkinRepo.findAll().forEach(checkIn::add);
             if (teamMemberId != null) {
@@ -127,6 +134,6 @@ public class CheckInServicesImpl implements CheckInServices {
             return checkIn;
         }
 
-        throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
+        throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
     }
 }

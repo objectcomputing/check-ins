@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class CheckInCreateDTO {
     private UUID pdlId;
 
     @Schema(description = "date of checkin")
-    private LocalDate checkInDate;
+    private LocalDateTime checkInDate;
 
     @NotNull
     @Schema(description = "whether checkin is completed or not")
@@ -42,11 +42,11 @@ public class CheckInCreateDTO {
         this.pdlId = pdlId;
     }
 
-    public LocalDate getCheckInDate() {
+    public LocalDateTime getCheckInDate() {
         return this.checkInDate;
     }
 
-    public void setCheckInDate(LocalDate checkInDate) {
+    public void setCheckInDate(LocalDateTime checkInDate) {
         this.checkInDate = checkInDate;
     }
 

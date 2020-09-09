@@ -26,6 +26,5 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
         return userProfile.orElseGet(() -> memberProfileServices.saveProfile(new MemberProfile(name, "", null,
                 "", workEmail, "", null, "")));
-
     }
 }

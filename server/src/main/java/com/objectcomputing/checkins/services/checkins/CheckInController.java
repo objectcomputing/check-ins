@@ -59,9 +59,7 @@ public class CheckInController {
      */
     @Get("/{?teamMemberId,pdlId,completed}")
     public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
-
-        Set<CheckIn> checkInResult = checkInServices.findByFields(teamMemberId, pdlId, completed);
-        return checkInResult;
+        return checkInServices.findByFields(teamMemberId, pdlId, completed);
     }
 
     /**
