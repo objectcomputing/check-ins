@@ -318,26 +318,25 @@ class ActionItemServicesImplTest {
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
         );
 
-        when(actionItemRepository.findAll()).thenReturn(actionItemSet);
+        when(actionItemRepository.search(null, null)).thenReturn(actionItemSet);
 
         assertEquals(actionItemSet, services.findByFields(null, null));
 
+<<<<<<< HEAD
         verify(actionItemRepository, times(1)).findAll();
         verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
         verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
+=======
+>>>>>>> origin/develop
     }
 
     @Test
     void testFindByFieldsCheckInId() {
-        List<ActionItem> actionItems = List.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
+        ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        List<ActionItem> actionItemsToFind = List.of(actionItems.get(1));
-        ActionItem actionItem = actionItemsToFind.get(0);
+        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(actionItemToFind));
 
+<<<<<<< HEAD
         when(actionItemRepository.findAll()).thenReturn(actionItems);
         when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
 
@@ -346,20 +345,21 @@ class ActionItemServicesImplTest {
         verify(actionItemRepository, times(1)).findAll();
         verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
         verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
+=======
+        assertEquals(Set.of(actionItemToFind), services.findByFields(actionItemToFind.getCheckinid(), null));
+>>>>>>> origin/develop
     }
 
     @Test
     void testFindByFieldsCreateById() {
-        List<ActionItem> actionItems = List.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
+        ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
+        Set<ActionItem> actionItems = Set.of(actionItemToFind,
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
         );
 
-        List<ActionItem> actionItemsToFind = List.of(actionItems.get(1));
-        ActionItem actionItem = actionItemsToFind.get(0);
-
         when(actionItemRepository.findAll()).thenReturn(actionItems);
+<<<<<<< HEAD
         when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
 
         assertEquals(new HashSet<>(actionItemsToFind), services.findByFields(null, actionItem.getCreatedbyid()));
@@ -367,29 +367,36 @@ class ActionItemServicesImplTest {
         verify(actionItemRepository, times(1)).findAll();
         verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
         verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
+=======
+        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
+
+        assertEquals(Set.of(actionItemToFind), services.findByFields(null, actionItemToFind.getCreatedbyid()));
+>>>>>>> origin/develop
     }
 
     @Test
     void testFindByFieldsAll() {
-        List<ActionItem> actionItems = List.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
+        ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        List<ActionItem> actionItemsToFind = List.of(actionItems.get(1));
-
+<<<<<<< HEAD
         ActionItem actionItem = actionItemsToFind.get(0);
         when(actionItemRepository.findAll()).thenReturn(actionItems);
         when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
         when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
+=======
+        ActionItem actionItem = actionItemToFind;
+        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
+>>>>>>> origin/develop
 
-        assertEquals(new HashSet<>(actionItemsToFind), services
+        assertEquals(Set.of(actionItemToFind), services
                 .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));
+<<<<<<< HEAD
 
         verify(actionItemRepository, times(1)).findAll();
         verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
         verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
+=======
+>>>>>>> origin/develop
     }
 
     @Test
