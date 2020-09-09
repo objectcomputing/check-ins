@@ -30,22 +30,6 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     void testGetLogin() {
         HttpRequest<?> request = HttpRequest.GET("");
         String response = client.toBlocking().retrieve(request);
-<<<<<<< HEAD
-        assertEquals("<!DOCTYPE HTML>\r\n" +
-                "<html>\r\n" +
-                "<head>\r\n" +
-                "    <title>Login</title>\r\n" +
-                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n" +
-                "</head>\r\n" +
-                "<body>\r\n" +
-                "<h1>Local Login</h1>\r\n" +
-                "<form action=\"/oauth/login/google\" method=\"post\">\r\n" +
-                "    <p>Email: <input type=\"text\" name=\"email\"/></p>\r\n" +
-                "    <p>Role Override: <input type=\"text\" name=\"role\"/></p>\r\n" +
-                "    <p><input type=\"submit\" value=\"Submit\" /> </p>\r\n" +
-                "</form>\r\n" +
-                "</body>\r\n" +
-=======
         assertEquals("<!DOCTYPE HTML>\n" +
                 "<html>\n" +
                 "<head>\n" +
@@ -60,7 +44,6 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
                 "    <p><input type=\"submit\" value=\"Submit\" /> </p>\n" +
                 "</form>\n" +
                 "</body>\n" +
->>>>>>> origin/develop
                 "</html>", response.trim());
     }
 

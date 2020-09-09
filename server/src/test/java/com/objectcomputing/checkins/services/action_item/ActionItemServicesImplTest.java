@@ -312,15 +312,20 @@ class ActionItemServicesImplTest {
 
     @Test
     void testFindByFieldsNullParams() {
-        List<ActionItem> actionItemSet = List.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
+        List<ActionItem> actionItemList = List.of(
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 1.0),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 2.0),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 3.0)
         );
 
-        when(actionItemRepository.search(null, null)).thenReturn(actionItemSet);
+        when(actionItemRepository.search(null, null)).thenReturn(actionItemList);
 
-        assertEquals(actionItemSet, services.findByFields(null, null));
+        Set<ActionItem> result = services.findByFields(null, null);
+        int i = 0;
+
+        for (ActionItem setItem : result) {
+            assertEquals(actionItemList.get(i++), setItem);
+        }
     }
 
     @Test
