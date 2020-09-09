@@ -46,7 +46,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -102,7 +102,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("test");
 
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -151,12 +151,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(checkIn.getId());
-        actionItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
@@ -209,12 +209,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);

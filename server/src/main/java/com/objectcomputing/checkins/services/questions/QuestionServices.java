@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface QuestionServices {
-    void setQuestionRepository(QuestionRepository questionRepository);
     Question saveQuestion(Question question);
     Set<Question> readAllQuestions();
     Question findById(UUID skillId);

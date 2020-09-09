@@ -9,8 +9,6 @@ public interface AgendaItemServices {
 
     AgendaItem read(UUID id);
 
-    Set<AgendaItem> readAll();
-
     AgendaItem update(AgendaItem agendaItem);
 
     Set<AgendaItem> findByFields(UUID checkinid, UUID createdbyid);

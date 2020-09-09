@@ -1,6 +1,5 @@
-package com.objectcomputing.checkins.services.memberskill;
+package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.services.memberSkill.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;

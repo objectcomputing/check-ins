@@ -1,16 +1,13 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 
-import com.objectcomputing.checkins.services.role.RoleBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -57,18 +54,18 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by UUID.
-     * @param uuid
+     * Find Team Member profile by id.
+     * @param id
      * @return
      */
-    @Get("/{uuid}")
-    public HttpResponse<MemberProfileResponseDTO> getByUuid(UUID uuid) {
+    @Get("/{id}")
+    public HttpResponse<MemberProfileResponseDTO> getById(UUID id) {
 
-        MemberProfile result = memberProfileServices.getById(uuid);
+        MemberProfile result = memberProfileServices.getById(id);
 
         return HttpResponse
                 .ok(fromEntity(result))
-                .headers(headers -> headers.location(location(result.getUuid())));
+                .headers(headers -> headers.location(location(result.getId())));
     }
 
     /**
@@ -99,7 +96,7 @@ public class MemberProfileController {
 
         return HttpResponse
                 .created(fromEntity(newMemberProfile))
-                .headers(headers -> headers.location(location(newMemberProfile.getUuid())));
+                .headers(headers -> headers.location(location(newMemberProfile.getId())));
     }
 
     /**
@@ -112,17 +109,17 @@ public class MemberProfileController {
         MemberProfile updatedMemberProfile = memberProfileServices.saveProfile(fromDTO(memberProfile));
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(location(updatedMemberProfile.getUuid())))
+                .headers(headers -> headers.location(location(updatedMemberProfile.getId())))
                 .body(fromEntity(updatedMemberProfile));
     }
 
-    protected URI location(UUID uuid) {
-        return URI.create("/member-profile/" + uuid);
+    protected URI location(UUID id) {
+        return URI.create("/member-profile/" + id);
     }
 
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
-        dto.setId(entity.getUuid());
+        dto.setId(entity.getId());
         dto.setBioText(entity.getBioText());
         dto.setInsperityId(entity.getInsperityId());
         dto.setLocation(entity.getLocation());

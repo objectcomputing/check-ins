@@ -1,10 +1,15 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
+import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.guild.GuildRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
+import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -47,12 +52,32 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(ActionItemRepository.class);
     }
 
+    default AgendaItemRepository getAgendaItemRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(AgendaItemRepository.class);
+    }
+
     default TeamRepository getTeamRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TeamRepository.class);
     }
 
     default TeamMemberRepository getTeamMemberRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TeamMemberRepository.class);
+    }
+
+    default QuestionRepository getQuestionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(QuestionRepository.class);
+    }
+
+    default MemberSkillRepository getMemberSkillRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberSkillRepository.class);
+    }
+
+    default GuildRepository getGuildRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(GuildRepository.class);
+    }
+
+    default GuildMemberRepository getGuildMemberRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(GuildMemberRepository.class);
     }
 
 }

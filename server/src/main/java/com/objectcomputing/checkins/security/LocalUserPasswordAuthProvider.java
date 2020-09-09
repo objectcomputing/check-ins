@@ -46,22 +46,22 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
                 return Flowable.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
             }
 
-            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
+            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getId()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
             currentRoles.removeAll(roles);
 
             // Create the roles if they don't already exist, delete roles not asked for
             for (String curRole : currentRoles) {
-                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getUuid());
+                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getId());
             }
 
             for (String curRole : roles) {
                 RoleType roleType = RoleType.valueOf(curRole);
-                if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getUuid()).isEmpty()) {
-                    roleRepository.save(new Role(roleType, memberProfile.getUuid()));
+                if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getId()).isEmpty()) {
+                    roleRepository.save(new Role(roleType, memberProfile.getId()));
                 }
             }
         } else {
-            roles = roleRepository.findByMemberid(memberProfile.getUuid()).stream().map((r) -> r.getRole().toString())
+            roles = roleRepository.findByMemberid(memberProfile.getId()).stream().map((r) -> r.getRole().toString())
                     .collect(Collectors.toList());
         }
 
