@@ -13,8 +13,10 @@ const CheckinsPage = () => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
   const { checkins, userProfile } = state;
+  console.log({ userProfile });
   const [index, setIndex] = useState(0);
   const checkin = checkins[index];
+  const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
 
   const showModal = () => {
     setShow(!show);
@@ -27,15 +29,12 @@ const CheckinsPage = () => {
           <CheckinsHistory setIndex={setIndex} />
         </div>
         <div className="right-sidebar">
-          <Personnel />
+          {canSeePersonnel && <Personnel />}
           <GuidesPanel />
         </div>
       </div>
       {checkin && checkin.id && (
-        <Note
-          checkin={checkin}
-          memberName={userProfile.name}
-        />
+        <Note checkin={checkin} memberName={userProfile.name} />
       )}
       <CheckinDocs />
       <div className="modal-container">
