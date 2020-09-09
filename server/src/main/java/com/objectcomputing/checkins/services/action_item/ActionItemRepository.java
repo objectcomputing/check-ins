@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 
@@ -23,7 +22,7 @@ public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
             "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
             "AND (:createdById IS NULL OR item.createdbyid = :createdById) " +
             "ORDER BY priority")
-    Set<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
+    List<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
 
     @Override
     <S extends ActionItem> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

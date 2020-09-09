@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -81,10 +82,9 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<ActionItem> actionItems = new HashSet<>(
-                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
-        return actionItems;
+        return new LinkedHashSet<>(
+                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
     }
 
     public void delete(@NotNull UUID id) {

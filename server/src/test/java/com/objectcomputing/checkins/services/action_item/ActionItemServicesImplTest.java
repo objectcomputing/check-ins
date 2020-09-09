@@ -312,7 +312,7 @@ class ActionItemServicesImplTest {
 
     @Test
     void testFindByFieldsNullParams() {
-        Set<ActionItem> actionItemSet = Set.of(
+        List<ActionItem> actionItemSet = List.of(
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
@@ -321,33 +321,15 @@ class ActionItemServicesImplTest {
         when(actionItemRepository.search(null, null)).thenReturn(actionItemSet);
 
         assertEquals(actionItemSet, services.findByFields(null, null));
-
-<<<<<<< HEAD
-        verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
-        verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
-=======
->>>>>>> origin/develop
     }
 
     @Test
     void testFindByFieldsCheckInId() {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(List.of(actionItemToFind));
 
-<<<<<<< HEAD
-        when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
-
-        assertEquals(new HashSet<>(actionItemsToFind), services.findByFields(actionItem.getCheckinid(), null));
-
-        verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
-        verify(actionItemRepository, never()).findByCreatedbyidOrderByPriority(any(UUID.class));
-=======
         assertEquals(Set.of(actionItemToFind), services.findByFields(actionItemToFind.getCheckinid(), null));
->>>>>>> origin/develop
     }
 
     @Test
@@ -359,44 +341,20 @@ class ActionItemServicesImplTest {
         );
 
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-<<<<<<< HEAD
-        when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
-
-        assertEquals(new HashSet<>(actionItemsToFind), services.findByFields(null, actionItem.getCreatedbyid()));
-
-        verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
-        verify(actionItemRepository, never()).findByCheckinidOrderByPriority(any(UUID.class));
-=======
-        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(List.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(null, actionItemToFind.getCreatedbyid()));
->>>>>>> origin/develop
     }
 
     @Test
     void testFindByFieldsAll() {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-<<<<<<< HEAD
-        ActionItem actionItem = actionItemsToFind.get(0);
-        when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.findByCreatedbyidOrderByPriority(actionItem.getCreatedbyid())).thenReturn(actionItemsToFind);
-        when(actionItemRepository.findByCheckinidOrderByPriority(actionItem.getCheckinid())).thenReturn(actionItemsToFind);
-=======
         ActionItem actionItem = actionItemToFind;
-        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
->>>>>>> origin/develop
+        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(List.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services
                 .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));
-<<<<<<< HEAD
-
-        verify(actionItemRepository, times(1)).findAll();
-        verify(actionItemRepository, times(1)).findByCreatedbyidOrderByPriority(any(UUID.class));
-        verify(actionItemRepository, times(1)).findByCheckinidOrderByPriority(any(UUID.class));
-=======
->>>>>>> origin/develop
     }
 
     @Test
