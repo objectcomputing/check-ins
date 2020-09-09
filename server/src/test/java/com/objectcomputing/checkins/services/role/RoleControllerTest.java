@@ -36,7 +36,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(memberProfile.getUuid());
+        roleCreateDTO.setMemberid(memberProfile.getId());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -148,11 +148,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(memberProfile.getUuid());
+        roleCreateDTO.setMemberid(memberProfile.getId());
 
         RoleCreateDTO roleCreateDTO2 = new RoleCreateDTO();
         roleCreateDTO2.setRole(RoleType.ADMIN);
-        roleCreateDTO2.setMemberid(memberProfile.getUuid());
+        roleCreateDTO2.setMemberid(memberProfile.getId());
 
         List<RoleCreateDTO> dtoList = List.of(roleCreateDTO, roleCreateDTO2);
 
@@ -254,7 +254,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
                 createDefaultRole(RoleType.PDL, memberProfile));
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getUuid()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getId()))
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
@@ -356,7 +356,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateNonExistingRole() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getUuid());
+        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getId());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);

@@ -15,7 +15,7 @@ import "./Checkin.css";
 const CheckinsHistory = ({ setIndex }) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail, role, uuid, pdlId } =
+  const { workEmail, role, id, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const { imageUrl, name } = userProfile ? userProfile : {};
   const [checkins, setCheckins] = useState([]);
@@ -38,8 +38,8 @@ const CheckinsHistory = ({ setIndex }) => {
   // Get checkins
   React.useEffect(() => {
     async function updateCheckins() {
-      if (uuid) {
-        let res = await getCheckinByPdlId(uuid);
+      if (id) {
+        let res = await getCheckinByPdlId(id);
         let data =
           res && res.payload && res.payload.status === 200
             ? res.payload.data
@@ -50,7 +50,7 @@ const CheckinsHistory = ({ setIndex }) => {
       }
     }
     updateCheckins();
-  }, [uuid]);
+  }, [id]);
 
   let checkinDate =
     checkins.length > 0

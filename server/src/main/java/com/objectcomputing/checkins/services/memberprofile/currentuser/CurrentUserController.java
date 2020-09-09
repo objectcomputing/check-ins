@@ -47,11 +47,11 @@ public class CurrentUserController {
         String imageUrl = authentication.getAttributes().get("picture").toString();
 
         MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getUuid()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
+        List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()
-                .headers(headers -> headers.location(location(user.getUuid())))
+                .headers(headers -> headers.location(location(user.getId())))
                 .body(fromEntity(user, imageUrl, roles));
     }
 

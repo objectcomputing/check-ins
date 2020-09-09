@@ -7,6 +7,6 @@ import com.objectcomputing.checkins.services.skills.Skill;
 public interface MemberSkillFixture extends RepositoryFixture{
 
     default MemberSkill createMemberSkill(MemberProfile memberProfile, Skill skill) {
-        return getMemberSkillRepository().save(new MemberSkill(memberProfile.getUuid(),skill.getId()));
+        return getMemberSkillRepository().save(new MemberSkill(memberProfile.getId(),skill.getId()));
     }
 }

@@ -46,7 +46,7 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO.setDescription("dnc");
 
         final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -102,7 +102,7 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(UUID.randomUUID());
-        agendaItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO.setDescription("test");
 
         final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("",agendaItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -151,12 +151,12 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO.setDescription("dnc");
 
         AgendaItemCreateDTO agendaItemCreateDTO2 = new AgendaItemCreateDTO();
         agendaItemCreateDTO2.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO2.setDescription("dnc");
 
         List<AgendaItemCreateDTO> dtoList = List.of(agendaItemCreateDTO, agendaItemCreateDTO2);
@@ -209,12 +209,12 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO.setDescription("dnc");
 
         AgendaItemCreateDTO agendaItemCreateDTO2 = new AgendaItemCreateDTO();
         agendaItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        agendaItemCreateDTO2.setCreatedbyid(memberProfile.getUuid());
+        agendaItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO2.setDescription("dnc");
 
         List<AgendaItemCreateDTO> dtoList = List.of(agendaItemCreateDTO, agendaItemCreateDTO2);
