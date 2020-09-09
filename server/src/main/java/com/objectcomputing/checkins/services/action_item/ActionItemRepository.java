@@ -16,10 +16,6 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
 
-    List<ActionItem> findByCheckinid(UUID checkinid);
-
-    List<ActionItem> findByCreatedbyid(UUID uuid);
-
     @Query("SELECT * " +
             "FROM action_items item " +
             "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +

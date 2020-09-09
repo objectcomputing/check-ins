@@ -288,8 +288,6 @@ class ActionItemServicesImplTest {
         when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(actionItemToFind.getCheckinid(), null));
-
-        verify(actionItemRepository, never()).findByCreatedbyid(any(UUID.class));
     }
 
     @Test
@@ -304,8 +302,6 @@ class ActionItemServicesImplTest {
         when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(null, actionItemToFind.getCreatedbyid()));
-
-        verify(actionItemRepository, never()).findByCheckinid(any(UUID.class));
     }
 
     @Test
