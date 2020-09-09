@@ -9,7 +9,7 @@ public interface ActionItemServices {
 
     ActionItem read(UUID id);
 
-    Set<ActionItem> readAll();
+//    Set<ActionItem> readAll();
 
     ActionItem update(ActionItem actionItem);
 
