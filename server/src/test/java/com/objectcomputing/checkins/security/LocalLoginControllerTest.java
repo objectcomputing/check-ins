@@ -44,7 +44,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
                 "    <p><input type=\"submit\" value=\"Submit\" /> </p>\n" +
                 "</form>\n" +
                 "</body>\n" +
-                "</html>", response);
+                "</html>", response.trim());
     }
 
     @Test
