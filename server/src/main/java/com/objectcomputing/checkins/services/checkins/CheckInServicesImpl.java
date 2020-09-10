@@ -120,20 +120,26 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        if(isAdmin || currentUser.getId().equals(teamMemberId) || currentUser.getId().equals(pdlId) ||
-                currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
-
-            checkinRepo.findAll().forEach(checkIn::add);
-            if (teamMemberId != null) {
-                checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
-            } else if (pdlId != null) {
-                checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
-            } else if (completed != null) {
-                checkIn.retainAll(checkinRepo.findByCompleted(completed));
+        if(!isAdmin) {
+            if(teamMemberId != null) {
+                if(!currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
+                    throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                }
+            } else if(!currentUser.getId().equals(pdlId)) {
+                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+            } else if(completed != null) {
+                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
             }
-            return checkIn;
         }
 
-        throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+        checkinRepo.findAll().forEach(checkIn::add);
+        if (teamMemberId != null) {
+            checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
+        } else if (pdlId != null) {
+            checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
+        } else if (completed != null) {
+            checkIn.retainAll(checkinRepo.findByCompleted(completed));
+        }
+        return checkIn;
     }
 }
