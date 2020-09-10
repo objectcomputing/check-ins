@@ -49,4 +49,3 @@ flyway:
     default:
       locations:
         - "classpath:db/common"
-        - "classpath:db/local"

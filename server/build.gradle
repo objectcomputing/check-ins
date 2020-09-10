@@ -33,7 +33,7 @@ flyway {
     user = 'postgres'
     password = 'postgres'
     schemas = ['checkinsdb']
-    locations = ['classpath:db']
+    locations = ['classpath:db/common', 'classpath:db/local']
 }
 
 configurations {

@@ -70,4 +70,5 @@ flyway:
   enabled: enabled
   datasources:
     default:
-      locations: classpath:db
+      locations:
+        - "classpath:db/common"
