@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import Personnel from "../components/personnel/Personnel";
@@ -8,19 +8,20 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import Note from "../components/notes/Note";
-import {AppContext} from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
 import "./CheckinsPage.css";
 
 const CheckinsPage = () => {
-    const [show, setShow] = useState(false);
-    const {state} = useContext(AppContext);
-    const {checkins, userProfile} = state;
-    const [index, setIndex] = useState(0);
-    const checkin = checkins[index];
+  const [show, setShow] = useState(false);
+  const { state } = useContext(AppContext);
+  const { checkins, userProfile } = state;
+  const [index, setIndex] = useState(0);
+  const checkin = checkins[index];
+  const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
 
-    const showModal = () => {
-        setShow(!show);
-    };
+  const showModal = () => {
+    setShow(!show);
+  };
 
     return (
         <div>
@@ -56,7 +57,7 @@ const CheckinsPage = () => {
                     <Grid item sm={3} justify="flex-end">
                         <Container maxWidth="md">
                             <div className="right-sidebar">
-                                <Personnel/>
+                                {canSeePersonnel && <Personnel />}
                                 <GuidesPanel/>
                             </div>
                             {checkin && checkin.id && (

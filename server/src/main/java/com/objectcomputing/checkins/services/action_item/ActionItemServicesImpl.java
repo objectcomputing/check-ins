@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 public class ActionItemServicesImpl implements ActionItemServices {
 
     @Inject
@@ -71,15 +73,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<ActionItem> actionItems = new HashSet<>();
-        actionItemRepo.findAll().forEach(actionItems::add);
-
-        if (checkinid != null) {
-            actionItems.retainAll(actionItemRepo.findByCheckinid(checkinid));
-        }
-        if (createdbyid != null) {
-            actionItems.retainAll(actionItemRepo.findByCreatedbyid(createdbyid));
-        }
+        Set<ActionItem> actionItems = new HashSet<>(
+                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
         return actionItems;
     }
