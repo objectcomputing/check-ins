@@ -22,7 +22,7 @@ jobs:
       - name: Gradle runs tests
         run: ./gradlew check
       - name: Do SonarQube checks
-        run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONARQUBE_TOKEN
+        run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         env:
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
