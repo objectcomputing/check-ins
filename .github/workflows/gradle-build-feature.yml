@@ -26,4 +26,4 @@ jobs:
         env:
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
-          TOKEN: ${{ SONARQUBE_TOKEN }}
+          TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
