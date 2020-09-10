@@ -45,6 +45,10 @@
 
 .profile-section {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 50px;
+  margin-top: 50px;
   margin-left: 50px;
 }
 
