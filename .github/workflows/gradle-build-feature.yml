@@ -10,24 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Gradle package
-        run: ./gradlew assemble
-      - name: Gradle runs tests
-        run: ./gradlew check
       - name: Do SonarQube checks
-        run: ./gradlew sonarqube -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONARQUBE_TOKEN}
+        run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONARQUBE_TOKEN
         env:
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
       - name: force build failure if SonarQube problems
-        run: curl -u "${SONARQUBE_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY} > result.json
+        run: curl -u "$SONARQUBE_TOKEN:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY > result.json
           - cat result.json
           - if [[ $(jq -r '.projectStatus.status' result.json) = ERROR ]] ; then exit 1;fi
         env:
