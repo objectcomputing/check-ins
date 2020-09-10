@@ -13,7 +13,6 @@ const CheckinsPage = () => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
   const { checkins, userProfile } = state;
-  console.log({ userProfile });
   const [index, setIndex] = useState(0);
   const checkin = checkins[index];
   const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
