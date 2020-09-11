@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 public class AgendaItemServicesImpl implements AgendaItemServices {
 
     @Inject
@@ -43,6 +45,12 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     }
 
+    public Set<AgendaItem> readAll() {
+        Set<AgendaItem> agendaItems = new HashSet<>();
+        agendaItemRepo.findAll().forEach(agendaItems::add);
+        return agendaItems;
+    }
+
     public AgendaItem update(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
         if (agendaItem != null) {
@@ -65,15 +73,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     }
 
     public Set<AgendaItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<AgendaItem> agendaItems = new HashSet<>();
-        agendaItemRepo.findAll().forEach(agendaItems::add);
-
-        if (checkinid != null) {
-            agendaItems.retainAll(agendaItemRepo.findByCheckinid(checkinid));
-        }
-        if (createdbyid != null) {
-            agendaItems.retainAll(agendaItemRepo.findByCreatedbyid(createdbyid));
-        }
+        Set<AgendaItem> agendaItems = new HashSet<>(
+                agendaItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
         return agendaItems;
     }
@@ -82,3 +83,5 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         agendaItemRepo.deleteById(id);
     }
 }
+
+
