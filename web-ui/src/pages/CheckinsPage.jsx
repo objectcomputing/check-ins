@@ -17,6 +17,7 @@ const CheckinsPage = ({ history }) => {
   const { state } = useContext(AppContext);
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
+  const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
 
   useEffect(() => {
     if (checkin && checkin.id) {
@@ -40,7 +41,7 @@ const CheckinsPage = ({ history }) => {
           <CheckinDocs />
         </div>
         <div className="right-sidebar">
-          <Personnel />
+          {canSeePersonnel && <Personnel />}
           <GuidesPanel />
         </div>
       </div>
