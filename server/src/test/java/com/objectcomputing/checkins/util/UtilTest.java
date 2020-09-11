@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @MicronautTest
 public class UtilTest {
@@ -16,8 +17,7 @@ public class UtilTest {
     @Test
     public void testNullSafeUUIDTranslationNotNull() {
         String result = Util.nullSafeUUIDToString(sampleUUID);
-        //assertEquals(sampleUUIDString, result);
-        assertFalse(true);
+        assertEquals(sampleUUIDString, result);
     }
 
     @Test
