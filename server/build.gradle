@@ -12,7 +12,9 @@ plugins {
     id "application"
     id "idea"
     id "groovy"
+    id "jacoco"
 }
+
 
 targetCompatibility = "11"
 sourceCompatibility = "11"
@@ -25,6 +27,7 @@ repositories {
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
 }
+
 
 
 configurations {
