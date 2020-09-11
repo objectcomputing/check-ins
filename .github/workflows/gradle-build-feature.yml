@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
       - name: Do SonarQube checks
         uses: sonarsouce/sonarcloud-github-action
-        run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
+        #run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #SONAR_PROJECT_KEY: oci-labs_oci-checkins
