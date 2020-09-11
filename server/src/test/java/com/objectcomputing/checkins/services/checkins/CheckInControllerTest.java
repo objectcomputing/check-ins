@@ -170,13 +170,15 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testCreateCheckInForNonExistingMember() {
 
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
         checkInCreateDTO.setTeamMemberId(UUID.randomUUID());
         checkInCreateDTO.setPdlId(UUID.randomUUID());
         checkInCreateDTO.setCompleted(true);
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
 
-        HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth("test@test.com", MEMBER_ROLE);
+        HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfMrNobody.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -572,7 +574,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     }
 
     @Test
-    void testCannotUpdateCheckIfCompletedIsTrue() {
+    void testCannotUpdateCheckInIfCompletedIsTrue() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
@@ -584,10 +586,8 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()), error);
-        assertEquals(request.getPath(), href);
     }
 
     @Test
@@ -730,48 +730,163 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUser.getId()), error);
+        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
     }
 
     @Test
-    public void testGetFindByCompleted() {
+    public void testGetFindByCompletedByAdmin() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn.isCompleted())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
-        assertEquals(Set.of(checkIn), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
+        Set<CheckIn> expected = new HashSet<>();
+        expected.add(checkIn2);
+        expected.add(checkIn3);
 
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(expected.size(), response.body().size());
+        assertEquals(expected, response.body());
     }
 
     @Test
-    void testFindCheckInAllParams() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    public void testGetFindByCompletedByMember() {
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s&pdlId=%s&completed=%s", checkIn.getTeamMemberId(),
-                checkIn.getTeamMemberId(),checkIn.isCompleted())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUnrelatedUser, memberProfileOfPDL);
+
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
-        assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertEquals(1, response.body().size());
+        assertEquals(checkIn2, response.body().iterator().next());
     }
 
     @Test
-    void testCheckInDoesNotExist() {
+    public void testGetFindByCompletedByPDL() {
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s",UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUnrelatedUser);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        Set<CheckIn> expected = new HashSet<>();
+        expected.add(checkIn2);
+        expected.add(checkIn3);
+
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(expected.size(), response.body().size());
+        assertEquals(expected, response.body());
+    }
+
+    @Test
+    void testFindAllCheckInsByAdmin() {
+
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        Set<CheckIn> expected = new HashSet<>();
+        expected.add(checkIn1);
+        expected.add(checkIn2);
+        expected.add(checkIn3);
+
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(expected.size(), response.body().size());
+        assertEquals(expected, response.body());
+    }
+
+    @Test
+    void testFindAllCheckInsByMember() {
+
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+    }
+
+    @Test
+    void testFindAllCheckInsByPDL() {
+
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+    }
+
+    @Test
+    void testCheckInDoesNotExistForTeamMemberID() {
+
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", memberProfileOfUnrelatedUser.getId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         assertEquals(Set.of(), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    void testCheckInDoesNotExistForPdlId() {
+
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfileOfUnrelatedUser.getId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
+        HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        assertEquals(Set.of(), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    public void testCheckInDoesNotExistForCompleted() {
+
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", true)).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
+
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(Set.of(), response.body());
     }
 }
