@@ -20,7 +20,7 @@ jobs:
       - name: Gradle package
         run: ./gradlew assemble
       - name: Do SonarQube checks
-        run: ./gradlew check jacocoTestReport sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
+        run: ./gradlew check jacocoTestReport sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORG -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         env:
           SONAR_PROJECT_KEY: oci-labs_oci-checkins
           SONAR_ORG: oci-labs
