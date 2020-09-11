@@ -4,20 +4,28 @@ import com.objectcomputing.checkins.services.guild.GuildBadArgException;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
+@Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
 
-    @Inject
     private GuildRepository guildRepo;
-    @Inject
+
     private GuildMemberRepository guildMemberRepo;
-    @Inject
+
     private MemberProfileRepository memberRepo;
+
+    public GuildMemberServicesImpl(GuildRepository guildRepo, GuildMemberRepository guildMemberRepo, MemberProfileRepository memberRepo) {
+        this.guildRepo = guildRepo;
+        this.guildMemberRepo = guildMemberRepo;
+        this.memberRepo = memberRepo;
+    }
 
     public GuildMember save(GuildMember guildMember) {
         GuildMember guildMemberRet = null;
@@ -68,19 +76,10 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     }
 
     public Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead) {
-        Set<GuildMember> guildMembers = new HashSet<>();
-        guildMemberRepo.findAll().forEach(guildMembers::add);
-
-        if (guildid != null) {
-            guildMembers.retainAll(guildMemberRepo.findByGuildid(guildid));
-        }
-        if (memberid != null) {
-            guildMembers.retainAll(guildMemberRepo.findByMemberid(memberid));
-        }
-        if (lead != null) {
-            guildMembers.retainAll(guildMemberRepo.findByLead(lead));
-        }
+        Set<GuildMember> guildMembers = new HashSet<>(
+                guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead));
 
         return guildMembers;
     }
+
 }
