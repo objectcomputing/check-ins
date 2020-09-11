@@ -191,7 +191,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Set<Guild> guilds = Collections.singleton(g);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", g.getName(),
-                mp.getUuid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                mp.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Guild>> response = client.toBlocking().exchange(request, Argument.setOf(Guild.class));
 
         assertEquals(guilds, response.body());

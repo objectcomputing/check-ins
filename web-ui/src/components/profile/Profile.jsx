@@ -21,7 +21,7 @@ const Profile = () => {
   const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
-  const { bioText, workEmail, name, role, uuid, pdlId } =
+  const { bioText, workEmail, name, role, id, pdlId } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
   const [pdl, setPDL] = useState();
@@ -62,8 +62,8 @@ const Profile = () => {
   React.useEffect(() => {
     async function updateMySkills() {
       let updatedMySkills = {};
-      if (uuid) {
-        let res = await getMemberSkills(uuid);
+      if (id) {
+        let res = await getMemberSkills(id);
 
         let data =
           res.payload && res.payload.status === 200 ? res.payload.data : null;
@@ -91,7 +91,7 @@ const Profile = () => {
       setMySkills(updatedMySkills);
     }
     updateMySkills();
-  }, [uuid]);
+  }, [id]);
 
   const addSkill = async (name) => {
     const inSkillsList = skillsList.find(
@@ -109,7 +109,7 @@ const Profile = () => {
     }
 
     let mySkillsTemp = { ...mySkills };
-    if (curSkill && curSkill.id && uuid) {
+    if (curSkill && curSkill.id && id) {
       if (
         !Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
@@ -117,7 +117,7 @@ const Profile = () => {
       ) {
         let res = await createMemberSkill({
           skillid: curSkill.id,
-          memberid: uuid,
+          memberid: id,
         });
         let data =
           res && res.payload && res.payload.status === 201

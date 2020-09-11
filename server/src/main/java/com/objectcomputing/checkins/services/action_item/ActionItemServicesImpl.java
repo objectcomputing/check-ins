@@ -14,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Singleton
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 public class ActionItemServicesImpl implements ActionItemServices {
 
     private CheckInRepository checkinRepo;
@@ -85,8 +86,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<ActionItem> actionItems = new HashSet<>();
-
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
@@ -99,14 +98,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if(isAdmin || currentUser.getUuid().equals(teamMemberId) || currentUser.getUuid().equals(pdlId) ||
                 currentUser.getUuid().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
 
-            actionItemRepo.findAll().forEach(actionItems::add);
-
-            if (checkinid != null) {
-                actionItems.retainAll(actionItemRepo.findByCheckinid(checkinid));
-            }
-            if (createdbyid != null) {
-                actionItems.retainAll(actionItemRepo.findByCreatedbyid(createdbyid));
-            }
+            Set<ActionItem> actionItems = new HashSet<>(
+                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
             return actionItems;
         }

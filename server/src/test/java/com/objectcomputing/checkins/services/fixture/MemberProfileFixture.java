@@ -14,7 +14,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Mr. Bill PDL", "Comedic Relief PDL",
-                memberProfile.getUuid(), "New York, New York", "billmpdl@objectcomputing.com", "mr-bill-insperity-pdl",
+                memberProfile.getId(), "New York, New York", "billmpdl@objectcomputing.com", "mr-bill-insperity-pdl",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows"));
     }
 }

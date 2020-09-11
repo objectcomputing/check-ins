@@ -39,7 +39,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
         teamMemberCreateDTO.setTeamid(team.getId());
-        teamMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO.setMemberid(memberProfile.getId());
         teamMemberCreateDTO.setLead(false);
 
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -96,7 +96,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
         teamMemberCreateDTO.setTeamid(UUID.randomUUID());
-        teamMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO.setMemberid(memberProfile.getId());
         teamMemberCreateDTO.setLead(false);
 
         final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -167,14 +167,14 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
         teamMemberCreateDTO.setTeamid(team.getId());
-        teamMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO.setMemberid(memberProfile.getId());
         teamMemberCreateDTO.setLead(true);
 
         MemberProfile memberProfile1 = createADefaultMemberProfileForPdl(memberProfile);
         Team team1 = createAnotherDeafultTeam();
         TeamMemberCreateDTO teamMemberCreateDTO2 = new TeamMemberCreateDTO();
         teamMemberCreateDTO2.setTeamid(team1.getId());
-        teamMemberCreateDTO2.setMemberid(memberProfile1.getUuid());
+        teamMemberCreateDTO2.setMemberid(memberProfile1.getId());
         teamMemberCreateDTO2.setLead(true);
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);
@@ -195,7 +195,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
         teamMemberCreateDTO.setTeamid(team.getId());
-        teamMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO.setMemberid(memberProfile.getId());
         teamMemberCreateDTO.setLead(true);
 
         TeamMemberCreateDTO teamMemberCreateDTO2 = new TeamMemberCreateDTO();
@@ -224,12 +224,12 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO();
         teamMemberCreateDTO.setTeamid(team.getId());
-        teamMemberCreateDTO.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO.setMemberid(memberProfile.getId());
         teamMemberCreateDTO.setLead(true);
 
         TeamMemberCreateDTO teamMemberCreateDTO2 = new TeamMemberCreateDTO();
         teamMemberCreateDTO2.setTeamid(team.getId());
-        teamMemberCreateDTO2.setMemberid(memberProfile.getUuid());
+        teamMemberCreateDTO2.setMemberid(memberProfile.getId());
         teamMemberCreateDTO2.setLead(true);
 
         List<TeamMemberCreateDTO> dtoList = List.of(teamMemberCreateDTO, teamMemberCreateDTO2);

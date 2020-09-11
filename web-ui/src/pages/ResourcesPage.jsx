@@ -13,20 +13,14 @@ const ResourcesPage = () => {
   const ociLightBlue = "#72c7d5";
   const ociOrange = "#feb672";
 
-  const getPDF = async (name) => {
+  const loadPDF = async (name) => {
     try {
-      const res = await fetch("/pdfs/" + name + ".pdf");
-      if (res.ok) return res.blob();
+      const res = await fetch("/pdfs/" + name.split(" ").join("_") + ".pdf");
+      if (res.ok) return setPDF(await res.blob());
       const message = await res.text();
       throw new Error(message);
     } catch (e) {
       console.error(e);
-    }
-  };
-
-  const getPDFs = async (pdfArray) => {
-    for (const tmp of pdfArray) {
-      tmp.pdf = await getPDF(tmp.name);
     }
   };
 
@@ -53,8 +47,6 @@ const ResourcesPage = () => {
     },
   ];
 
-  getPDFs(teamMemberPDFs);
-
   const pdlPDFs = [
     {
       color: ociBlue,
@@ -69,8 +61,6 @@ const ResourcesPage = () => {
       name: "Feedback Discussion Guide for PDLs",
     },
   ];
-
-  getPDFs(pdlPDFs);
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -96,9 +86,7 @@ const ResourcesPage = () => {
       <div
         className="custom-button"
         key={pdf.name}
-        onClick={() => {
-          setPDF(pdf.pdf);
-        }}
+        onClick={() => loadPDF(pdf.name)}
         style={{ backgroundColor: pdf.color }}
       >
         {pdf.name}
