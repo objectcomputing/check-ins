@@ -15,7 +15,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -313,11 +316,11 @@ class GuildMemberServicesImplTest {
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false)
         );
 
-        when(guildMemberRepository.findAll()).thenReturn(guildMemberSet);
+        when(guildMemberRepository.search(null, null, null)).thenReturn(guildMemberSet);
 
         assertEquals(guildMemberSet, services.findByFields(null, null, null));
 
-        verify(guildMemberRepository, times(1)).findAll();
+        verify(guildMemberRepository, times(1)).search(null, null, null);
         verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
         verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
         verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
@@ -325,92 +328,68 @@ class GuildMemberServicesImplTest {
 
     @Test
     void testFindByFieldsGuildId() {
-        List<GuildMember> guildMembers = List.of(
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false)
-        );
 
-        List<GuildMember> guildMembersToFind = List.of(guildMembers.get(1));
-        GuildMember guildMember = guildMembersToFind.get(0);
+        GuildMember guildMemberToFind = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false);
 
-        when(guildMemberRepository.findAll()).thenReturn(guildMembers);
-        when(guildMemberRepository.findByGuildid(guildMember.getGuildid())).thenReturn(guildMembersToFind);
+        when(guildMemberRepository.search(guildMemberToFind.getGuildid().toString(), null, null)).thenReturn(Set.of(guildMemberToFind));
 
-        assertEquals(new HashSet<>(guildMembersToFind), services.findByFields(guildMember.getGuildid(), null, null));
+        assertEquals(Set.of(guildMemberToFind), services.findByFields(guildMemberToFind.getGuildid(), null, null));
 
-        verify(guildMemberRepository, times(1)).findAll();
-        verify(guildMemberRepository, times(1)).findByGuildid(any(UUID.class));
+        verify(guildMemberRepository, times(1)).search(guildMemberToFind.getGuildid().toString(), null, null);
         verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
         verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
     }
 
     @Test
     void testFindByFieldsMemberId() {
-        List<GuildMember> guildMembers = List.of(
+        GuildMember guildMemberToFind = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false);
+        Set<GuildMember> guildMembers = Set.of(
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false)
         );
 
-        List<GuildMember> guildMembersToFind = List.of(guildMembers.get(1));
-        GuildMember guildMember = guildMembersToFind.get(0);
-
         when(guildMemberRepository.findAll()).thenReturn(guildMembers);
-        when(guildMemberRepository.findByMemberid(guildMember.getMemberid())).thenReturn(guildMembersToFind);
+        when(guildMemberRepository.search(null, guildMemberToFind.getMemberid().toString(), null)).thenReturn(Set.of(guildMemberToFind));
 
-        assertEquals(new HashSet<>(guildMembersToFind), services.findByFields(null, guildMember.getMemberid(), null));
+        assertEquals(Set.of(guildMemberToFind), services.findByFields(null, guildMemberToFind.getMemberid(), null));
 
-        verify(guildMemberRepository, times(1)).findAll();
-        verify(guildMemberRepository, times(1)).findByMemberid(any(UUID.class));
         verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
         verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
+
     }
 
     @Test
     void testFindByFieldsLead() {
+        GuildMember guildMemberToFind = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false);
         List<GuildMember> guildMembers = List.of(
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
                 new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false)
         );
 
-        List<GuildMember> guildMembersToFind = List.of(guildMembers.get(1));
 
-        GuildMember guildMember = guildMembersToFind.get(0);
         when(guildMemberRepository.findAll()).thenReturn(guildMembers);
-        when(guildMemberRepository.findByLead(guildMember.isLead())).thenReturn(guildMembersToFind);
+        when(guildMemberRepository.search(null, null, guildMemberToFind.isLead())).thenReturn(Set.of(guildMemberToFind));
 
-        assertEquals(new HashSet<>(guildMembersToFind), services.findByFields(null, null, guildMember.isLead()));
+        assertEquals(Set.of(guildMemberToFind), services.findByFields(null, null, guildMemberToFind.isLead()));
 
-        verify(guildMemberRepository, times(1)).findAll();
         verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
         verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
-        verify(guildMemberRepository, times(1)).findByLead(any(Boolean.class));
     }
 
     @Test
     void testFindByFieldsAll() {
-        List<GuildMember> guildMembers = List.of(
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false),
-                new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false)
-        );
 
-        List<GuildMember> guildMembersToFind = List.of(guildMembers.get(1));
+        GuildMember guildMemberToFind = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false);
 
-        GuildMember guildMember = guildMembersToFind.get(0);
-        when(guildMemberRepository.findAll()).thenReturn(guildMembers);
-        when(guildMemberRepository.findByMemberid(guildMember.getMemberid())).thenReturn(guildMembersToFind);
-        when(guildMemberRepository.findByLead(guildMember.isLead())).thenReturn(guildMembersToFind);
-        when(guildMemberRepository.findByGuildid(guildMember.getGuildid())).thenReturn(guildMembersToFind);
 
-        assertEquals(new HashSet<>(guildMembersToFind), services
+        GuildMember guildMember = guildMemberToFind;
+
+        when(guildMemberRepository.search(guildMember.getGuildid().toString(), guildMember.getMemberid().toString(), guildMember.isLead())).thenReturn(Set.of(guildMemberToFind));
+
+        assertEquals(Set.of(guildMemberToFind), services
                 .findByFields(guildMember.getGuildid(), guildMember.getMemberid(), guildMember.isLead()));
 
-        verify(guildMemberRepository, times(1)).findAll();
-        verify(guildMemberRepository, times(1)).findByMemberid(any(UUID.class));
-        verify(guildMemberRepository, times(1)).findByGuildid(any(UUID.class));
-        verify(guildMemberRepository, times(1)).findByLead(any(Boolean.class));
     }
 }
