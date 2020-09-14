@@ -45,12 +45,6 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     }
 
-    public Set<AgendaItem> readAll() {
-        Set<AgendaItem> agendaItems = new HashSet<>();
-        agendaItemRepo.findAll().forEach(agendaItems::add);
-        return agendaItems;
-    }
-
     public AgendaItem update(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
         if (agendaItem != null) {

@@ -17,9 +17,9 @@ import java.util.UUID;
 public interface AgendaItemRepository extends CrudRepository<AgendaItem, UUID> {
 
     @Query("SELECT * " +
-    "FROM action_items item " +
-    "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
-    "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
+            "FROM agenda_items item " +
+            "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
+            "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
     Set<AgendaItem> search(@Nullable String checkinId, @Nullable String createdById);
 
     @Override
