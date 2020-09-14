@@ -25,7 +25,10 @@ jobs:
         run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORG -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_PROJECT_KEY: oci-labs_oci-checkins
+          #SONAR_PROJECT_KEY: oci-labs_oci-checkins
+          SONAR_PROJECT_KEY: oci-checkins
           SONAR_ORG: oci-labs
-          SONAR_URL: https://sonarcloud.io
-          SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
+          #SONAR_URL: https://sonarcloud.io
+          SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
+          #SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
