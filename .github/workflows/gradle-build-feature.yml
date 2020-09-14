@@ -34,14 +34,13 @@ jobs:
           #SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
       #    SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       - name: capture sonar result status
-        run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY)
+        run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY) | jq '.projectStatus.status'
         id: curlSonar
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
-        run: |
-          echo $result | jq '.projectStatus.status'
+        if: $result != 'PASSED'
+        run: exit 0
         env:
           result: ${{ steps.curlSonar.outputs.result }}
-        #if: ${{ needs.build.curlSonar.outputs.result.status == "Passed" }}
