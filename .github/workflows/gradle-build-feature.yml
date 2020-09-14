@@ -42,4 +42,4 @@ jobs:
       - name: fail if sonar result bad
         if: steps.curlSonar.outputs.result != 'PASSED'
         continue-on-error: true
-        run: exit 1
+        run: throw new Error('Sonar findings are a failure')
