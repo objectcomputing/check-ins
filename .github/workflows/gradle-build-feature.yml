@@ -43,4 +43,4 @@ jobs:
           SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
         run: echo ${{ needs.build.curlSonar.outputs.result }}
-        if: ${{ needs.build.curlSonar.outputs.result.status == "Passed" }}
+        #if: ${{ needs.build.curlSonar.outputs.result.status == "Passed" }}
