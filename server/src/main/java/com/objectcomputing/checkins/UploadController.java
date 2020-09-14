@@ -77,6 +77,7 @@ public class UploadController {
     @Post(consumes = MediaType.MULTIPART_FORM_DATA)
     public HttpResponse<?> upload(@Body final CompletedFileUpload file) {
         Drive drive = null;
+        System.out.println("Inside POST of Upload service");
         try {
             drive = googleDriveAccessor.accessGoogleDrive();
         } catch (final IOException e) {
