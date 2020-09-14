@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         return agendaItemRet;
     }
 
-    public Set<AgendaItem> findByFields(UUID checkinid, UUID createdbyid) {
+    public Set<AgendaItem> findByFields(@Nullable UUID checkinid,@Nullable UUID createdbyid) {
         Set<AgendaItem> agendaItems = new HashSet<>(
                 agendaItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
