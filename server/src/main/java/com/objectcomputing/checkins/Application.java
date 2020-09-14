@@ -15,6 +15,20 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 )
 public class Application {
+
+    public static final String PASSWORD="P@ssw0rd";
+
+    public void iAmAMethod() {
+        System.out.println("doing stuff");
+    }
+
+    public int[] swapValues(int a, int b) {
+        a = a^b; // a = a^b
+        b = a^b; // b = a^b^b = a
+        a = a^b; // a = a^b^a = b
+        return new int[] {a, b};
+    }
+
     public static void main(String[] args) {
         Micronaut.run(Application.class);
     }
