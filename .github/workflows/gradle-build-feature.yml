@@ -41,4 +41,4 @@ jobs:
           SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
         if: steps.curlSonar.outputs.result != 'PASSED'
-        run: exit 0
+        run: exit 1
