@@ -36,11 +36,11 @@ jobs:
       - name: capture sonar result status
         run: |
           curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY > result.json
-          echo ::set-output name=result::result.json
+          echo ::set-output name=result::{"status":"Failed"}
         id: curlSonar
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
-        run: echo ${{ needs.build.curlSonar.outputs }}
+        run: echo ${{ steps.curlSonar.outputs.result }}
         #if: ${{ needs.build.curlSonar.outputs.result.status == "Passed" }}
