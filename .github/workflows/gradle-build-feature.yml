@@ -33,3 +33,10 @@ jobs:
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
           #SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+      - name: Force sonar failure if Quality gate failed
+        run: |
+          curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY > result.json
+          echo ::set-output name=sonarResult::result.json
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_PROJECT_KEY: oci-checkins
