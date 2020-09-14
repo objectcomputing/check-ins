@@ -21,18 +21,11 @@ jobs:
         run: ./gradlew assemble
       #- name: Gradle runs tests
       #  run: ./gradlew check
-  sonarcloud:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Do SonarQube checks
-        uses: sonarsource/sonarcloud-github-action@master
-        #run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
+        run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #SONAR_PROJECT_KEY: oci-labs_oci-checkins
-          #SONAR_ORG: oci-labs
-          #SONAR_URL: https://sonarcloud.io
+          SONAR_PROJECT_KEY: oci-labs_oci-checkins
+          SONAR_ORG: oci-labs
+          SONAR_URL: https://sonarcloud.io
           SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
