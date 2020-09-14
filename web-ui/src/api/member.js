@@ -47,7 +47,7 @@ export const updateMember = async (member) => {
       method: "put",
       url: memberProfileUrl,
       responseType: "json",
-      data: { ...member, id: member.id },
+      data: member,
       withCredentials: true,
     })
   );

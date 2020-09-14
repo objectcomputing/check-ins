@@ -50,12 +50,12 @@ const CheckinsHistory = ({ checkins, index }) => {
     setCheckinDate(new Date(dateArray));
   };
 
-  const DateInput = ({ value, onClick }) => (
-    <div className="date-input">
-      <p style={{ margin: "0px" }}>{value}</p>
-      <CalendarTodayIcon onClick={onClick}>stuff</CalendarTodayIcon>
+  const DateInput = React.forwardRef((props, ref) => (
+    <div className="date-input" ref={ref}>
+      <p style={{ margin: "0px" }}>{props.value}</p>
+      <CalendarTodayIcon onClick={props.onClick}>stuff</CalendarTodayIcon>
     </div>
-  );
+  ));
 
   return (
     <div>

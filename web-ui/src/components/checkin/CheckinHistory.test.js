@@ -1,6 +1,8 @@
 import React from "react";
-import CheckinHistory from "./CheckinHistory";
+import CheckinsHistory from "./CheckinHistory";
 import { AppContextProvider } from "../../context/AppContext";
+import { act } from "react-dom/test-utils";
+import { render } from "@testing-library/react";
 
 const initialState = {
   state: {
@@ -30,13 +32,17 @@ const initialState = {
   },
 };
 
-it("renders correctly", () => {
-  snapshot(
-    <AppContextProvider value={initialState}>
-      <CheckinHistory
-        checkins={initialState.state.checkins}
-        index={initialState.state.index}
-      />
-    </AppContextProvider>
-  );
+it("renders correctly", async () => {
+  let asFragment;
+  await act(async () => {
+    ({ asFragment } = render(
+      <AppContextProvider value={initialState}>
+        <CheckinsHistory
+          checkins={initialState.state.checkins}
+          index={initialState.state.index}
+        />
+      </AppContextProvider>
+    ));
+  });
+  expect(asFragment()).toMatchSnapshot();
 });
