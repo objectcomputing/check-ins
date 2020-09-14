@@ -40,7 +40,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
-        if: $result != 'PASSED'
+        if: result != 'PASSED'
         run: exit 0
         env:
           result: ${{ steps.curlSonar.outputs.result }}
