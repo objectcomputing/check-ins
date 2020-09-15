@@ -12,7 +12,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -25,10 +25,14 @@ import java.util.UUID;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "guild")
+@Singleton
 public class GuildController {
 
-    @Inject
     private GuildServices guildService;
+
+    public GuildController(GuildServices guildService) {
+        this.guildService = guildService;
+    }
 
     @Error(exception = GuildBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {

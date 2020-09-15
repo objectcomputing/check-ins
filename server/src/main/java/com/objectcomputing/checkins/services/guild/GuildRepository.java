@@ -1,14 +1,18 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -18,6 +22,11 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     List<Guild> findByNameIlike(String name);
 
+    @Query("SELECT * " +
+            "FROM guilds guild " +
+            "WHERE (:checkinId IS NULL OR guild.checkinid = :checkinId) " +
+            "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
+    Set<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
     @Override
     <S extends Guild> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
