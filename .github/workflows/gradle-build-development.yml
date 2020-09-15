@@ -20,12 +20,14 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew assemble
+        env:
+          - REACT_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
       - name: Gradle runs tests
         run: ./gradlew check
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          version: '290.0.1'
+          version: "290.0.1"
           service_account_key: ${{ secrets.RUN_SA_KEY }}
           project_id: ${{ secrets.RUN_PROJECT }}
       - name: Auth Configure Docker
