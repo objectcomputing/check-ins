@@ -36,9 +36,11 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
                 throw new GuildBadArgException(String.format("Invalid guildMember %s", guildMember));
             } else if (guildMember.getId() != null) {
                 throw new GuildBadArgException(String.format("Found unexpected id %s for guild member", guildMember.getId()));
-            } else if (!guildRepo.findById(guildId).isPresent()) {
+            } else if (guildRepo.findById(guildId).isEmpty()) {
+//            } else if (!guildRepo.findById(guildId).isPresent()) {
                 throw new GuildBadArgException(String.format("Guild %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
+            } else if (memberRepo.findById(memberId).isEmpty()) {
+//            } else if (!memberRepo.findById(memberId).isPresent()) {
                 throw new GuildBadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(),
                     guildMember.getMemberid()).isPresent()) {
