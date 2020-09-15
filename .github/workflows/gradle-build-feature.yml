@@ -39,4 +39,4 @@ jobs:
         run: |
           echo ${{ steps.curlSonar.outputs.result }}
           echo ${{ 'OK' }}
-          echo ${{ steps.curlSonar.outputs.result != 'OK }}
+          echo ${{ steps.curlSonar.outputs.result != 'OK' }}
