@@ -17,10 +17,10 @@ jobs:
           java-version: 11
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Gradle package
-        run: ./gradlew assemble
-      - name: Gradle runs tests
-        run: ./gradlew check
+      #- name: Gradle package
+      #  run: ./gradlew assemble
+      #- name: Gradle runs tests
+      #  run: ./gradlew check
       - name: Do SonarQube checks
        #run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORG -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
         run: ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
@@ -34,13 +34,13 @@ jobs:
           #SONAR_TOKEN: 76d54e72c4fbab6a5d7928cc95e2e9248986b1c5
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       - name: capture sonar result status
-        run: |
-          echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
-          echo $result
+        run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
         id: curlSonar
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
+      - name: sanity check output
+        run: echo $steps.curlSOnar.outputs.result
       - name: fail if sonar result bad
         if: steps.curlSonar.outputs.result != 'OK'
         run: exit 1
