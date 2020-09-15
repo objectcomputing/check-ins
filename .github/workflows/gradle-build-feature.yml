@@ -44,7 +44,7 @@ jobs:
         env:
           result: steps.curlSonar.outputs.result
       - name: fail if sonar result bad
-        if: result != 'OK'
+        if: $result != 'OK'
         run: exit 1
         env:
           result: steps.curlSonar.outputs.result
