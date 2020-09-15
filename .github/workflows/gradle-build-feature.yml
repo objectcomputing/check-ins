@@ -40,3 +40,4 @@ jobs:
           echo ${{ steps.curlSonar.outputs.result }}
           echo ${{ 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
+          echo ${{ 'OK' != 'OK' }}
