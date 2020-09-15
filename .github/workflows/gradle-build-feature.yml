@@ -39,6 +39,6 @@ jobs:
         run: |
           echo ${{ steps.curlSonar.outputs.result }}
           echo ${{ 'OK' }}
-          echo ${{ $({"val":"OK"} | jq .val) }}
-          echo ${{ steps.curlSonar.outputs.result != $({"val":"OK"} | jq .val) }}
+          echo ${{ {"val":"OK"} | jq .val }}
+          echo ${{ steps.curlSonar.outputs.result != {"val":"OK"} | jq .val }}
           echo ${{ 'OK' != 'OK' }}
