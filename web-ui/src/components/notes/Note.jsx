@@ -1,46 +1,49 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import {
   getNoteByCheckinId,
   createCheckinNote,
   updateCheckinNote,
 } from "../../api/checkins";
+// import SnackBar from "../snackbar/SnackBar.jsx";
+import { AppContext } from "../../context/AppContext";
+
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
-import { AppContext } from "../../context/AppContext";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+// import Snackbar from "@material-ui/core/Snackbar";
+// import MuiAlert from "@material-ui/lab/Alert";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import "./Note.css";
 
 async function realUpdate(note) {
-  let res = await updateCheckinNote(note);
-  if (res.error) {
-    console.error(res.error);
-  }
+  await updateCheckinNote(note);
 }
 
 const updateNote = debounce(realUpdate, 1000);
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+// function Alert(props) {
+//   return <MuiAlert elevation={6} variant="filled" {...props} />;
+// }
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const canViewPrivateNote =
-    userProfile.memberProfile &&
-    userProfile.memberProfile.role &&
-    (userProfile.memberProfile.role.includes("PDL") ||
-      userProfile.memberProfile.role.includes("ADMIN"));
   const { checkin, memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [toast, setToast] = useState("");
-  // TODO: get private note and determine if user is PDL
+  // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
+
+  const canViewPrivateNote =
+    userProfile.memberProfile &&
+    userProfile.memberProfile.role &&
+    (userProfile.memberProfile.role.includes("PDL") ||
+      userProfile.memberProfile.role.includes("ADMIN")) &&
+    userProfile.memberProfile.id !== checkin.teamMemberId;
 
   useEffect(() => {
     const id = checkin.id;
@@ -100,7 +103,12 @@ const Notes = (props) => {
         </h1>
         <div className="container">
           {isLoading ? (
-            <div className="is-loading"></div>
+            <div className="skeleton">
+              <Skeleton variant="text" height={40} />
+              <Skeleton variant="text" height={40} />
+              <Skeleton variant="text" height={40} />
+              <Skeleton variant="text" height={40} />
+            </div>
           ) : (
             <textarea
               onChange={handleNoteChange}
@@ -108,7 +116,7 @@ const Notes = (props) => {
             ></textarea>
           )}
         </div>
-        <Snackbar
+        {/* <Snackbar
           autoHideDuration={2500}
           open={open}
           onClose={handleClose}
@@ -117,7 +125,8 @@ const Notes = (props) => {
           <Alert onClose={handleClose} severity="error">
             {toast}
           </Alert>
-        </Snackbar>
+        </Snackbar> */}
+        {/* <SnackBar handleClose={handleClose} open={open} toast={toast} /> */}
       </div>
       {canViewPrivateNote && (
         <div>

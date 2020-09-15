@@ -33,7 +33,7 @@ const reducer = (state, action) => {
 const initialState = {
   userProfile: undefined,
   checkins: [],
-  index: -1,
+  index: 0,
 };
 
 const AppContextProvider = (props) => {
@@ -64,8 +64,12 @@ const AppContextProvider = (props) => {
   }, []);
 
   const date = (months, prevCheckinDate) => {
+    let currentMonth = new Date().getMonth() + 1;
+    let prevCheckinMonth = prevCheckinDate.getMonth() + 1;
     let newDate = prevCheckinDate ? new Date(...prevCheckinDate) : new Date();
-    newDate.setMonth(newDate.getMonth() + months);
+    newDate.setMonth(
+      newDate.getMonth() + currentMonth - prevCheckinMonth >= 3 ? 1 : months
+    );
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const day = newDate.getDate();

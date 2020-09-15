@@ -12,6 +12,7 @@ export const resolve = async (promise) => {
     resolved.payload = await promise;
   } catch (e) {
     resolved.error = e;
+    console.log(e);
   }
 
   return resolved;

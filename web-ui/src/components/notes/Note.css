@@ -21,6 +21,12 @@
   width: 98%;
 }
 
+.container .skeleton {
+  border: 2px solid black;
+  min-height: 150px;
+  padding: 5px;
+}
+
 .container textarea {
   border: 2px solid black;
   min-height: 150px;
@@ -28,19 +34,6 @@
   width: 100%;
 }
 
-.is-loading {
-  background: repeating-linear-gradient(
-    to bottom,
-    white,
-    white 10px,
-    lightgray 10px,
-    lightgray 25px
-  );
-  border: 2px solid black;
-  min-height: 150px;
-  padding: 5px;
+.skeleton {
   width: 100%;
-  height: fit-content;
-  top: 0;
-  left: 0;
 }

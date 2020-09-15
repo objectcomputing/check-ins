@@ -19,6 +19,7 @@ const CheckinsPage = ({ history }) => {
   const checkin = checkins[index];
   const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
 
+  // console.log({ history });
   useEffect(() => {
     if (checkin && checkin.id) {
       history.push(`/checkins/${checkin.id}`);
