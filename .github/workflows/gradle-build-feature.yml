@@ -28,12 +28,12 @@ jobs:
       #     SONAR_PROJECT_KEY: oci-checkins
       #    SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
       #    SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-      #- name: capture sonar result status
-      #  run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
-      #  id: curlSonar
-      #  env:
-      #    SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-      #    SONAR_PROJECT_KEY: oci-checkins
+      - name: capture sonar result status
+        run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
+        id: curlSonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_PROJECT_KEY: oci-checkins
       - name: fail if sonar result bad
       #  if: steps.curlSonar.outputs.result != 'OK'
         run: |
