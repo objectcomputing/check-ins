@@ -10,20 +10,13 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface GuildMemberRepository extends CrudRepository<GuildMember, UUID> {
 
-    List<GuildMember> findByGuildid(UUID guildid);
-
     List<GuildMember> findByMemberid(UUID uuid);
-
-    List<GuildMember> findByLead(Boolean aBoolean);
-
-    Optional<GuildMember> findByGuildidAndMemberid(UUID guildMemberid, UUID memberId);
 
     @Query("SELECT * " +
             "FROM guildmembers guildMember " +

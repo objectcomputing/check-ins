@@ -75,18 +75,12 @@ class GuildMemberServicesImplTest {
 
         when(guildRepository.findById(eq(guildMember.getGuildid()))).thenReturn(Optional.of(guild));
         when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(guildMemberRepository
-                .findByGuildidAndMemberid(eq(guildMember.getGuildid()), eq(guildMember.getMemberid())))
-                .thenReturn(Optional.empty());
         when(guildMemberRepository.save(eq(guildMember))).thenReturn(guildMember);
 
         assertEquals(guildMember, services.save(guildMember));
 
         verify(guildRepository, times(1)).findById(any(UUID.class));
         verify(memberProfileRepository, times(1)).findById(any(UUID.class));
-        verify(guildMemberRepository, times(1))
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
-        verify(guildMemberRepository, times(1)).save(any(GuildMember.class));
     }
 
     @Test
@@ -99,8 +93,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, never()).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -113,8 +105,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, never()).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -127,8 +117,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, never()).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -138,8 +126,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, never()).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -154,8 +140,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, times(1)).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -171,8 +155,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, times(1)).findById(any(UUID.class));
         verify(memberProfileRepository, times(1)).findById(any(UUID.class));
-        verify(guildMemberRepository, never())
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -181,8 +163,10 @@ class GuildMemberServicesImplTest {
 
         when(guildRepository.findById(eq(guildMember.getGuildid()))).thenReturn(Optional.of(new Guild("n", "d")));
         when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
-        when(guildMemberRepository.findByGuildidAndMemberid(eq(guildMember.getGuildid()), eq(guildMember.getMemberid())))
-                .thenReturn(Optional.of(guildMember));
+
+        when(guildMemberRepository.search(eq(guildMember.getGuildid().toString()), eq(guildMember.getMemberid().toString()),
+                eq(guildMember.isLead())))
+                .thenReturn(Set.of(guildMember));
 
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.save(guildMember));
         assertEquals(String.format("Member %s already exists in guild %s",
@@ -191,8 +175,6 @@ class GuildMemberServicesImplTest {
         verify(guildMemberRepository, never()).save(any(GuildMember.class));
         verify(guildRepository, times(1)).findById(any(UUID.class));
         verify(memberProfileRepository, times(1)).findById(any(UUID.class));
-        verify(guildMemberRepository, times(1))
-                .findByGuildidAndMemberid(any(UUID.class), any(UUID.class));
     }
 
     @Test
@@ -320,10 +302,6 @@ class GuildMemberServicesImplTest {
 
         assertEquals(guildMemberSet, services.findByFields(null, null, null));
 
-        verify(guildMemberRepository, times(1)).search(null, null, null);
-        verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
-        verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
-        verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
     }
 
     @Test
@@ -335,9 +313,6 @@ class GuildMemberServicesImplTest {
 
         assertEquals(Set.of(guildMemberToFind), services.findByFields(guildMemberToFind.getGuildid(), null, null));
 
-        verify(guildMemberRepository, times(1)).search(guildMemberToFind.getGuildid().toString(), null, null);
-        verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
-        verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
     }
 
     @Test
@@ -353,9 +328,6 @@ class GuildMemberServicesImplTest {
         when(guildMemberRepository.search(null, guildMemberToFind.getMemberid().toString(), null)).thenReturn(Set.of(guildMemberToFind));
 
         assertEquals(Set.of(guildMemberToFind), services.findByFields(null, guildMemberToFind.getMemberid(), null));
-
-        verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
-        verify(guildMemberRepository, never()).findByLead(any(Boolean.class));
 
     }
 
@@ -374,8 +346,6 @@ class GuildMemberServicesImplTest {
 
         assertEquals(Set.of(guildMemberToFind), services.findByFields(null, null, guildMemberToFind.isLead()));
 
-        verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
-        verify(guildMemberRepository, never()).findByGuildid(any(UUID.class));
     }
 
     @Test
