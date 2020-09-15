@@ -35,7 +35,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
       - name: sanity check output
-        run: echo ${{ steps.curlSonar.outputs.result }}
+        run: |
+          echo ${{ steps.curlSonar.outputs.result }}
       - name: fail if sonar result bad
         if: steps.curlSonar.outputs.result != 'OK'
         run: exit 1
