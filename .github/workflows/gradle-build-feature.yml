@@ -43,6 +43,9 @@ jobs:
           echo ${{ 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
           echo ${{ 'OK' != 'OK' }}
-          echo $steps.curlSonar.outputs.expected  | jq '.val'
+          echo $curlExpected
+          echo $curlExpected | jq '.val'
           echo ${{ steps.curlSonar.outputs.expected != 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != steps.curlSonar.outputs.expected }}
+        env:
+          curlExpected: ${{ steps.curlSonar.outputs.expected }}
