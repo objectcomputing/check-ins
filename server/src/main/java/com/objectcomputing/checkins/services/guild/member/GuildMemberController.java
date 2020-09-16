@@ -13,7 +13,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -28,8 +27,11 @@ import java.util.UUID;
 @Tag(name = "guild-member")
 public class GuildMemberController {
 
-    @Inject
-    private GuildMemberServices guildMemberServices;
+    private final GuildMemberServices guildMemberServices;
+
+    public GuildMemberController(GuildMemberServices guildMemberServices) {
+        this.guildMemberServices = guildMemberServices;
+    }
 
     @Error(exception = GuildBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
