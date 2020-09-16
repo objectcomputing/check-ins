@@ -42,7 +42,7 @@ jobs:
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
           echo ${{ 'OK' != 'OK' }}
           echo $OK
-          echo ${{ OK != 'OK' }}
-          echo ${{ steps.curlSOnar.outputs.result != OK }}
+          echo ${{ env.OK != 'OK' }}
+          echo ${{ steps.curlSOnar.outputs.result != env.OK }}
         env:
           OK: $({"val":"OK"} | jq .val)
