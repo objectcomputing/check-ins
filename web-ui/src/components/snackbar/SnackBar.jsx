@@ -6,7 +6,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const SnackBar = ({ handleClose, open, severity, toast }) => {
+const SnackBar = ({ handleClose, open, toast }) => {
   return (
     <Snackbar
       autoHideDuration={2500}
@@ -14,7 +14,7 @@ const SnackBar = ({ handleClose, open, severity, toast }) => {
       onClose={handleClose}
       style={{ bottom: "10%" }}
     >
-      <Alert onClose={handleClose} severity={severity ? severity : "error"}>
+      <Alert onClose={handleClose} severity={"error"}>
         {toast}
       </Alert>
     </Snackbar>

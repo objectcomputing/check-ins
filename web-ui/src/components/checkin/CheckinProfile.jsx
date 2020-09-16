@@ -17,7 +17,9 @@ const CheckinProfile = ({ state }) => {
       if (pdlId) {
         let res = await getMember(pdlId);
         let pdlProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : undefined;
         setPDL(pdlProfile ? pdlProfile.name : "");
       }
     }

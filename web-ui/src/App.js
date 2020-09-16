@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
@@ -11,20 +11,13 @@ import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import CheckinsPage from "./pages/CheckinsPage";
 import { AppContextProvider } from "./context/AppContext";
-// import SnackBar from "./components/snackbar/SnackBar";
+import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import "./App.css";
 
 const customHistory = createBrowserHistory();
 
 function App() {
-  // const [open, setOpen] = useState(true);
-  // const handleClose = (event, reason) => {
-  //   if (reason === "clickaway") {
-  //     return;
-  //   }
-  //   setOpen(false);
-  // };
 
   return (
     <Router history={customHistory}>
@@ -56,7 +49,6 @@ function App() {
                 <Header title="Profile" />
                 <Profile />
               </Route>
-              {/* <Route path="/checkins:/checkinid"> */}
               <Route path="/checkins">
                 <Header title="Check-ins" />
                 <CheckinsPage history={customHistory} />
@@ -67,7 +59,7 @@ function App() {
               </Route>
             </Switch>
           </div>
-          {/* <SnackBar handleClose={handleClose} open={open} toast="test" /> */}
+          <SnackBarWithContext />
         </div>
       </AppContextProvider>
     </Router>

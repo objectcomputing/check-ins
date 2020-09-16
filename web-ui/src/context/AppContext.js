@@ -6,6 +6,7 @@ export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_USER_BIO = "update_bio";
 export const UPDATE_CHECKINS = "update_checkins";
 export const UPDATE_INDEX = "update_index";
+export const UPDATE_TOAST = "update_toast";
 
 const AppContext = React.createContext();
 
@@ -20,10 +21,27 @@ const reducer = (state, action) => {
       break;
     case UPDATE_CHECKINS:
       state.checkins = action.payload;
-      state.index = state.checkins.length - 1;
+      //sort by date
+      state.checkins.sort(function (a, b) {
+        var c = new Date(a.checkInDate);
+        var d = new Date(b.checkInDate);
+        return c - d;
+      });
+      const { pathname } = document.location;
+      const [, , checkinid] = pathname.split("/");
+      if (checkinid) {
+        state.index = state.checkins.findIndex(
+          (checkin) => checkin.id === checkinid
+        );
+      } else {
+        state.index = state.checkins.length - 1;
+      }
       break;
     case UPDATE_INDEX:
       state.index = action.payload;
+      break;
+    case UPDATE_TOAST:
+      state.toast = action.payload;
       break;
     default:
   }
@@ -34,6 +52,10 @@ const initialState = {
   userProfile: undefined,
   checkins: [],
   index: 0,
+  toast: {
+    severity: '',
+    toast: ''
+  },
 };
 
 const AppContextProvider = (props) => {

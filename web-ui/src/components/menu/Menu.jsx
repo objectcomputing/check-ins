@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,7 +16,6 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
-// import { AppContext } from "../../context/AppContext";
 
 import "./Menu.css";
 
@@ -57,8 +56,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  // const { state } = useContext(AppContext);
-  // const { checkins } = state;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -68,8 +65,6 @@ function Menu() {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-  // console.log({ checkins });
-  // const checkinid = checkins.length > 0 ? checkins[checkins.length - 1].id : "";
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -119,7 +114,6 @@ function Menu() {
       <br />
       <Button>
         <Link style={linkStyle} to={`/checkins`}>
-        {/* <Link style={linkStyle} to={`/checkins/${checkinid}`}> */}
           Check-ins
         </Link>
       </Button>

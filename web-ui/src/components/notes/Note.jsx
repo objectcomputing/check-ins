@@ -5,14 +5,11 @@ import {
   createCheckinNote,
   updateCheckinNote,
 } from "../../api/checkins";
-// import SnackBar from "../snackbar/SnackBar.jsx";
 import { AppContext } from "../../context/AppContext";
 
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
-// import Snackbar from "@material-ui/core/Snackbar";
-// import MuiAlert from "@material-ui/lab/Alert";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 import "./Note.css";
@@ -23,18 +20,12 @@ async function realUpdate(note) {
 
 const updateNote = debounce(realUpdate, 1000);
 
-// function Alert(props) {
-//   return <MuiAlert elevation={6} variant="filled" {...props} />;
-// }
-
 const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { checkin, memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [open, setOpen] = useState(false);
-  const [toast, setToast] = useState("");
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
 
@@ -63,23 +54,12 @@ const Notes = (props) => {
           } else {
             setNote(res.payload.data[0]);
           }
-        } else {
-          setToast("There was a problem loading Notes");
-          setOpen(true);
-          setNote(null);
         }
         setIsLoading(false);
       }
     }
     getNotes();
   }, [checkin]);
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
 
   const handleNoteChange = (e) => {
     const { value } = e.target;
@@ -104,10 +84,10 @@ const Notes = (props) => {
         <div className="container">
           {isLoading ? (
             <div className="skeleton">
-              <Skeleton variant="text" height={40} />
-              <Skeleton variant="text" height={40} />
-              <Skeleton variant="text" height={40} />
-              <Skeleton variant="text" height={40} />
+              <Skeleton variant="text" height={30} />
+              <Skeleton variant="text" height={30} />
+              <Skeleton variant="text" height={30} />
+              <Skeleton variant="text" height={30} />
             </div>
           ) : (
             <textarea
@@ -116,17 +96,6 @@ const Notes = (props) => {
             ></textarea>
           )}
         </div>
-        {/* <Snackbar
-          autoHideDuration={2500}
-          open={open}
-          onClose={handleClose}
-          style={{ left: "40%", bottom: "20%" }}
-        >
-          <Alert onClose={handleClose} severity="error">
-            {toast}
-          </Alert>
-        </Snackbar> */}
-        {/* <SnackBar handleClose={handleClose} open={open} toast={toast} /> */}
       </div>
       {canViewPrivateNote && (
         <div>
