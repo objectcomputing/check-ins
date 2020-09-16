@@ -31,7 +31,7 @@ jobs:
       - name: capture sonar result status
         run: |
           echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
-          echo ::set-output name=expected::$({"val":"OK"} | jq '.val')
+          echo ::set-output name=expected::'{"val":"OK"}' | jq '.val'
         id: curlSonar
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
