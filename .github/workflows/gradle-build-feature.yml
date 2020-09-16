@@ -29,7 +29,9 @@ jobs:
       #    SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
       #    SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
       - name: capture sonar result status
-        run: echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
+        run: |
+          echo ::set-output name=result::$(curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY | jq '.projectStatus.status')
+          echo ::set-output name=expected::$('{"val":"OK"}' | jq '.val')
         id: curlSonar
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
@@ -37,11 +39,10 @@ jobs:
       - name: fail if sonar result bad
       #  if: steps.curlSonar.outputs.result != 'OK'
         run: |
-          echo ::set-env name=OK::$('{"val":"OK"}' | jq 'val')
           echo ${{ steps.curlSonar.outputs.result }}
           echo ${{ 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
           echo ${{ 'OK' != 'OK' }}
-          echo $env.OK
-          echo ${{ env.OK != 'OK' }}
-          echo ${{ steps.curlSonar.outputs.result != env.OK }}
+          echo ${{ steps.curlSonar.outputs.expected }}}
+          echo ${{ steps.curlSonar.outputs.expected != 'OK' }}
+          echo ${{ steps.curlSonar.outputs.result != steps.curlSonar.outputs.expected }}
