@@ -27,10 +27,9 @@ exports[`renders correctly 1`] = `
     <div
       className="container"
     >
-      <textarea
-        onChange={[Function]}
+      <div
+        className="is-loading"
       />
-      <canvas />
     </div>
   </div>
 </div>

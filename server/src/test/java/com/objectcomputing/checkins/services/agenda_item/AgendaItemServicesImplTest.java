@@ -275,78 +275,44 @@ class AgendaItemServicesImplTest {
                 new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
         );
 
-        when(agendaItemRepository.findAll()).thenReturn(agendaItemSet);
+        when(agendaItemRepository.search(null, null)).thenReturn(agendaItemSet);
 
         assertEquals(agendaItemSet, services.findByFields(null, null));
 
-        verify(agendaItemRepository, times(1)).findAll();
-        verify(agendaItemRepository, never()).findByCheckinid(any(UUID.class));
-        verify(agendaItemRepository, never()).findByCreatedbyid(any(UUID.class));
     }
 
     @Test
     void testFindByFieldsCheckInId() {
-        List<AgendaItem> agendaItems = List.of(
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
+        AgendaItem agendaItemToFind = new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        List<AgendaItem> agendaItemsToFind = List.of(agendaItems.get(1));
-        AgendaItem agendaItem = agendaItemsToFind.get(0);
+        when(agendaItemRepository.search(agendaItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(agendaItemToFind));
 
-        when(agendaItemRepository.findAll()).thenReturn(agendaItems);
-        when(agendaItemRepository.findByCheckinid(agendaItem.getCheckinid())).thenReturn(agendaItemsToFind);
-
-        assertEquals(new HashSet<>(agendaItemsToFind), services.findByFields(agendaItem.getCheckinid(), null));
-
-        verify(agendaItemRepository, times(1)).findAll();
-        verify(agendaItemRepository, times(1)).findByCheckinid(any(UUID.class));
-        verify(agendaItemRepository, never()).findByCreatedbyid(any(UUID.class));
+        assertEquals(Set.of(agendaItemToFind), services.findByFields(agendaItemToFind.getCheckinid(), null));
     }
 
     @Test
     void testFindByFieldsCreateById() {
-        List<AgendaItem> agendaItems = List.of(
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
+        AgendaItem agendaItemToFind = new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
+        Set<AgendaItem> agendaItems = Set.of(agendaItemToFind,
                 new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
                 new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
         );
 
-        List<AgendaItem> agendaItemsToFind = List.of(agendaItems.get(1));
-        AgendaItem agendaItem = agendaItemsToFind.get(0);
-
         when(agendaItemRepository.findAll()).thenReturn(agendaItems);
-        when(agendaItemRepository.findByCreatedbyid(agendaItem.getCreatedbyid())).thenReturn(agendaItemsToFind);
+        when(agendaItemRepository.search(null, agendaItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(agendaItemToFind));
 
-        assertEquals(new HashSet<>(agendaItemsToFind), services.findByFields(null, agendaItem.getCreatedbyid()));
-
-        verify(agendaItemRepository, times(1)).findAll();
-        verify(agendaItemRepository, times(1)).findByCreatedbyid(any(UUID.class));
-        verify(agendaItemRepository, never()).findByCheckinid(any(UUID.class));
+        assertEquals(Set.of(agendaItemToFind), services.findByFields(null, agendaItemToFind.getCreatedbyid()));
     }
 
     @Test
     void testFindByFieldsAll() {
-        List<AgendaItem> agendaItems = List.of(
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
-        );
+        AgendaItem agendaItemToFind = new AgendaItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        List<AgendaItem> agendaItemsToFind = List.of(agendaItems.get(1));
+        AgendaItem agendaItem = agendaItemToFind;
+        when(agendaItemRepository.search(agendaItem.getCheckinid().toString(), agendaItem.getCreatedbyid().toString())).thenReturn(Set.of(agendaItemToFind));
 
-        AgendaItem agendaItem = agendaItemsToFind.get(0);
-        when(agendaItemRepository.findAll()).thenReturn(agendaItems);
-        when(agendaItemRepository.findByCreatedbyid(agendaItem.getCreatedbyid())).thenReturn(agendaItemsToFind);
-        when(agendaItemRepository.findByCheckinid(agendaItem.getCheckinid())).thenReturn(agendaItemsToFind);
-
-        assertEquals(new HashSet<>(agendaItemsToFind), services
+        assertEquals(Set.of(agendaItemToFind), services
                 .findByFields(agendaItem.getCheckinid(), agendaItem.getCreatedbyid()));
-
-        verify(agendaItemRepository, times(1)).findAll();
-        verify(agendaItemRepository, times(1)).findByCreatedbyid(any(UUID.class));
-        verify(agendaItemRepository, times(1)).findByCheckinid(any(UUID.class));
     }
 
     @Test
