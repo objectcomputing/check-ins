@@ -37,6 +37,7 @@ jobs:
       - name: fail if sonar result bad
       #  if: steps.curlSonar.outputs.result != 'OK'
         run: |
+          echo ::set-env name=OK::'{"val":"OK"}' | jq .val
           echo ${{ steps.curlSonar.outputs.result }}
           echo ${{ 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
@@ -44,5 +45,3 @@ jobs:
           echo $OK
           echo ${{ env.OK != 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != env.OK }}
-        env:
-          OK: ${{ '{"val":"OK"}' | jq .val) }}
