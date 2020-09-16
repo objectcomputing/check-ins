@@ -84,10 +84,10 @@ const Notes = (props) => {
         <div className="container">
           {isLoading ? (
             <div className="skeleton">
-              <Skeleton variant="text" height={30} />
-              <Skeleton variant="text" height={30} />
-              <Skeleton variant="text" height={30} />
-              <Skeleton variant="text" height={30} />
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
             </div>
           ) : (
             <textarea

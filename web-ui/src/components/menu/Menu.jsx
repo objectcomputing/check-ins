@@ -113,7 +113,7 @@ function Menu() {
       </Button>
       <br />
       <Button>
-        <Link style={linkStyle} to={`/checkins`}>
+        <Link style={linkStyle} to={"/checkins"}>
           Check-ins
         </Link>
       </Button>
