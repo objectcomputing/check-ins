@@ -42,6 +42,6 @@ jobs:
           echo ${{ 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != 'OK' }}
           echo ${{ 'OK' != 'OK' }}
-          echo $OK
+          echo $env.OK
           echo ${{ env.OK != 'OK' }}
           echo ${{ steps.curlSonar.outputs.result != env.OK }}
