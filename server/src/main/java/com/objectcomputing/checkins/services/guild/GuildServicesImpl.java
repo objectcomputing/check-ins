@@ -1,14 +1,14 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 
 import javax.inject.Inject;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
 
 public class GuildServicesImpl implements GuildServices {
 
@@ -51,16 +51,9 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public Set<Guild> findByFields(String name, UUID memberid) {
-        Set<Guild> guilds = new HashSet<>();
-        guildsRepo.findAll().forEach(guilds::add);
-        if (name != null) {
-            guilds.retainAll(guildsRepo.findByNameIlike(name));
-        }
-        if (memberid != null) {
-            guilds.retainAll(guildMemberRepo.findByMemberid(memberid)
-                    .stream().map(GuildMember::getGuildid).map(id -> guildsRepo.findById(id).orElse(null))
-                    .filter(Objects::nonNull).collect(Collectors.toSet()));
-        }
+        Set<Guild> guilds = new HashSet<>(
+                guildsRepo.search(name, nullSafeUUIDToString(memberid)));
+
         return guilds;
     }
 }

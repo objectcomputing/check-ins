@@ -24,9 +24,12 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     @Query("SELECT * " +
             "FROM guilds guild " +
-            "WHERE (:checkinId IS NULL OR guild.checkinid = :checkinId) " +
-            "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
-    Set<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
+            "WHERE (:name IS NULL OR guild.name LIKE ${%:name%}) " +
+            "AND (guild.id IN " +
+                "(SELECT guildid FROM guildmembers gm " +
+                "WHERE(:memberid IS NULL OR  gm.memberid = :memberid))")
+    Set<Guild> search(@Nullable String name, @Nullable String memberid);
+
     @Override
     <S extends Guild> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
