@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.fileupload;
+package com.objectcomputing.checkins.services.file;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -27,32 +27,32 @@ import java.util.UUID;
 @Tag(name = "file")
 @Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
 @Singleton
-public class FileUploadController {
+public class FileController {
 
-    private FileUploadServices fileUploadServices;
+    private FileServices fileServices;
 
-    public FileUploadController(FileUploadServices fileUploadServices) {
-        this.fileUploadServices = fileUploadServices;
+    public FileController(FileServices fileServices) {
+        this.fileServices = fileServices;
     }
 
     /**
      * Retrieve documents associated with CheckIn Id or find all
      * @param {id}
-     * @return {@link HttpResponse<Set<CompletedFileUpload>>} Returns a set of files associated with CheckInId or all files
+     * @return {@link HttpResponse<Set<File>>} Returns a set of files associated with CheckInId or all files
      */
-    @Get("/{id}")
-    public HttpResponse<Set<File>> findDocuments(@Nullable UUID checkInId) {
-        return fileUploadServices.findFiles(checkInId);
+    @Get("/{?id}")
+    public HttpResponse<Set<File>> findDocuments(@Nullable UUID id) {
+        return fileServices.findFiles(id);
     }
 
     /**
      * Retrieve documents contents associated with UploadDocId
      * @param {id}
-     * @return {@link HttpResponse<Set<CompletedFileUpload>>} Returns a set of files associated with CheckInId or all files
+     * @return {@link HttpResponse<Set<OutputStream>>} Returns a set of files associated with CheckInId or all files
      */
-    @Get("/{id}")
-    public HttpResponse<OutputStream> downloadDocument(@NotNull UUID uploadDocId) {
-        return fileUploadServices.downloadFiles(uploadDocId);
+    @Get("/{id}/download")
+    public HttpResponse<OutputStream> downloadDocument(@NotNull UUID id) {
+        return fileServices.downloadFiles(id);
     }
 
     /**
@@ -63,6 +63,6 @@ public class FileUploadController {
      */
     @Post(consumes = MediaType.MULTIPART_FORM_DATA)
     public HttpResponse<?> upload(@Body final CompletedFileUpload file) {
-        return fileUploadServices.uploadFile(file);
+        return fileServices.uploadFile(file);
     }
 }

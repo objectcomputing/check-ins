@@ -1,13 +1,11 @@
-package com.objectcomputing.checkins.services.fileupload;
+package com.objectcomputing.checkins.services.file;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.objectcomputing.checkins.GoogleDriveAccessor;
 import com.objectcomputing.checkins.UploadController;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
@@ -15,10 +13,10 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServ
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -28,34 +26,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
-import java.io.InputStream;
 
-public class FileUploadServicesImpl implements FileUploadServices {
+@Singleton
+public class FileServicesImpl implements FileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(UploadController.class);
 
-    private static final String DIRECTORY_KEY = "upload-directory-id";
-    private static final String DIRECTORY_FILE_PATH = "/secrets/directory.json";
+//    private static final String DIRECTORY_KEY = "upload-directory-id";
+//    private static final String DIRECTORY_FILE_PATH = "/secrets/directory.json";
     private static final String RSP_SERVER_ERROR_KEY = "serverError";
     private static final String RSP_COMPLETE_MESSAGE_KEY = "completeMessage";
 
-    private final GoogleDriveAccessor googleDriveAccessor;
-    private final EmailSender emailSender;
+
+    private String googleCredentials;
+    private GoogleDriveAccessor googleDriveAccessor;
+    private EmailSender emailSender;
     private SecurityService securityService;
     private CurrentUserServices currentUserServices;
     private CheckInServices checkInServices;
     private CheckinDocumentServices checkinDocumentServices;
     private MemberProfileServices memberProfileServices;
 
-    public FileUploadServicesImpl(final GoogleDriveAccessor googleDriveAccessor, final EmailSender emailSender,
-                                  SecurityService securityService, CurrentUserServices currentUserServices,
-                                  CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,
-                                  MemberProfileServices memberProfileServices) throws IOException {
+    public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, EmailSender emailSender,
+                            SecurityService securityService, CurrentUserServices currentUserServices,
+                            CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,
+                            MemberProfileServices memberProfileServices,
+                            @Property(name = "google.credentials") String googleCredentials) {
         this.googleDriveAccessor = googleDriveAccessor;
         this.emailSender = emailSender;
         this.securityService = securityService;
@@ -63,8 +65,10 @@ public class FileUploadServicesImpl implements FileUploadServices {
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
         this.memberProfileServices = memberProfileServices;
+        this.googleCredentials = googleCredentials;
     }
 
+    // - fileId, checkinId and file name, file size - dto
     @Override
     public HttpResponse<Set<File>> findFiles(@Nullable UUID checkInID) {
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
@@ -73,7 +77,9 @@ public class FileUploadServicesImpl implements FileUploadServices {
         CheckIn checkIn = checkInServices.read(checkInID);
         Set<File> result = new HashSet<File>();
 
-        if(checkInID.equals(null) && !isAdmin) {
+        if(checkIn == null) {
+            throw new FileRetrievalException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
+        } else if(checkInID.equals(null) && !isAdmin) {
             throw new FileRetrievalException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
         } else if(!isAdmin &&
                 !currentUser.getId().equals(checkIn.getTeamMemberId()) &&

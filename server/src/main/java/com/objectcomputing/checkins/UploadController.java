@@ -3,8 +3,6 @@ package com.objectcomputing.checkins;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.InputStreamContent;
@@ -12,6 +10,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 
+import com.objectcomputing.checkins.services.file.GoogleDriveAccessor;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecuredAnnotationRule;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.fileupload;
+package com.objectcomputing.checkins.services.file;
 
 import com.google.api.services.drive.model.File;
 import io.micronaut.http.HttpResponse;
@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-public interface FileUploadServices {
+public interface FileServices {
     HttpResponse<Set<File>> findFiles(UUID checkInId);
     HttpResponse<OutputStream> downloadFiles(UUID uploadDocId);
     HttpResponse<?> uploadFile(CompletedFileUpload file);
