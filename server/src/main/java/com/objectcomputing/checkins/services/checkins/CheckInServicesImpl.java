@@ -55,7 +55,7 @@ public class CheckInServicesImpl implements CheckInServices {
         } else if(!isAdmin) {
             if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
                 // Limit create to subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                throw new CheckInBadArgException("You are not authorized to perform this operation");
             }
         }
 
@@ -76,7 +76,7 @@ public class CheckInServicesImpl implements CheckInServices {
         } else if(!isAdmin) {
             if(!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())) {
                 // Limit read to Subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                throw new CheckInBadArgException("You are not authorized to perform this operation");
             }
         }
 
@@ -108,7 +108,7 @@ public class CheckInServicesImpl implements CheckInServices {
         } else if(!isAdmin) {
             if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
                 // Limit update to subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                throw new CheckInBadArgException("You are not authorized to perform this operation");
             } else if(checkinRepo.findById(id).get().isCompleted()) {
                 // Update is only allowed if the check in is not completed unless made by admin
                 throw new CheckInBadArgException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
@@ -139,14 +139,14 @@ public class CheckInServicesImpl implements CheckInServices {
             if(teamMemberId != null) {
                 if(!currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
                     // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
-                    throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                    throw new CheckInBadArgException("You are not authorized to perform this operation");
                 } else {
                     checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
                 }
             } else if(pdlId != null) {
                 if (!currentUser.getId().equals(pdlId)) {
                     // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
-                    throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                    throw new CheckInBadArgException("You are not authorized to perform this operation");
                 } else {
                     checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
                 }
@@ -158,7 +158,7 @@ public class CheckInServicesImpl implements CheckInServices {
                             .collect(Collectors.toSet());
             } else {
                 // Limit findAll to only Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                throw new CheckInBadArgException("You are not authorized to perform this operation");
             }
         }
 

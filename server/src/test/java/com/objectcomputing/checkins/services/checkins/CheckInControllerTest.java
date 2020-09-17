@@ -121,7 +121,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfMrNobody.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -332,7 +332,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfMrNobody.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -415,7 +415,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfMrNobody.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -664,7 +664,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -682,7 +682,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUser.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -730,7 +730,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -836,7 +836,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
@@ -851,7 +851,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfUnrelatedUser.getId()), error);
+        assertEquals(String.format("You are not authorized to perform this operation"), error);
     }
 
     @Test
