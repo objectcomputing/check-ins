@@ -1,19 +1,21 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import io.reactivex.Single;
+
 import java.util.Set;
 import java.util.UUID;
 
 public interface ActionItemServices {
 
-    ActionItem save(ActionItem actionItem);
+    Single<ActionItem> save(ActionItem actionItem);
 
-    ActionItem read(UUID id);
+    Single<ActionItem> read(UUID id);
 
-    Set<ActionItem> readAll();
+    Single<Set<ActionItem>> readAll();
 
-    ActionItem update(ActionItem actionItem);
+    Single<ActionItem> update(ActionItem actionItem);
 
-    Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid);
+    Single<Set<ActionItem>> findByFields(UUID checkinid, UUID createdbyid);
 
     void delete(UUID id);
 }

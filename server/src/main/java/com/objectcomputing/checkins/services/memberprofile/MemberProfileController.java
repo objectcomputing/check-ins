@@ -1,30 +1,24 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Consumes;
-
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 
 @Controller("/services/member-profile")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -32,6 +26,7 @@ import io.micronaut.security.rules.SecurityRule;
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="member profile")
 public class MemberProfileController {
+    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
 
     private final MemberProfileServices memberProfileServices;
 
@@ -60,7 +55,7 @@ public class MemberProfileController {
      */
     @Get("/{id}")
     public HttpResponse<MemberProfileResponseDTO> getById(UUID id) {
-
+        LOG.info("Entering controller on main event loop");
         MemberProfile result = memberProfileServices.getById(id);
 
         return HttpResponse

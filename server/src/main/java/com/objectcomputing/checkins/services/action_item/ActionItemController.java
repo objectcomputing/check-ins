@@ -9,10 +9,14 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -26,9 +30,16 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "action-item")
 public class ActionItemController {
+    private static final Logger LOG = LoggerFactory.getLogger(ActionItemController.class);
 
-    @Inject
     private ActionItemServices actionItemServices;
+    private EventLoopGroup eventLoopGroup;
+
+    public ActionItemController(ActionItemServices actionItemServices,
+                                EventLoopGroup eventLoopGroup) {
+        this.actionItemServices = actionItemServices;
+        this.eventLoopGroup = eventLoopGroup;
+    }
 
     @Error(exception = ActionItemBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, ActionItemBadArgException e) {
@@ -46,14 +57,20 @@ public class ActionItemController {
      * @return {@link HttpResponse <ActionItem>}
      */
     @Post()
-    public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
-                                                     HttpRequest<ActionItemCreateDTO> request) {
-        ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
-                actionItem.getCreatedbyid(), actionItem.getDescription()));
-        return HttpResponse
-                .created(newActionItem)
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newActionItem.getId()))));
+    public Single<HttpResponse<ActionItem>> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
+                                                                    HttpRequest<ActionItemCreateDTO> request) {
+        LOG.info("Entering controller on main event loop");
+        return actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
+                actionItem.getCreatedbyid(), actionItem.getDescription()))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(createdActionItem -> {
+                    //Using code block rather than lambda so we can log what thread we're in
+                    LOG.info("Back on the main event loop in the controller");
+                    return HttpResponse
+                    .created(createdActionItem)
+                    .headers(headers -> headers.location(
+                        URI.create(String.format("%s/%s", request.getPath(), createdActionItem.getId()))));
+                });
     }
 
     /**
@@ -63,13 +80,17 @@ public class ActionItemController {
      * @return {@link HttpResponse< ActionItem >}
      */
     @Put()
-    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
-        ActionItem updatedActionItem = actionItemServices.update(actionItem);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))))
-                .body(updatedActionItem);
+    public Single<HttpResponse<?>> updateActionItem(@Body @Valid ActionItem actionItem,
+                                            HttpRequest<ActionItem> request) {
+        LOG.info("Entering controller on main event loop");
+        return actionItemServices.update(actionItem)
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedActionItem -> //This lambda expression is the preferred way to do this kind of simple mapping.
+                HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(
+                                URI.create(String.format("%s/%s", request.getPath(), updatedActionItem.getId()))))
+                        .body(updatedActionItem));
 
     }
 
@@ -80,7 +101,9 @@ public class ActionItemController {
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteActionItem(UUID id) {
+        LOG.info("Entering controller on main event loop");
         actionItemServices.delete(id);
+        LOG.info("Back on main event loop. Note when this occurs in the log");
         return HttpResponse
                 .ok();
     }
@@ -92,8 +115,11 @@ public class ActionItemController {
      * @return {@link ActionItem}
      */
     @Get("/{id}")
-    public ActionItem readActionItem(UUID id) {
-        return actionItemServices.read(id);
+    public Single<HttpResponse<ActionItem>> readActionItem(UUID id) {
+        LOG.info("Entering controller on main event loop");
+        return actionItemServices.read(id)
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(actionItem -> HttpResponse.ok(actionItem));
     }
 
     /**
@@ -104,9 +130,15 @@ public class ActionItemController {
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?checkinid,createdbyid}")
-    public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
+    public Single<HttpResponse<Set<ActionItem>>> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
-        return actionItemServices.findByFields(checkinid, createdbyid);
+        LOG.info("Entering controller on main event loop");
+        return actionItemServices.findByFields(checkinid, createdbyid)
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(actionItems -> {
+                    LOG.info("Mapping on main event loop");
+                    return HttpResponse.ok(actionItems);
+                });
     }
 
     /**
@@ -118,6 +150,7 @@ public class ActionItemController {
     @Post("/items")
     public HttpResponse<?> loadActionItems(@Body @Valid @NotNull List<ActionItemCreateDTO> actionItems,
                                            HttpRequest<List<ActionItem>> request) {
+        LOG.info("Entire controller method can be done in event loop. Not sure this method should exist, but it is easy to implement this way");
         List<String> errors = new ArrayList<>();
         List<ActionItem> actionItemsCreated = new ArrayList<>();
         for (ActionItemCreateDTO actionItemDTO : actionItems) {
