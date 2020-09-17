@@ -19,7 +19,7 @@ const CheckinsPage = ({ history }) => {
   const { state } = useContext(AppContext);
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
-  const canSeePersonnel = userProfile && userProfile.role.includes("PDL");
+  const canSeePersonnel = userProfile && userProfile.role && userProfile.role.includes("PDL");
 
   useEffect(() => {
     if (checkin && checkin.id) {
