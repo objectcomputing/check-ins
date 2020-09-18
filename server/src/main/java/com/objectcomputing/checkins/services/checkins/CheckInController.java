@@ -33,7 +33,6 @@ import io.micronaut.http.annotation.Error;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="check-ins")
-@Singleton
 public class CheckInController {
 
     private CheckInServices checkInServices;
