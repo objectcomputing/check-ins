@@ -257,7 +257,7 @@ class ActionItemServicesImplTest {
         verify(actionItemRepository, times(1)).findById(any(UUID.class));
     }
 
-    @Test
+    //No longer needed. Null check has been moved to controller
     void testUpdateNullActionItem() {
         assertNull(services.update(null));
 
@@ -311,8 +311,9 @@ class ActionItemServicesImplTest {
         ActionItem actionItem = actionItemToFind;
         when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
 
-        assertEquals(Set.of(actionItemToFind), services
-                .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));
+        Set<ActionItem> result = services.findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid());
+
+        assertEquals(Set.of(actionItemToFind), result);
     }
 
     @Test
