@@ -1,77 +1,73 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { getNoteByCheckinId, updateCheckinNote } from "../../api/checkins";
-import useDebounce from "../../hooks/useDebounce";
-import NotesIcon from "@material-ui/icons/Notes";
-import LockIcon from "@material-ui/icons/Lock";
+import React, { useContext, useEffect, useState } from "react";
+
+import {
+  getNoteByCheckinId,
+  createCheckinNote,
+  updateCheckinNote,
+} from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
 
+import { debounce } from "lodash/function";
+import NotesIcon from "@material-ui/icons/Notes";
+import LockIcon from "@material-ui/icons/Lock";
+import Skeleton from "@material-ui/lab/Skeleton";
+
 import "./Note.css";
+
+async function realUpdate(note) {
+  await updateCheckinNote(note);
+}
+
+const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const canViewPrivateNote =
-    userProfile.role.includes("PDL") || userProfile.role.includes("ADMIN");
   const { checkin, memberName } = props;
-  const { id } = checkin;
   const [note, setNote] = useState({});
-  // TODO: get private note and determine if user is PDL
+  const [isLoading, setIsLoading] = useState(true);
+  // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
 
-  const canvasRef = useRef();
-
-  // to draw empty sections when loading
-  useEffect(() => {
-    const context = canvasRef.current.getContext("2d");
-    context.fillStyle = "lightgrey";
-    for (let i = 1; i < 5; i++) {
-      context.fillRect(5, 15 * i, 500, 10);
-    }
-  }, []);
+  const canViewPrivateNote =
+    userProfile.memberProfile &&
+    userProfile.memberProfile.role &&
+    (userProfile.memberProfile.role.includes("PDL") ||
+      userProfile.memberProfile.role.includes("ADMIN")) &&
+    userProfile.memberProfile.id !== checkin.teamMemberId;
 
   useEffect(() => {
+    const id = checkin.id;
+    const createdby = checkin.teamMemberId;
     async function getNotes() {
-      if (id) {
+      if (checkin) {
+        setIsLoading(true);
         let res = await getNoteByCheckinId(id);
-        let data =
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data) {
-          setNote(data[0]);
-          const canvas = canvasRef.current;
-          if (canvas && data[0].description) {
-            // to remove canvas if there is data
-            canvas.parentElement.removeChild(canvas);
+        if (res.payload && res.payload.data && !res.error) {
+          if (res.payload.data.length === 0) {
+            res = await createCheckinNote({
+              checkinid: id,
+              createdbyid: createdby,
+              description: "",
+            });
+            setNote(res.payload.data);
+          } else {
+            setNote(res.payload.data[0]);
           }
         }
+        setIsLoading(false);
       }
     }
     getNotes();
-  }, [id]);
-
-  let debouncedDescription = useDebounce(note.description, 2000);
-
-  useEffect(() => {
-    async function updateNotes() {
-      if (note.id) {
-        let res = await updateCheckinNote({
-          ...note,
-          description: debouncedDescription,
-        });
-        if (res.error) {
-          console.error(res.error);
-        }
-      }
-    }
-    updateNotes();
-  }, [debouncedDescription, note, note.id]);
+  }, [checkin]);
 
   const handleNoteChange = (e) => {
-    setNote({ ...note, description: e.target.value });
+    const { value } = e.target;
+    setNote((note) => {
+      const newNote = { ...note, description: value };
+      updateNote(newNote);
+      return newNote;
+    });
   };
 
   const handlePrivateNoteChange = (e) => {
@@ -86,11 +82,19 @@ const Notes = (props) => {
           Notes for {memberName}
         </h1>
         <div className="container">
-          <textarea
-            onChange={handleNoteChange}
-            value={note.description}
-          ></textarea>
-          <canvas ref={canvasRef}></canvas>
+          {isLoading ? (
+            <div className="skeleton">
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
+              <Skeleton variant="text" height={"2rem"} />
+            </div>
+          ) : (
+            <textarea
+              onChange={handleNoteChange}
+              value={note && note.description ? note.description : ""}
+            ></textarea>
+          )}
         </div>
       </div>
       {canViewPrivateNote && (

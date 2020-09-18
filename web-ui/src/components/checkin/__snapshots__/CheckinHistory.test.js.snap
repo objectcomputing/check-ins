@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      class="date-picker"
+    >
+      <svg
+        aria-hidden="true"
+        class="MuiSvgIcon-root arrow disabled"
+        focusable="false"
+        style="font-size: 50px;"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+        />
+      </svg>
+      <div>
+        <div
+          class="react-datepicker__input-container"
+        >
+          <div
+            class="date-input"
+          >
+            <p
+              style="margin: 0px;"
+            >
+              September 08, 2020 12:00 AM
+            </p>
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <svg
+        aria-hidden="true"
+        class="MuiSvgIcon-root arrow enabled"
+        focusable="false"
+        style="font-size: 50px;"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+        />
+      </svg>
+    </div>
+  </div>
+</DocumentFragment>
+`;

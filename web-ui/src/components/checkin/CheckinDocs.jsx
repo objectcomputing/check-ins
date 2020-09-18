@@ -1,32 +1,19 @@
-import React, { useState } from "react";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
-import DescriptionIcon from "@material-ui/icons/Description";
+import React, { useContext, useState } from "react";
 import FileUploader from "./FileUploader";
+import { uploadFile } from "../../api/upload";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+
+import DescriptionIcon from "@material-ui/icons/Description";
 import Button from "@material-ui/core/Button";
 import { CircularProgress } from "@material-ui/core";
-import { uploadFile } from "../../api/upload";
 
 import "./Checkin.css";
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 const UploadDocs = () => {
-  const [responseText, setResponseText] = useState("");
-  const [severity, setSeverity] = useState("");
-  const [open, setOpen] = useState(false);
+  const { dispatch } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileColor, setFileColor] = useState("");
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
 
   const handleFile = (file) => {
     setFiles([...files, file]);
@@ -35,30 +22,26 @@ const UploadDocs = () => {
 
   const addFile = async (file) => {
     if (!file) {
-      //if user doesn't select a file
-      setResponseText("Please select a file before uploading.");
-      setSeverity("error");
       setLoading(false);
-      setOpen(true);
       return;
     }
     setLoading(true);
     let res = await uploadFile(file);
     if (res.error) {
       setLoading(false);
-      setSeverity("error");
-      setResponseText("Unable to upload file");
-      setOpen(true);
       setFileColor("red");
     } else {
       const resJson = res.payload.data();
-      setResponseText(Object.values(resJson)[0]);
       Object.keys(resJson)[0] === "completeMessage"
-        ? setSeverity("success") &&
-          setFileColor("green") &&
-          setResponseText("Successfully uploaded file")
-        : setSeverity("error") && setFileColor("red");
-      setOpen(true);
+        ? setFileColor("green") &&
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "success",
+              toast: "File successfully uploaded",
+            },
+          })
+        : setFileColor("red");
       setLoading(false);
     }
   };
@@ -107,16 +90,6 @@ const UploadDocs = () => {
             <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
           )}
         </div>
-        <Snackbar
-          autoHideDuration={4000}
-          open={open}
-          onClose={handleClose}
-          style={{ left: "56%", bottom: "50px" }}
-        >
-          <Alert onClose={handleClose} severity={severity}>
-            {responseText}
-          </Alert>
-        </Snackbar>
       </div>
     </div>
   );

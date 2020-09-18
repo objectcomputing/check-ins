@@ -18,8 +18,7 @@ micronaut:
             expiration: 60000
           secret: ihaveChangedThisSecretForANewOne
     intercept-url-map:
-      -
-        pattern: /swagger-ui/**
+      - pattern: /swagger-ui/**
         http-method: GET
         access:
           - isAnonymous()

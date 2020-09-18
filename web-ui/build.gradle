@@ -4,8 +4,8 @@ plugins {
 }
 
 node {
-    version = '13.0.1' // https://nodejs.org/en/
-    yarnVersion = '1.22.0' // https://yarnpkg.com/en/
+    version = '14.10.1' // https://nodejs.org/en/
+    yarnVersion = '1.22.5' // https://yarnpkg.com/en/
     download = true
 }
 
