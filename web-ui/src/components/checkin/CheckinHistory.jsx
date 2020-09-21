@@ -1,24 +1,45 @@
 import React, { useContext, useEffect, useState } from "react";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import { UPDATE_INDEX } from "../../context/AppContext";
+
+import {
+  UPDATE_CURRENT_CHECKIN,
+  UPDATE_CHECKINS,
+} from "../../context/AppContext";
 import { AppContext } from "../../context/AppContext";
 import { updateCheckin } from "../../api/checkins";
 
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import "./Checkin.css";
 
-const CheckinsHistory = ({ checkins, index }) => {
-  const { dispatch } = useContext(AppContext);
-  const [checkinDate, setCheckinDate] = useState(null);
+const CheckinsHistory = ({ history }) => {
+  const { state, dispatch } = useContext(AppContext);
+  const { checkins, currentCheckin } = state;
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (checkins[index]) {
-      setCheckinDate(new Date(checkins[index].checkInDate));
+    if (checkins.length) {
+      const { pathname } = document.location;
+      const [, , checkinid] = pathname.split("/");
+      const i = checkinid
+        ? checkins.findIndex((checkin) => checkin.id === checkinid)
+        : checkins.length - 1;
+      setIndex(i);
+      const checkin = checkins[index];
+      dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
+      history.push(`/checkins/${checkin.id}`);
     }
-  }, [checkins, index]);
+  }, [checkins, index, dispatch, history]);
+
+  const getCheckinDate = () => {
+    if (currentCheckin.checkInDate) {
+      return new Date(currentCheckin.checkInDate);
+    }
+    return new Date();
+  };
 
   const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
@@ -27,13 +48,13 @@ const CheckinsHistory = ({ checkins, index }) => {
 
   const previousCheckin = () => {
     if (index !== 0) {
-      dispatch({ type: UPDATE_INDEX, payload: index - 1 });
+      setIndex((index) => index - 1);
     }
   };
 
   const nextCheckin = () => {
     if (index !== lastIndex) {
-      dispatch({ type: UPDATE_INDEX, payload: index + 1 });
+      setIndex((index) => index + 1);
     }
   };
 
@@ -43,11 +64,23 @@ const CheckinsHistory = ({ checkins, index }) => {
     const day = date.getDate();
     const checkin = checkins[index];
     const dateArray = [year, month, day];
-    await updateCheckin({
+    const updatedCheckin = await updateCheckin({
       ...checkin,
       checkInDate: dateArray,
     });
-    setCheckinDate(new Date(dateArray));
+    const newCheckin = updatedCheckin.payload.data;
+    const filtered = checkins.filter((e) => {
+      return e.id !== checkin.id;
+    });
+    filtered.push(newCheckin);
+    dispatch({
+      type: UPDATE_CHECKINS,
+      payload: filtered,
+    });
+    dispatch({
+      type: UPDATE_CURRENT_CHECKIN,
+      payload: newCheckin,
+    });
   };
 
   const DateInput = React.forwardRef((props, ref) => (
@@ -59,7 +92,7 @@ const CheckinsHistory = ({ checkins, index }) => {
 
   return (
     <div>
-      {checkinDate && (
+      {getCheckinDate() && (
         <div className="date-picker">
           <ArrowBackIcon
             className={leftArrowClass}
@@ -71,7 +104,7 @@ const CheckinsHistory = ({ checkins, index }) => {
             customInput={<DateInput />}
             dateFormat="MMMM dd, yyyy h:mm aa"
             onChange={pickDate}
-            selected={checkinDate}
+            selected={getCheckinDate()}
             showTimeSelect
             withPortal
           />
