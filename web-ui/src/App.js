@@ -5,7 +5,6 @@ import { createBrowserHistory } from "history";
 import MyTeamPage from "./pages/MyTeamPage";
 //import EditPDLPage from "./pages/EditPDLPage";
 import ResourcesPage from "./pages/ResourcesPage";
-import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
@@ -55,7 +54,7 @@ function App() {
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />
-                <HomePage />
+                <Profile />
               </Route>
             </Switch>
           </div>
