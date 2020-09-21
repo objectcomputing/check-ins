@@ -1,9 +1,7 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -42,11 +40,13 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        validate(checkIn.getId()!=null, String.format("Found unexpected id for checkin %s", checkIn.getId()));
-        validate(memberId.equals(pdlId), String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
-        validate(memberRepo.findById(memberId).isEmpty(), String.format("Member %s doesn't exist", memberId));
-        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), String.format("Invalid date for checkin %s",memberId));
+        validate(checkIn.getId()!=null, "Found unexpected id for checkin %s", checkIn.getId());
+
+
+        validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
+        validate(memberRepo.findById(memberId).isEmpty(), "Member %s doesn't exist", memberId);
+        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if(!isAdmin) {
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
         }
@@ -63,7 +63,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         CheckIn result = checkinRepo.findById(id).orElse(null);
 
-        validate((result == null), String.format("Invalid checkin id %s", id));
+        validate((result == null), "Invalid checkin id %s", id);
         if(!isAdmin) {
             // Limit read to Subject of check-in, PDL of subject and Admin
             validate((!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())), "You are not authorized to perform this operation");
@@ -84,16 +84,16 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        validate((id==null||!checkinRepo.findById(id).isPresent()), String.format("Unable to find checkin record with id %s", checkIn.getId()));
-        validate(memberId==null, String.format("Invalid checkin %s", checkIn));
-        validate(!memberRepo.findById(memberId).isPresent(), String.format("Member %s doesn't exist", memberId));
-        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), String.format("Invalid date for checkin %s",memberId));
+        validate((id==null||!checkinRepo.findById(id).isPresent()), "Unable to find checkin record with id %s", checkIn.getId());
+        validate(memberId==null, "Invalid checkin %s", checkIn.getId());
+        validate(!memberRepo.findById(memberId).isPresent(), "Member %s doesn't exist", memberId);
+        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s",memberId);
         if(!isAdmin) {
             // Limit update to subject of check-in, PDL of subject and Admin
             validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
             // Update is only allowed if the check in is not completed unless made by admin
-            validate(checkinRepo.findById(id).get().isCompleted(), String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
+            validate(checkinRepo.findById(id).get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
 
         return checkinRepo.update(checkIn);
@@ -132,9 +132,9 @@ public class CheckInServicesImpl implements CheckInServices {
         return checkIn;
     }
 
-    private static void validate(Boolean val, String message) {
-        if(val) {
-            throw new CheckInBadArgException(message);
+    private static void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+        if(isError) {
+            throw new CheckInBadArgException(String.format(message, args));
         }
     }
 }
