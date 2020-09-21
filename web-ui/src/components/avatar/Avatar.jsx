@@ -1,10 +1,9 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
-import PersonIcon from "@material-ui/icons/Person";
 
 const AvatarComponent = ({ loggedIn = false, profile = {} }) => {
   const { image_url } = profile;
-  const src = !image_url || loggedIn === false ? <PersonIcon /> : image_url;
+  const src = !image_url || loggedIn === false ? "" : image_url;
   return (
     <Avatar
       style={{

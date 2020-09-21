@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -34,9 +34,12 @@ import io.micronaut.http.annotation.Error;
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="check-ins")
 public class CheckInController {
-    
-    @Inject
-    CheckInServices checkInservices ;
+
+    private CheckInServices checkInServices;
+
+    public CheckInController(CheckInServices checkInServices) {
+        this.checkInServices = checkInServices;
+    }
 
     @Error(exception = CheckInBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckInBadArgException e) {
@@ -47,7 +50,6 @@ public class CheckInController {
                 .body(error);
     }
 
-
     /**
      * Find Check-in details by Member Id or PDL Id. 
      * @param teamMemberId
@@ -55,9 +57,8 @@ public class CheckInController {
      * @return
      */
     @Get("/{?teamMemberId,pdlId,completed}")
-    public Set<CheckIn> findByValue(@Nullable UUID teamMemberId,
-                                     @Nullable UUID  pdlId, @Nullable Boolean completed) {          
-            return checkInservices.findByFields(teamMemberId, pdlId,completed);
+    public Set<CheckIn> findByValue(@Nullable UUID teamMemberId, @Nullable UUID  pdlId, @Nullable Boolean completed) {
+        return checkInServices.findByFields(teamMemberId, pdlId, completed);
     }
 
     /**
@@ -67,9 +68,10 @@ public class CheckInController {
      */
     @Post()
     public HttpResponse<CheckIn> createCheckIn(@Body @Valid CheckInCreateDTO checkIn, HttpRequest<CheckInCreateDTO> request) {
-        CheckIn newMemberCheckIn = checkInservices.save(new CheckIn(checkIn.getTeamMemberId(),checkIn.getPdlId(),checkIn.getCheckInDate(),checkIn.isCompleted()));
+
+        CheckIn newMemberCheckIn = checkInServices.save(new CheckIn(checkIn.getTeamMemberId(), checkIn.getPdlId(), checkIn.getCheckInDate(), checkIn.isCompleted()));
         return HttpResponse.created(newMemberCheckIn)
-        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),newMemberCheckIn.getId()))));
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newMemberCheckIn.getId()))));
     }
 
     /**
@@ -78,25 +80,22 @@ public class CheckInController {
      * @return
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid CheckIn checkIn,HttpRequest<CheckInCreateDTO> request) {
+    public HttpResponse<?> update(@Body @Valid CheckIn checkIn, HttpRequest<CheckInCreateDTO> request) {
 
-            CheckIn updatedMemberCheckIn = checkInservices.update(checkIn);
-            return HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),updatedMemberCheckIn.getId()))))
-                    .body(updatedMemberCheckIn);
-                         
+        CheckIn updatedMemberCheckIn = checkInServices.update(checkIn);
+        return HttpResponse
+                .ok()
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberCheckIn.getId()))))
+                .body(updatedMemberCheckIn);
     }
 
     /**
-     * 
+     *
      * @param id
      * @return
      */
     @Get("/{id}")
     public CheckIn readCheckIn(@NotNull UUID id){
-        return checkInservices.read(id);
+        return checkInServices.read(id);
     }
-
-
 }

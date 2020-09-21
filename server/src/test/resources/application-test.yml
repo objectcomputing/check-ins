@@ -18,7 +18,9 @@ credentials:
       - MEMBER
     ADMIN:
       - ADMIN
+      - MEMBER
     PDL:
       - PDL
+      - MEMBER
     MEMBER:
       - MEMBER

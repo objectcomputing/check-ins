@@ -11,12 +11,14 @@ import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import CheckinsPage from "./pages/CheckinsPage";
 import { AppContextProvider } from "./context/AppContext";
+import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import "./App.css";
 
 const customHistory = createBrowserHistory();
 
 function App() {
+
   return (
     <Router history={customHistory}>
       <AppContextProvider>
@@ -49,7 +51,7 @@ function App() {
               </Route>
               <Route path="/checkins">
                 <Header title="Check-ins" />
-                <CheckinsPage />
+                <CheckinsPage history={customHistory} />
               </Route>
               <Route path="/">
                 <Header title="Professional Development @ OCI" />
@@ -57,6 +59,7 @@ function App() {
               </Route>
             </Switch>
           </div>
+          <SnackBarWithContext />
         </div>
       </AppContextProvider>
     </Router>
