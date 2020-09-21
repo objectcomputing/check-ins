@@ -132,7 +132,7 @@ const AppContextProvider = (props) => {
                 : null;
             data.push(checkin);
           }
-        } else if (data.length === 0) {
+        } else if (data != null && data.length === 0) {
           if (pdlId) {
             const res = await createCheckin({
               teamMemberId: id,
