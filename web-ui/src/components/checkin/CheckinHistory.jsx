@@ -1,120 +1,87 @@
-import React, { useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { getCheckinByPdlId } from "../../api/checkins";
-
-import Avatar from "@material-ui/core/Avatar";
+import React, { useContext, useEffect, useState } from "react";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import { getMember } from "../../api/member";
+import { UPDATE_INDEX } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { updateCheckin } from "../../api/checkins";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ setIndex }) => {
-  const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { workEmail, role, id, pdlId } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const { imageUrl, name } = userProfile ? userProfile : {};
-  const [checkins, setCheckins] = useState([]);
-  const [checkinIndex, setCheckinIndex] = useState(0);
-  const [pdl, setPDL] = useState();
+const CheckinsHistory = ({ checkins, index }) => {
+  const { dispatch } = useContext(AppContext);
+  const [checkinDate, setCheckinDate] = useState(null);
 
-  // Get PDL's name
-  React.useEffect(() => {
-    async function getPDLName() {
-      if (pdlId) {
-        let res = await getMember(pdlId);
-        let pdlProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setPDL(pdlProfile ? pdlProfile.name : "");
-      }
+  useEffect(() => {
+    if (checkins[index]) {
+      setCheckinDate(new Date(checkins[index].checkInDate));
     }
-    getPDLName();
-  }, [pdlId]);
+  }, [checkins, index]);
 
-  // Get checkins
-  React.useEffect(() => {
-    async function updateCheckins() {
-      if (id) {
-        let res = await getCheckinByPdlId(id);
-        let data =
-          res && res.payload && res.payload.status === 200
-            ? res.payload.data
-            : null;
-        let checkinList = data && !res.error ? data : [];
-        checkinList.sort((a, b) => (a.checkInDate > b.checkInDate ? -1 : 1));
-        setCheckins(checkinList);
-      }
-    }
-    updateCheckins();
-  }, [id]);
-
-  let checkinDate =
-    checkins.length > 0
-      ? new Date(checkins[checkinIndex].checkInDate)
-      : new Date();
   const lastIndex = checkins.length - 1;
-  const leftArrowClass =
-    "arrow " + (checkinIndex < lastIndex ? "enabled" : "disabled");
+  const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
   const rightArrowClass =
-    "arrow " + (checkinIndex > 0 ? "enabled" : "disabled");
+    "arrow " + (index < lastIndex ? "enabled" : "disabled");
 
   const previousCheckin = () => {
-    setCheckinIndex((index) => (index === lastIndex ? lastIndex : index + 1));
-    setIndex(checkinIndex);
-    // TODO: change checkin on click
+    if (index !== 0) {
+      dispatch({ type: UPDATE_INDEX, payload: index - 1 });
+    }
   };
 
   const nextCheckin = () => {
-    setCheckinIndex((index) => (index === 0 ? 0 : index - 1));
-    setIndex(checkinIndex);
+    if (index !== lastIndex) {
+      dispatch({ type: UPDATE_INDEX, payload: index + 1 });
+    }
   };
 
-  const pickDate = (date) => {};
+  const pickDate = async (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const checkin = checkins[index];
+    const dateArray = [year, month, day];
+    await updateCheckin({
+      ...checkin,
+      checkInDate: dateArray,
+    });
+    setCheckinDate(new Date(dateArray));
+  };
 
-  const DateInput = ({ value, onClick }) => (
-    <div className="date-input">
-      <p style={{ margin: "0px" }}>{value}</p>
-      <CalendarTodayIcon onClick={onClick}>stuff</CalendarTodayIcon>
+  const DateInput = React.forwardRef((props, ref) => (
+    <div className="date-input" ref={ref}>
+      <p style={{ margin: "0px" }}>{props.value}</p>
+      <CalendarTodayIcon onClick={props.onClick}>stuff</CalendarTodayIcon>
     </div>
-  );
+  ));
 
   return (
     <div>
-      <div className="profile-section">
-        <Avatar
-          src={imageUrl ? imageUrl : "/default_profile.jpg"}
-          style={{ height: "220px", width: "200px" }}
-        />
-        <div className="info">
-          <p>{name}</p>
-          <p>{role}</p>
-          <p>PDL: {pdl}</p>
-          <p>Company Email: {workEmail}</p>
+      {checkinDate && (
+        <div className="date-picker">
+          <ArrowBackIcon
+            className={leftArrowClass}
+            onClick={previousCheckin}
+            style={{ fontSize: "50px" }}
+          />
+          <DatePicker
+            closeOnScroll
+            customInput={<DateInput />}
+            dateFormat="MMMM dd, yyyy h:mm aa"
+            onChange={pickDate}
+            selected={checkinDate}
+            showTimeSelect
+            withPortal
+          />
+          <ArrowForwardIcon
+            className={rightArrowClass}
+            onClick={nextCheckin}
+            style={{ fontSize: "50px" }}
+          />
         </div>
-      </div>
-      <div className="date-picker">
-        <ArrowBackIcon
-          className={leftArrowClass}
-          onClick={previousCheckin}
-          style={{ fontSize: "50px" }}
-        />
-        <DatePicker
-          customInput={<DateInput />}
-          dateFormat="MMMM dd, yyyy h:mm aa"
-          selected={checkinDate}
-          showTimeSelect
-          onChange={pickDate}
-        />
-        <ArrowForwardIcon
-          className={rightArrowClass}
-          onClick={nextCheckin}
-          style={{ fontSize: "50px" }}
-        />
-      </div>
+      )}
     </div>
   );
 };

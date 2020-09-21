@@ -47,9 +47,12 @@ const GuidesPanel = () => {
       <legend>Check-In Guides</legend>
       <div>
         {teamMemberPDFs.map((memberPDF) => (
-          <GuideLink name={memberPDF.name} />
+          <GuideLink key={memberPDF.name} name={memberPDF.name} />
         ))}
-        {isPdl && pdlPDFs.map((pdlPDF) => <GuideLink name={pdlPDF.name} />)}
+        {isPdl &&
+          pdlPDFs.map((pdlPDF) => (
+            <GuideLink key={pdlPDF.name} name={pdlPDF.name} />
+          ))}
       </div>
     </fieldset>
   );

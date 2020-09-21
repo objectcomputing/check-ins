@@ -13,7 +13,7 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
         teamMemberId: memberId,
         pdlId: pdlId,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -27,7 +27,7 @@ export const getCheckinByMemberId = async (id) => {
       params: {
         teamMemberId: id,
       },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
@@ -41,7 +41,24 @@ export const getCheckinByPdlId = async (id) => {
       params: {
         pdlId: id,
       },
-      withCredentials: true
+      withCredentials: true,
+    })
+  );
+};
+
+export const createCheckin = async ({
+  teamMemberId,
+  pdlId,
+  checkInDate,
+  completed,
+}) => {
+  return await resolve(
+    axios({
+      method: "post",
+      url: checkinsUrl,
+      responseType: "json",
+      data: { teamMemberId, pdlId, checkInDate, completed },
+      withCredentials: true,
     })
   );
 };
@@ -55,7 +72,37 @@ export const getNoteByCheckinId = async (id) => {
       params: {
         checkinid: id,
       },
-      withCredentials: true
+      withCredentials: true,
+    })
+  );
+};
+
+export const updateCheckin = ({
+  completed,
+  id,
+  teamMemberId,
+  pdlId,
+  checkInDate,
+}) => {
+  return resolve(
+    axios({
+      method: "put",
+      url: checkinsUrl,
+      responseType: "json",
+      data: { completed, id, teamMemberId, pdlId, checkInDate },
+      withCredentials: true,
+    })
+  );
+};
+
+export const createCheckinNote = ({ checkinid, createdbyid, description }) => {
+  return resolve(
+    axios({
+      method: "post",
+      url: checkinsNoteUrl,
+      responseType: "json",
+      data: { checkinid, createdbyid, description },
+      withCredentials: true,
     })
   );
 };
@@ -72,7 +119,7 @@ export const updateCheckinNote = ({
       url: checkinsNoteUrl,
       responseType: "json",
       data: { id, checkinid, createdbyid, description },
-      withCredentials: true
+      withCredentials: true,
     })
   );
 };
