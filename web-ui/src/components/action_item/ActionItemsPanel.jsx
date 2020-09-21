@@ -27,12 +27,10 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
 
   const actionItemsCompare = currItems => {
     if (!prevActionItems) {
-      console.log('no previous');
       setPrevActionItems(currItems);
       return true;
     }
     if (prevActionItems.length !== currItems.length) {
-      console.log('length change');
       setPrevActionItems(currItems);
       return true;
     }
@@ -108,7 +106,6 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
   });
 
   const onDragEnd = result => {
-    console.log('onDragEnd: result =', result);
     if (!result || !result.destination) {
       return;
     }
@@ -139,11 +136,8 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
 
   const killActionItem = (id, event) => {
     doDelete(id);
-    console.log('BEFORE');
-    console.log(actionItems);
     var arrayDupe = actionItems;
     for (var i = 0; i < arrayDupe.length; i++) {
-      console.log(arrayDupe[i].id + '===' + id);
       if (arrayDupe[i].id === id) {
         arrayDupe.splice(i, 1);
         break;

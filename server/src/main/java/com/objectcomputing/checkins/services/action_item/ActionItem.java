@@ -43,7 +43,6 @@ public class ActionItem {
     private String description;
 
     @Column(name = "priority")
-    @TypeDef(type = DataType.DOUBLE)
     @Schema(description = "Allow for a user defined display order")
     private double priority;
 
