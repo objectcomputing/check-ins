@@ -79,11 +79,15 @@ const AppContextProvider = (props) => {
 
   const date = (months, prevCheckinDate) => {
     let currentMonth = new Date().getMonth() + 1;
-    let prevCheckinMonth = prevCheckinDate.getMonth() + 1;
     let newDate = prevCheckinDate ? new Date(...prevCheckinDate) : new Date();
-    newDate.setMonth(
-      newDate.getMonth() + currentMonth - prevCheckinMonth >= 3 ? 1 : months
-    );
+    if (prevCheckinDate) {
+      let prevCheckinMonth = prevCheckinDate.getMonth() + 1;
+      newDate.setMonth(
+        newDate.getMonth() + currentMonth - prevCheckinMonth >= 3 ? 1 : months
+      );
+    } else {
+      newDate.setMonth(newDate.getMonth() + months);
+    }
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const day = newDate.getDate();
@@ -121,17 +125,20 @@ const AppContextProvider = (props) => {
             data.push(checkin);
           }
         } else if (data.length === 0) {
-          const res = await createCheckin({
-            teamMemberId: id,
-            pdlId: pdlId,
-            checkInDate: date(1),
-            completed: false,
-          });
-          const checkin =
-            res.payload && res.payload.data && !res.error
-              ? res.payload.data
-              : null;
-          data = [checkin];
+          if (pdlId) {
+            const res = await createCheckin({
+              teamMemberId: id,
+              pdlId: pdlId,
+              checkInDate: date(1),
+              completed: false,
+            });
+            const checkin =
+              res.payload && res.payload.data && !res.error
+                ? res.payload.data
+                : null;
+            data = [checkin];
+          }
+          dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
         dispatch({ type: UPDATE_CHECKINS, payload: data });
       }
