@@ -15,8 +15,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 )
 public class Application {
-
-    public static final String PASSWORD = "P@ssw0rd";
     public static void main(String[] args) {
         Micronaut.run(Application.class);
     }
