@@ -34,13 +34,13 @@ sonarqube {
     }
 }
 
-/*project(":web-ui") {
+project(":web-ui") {
     sonarqube {
         properties {
             property "sonar.sources", "src/"
         }
     }
-}*/
+}
 
 ////// ################### SONARCLOUD PLUGIN END#########################
 
