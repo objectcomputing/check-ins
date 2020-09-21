@@ -353,7 +353,6 @@ class GuildMemberServicesImplTest {
 
         GuildMember guildMemberToFind = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), false);
 
-
         GuildMember guildMember = guildMemberToFind;
 
         when(guildMemberRepository.search(guildMember.getGuildid().toString(), guildMember.getMemberid().toString(), guildMember.isLead())).thenReturn(Set.of(guildMemberToFind));

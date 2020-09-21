@@ -200,11 +200,28 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     }
 
     @Test
+    void testFindGuildSByMemeberid() {
+
+        Guild g = createDeafultGuild();
+        MemberProfile mp = createADefaultMemberProfile();
+        GuildMember gm = createDeafultGuildMember(g, mp);
+        Set<Guild> guilds = Collections.singleton(g);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", mp.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<Guild>> response = client.toBlocking().exchange(request, Argument.setOf(Guild.class));
+
+        assertEquals(guilds, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
     void testFindAllGuilds() {
 
         Guild g = createDeafultGuild();
+        MemberProfile mp = createADefaultMemberProfile();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Guild>> response = client.toBlocking().exchange(request, Argument.setOf(Guild.class));
 
         assertEquals(Set.of(g), response.body());
