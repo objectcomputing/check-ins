@@ -97,6 +97,7 @@ const CheckinsHistory = ({ history }) => {
       {getCheckinDate() && (
         <div className="date-picker">
           <Link
+            className="arrow"
             onClick={previousCheckin}
             to={`${currentCheckin && currentCheckin.id}`}
           >
@@ -115,6 +116,7 @@ const CheckinsHistory = ({ history }) => {
             withPortal
           />
           <Link
+            className="arrow"
             onClick={nextCheckin}
             to={`${currentCheckin && currentCheckin.id}`}
           >
