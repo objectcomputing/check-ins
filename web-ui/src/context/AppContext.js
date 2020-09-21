@@ -133,19 +133,21 @@ const AppContextProvider = (props) => {
             data.push(checkin);
           }
         } else if (data.length === 0) {
-          const res = await createCheckin({
-            teamMemberId: id,
-            pdlId: pdlId,
-            checkInDate: date(1),
-            completed: false,
-          });
-          const checkin =
-            res.payload && res.payload.data && !res.error
-              ? res.payload.data
-              : null;
-          data = [checkin];
+          if (pdlId) {
+            const res = await createCheckin({
+              teamMemberId: id,
+              pdlId: pdlId,
+              checkInDate: date(1),
+              completed: false,
+            });
+            const checkin =
+              res.payload && res.payload.data && !res.error
+                ? res.payload.data
+                : null;
+            data = [checkin];
+          }
+          dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
-        dispatch({ type: UPDATE_CHECKINS, payload: data });
       }
     }
     getCheckins();
