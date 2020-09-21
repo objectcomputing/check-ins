@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
@@ -19,8 +18,6 @@ import java.util.UUID;
 public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     Optional<Guild> findByName(String name);
-
-    List<Guild> findByNameIlike(String name);
 
     @Query("SELECT * " +
             "FROM guilds guild " +

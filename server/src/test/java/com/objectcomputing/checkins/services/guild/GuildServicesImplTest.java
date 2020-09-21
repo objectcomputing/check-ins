@@ -67,8 +67,6 @@ class GuildServicesImplTest {
         when(guildRepository.findByName(eq(guild.getName()))).thenReturn(Optional.empty());
         when(guildRepository.save(eq(guild))).thenReturn(guild);
         assertEquals(guild, services.save(guild));
-        verify(guildRepository, times(1)).findByName(any(String.class));
-        verify(guildRepository, times(1)).save(any(Guild.class));
     }
 
     @Test
@@ -76,8 +74,6 @@ class GuildServicesImplTest {
         Guild guild = new Guild(UUID.randomUUID(), "Wayne's", "World");
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.save(guild));
         assertTrue(exception.getMessage().contains(String.format("unexpected id %s", guild.getId())));
-        verify(guildRepository, never()).findByName(any(String.class));
-        verify(guildRepository, never()).save(any(Guild.class));
     }
 
     @Test
