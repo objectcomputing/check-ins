@@ -1,9 +1,7 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -42,21 +40,15 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        if(checkIn.getId()!=null) {
-            throw new CheckInBadArgException(String.format("Found unexpected id for checkin  %s", checkIn.getId()));
-        } else if(memberId.equals(pdlId)) {
-            throw new CheckInBadArgException(String.format("Team member id %s can't be same as PDL id", checkIn.getTeamMemberId()));
-        } else if(memberRepo.findById(memberId).isEmpty()) {
-            throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
-            throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        } else if(chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)) {
-            throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-        } else if(!isAdmin) {
-            if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
-                // Limit create to subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-            }
+        validate(checkIn.getId()!=null, "Found unexpected id for checkin %s", checkIn.getId());
+
+
+        validate(memberId.equals(pdlId), "Team member id %s can't be same as PDL id", checkIn.getTeamMemberId());
+        validate(memberRepo.findById(memberId).isEmpty(), "Member %s doesn't exist", memberId);
+        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
+        if(!isAdmin) {
+            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
         }
 
         return checkinRepo.save(checkIn);
@@ -71,13 +63,10 @@ public class CheckInServicesImpl implements CheckInServices {
 
         CheckIn result = checkinRepo.findById(id).orElse(null);
 
-        if (result == null) {
-            throw new CheckInBadArgException(String.format("Invalid checkin id %s", id));
-        } else if(!isAdmin) {
-            if(!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())) {
-                // Limit read to Subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-            }
+        validate((result == null), "Invalid checkin id %s", id);
+        if(!isAdmin) {
+            // Limit read to Subject of check-in, PDL of subject and Admin
+            validate((!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())), "You are not authorized to perform this operation");
         }
 
         return result;
@@ -95,24 +84,16 @@ public class CheckInServicesImpl implements CheckInServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        if(id==null||!checkinRepo.findById(id).isPresent()) {
-            throw new CheckInBadArgException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
-        } else if(memberId==null) {
-            throw new CheckInBadArgException(String.format("Invalid checkin %s", checkIn));
-        } else if(!memberRepo.findById(memberId).isPresent()) {
-            throw new CheckInBadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId())) {
-            throw new CheckInBadArgException(String.format("PDL %s is not associated with member %s", pdlId, memberId));
-        } else if(chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)) {
-            throw new CheckInBadArgException(String.format("Invalid date for checkin %s",memberId));
-        } else if(!isAdmin) {
-            if(!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())) {
-                // Limit update to subject of check-in, PDL of subject and Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-            } else if(checkinRepo.findById(id).get().isCompleted()) {
-                // Update is only allowed if the check in is not completed unless made by admin
-                throw new CheckInBadArgException(String.format("Checkin with id %s is complete and cannot be updated", checkIn.getId()));
-            }
+        validate((id==null||!checkinRepo.findById(id).isPresent()), "Unable to find checkin record with id %s", checkIn.getId());
+        validate(memberId==null, "Invalid checkin %s", checkIn.getId());
+        validate(!memberRepo.findById(memberId).isPresent(), "Member %s doesn't exist", memberId);
+        validate(!pdlId.equals(memberRepo.findById(memberId).get().getPdlId()), "PDL %s is not associated with member %s", pdlId, memberId);
+        validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s",memberId);
+        if(!isAdmin) {
+            // Limit update to subject of check-in, PDL of subject and Admin
+            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
+            // Update is only allowed if the check in is not completed unless made by admin
+            validate(checkinRepo.findById(id).get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
 
         return checkinRepo.update(checkIn);
@@ -127,41 +108,33 @@ public class CheckInServicesImpl implements CheckInServices {
 
         checkinRepo.findAll().forEach(checkIn::add);
 
-        if(isAdmin) {
-            if (teamMemberId != null) {
-                checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
-            } else if (pdlId != null) {
-                checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
-            } else if (completed != null) {
-                checkIn.retainAll(checkinRepo.findByCompleted(completed));
-            }
-        } else {
-            if(teamMemberId != null) {
-                if(!currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
-                    // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
-                    throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-                } else {
-                    checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
-                }
-            } else if(pdlId != null) {
-                if (!currentUser.getId().equals(pdlId)) {
-                    // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
-                    throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-                } else {
-                    checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
-                }
-            } else if(completed != null) {
+        if(teamMemberId != null) {
+            // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
+            validate((!isAdmin && !currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())), "You are not authorized to perform this operation");
+            checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
+        } else if(pdlId != null) {
+            // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
+            validate(!isAdmin && !currentUser.getId().equals(pdlId), "You are not authorized to perform this operation");
+            checkIn.retainAll(checkinRepo.findByPdlId(pdlId));
+        } else if(completed != null) {
+            checkIn.retainAll(checkinRepo.findByCompleted(completed));
+            if(!isAdmin) {
                 // Limit findByCompleted to retrieve only the records pertinent to current user (if not admin)
                 checkIn = checkIn.stream()
-                            .filter(c -> c.getTeamMemberId().equals(currentUser.getId()) || c.getPdlId().equals(currentUser.getId()))
-                            .filter(c -> c.isCompleted() == completed)
-                            .collect(Collectors.toSet());
-            } else {
-                // Limit findAll to only Admin
-                throw new CheckInBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
+                        .filter(c -> c.getTeamMemberId().equals(currentUser.getId()) || c.getPdlId().equals(currentUser.getId()))
+                        .collect(Collectors.toSet());
             }
+        } else {
+            // Limit findAll to only Admin
+            validate(!isAdmin, "You are not authorized to perform this operation");
         }
 
         return checkIn;
+    }
+
+    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+        if(isError) {
+            throw new CheckInBadArgException(String.format(message, args));
+        }
     }
 }
