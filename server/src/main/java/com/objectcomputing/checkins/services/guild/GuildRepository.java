@@ -24,10 +24,10 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     @Query("SELECT * " +
             "FROM guilds guild " +
-            "WHERE (:name IS NULL OR guild.name LIKE ${%:name%}) " +
-            "AND (guild.id IN " +
+            "WHERE (:name IS NULL OR guild.name LIKE :name) " +
+            "AND (:memberid IS NULL OR guild.id IN " +
                 "(SELECT guildid FROM guildmembers gm " +
-                "WHERE(:memberid IS NULL OR  gm.memberid = :memberid))")
+                "WHERE(:memberid IS NULL OR  gm.memberid = :memberid)))")
     Set<Guild> search(@Nullable String name, @Nullable String memberid);
 
     @Override

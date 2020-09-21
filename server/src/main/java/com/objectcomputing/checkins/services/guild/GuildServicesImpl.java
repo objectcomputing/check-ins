@@ -51,9 +51,15 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public Set<Guild> findByFields(String name, UUID memberid) {
+        String likeName = null;
+        if (name != null) {
+            likeName = "%" + name + "%";
+        }
         Set<Guild> guilds = new HashSet<>(
-                guildsRepo.search(name, nullSafeUUIDToString(memberid)));
+                guildsRepo.search(likeName, nullSafeUUIDToString(memberid)));
 
         return guilds;
+
     }
+
 }

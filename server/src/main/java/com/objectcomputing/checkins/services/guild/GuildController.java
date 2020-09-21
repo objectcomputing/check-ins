@@ -107,6 +107,7 @@ public class GuildController {
 
     @Get("/{?name,memberid}")
     public Set<Guild> findGuilds(@Nullable String name, @Nullable UUID memberid) {
+        Set<Guild> g = guildService.findByFields(name, memberid);
         return guildService.findByFields(name, memberid);
     }
 

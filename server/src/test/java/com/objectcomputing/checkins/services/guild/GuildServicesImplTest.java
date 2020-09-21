@@ -148,17 +148,17 @@ class GuildServicesImplTest {
 
     @Test
     void testFindByFieldName() {
-        Set<Guild> guild = Set.of(
+        Set<Guild> guildSet = Set.of(
                 new Guild(UUID.randomUUID(), "What a Wonderful", "World"),
                 new Guild(UUID.randomUUID(), "World", "History")
         );
 
-        Set<Guild> guildToFind = Set.of(guild.iterator().next());
         final String nameSearch = "World";
-        when(guildRepository.findAll()).thenReturn(guild);
-        when(guildRepository.search(nameSearch, null)).thenReturn(guildToFind);
+        Guild guildToFind = guildSet.iterator().next();
 
-        assertEquals(new HashSet<>(guildToFind), services.findByFields(nameSearch, null));
+        when(guildRepository.search("%"+nameSearch+"%", null)).thenReturn(guildSet);
+
+        assertEquals(guildSet, services.findByFields(nameSearch, null));
 
     }
 
@@ -176,14 +176,18 @@ class GuildServicesImplTest {
 
     @Test
     void testFindByFieldNameAndMemberid() {
+        Set<Guild> guildSet = Set.of(
+                new Guild(UUID.randomUUID(), "World", "Series"),
+                new Guild(UUID.randomUUID(), "Super Mario", "World")
+        );
 
         final UUID memberId = UUID.randomUUID();
         final String nameSearch = "World";
-        Guild guildToFind = new Guild(UUID.randomUUID(), "World", "Series");
 
-        when(guildRepository.search(nameSearch, memberId.toString())).thenReturn(Set.of(guildToFind));
+        when(guildRepository.search("%"+nameSearch+"%", memberId.toString())).thenReturn(guildSet);
 
-        assertEquals(new HashSet<Guild>(Set.of(guildToFind)), services.findByFields(nameSearch, memberId));
+        assertEquals(guildSet, services.findByFields(nameSearch, memberId));
 
     }
+
 }
