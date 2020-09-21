@@ -11,6 +11,8 @@ import org.reactivestreams.Publisher;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 
 @Requires(env = "test")
 @Singleton
@@ -23,7 +25,10 @@ public class UserPasswordAuthProvider implements AuthenticationProvider {
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
         String email = authReq.getIdentity().toString();
         String roleCred = authReq.getSecret().toString();
-        UserDetails details = new UserDetails(email, store.getUserRole(roleCred));
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("email", email);
+
+        UserDetails details = new UserDetails(email, store.getUserRole(roleCred), attributes);
         return Flowable.just(details);
     }
 }
