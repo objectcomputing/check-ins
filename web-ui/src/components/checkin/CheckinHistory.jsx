@@ -12,6 +12,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Link } from "react-router-dom";
 
 import "./Checkin.css";
 
@@ -22,7 +23,7 @@ const CheckinsHistory = ({ history }) => {
 
   useEffect(() => {
     if (checkins.length) {
-      const { pathname } = document.location;
+      const { pathname } = history.location;
       const [, , checkinid] = pathname.split("/");
       const i = checkinid
         ? checkins.findIndex((checkin) => checkin.id === checkinid)
@@ -35,10 +36,11 @@ const CheckinsHistory = ({ history }) => {
   }, [checkins, index, dispatch, history]);
 
   const getCheckinDate = () => {
-    if (currentCheckin.checkInDate) {
+    if (currentCheckin && currentCheckin.checkInDate) {
       return new Date(currentCheckin.checkInDate);
     }
-    return new Date();
+    // return new date unless you are running a Jest test
+    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
   };
 
   const lastIndex = checkins.length - 1;
@@ -94,11 +96,15 @@ const CheckinsHistory = ({ history }) => {
     <div>
       {getCheckinDate() && (
         <div className="date-picker">
-          <ArrowBackIcon
-            className={leftArrowClass}
+          <Link
             onClick={previousCheckin}
-            style={{ fontSize: "50px" }}
-          />
+            to={`${currentCheckin && currentCheckin.id}`}
+          >
+            <ArrowBackIcon
+              className={leftArrowClass}
+              style={{ fontSize: "50px" }}
+            />
+          </Link>
           <DatePicker
             closeOnScroll
             customInput={<DateInput />}
@@ -108,11 +114,15 @@ const CheckinsHistory = ({ history }) => {
             showTimeSelect
             withPortal
           />
-          <ArrowForwardIcon
-            className={rightArrowClass}
+          <Link
             onClick={nextCheckin}
-            style={{ fontSize: "50px" }}
-          />
+            to={`${currentCheckin && currentCheckin.id}`}
+          >
+            <ArrowForwardIcon
+              className={rightArrowClass}
+              style={{ fontSize: "50px" }}
+            />
+          </Link>
         </div>
       )}
     </div>
