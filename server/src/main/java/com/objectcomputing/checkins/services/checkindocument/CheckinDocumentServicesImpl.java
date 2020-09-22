@@ -68,12 +68,21 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         return updatedCheckinDocument;
     }
 
-    public void delete(@NotNull UUID checkinsId) {
+    public void deleteByCheckinId(@NotNull UUID checkinsId) {
 
         if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
             throw new CheckinDocumentBadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
         } else {
             checkinDocumentRepo.deleteByCheckinsId(checkinsId);
+        }
+    }
+
+    public void deleteByUploadDocId(@NotNull String uploadDocId) {
+
+        if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
+            throw new CheckinDocumentBadArgException(String.format("CheckinDocument with uploadDocId %s does not exist", uploadDocId));
+        } else {
+            checkinDocumentRepo.deleteByUploadDocId(uploadDocId);
         }
     }
 }

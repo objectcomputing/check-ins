@@ -11,5 +11,7 @@ public interface CheckinDocumentServices {
 
     CheckinDocument update(CheckinDocument checkinDocument);
 
-    void delete(UUID checkinsId);
+    void deleteByCheckinId(UUID checkinsId);
+
+    void deleteByUploadDocId(String uploadDocId);
 }

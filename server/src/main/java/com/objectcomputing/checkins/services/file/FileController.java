@@ -5,15 +5,12 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
 import com.google.api.services.drive.model.File;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecuredAnnotationRule;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,19 +33,21 @@ public class FileController {
     }
 
     /**
-     * Retrieve documents associated with CheckIn Id or find all
+     * Retrieve documents associated with CheckIn Id or find all from Google Drive
+     *
      * @param {id}
      * @return {@link HttpResponse<Set<File>>} Returns a set of files associated with CheckInId or all files
      */
     @Get("/{?id}")
-    public HttpResponse<Set<File>> findDocuments(@Nullable UUID id) {
+    public HttpResponse<Set<FileInfoDTO>> findDocuments(@Nullable UUID id) {
         return fileServices.findFiles(id);
     }
 
     /**
-     * Retrieve documents contents associated with UploadDocId
+     * Download document associated with UploadDocId from Google Drive
+     *
      * @param {id}
-     * @return {@link HttpResponse<Set<OutputStream>>} Returns a set of files associated with CheckInId or all files
+     * @return {@link HttpResponse<OutputStream>} Returns OutputStream of document
      */
     @Get("/{id}/download")
     public HttpResponse<OutputStream> downloadDocument(@NotNull UUID id) {
@@ -61,8 +60,19 @@ public class FileController {
      * @param file, the file to upload to Google Drive
      * @return HttpResponse
      */
-    @Post(consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<?> upload(@Body final CompletedFileUpload file) {
-        return fileServices.uploadFile(file);
+    @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
+    public HttpResponse<?> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+        return fileServices.uploadFile(checkInId, file);
+    }
+
+    /**
+     * Delete a document from Google Drive
+     *
+     * @param {id}, the uploadDocId of the document
+     * @return HttpResponse
+     */
+    @Delete("/{uploadDocId}")
+    public HttpResponse<?> delete(@NotNull String uploadDocId) {
+        return fileServices.deleteFile(uploadDocId);
     }
 }

@@ -244,7 +244,7 @@ public class CheckinDocumentServiceImplTest {
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(true);
 
-        services.delete(UUID.randomUUID());
+        services.deleteByCheckinId(UUID.randomUUID());
 
         verify(checkinDocumentRepository, times(1)).deleteByCheckinsId(any(UUID.class));
     }
@@ -255,7 +255,7 @@ public class CheckinDocumentServiceImplTest {
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(false);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.delete(uuid));
+        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByCheckinId(uuid));
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));

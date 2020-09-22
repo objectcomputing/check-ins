@@ -1,12 +1,9 @@
 package com.objectcomputing.checkins.services.file;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.objectcomputing.checkins.UploadController;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
@@ -17,7 +14,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -31,18 +27,13 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.util.*;
 
 @Singleton
 public class FileServicesImpl implements FileServices {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UploadController.class);
-
-//    private static final String DIRECTORY_KEY = "upload-directory-id";
-//    private static final String DIRECTORY_FILE_PATH = "/secrets/directory.json";
-    private static final String RSP_SERVER_ERROR_KEY = "serverError";
-    private static final String RSP_COMPLETE_MESSAGE_KEY = "completeMessage";
-
+    private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
     private String googleCredentials;
     private GoogleDriveAccessor googleDriveAccessor;
@@ -68,41 +59,47 @@ public class FileServicesImpl implements FileServices {
         this.googleCredentials = googleCredentials;
     }
 
-    // - fileId, checkinId and file name, file size - dto
     @Override
-    public HttpResponse<Set<File>> findFiles(@Nullable UUID checkInID) {
+    public HttpResponse<Set<FileInfoDTO>> findFiles(@Nullable UUID checkInID) {
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
-        CheckIn checkIn = checkInServices.read(checkInID);
-        Set<File> result = new HashSet<File>();
-
-        if(checkIn == null) {
-            throw new FileRetrievalException(String.format("Unable to find checkin record with id %s", checkIn.getId()));
-        } else if(checkInID.equals(null) && !isAdmin) {
-            throw new FileRetrievalException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-        } else if(!isAdmin &&
-                !currentUser.getId().equals(checkIn.getTeamMemberId()) &&
-                !currentUser.getId().equals(checkIn.getPdlId()) &&
-                !currentUser.getId().equals(memberProfileServices.getById(checkIn.getTeamMemberId()).getPdlId())) {
-            //Current user is not associated with checkIn
-            throw new FileRetrievalException(String.format("Member %s is unauthorized to do this operation", currentUser.getId()));
-        }
+        Set<FileInfoDTO> result = new HashSet<>();
 
         try {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
+            validate(drive == null, "Unable to access Google Drive");
+            validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
-            if(drive == null) {
-                throw new FileRetrievalException("Unable to access Google Drive");
-            } else if(checkInID.equals(null)) {
+            if (checkInID.equals(null) && isAdmin) {
                 //find all
-                FileList files = drive.files().list().execute();
-                result.addAll(files.getFiles());
-            } else {
+                FileList fileList = drive.files().list().execute();
+                for (File file : fileList.getFiles()) {
+                    FileInfoDTO dto = new FileInfoDTO();
+                    dto.setFileId(file.getId());
+                    dto.setName(file.getName());
+                    dto.setSize(file.getSize());
+                    result.add(dto);
+                }
+            } else if (checkInID != null) {
+                CheckIn checkIn = checkInServices.read(checkInID);
+                validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
+                validate((!isAdmin &&
+                        !currentUser.getId().equals(checkIn.getTeamMemberId()) &&
+                        !currentUser.getId().equals(checkIn.getPdlId()) &&
+                        !currentUser.getId().equals(memberProfileServices.getById(checkIn.getTeamMemberId()).getPdlId())),
+                        "You are not authorized to perform this operation");
+
                 //find by CheckIn ID
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
-                for(CheckinDocument cd : checkinDocuments) {
-                    result.add(drive.files().get(cd.getUploadDocId()).execute());
+                for (CheckinDocument cd : checkinDocuments) {
+                    File file = drive.files().get(cd.getUploadDocId()).execute();
+                    FileInfoDTO dto = new FileInfoDTO();
+                    dto.setFileId(file.getId());
+                    dto.setCheckInId(cd.getCheckinsId());
+                    dto.setName(file.getName());
+                    dto.setSize(file.getSize());
+                    result.add(dto);
                 }
             }
         } catch (IOException e) {
@@ -119,13 +116,8 @@ public class FileServicesImpl implements FileServices {
         OutputStream outputStream = new ByteArrayOutputStream();
         try {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
-
-            if(drive == null) {
-                throw new FileRetrievalException("Unable to access Google Drive");
-            } else {
-                drive.files().export(uploadDocId.toString(), "application/pdf")
-                        .executeMediaAndDownloadTo(outputStream);
-            }
+            validate(drive == null, "Unable to access Google Drive");
+            drive.files().export(uploadDocId.toString(), "application/pdf").executeMediaAndDownloadTo(outputStream);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             return HttpResponse.serverError();
@@ -135,66 +127,91 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public HttpResponse<?> uploadFile(@NotNull CompletedFileUpload file) {
+    public HttpResponse<?> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
 
-        Drive drive = null;
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        try {
-            drive = googleDriveAccessor.accessGoogleDrive();
-        } catch (final IOException e) {
-            LOG.error("Error occurred while initializing Google Drive.", e);
-        }
+        CheckIn checkIn = checkInServices.read(checkInID);
+        validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
+        validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a file before uploading.");
 
-        if (drive == null) {
-            return HttpResponse
-                    .serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Unable to access Google Drive"));
-        }
-
-        if ((file.getFilename() == null || file.getFilename().equals(""))) {
-            return HttpResponse
-                    .badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Please select a file before uploading."));
-        }
-
-        JsonNode dirNode = null;
-        try {
-            dirNode = new ObjectMapper().readTree(this.getClass().getResourceAsStream(DIRECTORY_FILE_PATH));
-        } catch (final IOException e) {
-            return HttpResponse.serverError(
-                    CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Configuration error, please contact admin"));
-        }
-
-        final String parentId = dirNode.get(DIRECTORY_KEY) != null ? dirNode.get(DIRECTORY_KEY).asText() : null;
-        if (parentId == null) {
-            return HttpResponse.serverError(
-                    CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Configuration error, please contact admin"));
-        }
-
-        final File fileMetadata = new File();
-        fileMetadata.setName(file.getFilename());
-        fileMetadata.setMimeType(file.getContentType().orElse(MediaType.APPLICATION_OCTET_STREAM_TYPE).toString());
-        fileMetadata.setParents(Arrays.asList(parentId));
-
-        InputStreamContent content;
-        try {
-            content = new InputStreamContent(fileMetadata.getMimeType(), file.getInputStream());
-        } catch (final IOException e) {
-            LOG.error("Unexpected error processing file upload.", e);
-            return HttpResponse.badRequest(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY,
-                    String.format("Unexpected error processing %s", file.getFilename())));
-        }
+        MemberProfile teamMember = memberProfileServices.getById(checkIn.getTeamMemberId());
+        String subjectName = teamMember.getName();
+        String fileId = String.format(file.getFilename(), LocalDate.now());
+        String folderId;
+        String directoryName = String.format(subjectName, LocalDate.now());
+        validate((!isAdmin &&
+                        !currentUser.getId().equals(checkIn.getTeamMemberId()) &&
+                        !currentUser.getId().equals(teamMember.getPdlId())),
+                "You are not authorized to perform this operation");
 
         try {
+            Drive drive = googleDriveAccessor.accessGoogleDrive();
+
+            validate(drive == null, "Unable to access Google Drive");
+            validate(googleCredentials == null, "Configuration error, please contact admin");
+
+            final File fileMetadata = new File();
+            fileMetadata.setName(file.getFilename());
+            fileMetadata.setMimeType(file.getContentType().orElse(MediaType.APPLICATION_OCTET_STREAM_TYPE).toString());
+            fileMetadata.setId(fileId);
+
+            Drive.Files.List driveIndex = drive.files().list();
+            if(driveIndex.containsValue(directoryName) || driveIndex.containsKey(directoryName)) {
+                //Directory exists on Google Drive
+                fileMetadata.setParents(Arrays.asList(directoryName));
+            } else {
+                //Directory does not exist on Google Drive - create a new directory
+                folderId = createNewDirectoryOnDrive(drive, directoryName);
+                fileMetadata.setParents(Arrays.asList(folderId));
+            }
+
+            InputStreamContent content = new InputStreamContent(fileMetadata.getMimeType(), file.getInputStream());
             drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("parents").execute();
 
+            CheckinDocument cd = new CheckinDocument(checkInID, fileId);
+            checkinDocumentServices.save(cd);
+
             emailSender.sendEmail("New Check-in Notes",
-                    "New check-in notes have been uploaded by a PDL. Please check the Google Drive folder.");
+                    "New check-in notes have been uploaded. Please check the Google Drive folder.");
         } catch (final IOException e) {
-            LOG.error("Unexpected error uploading file to Google Drive.", e);
-            return HttpResponse
-                    .serverError(CollectionUtils.mapOf(RSP_SERVER_ERROR_KEY, "Unable to upload file to Google Drive"));
+            LOG.error("Unexpected error processing file upload.", e);
+            return HttpResponse.badRequest(String.format("Unexpected error processing %s", file.getFilename()));
         }
 
-        return HttpResponse.ok(CollectionUtils.mapOf(RSP_COMPLETE_MESSAGE_KEY,
-                String.format("The file %s was uploaded", file.getFilename())));
+        return HttpResponse.ok(String.format("The file %s was uploaded", file.getFilename()));
+    }
+
+    @Override
+    public HttpResponse deleteFile(@NotNull String uploadDocId) {
+
+        try {
+            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            validate(drive == null, "Unable to access Google Drive");
+            drive.files().delete(uploadDocId).execute();
+            checkinDocumentServices.deleteByUploadDocId(uploadDocId);
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving files from Google Drive.", e);
+            return HttpResponse.serverError();
+        }
+
+        return HttpResponse.ok();
+    }
+
+    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+        if(isError) {
+            throw new FileRetrievalException(String.format(message, args));
+        }
+    }
+
+    private String createNewDirectoryOnDrive(Drive drive, String directoryName) throws IOException {
+        File fileMetadata = new File();
+        fileMetadata.setName(directoryName);
+        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+        File folder = drive.files().create(fileMetadata).execute();
+        return folder.getId();
     }
 }
