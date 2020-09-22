@@ -187,7 +187,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
           assertEquals(request.getPath(),href);
-          assertEquals(String.format("Member %s is unauthorized to do this operation",memberProfileOfPDL.getId()),error);
+          assertEquals("User is unauthorized to do this operation",error);
 
       }
 
@@ -260,7 +260,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
           assertEquals(request.getPath(),href);
-          assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfMrNobody.getId()), error);
+          assertEquals("User is unauthorized to do this operation", error);
 
       }
 
@@ -300,7 +300,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
           assertEquals(request.getPath(),href);
-          assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileForPDL.getId()), error);
+          assertEquals("User is unauthorized to do this operation", error);
 
       }
 
@@ -396,7 +396,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
           String error = Objects.requireNonNull(body).get("message").asText();
 
-          assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfile1.getId()), error);
+          assertEquals("User is unauthorized to do this operation", error);
 
       }
 
@@ -435,7 +435,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
           String error = Objects.requireNonNull(body).get("message").asText();
 
-          assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfile1.getId()), error);
+          assertEquals("User is unauthorized to do this operation", error);
 
       }
 
@@ -617,7 +617,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
           String error = Objects.requireNonNull(body).get("message").asText();
           String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-          assertEquals(String.format("Member %s is unauthorized to do this operation", memberProfileOfMrNobody.getId()), error);
+          assertEquals("User is unauthorized to do this operation", error);
           assertEquals(request.getPath(), href);
 
       }
