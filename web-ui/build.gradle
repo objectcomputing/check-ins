@@ -16,12 +16,14 @@ task start(type: YarnTask, dependsOn: 'yarn') {
 }
 
 task build(overwrite: true, type: YarnTask, dependsOn: 'yarn') {
+    outputs.dir 'build'
     group = 'build'
     description = 'Build the client bundle'
     args = ['run', 'build']
 }
 
 task test(type: YarnTask, dependsOn: 'yarn') {
+    outputs.dir 'build'
     group = 'verification'
     description = 'Run the client tests'
     args = ['run', 'test']
@@ -36,3 +38,5 @@ task eject(type: YarnTask, dependsOn: 'yarn') {
 artifacts {
     'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
 }
+
+yarn_run_build.outputs.dir 'build'
