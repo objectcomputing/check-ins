@@ -1,10 +1,9 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -41,17 +40,17 @@ public class CheckIn {
 
     @Column(name="checkInDate")
     @Schema(description = "date of checkin")
-    private LocalDate checkInDate;
+    private LocalDateTime checkInDate;
 
-    @Nullable
+    @NotNull
     @Column(name = "completed")
     @Schema(description = "whether checkin is completed or not",
-            nullable = true)
+            required = true)
     private Boolean completed;
 
     public CheckIn() {}
 
-    public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
+    public CheckIn(UUID id,UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, Boolean completed) {
         this.id=id;
         this.teamMemberId= teamMemberId;
         this.pdlId=pdlId;
@@ -59,7 +58,7 @@ public class CheckIn {
         this.completed=completed;
     }
     
-    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDate checkInDate, Boolean completed) {
+    public CheckIn(UUID teamMemberId, UUID pdlId, LocalDateTime checkInDate, Boolean completed) {
         this(null, teamMemberId, pdlId, checkInDate,completed);
     }
     
@@ -95,11 +94,11 @@ public class CheckIn {
         this.pdlId = pdlId;
     }
 
-    public LocalDate getCheckInDate() {
+    public LocalDateTime getCheckInDate() {
         return this.checkInDate;
     }
 
-    public void setCheckInDate(LocalDate checkInDate) {
+    public void setCheckInDate(LocalDateTime checkInDate) {
         this.checkInDate = checkInDate;
     }
 
