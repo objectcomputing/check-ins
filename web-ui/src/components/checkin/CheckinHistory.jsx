@@ -40,7 +40,7 @@ const CheckinsHistory = ({ history }) => {
       return new Date(currentCheckin.checkInDate);
     }
     // return new date unless you are running a Jest test
-    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : null;
   };
 
   const lastIndex = checkins.length - 1;

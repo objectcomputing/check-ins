@@ -138,7 +138,6 @@ const AppContextProvider = (props) => {
                 : null;
             data = [checkin];
           }
-          dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
         dispatch({ type: UPDATE_CHECKINS, payload: data });
       }
