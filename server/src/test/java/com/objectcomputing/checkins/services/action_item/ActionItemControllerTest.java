@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -248,7 +248,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
-    void testReadActionItem() {
+    void testReadActionItemByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
@@ -256,11 +256,24 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(memberProfileForPDL.getWorkEmail(),PDL_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
         assertEquals(actionItem, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+//
+//        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+//
+//        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+//
+//        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+//        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
+//
+//        assertEquals(actionItem, response.body());
+//        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
@@ -288,6 +301,25 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         assertEquals(Set.of(actionItem), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
+
+    @Test
+    void testFindAllActionItemsByAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(memberProfileForPDL.getWorkEmail(),ADMIN_ROLE);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(Set.of(actionItem), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
 
     @Test
     void testUpdateActionItem() {

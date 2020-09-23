@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
@@ -7,7 +8,6 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.utils.SecurityService;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -16,11 +16,12 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
+@Singleton
 public class ActionItemServicesImpl implements ActionItemServices {
 
-    private CheckInRepository checkinRepo;
-    private ActionItemRepository actionItemRepo;
-    private MemberProfileRepository memberRepo;
+    private final CheckInRepository checkinRepo;
+    private final ActionItemRepository actionItemRepo;
+    private final MemberProfileRepository memberRepo;
     private SecurityService securityService;
     private CurrentUserServices currentUserServices;
 
@@ -30,7 +31,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
         this.checkinRepo = checkinRepo;
         this.actionItemRepo = actionItemRepo;
         this.memberRepo = memberRepo;
-
+        this.securityService = securityService;
+        this.currentUserServices = currentUserServices;
     }
 
     public ActionItem save(ActionItem actionItem) {
@@ -53,8 +55,27 @@ public class ActionItemServicesImpl implements ActionItemServices {
         return actionItemRet;
     }
 
+//    @Override
     public ActionItem read(@NotNull UUID id) {
-        return actionItemRepo.findById(id).orElse(null);
+
+        int x;  // breakpoint- next line gets npe
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
+        ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
+
+        validate(actionItemResult == null, "Invalid action item id %s", id);
+        if(!isAdmin) {
+            CheckIn checkinRecord = checkinRepo.findById(actionItemResult.getCheckinid()).orElse(null);
+            final UUID pdlId = checkinRecord!=null?checkinRecord.getPdlId():null;
+            final UUID createById = checkinRecord!=null?checkinRecord.getTeamMemberId():null;
+            validate(!currentUser.getId().equals(pdlId)&&!currentUser.getId().equals(createById),"User is unauthorized to do this operation");
+        }
+
+        return actionItemResult;
+
+//        return actionItemRepo.findById(id).orElse(null);
 
     }
 //
@@ -86,29 +107,57 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
 /*        Limit read
         subject of the check in
         the current PDL of the subject of the check in
         the admin */
 
-        if(isAdmin || currentUser.getUuid().equals(teamMemberId) || currentUser.getUuid().equals(pdlId) ||
-                currentUser.getUuid().equals(memberRepo.findById(teamMemberId).get().getPdlId())) {
+        if (checkinid != null) {
+            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+            validate(!currentUser.getId().equals(pdlId) &&
+                    !currentUser.getId().equals(teamMemberId) &&
+                    !isAdmin, "User is unauthorized to do this operation");
+        }
+        if (createdbyid != null) {
+            MemberProfile memberRecord = memberRepo.findById(createdbyid).orElse(null);
+            validate(!currentUser.getId().equals(memberRecord.getId()) &&
+                    !isAdmin,"User is unauthorized to do this operation");
+        }
+        if (checkinid == null && createdbyid == null) {
 
-            Set<ActionItem> actionItems = new HashSet<>(
+        }
+        Set<ActionItem> actionItems = new HashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
-            return actionItems;
-        }
-        throw new ActionItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
+        return actionItems;
+
+//        throw new ActionItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
     }
+
+    // original code
+//    public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
+//        Set<ActionItem> actionItems = new HashSet<>(
+//                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
+//
+//        return actionItems;
+//    }
 
     public void delete(@NotNull UUID id) {
         actionItemRepo.deleteById(id);
     }
+
+    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+        if (isError) {
+            throw new ActionItemBadArgException(String.format(message, args));
+        }
+    }
+
 }
 
 

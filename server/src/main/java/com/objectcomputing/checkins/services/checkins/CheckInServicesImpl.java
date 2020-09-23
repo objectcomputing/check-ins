@@ -110,7 +110,10 @@ public class CheckInServicesImpl implements CheckInServices {
 
         if(teamMemberId != null) {
             // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
-            validate((!isAdmin && !currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())), "You are not authorized to perform this operation");
+            validate((!isAdmin &&
+                    !currentUser.getId().equals(teamMemberId) &&
+                    !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())),
+                    "You are not authorized to perform this operation");
             checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
         } else if(pdlId != null) {
             // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
