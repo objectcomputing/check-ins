@@ -131,7 +131,6 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     actionItems[result.destination.index].priority = newPriority;
 
     doUpdate(actionItems[result.destination.index]);
-    getActionItems();
   };
 
   const killActionItem = (id, event) => {
@@ -144,7 +143,6 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
       }
     }
     setActionItems(arrayDupe);
-    getActionItems();
   };
 
   const createFakeEntry = item => {

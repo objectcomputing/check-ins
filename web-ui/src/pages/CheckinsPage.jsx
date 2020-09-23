@@ -18,7 +18,6 @@ import "./CheckinsPage.css";
 
 const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
-  const [index, setIndex] = useState(0);
   const { state } = useContext(AppContext);
   const { checkins, index, userProfile } = state;
   const checkin = checkins[index];
@@ -48,7 +47,7 @@ const CheckinsPage = ({ history }) => {
               </div>
               <CheckinDocs />
               <div className="modal-container">
-                <ActionItemsPanel checkinId="428db634-76d3-48a9-bfd2-e2c6fd2dc59a" />
+                <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
                 <Modal close={showModal} show={show}>
                   The checkin will no longer be able to be edited. Are you sure
                   that you are ready to close this check-in?
