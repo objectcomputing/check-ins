@@ -1,0 +1,56 @@
+.agenda-items-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  justify-content: center;
+  width: 75%;
+}
+
+.agenda-items-container > h1 {
+  text-align: left;
+}
+
+.agenda-container {
+  display: flex;
+  justify-content: center;
+  border: 2px solid black;
+  min-height: 150px;
+  width: 100%;
+}
+
+.description-field {
+  text-align: left;
+  width: 200px;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.delete-button {
+  background: red;
+}
+
+.agenda-items-info,
+.agenda-items-info-hidden {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.agenda-items-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.image-div {
+  cursor: auto;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.info-div {
+  display: block;
+}
