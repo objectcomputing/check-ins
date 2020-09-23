@@ -79,11 +79,16 @@ exports[`renders correctly 1`] = `
             PDL: 
           </span>
         </div>
-        <textarea
-          disabled={true}
-          id="Bio"
-          onChange={[Function]}
-        />
+        <div>
+          <span>
+            Bio
+          </span>
+          <textarea
+            disabled={true}
+            id="Bio"
+            onChange={[Function]}
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -200,11 +205,16 @@ exports[`renders image_url 1`] = `
             PDL: 
           </span>
         </div>
-        <textarea
-          disabled={true}
-          id="Bio"
-          onChange={[Function]}
-        />
+        <div>
+          <span>
+            Bio
+          </span>
+          <textarea
+            disabled={true}
+            id="Bio"
+            onChange={[Function]}
+          />
+        </div>
       </div>
     </div>
   </div>

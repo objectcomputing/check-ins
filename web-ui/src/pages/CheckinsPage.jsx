@@ -17,15 +17,15 @@ import "./CheckinsPage.css";
 const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
-  const { checkins, index, userProfile } = state;
-  const checkin = checkins[index];
-  const canSeePersonnel = userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const { currentCheckin, userProfile } = state;
+  const canSeePersonnel =
+    userProfile && userProfile.role && userProfile.role.includes("PDL");
 
   useEffect(() => {
-    if (checkin && checkin.id) {
-      history.push(`/checkins/${checkin.id}`);
+    if (currentCheckin && currentCheckin.id) {
+      history.push(`/checkins/${currentCheckin.id}`);
     }
-  }, [checkin, history]);
+  }, [currentCheckin, history]);
 
   const showModal = () => {
     setShow(!show);
@@ -39,9 +39,9 @@ const CheckinsPage = ({ history }) => {
             <Container maxWidth="md">
               <div className="contents">
                 <CheckinProfile state={state} />
-                <CheckinsHistory checkins={checkins} index={index} />
-                {checkin && checkin.id && (
-                  <Note checkin={checkin} memberName={userProfile.name} />
+                <CheckinsHistory history={history} />
+                {currentCheckin && currentCheckin.id && (
+                  <Note memberName={userProfile.name} />
                 )}
               </div>
               <CheckinDocs />

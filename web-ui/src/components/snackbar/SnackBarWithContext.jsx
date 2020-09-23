@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
-import SnackBar from "./SnackBar";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const SnackBarWithContext = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -16,12 +21,19 @@ const SnackBarWithContext = () => {
       },
     });
   };
+  
   return (
-    <SnackBar
-      handleClose={closeToast}
+    <Snackbar
+      autoHideDuration={2500}
       open={toast !== "" && severity !== ""}
+      onClose={closeToast}
+      style={{ bottom: "10%" }}
       toast={toast}
-    />
+    >
+      <Alert onClose={closeToast} severity={"error"}>
+        {toast}
+      </Alert>
+    </Snackbar>
   );
 };
 
