@@ -12,7 +12,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -27,8 +26,11 @@ import java.util.UUID;
 @Tag(name = "guild")
 public class GuildController {
 
-    @Inject
-    private GuildServices guildService;
+    private final GuildServices guildService;
+
+    public GuildController(GuildServices guildService) {
+        this.guildService = guildService;
+    }
 
     @Error(exception = GuildBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
@@ -105,6 +107,7 @@ public class GuildController {
 
     @Get("/{?name,memberid}")
     public Set<Guild> findGuilds(@Nullable String name, @Nullable UUID memberid) {
+        Set<Guild> g = guildService.findByFields(name, memberid);
         return guildService.findByFields(name, memberid);
     }
 
