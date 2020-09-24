@@ -45,9 +45,9 @@ const CheckinsPage = ({ history }) => {
                   <Note checkin={checkin} memberName={userProfile.name} />
                 )}
               </div>
+              <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
               <CheckinDocs />
               <div className="modal-container">
-                <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
                 <Modal close={showModal} show={show}>
                   The checkin will no longer be able to be edited. Are you sure
                   that you are ready to close this check-in?
