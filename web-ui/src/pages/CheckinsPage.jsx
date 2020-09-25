@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
@@ -5,6 +6,7 @@ import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import CheckinProfile from "../components/checkin/CheckinProfile";
+import ActionItemsPanel from '../components/action_item/ActionItemsPanel';
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
 
@@ -30,7 +32,6 @@ const CheckinsPage = ({ history }) => {
   const showModal = () => {
     setShow(!show);
   };
-
   return (
     <div>
       <Container maxWidth="xl">
@@ -44,6 +45,7 @@ const CheckinsPage = ({ history }) => {
                   <Note checkin={checkin} memberName={userProfile.name} />
                 )}
               </div>
+              <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
               <CheckinDocs />
               <div className="modal-container">
                 <Modal close={showModal} show={show}>
