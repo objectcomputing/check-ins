@@ -28,8 +28,45 @@ exports[`renders correctly 1`] = `
       className="container"
     >
       <div
-        className="is-loading"
-      />
+        className="skeleton"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
+            }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
+            }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
+            }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
+            }
+          }
+        />
+      </div>
     </div>
   </div>
 </div>

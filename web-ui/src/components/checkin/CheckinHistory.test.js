@@ -1,8 +1,9 @@
 import React from "react";
 import CheckinsHistory from "./CheckinHistory";
 import { AppContextProvider } from "../../context/AppContext";
-import { act } from "react-dom/test-utils";
 import { render } from "@testing-library/react";
+import { Router } from "react-router-dom";
+import { createBrowserHistory } from "history";
 
 const initialState = {
   state: {
@@ -33,16 +34,16 @@ const initialState = {
 };
 
 it("renders correctly", async () => {
-  let asFragment;
-  await act(async () => {
-    ({ asFragment } = render(
+  const customHistory = createBrowserHistory();
+  snapshot(
+    <Router history={customHistory}>
       <AppContextProvider value={initialState}>
         <CheckinsHistory
           checkins={initialState.state.checkins}
           index={initialState.state.index}
+          history={customHistory}
         />
       </AppContextProvider>
-    ));
-  });
-  expect(asFragment()).toMatchSnapshot();
+    </Router>
+  );
 });

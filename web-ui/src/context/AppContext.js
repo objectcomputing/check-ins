@@ -5,8 +5,8 @@ import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 export const MY_PROFILE_UPDATE = "update_profile";
 export const UPDATE_USER_BIO = "update_bio";
 export const UPDATE_CHECKINS = "update_checkins";
-export const UPDATE_INDEX = "update_index";
 export const UPDATE_TOAST = "update_toast";
+export const UPDATE_CURRENT_CHECKIN = "update_current_checkin";
 
 const AppContext = React.createContext();
 
@@ -27,21 +27,12 @@ const reducer = (state, action) => {
         var d = new Date(b.checkInDate);
         return c - d;
       });
-      const { pathname } = document.location;
-      const [, , checkinid] = pathname.split("/");
-      if (checkinid) {
-        state.index = state.checkins.findIndex(
-          (checkin) => checkin.id === checkinid
-        );
-      } else {
-        state.index = state.checkins.length - 1;
-      }
-      break;
-    case UPDATE_INDEX:
-      state.index = action.payload;
       break;
     case UPDATE_TOAST:
       state.toast = action.payload;
+      break;
+    case UPDATE_CURRENT_CHECKIN:
+      state.currentCheckin = action.payload;
       break;
     default:
   }
@@ -49,13 +40,14 @@ const reducer = (state, action) => {
 };
 
 const initialState = {
-  userProfile: undefined,
   checkins: [],
+  currentCheckin: {},
   index: 0,
   toast: {
     severity: "",
     toast: "",
   },
+  userProfile: undefined,
 };
 
 const AppContextProvider = (props) => {
@@ -148,6 +140,7 @@ const AppContextProvider = (props) => {
           }
           dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
+        dispatch({ type: UPDATE_CHECKINS, payload: data });
       }
     }
     getCheckins();

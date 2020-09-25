@@ -22,8 +22,8 @@ const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { checkin, memberName } = props;
+  const { userProfile, currentCheckin } = state;
+  const { memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
@@ -34,19 +34,19 @@ const Notes = (props) => {
     userProfile.memberProfile.role &&
     (userProfile.memberProfile.role.includes("PDL") ||
       userProfile.memberProfile.role.includes("ADMIN")) &&
-    userProfile.memberProfile.id !== checkin.teamMemberId;
+    userProfile.memberProfile.id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
-    const id = checkin.id;
-    const createdby = checkin.teamMemberId;
+    const id = currentCheckin.id;
+    const createdby = currentCheckin.teamMemberId;
     async function getNotes() {
-      if (checkin) {
+      if (currentCheckin) {
         setIsLoading(true);
         let res = await getNoteByCheckinId(id);
         if (res.payload && res.payload.data && !res.error) {
           if (res.payload.data.length === 0) {
             res = await createCheckinNote({
-              checkinid: id,
+              currentCheckin: id,
               createdbyid: createdby,
               description: "",
             });
@@ -59,7 +59,7 @@ const Notes = (props) => {
       }
     }
     getNotes();
-  }, [checkin]);
+  }, [currentCheckin]);
 
   const handleNoteChange = (e) => {
     const { value } = e.target;
