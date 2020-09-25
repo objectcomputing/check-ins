@@ -23,31 +23,33 @@ const updateNote = debounce(realUpdate, 1000);
 const Notes = (props) => {
   const { state } = useContext(AppContext);
   const { userProfile, currentCheckin } = state;
+  const { memberProfile } = userProfile;
   const { memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
+  const pdlId = memberProfile && memberProfile.pdlId;
 
   const canViewPrivateNote =
-    userProfile.memberProfile &&
-    userProfile.memberProfile.role &&
-    (userProfile.memberProfile.role.includes("PDL") ||
-      userProfile.memberProfile.role.includes("ADMIN")) &&
-    userProfile.memberProfile.id !== currentCheckin.teamMemberId;
+    memberProfile &&
+    memberProfile.role &&
+    (memberProfile.role.includes("PDL") ||
+      memberProfile.role.includes("ADMIN")) &&
+    memberProfile.id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
-    const id = currentCheckin.id;
-    const createdby = currentCheckin.teamMemberId;
     async function getNotes() {
       if (currentCheckin) {
+        const id = currentCheckin.id;
+        // const createdby = currentCheckin.teamMemberId;
         setIsLoading(true);
         let res = await getNoteByCheckinId(id);
-        if (res.payload && res.payload.data && !res.error) {
+        if (pdlId && res.payload && res.payload.data && !res.error) {
           if (res.payload.data.length === 0) {
             res = await createCheckinNote({
-              currentCheckin: id,
-              createdbyid: createdby,
+              checkinid: id,
+              createdbyid: pdlId,
               description: "",
             });
             setNote(res.payload.data);
@@ -59,7 +61,7 @@ const Notes = (props) => {
       }
     }
     getNotes();
-  }, [currentCheckin]);
+  }, [currentCheckin, pdlId]);
 
   const handleNoteChange = (e) => {
     const { value } = e.target;

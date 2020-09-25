@@ -22,7 +22,7 @@ const CheckinsHistory = ({ history }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (checkins.length) {
+    if (checkins && checkins.length) {
       const { pathname } = history.location;
       const [, , checkinid] = pathname.split("/");
       const i = checkinid
@@ -37,10 +37,11 @@ const CheckinsHistory = ({ history }) => {
 
   const getCheckinDate = () => {
     if (currentCheckin && currentCheckin.checkInDate) {
-      return new Date(currentCheckin.checkInDate);
+      const [year, month, day, hour, minute] = currentCheckin.checkInDate;
+      return new Date(year, month - 1, day, hour, minute, 0);
     }
     // return new date unless you are running a Jest test
-    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : null;
+    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
   };
 
   const lastIndex = checkins.length - 1;
@@ -64,8 +65,10 @@ const CheckinsHistory = ({ history }) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
     const checkin = checkins[index];
-    const dateArray = [year, month, day];
+    const dateArray = [year, month, day, hours, minutes, 0];
     const updatedCheckin = await updateCheckin({
       ...checkin,
       checkInDate: dateArray,
@@ -110,6 +113,7 @@ const CheckinsHistory = ({ history }) => {
             closeOnScroll
             customInput={<DateInput />}
             dateFormat="MMMM dd, yyyy h:mm aa"
+            disabled={!checkins.length || currentCheckin.completed === true}
             onChange={pickDate}
             selected={getCheckinDate()}
             showTimeSelect

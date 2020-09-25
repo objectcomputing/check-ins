@@ -91,8 +91,10 @@ const AppContextProvider = (props) => {
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const day = newDate.getDate();
-    const monthArray = [year, month, day];
-    return monthArray;
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const dateTimeArray = [year, month, day, hours, minutes, 0];
+    return dateTimeArray;
   };
 
   useEffect(() => {
