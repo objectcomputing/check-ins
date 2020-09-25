@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
@@ -14,8 +15,13 @@ import java.util.UUID;
 public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {
 
     Optional<MemberProfile> findByWorkEmail(String workEmail);
-    List<MemberProfile> findByName(@NotBlank String name);
-    List<MemberProfile> findByRole(@NotBlank String name);
-    List<MemberProfile> findByPdlId(@NotBlank UUID pdlId);
+
+    @Query("SELECT * " +
+            "FROM member_profile mp " +
+            "WHERE (:name IS NULL OR mp.name = :name) " +
+            "AND (:role IS NULL OR mp.role = :role) " +
+            "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
+            "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) ")
+    List<MemberProfile> search(@Nullable String name, @Nullable String role, @Nullable String pdlId, @Nullable String workEmail);
     List<MemberProfile> findAll();
 }

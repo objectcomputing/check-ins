@@ -10,10 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +37,7 @@ public class MemberProfileServicesImplTest {
         MemberProfile profileTwo = mkMemberProfile("2");
         MemberProfile profileThree = mkMemberProfile("3");
 
-        when(mockMemberProfileRepository.findAll())
+        when(mockMemberProfileRepository.search(null, null, null, null))
                 .thenReturn(List.of(profileOne, profileTwo, profileThree));
 
         Set<MemberProfile> actual = testObject.findByValues(null, null, null, null);
@@ -49,7 +46,6 @@ public class MemberProfileServicesImplTest {
         assertTrue(actual.contains(profileOne));
         assertTrue(actual.contains(profileTwo));
         assertTrue(actual.contains(profileThree));
-        verify(mockMemberProfileRepository, times(1)).findAll();
     }
 
     @Test
@@ -63,16 +59,8 @@ public class MemberProfileServicesImplTest {
         profileThree.setName(profileOne.getName());
         profileThree.setPdlId(testPdlId);
 
-        when(mockMemberProfileRepository.findAll())
-                .thenReturn(List.of(profileOne, profileTwo, profileThree));
-        when(mockMemberProfileRepository.findByName(profileOne.getName()))
-                .thenReturn(List.of(profileOne, profileTwo, profileThree));
-        when(mockMemberProfileRepository.findByRole(profileOne.getRole()))
-                .thenReturn(List.of(profileOne, profileTwo));
-        when(mockMemberProfileRepository.findByPdlId(profileOne.getPdlId()))
-                .thenReturn(List.of(profileOne, profileThree));
-        when(mockMemberProfileRepository.findByWorkEmail(profileOne.getWorkEmail()))
-                .thenReturn(java.util.Optional.of(profileOne));
+        when(mockMemberProfileRepository.search(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId().toString(), profileOne.getWorkEmail()))
+                .thenReturn(Collections.singletonList(profileOne));
 
         Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId(), profileOne.getWorkEmail());
 
