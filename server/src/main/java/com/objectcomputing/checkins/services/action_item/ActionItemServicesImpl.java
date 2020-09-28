@@ -55,10 +55,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
         return actionItemRet;
     }
 
-//    @Override
     public ActionItem read(@NotNull UUID id) {
 
-        int x;  // breakpoint- next line gets npe
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
@@ -66,6 +64,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
         validate(actionItemResult == null, "Invalid action item id %s", id);
+
         if(!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(actionItemResult.getCheckinid()).orElse(null);
             final UUID pdlId = checkinRecord!=null?checkinRecord.getPdlId():null;
@@ -75,15 +74,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         return actionItemResult;
 
-//        return actionItemRepo.findById(id).orElse(null);
-
     }
-//
-//    public Set<ActionItem> readAll() {
-//        Set<ActionItem> actionItems = new HashSet<>();
-//        actionItemRepo.findAll().forEach(actionItems::add);
-//        return actionItems;
-//    }
 
     public ActionItem update(ActionItem actionItem) {
         ActionItem actionItemRet = null;
@@ -132,6 +123,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (checkinid == null && createdbyid == null) {
 
         }
+
+//        if(!isAdmin) {
+//            CheckIn checkinRecord = checkinRepo.findById(actionItemResult.getCheckinid()).orElse(null);
+//            final UUID pdlId = checkinRecord!=null?checkinRecord.getPdlId():null;
+//            final UUID createById = checkinRecord!=null?checkinRecord.getTeamMemberId():null;
+//            validate(!currentUser.getId().equals(pdlId)&&!currentUser.getId().equals(createById),"User is unauthorized to do this operation");
+//        }
+
         Set<ActionItem> actionItems = new HashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 

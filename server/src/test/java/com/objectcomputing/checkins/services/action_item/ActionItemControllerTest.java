@@ -248,7 +248,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
-    void testReadActionItemByPDL() {
+    void testReadActionItemByIdByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
@@ -262,18 +262,44 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         assertEquals(actionItem, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-//
-//        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
-//
-//        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
-//
-//        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-//        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
-//
-//        assertEquals(actionItem, response.body());
-//        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReadCheckinNoteByAdmin(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",actionItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(),ADMIN_ROLE);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(Set.of(actionItem), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReadActionItemFoundByUnrelatedUser(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",actionItem.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(),PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals("User is unauthorized to do this operation", error);
+
     }
 
     @Test
@@ -320,6 +346,27 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     }
 
+    @Test
+    void testFindAllActionItemByNonAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(memberProfileForPDL.getWorkEmail(),MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(),href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
 
     @Test
     void testUpdateActionItem() {
