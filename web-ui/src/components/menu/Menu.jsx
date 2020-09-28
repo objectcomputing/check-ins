@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
-    backgroundColor: "#255aa8",
+    backgroundColor: "#e4e3e4",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
   // toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor: "#a5a4a8",
   },
   content: {
     flexGrow: 1,
@@ -88,32 +89,27 @@ function Menu() {
     setMobileOpen(!mobileOpen);
   };
 
-  const linkStyle = { textDecoration: "none" };
+  const linkStyle = { textDecoration: "none", color: "white" };
 
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <h3 className="checkin">Check in!</h3>
-      <Button>
+      <div style={{display: "flex", justifyContent: "center"}}><img alt="Object Computing, Inc." src="/img/ocicube-white.png" style={{width:"50%"}}/></div>
+      <br/>
+      <Button size="large" style={{width: "100%"}}>
         <Link style={linkStyle} to="/">
           Home
         </Link>
       </Button>
       <br />
-      <Button>
-        <Link style={linkStyle} to="/resources">
-          Resources
+      <Button size="large" style={{width: "100%"}}>
+        <Link style={linkStyle} to="/teams">
+          Teams
         </Link>
       </Button>
       <br />
-      <Button>
-        <Link style={linkStyle} to="/team">
-          Team
-        </Link>
-      </Button>
-      <br />
-      <Button>
-        <Link style={linkStyle} to={"/checkins"}>
+      <Button size="large" style={{width: "100%"}}>
+        <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
       </Button>

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div>
+<div
+  className="Profile"
+>
   <div
     className="flex-row"
     style={
@@ -127,7 +129,9 @@ exports[`renders correctly 1`] = `
 `;
 
 exports[`renders image_url 1`] = `
-<div>
+<div
+  className="Profile"
+>
   <div
     className="flex-row"
     style={

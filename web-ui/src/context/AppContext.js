@@ -1,12 +1,17 @@
 import React, { useEffect, useReducer, useMemo } from "react";
-import { getCurrentUser, updateMember } from "../api/member.js";
-import { getCheckinByMemberId, createCheckin } from "../api/checkins";
+import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
+import { getAllTeamMembers } from "../api/team";
+import { getCheckinByMemberId,createCheckin } from "../api/checkins";
 
-export const MY_PROFILE_UPDATE = "update_profile";
-export const UPDATE_USER_BIO = "update_bio";
-export const UPDATE_CHECKINS = "update_checkins";
-export const UPDATE_TOAST = "update_toast";
-export const UPDATE_CURRENT_CHECKIN = "update_current_checkin";
+export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
+export const UPDATE_USER_BIO = "@@check-ins/update_bio";
+export const UPDATE_CHECKINS = "@@check-ins/update_checkins";
+export const UPDATE_INDEX = "@@check-ins/update_index";
+export const UPDATE_TOAST = "@@check-ins/update_toast";
+export const UPDATE_CURRENT_CHECKIN = "@@check-ins/update_current_checkin";
+export const UPDATE_TEAMS = "@@check-ins/update_teams";
+export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
+export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 
 const AppContext = React.createContext();
 
@@ -29,6 +34,15 @@ const reducer = (state, action) => {
     case UPDATE_TOAST:
       state.toast = action.payload;
       break;
+    case UPDATE_TEAMS:
+      state.teams = action.payload;
+      break;
+    case UPDATE_MEMBER_PROFILES:
+      state.memberProfiles = action.payload;
+      break;
+    case UPDATE_TEAM_MEMBERS:
+      state.teamMembers = action.payload;
+      break;
     case UPDATE_CURRENT_CHECKIN:
       state.currentCheckin = action.payload;
       break;
@@ -40,6 +54,8 @@ const reducer = (state, action) => {
 const initialState = {
   checkins: [],
   currentCheckin: {},
+  teams: [],
+  memberProfiles: [],
   index: 0,
   toast: {
     severity: "",
@@ -60,17 +76,16 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     async function updateUserProfile() {
-      if (initialState.userProfile === undefined) {
-        let res = await getCurrentUser();
-        let profile =
-          res.payload && res.payload.data && !res.error
-            ? res.payload.data
-            : undefined;
+      let res = await getCurrentUser();
+      let profile =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
 
-        if (profile) {
-          dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
-        }
+      if (profile) {
+        dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
       }
+
     }
     updateUserProfile();
   }, []);
@@ -94,6 +109,36 @@ const AppContextProvider = (props) => {
     const dateTimeArray = [year, month, day, hours, minutes, 0];
     return dateTimeArray;
   };
+
+  useEffect(() => {
+    async function getMemberProfiles() {
+      let res = await getAllMembers();
+      let profiles =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
+
+      if (profiles) {
+        dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
+      }
+    }
+    getMemberProfiles();
+  }, []);
+
+  useEffect(() => {
+    async function getTeamMembers() {
+      let res = await getAllTeamMembers();
+      let teamMembers =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
+
+      if (teamMembers) {
+        dispatch({ type: UPDATE_TEAM_MEMBERS, payload: teamMembers });
+      }
+    }
+    getTeamMembers();
+  }, []);
 
   useEffect(() => {
     async function getCheckins() {
@@ -154,5 +199,28 @@ const AppContextProvider = (props) => {
     </AppContext.Provider>
   );
 };
+
+const selectProfileMap = ({memberProfiles}) => {
+  if (memberProfiles && memberProfiles.length) {
+    memberProfiles = memberProfiles.reduce((mappedById, profile) => {
+      mappedById[profile.id] = profile;
+      return mappedById;
+    }, {});
+  }
+  return memberProfiles;
+};
+
+const selectMembersByTeamId = ({teamMembers}) => (id) => {
+  let members = [];
+  if(teamMembers && teamMembers.length) {
+    members = teamMembers.filter(member => member.teamid === id);
+  }
+  return members;
+};
+
+const selectMemberProfilesByTeamId = (state) => (id) => selectMembersByTeamId(state)(id).map(member => {return {...selectProfileMap(state)[member.memberid], ...member}});
+
+AppContext.selectProfileById = selectProfileMap;
+AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
 
 export { AppContext, AppContextProvider };

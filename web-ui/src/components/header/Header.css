@@ -5,10 +5,12 @@
   font-weight: 500;
   margin-top: 5px;
   margin-bottom: 0px;
+  margin-left: .5rem;
 }
 
 .header {
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-direction: row;
   margin-top: 25px;
