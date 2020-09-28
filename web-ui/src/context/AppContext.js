@@ -23,9 +23,7 @@ const reducer = (state, action) => {
       state.checkins = action.payload;
       //sort by date
       state.checkins.sort(function (a, b) {
-        var c = new Date(a.checkInDate);
-        var d = new Date(b.checkInDate);
-        return c - d;
+        return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       break;
     case UPDATE_TOAST:

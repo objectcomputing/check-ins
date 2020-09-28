@@ -42,19 +42,24 @@ const Notes = (props) => {
     async function getNotes() {
       if (currentCheckin) {
         const id = currentCheckin.id;
-        // const createdby = currentCheckin.teamMemberId;
         setIsLoading(true);
         let res = await getNoteByCheckinId(id);
-        if (pdlId && res.payload && res.payload.data && !res.error) {
-          if (res.payload.data.length === 0) {
-            res = await createCheckinNote({
-              checkinid: id,
-              createdbyid: pdlId,
-              description: "",
-            });
+        if (
+          pdlId &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.data.length > 0 &&
+          !res.error
+        ) {
+          setNote(res.payload.data[0]);
+        } else {
+          res = await createCheckinNote({
+            checkinid: id,
+            createdbyid: pdlId,
+            description: "",
+          });
+          if (res && res.payload && res.payload.data) {
             setNote(res.payload.data);
-          } else {
-            setNote(res.payload.data[0]);
           }
         }
         setIsLoading(false);
@@ -93,6 +98,7 @@ const Notes = (props) => {
             </div>
           ) : (
             <textarea
+              disabled={currentCheckin.completed === true}
               onChange={handleNoteChange}
               value={note && note.description ? note.description : ""}
             ></textarea>

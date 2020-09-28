@@ -23,15 +23,11 @@ const CheckinsHistory = ({ history }) => {
 
   useEffect(() => {
     if (checkins && checkins.length) {
-      const { pathname } = history.location;
-      const [, , checkinid] = pathname.split("/");
-      const i = checkinid
-        ? checkins.findIndex((checkin) => checkin.id === checkinid)
-        : checkins.length - 1;
-      setIndex(i);
       const checkin = checkins[index];
-      dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
-      history.push(`/checkins/${checkin.id}`);
+      if (checkin) {
+        dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
+        history.push(`/checkins/${checkin.id}`);
+      }
     }
   }, [checkins, index, dispatch, history]);
 
@@ -51,13 +47,17 @@ const CheckinsHistory = ({ history }) => {
 
   const previousCheckin = () => {
     if (index !== 0) {
-      setIndex((index) => index - 1);
+      const i = index - 1;
+      setIndex(i);
+      history.push(`/checkins/${checkins[i].id}`);
     }
   };
 
   const nextCheckin = () => {
     if (index !== lastIndex) {
-      setIndex((index) => index + 1);
+      const i = index + 1;
+      setIndex(i);
+      history.push(`/checkins/${checkins[i].id}`);
     }
   };
 
