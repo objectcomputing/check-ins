@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Validated
-@Controller("/file")
+@Controller("/services/file")
 @Tag(name = "file")
 @Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
 @Singleton
@@ -50,7 +50,7 @@ public class FileController {
      * @return {@link HttpResponse<OutputStream>} Returns OutputStream of document
      */
     @Get("/{id}/download")
-    public HttpResponse<OutputStream> downloadDocument(@NotNull UUID id) {
+    public HttpResponse<OutputStream> downloadDocument(@NotNull String id) {
         return fileServices.downloadFiles(id);
     }
 
@@ -61,7 +61,7 @@ public class FileController {
      * @return HttpResponse
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<?> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+    public HttpResponse<?> upload(@NotNull UUID checkInId, @Nullable @Body CompletedFileUpload file) {
         return fileServices.uploadFile(checkInId, file);
     }
 

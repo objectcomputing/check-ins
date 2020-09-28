@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.file;
 
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -27,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -71,7 +73,7 @@ public class FileServicesImpl implements FileServices {
             validate(drive == null, "Unable to access Google Drive");
             validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
-            if (checkInID.equals(null) && isAdmin) {
+            if (checkInID == null && isAdmin) {
                 //find all
                 FileList fileList = drive.files().list().execute();
                 for (File file : fileList.getFiles()) {
@@ -111,7 +113,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public HttpResponse<OutputStream> downloadFiles(@NotNull UUID uploadDocId) {
+    public HttpResponse<OutputStream> downloadFiles(@NotNull String uploadDocId) {
 
         OutputStream outputStream = new ByteArrayOutputStream();
         try {
@@ -123,6 +125,7 @@ public class FileServicesImpl implements FileServices {
             return HttpResponse.serverError();
         }
 
+        System.out.println("outputstream = " + outputStream);
         return HttpResponse.ok(outputStream);
     }
 
@@ -139,9 +142,8 @@ public class FileServicesImpl implements FileServices {
 
         MemberProfile teamMember = memberProfileServices.getById(checkIn.getTeamMemberId());
         String subjectName = teamMember.getName();
-        String fileId = String.format(file.getFilename(), LocalDate.now());
         String folderId;
-        String directoryName = String.format(subjectName, LocalDate.now());
+        String directoryName = String.format("subjectName", LocalDate.now());
         validate((!isAdmin &&
                         !currentUser.getId().equals(checkIn.getTeamMemberId()) &&
                         !currentUser.getId().equals(teamMember.getPdlId())),
@@ -153,10 +155,9 @@ public class FileServicesImpl implements FileServices {
             validate(drive == null, "Unable to access Google Drive");
             validate(googleCredentials == null, "Configuration error, please contact admin");
 
-            final File fileMetadata = new File();
+            File fileMetadata = new File();
             fileMetadata.setName(file.getFilename());
             fileMetadata.setMimeType(file.getContentType().orElse(MediaType.APPLICATION_OCTET_STREAM_TYPE).toString());
-            fileMetadata.setId(fileId);
 
             Drive.Files.List driveIndex = drive.files().list();
             if(driveIndex.containsValue(directoryName) || driveIndex.containsKey(directoryName)) {
@@ -165,17 +166,18 @@ public class FileServicesImpl implements FileServices {
             } else {
                 //Directory does not exist on Google Drive - create a new directory
                 folderId = createNewDirectoryOnDrive(drive, directoryName);
-                fileMetadata.setParents(Arrays.asList(folderId));
+                fileMetadata.setParents(Collections.singletonList(folderId));
             }
 
-            InputStreamContent content = new InputStreamContent(fileMetadata.getMimeType(), file.getInputStream());
-            drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("parents").execute();
+            InputStreamContent content = new InputStreamContent(file.getContentType().toString(), file.getInputStream());
+            File uploadedFile = drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("id").execute();
 
-            CheckinDocument cd = new CheckinDocument(checkInID, fileId);
+            System.out.println("returned fileID = " + uploadedFile.getId());
+            CheckinDocument cd = new CheckinDocument(checkInID, uploadedFile.getId());
             checkinDocumentServices.save(cd);
 
-            emailSender.sendEmail("New Check-in Notes",
-                    "New check-in notes have been uploaded. Please check the Google Drive folder.");
+//            emailSender.sendEmail("New Check-in Notes",
+//                    "New check-in notes have been uploaded. Please check the Google Drive folder.");
         } catch (final IOException e) {
             LOG.error("Unexpected error processing file upload.", e);
             return HttpResponse.badRequest(String.format("Unexpected error processing %s", file.getFilename()));
@@ -212,6 +214,7 @@ public class FileServicesImpl implements FileServices {
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
         File folder = drive.files().create(fileMetadata).execute();
+        System.out.println("Folder created successfully, returning folder ID = " + folder.getId());
         return folder.getId();
     }
 }
