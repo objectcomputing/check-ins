@@ -76,17 +76,16 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     async function updateUserProfile() {
-      if (initialState.userProfile === undefined) {
-        let res = await getCurrentUser();
-        let profile =
-          res.payload && res.payload.data && !res.error
-            ? res.payload.data
-            : undefined;
+      let res = await getCurrentUser();
+      let profile =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
 
-        if (profile) {
-          dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
-        }
+      if (profile) {
+        dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
       }
+
     }
     updateUserProfile();
   }, []);

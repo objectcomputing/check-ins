@@ -34,7 +34,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             aria-labelledby="edit-team-modal-title"
         >
             <div className="EditTeamModal">
-                <h2>Add a team</h2>
+                <h2>Edit your team</h2>
                 <TextField
                     id="team-name-input"
                     label="Team Name"
@@ -45,6 +45,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                     onChange={(e) => setTeam({...editedTeam, name: e.target.value})}
                 />
                 <TextField
+                    id="team-description-input"
                     label="Description"
                     className="fullWidth"
                     placeholder="What do they do?"
