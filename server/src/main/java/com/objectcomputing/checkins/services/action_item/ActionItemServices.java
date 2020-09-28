@@ -1,19 +1,22 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import nu.studer.sample.tables.pojos.ActionItems;
+
+import javax.validation.Valid;
 import java.util.Set;
 import java.util.UUID;
 
 public interface ActionItemServices {
 
-    ActionItem save(ActionItem actionItem);
+    ActionItems save(ActionItemCreateDTO actionItem);
 
-    ActionItem read(UUID id);
+    ActionItems read(UUID id);
 
-    Set<ActionItem> readAll();
+    Set<ActionItems> readAll();
 
-    ActionItem update(ActionItem actionItem);
+    ActionItems update(@Valid ActionItemUpdateDTO actionItem);
 
-    Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid);
+    Set<ActionItems> findByFields(UUID checkinid, UUID createdbyid);
 
     void delete(UUID id);
 }

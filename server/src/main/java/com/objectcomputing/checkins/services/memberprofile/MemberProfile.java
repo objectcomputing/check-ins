@@ -17,8 +17,10 @@ import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
-@Table(name ="member_profile")
+@Table(name = MemberProfile.MEMBER_PROFILE)
 public class MemberProfile {
+
+    public static final String MEMBER_PROFILE = "member_profile";
 
     @Id
     @Column(name="id")

@@ -10,6 +10,7 @@ import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import nu.studer.sample.tables.pojos.ActionItems;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -46,10 +47,9 @@ public class ActionItemController {
      * @return {@link HttpResponse <ActionItem>}
      */
     @Post()
-    public HttpResponse<ActionItem> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
+    public HttpResponse<ActionItems> createActionItem(@Body @Valid ActionItemCreateDTO actionItem,
                                                      HttpRequest<ActionItemCreateDTO> request) {
-        ActionItem newActionItem = actionItemServices.save(new ActionItem(actionItem.getCheckinid(),
-                actionItem.getCreatedbyid(), actionItem.getDescription()));
+        ActionItems newActionItem = actionItemServices.save(actionItem);
         return HttpResponse
                 .created(newActionItem)
                 .headers(headers -> headers.location(
@@ -63,8 +63,8 @@ public class ActionItemController {
      * @return {@link HttpResponse< ActionItem >}
      */
     @Put()
-    public HttpResponse<?> updateActionItem(@Body @Valid ActionItem actionItem, HttpRequest<ActionItem> request) {
-        ActionItem updatedActionItem = actionItemServices.update(actionItem);
+    public HttpResponse<?> updateActionItem(@Body @Valid ActionItemUpdateDTO actionItem, HttpRequest<ActionItem> request) {
+        ActionItems updatedActionItem = actionItemServices.update(actionItem);
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(
@@ -92,7 +92,7 @@ public class ActionItemController {
      * @return {@link ActionItem}
      */
     @Get("/{id}")
-    public ActionItem readActionItem(UUID id) {
+    public ActionItems readActionItem(UUID id) {
         return actionItemServices.read(id);
     }
 
@@ -104,7 +104,7 @@ public class ActionItemController {
      * @return {@link List < CheckIn > list of checkins}
      */
     @Get("/{?checkinid,createdbyid}")
-    public Set<ActionItem> findActionItems(@Nullable UUID checkinid,
+    public Set<ActionItems> findActionItems(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
         return actionItemServices.findByFields(checkinid, createdbyid);
     }
@@ -119,16 +119,14 @@ public class ActionItemController {
     public HttpResponse<?> loadActionItems(@Body @Valid @NotNull List<ActionItemCreateDTO> actionItems,
                                            HttpRequest<List<ActionItem>> request) {
         List<String> errors = new ArrayList<>();
-        List<ActionItem> actionItemsCreated = new ArrayList<>();
+        List<ActionItems> actionItemsCreated = new ArrayList<>();
         for (ActionItemCreateDTO actionItemDTO : actionItems) {
-            ActionItem actionItem = new ActionItem(actionItemDTO.getCheckinid(),
-                    actionItemDTO.getCreatedbyid(), actionItemDTO.getDescription());
             try {
-                actionItemServices.save(actionItem);
-                actionItemsCreated.add(actionItem);
+                actionItemServices.save(actionItemDTO);
+                actionItemsCreated.add(actionItemServices.save(actionItemDTO));
             } catch (ActionItemBadArgException e) {
-                errors.add(String.format("Member %s's action item was not added to CheckIn %s because: %s", actionItem.getCreatedbyid(),
-                        actionItem.getCheckinid(), e.getMessage()));
+                errors.add(String.format("Member %s's action item was not added to CheckIn %s because: %s", actionItemDTO.getCreatedbyid(),
+                        actionItemDTO.getCheckinid(), e.getMessage()));
             }
         }
         if (errors.isEmpty()) {

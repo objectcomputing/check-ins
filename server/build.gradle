@@ -12,6 +12,7 @@ plugins {
     id "application"
     id "idea"
     id "groovy"
+    id 'nu.studer.jooq' version '5.1.1'
 }
 
 targetCompatibility = "11"
@@ -58,7 +59,9 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
         exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     }
+    implementation "io.micronaut.sql:micronaut-jooq"
     implementation 'org.postgresql:postgresql:42.2.12'
+    jooqGenerator 'org.postgresql:postgresql:42.2.12'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
     implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     implementation 'io.micronaut.flyway:micronaut-flyway'
@@ -153,5 +156,62 @@ appengine {
         stopPreviousVersion = true
         promote = true
         project = 'oci-intern-2019'
+    }
+}
+
+jooq {
+    version = '3.13.4'  // default (can be omitted)
+    edition = nu.studer.gradle.jooq.JooqEdition.OSS  // default (can be omitted)
+
+    configurations {
+        main {  // name of the jOOQ configuration
+            generateSchemaSourceOnCompilation = true  // default (can be omitted)
+
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5432/checkinsdb'
+                    user = 'postgres'
+                    password = 'postgres'
+                    properties {
+                        property {
+                            key = 'ssl'
+                            value = 'false'
+                        }
+                    }
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        forcedTypes {
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'JSONB?'
+                            }
+                            forcedType {
+                                name = 'varchar'
+                                includeExpression = '.*'
+                                includeTypes = 'INET'
+                            }
+                        }
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'nu.studer.sample'
+                        directory = 'build/generated-src/jooq/main'  // default (can be omitted)
+                    }
+                    strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                }
+            }
+        }
     }
 }

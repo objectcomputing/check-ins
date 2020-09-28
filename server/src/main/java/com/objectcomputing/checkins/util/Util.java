@@ -11,4 +11,8 @@ public class Util {
     public static String nullSafeUUIDToString(UUID uuid) {
         return uuid == null ? null : uuid.toString();
     }
+
+    public static UUID nullSafeStringToUUID(String string) {
+        return string == null ? null : UUID.fromString(string);
+    }
 }
