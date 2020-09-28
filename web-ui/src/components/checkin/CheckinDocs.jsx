@@ -13,7 +13,7 @@ const UploadDocs = () => {
   const { dispatch } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
-  const [fileColor, setFileColor] = useState("");
+  const [fileColors, setFileColors] = useState({});
 
   const handleFile = (file) => {
     setFiles([...files, file]);
@@ -21,27 +21,30 @@ const UploadDocs = () => {
   };
 
   const addFile = async (file) => {
+    let formData = new FormData();
+    formData.append("file", file);
     if (!file) {
       setLoading(false);
       return;
     }
     setLoading(true);
-    let res = await uploadFile(file);
-    if (res.error) {
-      setLoading(false);
-      setFileColor("red");
-    } else {
-      const resJson = res.payload.data();
-      Object.keys(resJson)[0] === "completeMessage"
-        ? setFileColor("green") &&
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: "success",
-              toast: "File successfully uploaded",
-            },
-          })
-        : setFileColor("red");
+    try {
+      let res = await uploadFile(formData);
+      if (res.error) throw new Error(res.error);
+      const { data, status } = res.payload;
+      if (status !== 200) throw new Error("status equals " + status);
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: data.completeMessage,
+        },
+      });
+      setFileColors((fileColors) => ({ ...fileColors, [file.name]: "green" }));
+    } catch (e) {
+      setFileColors((fileColors) => ({ ...fileColors, [file.name]: "red" }));
+      console.log({ e });
+    } finally {
       setLoading(false);
     }
   };
@@ -52,7 +55,7 @@ const UploadDocs = () => {
         return null;
       } else {
         return (
-          <div key={file.name} style={{ color: fileColor }}>
+          <div key={file.name} style={{ color: fileColors[file.name] }}>
             {file.name}
             <Button
               className="remove-file"

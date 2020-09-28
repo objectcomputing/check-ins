@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect, useState } from "react";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinDocs from "../components/checkin/CheckinDocs";
@@ -6,7 +5,7 @@ import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import CheckinProfile from "../components/checkin/CheckinProfile";
-import ActionItemsPanel from '../components/action_item/ActionItemsPanel';
+import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
 

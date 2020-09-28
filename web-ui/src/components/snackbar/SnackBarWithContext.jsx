@@ -21,7 +21,7 @@ const SnackBarWithContext = () => {
       },
     });
   };
-  
+
   return (
     <Snackbar
       autoHideDuration={2500}
@@ -30,9 +30,11 @@ const SnackBarWithContext = () => {
       style={{ bottom: "10%" }}
       toast={toast}
     >
-      <Alert onClose={closeToast} severity={"error"}>
-        {toast}
-      </Alert>
+      {severity === "" ? null : (
+        <Alert onClose={closeToast} severity={severity}>
+          {toast}
+        </Alert>
+      )}
     </Snackbar>
   );
 };

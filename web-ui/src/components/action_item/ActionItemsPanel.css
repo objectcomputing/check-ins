@@ -1,22 +1,25 @@
 .action-items-container {
-  width: fit-content;
+  width: 75%;
   height: fit-content;
-  border: solid 3px black;
+  border: solid 2px black;
+  margin: 0 auto;
+  margin-top: 25px;
 }
 
 .description-field {
-     text-align: left;
-     width: 200px;
-     align-items: center;
-     display: flex;
-     flex-direction: row;
- }
+  text-align: left;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
 
- .delete-button {
-    background: red;
- }
+.delete-button {
+  background: red;
+}
 
-.action-items-info, .action-items-info-hidden {
+.action-items-info,
+.action-items-info-hidden {
   text-align: left;
   display: inline-block;
   margin-bottom: 1px;

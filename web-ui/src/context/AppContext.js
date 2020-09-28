@@ -23,9 +23,7 @@ const reducer = (state, action) => {
       state.checkins = action.payload;
       //sort by date
       state.checkins.sort(function (a, b) {
-        var c = new Date(a.checkInDate);
-        var d = new Date(b.checkInDate);
-        return c - d;
+        return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       break;
     case UPDATE_TOAST:
@@ -91,8 +89,10 @@ const AppContextProvider = (props) => {
     const year = newDate.getFullYear();
     const month = newDate.getMonth() + 1;
     const day = newDate.getDate();
-    const monthArray = [year, month, day];
-    return monthArray;
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+    const dateTimeArray = [year, month, day, hours, minutes, 0];
+    return dateTimeArray;
   };
 
   useEffect(() => {
@@ -138,7 +138,6 @@ const AppContextProvider = (props) => {
                 : null;
             data = [checkin];
           }
-          dispatch({ type: UPDATE_CHECKINS, payload: data });
         }
         dispatch({ type: UPDATE_CHECKINS, payload: data });
       }

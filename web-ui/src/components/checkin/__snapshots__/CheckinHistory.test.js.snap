@@ -6,6 +6,7 @@ exports[`renders correctly 1`] = `
     className="date-picker"
   >
     <a
+      className="arrow"
       href="/undefined"
       onClick={[Function]}
     >
@@ -56,6 +57,7 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <a
+      className="arrow"
       href="/undefined"
       onClick={[Function]}
     >
