@@ -9,9 +9,6 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-
-
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
@@ -27,7 +24,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     public MemberProfile findOrSaveUser(@Nullable String name, @NotNull String workEmail) {
 
         Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
-        return userProfile.orElseGet(() -> memberProfileServices.saveProfile(new MemberProfile(name, MEMBER_ROLE , null,
+        return userProfile.orElseGet(() -> memberProfileServices.saveProfile(new MemberProfile(name, "", null,
                 "", workEmail, "", null, "")));
     }
 }
