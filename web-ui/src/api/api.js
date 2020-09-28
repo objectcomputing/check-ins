@@ -1,7 +1,5 @@
 import { UPDATE_TOAST } from "../context/AppContext";
 
-window.snackDispatch = jest.fn();
-
 export const BASE_API_URL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
   : "http://localhost:8080";

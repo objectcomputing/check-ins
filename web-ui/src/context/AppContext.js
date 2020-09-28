@@ -207,7 +207,6 @@ const selectProfileMap = ({memberProfiles}) => {
       return mappedById;
     }, {});
   }
-  console.log(JSON.stringify(memberProfiles));
   return memberProfiles;
 };
 
@@ -216,7 +215,6 @@ const selectMembersByTeamId = ({teamMembers}) => (id) => {
   if(teamMembers && teamMembers.length) {
     members = teamMembers.filter(member => member.teamid === id);
   }
-  console.log(JSON.stringify(members));
   return members;
 };
 

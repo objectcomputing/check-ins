@@ -19,8 +19,6 @@ const TeamSummaryCard = ({ team }) => {
     const {state} = useContext(AppContext);
     const teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
 
-    console.log(JSON.stringify(teamMembers));
-
     let leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
     let nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
 

@@ -3,7 +3,6 @@ import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
 //import EditPDLPage from "./pages/EditPDLPage";
-import HomePage from "./pages/HomePage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
