@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services;
 
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
+import io.micronaut.context.env.Environment;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.annotation.MicronautTest;
 import org.flywaydb.core.Flyway;
@@ -11,7 +12,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.inject.Inject;
 
-@MicronautTest(environments = "test", transactional = false)
+@MicronautTest(environments = Environment.TEST, transactional = false)
 @Testcontainers
 public abstract class TestContainersSuite implements RepositoryFixture {
 

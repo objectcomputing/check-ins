@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.security;
 
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
@@ -14,7 +15,7 @@ import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
-@Requires(env = "test")
+@Requires(env = Environment.TEST, missingBeans = LocalUserPasswordAuthProvider.class)
 @Singleton
 public class UserPasswordAuthProvider implements AuthenticationProvider {
 
