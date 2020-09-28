@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { getMembersByTeam } from '../../api/team';
 import { AppContext } from '../../context/AppContext';
 
 const propTypes = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useMemo, memo } from "react";
+import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId,createCheckin } from "../api/checkins";
