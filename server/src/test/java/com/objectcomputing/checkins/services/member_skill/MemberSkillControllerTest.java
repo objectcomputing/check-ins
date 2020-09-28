@@ -175,10 +175,9 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
         final HttpRequest<Object> request = HttpRequest.DELETE(memberSkill.getId().toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, String.class));
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
