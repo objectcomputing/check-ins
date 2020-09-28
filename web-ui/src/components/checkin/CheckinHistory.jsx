@@ -113,7 +113,7 @@ const CheckinsHistory = ({ history }) => {
             closeOnScroll
             customInput={<DateInput />}
             dateFormat="MMMM dd, yyyy h:mm aa"
-            disabled={!checkins.length || currentCheckin.completed === true}
+            disabled={!checkins.length || (currentCheckin && currentCheckin.completed === true)}
             onChange={pickDate}
             selected={getCheckinDate()}
             showTimeSelect
