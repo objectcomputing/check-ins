@@ -33,6 +33,7 @@ public class MemberProfile {
     private String name;
 
     @Column(name="role")
+    @Nullable
     @Schema(description = "employee's role at the company")
     private String role ;
     
@@ -43,6 +44,7 @@ public class MemberProfile {
     private UUID pdlId;
 
     @Column(name="location")
+    @Nullable
     @Schema(description = "where the employee is geographically located")
     private String location;
 
@@ -52,6 +54,7 @@ public class MemberProfile {
     private String workEmail;
 
     @Column(name="insperityId")
+    @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
     private String insperityId; 
 
@@ -61,6 +64,7 @@ public class MemberProfile {
     private LocalDate startDate;
 
     @Column(name="bioText")
+    @Nullable
     @Schema(description = "employee's biography")
     private String bioText;
 
