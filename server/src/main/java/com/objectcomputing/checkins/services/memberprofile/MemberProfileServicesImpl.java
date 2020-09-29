@@ -27,9 +27,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String role,@Nullable UUID pdlId, @Nullable String workEmail) {
+    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
         Set<MemberProfile> memberProfiles = new HashSet<>(
-                memberProfileRepository.search(name, role, nullSafeUUIDToString(pdlId), workEmail));
+                memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId), workEmail));
 
         return memberProfiles;
     }

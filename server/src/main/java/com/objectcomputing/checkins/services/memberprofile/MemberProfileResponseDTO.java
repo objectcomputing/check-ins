@@ -22,8 +22,8 @@ public class MemberProfileResponseDTO {
     private String name;
 
     @NotBlank
-    @Schema(description = "employee's role at the company", required = true)
-    private String role ;
+    @Schema(description = "employee's title at the company", required = true)
+    private String title ;
 
     @Nullable
     @Schema(description = "employee's professional development lead")
@@ -66,12 +66,12 @@ public class MemberProfileResponseDTO {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Nullable
