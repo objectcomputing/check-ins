@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
@@ -21,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/role")
-@Secured(RoleType.Constants.ADMIN_ROLE)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "role")
 public class RoleController {
@@ -43,6 +44,7 @@ public class RoleController {
      * @return {@link HttpResponse <Role>}
      */
     @Post()
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<Role> create(@Body @Valid RoleCreateDTO role,
                                      HttpRequest<RoleCreateDTO> request) {
         Role newRole = roleServices.save(new Role(role.getRole(), role.getMemberid()));
@@ -59,6 +61,7 @@ public class RoleController {
      * @return {@link HttpResponse<Role>}
      */
     @Put()
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> update(@Body @Valid Role role, HttpRequest<Role> request) {
         Role updatedRole = roleServices.update(role);
         return HttpResponse
@@ -100,6 +103,7 @@ public class RoleController {
      * @return {@link HttpResponse<List<Role>}
      */
     @Post("/roles")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> loadRoles(@Body @Valid @NotNull List<RoleCreateDTO> roles,
                                      HttpRequest<List<Role>> request) {
         List<String> errors = new ArrayList<>();
@@ -129,6 +133,7 @@ public class RoleController {
      * @param id, id of {@link Role} to delete
      */
     @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteRole(UUID id) {
         roleServices.delete(id);
         return HttpResponse
