@@ -138,10 +138,12 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
         validate(agendaItemResult == null, "Invalid agenda item id %s", id);
-        if (!isAdmin) {
-            CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+        CheckIn checkinRecord = checkinRepo.findById(agendaItemResult.getCheckinid()).orElse(null);
+        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+        if (!isAdmin && isCompleted) {
             validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
 
