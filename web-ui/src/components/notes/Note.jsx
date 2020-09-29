@@ -22,44 +22,51 @@ const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { checkin, memberName } = props;
+  const { userProfile, currentCheckin } = state;
+  const { memberProfile } = userProfile;
+  const { memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
+  const pdlId = memberProfile && memberProfile.pdlId;
 
   const canViewPrivateNote =
-    userProfile.memberProfile &&
-    userProfile.memberProfile.role &&
-    (userProfile.memberProfile.role.includes("PDL") ||
-      userProfile.memberProfile.role.includes("ADMIN")) &&
-    userProfile.memberProfile.id !== checkin.teamMemberId;
+    memberProfile &&
+    memberProfile.role &&
+    (memberProfile.role.includes("PDL") ||
+      memberProfile.role.includes("ADMIN")) &&
+    memberProfile.id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
-    const id = checkin.id;
-    const createdby = checkin.teamMemberId;
     async function getNotes() {
-      if (checkin) {
+      if (currentCheckin) {
+        const id = currentCheckin.id;
         setIsLoading(true);
         let res = await getNoteByCheckinId(id);
-        if (res.payload && res.payload.data && !res.error) {
-          if (res.payload.data.length === 0) {
-            res = await createCheckinNote({
-              checkinid: id,
-              createdbyid: createdby,
-              description: "",
-            });
+        if (
+          pdlId &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.data.length > 0 &&
+          !res.error
+        ) {
+          setNote(res.payload.data[0]);
+        } else {
+          res = await createCheckinNote({
+            checkinid: id,
+            createdbyid: pdlId,
+            description: "",
+          });
+          if (res && res.payload && res.payload.data) {
             setNote(res.payload.data);
-          } else {
-            setNote(res.payload.data[0]);
           }
         }
         setIsLoading(false);
       }
     }
     getNotes();
-  }, [checkin]);
+  }, [currentCheckin, pdlId]);
 
   const handleNoteChange = (e) => {
     const { value } = e.target;
@@ -91,6 +98,7 @@ const Notes = (props) => {
             </div>
           ) : (
             <textarea
+              disabled={currentCheckin.completed === true}
               onChange={handleNoteChange}
               value={note && note.description ? note.description : ""}
             ></textarea>

@@ -71,7 +71,6 @@ public class MemberSkillController {
      * @param id, id of {@link MemberSkill} to delete
      */
     @Delete("/{id}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
         memberSkillsService.delete(id);
         return HttpResponse

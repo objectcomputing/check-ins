@@ -147,7 +147,7 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="Profile">
       <div className="flex-row" style={{ marginTop: "20px" }}>
         <div className="profile-image">
           <Avatar

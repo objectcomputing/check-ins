@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
@@ -13,7 +12,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,8 +67,6 @@ class GuildServicesImplTest {
         when(guildRepository.findByName(eq(guild.getName()))).thenReturn(Optional.empty());
         when(guildRepository.save(eq(guild))).thenReturn(guild);
         assertEquals(guild, services.save(guild));
-        verify(guildRepository, times(1)).findByName(any(String.class));
-        verify(guildRepository, times(1)).save(any(Guild.class));
     }
 
     @Test
@@ -74,8 +74,6 @@ class GuildServicesImplTest {
         Guild guild = new Guild(UUID.randomUUID(), "Wayne's", "World");
         GuildBadArgException exception = assertThrows(GuildBadArgException.class, () -> services.save(guild));
         assertTrue(exception.getMessage().contains(String.format("unexpected id %s", guild.getId())));
-        verify(guildRepository, never()).findByName(any(String.class));
-        verify(guildRepository, never()).save(any(Guild.class));
     }
 
     @Test
@@ -138,71 +136,54 @@ class GuildServicesImplTest {
                 new Guild(UUID.randomUUID(), "World", "Wide Web")
         );
 
-        when(guildRepository.findAll()).thenReturn(guildSet);
+        when(guildRepository.search(null, null)).thenReturn(guildSet);
+
         assertEquals(guildSet, services.findByFields(null, null));
-        verify(guildRepository, times(1)).findAll();
-        verify(guildRepository, never()).findById(any(UUID.class));
-        verify(guildRepository, never()).findByNameIlike(any(String.class));
-        verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
+
     }
 
     @Test
     void testFindByFieldName() {
-        List<Guild> guild = List.of(
+        Set<Guild> guildSet = Set.of(
                 new Guild(UUID.randomUUID(), "What a Wonderful", "World"),
                 new Guild(UUID.randomUUID(), "World", "History")
         );
 
-        List<Guild> guildToFind = List.of(guild.get(1));
         final String nameSearch = "World";
-        when(guildRepository.findAll()).thenReturn(guild);
-        when(guildRepository.findByNameIlike(eq(nameSearch))).thenReturn(guildToFind);
-        assertEquals(new HashSet<>(guildToFind), services.findByFields(nameSearch, null));
-        verify(guildRepository, times(1)).findAll();
-        verify(guildRepository, never()).findById(any(UUID.class));
-        verify(guildRepository, times(1)).findByNameIlike(any(String.class));
-        verify(guildMemberRepository, never()).findByMemberid(any(UUID.class));
+        Guild guildToFind = guildSet.iterator().next();
+
+        when(guildRepository.search("%"+nameSearch+"%", null)).thenReturn(guildSet);
+
+        assertEquals(guildSet, services.findByFields(nameSearch, null));
+
     }
 
     @Test
     void testFindByFieldMemberid() {
-        List<Guild> guild = List.of(
-                new Guild(UUID.randomUUID(), "A Brave New", "World"),
-                new Guild(UUID.randomUUID(), "World", "of Warcraft")
-        );
 
         final UUID memberId = UUID.randomUUID();
-        List<Guild> guildToFind = List.of(guild.get(0));
-        when(guildRepository.findAll()).thenReturn(guild);
-        when(guildRepository.findById(eq(guildToFind.get(0).getId()))).thenReturn(Optional.of(guildToFind.get(0)));
-        when(guildMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getId(), memberId, true)));
-        assertEquals(new HashSet<>(guildToFind), services.findByFields(null, memberId));
-        verify(guildRepository, times(1)).findAll();
-        verify(guildRepository, times(1)).findById(any(UUID.class));
-        verify(guildRepository, never()).findByNameIlike(any(String.class));
-        verify(guildMemberRepository, times(1)).findByMemberid(any(UUID.class));
+        Guild guildToFind = new Guild(UUID.randomUUID(), "World", "of Warcraft");
+
+        when(guildRepository.search(null, memberId.toString())).thenReturn(Set.of(guildToFind));
+
+        assertEquals(new HashSet<>(Set.of(guildToFind)), services.findByFields(null, memberId));
+
     }
 
     @Test
     void testFindByFieldNameAndMemberid() {
-        List<Guild> guild = List.of(
+        Set<Guild> guildSet = Set.of(
                 new Guild(UUID.randomUUID(), "World", "Series"),
                 new Guild(UUID.randomUUID(), "Super Mario", "World")
         );
 
         final UUID memberId = UUID.randomUUID();
         final String nameSearch = "World";
-        List<Guild> guildToFind = List.of(guild.get(0));
-        when(guildRepository.findAll()).thenReturn(guild);
-        when(guildRepository.findByNameIlike(eq(nameSearch))).thenReturn(guildToFind);
-        when(guildRepository.findById(eq(guildToFind.get(0).getId()))).thenReturn(Optional.of(guildToFind.get(0)));
-        when(guildMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new GuildMember(UUID.randomUUID(), guildToFind.get(0).getId(), memberId, true)));
-        assertEquals(new HashSet<>(guildToFind), services.findByFields(nameSearch, memberId));
-        verify(guildRepository, times(1)).findAll();
-        verify(guildRepository, times(1)).findById(any(UUID.class));
-        verify(guildRepository, times(1)).findByNameIlike(any(String.class));
-        verify(guildMemberRepository, times(1)).findByMemberid(any(UUID.class));
+
+        when(guildRepository.search("%"+nameSearch+"%", memberId.toString())).thenReturn(guildSet);
+
+        assertEquals(guildSet, services.findByFields(nameSearch, memberId));
+
     }
+
 }

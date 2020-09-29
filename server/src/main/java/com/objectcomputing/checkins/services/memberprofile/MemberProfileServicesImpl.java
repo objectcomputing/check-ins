@@ -1,16 +1,21 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
-import io.micronaut.core.util.StringUtils;
 
-import javax.inject.Inject;
+import javax.annotation.Nullable;
+import javax.inject.Singleton;
 import java.util.*;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
+
+@Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
-    @Inject
     private MemberProfileRepository memberProfileRepository;
+
+    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
+        this.memberProfileRepository = memberProfileRepository;
+    }
 
     @Override
     public MemberProfile getById(UUID id) {
@@ -22,22 +27,11 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(String name, String role, UUID pdlId, String workEmail) {
-        Set<MemberProfile> foundProfiles = new HashSet<>(memberProfileRepository.findAll());
-        if (!StringUtils.isEmpty(name)) {
-            foundProfiles.retainAll(memberProfileRepository.findByName(name));
-        }
-        if (!StringUtils.isEmpty(role)) {
-            foundProfiles.retainAll(memberProfileRepository.findByRole(role));
-        }
-        if (pdlId != null) {
-            foundProfiles.retainAll(memberProfileRepository.findByPdlId(pdlId));
-        }
-        if (workEmail != null) {
-            Optional<MemberProfile> result = memberProfileRepository.findByWorkEmail(workEmail);
-            result.ifPresent(memberProfile -> foundProfiles.retainAll(Collections.singleton(memberProfile)));
-        }
-        return foundProfiles;
+    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String role,@Nullable UUID pdlId, @Nullable String workEmail) {
+        Set<MemberProfile> memberProfiles = new HashSet<>(
+                memberProfileRepository.search(name, role, nullSafeUUIDToString(pdlId), workEmail));
+
+        return memberProfiles;
     }
 
     @Override

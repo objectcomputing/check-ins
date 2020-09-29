@@ -1,3 +1,0 @@
-<configuration>
-    <logger name="org.flywaydb" level="ERROR"/>
-</configuration>

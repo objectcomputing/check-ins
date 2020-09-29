@@ -33,7 +33,8 @@ public class MemberProfile {
     private String name;
 
     @Column(name="role")
-    @Schema(description = "employee's role at the company", required = true)
+    @Nullable
+    @Schema(description = "employee's role at the company")
     private String role ;
     
     @Column(name="pdlId")
@@ -43,7 +44,8 @@ public class MemberProfile {
     private UUID pdlId;
 
     @Column(name="location")
-    @Schema(description = "where the employee is geographically located", required = true)
+    @Nullable
+    @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotNull
@@ -52,6 +54,7 @@ public class MemberProfile {
     private String workEmail;
 
     @Column(name="insperityId")
+    @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
     private String insperityId; 
 
@@ -61,18 +64,19 @@ public class MemberProfile {
     private LocalDate startDate;
 
     @Column(name="bioText")
+    @Nullable
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, @Nullable LocalDate startDate,
-                         String bioText) {
+    public MemberProfile(String name, @Nullable String role, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
        this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfile(UUID id, String name, String role, @Nullable UUID pdlId, String location,
-                         String workEmail, String insperityId, @Nullable LocalDate startDate,
-                         String bioText) {
+    public MemberProfile(UUID id, String name, @Nullable String role, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
         this.id = id;
         this.name=name;
         this.role=role;
