@@ -695,4 +695,108 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         assertEquals(HttpStatus.OK, response.getStatus());
 
     }
+
+    @Test
+    void testDeleteAgendaItemByAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteAgendaItemByPdl() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteAgendaItemByMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteAAgendaItemByADMINIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testDeleteAAgendaItemByPDLIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(),PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testDeleteAAgendaItemByMEMBERIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
 }

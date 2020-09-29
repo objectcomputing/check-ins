@@ -144,6 +144,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         if (!isAdmin && isCompleted) {
+            validate(true, "User is unauthorized to do this operation");
+        } else if (!isAdmin && !isCompleted) {
             validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
 

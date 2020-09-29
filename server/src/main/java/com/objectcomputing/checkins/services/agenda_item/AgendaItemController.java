@@ -18,6 +18,8 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller("/services/agenda-item")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -94,6 +96,49 @@ public class AgendaItemController {
     @Get("/{id}")
     public AgendaItem readAgendaItem(@NotNull UUID id) {
         return agendaItemServices.read(id);
+    }
+
+    /**
+     * Delete agendaItem
+     *
+     * @param id, id of {@link AgendaItem} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteAgendaItem(UUID id) {
+        agendaItemServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
+
+    /**
+     * Load agenda items
+     *
+     * @param agendaItems, {@link List< AgendaItemCreateDTO > to load {@link AgendaItem agenda items}}
+     * @return {@link HttpResponse<List< AgendaItem >}
+     */
+    @Post("/items")
+    public HttpResponse<?> loadAgendaItems(@Body @Valid @NotNull List<AgendaItemCreateDTO> agendaItems,
+                                           HttpRequest<List<AgendaItem>> request) {
+        List<String> errors = new ArrayList<>();
+        List<AgendaItem> agendaItemsCreated = new ArrayList<>();
+        for (AgendaItemCreateDTO agendaItemDTO : agendaItems) {
+            AgendaItem agendaItem = new AgendaItem(agendaItemDTO.getCheckinid(),
+                    agendaItemDTO.getCreatedbyid(), agendaItemDTO.getDescription());
+            try {
+                agendaItemServices.save(agendaItem);
+                agendaItemsCreated.add(agendaItem);
+            } catch (AgendaItemBadArgException e) {
+                errors.add(String.format("Member %s's agenda item was not added to CheckIn %s because: %s", agendaItem.getCreatedbyid(),
+                        agendaItem.getCheckinid(), e.getMessage()));
+            }
+        }
+        if (errors.isEmpty()) {
+            return HttpResponse.created(agendaItemsCreated)
+                    .headers(headers -> headers.location(request.getUri()));
+        } else {
+            return HttpResponse.badRequest(errors)
+                    .headers(headers -> headers.location(request.getUri()));
+        }
     }
 
 }
