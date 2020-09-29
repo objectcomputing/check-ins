@@ -2,14 +2,14 @@ import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
-import MyTeamPage from "./pages/MyTeamPage";
 //import EditPDLPage from "./pages/EditPDLPage";
-import ResourcesPage from "./pages/ResourcesPage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
+import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import { AppContextProvider } from "./context/AppContext";
+import GroupIcon from '@material-ui/icons/Group';
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import "./App.css";
@@ -36,13 +36,11 @@ function App() {
                 <Header title="Edit Team" />
                 <EditPDLPage />
               </Route> */}
-              <Route path="/team">
-                <Header title="My Team" />
-                <MyTeamPage />
-              </Route>
-              <Route path="/resources">
-                <Header title="Resources" />
-                <ResourcesPage />
+              <Route path="/teams">
+                <Header title="Teams">
+                  <GroupIcon fontSize="large"/>
+                </Header>
+                <TeamsPage />
               </Route>
               <Route path="/profile">
                 <Header title="Profile" />

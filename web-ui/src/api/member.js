@@ -2,6 +2,17 @@ import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
 const memberProfileUrl = `${BASE_API_URL}/services/member-profile`;
+export const getAllMembers = async () => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: memberProfileUrl,
+      responseType: "json",
+      withCredentials: true
+    })
+  );
+};
+
 export const getMembersByPDL = async (id) => {
   return await resolve(
     axios({

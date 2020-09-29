@@ -5,6 +5,7 @@ import Personnel from "../components/personnel/Personnel";
 import Modal from "../components/modal/Modal";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import CheckinProfile from "../components/checkin/CheckinProfile";
+import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
 
@@ -17,20 +18,19 @@ import "./CheckinsPage.css";
 const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
-  const { checkins, index, userProfile } = state;
-  const checkin = checkins[index];
-  const canSeePersonnel = userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const { currentCheckin, userProfile } = state;
+  const canSeePersonnel =
+    userProfile && userProfile.role && userProfile.role.includes("PDL");
 
   useEffect(() => {
-    if (checkin && checkin.id) {
-      history.push(`/checkins/${checkin.id}`);
+    if (currentCheckin && currentCheckin.id) {
+      history.push(`/checkins/${currentCheckin.id}`);
     }
-  }, [checkin, history]);
+  }, [currentCheckin, history]);
 
   const showModal = () => {
     setShow(!show);
   };
-
   return (
     <div>
       <Container maxWidth="xl">
@@ -39,11 +39,12 @@ const CheckinsPage = ({ history }) => {
             <Container maxWidth="md">
               <div className="contents">
                 <CheckinProfile state={state} />
-                <CheckinsHistory checkins={checkins} index={index} />
-                {checkin && checkin.id && (
-                  <Note checkin={checkin} memberName={userProfile.name} />
+                <CheckinsHistory history={history} />
+                {currentCheckin && currentCheckin.id && (
+                  <Note memberName={userProfile.name} />
                 )}
               </div>
+              <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
               <CheckinDocs />
               <div className="modal-container">
                 <Modal close={showModal} show={show}>

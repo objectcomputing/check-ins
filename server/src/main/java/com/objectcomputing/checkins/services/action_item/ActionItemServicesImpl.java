@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +26,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (actionItem != null) {
             final UUID guildId = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
+            double lastDisplayOrder = 0;
+            try {
+                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+            } catch (NullPointerException npe) {
+                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+                //nothing needs to happen here.
+            }
+            actionItem.setPriority(lastDisplayOrder+1);
             if (guildId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (actionItem.getId() != null) {
@@ -73,10 +82,9 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        Set<ActionItem> actionItems = new HashSet<>(
-                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
-        return actionItems;
+        return new LinkedHashSet<>(
+                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
     }
 
     public void delete(@NotNull UUID id) {

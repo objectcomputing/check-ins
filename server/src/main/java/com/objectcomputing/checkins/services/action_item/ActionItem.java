@@ -42,15 +42,28 @@ public class ActionItem {
     @Schema(description = "description of the action item")
     private String description;
 
+    @Column(name = "priority")
+    @Schema(description = "Allow for a user defined display order")
+    private double priority;
+
     public ActionItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
     }
 
     public ActionItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
+        this(id, checkinid, createdbyid, description, 1.0);
+    }
+
+    public ActionItem(UUID checkinid, UUID createdbyid, String description, double priority) {
+        this(null, checkinid, createdbyid, description, priority);
+    }
+
+    public ActionItem(UUID id, UUID checkinid, UUID createdbyid, String description, double priority) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
+        this.priority = priority;
     }
 
     public UUID getId() {
@@ -85,6 +98,14 @@ public class ActionItem {
         this.description = description;
     }
 
+    public double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(double priority) {
+        this.priority = priority;
+    }
+
     @Override
     public String toString() {
         return "ActionItem{" +
@@ -92,6 +113,7 @@ public class ActionItem {
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
                 ", description='" + description + '\'' +
+                ", priority=" + priority +
                 '}';
     }
 
@@ -100,7 +122,8 @@ public class ActionItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ActionItem that = (ActionItem) o;
-        return Objects.equals(id, that.id) &&
+        return Double.compare(that.priority, priority) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
                 Objects.equals(description, that.description);
@@ -108,6 +131,6 @@ public class ActionItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid, description);
+        return Objects.hash(id, checkinid, createdbyid, description, priority);
     }
 }

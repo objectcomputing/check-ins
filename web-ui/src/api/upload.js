@@ -5,11 +5,12 @@ const uploadUrl = `${BASE_API_URL}/upload`;
 export const uploadFile = async (file) => {
   return await resolve(
     axios({
+      headers: { "Content-Type": "multipart/form-data" },
       method: "post",
       url: uploadUrl,
       responseType: "json",
-      body: { file: file },
-      withCredentials: true
+      data: file,
+      withCredentials: true,
     })
   );
 };
