@@ -30,13 +30,14 @@ const Notes = (props) => {
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
   const pdlId = memberProfile && memberProfile.pdlId;
+  const pdlorAdmin =
+    (memberProfile &&
+      memberProfile.role &&
+      memberProfile.role.includes("PDL")) ||
+    memberProfile.role.includes("ADMIN");
 
   const canViewPrivateNote =
-    memberProfile &&
-    memberProfile.role &&
-    (memberProfile.role.includes("PDL") ||
-      memberProfile.role.includes("ADMIN")) &&
-    memberProfile.id !== currentCheckin.teamMemberId;
+    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
     async function getNotes() {
@@ -98,7 +99,7 @@ const Notes = (props) => {
             </div>
           ) : (
             <textarea
-              disabled={currentCheckin.completed === true}
+              disabled={!pdlorAdmin || currentCheckin.completed === true}
               onChange={handleNoteChange}
               value={note && note.description ? note.description : ""}
             ></textarea>

@@ -157,17 +157,19 @@ const AppContextProvider = (props) => {
           );
           if (allComplete) {
             const prevCheckinDate = data[data.length - 1].checkInDate;
-            const res = await createCheckin({
-              teamMemberId: id,
-              pdlId: pdlId,
-              checkInDate: date(3, prevCheckinDate),
-              completed: false,
-            });
-            const checkin =
-              res.payload && res.payload.data && !res.error
-                ? res.payload.data
-                : null;
-            data.push(checkin);
+            if (pdlId) {
+              const res = await createCheckin({
+                teamMemberId: id,
+                pdlId: pdlId,
+                checkInDate: date(3, prevCheckinDate),
+                completed: false,
+              });
+              const checkin =
+                res.payload && res.payload.data && !res.error
+                  ? res.payload.data
+                  : null;
+              data.push(checkin);
+            }
           }
         } else if (data.length === 0) {
           if (pdlId) {
