@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getMembersByPDL } from "../../api/member";
 import { getMemberCheckinsByPDL } from "../../api/checkins";
-import {
-  AppContext,
-  UPDATE_SELECTED_PROFILE,
-  UPDATE_CHECKINS,
-} from "../../context/AppContext";
+import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
 
 import "./Personnel.css";
 
@@ -35,7 +31,6 @@ const Personnel = () => {
           let personnelData = { pdlId: id, data: data };
           setPersonnel(personnelData);
         }
-        dispatch({ type: UPDATE_CHECKINS, payload: checkins });
       }
     }
     updatePersonnel();

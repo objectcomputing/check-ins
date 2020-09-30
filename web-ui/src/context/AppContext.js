@@ -77,6 +77,46 @@ const initialState = {
   userProfile: undefined,
 };
 
+const getCheckins = async (id, pdlId, date, dispatch) => {
+  const res = await getCheckinByMemberId(id);
+  let data =
+    res.payload && res.payload.data && res.payload.status === 200 && !res.error
+      ? res.payload.data
+      : null;
+  if (data && data.length > 0) {
+    const allComplete = data.every((checkin) => checkin.completed === true);
+    if (allComplete) {
+      const prevCheckinDate = data[data.length - 1].checkInDate;
+      if (pdlId) {
+        const res = await createCheckin({
+          teamMemberId: id,
+          pdlId: pdlId,
+          checkInDate: date(3, prevCheckinDate),
+          completed: false,
+        });
+        const checkin =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        data.push(checkin);
+      }
+    }
+  } else if (data.length === 0) {
+    if (pdlId) {
+      const res = await createCheckin({
+        teamMemberId: id,
+        pdlId: pdlId,
+        checkInDate: date(1),
+        completed: false,
+      });
+      const checkin =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      data = [checkin];
+    }
+  }
+  dispatch({ type: UPDATE_CHECKINS, payload: data });
+};
+
 const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const memberProfile =
@@ -88,51 +128,6 @@ const AppContextProvider = (props) => {
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
-
-  const getCheckins = async (id, pdlId) => {
-    const res = await getCheckinByMemberId(id);
-    let data =
-      res.payload &&
-      res.payload.data &&
-      res.payload.status === 200 &&
-      !res.error
-        ? res.payload.data
-        : null;
-    if (data && data.length > 0) {
-      const allComplete = data.every((checkin) => checkin.completed === true);
-      if (allComplete) {
-        const prevCheckinDate = data[data.length - 1].checkInDate;
-        if (pdlId) {
-          const res = await createCheckin({
-            teamMemberId: id,
-            pdlId: pdlId,
-            checkInDate: date(3, prevCheckinDate),
-            completed: false,
-          });
-          const checkin =
-            res.payload && res.payload.data && !res.error
-              ? res.payload.data
-              : null;
-          data.push(checkin);
-        }
-      }
-    } else if (data.length === 0) {
-      if (pdlId) {
-        const res = await createCheckin({
-          teamMemberId: id,
-          pdlId: pdlId,
-          checkInDate: date(1),
-          completed: false,
-        });
-        const checkin =
-          res.payload && res.payload.data && !res.error
-            ? res.payload.data
-            : null;
-        data = [checkin];
-      }
-    }
-    dispatch({ type: UPDATE_CHECKINS, payload: data });
-  };
 
   useEffect(() => {
     async function updateUserProfile() {
@@ -201,13 +196,13 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     if (id && state.checkins.length === 0) {
-      getCheckins(id, pdlId);
+      getCheckins(id, pdlId, date, dispatch);
     }
   }, [state.checkins, id, pdlId]);
 
   useEffect(() => {
     if (selectedId) {
-      getCheckins(selectedId, id);
+      getCheckins(selectedId, id, date, dispatch);
     }
   }, [selectedId, id]);
 

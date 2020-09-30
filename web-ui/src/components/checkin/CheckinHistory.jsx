@@ -32,7 +32,7 @@ const CheckinsHistory = ({ history }) => {
       dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
       history.push(`/checkins/${checkin.id}`);
     }
-  }, [index, dispatch, history]);
+  }, [index, dispatch, history, checkins]);
 
   const getCheckinDate = () => {
     if (currentCheckin && currentCheckin.checkInDate) {

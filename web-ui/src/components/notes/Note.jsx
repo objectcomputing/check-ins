@@ -40,44 +40,42 @@ const Notes = (props) => {
 
   const canViewPrivateNote =
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
+  const currentCheckinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {
     async function getNotes() {
       if (!pdlId) {
         return;
       }
-      if (currentCheckin) {
-        const checkinId = currentCheckin.id;
-        setIsLoading(true);
-        try {
-          let res = await getNoteByCheckinId(checkinId);
-          if (res.error) throw new Error(res.error);
+      setIsLoading(true);
+      try {
+        let res = await getNoteByCheckinId(currentCheckinId);
+        if (res.error) throw new Error(res.error);
 
-          const currentNote =
-            res.payload && res.payload.data && res.payload.data.length > 0
-              ? res.payload.data[0]
-              : null;
-          if (currentNote) {
-            setNote(currentNote);
-          } else if (id === selectedProfilePDLId) {
-            res = await createCheckinNote({
-              checkinid: checkinId,
-              createdbyid: id,
-              description: "",
-            });
-            if (res.error) throw new Error(res.error);
-            if (res && res.payload && res.payload.data) {
-              setNote(res.payload.data);
-            }
+        const currentNote =
+          res.payload && res.payload.data && res.payload.data.length > 0
+            ? res.payload.data[0]
+            : null;
+        if (currentNote) {
+          setNote(currentNote);
+        } else if (id === selectedProfilePDLId) {
+          res = await createCheckinNote({
+            checkinid: currentCheckinId,
+            createdbyid: id,
+            description: "",
+          });
+          if (res.error) throw new Error(res.error);
+          if (res && res.payload && res.payload.data) {
+            setNote(res.payload.data);
           }
-        } catch (e) {
-          console.log(e);
         }
-        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
       }
+      setIsLoading(false);
     }
     getNotes();
-  }, [currentCheckin.id, pdlId]);
+  }, [currentCheckinId, pdlId, id, selectedProfilePDLId]);
 
   const handleNoteChange = (e) => {
     const { value } = e.target;
