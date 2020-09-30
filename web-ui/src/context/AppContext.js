@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getAllTeamMembers } from "../api/team";
-import { getCheckinByMemberId,createCheckin } from "../api/checkins";
+import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const UPDATE_USER_BIO = "@@check-ins/update_bio";
@@ -12,6 +12,7 @@ export const UPDATE_CURRENT_CHECKIN = "@@check-ins/update_current_checkin";
 export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
+export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
 
 const AppContext = React.createContext();
 
@@ -30,6 +31,7 @@ const reducer = (state, action) => {
       state.checkins.sort(function (a, b) {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
+      state.currentCheckin = state.checkins[state.checkins.length - 1];
       break;
     case UPDATE_TOAST:
       state.toast = action.payload;
@@ -46,6 +48,16 @@ const reducer = (state, action) => {
     case UPDATE_CURRENT_CHECKIN:
       state.currentCheckin = action.payload;
       break;
+    case UPDATE_SELECTED_PROFILE:
+      const { payload } = action;
+      if (state.selectedProfile !== payload) {
+        state.selectedProfile = payload;
+        state.currentCheckin = payload ? payload.checkIn : {};
+      }
+      if (payload === undefined) {
+        state.checkins = [];
+      }
+      break;
     default:
   }
   return { ...state };
@@ -57,6 +69,7 @@ const initialState = {
   teams: [],
   memberProfiles: [],
   index: 0,
+  selectedProfile: undefined,
   toast: {
     severity: "",
     toast: "",
@@ -71,8 +84,55 @@ const AppContextProvider = (props) => {
       ? state.userProfile.memberProfile
       : undefined;
   const id = memberProfile ? memberProfile.id : undefined;
+  const selectedProfile = state && state.selectedProfile;
+  const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
+
+  const getCheckins = async (id, pdlId) => {
+    const res = await getCheckinByMemberId(id);
+    let data =
+      res.payload &&
+      res.payload.data &&
+      res.payload.status === 200 &&
+      !res.error
+        ? res.payload.data
+        : null;
+    if (data && data.length > 0) {
+      const allComplete = data.every((checkin) => checkin.completed === true);
+      if (allComplete) {
+        const prevCheckinDate = data[data.length - 1].checkInDate;
+        if (pdlId) {
+          const res = await createCheckin({
+            teamMemberId: id,
+            pdlId: pdlId,
+            checkInDate: date(3, prevCheckinDate),
+            completed: false,
+          });
+          const checkin =
+            res.payload && res.payload.data && !res.error
+              ? res.payload.data
+              : null;
+          data.push(checkin);
+        }
+      }
+    } else if (data.length === 0) {
+      if (pdlId) {
+        const res = await createCheckin({
+          teamMemberId: id,
+          pdlId: pdlId,
+          checkInDate: date(1),
+          completed: false,
+        });
+        const checkin =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        data = [checkin];
+      }
+    }
+    dispatch({ type: UPDATE_CHECKINS, payload: data });
+  };
 
   useEffect(() => {
     async function updateUserProfile() {
@@ -85,7 +145,6 @@ const AppContextProvider = (props) => {
       if (profile) {
         dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
       }
-
     }
     updateUserProfile();
   }, []);
@@ -141,56 +200,16 @@ const AppContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    async function getCheckins() {
-      if (id) {
-        const res = await getCheckinByMemberId(id);
-        let data =
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data && data.length > 0) {
-          const allComplete = data.every(
-            (checkin) => checkin.completed === true
-          );
-          if (allComplete) {
-            const prevCheckinDate = data[data.length - 1].checkInDate;
-            if (pdlId) {
-              const res = await createCheckin({
-                teamMemberId: id,
-                pdlId: pdlId,
-                checkInDate: date(3, prevCheckinDate),
-                completed: false,
-              });
-              const checkin =
-                res.payload && res.payload.data && !res.error
-                  ? res.payload.data
-                  : null;
-              data.push(checkin);
-            }
-          }
-        } else if (data.length === 0) {
-          if (pdlId) {
-            const res = await createCheckin({
-              teamMemberId: id,
-              pdlId: pdlId,
-              checkInDate: date(1),
-              completed: false,
-            });
-            const checkin =
-              res.payload && res.payload.data && !res.error
-                ? res.payload.data
-                : null;
-            data = [checkin];
-          }
-        }
-        dispatch({ type: UPDATE_CHECKINS, payload: data });
-      }
+    if (id && state.checkins.length === 0) {
+      getCheckins(id, pdlId);
     }
-    getCheckins();
-  }, [id, pdlId]);
+  }, [state.checkins, id, pdlId]);
+
+  useEffect(() => {
+    if (selectedId) {
+      getCheckins(selectedId, id);
+    }
+  }, [selectedId, id]);
 
   const value = useMemo(() => {
     return { state, dispatch };
@@ -202,7 +221,7 @@ const AppContextProvider = (props) => {
   );
 };
 
-const selectProfileMap = ({memberProfiles}) => {
+const selectProfileMap = ({ memberProfiles }) => {
   if (memberProfiles && memberProfiles.length) {
     memberProfiles = memberProfiles.reduce((mappedById, profile) => {
       mappedById[profile.id] = profile;
@@ -212,15 +231,18 @@ const selectProfileMap = ({memberProfiles}) => {
   return memberProfiles;
 };
 
-const selectMembersByTeamId = ({teamMembers}) => (id) => {
+const selectMembersByTeamId = ({ teamMembers }) => (id) => {
   let members = [];
-  if(teamMembers && teamMembers.length) {
-    members = teamMembers.filter(member => member.teamid === id);
+  if (teamMembers && teamMembers.length) {
+    members = teamMembers.filter((member) => member.teamid === id);
   }
   return members;
 };
 
-const selectMemberProfilesByTeamId = (state) => (id) => selectMembersByTeamId(state)(id).map(member => {return {...selectProfileMap(state)[member.memberid], ...member}});
+const selectMemberProfilesByTeamId = (state) => (id) =>
+  selectMembersByTeamId(state)(id).map((member) => {
+    return { ...selectProfileMap(state)[member.memberid], ...member };
+  });
 
 AppContext.selectProfileById = selectProfileMap;
 AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
