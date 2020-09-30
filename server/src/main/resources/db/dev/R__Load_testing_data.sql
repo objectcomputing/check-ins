@@ -17,7 +17,7 @@ INSERT INTO member_profile(id, name, role, location, workEmail, insperityid, sta
 VALUES ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9','Gina Bremehr', 'COO','St. Louis', 'bremehrg@objectcomputing.com', '1231234', '2012-09-29', 'Epitome of Strong Woman');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('6207b3fd-042d-49aa-9e28-dcc04f537c2d','Michael Kimberlin', 'Director of Organizational Development', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers');
+VALUES ('6207b3fd-042d-49aa-9e28-dcc04f537c2d','Michael Kimberlin', 'Director of Organizational Development', '802cb1f5-a255-4236-8719-773fa53d79d9','St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('2559a257-ae84-4076-9ed4-3820c427beeb','Ron Steinkamp', 'Senior Project Manager', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','St. Louis', 'steinkampr@objectcomputing.com', '3333333', '2019-09-19', 'Managing projets well');
@@ -29,22 +29,22 @@ INSERT INTO member_profile(id, name, role, location, workEmail, insperityid, sta
 VALUES ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d','Mark Volkmann', 'Partner and Principal Software Engineer','St. Louis', 'volkmannm@objectcomputing.com', '9999999', '1996-06-13', 'Software Engineer Spectacular');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3','Jesse Hanner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'hannerj@objectcomputing.com','1234567', '2018-01-10', 'Amazing Engineer');
+VALUES ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3','Jesse Hanner', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'hannerj@objectcomputing.com','1234567', '2018-01-10', 'Amazing Engineer');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('6884ab96-2275-4af9-89d8-ad84254d8759','Pramukh Bagur', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d','St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer');
+VALUES ('6884ab96-2275-4af9-89d8-ad84254d8759','Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9','St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('1b4f99da-ef70-4a76-9b37-8bb783b749ad','Suman Maroju', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'St. Louis', 'marojus@objectcomputing.com', '2345678', '2018-06-06', 'Superior Engineer');
+VALUES ('1b4f99da-ef70-4a76-9b37-8bb783b749ad','Suman Maroju', 'Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'St. Louis', 'marojus@objectcomputing.com', '2345678', '2018-06-06', 'Superior Engineer');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('802cb1f5-a255-4236-8719-773fa53d79d9','John Meyerin', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'St. Louis', 'meyerinj@objectcomputing.com', '1111111', '2018-09-03', 'Outstanding Engineer');
+VALUES ('802cb1f5-a255-4236-8719-773fa53d79d9','John Meyerin', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'meyerinj@objectcomputing.com', '1111111', '2018-09-03', 'Outstanding Engineer');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('b2d35288-7f1e-4549-aa2b-68396b162490','Mohit Bhatia', 'Senior Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d','St. Louis', 'bhatiam@objectcomputing.com', '5555555', '2013-11-13', 'Engineer Extrodinaire');
+VALUES ('b2d35288-7f1e-4549-aa2b-68396b162490','Mohit Bhatia', 'Senior Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','St. Louis', 'bhatiam@objectcomputing.com', '5555555', '2013-11-13', 'Engineer Extrodinaire');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('43ee8e79-b33d-44cd-b23c-e183894ebfef','Zack Brown', 'Intern', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d','St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire');
+VALUES ('43ee8e79-b33d-44cd-b23c-e183894ebfef','Zack Brown', 'Intern', '2559a257-ae84-4076-9ed4-3820c427beeb','St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('8fa673c0-ca19-4271-b759-41cb9db2e83a','Holly Williams', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d','St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable');
@@ -73,8 +73,11 @@ VALUES ('517d324c-3d25-4ffe-887e-0de3ddc8fff9', 'PDL', '2c1b77e2-e2fc-46d1-92f2-
 INSERT INTO role(id, role, memberid)
 VALUES ('503fd79e-3e4d-4dc2-8045-498d329fd51f', 'PDL', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
+INSERT INTO role(id, role, memberid)
+VALUES ('58f21738-43a9-4e3d-ac6d-8d9acb9b1fb9', 'PDL', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
 INSERT INTO team(id, name, description)
-VALUES ('a8733740-cf4c-4c16-a8cf-4f928c409acc', 'Java Experts', 'Java Engineers of superior knowledge');
+VALUES ('a8733740-cf4c-4c16-a8cf-4f928c409acc', 'Checkins Experts', 'Checkins Engineers of superior knowledge');
 
 INSERT INTO team(id, name, description)
 VALUES ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', 'JavaScript Gurus', 'JavaScript Engineers of Outstanding Skill');
@@ -86,7 +89,7 @@ INSERT INTO team(id, name, description)
 VALUES ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', 'PMO Superness', 'Excellent PMO Artists');
 
 INSERT INTO team_member(id, teamid, memberid, lead)
-VALUES ('d2ee49cb-9479-49fb-80d7-43c3c1b50f91', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
+VALUES ('d2ee49cb-9479-49fb-80d7-43c3c1b50f91', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
 
 INSERT INTO team_member(id, teamid, memberid, lead)
 VALUES ('0f299d11-df47-406f-a426-8e3160eaeb21', '036b95a5-357c-45bd-b60e-e8e2e1afec83', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
@@ -104,7 +107,7 @@ INSERT INTO team_member(id, teamid, memberid, lead)
 VALUES ('c7b4d5e0-09ba-479a-8c40-ca9bbd8f217a', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '6884ab96-2275-4af9-89d8-ad84254d8759', false);
 
 INSERT INTO team_member(id, teamid, memberid, lead)
-VALUES ('20bf1ddb-53a0-436e-99dc-802c1199e282', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', false);
+VALUES ('20bf1ddb-53a0-436e-99dc-802c1199e282', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', false);
 
 INSERT INTO team_member(id, teamid, memberid, lead)
 VALUES ('f84a21ca-1579-4c6a-8148-6a355518797a', 'e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', true);
@@ -116,19 +119,31 @@ INSERT INTO team_member(id, teamid, memberid, lead)
 VALUES ('adff5631-d4dc-4c61-b3d4-232d1cce8ce0', 'a8733740-cf4c-4c16-a8cf-4f928c409acc', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
-VALUES ('92e91c5a-cb00-461a-86b4-d01b3f07754e', '6884ab96-2275-4af9-89d8-ad84254d8759', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 17:40:29.04' ,true);
+VALUES ('92e91c5a-cb00-461a-86b4-d01b3f07754e', '6884ab96-2275-4af9-89d8-ad84254d8759', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 17:40:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
-VALUES ('1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 10:40:29.04' ,true);
+VALUES ('1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-09-29 10:40:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
-VALUES ('8aa38f8c-2169-41b1-8548-1c2472fab7ff', 'b2d35288-7f1e-4549-aa2b-68396b162490', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 15:40:29.04' ,true);
+VALUES ('8aa38f8c-2169-41b1-8548-1c2472fab7ff', 'b2d35288-7f1e-4549-aa2b-68396b162490', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 15:40:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
-VALUES ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '2020-09-29 13:42:29.04' ,true);
+VALUES ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '2020-09-29 13:42:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
 VALUES ('bbc3db2a-181d-4ddb-a2e4-7a9842cdfd78', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '2020-09-29 11:32:29.04' ,true);
+
+INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
+VALUES ('1f68cfdc-0a4b-4118-b38e-d862a8b82bbb', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-09-20 11:32:29.04' ,false);
+
+INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
+VALUES ('e60c3ca1-3894-4466-b418-9b743d058cc8', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-06-20 11:32:29.04' ,false);
+
+INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
+VALUES ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-03-20 11:32:29.04' ,true);
+
+INSERT INTO checkin_notes(id, checkinid, createdbyid, description)
+VALUES ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note')
 
 INSERT INTO action_items(id, checkinid, createdbyid, description)
 Values('b0840fc5-9a8e-43d8-be99-9682fc32e69e','92e91c5a-cb00-461a-86b4-d01b3f07754e', '8fa673c0-ca19-4271-b759-41cb9db2e83a','Action Item for Holly Williams');
