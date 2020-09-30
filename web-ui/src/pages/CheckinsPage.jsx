@@ -38,7 +38,7 @@ const CheckinsPage = ({ history }) => {
           <Grid item sm={9} justify="center">
             <Container maxWidth="md">
               <div className="contents">
-                <CheckinProfile state={state} />
+                <CheckinProfile />
                 <CheckinsHistory history={history} />
                 {currentCheckin && currentCheckin.id && (
                   <Note memberName={userProfile.name} />
@@ -67,7 +67,7 @@ const CheckinsPage = ({ history }) => {
           <Grid item sm={3} justify="flex-end">
             <Container maxWidth="md">
               <div className="right-sidebar">
-                {canSeePersonnel && <Personnel />}
+                {canSeePersonnel && <Personnel history={history} />}
                 <GuidesPanel />
               </div>
             </Container>
