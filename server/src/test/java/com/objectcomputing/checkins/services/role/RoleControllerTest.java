@@ -218,25 +218,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
-        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(role, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testReadForbidden() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
-
-        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, String.class));
-
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
     }
 
     @Test
@@ -260,17 +246,6 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
         assertEquals(roles, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testFindRolesForbidden() {
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", RoleType.ADMIN,
-                UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, String.class));
-
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
     }
 
     @Test
