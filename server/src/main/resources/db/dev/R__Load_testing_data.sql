@@ -77,7 +77,7 @@ INSERT INTO team(id, name, description)
 VALUES ('a8733740-cf4c-4c16-a8cf-4f928c409acc', 'Java Experts', 'Java Engineers of superior knowledge');
 
 INSERT INTO team(id, name, description)
-VALUES ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', 'JavaScript GurusJavaScript Gurus', 'JavaScript Engineers of Outstanding Skill');
+VALUES ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', 'JavaScript Gurus', 'JavaScript Engineers of Outstanding Skill');
 
 INSERT INTO team(id, name, description)
 VALUES ('036b95a5-357c-45bd-b60e-e8e2e1afec83', 'Micronaut Genii', 'Micronaut Engineers of Genius Caliber');

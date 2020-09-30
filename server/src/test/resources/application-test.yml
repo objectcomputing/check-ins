@@ -24,3 +24,10 @@ credentials:
       - MEMBER
     MEMBER:
       - MEMBER
+---
+flyway:
+  enabled: enabled
+  datasources:
+    default:
+      locations:
+        - "classpath:db/common"
