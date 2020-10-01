@@ -43,7 +43,7 @@ function App() {
                 <TeamsPage />
               </Route>
               <Route path="/profile">
-                <Header title="Profile" />
+                <Header title="My Profile" />
                 <Profile />
               </Route>
               <Route path="/checkins">
@@ -51,7 +51,7 @@ function App() {
                 <CheckinsPage history={customHistory} />
               </Route>
               <Route path="/">
-                <Header title="Professional Development @ OCI" />
+                <Header title="My Profile" />
                 <Profile />
               </Route>
             </Switch>

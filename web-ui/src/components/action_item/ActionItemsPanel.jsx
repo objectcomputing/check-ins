@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './ActionItemsPanel.css';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {
@@ -7,6 +7,20 @@ import {
   updateActionItem
 } from '../../api/actionitem.js';
 import DragIndicator from '@material-ui/icons/DragIndicator';
+
+async function getActionItems(checkinId, mockActionItems, setActionItems) {
+  if (mockActionItems) {
+    setActionItems(mockActionItems);
+    return;
+  }
+
+  let res = await findActionItem(checkinId, null);
+  if (res && res.payload) {
+    let actionItemList =
+      res.payload.data && !res.error ? res.payload.data : undefined;
+    setActionItems(actionItemList);
+  }
+}
 
 const ActionItemsPanel = ({checkinId, mockActionItems}) => {
   let [actionItems, setActionItems] = useState();
@@ -23,45 +37,9 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     }
   }
 
-  let [prevActionItems, setPrevActionItems] = useState();
-
-  const actionItemsCompare = currItems => {
-    if (!prevActionItems) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    if (prevActionItems.length !== currItems.length) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    for (var i = 0; i < prevActionItems.length; i++) {
-      if (prevActionItems[i].id !== currItems[i].id) {
-        setPrevActionItems(currItems);
-        return true;
-      }
-    }
-    return false;
-  };
-
-  async function getActionItems() {
-    if (mockActionItems) {
-      setActionItems(mockActionItems);
-      return;
-    }
-
-    let res = await findActionItem(checkinId, null);
-    if (res && res.payload) {
-      let actionItemList =
-        res.payload.data && !res.error ? res.payload.data : undefined;
-      setActionItems(actionItemList);
-    }
-  }
-
-  React.useEffect(() => {
-    if (actionItemsCompare(actionItems)) {
-      getActionItems();
-    }
-  });
+  useEffect(() => {
+      getActionItems(checkinId, mockActionItems, setActionItems);
+  }, [checkinId, mockActionItems, setActionItems]);
 
   const getActionItemStyle = actionItem => {
     if (actionItem && actionItem.description) {
