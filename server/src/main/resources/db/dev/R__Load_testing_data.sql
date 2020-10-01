@@ -50,6 +50,42 @@ INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperity
 VALUES ('8fa673c0-ca19-4271-b759-41cb9db2e83a','Holly Williams', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d','St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable');
 
 INSERT INTO role(id, role, memberid)
+VALUES ('607b1143-0184-415d-b3a3-1516870cbc25', 'MEMBER', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('61e600ef-92d1-44fc-928a-6f239d44de39', 'MEMBER', '2559a257-ae84-4076-9ed4-3820c427beeb');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('234035dc-e0bc-4c4b-9760-ba4e1fbc9367', 'MEMBER', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('cbf5d93c-57a1-4d8a-aeec-5490698778ab', 'MEMBER', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('53edee95-9a3c-4938-bc32-341c2e891d4f', 'MEMBER', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('3b61aad5-446a-4e9d-b23d-2605892eb14b', 'MEMBER', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('f3be8ff3-1370-40c7-8202-9f017cf94e65', 'MEMBER', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('aa6561f7-35ae-409e-82a7-7324e140e013', 'MEMBER', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('ae7b3c1b-3b61-49ab-9945-e137c7648c26', 'MEMBER', '1b4f99da-ef70-4a76-9b37-8bb783b749ad');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('1658607a-e8f9-4f5c-8366-a5c9ca38f4e9', 'MEMBER', 'b2d35288-7f1e-4549-aa2b-68396b162490');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('4194684c-2f3f-4d79-a80a-f6356b9a1125', 'MEMBER', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+
+INSERT INTO role(id, role, memberid)
+VALUES ('415104a3-d048-41f4-aa6d-3619d1863fff', 'MEMBER', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+
+INSERT INTO role(id, role, memberid)
 VALUES ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', 'ADMIN', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO role(id, role, memberid)
