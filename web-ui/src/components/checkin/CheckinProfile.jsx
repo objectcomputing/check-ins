@@ -14,6 +14,11 @@ const CheckinProfile = () => {
     : userProfile && userProfile.memberProfile
     ? userProfile.memberProfile
     : {};
+  const { imageUrl } = selectedProfile
+    ? selectedProfile
+    : userProfile
+    ? userProfile
+    : {};
   const [pdl, setPDL] = useState();
 
   // Get PDL's name
