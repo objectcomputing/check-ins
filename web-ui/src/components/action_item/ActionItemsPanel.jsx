@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './ActionItemsPanel.css';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {
@@ -23,26 +23,6 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     }
   }
 
-  let [prevActionItems, setPrevActionItems] = useState();
-
-  const actionItemsCompare = currItems => {
-    if (!prevActionItems) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    if (prevActionItems.length !== currItems.length) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    for (var i = 0; i < prevActionItems.length; i++) {
-      if (prevActionItems[i].id !== currItems[i].id) {
-        setPrevActionItems(currItems);
-        return true;
-      }
-    }
-    return false;
-  };
-
   async function getActionItems() {
     if (mockActionItems) {
       setActionItems(mockActionItems);
@@ -57,11 +37,9 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     }
   }
 
-  React.useEffect(() => {
-    if (actionItemsCompare(actionItems)) {
+  useEffect(() => {
       getActionItems();
-    }
-  });
+  }, [checkinId]);
 
   const getActionItemStyle = actionItem => {
     if (actionItem && actionItem.description) {

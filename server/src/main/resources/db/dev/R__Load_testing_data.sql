@@ -128,7 +128,7 @@ INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
 VALUES ('8aa38f8c-2169-41b1-8548-1c2472fab7ff', 'b2d35288-7f1e-4549-aa2b-68396b162490', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2020-09-29 15:40:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
-VALUES ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '2020-09-29 13:42:29.04' ,false);
+VALUES ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-09-29 13:42:29.04' ,false);
 
 INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
 VALUES ('bbc3db2a-181d-4ddb-a2e4-7a9842cdfd78', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '2020-09-29 11:32:29.04' ,true);

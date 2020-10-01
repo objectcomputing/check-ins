@@ -34,9 +34,9 @@ const Notes = (props) => {
   const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
     (memberProfile &&
-      memberProfile.role &&
-      memberProfile.role.includes("PDL")) ||
-    memberProfile.role.includes("ADMIN");
+      userProfile.role &&
+      userProfile.role.includes("PDL")) ||
+      userProfile.role.includes("ADMIN");
 
   const canViewPrivateNote =
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
@@ -93,7 +93,6 @@ const Notes = (props) => {
   return (
     <div className="notes">
       <div>
-        {Object.keys(note).length !== 0 && (
           <div>
             <h1>
               <NotesIcon style={{ marginRight: "10px" }} />
@@ -116,7 +115,6 @@ const Notes = (props) => {
               )}
             </div>
           </div>
-        )}
       </div>
       {canViewPrivateNote && (
         <div>

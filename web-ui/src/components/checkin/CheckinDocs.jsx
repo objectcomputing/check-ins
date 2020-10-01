@@ -10,10 +10,20 @@ import { CircularProgress } from "@material-ui/core";
 import "./Checkin.css";
 
 const UploadDocs = () => {
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
+  const { userProfile, currentCheckin } = state;
+  const { memberProfile } = userProfile;
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileColors, setFileColors] = useState({});
+
+  const pdlorAdmin =
+    (memberProfile &&
+      userProfile.role &&
+      userProfile.role.includes("PDL")) ||
+      userProfile.role.includes("ADMIN");
+  const canView =
+    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
 
   const handleFile = (file) => {
     setFiles([...files, file]);
@@ -80,7 +90,7 @@ const UploadDocs = () => {
 
   return (
     <div className="documents">
-      <div>
+      {canView && (<div>
         <h1 className="title">
           <DescriptionIcon />
           Documents
@@ -93,7 +103,7 @@ const UploadDocs = () => {
             <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
           )}
         </div>
-      </div>
+      </div>)}
     </div>
   );
 };
