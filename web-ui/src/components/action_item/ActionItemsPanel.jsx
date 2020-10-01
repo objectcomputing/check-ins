@@ -8,6 +8,20 @@ import {
 } from '../../api/actionitem.js';
 import DragIndicator from '@material-ui/icons/DragIndicator';
 
+async function getActionItems(checkinId, mockActionItems, setActionItems) {
+  if (mockActionItems) {
+    setActionItems(mockActionItems);
+    return;
+  }
+
+  let res = await findActionItem(checkinId, null);
+  if (res && res.payload) {
+    let actionItemList =
+      res.payload.data && !res.error ? res.payload.data : undefined;
+    setActionItems(actionItemList);
+  }
+}
+
 const ActionItemsPanel = ({checkinId, mockActionItems}) => {
   let [actionItems, setActionItems] = useState();
 
@@ -23,23 +37,9 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     }
   }
 
-  async function getActionItems() {
-    if (mockActionItems) {
-      setActionItems(mockActionItems);
-      return;
-    }
-
-    let res = await findActionItem(checkinId, null);
-    if (res && res.payload) {
-      let actionItemList =
-        res.payload.data && !res.error ? res.payload.data : undefined;
-      setActionItems(actionItemList);
-    }
-  }
-
   useEffect(() => {
-      getActionItems();
-  }, [checkinId]);
+      getActionItems(checkinId, mockActionItems, setActionItems);
+  }, [checkinId, mockActionItems, setActionItems]);
 
   const getActionItemStyle = actionItem => {
     if (actionItem && actionItem.description) {
