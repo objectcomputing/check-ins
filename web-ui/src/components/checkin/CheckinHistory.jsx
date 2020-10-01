@@ -22,14 +22,17 @@ const CheckinsHistory = ({ history }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (checkins && checkins.length) {
-      const checkin = checkins[index];
-      if (checkin) {
-        dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
-        history.push(`/checkins/${checkin.id}`);
-      }
+    const length = checkins ? checkins.length : 0;
+    setIndex(length - 1);
+  }, [checkins]);
+
+  useEffect(() => {
+    const checkin = checkins[index];
+    if (checkin) {
+      dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
+      history.push(`/checkins/${checkin.id}`);
     }
-  }, [checkins, index, dispatch, history]);
+  }, [index, dispatch, history, checkins]);
 
   const getCheckinDate = () => {
     if (currentCheckin && currentCheckin.checkInDate) {
@@ -91,7 +94,7 @@ const CheckinsHistory = ({ history }) => {
   const DateInput = React.forwardRef((props, ref) => (
     <div className="date-input" ref={ref}>
       <p style={{ margin: "0px" }}>{props.value}</p>
-      <CalendarTodayIcon onClick={props.onClick}>stuff</CalendarTodayIcon>
+      <CalendarTodayIcon onClick={props.onClick}></CalendarTodayIcon>
     </div>
   ));
 
@@ -113,7 +116,10 @@ const CheckinsHistory = ({ history }) => {
             closeOnScroll
             customInput={<DateInput />}
             dateFormat="MMMM dd, yyyy h:mm aa"
-            disabled={!checkins.length || (currentCheckin && currentCheckin.completed === true)}
+            disabled={
+              !checkins.length ||
+              (currentCheckin && currentCheckin.completed === true)
+            }
             onChange={pickDate}
             selected={getCheckinDate()}
             showTimeSelect

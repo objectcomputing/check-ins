@@ -1,22 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getMembersByPDL } from "../../api/member";
 import { getMemberCheckinsByPDL } from "../../api/checkins";
-import { AppContext } from "../../context/AppContext";
+import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
 
 import "./Personnel.css";
 
 const Personnel = () => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const id =
     userProfile && userProfile.memberProfile
       ? userProfile.memberProfile.id
       : undefined;
   const [personnel, setPersonnel] = useState();
-  const [checkins, setCheckins] = useState();
+  const [checkins, setCheckins] = useState([]);
 
   // Get personnel
-  React.useEffect(() => {
+  useEffect(() => {
     async function updatePersonnel() {
       if (id) {
         let res = await getMembersByPDL(id);
@@ -37,23 +37,23 @@ const Personnel = () => {
   }, [id]);
 
   // Get checkins per personnel
-  React.useEffect(() => {
+  useEffect(() => {
     async function updateCheckins() {
       if (personnel && personnel.pdlId && personnel.data) {
         const tmpCheckins = [];
         for (const person of personnel.data) {
           let res = await getMemberCheckinsByPDL(person.id, personnel.pdlId);
-          let checkIn = undefined;
+          let newCheckins = [];
           let data =
             res && res.payload && res.payload.status === 200
               ? res.payload.data
               : null;
           if (data && data.length > 0 && !res.error) {
             data.sort((a, b) => (a.checkInDate < b.checkInDate ? 1 : -1));
-            checkIn = data[0];
+            newCheckins = data;
           }
           let personWithCheckin = Object.assign({}, person);
-          personWithCheckin.checkIn = checkIn;
+          personWithCheckin.checkins = newCheckins;
           tmpCheckins.push(personWithCheckin);
         }
         setCheckins(tmpCheckins);
@@ -63,27 +63,14 @@ const Personnel = () => {
   }, [personnel]);
 
   // Create entry of member and their last checkin
-  function createEntry(person, checkIn, keyInput) {
+  function createEntry(person, checkins, keyInput) {
     let key = keyInput ? keyInput : undefined;
     let name = "Team Member";
-    let lastCheckIn = "Unknown";
+    let lastCheckInDate = "Unknown";
     let infoClassName = "personnel-info-hidden";
-
-    if (
-      checkIn &&
-      checkIn.checkInDate &&
-      checkIn.checkInDate.length === 3 &&
-      checkIn.id
-    ) {
-      let checkInDate = checkIn.checkInDate;
-      checkInDate = new Date(
-        checkInDate[0],
-        checkInDate[1] - 1,
-        checkInDate[2]
-      ).toLocaleDateString();
-      lastCheckIn = (
-        <a href={`/services/check-in/${checkIn.id}`}>{checkInDate}</a>
-      );
+    if (checkins && checkins.length) {
+      const lastCheckin = checkins[checkins.length - 1];
+      lastCheckInDate = new Date(...lastCheckin.checkInDate);
     }
 
     if (person) {
@@ -94,7 +81,13 @@ const Personnel = () => {
     }
 
     return (
-      <div key={key} className="image-div">
+      <div
+        onClick={() => {
+          dispatch({ type: UPDATE_SELECTED_PROFILE, payload: person });
+        }}
+        key={key}
+        className="image-div"
+      >
         <img
           className="member-image"
           alt="personnel pic"
@@ -102,7 +95,7 @@ const Personnel = () => {
         />
         <div className="info-div">
           <p className={infoClassName}>{name}</p>
-          <p className={infoClassName}>Last Check-in: {lastCheckIn}</p>
+          <p className={infoClassName}>Last Check-in: {lastCheckInDate}</p>
         </div>
       </div>
     );

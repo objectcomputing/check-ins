@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
+  const { dispatch } = useContext(AppContext);
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -94,21 +96,36 @@ function Menu() {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <div style={{display: "flex", justifyContent: "center"}}><img alt="Object Computing, Inc." src="/img/ocicube-white.png" style={{width:"50%"}}/></div>
-      <br/>
-      <Button size="large" style={{width: "100%"}}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <img
+          alt="Object Computing, Inc."
+          src="/img/ocicube-white.png"
+          style={{ width: "50%" }}
+        />
+      </div>
+      <br />
+      <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/">
           Home
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{width: "100%"}}>
+      <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{width: "100%"}}>
+      <Button
+        onClick={() =>
+          dispatch({
+            type: UPDATE_SELECTED_PROFILE,
+            payload: undefined,
+          })
+        }
+        size="large"
+        style={{ width: "100%" }}
+      >
         <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
