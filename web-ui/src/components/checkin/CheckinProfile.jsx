@@ -9,7 +9,7 @@ import "./Checkin.css";
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
   const { selectedProfile, userProfile } = state;
-  const { imageUrl, name, pdlId, role, workEmail } = selectedProfile
+  const { name, pdlId, role, workEmail } = selectedProfile
     ? selectedProfile
     : userProfile && userProfile.memberProfile
     ? userProfile.memberProfile
