@@ -21,16 +21,16 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "full name of the employee", required = true)
     private String name;
 
-    @NotBlank
-    @Schema(description = "employee's role at the company", required = true)
+    @Nullable
+    @Schema(description = "employee's role at the company")
     private String role ;
 
     @Nullable
     @Schema(description = "employee's professional development lead")
     private UUID pdlId;
 
-    @NotBlank
-    @Schema(description = "where the employee is geographically located", required = true)
+    @Nullable
+    @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotBlank
@@ -41,9 +41,9 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "unique identifier for this employee with the Insperity system")
     private String insperityId;
 
-    @NotNull
+    @Nullable
     @Past
-    @Schema(description = "employee's date of hire", required = true)
+    @Schema(description = "employee's date of hire")
     private LocalDate startDate;
 
     @Nullable
@@ -66,6 +66,7 @@ public class MemberProfileUpdateDTO {
         this.name = name;
     }
 
+    @Nullable
     public String getRole() {
         return role;
     }
@@ -83,6 +84,7 @@ public class MemberProfileUpdateDTO {
         this.pdlId = pdlId;
     }
 
+    @Nullable
     public String getLocation() {
         return location;
     }
@@ -108,6 +110,7 @@ public class MemberProfileUpdateDTO {
         this.insperityId = insperityId;
     }
 
+    @Nullable
     public LocalDate getStartDate() {
         return startDate;
     }

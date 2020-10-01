@@ -40,7 +40,15 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (actionItem != null) {
             final UUID checkinid = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
-            if (checkinid == null || createById == null) {
+            double lastDisplayOrder = 0;
+            try {
+                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+            } catch (NullPointerException npe) {
+                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+                //nothing needs to happen here.
+            }
+            actionItem.setPriority(lastDisplayOrder+1);
+            if (guildId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (actionItem.getId() != null) {
                 throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
@@ -97,6 +105,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         return actionItemRet;
     }
 
+
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -138,6 +147,13 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
 //        throw new ActionItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
     }
+
+
+//    public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
+//
+//        return new LinkedHashSet<>(
+//                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
+//    }
 
     // original code
 //    public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {

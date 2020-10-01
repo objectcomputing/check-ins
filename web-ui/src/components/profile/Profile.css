@@ -1,4 +1,4 @@
-.current-skills {
+.Profile .current-skills {
   background-color: green;
   border: 1px solid black;
   border-radius: 5px;
@@ -9,30 +9,30 @@
   padding: 5px;
 }
 
-.skills-section {
+.Profile .skills-section {
   max-width: 50%;
   margin: auto;
 }
 
-.flex-row {
+.Profile .skills-section h2 {
+  text-align: center;
+}
+
+.Profile .flex-row {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   margin-bottom: 20px;
 }
-.profile-image {
+.Profile .profile-image {
   display: flex;
   flex-direction: row;
   margin-left: 50px;
   margin-right: 20px;
   cursor: pointer;
 }
-img {
-  border-radius: 50%;
-  max-width: 256px;
-  max-height: 256px;
-}
 
-input {
+.Profile input {
   background-color: unset;
   border-radius: 2px;
   border: none;
@@ -42,28 +42,28 @@ input {
   margin-bottom: 5px;
 }
 
-input:not(:disabled) {
+.Profile input:not(:disabled) {
   border: 1px solid black;
 }
 
-.input-component label {
+.Profile .input-component label {
   display: inline-block;
   width: 50px;
 }
 
-label {
+.Profile label {
   font-weight: 600;
 }
 
-p {
+.Profile p {
   font-size: 16px;
 }
 
-span {
+.Profile span {
   font-weight: 600;
 }
 
-textarea {
+.Profile textarea {
   background-color: unset;
   border-radius: 2px;
   border: none;
@@ -74,6 +74,6 @@ textarea {
   min-width: 350px;
 }
 
-textarea:not(:disabled) {
+.Profile textarea:not(:disabled) {
   border: 1px solid black;
 }

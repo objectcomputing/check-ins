@@ -1,0 +1,44 @@
+.action-items-container {
+  width: 75%;
+  height: fit-content;
+  border: solid 2px black;
+  margin: 0 auto;
+  margin-top: 25px;
+}
+
+.description-field {
+  text-align: left;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.delete-button {
+  background: red;
+}
+
+.action-items-info,
+.action-items-info-hidden {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.action-items-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.image-div {
+  cursor: auto;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.info-div {
+  display: block;
+}

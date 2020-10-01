@@ -65,6 +65,49 @@ class ActionItemServicesImplTest {
     }
 
     @Test
+    void testSaveWithExistingDisplayOrder() {
+        ActionItem currentActionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "I was already here!");
+        currentActionItem.setPriority(6.0);
+        ActionItem actionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        actionItem.setPriority(7.0);
+
+        when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.of(currentActionItem.getPriority()));
+        when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
+
+        ActionItem result = actionItemRepository.save(actionItem);
+
+        assertEquals(7, result.getPriority());
+    }
+
+    @Test
+    void testSaveNoExistingDisplayOrder() {
+        ActionItem actionItem = new ActionItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        actionItem.setPriority(1.0);
+
+        when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.empty());
+        when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
+
+        ActionItem result = actionItemRepository.save(actionItem);
+
+        assertEquals(1.0, result.getPriority());
+    }
+
+    @Test
     void testSave() {
         ActionItem actionItem = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
         CheckIn checkin = new CheckIn();
@@ -269,23 +312,27 @@ class ActionItemServicesImplTest {
 
     @Test
     void testFindByFieldsNullParams() {
-        Set<ActionItem> actionItemSet = Set.of(
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc"),
-                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc")
+        List<ActionItem> actionItemList = List.of(
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 1.0),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 2.0),
+                new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc", 3.0)
         );
 
-        when(actionItemRepository.search(null, null)).thenReturn(actionItemSet);
+        when(actionItemRepository.search(null, null)).thenReturn(actionItemList);
 
-        assertEquals(actionItemSet, services.findByFields(null, null));
+        Set<ActionItem> result = services.findByFields(null, null);
+        int i = 0;
 
+        for (ActionItem setItem : result) {
+            assertEquals(actionItemList.get(i++), setItem);
+        }
     }
 
     @Test
     void testFindByFieldsCheckInId() {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
-        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(actionItemToFind.getCheckinid().toString(), null)).thenReturn(List.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(actionItemToFind.getCheckinid(), null));
     }
@@ -299,7 +346,7 @@ class ActionItemServicesImplTest {
         );
 
         when(actionItemRepository.findAll()).thenReturn(actionItems);
-        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(null, actionItemToFind.getCreatedbyid().toString())).thenReturn(List.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services.findByFields(null, actionItemToFind.getCreatedbyid()));
     }
@@ -309,7 +356,7 @@ class ActionItemServicesImplTest {
         ActionItem actionItemToFind = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), "dnc");
 
         ActionItem actionItem = actionItemToFind;
-        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(Set.of(actionItemToFind));
+        when(actionItemRepository.search(actionItem.getCheckinid().toString(), actionItem.getCreatedbyid().toString())).thenReturn(List.of(actionItemToFind));
 
         assertEquals(Set.of(actionItemToFind), services
                 .findByFields(actionItem.getCheckinid(), actionItem.getCreatedbyid()));

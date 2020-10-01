@@ -10,8 +10,9 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
+
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
@@ -19,8 +20,9 @@ public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
     @Query("SELECT * " +
             "FROM action_items item " +
             "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
-            "AND (:createdById IS NULL OR item.createdbyid = :createdById)")
-    Set<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
+            "AND (:createdById IS NULL OR item.createdbyid = :createdById) " +
+            "ORDER BY priority")
+    List<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
 
     @Override
     <S extends ActionItem> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
@@ -28,4 +30,5 @@ public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
     @Override
     <S extends ActionItem> S save(@Valid @NotNull @NonNull S entity);
 
+    Optional<Double> findMaxPriorityByCheckinid(UUID checkinid);
 }
