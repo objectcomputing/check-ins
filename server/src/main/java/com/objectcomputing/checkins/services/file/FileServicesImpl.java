@@ -77,11 +77,7 @@ public class FileServicesImpl implements FileServices {
                 //find all
                 FileList fileList = drive.files().list().execute();
                 for (File file : fileList.getFiles()) {
-                    FileInfoDTO dto = new FileInfoDTO();
-                    dto.setFileId(file.getId());
-                    dto.setName(file.getName());
-                    dto.setSize(file.getSize());
-                    result.add(dto);
+                    result.add(setFileInfo(file, null));
                 }
             } else if (checkInID != null) {
                 CheckIn checkIn = checkInServices.read(checkInID);
@@ -96,12 +92,7 @@ public class FileServicesImpl implements FileServices {
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
                 for (CheckinDocument cd : checkinDocuments) {
                     File file = drive.files().get(cd.getUploadDocId()).execute();
-                    FileInfoDTO dto = new FileInfoDTO();
-                    dto.setFileId(file.getId());
-                    dto.setCheckInId(cd.getCheckinsId());
-                    dto.setName(file.getName());
-                    dto.setSize(file.getSize());
-                    result.add(dto);
+                    result.add(setFileInfo(file, cd));
                 }
             }
         } catch (IOException e) {
@@ -130,20 +121,23 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public HttpResponse<?> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
+    public HttpResponse<FileInfoDTO> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
+        FileInfoDTO result;
         CheckIn checkIn = checkInServices.read(checkInID);
         validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
         validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a file before uploading.");
 
+        // create folder name in the format name-date
         MemberProfile teamMember = memberProfileServices.getById(checkIn.getTeamMemberId());
         String subjectName = teamMember.getName();
-        String folderId;
-        String directoryName = String.format("subjectName", LocalDate.now());
+        String directoryName = subjectName.concat(LocalDate.now().toString());
+        directoryName = directoryName.replaceAll("\\s", "");
+
         validate((!isAdmin &&
                         !currentUser.getId().equals(checkIn.getTeamMemberId()) &&
                         !currentUser.getId().equals(teamMember.getPdlId())),
@@ -165,25 +159,28 @@ public class FileServicesImpl implements FileServices {
                 fileMetadata.setParents(Arrays.asList(directoryName));
             } else {
                 //Directory does not exist on Google Drive - create a new directory
-                folderId = createNewDirectoryOnDrive(drive, directoryName);
+                String folderId = createNewDirectoryOnDrive(drive, directoryName);
                 fileMetadata.setParents(Collections.singletonList(folderId));
             }
 
             InputStreamContent content = new InputStreamContent(file.getContentType().toString(), file.getInputStream());
-            File uploadedFile = drive.files().create(fileMetadata, content).setSupportsAllDrives(true).setFields("id").execute();
+            File uploadedFile = drive.files().create(fileMetadata, content)
+                                .setSupportsAllDrives(true)
+                                .setFields("id, size, name")
+                                .execute();
 
-            System.out.println("returned fileID = " + uploadedFile.getId());
             CheckinDocument cd = new CheckinDocument(checkInID, uploadedFile.getId());
             checkinDocumentServices.save(cd);
 
-//            emailSender.sendEmail("New Check-in Notes",
-//                    "New check-in notes have been uploaded. Please check the Google Drive folder.");
+            result = setFileInfo(uploadedFile, cd);
+
+//            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded. Please check the Google Drive folder.");
         } catch (final IOException e) {
             LOG.error("Unexpected error processing file upload.", e);
-            return HttpResponse.badRequest(String.format("Unexpected error processing %s", file.getFilename()));
+            return HttpResponse.badRequest();
         }
 
-        return HttpResponse.ok(String.format("The file %s was uploaded", file.getFilename()));
+        return HttpResponse.ok(result);
     }
 
     @Override
@@ -214,7 +211,18 @@ public class FileServicesImpl implements FileServices {
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
         File folder = drive.files().create(fileMetadata).execute();
-        System.out.println("Folder created successfully, returning folder ID = " + folder.getId());
         return folder.getId();
+    }
+
+    private FileInfoDTO setFileInfo(@NotNull File file, @Nullable CheckinDocument cd) {
+        FileInfoDTO dto = new FileInfoDTO();
+        dto.setFileId(file.getId());
+        dto.setName(file.getName());
+        dto.setSize(file.getSize());
+        if(cd != null) {
+            dto.setCheckInId(cd.getCheckinsId());
+        }
+
+        return dto;
     }
 }

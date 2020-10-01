@@ -37,22 +37,19 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Client("/services/file")
     private HttpClient client;
 
-    private static final String FILE_TO_UPLOAD = "application-test.yml";
     private static File testFile;
-
-    @Inject
-    ResourceLoader resourceLoader;
 
     @BeforeEach
     void createTestFile() throws IOException {
-        testFile = new File("testFile2.txt");
-        FileWriter myWriter = new FileWriter("testFile2.txt");
+        testFile = new File("testFile.txt");
+        FileWriter myWriter = new FileWriter("testFile.txt");
         myWriter.write("This.Is.A.Test.File");
         myWriter.close();
     }
-//google.credentials=1rFg4Mr3Q1R1CtMRN1FfbRPUTU6IaQEYg
+
+    // Happy Path
     @Test
-    public void testUploadEndpoint() throws URISyntaxException, IOException {
+    public void testUploadEndpoint() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -60,9 +57,37 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
         final HttpRequest<?> request= HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder().addPart("file", testFile).build())
-                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                        .contentType(MULTIPART_FORM_DATA);
+        final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(testFile.getName(), response.getBody().get().getName());
+        assertEquals(checkin.getId(), response.getBody().get().getCheckInId());
+        assertTrue(response.getBody().get().getSize() > 0);
+        assertNotNull(response.getBody().get().getFileId());
+    }
+
+    @Test
+    public void testUploadEndpointFailsForUnrelatedUser() {
+
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+
+        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        final HttpRequest<?> request= HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder().addPart("file", testFile).build())
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), MEMBER_ROLE)
                 .contentType(MULTIPART_FORM_DATA);
-        final HttpResponse<CheckIn> response = client.toBlocking().exchange(request);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
+        assertEquals(HttpStatus.UNAUTHORIZED,  responseException.getStatus());
     }
 
     @Test
