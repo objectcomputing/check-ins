@@ -14,9 +14,14 @@
   margin: auto;
 }
 
+.Profile .skills-section h2 {
+  text-align: center;
+}
+
 .Profile .flex-row {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   margin-bottom: 20px;
 }
 .Profile .profile-image {
