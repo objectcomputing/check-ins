@@ -17,13 +17,16 @@ INSERT INTO member_profile(id, name, role, location, workEmail, insperityid, sta
 VALUES ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9','Gina Bremehr', 'COO','St. Louis', 'bremehrg@objectcomputing.com', '1231234', '2012-09-29', 'Epitome of Strong Woman');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('6207b3fd-042d-49aa-9e28-dcc04f537c2d','Michael Kimberlin', 'Director of Organizational Development', '802cb1f5-a255-4236-8719-773fa53d79d9','St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers');
-
-INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('2559a257-ae84-4076-9ed4-3820c427beeb','Ron Steinkamp', 'Senior Project Manager', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','St. Louis', 'steinkampr@objectcomputing.com', '3333333', '2019-09-19', 'Managing projets well');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
+VALUES ('802cb1f5-a255-4236-8719-773fa53d79d9','John Meyerin', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'meyerinj@objectcomputing.com', '1111111', '2018-09-03', 'Outstanding Engineer');
+
+INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','Geetika Sharma', 'PMO Administrator', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','St. Louis', 'sharmag@objectcomputing.com', '4444444', '2019-09-09', 'Engineer Wrangler extrodinaire');
+
+INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
+VALUES ('6207b3fd-042d-49aa-9e28-dcc04f537c2d','Michael Kimberlin', 'Director of Organizational Development', '802cb1f5-a255-4236-8719-773fa53d79d9','St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers');
 
 INSERT INTO member_profile(id, name, role, location, workEmail, insperityid, startdate, biotext)
 VALUES ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d','Mark Volkmann', 'Partner and Principal Software Engineer','St. Louis', 'volkmannm@objectcomputing.com', '9999999', '1996-06-13', 'Software Engineer Spectacular');
@@ -36,9 +39,6 @@ VALUES ('6884ab96-2275-4af9-89d8-ad84254d8759','Pramukh Bagur', 'Software Engine
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('1b4f99da-ef70-4a76-9b37-8bb783b749ad','Suman Maroju', 'Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'St. Louis', 'marojus@objectcomputing.com', '2345678', '2018-06-06', 'Superior Engineer');
-
-INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
-VALUES ('802cb1f5-a255-4236-8719-773fa53d79d9','John Meyerin', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'meyerinj@objectcomputing.com', '1111111', '2018-09-03', 'Outstanding Engineer');
 
 INSERT INTO member_profile(id, name, role, pdlid, location, workEmail, insperityid, startdate, biotext)
 VALUES ('b2d35288-7f1e-4549-aa2b-68396b162490','Mohit Bhatia', 'Senior Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','St. Louis', 'bhatiam@objectcomputing.com', '5555555', '2013-11-13', 'Engineer Extrodinaire');
@@ -143,7 +143,7 @@ INSERT INTO checkins(id, teammemberid, pdlid, checkindate, completed)
 VALUES ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-03-20 11:32:29.04' ,true);
 
 INSERT INTO checkin_notes(id, checkinid, createdbyid, description)
-VALUES ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note')
+VALUES ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note');
 
 INSERT INTO action_items(id, checkinid, createdbyid, description)
 Values('b0840fc5-9a8e-43d8-be99-9682fc32e69e','92e91c5a-cb00-461a-86b4-d01b3f07754e', '8fa673c0-ca19-4271-b759-41cb9db2e83a','Action Item for Holly Williams');
