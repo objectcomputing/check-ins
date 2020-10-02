@@ -5,67 +5,69 @@ exports[`renders correctly 1`] = `
   className="notes"
 >
   <div>
-    <h1>
-      <svg
-        aria-hidden={true}
-        className="MuiSvgIcon-root"
-        focusable="false"
-        style={
-          Object {
-            "marginRight": "10px",
+    <div>
+      <h1>
+        <svg
+          aria-hidden={true}
+          className="MuiSvgIcon-root"
+          focusable="false"
+          style={
+            Object {
+              "marginRight": "10px",
+            }
           }
-        }
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
-        />
-      </svg>
-      Notes for 
-      holmes
-    </h1>
-    <div
-      className="container"
-    >
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
+          />
+        </svg>
+        Notes for 
+        holmes
+      </h1>
       <div
-        className="skeleton"
+        className="container"
       >
-        <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-          style={
-            Object {
-              "height": "2rem",
-              "width": undefined,
+        <div
+          className="skeleton"
+        >
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
             }
-          }
-        />
-        <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-          style={
-            Object {
-              "height": "2rem",
-              "width": undefined,
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
             }
-          }
-        />
-        <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-          style={
-            Object {
-              "height": "2rem",
-              "width": undefined,
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
             }
-          }
-        />
-        <span
-          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-          style={
-            Object {
-              "height": "2rem",
-              "width": undefined,
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
             }
-          }
-        />
+          />
+        </div>
       </div>
     </div>
   </div>
