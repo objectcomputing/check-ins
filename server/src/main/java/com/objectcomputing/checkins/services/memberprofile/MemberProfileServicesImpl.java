@@ -11,7 +11,7 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
-    private MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRepository memberProfileRepository;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
         this.memberProfileRepository = memberProfileRepository;
