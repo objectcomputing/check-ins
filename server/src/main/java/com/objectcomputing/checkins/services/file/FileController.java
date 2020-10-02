@@ -23,7 +23,6 @@ import java.util.UUID;
 @Controller("/services/file")
 @Tag(name = "file")
 @Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
-@Singleton
 public class FileController {
 
     private FileServices fileServices;
@@ -36,7 +35,7 @@ public class FileController {
      * Retrieve documents associated with CheckIn Id or find all from Google Drive
      *
      * @param {id}
-     * @return {@link HttpResponse<Set<File>>} Returns a set of files associated with CheckInId or all files
+     * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
     @Get("/{?id}")
     public HttpResponse<Set<FileInfoDTO>> findDocuments(@Nullable UUID id) {
@@ -46,12 +45,12 @@ public class FileController {
     /**
      * Download document associated with UploadDocId from Google Drive
      *
-     * @param {id}
+     * @param {uploadDocId}, the fileId of the file to be deleted
      * @return {@link HttpResponse<OutputStream>} Returns OutputStream of document
      */
-    @Get("/{id}/download")
-    public HttpResponse<OutputStream> downloadDocument(@NotNull String id) {
-        return fileServices.downloadFiles(id);
+    @Get("/{uploadDocId}/download")
+    public HttpResponse<OutputStream> downloadDocument(@NotNull String uploadDocId) {
+        return fileServices.downloadFiles(uploadDocId);
     }
 
     /**
@@ -61,14 +60,14 @@ public class FileController {
      * @return HttpResponse
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<?> upload(@NotNull UUID checkInId, @Nullable @Body CompletedFileUpload file) {
+    public HttpResponse<FileInfoDTO> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
         return fileServices.uploadFile(checkInId, file);
     }
 
     /**
      * Delete a document from Google Drive
      *
-     * @param {id}, the uploadDocId of the document
+     * @param {uploadDocId}, the uploadDocId of the document
      * @return HttpResponse
      */
     @Delete("/{uploadDocId}")

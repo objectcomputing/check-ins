@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.core.io.ResourceLoader;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -23,7 +22,6 @@ import java.io.FileWriter;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
