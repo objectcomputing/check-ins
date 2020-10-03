@@ -13,7 +13,6 @@ import java.util.Collection;
 public class GoogleAuthenticator {
 
     private final Collection<String> scopes;
-    private final String googleCredentials;
     GoogleCredentials credentials = null;
 
 
@@ -22,10 +21,8 @@ public class GoogleAuthenticator {
      *
      * @param scopes, the scope(s) of access to request for this application
      */
-    public GoogleAuthenticator(@Property(name = "check-ins.application.scopes") Collection<String> scopes,
-                               @Property(name = "google.credentials") String googleCredentials) {
+    public GoogleAuthenticator(@Property(name = "check-ins.application.scopes") Collection<String> scopes) {
         this.scopes = scopes;
-        this.googleCredentials = googleCredentials;
     }
 
     /**
@@ -38,8 +35,6 @@ public class GoogleAuthenticator {
 
         // Load client secrets
         //insert secrets here for testing
-
-
 
         InputStream in = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         credentials = GoogleCredentials.fromStream(in);

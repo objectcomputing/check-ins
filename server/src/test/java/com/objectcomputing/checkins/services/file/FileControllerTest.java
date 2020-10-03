@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.file;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
@@ -16,8 +15,10 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.multipart.MultipartBody;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
 import java.io.FileWriter;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static io.micronaut.http.MediaType.MULTIPART_FORM_DATA;
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FileControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInDocumentFixture {
 
     @Inject
@@ -37,7 +39,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
     private static File testFile;
 
-    @BeforeEach
+    @BeforeAll
     void createTestFile() throws IOException {
         testFile = new File("testFile.txt");
         FileWriter myWriter = new FileWriter("testFile.txt");
@@ -45,7 +47,6 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         myWriter.close();
     }
 
-    // Happy Path
     @Test
     public void testUploadEndpoint() {
 
@@ -54,7 +55,9 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request= HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder().addPart("file", testFile).build())
+        // test folder creation and file upload
+        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                                        .addPart("file", testFile).build())
                                         .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
@@ -64,47 +67,70 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         assertEquals(checkin.getId(), response.getBody().get().getCheckInId());
         assertTrue(response.getBody().get().getSize() > 0);
         assertNotNull(response.getBody().get().getFileId());
+
+        // test usage of existing upload directory to upload file
+        final HttpRequest<?> requestExistingFolder = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                                                        .addPart("file", testFile).build())
+                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .contentType(MULTIPART_FORM_DATA);
+        final HttpResponse<FileInfoDTO> responseExistingFolder = client.toBlocking().exchange(requestExistingFolder, FileInfoDTO.class);
+
+        assertEquals(HttpStatus.OK, responseExistingFolder.getStatus());
+        assertEquals(testFile.getName(), responseExistingFolder.getBody().get().getName());
+        assertEquals(checkin.getId(), responseExistingFolder.getBody().get().getCheckInId());
+        assertTrue(responseExistingFolder.getBody().get().getSize() > 0);
+        assertNotNull(responseExistingFolder.getBody().get().getFileId());
     }
 
     @Test
-    public void testUploadEndpointFailsForUnrelatedUser() {
+    public void testUploadEndpointFailsForInvalidFile() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        File badFile = new File("");
 
-        final HttpRequest<?> request= HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder().addPart("file", testFile).build())
-                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), MEMBER_ROLE)
+        final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                .addPart("file", badFile).build())
+                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
                 .contentType(MULTIPART_FORM_DATA);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+
+        final IllegalArgumentException responseException = assertThrows(IllegalArgumentException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-
-        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
-        assertEquals(HttpStatus.UNAUTHORIZED,  responseException.getStatus());
+        String error = responseException.getMessage();
+        assertEquals("java.io.FileNotFoundException:  (No such file or directory)", error);
     }
 
     @Test
     public void testDownloadEndpoint() {
 
+        //arrange
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        String id = "1Ji7hrjp4c2-vBPYm6kyjkAyXI724Bvgp";
-        final HttpRequest<?> request= HttpRequest.GET(String.format("/%s/download", id))
-                .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse<CheckIn> response = client.toBlocking().exchange(request);
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                                                        .addPart("file", testFile).build())
+                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .contentType(MULTIPART_FORM_DATA);
+        final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
+        assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
+
+        //act
+        final HttpRequest<?> requestForDownloadEndpoint= HttpRequest.GET(String.format("/%s/download",
+                                                            responseFromPostEndpoint.getBody().get().getFileId()))
+                                                            .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<CheckIn> responseFromDownloadEndpoint = client.toBlocking().exchange(requestForDownloadEndpoint);
+
+        //assert
+        assertEquals(HttpStatus.OK, responseFromDownloadEndpoint.getStatus());
     }
 
     @Test
     public void testFindAllEndpointAdmin() {
-
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        String id = "1Ji7hrjp4c2-vBPYm6kyjkAyXI724Bvgp";
-        final HttpRequest<?> request= HttpRequest.GET("")
-                .basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+        MemberProfile user = createAnUnrelatedUser();
+        final HttpRequest<?> request = HttpRequest.GET("").basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
         assertEquals(HttpStatus.OK,response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -113,37 +139,47 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testFindAllFailsIfNotAdmin() {
 
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        final HttpRequest<?> request = HttpRequest.GET(String.format("")).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        MemberProfile user = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET("").basicAuth(user.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
         assertEquals(HttpStatus.UNAUTHORIZED,  responseException.getStatus());
+        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
     }
 
     @Test
     public void testFindByCheckInId() {
 
+        //arrange
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        String uploadDocID = "1Ji7hrjp4c2-vBPYm6kyjkAyXI724Bvgp";
-
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        CheckinDocument cd = createACustomCheckInDocument(checkin, uploadDocID);
 
-        final HttpRequest<?> request= HttpRequest.GET(String.format("/?id=%s", checkin.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
+        final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                                                        .addPart("file", testFile).build())
+                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .contentType(MULTIPART_FORM_DATA);
+        final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
+        assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
+        FileInfoDTO resultFromPost = responseFromPostEndpoint.getBody().get();
 
-        FileInfoDTO result = response.body().iterator().next();
+        //act
+        final HttpRequest<?> requestForFindById = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+                                                    .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<FileInfoDTO>> responseFromFindById = client.toBlocking().exchange(requestForFindById, Argument.setOf(FileInfoDTO.class));
+        FileInfoDTO result = Objects.requireNonNull(responseFromFindById.body()).iterator().next();
+
+        //assert
         assertNotNull(result);
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(uploadDocID, result.getFileId());
-        assertEquals(checkin.getId(), result.getCheckInId());
+        assertEquals(HttpStatus.OK, responseFromFindById.getStatus());
+        assertEquals(resultFromPost.getFileId(), result.getFileId());
+        assertEquals(resultFromPost.getCheckInId(), result.getCheckInId());
+        assertEquals(resultFromPost.getName(), result.getName());
     }
 
     @Test
@@ -155,7 +191,8 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?id=%s", checkin.getId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+                                        .basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -172,16 +209,41 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        CheckinDocument cd = createADefaultCheckInDocument(checkin);
+        createADefaultCheckInDocument(checkin);
 
-        final HttpRequest<?> request= HttpRequest.GET(String.format("/?id=%s", checkin.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request= HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+                                        .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals("Error occurred while retrieving files from Google Drive.", error);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,  responseException.getStatus());
+        assertEquals("File not found: doc1.", error);
+        assertEquals(HttpStatus.NOT_FOUND,  responseException.getStatus());
+    }
+
+    @Test
+    public void testDeleteEndpoint() {
+        //arrange
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
+                .addPart("file", testFile).build())
+                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                .contentType(MULTIPART_FORM_DATA);
+        final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
+        assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
+
+        //act
+        final HttpRequest<?> requestForDelete = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<FileInfoDTO>> responseFromDelete = client.toBlocking().exchange(requestForDelete);
+
+        //assert
+        assertEquals(HttpStatus.OK,  responseFromDelete.getStatus());
+        assertEquals(Optional.empty(), responseFromDelete.getBody());
     }
 }

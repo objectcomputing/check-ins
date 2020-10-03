@@ -1,22 +1,20 @@
 package com.objectcomputing.checkins.services.file;
 
-import com.google.api.client.http.FileContent;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.google.api.services.drive.Drive.Files;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.utils.SecurityService;
@@ -29,7 +27,6 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -38,32 +35,27 @@ public class FileServicesImpl implements FileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
-    private String googleCredentials;
-    private GoogleDriveAccessor googleDriveAccessor;
-    private EmailSender emailSender;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
-    private CheckInServices checkInServices;
-    private CheckinDocumentServices checkinDocumentServices;
-    private MemberProfileServices memberProfileServices;
+    private final GoogleDriveAccessor googleDriveAccessor;
+    private final EmailSender emailSender;
+    private final SecurityService securityService;
+    private final CheckInServices checkInServices;
+    private final CheckinDocumentServices checkinDocumentServices;
+    private final MemberProfileServices memberProfileServices;
 
     public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, EmailSender emailSender,
-                            SecurityService securityService, CurrentUserServices currentUserServices,
-                            CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,
-                            MemberProfileServices memberProfileServices,
-                            @Property(name = "google.credentials") String googleCredentials) {
+                            SecurityService securityService, CheckInServices checkInServices,
+                            CheckinDocumentServices checkinDocumentServices,
+                            MemberProfileServices memberProfileServices) {
         this.googleDriveAccessor = googleDriveAccessor;
         this.emailSender = emailSender;
         this.securityService = securityService;
-        this.currentUserServices = currentUserServices;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
         this.memberProfileServices = memberProfileServices;
-        this.googleCredentials = googleCredentials;
     }
 
     @Override
-    public HttpResponse<Set<FileInfoDTO>> findFiles(@Nullable UUID checkInID) {
+    public HttpResponse<?> findFiles(@Nullable UUID checkInID) {
 
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         Set<FileInfoDTO> result = new HashSet<>();
@@ -90,6 +82,11 @@ public class FileServicesImpl implements FileServices {
                     result.add(setFileInfo(file, cd));
                 }
             }
+        } catch (GoogleJsonResponseException e) {
+            LOG.error("Error occurred while retrieving files from Google Drive.", e);
+            return HttpResponse
+                    .status(HttpStatus.valueOf(e.getStatusCode()))
+                    .body(e.getContent());
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             return HttpResponse.serverError();
@@ -105,13 +102,13 @@ public class FileServicesImpl implements FileServices {
         try {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
-            drive.files().export(uploadDocId.toString(), "application/pdf").executeMediaAndDownloadTo(outputStream);
+//            drive.files().export(uploadDocId, "application/pdf").executeMediaAndDownloadTo(outputStream);
+            drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             return HttpResponse.serverError();
         }
 
-        System.out.println("outputstream = " + outputStream);
         return HttpResponse.ok(outputStream);
     }
 
@@ -133,29 +130,20 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            //check if folder already exists on google drive
-            //if exists, return folderId and name
+            /* check if folder already exists on google drive
+            * if exists, return folderId and name
+            * else, create a new folder in the format name-date */
             FileList driveIndex = drive.files().list().setFields("files(id, name)").execute();
             File folderOnDrive = driveIndex.getFiles().stream()
                                     .filter(s -> directoryName.contains(s.getName()))
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElse(createNewDirectoryOnDrive(drive, directoryName));
 
             // set file metadata
             File fileMetadata = new File();
             fileMetadata.setName(file.getFilename());
             fileMetadata.setMimeType(file.getContentType().orElse(MediaType.APPLICATION_OCTET_STREAM_TYPE).toString());
-
-            if(folderOnDrive != null) {
-                //Directory exists on Google Drive
-                System.out.println("Folder exists on drive");
-                fileMetadata.setParents(Arrays.asList(folderOnDrive.getId()));
-            } else {
-                //Directory does not exist on Google Drive - create a new directory
-                System.out.println("Folder does not exist on drive");
-                String folderId = createNewDirectoryOnDrive(drive, directoryName);
-                fileMetadata.setParents(Collections.singletonList(folderId));
-            }
+            fileMetadata.setParents(Collections.singletonList(folderOnDrive.getId()));
 
             //upload file to google drive
             InputStreamContent content = new InputStreamContent(file.getContentType().toString(), file.getInputStream());
@@ -170,7 +158,7 @@ public class FileServicesImpl implements FileServices {
 
             result = setFileInfo(uploadedFile, cd);
 
-//            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded. Please check the Google Drive folder.");
+            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded. Please check the Google Drive folder.");
         } catch (final IOException e) {
             LOG.error("Unexpected error processing file upload.", e);
             return HttpResponse.badRequest();
@@ -180,7 +168,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public HttpResponse deleteFile(@NotNull String uploadDocId) {
+    public HttpResponse<?> deleteFile(@NotNull String uploadDocId) {
 
         try {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
@@ -201,15 +189,11 @@ public class FileServicesImpl implements FileServices {
         }
     }
 
-    private String createNewDirectoryOnDrive(Drive drive, String directoryName) throws IOException {
+    private File createNewDirectoryOnDrive(Drive drive, String directoryName) throws IOException {
         File fileMetadata = new File();
         fileMetadata.setName(directoryName);
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
-
-        File folder = drive.files().create(fileMetadata).execute();
-        System.out.println("created new directory on drive = " + folder.getId());
-        System.out.println("created new directory on drive = " + folder.getName());
-        return folder.getId();
+        return drive.files().create(fileMetadata).execute();
     }
 
     private FileInfoDTO setFileInfo(@NotNull File file, @Nullable CheckinDocument cd) {

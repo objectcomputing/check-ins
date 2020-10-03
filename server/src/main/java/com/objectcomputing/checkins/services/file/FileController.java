@@ -1,10 +1,8 @@
 package com.objectcomputing.checkins.services.file;
 
 import javax.annotation.Nullable;
-import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
-import com.google.api.services.drive.model.File;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecuredAnnotationRule;
@@ -38,7 +36,7 @@ public class FileController {
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
     @Get("/{?id}")
-    public HttpResponse<Set<FileInfoDTO>> findDocuments(@Nullable UUID id) {
+    public HttpResponse<?> findDocuments(@Nullable UUID id) {
         return fileServices.findFiles(id);
     }
 
