@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import io.micronaut.context.ApplicationContext;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
 
@@ -12,6 +14,8 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
     private final MemberProfileRepository memberProfileRepository;
+    @Inject
+    ApplicationContext applicationContext;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
         this.memberProfileRepository = memberProfileRepository;
@@ -19,6 +23,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile getById(UUID id) {
+        MemberProfileServicesImpl impl = applicationContext.getBean(MemberProfileServicesImpl.class);
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
             throw new MemberProfileDoesNotExistException("No member profile for id");
