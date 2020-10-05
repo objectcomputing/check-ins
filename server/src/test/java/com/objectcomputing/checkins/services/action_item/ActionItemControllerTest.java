@@ -257,9 +257,9 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(memberProfileForPDL.getWorkEmail(),PDL_ROLE);
-        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
-        assertEquals(actionItem, response.body());
+        assertEquals(Set.of(actionItem), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
     }
@@ -304,11 +304,20 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testReadActionItemNotFound() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, ActionItem.class));
+        UUID randomCheckinID = UUID.randomUUID();
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Invalid action item id %s", randomCheckinID), error);
+
+//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test
@@ -321,7 +330,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
-                actionItem.getCreatedbyid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(),MEMBER_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());

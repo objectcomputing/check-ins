@@ -10,7 +10,7 @@ import io.micronaut.security.utils.SecurityService;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem save(ActionItem actionItem) {
         ActionItem actionItemRet = null;
         if (actionItem != null) {
-            final UUID checkinid = actionItem.getCheckinid();
+            final UUID actionItemId = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
             double lastDisplayOrder = 0;
             try {
@@ -48,12 +48,12 @@ public class ActionItemServicesImpl implements ActionItemServices {
                 //nothing needs to happen here.
             }
             actionItem.setPriority(lastDisplayOrder+1);
-            if (guildId == null || createById == null) {
+            if (actionItemId == null || createById == null) {
                 throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
             } else if (actionItem.getId() != null) {
                 throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
-            } else if (checkinRepo.findById(checkinid).isEmpty()) {
-                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", checkinid));
+            } else if (checkinRepo.findById(actionItemId).isEmpty()) {
+                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", actionItemId));
             } else if (memberRepo.findById(createById).isEmpty()) {
                 throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
             }
@@ -111,11 +111,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
         MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
-/*        Limit read
-        subject of the check in
-        the current PDL of the subject of the check in
-        the admin */
-
         if (checkinid != null) {
             CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
@@ -123,45 +118,20 @@ public class ActionItemServicesImpl implements ActionItemServices {
             validate(!currentUser.getId().equals(pdlId) &&
                     !currentUser.getId().equals(teamMemberId) &&
                     !isAdmin, "User is unauthorized to do this operation");
-        }
-        if (createdbyid != null) {
+        } else if (createdbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createdbyid).orElse(null);
             validate(!currentUser.getId().equals(memberRecord.getId()) &&
-                    !isAdmin,"User is unauthorized to do this operation");
+                        !isAdmin, "User is unauthorized to do this operation");
+        } else {
+            validate(!isAdmin, "User is unauthorized to do this operation");
         }
-        if (checkinid == null && createdbyid == null) {
 
-        }
-
-//        if(!isAdmin) {
-//            CheckIn checkinRecord = checkinRepo.findById(actionItemResult.getCheckinid()).orElse(null);
-//            final UUID pdlId = checkinRecord!=null?checkinRecord.getPdlId():null;
-//            final UUID createById = checkinRecord!=null?checkinRecord.getTeamMemberId():null;
-//            validate(!currentUser.getId().equals(pdlId)&&!currentUser.getId().equals(createById),"User is unauthorized to do this operation");
-//        }
-
-        Set<ActionItem> actionItems = new HashSet<>(
+        Set<ActionItem> actionItems = new LinkedHashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
 
         return actionItems;
 
-//        throw new ActionItemBadArgException(String.format("Member %s is unauthorized to do this operation", currentUser.getUuid()));
     }
-
-
-//    public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-//
-//        return new LinkedHashSet<>(
-//                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
-//    }
-
-    // original code
-//    public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-//        Set<ActionItem> actionItems = new HashSet<>(
-//                actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
-//
-//        return actionItems;
-//    }
 
     public void delete(@NotNull UUID id) {
         actionItemRepo.deleteById(id);
