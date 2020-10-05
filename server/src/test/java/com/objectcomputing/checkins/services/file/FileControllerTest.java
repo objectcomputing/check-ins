@@ -15,6 +15,7 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.multipart.MultipartBody;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -23,6 +24,8 @@ import java.io.FileWriter;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -38,13 +41,19 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     private HttpClient client;
 
     private static File testFile;
+    private final static String filePath = "testFile.txt";
 
     @BeforeAll
     void createTestFile() throws IOException {
-        testFile = new File("testFile.txt");
-        FileWriter myWriter = new FileWriter("testFile.txt");
+        testFile = new File(filePath);
+        FileWriter myWriter = new FileWriter(testFile);
         myWriter.write("This.Is.A.Test.File");
         myWriter.close();
+    }
+
+    @AfterAll
+    void deleteTestFile() {
+        testFile.deleteOnExit();
     }
 
     @Test
@@ -103,9 +112,10 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     }
 
     @Test
-    public void testDownloadEndpoint() {
+    public void testDownloadEndpoint() throws IOException {
 
         //arrange
+        String expected = Files.readString(Path.of(filePath));
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
@@ -121,10 +131,24 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         final HttpRequest<?> requestForDownloadEndpoint= HttpRequest.GET(String.format("/%s/download",
                                                             responseFromPostEndpoint.getBody().get().getFileId()))
                                                             .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse<CheckIn> responseFromDownloadEndpoint = client.toBlocking().exchange(requestForDownloadEndpoint);
+        final HttpResponse<File> responseFromDownloadEndpoint = client.toBlocking().exchange(requestForDownloadEndpoint, File.class);
+        String actual = responseFromDownloadEndpoint.getBody().get().toString();
 
         //assert
         assertEquals(HttpStatus.OK, responseFromDownloadEndpoint.getStatus());
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testDownloadEndpointThrowsExceptionIfDocIdDoesNotExist() {
+        MemberProfile user = createAnUnrelatedUser();
+
+        final HttpRequest<?> request = HttpRequest.GET("/test.file.id/download")
+                .basicAuth(user.getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.NOT_FOUND,  responseException.getStatus());
     }
 
     @Test
@@ -148,7 +172,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(HttpStatus.UNAUTHORIZED,  responseException.getStatus());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,  responseException.getStatus());
         assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
     }
 
@@ -169,7 +193,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         FileInfoDTO resultFromPost = responseFromPostEndpoint.getBody().get();
 
         //act
-        final HttpRequest<?> requestForFindById = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+        final HttpRequest<?> requestForFindById = HttpRequest.GET(String.format("?id=%s", checkin.getId()))
                                                     .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<FileInfoDTO>> responseFromFindById = client.toBlocking().exchange(requestForFindById, Argument.setOf(FileInfoDTO.class));
         FileInfoDTO result = Objects.requireNonNull(responseFromFindById.body()).iterator().next();
@@ -191,7 +215,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", checkin.getId()))
                                         .basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
@@ -200,7 +224,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         String error = Objects.requireNonNull(body).get("message").asText();
 
         assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
-        assertEquals(HttpStatus.UNAUTHORIZED,  responseException.getStatus());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,  responseException.getStatus());
     }
 
     @Test
@@ -211,7 +235,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         createADefaultCheckInDocument(checkin);
 
-        final HttpRequest<?> request= HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+        final HttpRequest<?> request= HttpRequest.GET(String.format("?id=%s", checkin.getId()))
                                         .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
@@ -236,14 +260,34 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
                 .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
         assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
+        FileInfoDTO resultFromPost = responseFromPostEndpoint.getBody().get();
 
         //act
-        final HttpRequest<?> requestForDelete = HttpRequest.GET(String.format("/?id=%s", checkin.getId()))
+        final HttpRequest<?> requestForDelete = HttpRequest.DELETE(String.format("/%s", resultFromPost.getFileId()))
                 .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<FileInfoDTO>> responseFromDelete = client.toBlocking().exchange(requestForDelete);
 
         //assert
         assertEquals(HttpStatus.OK,  responseFromDelete.getStatus());
         assertEquals(Optional.empty(), responseFromDelete.getBody());
+    }
+
+    @Test
+    public void testDeleteEndpointThrowsExceptionIfDocDoesNotExist() {
+        //arrange
+        MemberProfile user = createAnUnrelatedUser();
+
+        //act
+        final HttpRequest<?> request = HttpRequest.DELETE("/test.file.id")
+                .basicAuth(user.getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        //assert
+        assertEquals("File not found: test.file.id.", error);
+        assertEquals(HttpStatus.NOT_FOUND,  responseException.getStatus());
     }
 }

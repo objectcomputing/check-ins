@@ -36,6 +36,8 @@ public class GoogleAuthenticator {
         // Load client secrets
         //insert secrets here for testing
 
+
+
         InputStream in = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         credentials = GoogleCredentials.fromStream(in);
 

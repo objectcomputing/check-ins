@@ -13,7 +13,6 @@ import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class FileController {
      * @param {id}
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
-    @Get("/{?id}")
+    @Get("{?id}")
     public HttpResponse<?> findDocuments(@Nullable UUID id) {
         return fileServices.findFiles(id);
     }
@@ -44,10 +43,11 @@ public class FileController {
      * Download document associated with UploadDocId from Google Drive
      *
      * @param {uploadDocId}, the fileId of the file to be deleted
-     * @return {@link HttpResponse<OutputStream>} Returns OutputStream of document
+     * @return {@link HttpResponse<java.io.File>} Returns file
      */
     @Get("/{uploadDocId}/download")
-    public HttpResponse<OutputStream> downloadDocument(@NotNull String uploadDocId) {
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public HttpResponse<?> downloadDocument(@NotNull String uploadDocId) {
         return fileServices.downloadFiles(uploadDocId);
     }
 
