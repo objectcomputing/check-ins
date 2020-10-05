@@ -18,7 +18,7 @@ import "./CheckinsPage.css";
 const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile } = state;
+  const { currentCheckin, userProfile, selectedProfile} = state;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
 
@@ -38,14 +38,16 @@ const CheckinsPage = ({ history }) => {
           <Grid item sm={9} justify="center">
             <Container maxWidth="md">
               <div className="contents">
-                <CheckinProfile state={state} />
+                <CheckinProfile />
                 <CheckinsHistory history={history} />
                 {currentCheckin && currentCheckin.id && (
-                  <Note memberName={userProfile.name} />
+                  <React.Fragment>
+                    <Note memberName={selectedProfile ? selectedProfile.name : userProfile.name} />
+                    <ActionItemsPanel checkinId={currentCheckin.id} />
+                    <CheckinDocs />
+                  </React.Fragment>
                 )}
               </div>
-              <ActionItemsPanel checkinId="9636fdaa-75cd-430e-84d8-1efea999682a" />
-              <CheckinDocs />
               <div className="modal-container">
                 <Modal close={showModal} show={show}>
                   The checkin will no longer be able to be edited. Are you sure
@@ -67,7 +69,7 @@ const CheckinsPage = ({ history }) => {
           <Grid item sm={3} justify="flex-end">
             <Container maxWidth="md">
               <div className="right-sidebar">
-                {canSeePersonnel && <Personnel />}
+                {canSeePersonnel && <Personnel history={history} />}
                 <GuidesPanel />
               </div>
             </Container>
