@@ -54,6 +54,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
             validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
             if (!isAdmin && isCompleted) {
+                validate(true, "User is unauthorized to do this operation");
+            } else if (!isAdmin && !isCompleted) {
                 validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
             }
 
@@ -99,6 +101,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
             validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
             if (!isAdmin && isCompleted) {
+                validate(true, "User is unauthorized to do this operation");
+            } else if (!isAdmin && !isCompleted) {
                 validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
             }
 
