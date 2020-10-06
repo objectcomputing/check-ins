@@ -18,12 +18,11 @@ const UploadDocs = () => {
   const [fileColors, setFileColors] = useState({});
 
   const pdlorAdmin =
-    (memberProfile &&
-      userProfile.role &&
-      userProfile.role.includes("PDL")) ||
-      userProfile.role.includes("ADMIN");
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    userProfile.role.includes("ADMIN");
   const canView =
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
+  const checkinId = currentCheckin && currentCheckin.id;
 
   const handleFile = (file) => {
     setFiles([...files, file]);
@@ -39,7 +38,7 @@ const UploadDocs = () => {
     }
     setLoading(true);
     try {
-      let res = await uploadFile(formData);
+      let res = await uploadFile(formData, checkinId);
       if (res.error) throw new Error(res.error);
       const { data, status } = res.payload;
       if (status !== 200) throw new Error("status equals " + status);
@@ -90,20 +89,22 @@ const UploadDocs = () => {
 
   return (
     <div className="documents">
-      {canView && (<div>
-        <h1 className="title">
-          <DescriptionIcon />
-          Documents
-        </h1>
-        <div className="file-upload">
-          <div className="file-name-container">{fileMapper()}</div>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
-          )}
+      {canView && (
+        <div>
+          <h1 className="title">
+            <DescriptionIcon />
+            Documents
+          </h1>
+          <div className="file-upload">
+            <div className="file-name-container">{fileMapper()}</div>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
+            )}
+          </div>
         </div>
-      </div>)}
+      )}
     </div>
   );
 };
