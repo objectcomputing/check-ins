@@ -18,6 +18,7 @@ public class GoogleAuthenticator {
      * Creates a google drive utility for quick access
      *
      * @param scopes, the scope(s) of access to request for this application
+     * @param driveConfiguration, Google Drive configuration properties
      */
     public GoogleAuthenticator(@Property(name = "check-ins.application.scopes") Collection<String> scopes,
                                DriveConfiguration driveConfiguration) {
@@ -29,7 +30,7 @@ public class GoogleAuthenticator {
      * Creates an authorized Credential object.
      *
      * @return An authorized Credential object.
-     * @throws IOException If the configured  file cannot be found.
+     * @throws IOException If the configured file cannot be found.
      */
     GoogleCredentials setupCredentials() throws IOException {
 
@@ -38,7 +39,7 @@ public class GoogleAuthenticator {
 
         if (credentials == null) {
             credentials = GoogleCredentials.getApplicationDefault();
-            throw new FileNotFoundException("Using Google Application Default Credentials");
+            throw new FileNotFoundException("Credentials not found while using Google default credentials");
         }
 
         return scopes.isEmpty() ? credentials : credentials.createScoped(scopes);

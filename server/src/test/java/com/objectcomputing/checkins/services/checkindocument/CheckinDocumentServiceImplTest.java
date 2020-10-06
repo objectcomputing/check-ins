@@ -240,7 +240,7 @@ public class CheckinDocumentServiceImplTest {
     }
 
     @Test
-    void testDelete() {
+    void testDeleteByCheckinId() {
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(true);
 
@@ -259,5 +259,28 @@ public class CheckinDocumentServiceImplTest {
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));
+    }
+
+    @Test
+    void testDeleteByUploadDocId() {
+
+        when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(true);
+
+        services.deleteByUploadDocId("Test.Upload.Doc.Id");
+
+        verify(checkinDocumentRepository, times(1)).deleteByUploadDocId(any(String.class));
+        verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
+    }
+
+    @Test
+    void testDeleteNonExistingUploadDocId() {
+        String id = "Test.Id";
+        when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(false);
+
+        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByUploadDocId(id));
+
+        assertEquals(String.format("CheckinDocument with uploadDocId %s does not exist", id), exception.getMessage());
+        verify(checkinDocumentRepository, times(0)).deleteByUploadDocId(any(String.class));
+        verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
 }

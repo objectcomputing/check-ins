@@ -29,7 +29,7 @@ public class FileController {
     }
 
     /**
-     * Retrieve documents associated with CheckIn Id or find all from Google Drive
+     * Retrieve metadata of documents associated with CheckIn Id or find all from Google Drive
      *
      * @param {id}
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
@@ -55,7 +55,7 @@ public class FileController {
      * Takes in a file to upload to Google Drive
      *
      * @param file, the file to upload to Google Drive
-     * @return HttpResponse
+     * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
     public HttpResponse<FileInfoDTO> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {

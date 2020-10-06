@@ -21,11 +21,6 @@ public class GoogleDriveAccessor {
     private final String applicationName;
     private GoogleAuthenticator authenticator;
 
-    /**
-     * Creates a google drive utility for quick access
-     *
-     * @param applicationName the name of this application
-     */
     public GoogleDriveAccessor(@Property(name = "check-ins.application.name") String applicationName,
                                GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
