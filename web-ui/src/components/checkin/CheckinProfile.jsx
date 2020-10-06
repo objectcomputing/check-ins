@@ -9,10 +9,15 @@ import "./Checkin.css";
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
   const { selectedProfile, userProfile } = state;
-  const { imageUrl, name, pdlId, title, workEmail } = selectedProfile
+  const { name, pdlId, title, workEmail } = selectedProfile
     ? selectedProfile
     : userProfile && userProfile.memberProfile
     ? userProfile.memberProfile
+    : {};
+  const { imageUrl } = selectedProfile
+    ? selectedProfile
+    : userProfile
+    ? userProfile
     : {};
   const [pdl, setPDL] = useState();
 
