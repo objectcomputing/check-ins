@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -114,6 +115,49 @@ class AgendaItemServicesImplTest {
         verify(agendaItemRepository, never()).save(any(AgendaItem.class));
         verify(checkinRepository, never()).findById(any(UUID.class));
         verify(memberProfileRepository, never()).findById(any(UUID.class));
+    }
+
+    @Test
+    void testSaveWithExistingDisplayOrder() {
+        AgendaItem currentAgendaItem = new AgendaItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "I was already here!");
+        currentAgendaItem.setPriority(6.0);
+        AgendaItem agendaItem = new AgendaItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        agendaItem.setPriority(7.0);
+
+        when(checkinRepository.findById(agendaItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(agendaItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid())).thenReturn(Optional.of(currentAgendaItem.getPriority()));
+        when(agendaItemRepository.save(agendaItem)).thenReturn(agendaItem);
+
+        AgendaItem result = agendaItemRepository.save(agendaItem);
+
+        assertEquals(7, result.getPriority());
+    }
+
+    @Test
+    void testSaveNoExistingDisplayOrder() {
+        AgendaItem agendaItem = new AgendaItem(
+                UUID.fromString("35fb243a-eaa0-4c89-abca-2e088e03fb05"),
+                UUID.fromString("33d6110b-a468-41f7-9b69-feadaa6fe0e1"),
+                "Described!");
+
+        agendaItem.setPriority(1.0);
+
+        when(checkinRepository.findById(agendaItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
+        when(memberProfileRepository.findById(agendaItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid())).thenReturn(Optional.empty());
+        when(agendaItemRepository.save(agendaItem)).thenReturn(agendaItem);
+
+        AgendaItem result = agendaItemRepository.save(agendaItem);
+
+        assertEquals(1.0, result.getPriority());
     }
 
     @Test
