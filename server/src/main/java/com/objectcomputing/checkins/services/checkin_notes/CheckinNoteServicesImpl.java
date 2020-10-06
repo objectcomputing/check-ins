@@ -1,28 +1,27 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInBadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.utils.SecurityService;
-import jnr.a64asm.Mem;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CheckinNoteServicesImpl.class);
     private CheckInRepository checkinRepo;
     private CheckinNoteRepository checkinNoteRepository;
     private MemberProfileRepository memberRepo;
@@ -39,7 +38,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         this.currentUserServices = currentUserServices;
     }
 
-
     @Override
     public CheckinNote save(CheckinNote checkinNote) {
         CheckinNote checkinNoteRet = null;
@@ -48,6 +46,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         if (checkinNote != null) {
+            LOG.info("Making multiple calls within this I/O thread as thread switching is costly.");
             final UUID checkinId = checkinNote.getCheckinid();
             final UUID createById = checkinNote.getCreatedbyid();
             CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
@@ -83,9 +82,9 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         return checkInNoteResult;
     }
 
-
     @Override
     public CheckinNote update(CheckinNote checkinNote) {
+        LOG.info("Updating on I/O loop");
         CheckinNote checkinNoteRet = null;
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -110,7 +109,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         }
         return checkinNoteRet;
     }
-
 
     @Override
     public Set<CheckinNote> findByFields(UUID checkinid, UUID createbyid) {
