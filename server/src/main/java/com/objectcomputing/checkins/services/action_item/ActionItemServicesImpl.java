@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -69,31 +68,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
             actionItemRet = actionItemRepo.save(actionItem);
         }
 
-//        ActionItem actionItemRet = null;
-//        if (actionItem != null) {
-//            final UUID actionItemId = actionItem.getCheckinid();
-//            final UUID createById = actionItem.getCreatedbyid();
-//            double lastDisplayOrder = 0;
-//            try {
-//                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
-//            } catch (NullPointerException npe) {
-//                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
-//                //nothing needs to happen here.
-//            }
-//            actionItem.setPriority(lastDisplayOrder+1);
-//            if (actionItemId == null || createById == null) {
-//                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
-//            } else if (actionItem.getId() != null) {
-//                throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
-//            } else if (checkinRepo.findById(actionItemId).isEmpty()) {
-//                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", actionItemId));
-//            } else if (memberRepo.findById(createById).isEmpty()) {
-//                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
-//            }
-//
-//            actionItemRet = actionItemRepo.save(actionItem);
-//        }
         return actionItemRet;
+
     }
 
     public ActionItem read(@NotNull UUID id) {
