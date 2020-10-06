@@ -28,9 +28,6 @@ import java.util.UUID;
 @Singleton
 public class ActionItemController {
 
-//    @Inject
-//    private ActionItemServices actionItemServices;
-
     private ActionItemServices actionItemServices;
     public ActionItemController(ActionItemServices actionItemServices) {
         this.actionItemServices = actionItemServices;

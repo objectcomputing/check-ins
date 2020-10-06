@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteCreateDTO;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.ActionItemFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
@@ -35,37 +37,60 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Client("/services/action-item")
     HttpClient client;
 
+@Test
+void testCreateAnActionItemByAdmin() {
+
+    MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+    MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+    CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+    ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+    actionItemCreateDTO.setCheckinid(checkIn.getId());
+    actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+    actionItemCreateDTO.setDescription("dnc");
+
+    final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+    final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
+
+    ActionItem actionItem= response.body();
+
+    assertNotNull(response);
+    assertEquals(HttpStatus.CREATED, response.getStatus());
+    assertEquals(actionItemCreateDTO.getCheckinid(),actionItem.getCheckinid());
+    assertEquals(actionItemCreateDTO.getCreatedbyid(),actionItem.getCreatedbyid());
+    assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
+}
 
     @Test
-    void testCreateAnActionItem() {
+    void testCreateActionItemByPdl() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        checkinNoteCreateDTO.setDescription("test");
 
-        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
-        actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
-        actionItemCreateDTO.setDescription("dnc");
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
-
-        ActionItem actionItem= response.body();
+        CheckinNote checkinNote = response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(actionItemCreateDTO.getCheckinid(),actionItem.getCheckinid());
-        assertEquals(actionItemCreateDTO.getCreatedbyid(),actionItem.getCreatedbyid());
-        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
     }
 
     @Test
     void testCreateAnInvalidActionItem() {
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth("test@test.com",ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -83,13 +108,14 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Test
     void testCreateANullActionItem() {
 
-        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE,PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
         assertEquals("Required Body [actionItem] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -99,13 +125,14 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Test
     void testCreateAnActionItemForExistingCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(UUID.randomUUID());
         actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("test");
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -118,7 +145,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
-    void testCreateAnActionItemForExistingMemberIdId() {
+    void testCreateAnActionItemForNonExistingMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
@@ -129,7 +156,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
         actionItemCreateDTO.setDescription("test");
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -141,27 +168,51 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     }
 
-
     @Test
-    void testLoadActionItems() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    void testCreateAnActionItemByPLDIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
+        actionItemCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        actionItemCreateDTO.setDescription("test");
+
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+
+    @Test
+    void testLoadActionItems() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfUser);
+
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(checkIn.getId());
-        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
+        actionItemCreateDTO2.setCreatedbyid(memberProfileOfPDL.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<List<ActionItem>> response = client.toBlocking().exchange(request, Argument.listOf(ActionItem.class));
 
         List<ActionItem> actionItem= response.body();
@@ -175,6 +226,8 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testLoadActionItemsInvalidActionItem() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(UUID.randomUUID());
         actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
@@ -184,7 +237,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -193,6 +246,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
+
         assertEquals("actionItems.checkinid: must not be null", errorList.get(0));
         assertEquals("actionItems.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -202,31 +256,31 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testLoadActionItemsThrowException() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser,memberProfileOfPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfileOfUser.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
+        actionItemCreateDTO2.setCreatedbyid(memberProfileOfUser.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
 
-        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
         final String errorMessage = String.format("CheckIn %s doesn't exist",actionItemCreateDTO2.getCheckinid());
 
-       assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
-               actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
+        assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
+                actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
 
@@ -317,7 +371,6 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         assertEquals(request.getPath(), href);
         assertEquals(String.format("Invalid action item id %s", randomCheckinID), error);
 
-//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test

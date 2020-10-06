@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -37,9 +38,25 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItem save(ActionItem actionItem) {
         ActionItem actionItemRet = null;
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
         if (actionItem != null) {
-            final UUID actionItemId = actionItem.getCheckinid();
+            final UUID checkinId = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
+
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            validate(checkinId == null || createById == null, "Invalid checkin note %s", actionItem);
+            validate(actionItem.getId() != null, "Found unexpected id %s for action item", actionItem.getId());
+            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+            if (!isAdmin && isCompleted) {
+                validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
+            }
+
             double lastDisplayOrder = 0;
             try {
                 lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
@@ -48,18 +65,34 @@ public class ActionItemServicesImpl implements ActionItemServices {
                 //nothing needs to happen here.
             }
             actionItem.setPriority(lastDisplayOrder+1);
-            if (actionItemId == null || createById == null) {
-                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
-            } else if (actionItem.getId() != null) {
-                throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
-            } else if (checkinRepo.findById(actionItemId).isEmpty()) {
-                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", actionItemId));
-            } else if (memberRepo.findById(createById).isEmpty()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
-            }
 
             actionItemRet = actionItemRepo.save(actionItem);
         }
+
+//        ActionItem actionItemRet = null;
+//        if (actionItem != null) {
+//            final UUID actionItemId = actionItem.getCheckinid();
+//            final UUID createById = actionItem.getCreatedbyid();
+//            double lastDisplayOrder = 0;
+//            try {
+//                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+//            } catch (NullPointerException npe) {
+//                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+//                //nothing needs to happen here.
+//            }
+//            actionItem.setPriority(lastDisplayOrder+1);
+//            if (actionItemId == null || createById == null) {
+//                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
+//            } else if (actionItem.getId() != null) {
+//                throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
+//            } else if (checkinRepo.findById(actionItemId).isEmpty()) {
+//                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", actionItemId));
+//            } else if (memberRepo.findById(createById).isEmpty()) {
+//                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
+//            }
+//
+//            actionItemRet = actionItemRepo.save(actionItem);
+//        }
         return actionItemRet;
     }
 
