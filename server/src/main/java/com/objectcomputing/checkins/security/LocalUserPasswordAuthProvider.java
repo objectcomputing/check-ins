@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Singleton
 @Requires(env = "local")
-@Replaces(UserPasswordAuthProvider.class)
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private CurrentUserServices currentUserServices;

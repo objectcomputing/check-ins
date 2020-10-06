@@ -22,44 +22,60 @@ const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
-  const { userProfile } = state;
-  const { checkin, memberName } = props;
+  const { userProfile, currentCheckin, selectedProfile } = state;
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
+  const { memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
+  const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
+  const pdlId = memberProfile && memberProfile.pdlId;
+  const pdlorAdmin =
+    (memberProfile &&
+      userProfile.role &&
+      userProfile.role.includes("PDL")) ||
+      userProfile.role.includes("ADMIN");
 
   const canViewPrivateNote =
-    userProfile.memberProfile &&
-    userProfile.memberProfile.role &&
-    (userProfile.memberProfile.role.includes("PDL") ||
-      userProfile.memberProfile.role.includes("ADMIN")) &&
-    userProfile.memberProfile.id !== checkin.teamMemberId;
+    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
+  const currentCheckinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {
-    const id = checkin.id;
-    const createdby = checkin.teamMemberId;
     async function getNotes() {
-      if (checkin) {
-        setIsLoading(true);
-        let res = await getNoteByCheckinId(id);
-        if (res.payload && res.payload.data && !res.error) {
-          if (res.payload.data.length === 0) {
-            res = await createCheckinNote({
-              checkinid: id,
-              createdbyid: createdby,
-              description: "",
-            });
+      if (!pdlId) {
+        return;
+      }
+      setIsLoading(true);
+      try {
+        let res = await getNoteByCheckinId(currentCheckinId);
+        if (res.error) throw new Error(res.error);
+
+        const currentNote =
+          res.payload && res.payload.data && res.payload.data.length > 0
+            ? res.payload.data[0]
+            : null;
+        if (currentNote) {
+          setNote(currentNote);
+        } else if (id === selectedProfilePDLId) {
+          res = await createCheckinNote({
+            checkinid: currentCheckinId,
+            createdbyid: id,
+            description: "",
+          });
+          if (res.error) throw new Error(res.error);
+          if (res && res.payload && res.payload.data) {
             setNote(res.payload.data);
-          } else {
-            setNote(res.payload.data[0]);
           }
         }
-        setIsLoading(false);
+      } catch (e) {
+        console.log(e);
       }
+      setIsLoading(false);
     }
     getNotes();
-  }, [checkin]);
+  }, [currentCheckinId, pdlId, id, selectedProfilePDLId]);
 
   const handleNoteChange = (e) => {
     const { value } = e.target;
@@ -77,25 +93,28 @@ const Notes = (props) => {
   return (
     <div className="notes">
       <div>
-        <h1>
-          <NotesIcon style={{ marginRight: "10px" }} />
-          Notes for {memberName}
-        </h1>
-        <div className="container">
-          {isLoading ? (
-            <div className="skeleton">
-              <Skeleton variant="text" height={"2rem"} />
-              <Skeleton variant="text" height={"2rem"} />
-              <Skeleton variant="text" height={"2rem"} />
-              <Skeleton variant="text" height={"2rem"} />
+          <div>
+            <h1>
+              <NotesIcon style={{ marginRight: "10px" }} />
+              Notes for {memberName}
+            </h1>
+            <div className="container">
+              {isLoading ? (
+                <div className="skeleton">
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                </div>
+              ) : (
+                <textarea
+                  disabled={!pdlorAdmin || currentCheckin.completed === true}
+                  onChange={handleNoteChange}
+                  value={note && note.description ? note.description : ""}
+                ></textarea>
+              )}
             </div>
-          ) : (
-            <textarea
-              onChange={handleNoteChange}
-              value={note && note.description ? note.description : ""}
-            ></textarea>
-          )}
-        </div>
+          </div>
       </div>
       {canViewPrivateNote && (
         <div>

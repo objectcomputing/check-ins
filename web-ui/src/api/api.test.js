@@ -17,6 +17,7 @@ test("Error Resolve", async () => {
     reject("End of World");
   });
 
+  window.snackDispatch = () => {};
   let res = await resolve(p);
   expect(res).toStrictEqual({
     payload: null,

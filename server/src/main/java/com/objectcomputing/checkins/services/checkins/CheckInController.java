@@ -21,6 +21,7 @@ import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.authentication.Authentication;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.security.annotation.Secured;
