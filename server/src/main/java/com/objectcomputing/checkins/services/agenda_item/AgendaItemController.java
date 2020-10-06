@@ -43,12 +43,11 @@ public class AgendaItemController {
                 .body(error);
     }
 
-    /**
+    /**	   
      * Create and Save a new agenda item
      *
-     * @param agendaItem
-     * @param request
-     * @return
+     * @param agendaItem, {@link AgendaItemCreateDTO}
+     * @return {@link HttpResponse <AgendaItem>}
      */
     @Post("/")
     public HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
@@ -59,12 +58,11 @@ public class AgendaItemController {
 
     }
 
-    /**
+     /**
      * Update a agenda item
      *
-     * @param agendaItem
-     * @param request
-     * @return
+     * @param agendaItem, {@link AgendaItem}
+     * @return {@link HttpResponse< AgendaItem >}
      */
     @Put("/")
     public HttpResponse<AgendaItem> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
@@ -75,11 +73,11 @@ public class AgendaItemController {
     }
 
     /**
-     * Get items by checkind or createbyid
+     * Find agenda items that match all filled in parameters, return all results when given no params
      *
-     * @param checkinid
-     * @param createdbyid
-     * @return
+     * @param checkinid   {@link UUID} of checkin
+     * @param createdbyid {@link UUID} of member	
+     * @return {@link List < CheckIn > list of checkins}	
      */
     @Get("/{?checkinid,createdbyid}")
     public Set<AgendaItem> findAgendaItem(@Nullable UUID checkinid,
@@ -87,11 +85,11 @@ public class AgendaItemController {
         return agendaItemServices.findByFields(checkinid, createdbyid);
     }
 
-    /**
+     /**	
      * Get agenda item from id
      *
-     * @param id
-     * @return
+     * @param id {@link UUID} of the agenda item entry
+     * @return {@link AgendaItem}
      */
     @Get("/{id}")
     public AgendaItem readAgendaItem(@NotNull UUID id) {
