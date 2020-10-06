@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
