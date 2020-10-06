@@ -48,12 +48,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
             CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validate(checkinId == null || createById == null, "Invalid checkin note %s", actionItem);
             validate(actionItem.getId() != null, "Found unexpected id %s for action item", actionItem.getId());
             validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
             validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
             if (!isAdmin && isCompleted) {
                 validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
+                validate(!currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
             }
 
             double lastDisplayOrder = 0;

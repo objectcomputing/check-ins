@@ -86,6 +86,30 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
+    void testCreateActionItemBySubjectOfCheckin() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(memberProfileOfUser.getId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        CheckinNote checkinNote = response.body();
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
     void testCreateAnInvalidActionItem() {
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
 
