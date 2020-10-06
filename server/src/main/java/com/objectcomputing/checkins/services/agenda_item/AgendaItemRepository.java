@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,5 +28,7 @@ public interface AgendaItemRepository extends CrudRepository<AgendaItem, UUID> {
 
     @Override
     <S extends AgendaItem> S save(@Valid @NotNull @NonNull S entity);
+
+    Optional<Double> findMaxPriorityByCheckinid(UUID checkinid);
 
 }
