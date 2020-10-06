@@ -1,75 +1,45 @@
-import React, { useContext, useEffect, useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import "./Agenda.css";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
-  getAgendaItemByCheckinId,
+  getAgendaItem,
   deleteAgendaItem,
   updateAgendaItem,
 } from "../../api/agenda.js";
-import { AppContext } from "../../context/AppContext";
-
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIndicator from "@material-ui/icons/DragIndicator";
-import AdjustIcon from "@material-ui/icons/Adjust";
 
-import "./Agenda.css";
+async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
+  if (mockAgendaItems) {
+    setAgendaItems(mockAgendaItems);
+    return;
+  }
 
-const Agenda = ({ checkinId, mockAgendaItems }) => {
-  const { state } = useContext(AppContext);
-  const { currentCheckin } = state;
-  const [prevAgendaItems, setPrevAgendaItems] = useState();
-  const [agendaItems, setAgendaItems] = useState();
+  let res = await getAgendaItem(checkinId, null);
+  if (res && res.payload) {
+    let agendaItemList =
+      res.payload.data && !res.error ? res.payload.data : undefined;
+    setAgendaItems(agendaItemList);
+  }
+}
 
-  //   console.log({ agendaItems, currentCheckin, prevAgendaItems });
+const AgendaItems = ({ checkinId, mockAgendaItems }) => {
+  let [agendaItems, setAgendaItems] = useState();
 
-  const deleteItem = async (id) => {
+  async function deleteItem(id) {
     if (id) {
       await deleteAgendaItem(id);
     }
-  };
+  }
 
-  const updateItem = async (agendaItem) => {
+  async function doUpdate(agendaItem) {
     if (agendaItem) {
       await updateAgendaItem(agendaItem);
-    }
-  };
-
-  const agendaItemsCompare = (currItems) => {
-    if (!prevAgendaItems) {
-      setPrevAgendaItems(currItems);
-      return true;
-    }
-    if (prevAgendaItems.length !== currItems.length) {
-      setPrevAgendaItems(currItems);
-      return true;
-    }
-    for (var i = 0; i < prevAgendaItems.length; i++) {
-      if (prevAgendaItems[i].id !== currItems[i].id) {
-        setPrevAgendaItems(currItems);
-        return true;
-      }
-    }
-    return false;
-  };
-
-  async function getAgendaItems() {
-    if (mockAgendaItems) {
-      setAgendaItems(mockAgendaItems);
-      return;
-    }
-
-    let res = await getAgendaItemByCheckinId(currentCheckin.id);
-    if (res && res.payload) {
-      let agendaItemList =
-        res.payload.data && !res.error ? res.payload.data : undefined;
-      setAgendaItems(agendaItemList);
     }
   }
 
   useEffect(() => {
-    if (agendaItemsCompare(agendaItems)) {
-      getAgendaItems();
-    }
-  });
+    getAgendaItems(checkinId, mockAgendaItems, setAgendaItems);
+  }, [checkinId, mockAgendaItems, setAgendaItems]);
 
   const getAgendaItemStyle = (agendaItem) => {
     if (agendaItem && agendaItem.description) {
@@ -118,8 +88,10 @@ const Agenda = ({ checkinId, mockAgendaItems }) => {
       return;
     }
 
-    setAgendaItems(
-      reorder(agendaItems, result.source.index, result.destination.index)
+    agendaItems = reorder(
+      agendaItems,
+      result.source.index,
+      result.destination.index
     );
 
     let precedingPriority = 0;
@@ -136,9 +108,7 @@ const Agenda = ({ checkinId, mockAgendaItems }) => {
 
     agendaItems[result.destination.index].priority = newPriority;
 
-    updateItem(agendaItems[result.destination.index]);
-    getAgendaItems();
-    // update entire agenda items array
+    doUpdate(agendaItems[result.destination.index]);
   };
 
   const killAgendaItem = (id, event) => {
@@ -151,7 +121,6 @@ const Agenda = ({ checkinId, mockAgendaItems }) => {
       }
     }
     setAgendaItems(arrayDupe);
-    getAgendaItems();
   };
 
   const createFakeEntry = (item) => {
@@ -215,29 +184,24 @@ const Agenda = ({ checkinId, mockAgendaItems }) => {
   };
 
   return (
-    <div className="agenda-items-container">
-      <h1>
-        <AdjustIcon style={{ marginRight: "10px" }} />
-        Agenda Items
-      </h1>
-      <div className="agenda-container">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
-              >
-                {createAgendaItemEntries()}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </div>
-    </div>
+    <fieldset className="action-items-container">
+      <legend>My Agenda Items</legend>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+            >
+              {createAgendaItemEntries()}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </fieldset>
   );
 };
 
-export default Agenda;
+export default AgendaItems;

@@ -6,6 +6,7 @@ import Modal from "../components/modal/Modal";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import CheckinProfile from "../components/checkin/CheckinProfile";
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
+import AgendaItems from "../components/agenda/Agenda";
 import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
 
@@ -18,7 +19,7 @@ import "./CheckinsPage.css";
 const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile, selectedProfile} = state;
+  const { currentCheckin, userProfile, selectedProfile } = state;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
 
@@ -42,8 +43,15 @@ const CheckinsPage = ({ history }) => {
                 <CheckinsHistory history={history} />
                 {currentCheckin && currentCheckin.id && (
                   <React.Fragment>
-                    <Note memberName={selectedProfile ? selectedProfile.name : userProfile.name} />
+                    <Note
+                      memberName={
+                        selectedProfile
+                          ? selectedProfile.name
+                          : userProfile.name
+                      }
+                    />
                     <ActionItemsPanel checkinId={currentCheckin.id} />
+                    <AgendaItems checkinId={currentCheckin.id} />
                     <CheckinDocs />
                   </React.Fragment>
                 )}

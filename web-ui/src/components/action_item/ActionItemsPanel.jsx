@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import './ActionItemsPanel.css';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import React, { useState, useEffect } from "react";
+import "./ActionItemsPanel.css";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   findActionItem,
   deleteActionItem,
-  updateActionItem
-} from '../../api/actionitem.js';
-import DragIndicator from '@material-ui/icons/DragIndicator';
+  updateActionItem,
+} from "../../api/actionitem.js";
+import DragIndicator from "@material-ui/icons/DragIndicator";
 
 async function getActionItems(checkinId, mockActionItems, setActionItems) {
   if (mockActionItems) {
@@ -22,7 +22,7 @@ async function getActionItems(checkinId, mockActionItems, setActionItems) {
   }
 }
 
-const ActionItemsPanel = ({checkinId, mockActionItems}) => {
+const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
   let [actionItems, setActionItems] = useState();
 
   async function doDelete(id) {
@@ -38,21 +38,21 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
   }
 
   useEffect(() => {
-      getActionItems(checkinId, mockActionItems, setActionItems);
+    getActionItems(checkinId, mockActionItems, setActionItems);
   }, [checkinId, mockActionItems, setActionItems]);
 
-  const getActionItemStyle = actionItem => {
+  const getActionItemStyle = (actionItem) => {
     if (actionItem && actionItem.description) {
-      return 'action-items-info';
+      return "action-items-info";
     }
-    return 'action-items-info-hidden';
+    return "action-items-info-hidden";
   };
 
-  const getActionItemText = actionItem => {
+  const getActionItemText = (actionItem) => {
     if (actionItem && actionItem.description) {
       return actionItem.description;
     }
-    return 'Lorem Ipsum Etcetera';
+    return "Lorem Ipsum Etcetera";
   };
 
   const reorder = (list, startIndex, endIndex) => {
@@ -64,26 +64,26 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
 
   const grid = 8;
 
-  const getListStyle = isDraggingOver => ({
-    padding: grid
+  const getListStyle = (isDraggingOver) => ({
+    padding: grid,
   });
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: 'none',
+    userSelect: "none",
     padding: grid * 2,
-    margin: '0 0 {grid}px 0',
-    textAlign: 'left',
-    marginBottom: '1px',
-    marginTop: '1px',
-    display: 'flex',
-    flexDirection: 'row',
+    margin: "0 0 {grid}px 0",
+    textAlign: "left",
+    marginBottom: "1px",
+    marginTop: "1px",
+    display: "flex",
+    flexDirection: "row",
 
-    background: isDragging ? 'lightgreen' : '#fafafa',
+    background: isDragging ? "lightgreen" : "#fafafa",
 
-    ...draggableStyle
+    ...draggableStyle,
   });
 
-  const onDragEnd = result => {
+  const onDragEnd = (result) => {
     if (!result || !result.destination) {
       return;
     }
@@ -123,7 +123,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     setActionItems(arrayDupe);
   };
 
-  const createFakeEntry = item => {
+  const createFakeEntry = (item) => {
     return (
       <div key={item.id} className="image-div">
         <span>
@@ -165,7 +165,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
               <div>
                 <button
                   className="delete-button"
-                  onClick={e => killActionItem(actionItem.id, e)}
+                  onClick={(e) => killActionItem(actionItem.id, e)}
                 >
                   -
                 </button>
@@ -177,7 +177,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     } else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({id: `${i + 1}Action`});
+        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
       }
       return fake;
     }
