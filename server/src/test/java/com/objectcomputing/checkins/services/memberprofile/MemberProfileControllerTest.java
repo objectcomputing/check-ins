@@ -122,7 +122,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setName(memberProfile.getName());
 
-        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null, null))
+        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?role=%s", testRole))
@@ -208,10 +208,10 @@ public class MemberProfileControllerTest {
     public void testGetFindByRole() {
         MemberProfile memberProfile = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(null, memberProfile.getRole(), null, null))
+        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?role=%s", memberProfile.getRole()))
+        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?title=%s", memberProfile.getTitle()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
 
