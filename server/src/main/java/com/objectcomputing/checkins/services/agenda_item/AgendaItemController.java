@@ -24,11 +24,12 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller("/services/agenda-item")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -37,7 +38,6 @@ import java.util.concurrent.ExecutorService;
 public class AgendaItemController {
     private static final Logger LOG = LoggerFactory.getLogger(AgendaItemController.class);
 
-    @Inject
     private AgendaItemServices agendaItemServices;
 
     private EventLoopGroup eventLoopGroup;
@@ -50,7 +50,7 @@ public class AgendaItemController {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
-
+  
     @Error(exception = AgendaItemBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, AgendaItemBadArgException e) {
         JsonError error = new JsonError(e.getMessage())
@@ -100,7 +100,7 @@ public class AgendaItemController {
      * @param agendaItem, {@link AgendaItemCreateDTO}
      * @return {@link HttpResponse <AgendaItem>}
      */
-    @Post()
+    @Post("/")
     public Single<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
         LOG.info("Entering controller on main event loop");
@@ -118,15 +118,14 @@ public class AgendaItemController {
 
     }
 
-    /**
-     * Update agendaItem.
+     /**
+     * Update a agenda item
      *
      * @param agendaItem, {@link AgendaItem}
      * @return {@link HttpResponse< AgendaItem >}
      */
-    @Put()
+    @Put("/")
     public Single<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
-//        AgendaItem updatedAgendaItem = agendaItemServices.update(agendaItem);
         LOG.info("Entering controller on main event loop");
         if (agendaItem == null) {
             return Single.just(HttpResponse.ok());
@@ -140,23 +139,28 @@ public class AgendaItemController {
                                         URI.create(String.format("%s/%s", request.getPath(), updatedAgendaItem.getId()))))
                                 .body(updatedAgendaItem))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
     /**
-     * Delete agendaItem
+     * Find agenda items that match all filled in parameters, return all results when given no params
      *
-     * @param id, id of {@link AgendaItem} to delete
+     * @param checkinid   {@link UUID} of checkin
+     * @param createdbyid {@link UUID} of member	
+     * @return {@link List < CheckIn > list of checkins}	
      */
-    @Delete("/{id}")
-    public HttpResponse<?> deleteAgendaItem(UUID id) {
-        agendaItemServices.delete(id);
-        return HttpResponse
-                .ok();
-    }
+    @Get("/{?checkinid,createdbyid}")
+    public Single<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
+                                                                 @Nullable UUID createdbyid) {
+        LOG.info("Entering controller on main event loop");
+        return Single.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(agendaItems -> {
+                    LOG.info("Mapping on main event loop");
+                    return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
 
-    /**
-     * Get AgendaItem based off id
+     /**	
+     * Get agenda item from id
      *
      * @param id {@link UUID} of the agenda item entry
      * @return {@link AgendaItem}
@@ -176,25 +180,19 @@ public class AgendaItemController {
             LOG.info("Successful find");
             return (HttpResponse<AgendaItem>)HttpResponse.ok(agendaItem);
         }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
     /**
-     * Find agenda items that match all filled in parameters, return all results when given no params
+     * Delete agendaItem
      *
-     * @param checkinid   {@link UUID} of checkin
-     * @param createdbyid {@link UUID} of member
-     * @return {@link List < CheckIn > list of checkins}
+     * @param id, id of {@link AgendaItem} to delete
      */
-    @Get("/{?checkinid,createdbyid}")
-    public Single<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
-                                                                 @Nullable UUID createdbyid) {
-        LOG.info("Entering controller on main event loop");
-        return Single.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(agendaItems -> {
-                    LOG.info("Mapping on main event loop");
-                    return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+    @Delete("/{id}")
+    public HttpResponse<?> deleteAgendaItem(UUID id) {
+        agendaItemServices.delete(id);
+        return HttpResponse
+                .ok();
     }
 
     /**
@@ -227,6 +225,5 @@ public class AgendaItemController {
         }).map(agendaItemsCreated -> HttpResponse.created(agendaItemsCreated)
                   .headers(headers -> headers.location(request.getUri())));
     }
-
 
 }
