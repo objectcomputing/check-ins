@@ -158,6 +158,7 @@ public class AgendaItemController {
                     LOG.info("Mapping on main event loop");
                     return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
+    }
 
      /**	
      * Get agenda item from id
