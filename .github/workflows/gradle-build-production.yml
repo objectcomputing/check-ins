@@ -7,6 +7,10 @@ on:
       - 'test/*'
   pull_request:
     branches: [master]
+env:
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  RUN_REGION: us-central1
+  SERVICE_NAME: checkins-master
 jobs:
   build:
     runs-on: ubuntu-latest
