@@ -225,10 +225,8 @@ class AgendaItemControllerTest extends TestContainersSuite implements MemberProf
 
         final String errorMessage = String.format("CheckIn %s doesn't exist",agendaItemCreateDTO2.getCheckinid());
 
-       assertEquals(String.format("[\"Member %s's agenda item was not added to CheckIn %s because: %s\"]",
-               agendaItemCreateDTO2.getCreatedbyid(), agendaItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
+        assertEquals(errorMessage, responseException.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
 
     }
 
