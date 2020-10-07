@@ -12,6 +12,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
+import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -57,6 +58,40 @@ public class AgendaItemController {
 
         return HttpResponse.<JsonError>badRequest()
                 .body(error);
+    }
+
+    @Error(exception = AgendaItemNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, AgendaItemNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
+
+    @Error(exception = AgendaItemsBulkLoadException.class)
+    public HttpResponse<?> handleBulkLoadException(HttpRequest<?> request, AgendaItemsBulkLoadException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = CompositeException.class)
+    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
+        LOG.info("OH NO COMPOSITES");
+
+        for (Throwable t : e.getExceptions()) {
+            if (t instanceof AgendaItemBadArgException) {
+                return handleBadArgs(request, (AgendaItemBadArgException) t);
+            }
+            else if (t instanceof AgendaItemNotFoundException) {
+                return handleNotFound(request, (AgendaItemNotFoundException) t);
+            }
+        }
+
+        return HttpResponse.<JsonError>serverError();
     }
 
     /**
@@ -180,20 +215,17 @@ public class AgendaItemController {
                 try {
                     agendaItemServices.save(agendaItem);
                     agendaItemsCreated.add(agendaItem);
-                } catch (AgendaItemBadArgException e) {
+                } catch (CompositeException e) {
                     errors.add(String.format("Member %s's agenda item was not added to CheckIn %s because: %s", agendaItem.getCreatedbyid(),
                             agendaItem.getCheckinid(), e.getMessage()));
                 }
             }
             if (errors.isEmpty()) {
                 return agendaItemsCreated;
-            }else {
-                return HttpResponse.badRequest(errors).headers(headers ->
-                        headers.location(request.getUri()));
             }
-//            throw new AgendaItemsBulkLoadException(errors);
+            throw new AgendaItemsBulkLoadException(errors);
         }).map(agendaItemsCreated -> HttpResponse.created(agendaItemsCreated)
-                .headers(headers -> headers.location(request.getUri())));
+                  .headers(headers -> headers.location(request.getUri())));
     }
 
 
