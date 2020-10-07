@@ -120,14 +120,22 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
   const createActionItem = (newActionItem, event) => {
   };
 
-  const editActionItem = (actionItem, event) => {
-    if (!actionItem.enabled) {
-      actionItem.enabled = true;
+  const editActionItem = (index, event) => {
+   console.log(actionItems);
+   var setValue = true
+    if (!actionItems[index].enabled) {
+      console.log("enabling");
+      setValue = true;
     }
     else {
+      console.log("disabling");
       //doSave(actionItem);
-      actionItem.enabled = false;
+      setValue = false;
     }
+
+    setActionItems((actionItems) =>  {actionItems[index].enabled = setValue
+     return actionItems})
+    console.log(actionItems);
   };
 
   const killActionItem = (id, event) => {
@@ -179,7 +187,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
               </div>
               <div className="button-div">
                 <IconButton aria-label="edit"
-                  onClick={e => editActionItem(actionItem, e)}
+                  onClick={e => editActionItem(index, e)}
                 >
                     <EditIcon />
                 </IconButton>
