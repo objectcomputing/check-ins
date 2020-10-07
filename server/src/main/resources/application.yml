@@ -72,7 +72,7 @@ flyway:
     default:
       locations: classpath:db
 ---
-google-drive-credentials:
+service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
   type: ${ TYPE }
   project_id: ${ PROJECT_ID }

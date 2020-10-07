@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.file;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 
 import javax.inject.Singleton;
@@ -12,18 +13,18 @@ import java.util.Collection;
 public class GoogleAuthenticator {
 
     private final Collection<String> scopes;
-    private DriveConfiguration driveConfiguration;
+    private GoogleServiceConfiguration gServiceConfig;
 
     /**
      * Creates a google drive utility for quick access
      *
      * @param scopes, the scope(s) of access to request for this application
-     * @param driveConfiguration, Google Drive configuration properties
+     * @param gServiceConfig, Google Drive configuration properties
      */
     public GoogleAuthenticator(@Property(name = "check-ins.application.scopes") Collection<String> scopes,
-                               DriveConfiguration driveConfiguration) {
+                               GoogleServiceConfiguration gServiceConfig) {
         this.scopes = scopes;
-        this.driveConfiguration = driveConfiguration;
+        this.gServiceConfig = gServiceConfig;
     }
 
     /**
@@ -34,7 +35,7 @@ public class GoogleAuthenticator {
      */
     GoogleCredentials setupCredentials() throws IOException {
 
-        InputStream in = new ByteArrayInputStream(driveConfiguration.toString().getBytes(StandardCharsets.UTF_8));
+        InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8));
         GoogleCredentials credentials = GoogleCredentials.fromStream(in);
 
         if (credentials == null) {

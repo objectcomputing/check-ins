@@ -1,13 +1,13 @@
-package com.objectcomputing.checkins.services.file;
+package com.objectcomputing.checkins.security;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotNull;
 
-@ConfigurationProperties("google-drive-credentials")
+@ConfigurationProperties("service-account-credentials")
 @Introspected
-public class DriveConfiguration {
+public class GoogleServiceConfiguration {
 
     @NotNull
     public String directory_id;
