@@ -9,18 +9,22 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/member-skill")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -30,6 +34,15 @@ public class MemberSkillController {
 
     @Inject
     private MemberSkillServices memberSkillsService;
+    private EventLoopGroup eventLoopGroup;
+    private ExecutorService ioExecutorService;
+
+    public MemberSkillController(MemberSkillServices memberSkillServices,
+                                 EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+        this.memberSkillsService = memberSkillServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
 
     @Error(exception = MemberSkillBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillBadArgException e) {
