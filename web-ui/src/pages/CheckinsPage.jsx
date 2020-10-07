@@ -51,7 +51,11 @@ const CheckinsPage = ({ history }) => {
                       }
                     />
                     <ActionItemsPanel checkinId={currentCheckin.id} />
-                    <AgendaItems checkinId={currentCheckin.id} />
+                    <AgendaItems checkinId={currentCheckin.id} memberName={
+                        selectedProfile
+                          ? selectedProfile.name
+                          : userProfile.name
+                      } />
                     <CheckinDocs />
                   </React.Fragment>
                 )}

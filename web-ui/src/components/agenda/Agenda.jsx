@@ -6,7 +6,9 @@ import {
   deleteAgendaItem,
   updateAgendaItem,
 } from "../../api/agenda.js";
+
 import DragIndicator from "@material-ui/icons/DragIndicator";
+import AdjustIcon from "@material-ui/icons/Adjust";
 
 async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
   if (mockAgendaItems) {
@@ -25,7 +27,7 @@ async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
   }
 }
 
-const AgendaItems = ({ checkinId, mockAgendaItems }) => {
+const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   let [agendaItems, setAgendaItems] = useState();
 
   async function deleteItem(id) {
@@ -185,23 +187,28 @@ const AgendaItems = ({ checkinId, mockAgendaItems }) => {
   };
 
   return (
-    <fieldset className="action-items-container">
-      <legend>My Agenda Items</legend>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {createAgendaItemEntries()}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </fieldset>
+    <div className="agenda-items">
+      <h1>
+        <AdjustIcon style={{ fontSize: "larger", marginRight: "10px" }} />
+        Agenda Items for {memberName}
+      </h1>
+      <div className="agenda-items-container">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                {createAgendaItemEntries()}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
+    </div>
   );
 };
 
