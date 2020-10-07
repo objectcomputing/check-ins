@@ -18,6 +18,9 @@ async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
   if (res && res.payload) {
     let agendaItemList =
       res.payload.data && !res.error ? res.payload.data : undefined;
+    agendaItemList.sort((a, b) => {
+      return a.priority - b.priority;
+    });
     setAgendaItems(agendaItemList);
   }
 }
@@ -56,10 +59,8 @@ const AgendaItems = ({ checkinId, mockAgendaItems }) => {
   };
 
   const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
+    const [removed] = list.splice(startIndex, 1);
+    list.splice(endIndex, 0, removed);
   };
 
   const grid = 8;
@@ -88,27 +89,27 @@ const AgendaItems = ({ checkinId, mockAgendaItems }) => {
       return;
     }
 
-    agendaItems = reorder(
-      agendaItems,
-      result.source.index,
-      result.destination.index
-    );
+    const { index } = result.destination;
+    const sourceIndex = result.source.index;
+    if (index !== sourceIndex) {
+      const lastIndex = agendaItems.length - 1;
+      const precedingPriority =
+        index === 0 ? 0 : agendaItems[index - 1].priority;
+      const followingPriority =
+        index === lastIndex
+          ? agendaItems[lastIndex].priority + 1
+          : agendaItems[index].priority;
 
-    let precedingPriority = 0;
-    if (result.destination.index > 0) {
-      precedingPriority = agendaItems[result.destination.index - 1].priority;
+      let newPriority = (precedingPriority + followingPriority) / 2;
+
+      setAgendaItems((agendaItems) => {
+        agendaItems[sourceIndex].priority = newPriority;
+        reorder(agendaItems, sourceIndex, index);
+        return agendaItems;
+      });
+
+      doUpdate(agendaItems[result.destination.index]);
     }
-
-    let followingPriority = agendaItems[agendaItems.length - 1].priority + 1;
-    if (result.destination.index < agendaItems.length - 1) {
-      followingPriority = agendaItems[result.destination.index + 1].priority;
-    }
-
-    let newPriority = (precedingPriority + followingPriority) / 2;
-
-    agendaItems[result.destination.index].priority = newPriority;
-
-    doUpdate(agendaItems[result.destination.index]);
   };
 
   const killAgendaItem = (id, event) => {
