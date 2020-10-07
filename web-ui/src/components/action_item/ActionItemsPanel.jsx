@@ -7,6 +7,10 @@ import {
   updateActionItem
 } from '../../api/actionitem.js';
 import DragIndicator from '@material-ui/icons/DragIndicator';
+import IconButton from '@material-ui/core/IconButton';
+import SaveIcon from '@material-ui/icons/Done';
+import EditIcon from '@material-ui/icons/Edit';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 async function getActionItems(checkinId, mockActionItems, setActionItems) {
   if (mockActionItems) {
@@ -111,6 +115,21 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     doUpdate(actionItems[result.destination.index]);
   };
 
+  const [newActionItem, setNewActionItem] = useState("");
+
+  const createActionItem = (newActionItem, event) => {
+  };
+
+  const editActionItem = (actionItem, event) => {
+    if (!actionItem.enabled) {
+      actionItem.enabled = true;
+    }
+    else {
+      //doSave(actionItem);
+      actionItem.enabled = false;
+    }
+  };
+
   const killActionItem = (id, event) => {
     doDelete(id);
     var arrayDupe = actionItems;
@@ -129,9 +148,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
         <span>
           <DragIndicator />
         </span>
-        <div className="description-field">
-          <p className="action-items-info-hidden">Lorem Ipsum etc</p>
-        </div>
+        <p className="action-items-info-hidden">Lorem Ipsum etc</p>
       </div>
     );
   };
@@ -155,20 +172,22 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
               )}
             >
               <div className="description-field">
-                <span {...provided.dragHandleProps}>
+                <span style={{ cursor:"grab" }} {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
-                <p className={getActionItemStyle(actionItem)}>
-                  {getActionItemText(actionItem)}
-                </p>
+                <input className="text-input" disabled={ !(actionItem.enabled === true) } value={ actionItem.description } />
               </div>
-              <div>
-                <button
-                  className="delete-button"
+              <div className="button-div">
+                <IconButton aria-label="edit"
+                  onClick={e => editActionItem(actionItem, e)}
+                >
+                    <EditIcon />
+                </IconButton>
+                <IconButton aria-label="delete"
                   onClick={e => killActionItem(actionItem.id, e)}
                 >
-                  -
-                </button>
+                    <RemoveIcon />
+                </IconButton>
               </div>
             </div>
           )}
@@ -200,6 +219,17 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
           )}
         </Droppable>
       </DragDropContext>
+      <div className="button-div">
+        <input
+          className="text-input"
+          placeholder="Add action item"
+          value={ newActionItem }
+        />
+        <IconButton aria-label="create" style={{ paddingLeft:"5px" }}
+          onClick={e => createActionItem(newActionItem, e)}>
+          <SaveIcon />
+        </IconButton>
+      </div>
     </fieldset>
   );
 };
