@@ -13,7 +13,7 @@ public class MemberProfileTestUtil {
     public static MemberProfileCreateDTO mkCreateMemberProfileDTO() {
         MemberProfileCreateDTO dto = new MemberProfileCreateDTO();
         dto.setName("TestName");
-        dto.setRole("TestRole");
+        dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setInsperityId("TestInsperityId");
@@ -26,7 +26,7 @@ public class MemberProfileTestUtil {
         MemberProfileUpdateDTO dto = new MemberProfileUpdateDTO();
         dto.setId(UUID.fromString("e134d349-cf02-4a58-b9d3-42cc48375628"));
         dto.setName("TestName");
-        dto.setRole("TestRole");
+        dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
         dto.setInsperityId("TestInsperityId");
@@ -52,7 +52,7 @@ public class MemberProfileTestUtil {
 
     public static void assertProfilesEqual(MemberProfile entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getName(), dto.getName());
-        assertEquals(entity.getRole(), dto.getRole());
+        assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
@@ -64,7 +64,7 @@ public class MemberProfileTestUtil {
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getName(), dto.getName());
-        assertEquals(entity.getRole(), dto.getRole());
+        assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
@@ -75,7 +75,7 @@ public class MemberProfileTestUtil {
 
     public static void assertProfilesEqual(MemberProfileCreateDTO entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getName(), dto.getName());
-        assertEquals(entity.getRole(), dto.getRole());
+        assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
