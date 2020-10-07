@@ -12,14 +12,14 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller("/services/agenda-item")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -27,8 +27,12 @@ import java.util.UUID;
 @Tag(name = "agenda-item")
 public class AgendaItemController {
 
-    @Inject
     private AgendaItemServices agendaItemServices;
+
+    public AgendaItemController(AgendaItemServices agendaItemServices) {
+        this.agendaItemServices = agendaItemServices;
+    }
+
 
     @Error(exception = AgendaItemBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, AgendaItemBadArgException e) {
@@ -39,38 +43,57 @@ public class AgendaItemController {
                 .body(error);
     }
 
-    /**
-     * Create and save a new agendaItem.
+    /**	   
+     * Create and Save a new agenda item
      *
      * @param agendaItem, {@link AgendaItemCreateDTO}
      * @return {@link HttpResponse <AgendaItem>}
      */
-    @Post()
-    public HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
-                                                     HttpRequest<AgendaItemCreateDTO> request) {
-        AgendaItem newAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(),
-                agendaItem.getCreatedbyid(), agendaItem.getDescription()));
-        return HttpResponse
-                .created(newAgendaItem)
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newAgendaItem.getId()))));
+    @Post("/")
+    public HttpResponse<AgendaItem> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
+        AgendaItem newAgendaItem = agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(), agendaItem.getCreatedbyid()
+                , agendaItem.getDescription()));
+        return HttpResponse.created(newAgendaItem)
+                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newAgendaItem.getId()))));
+
     }
 
-    /**
-     * Update agendaItem.
+     /**
+     * Update a agenda item
      *
      * @param agendaItem, {@link AgendaItem}
      * @return {@link HttpResponse< AgendaItem >}
      */
-    @Put()
-    public HttpResponse<?> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
-        AgendaItem updatedAgendaItem = agendaItemServices.update(agendaItem);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedAgendaItem.getId()))))
-                .body(updatedAgendaItem);
+    @Put("/")
+    public HttpResponse<AgendaItem> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItemCreateDTO> request) {
+        AgendaItem updateAgendaItem = agendaItemServices.update(agendaItem);
+        return HttpResponse.ok().headers(headers -> headers.location(
+                URI.create(String.format("%s/%s", request.getPath(), updateAgendaItem.getId()))))
+                .body(updateAgendaItem);
+    }
 
+    /**
+     * Find agenda items that match all filled in parameters, return all results when given no params
+     *
+     * @param checkinid   {@link UUID} of checkin
+     * @param createdbyid {@link UUID} of member	
+     * @return {@link List < CheckIn > list of checkins}	
+     */
+    @Get("/{?checkinid,createdbyid}")
+    public Set<AgendaItem> findAgendaItem(@Nullable UUID checkinid,
+                                            @Nullable UUID createdbyid) {
+        return agendaItemServices.findByFields(checkinid, createdbyid);
+    }
+
+     /**	
+     * Get agenda item from id
+     *
+     * @param id {@link UUID} of the agenda item entry
+     * @return {@link AgendaItem}
+     */
+    @Get("/{id}")
+    public AgendaItem readAgendaItem(@NotNull UUID id) {
+        return agendaItemServices.read(id);
     }
 
     /**
@@ -83,30 +106,6 @@ public class AgendaItemController {
         agendaItemServices.delete(id);
         return HttpResponse
                 .ok();
-    }
-
-    /**
-     * Get AgendaItem based off id
-     *
-     * @param id {@link UUID} of the agenda item entry
-     * @return {@link AgendaItem}
-     */
-    @Get("/{id}")
-    public AgendaItem readAgendaItem(UUID id) {
-        return agendaItemServices.read(id);
-    }
-
-    /**
-     * Find agenda items that match all filled in parameters, return all results when given no params
-     *
-     * @param checkinid   {@link UUID} of checkin
-     * @param createdbyid {@link UUID} of member
-     * @return {@link List < CheckIn > list of checkins}
-     */
-    @Get("/{?checkinid,createdbyid}")
-    public Set<AgendaItem> findAgendaItems(@Nullable UUID checkinid,
-                                           @Nullable UUID createdbyid) {
-        return agendaItemServices.findByFields(checkinid, createdbyid);
     }
 
     /**
@@ -139,6 +138,5 @@ public class AgendaItemController {
                     .headers(headers -> headers.location(request.getUri()));
         }
     }
-
 
 }
