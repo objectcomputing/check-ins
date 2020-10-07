@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.*;
@@ -54,15 +53,15 @@ public class MemberProfileServicesImplTest {
         profileOne.setPdlId(testPdlId);
         MemberProfile profileTwo = mkMemberProfile("2");
         profileTwo.setName(profileOne.getName());
-        profileTwo.setRole(profileOne.getRole());
+        profileTwo.setTitle(profileOne.getTitle());
         MemberProfile profileThree = mkMemberProfile("3");
         profileThree.setName(profileOne.getName());
         profileThree.setPdlId(testPdlId);
 
-        when(mockMemberProfileRepository.search(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId().toString(), profileOne.getWorkEmail()))
+        when(mockMemberProfileRepository.search(profileOne.getName(), profileOne.getTitle(), profileOne.getPdlId().toString(), profileOne.getWorkEmail()))
                 .thenReturn(Collections.singletonList(profileOne));
 
-        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getRole(), profileOne.getPdlId(), profileOne.getWorkEmail());
+        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getTitle(), profileOne.getPdlId(), profileOne.getWorkEmail());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(profileOne));
