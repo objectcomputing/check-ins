@@ -116,14 +116,10 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
 
   const killAgendaItem = (id, event) => {
     deleteItem(id);
-    var arrayDupe = agendaItems;
-    for (var i = 0; i < arrayDupe.length; i++) {
-      if (arrayDupe[i].id === id) {
-        arrayDupe.splice(i, 1);
-        break;
-      }
-    }
-    setAgendaItems(arrayDupe);
+    let newItems = agendaItems.filter((agendaItem) => {
+      return agendaItem.id !== id;
+    });
+    setAgendaItems(newItems);
   };
 
   const createFakeEntry = (item) => {

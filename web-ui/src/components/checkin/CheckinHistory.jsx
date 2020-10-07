@@ -92,9 +92,9 @@ const CheckinsHistory = ({ history }) => {
   };
 
   const DateInput = React.forwardRef((props, ref) => (
-    <div className="date-input" ref={ref}>
+    <div className="date-input" onClick={props.onClick} ref={ref}>
       <p style={{ margin: "0px" }}>{props.value}</p>
-      <CalendarTodayIcon onClick={props.onClick}></CalendarTodayIcon>
+      <CalendarTodayIcon></CalendarTodayIcon>
     </div>
   ));
 
