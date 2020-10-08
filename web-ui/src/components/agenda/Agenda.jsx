@@ -1,21 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Agenda.css";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   getAgendaItem,
   deleteAgendaItem,
   updateAgendaItem,
+  createAgendaItem,
 } from "../../api/agenda.js";
 
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import AdjustIcon from "@material-ui/icons/Adjust";
 import Skeleton from "@material-ui/lab/Skeleton";
+import IconButton from "@material-ui/core/IconButton";
+import SaveIcon from "@material-ui/icons/Done";
+import EditIcon from "@material-ui/icons/Edit";
+import RemoveIcon from "@material-ui/icons/Remove";
+import { AppContext } from "../../context/AppContext";
 
 const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
+  const { state } = useContext(AppContext);
+  const { currentCheckin, userProfile } = state;
+  const { id } = userProfile && userProfile.memberProfile;
+  const checkinid = currentCheckin.id;
   const [agendaItems, setAgendaItems] = useState();
+  const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
+  const getAgendaItems = async (checkinId, mockAgendaItems, setAgendaItems) => {
     if (mockAgendaItems) {
       setAgendaItems(mockAgendaItems);
       return;
@@ -32,7 +43,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
       setAgendaItems(agendaItemList);
       setIsLoading(false);
     }
-  }
+  };
 
   async function deleteItem(id) {
     if (id) {
@@ -48,14 +59,8 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
 
   useEffect(() => {
     getAgendaItems(checkinId, mockAgendaItems, setAgendaItems);
+    console.log("getting items");
   }, [checkinId, mockAgendaItems, setAgendaItems]);
-
-  const getAgendaItemText = (agendaItem) => {
-    if (agendaItem && agendaItem.description) {
-      return agendaItem.description;
-    }
-    return "Lorem Ipsum Etcetera";
-  };
 
   const reorder = (list, startIndex, endIndex) => {
     const [removed] = list.splice(startIndex, 1);
@@ -98,12 +103,50 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
     }
   };
 
+  const makeAgendaItem = async () => {
+    if (!checkinid || !id || !description === "") {
+      return;
+    }
+    let newAgendaItem = {
+      checkinid: checkinid,
+      createdbyid: id,
+      description: description,
+    };
+    const res = await createAgendaItem(newAgendaItem);
+    if (!res.error && res.payload && res.payload.data) {
+      setDescription("");
+      setAgendaItems([...agendaItems, newAgendaItem]);
+    }
+  };
+
   const killAgendaItem = (id) => {
     deleteItem(id);
     let newItems = agendaItems.filter((agendaItem) => {
       return agendaItem.id !== id;
     });
     setAgendaItems(newItems);
+  };
+
+  const handleDescriptionChange = (index, event) => {
+    agendaItems[index].description = event.target.value;
+    setAgendaItems([...agendaItems]);
+  };
+
+  const editAgendaItem = (index, event) => {
+    console.log(agendaItems);
+    let enabled;
+    if (!agendaItems[index].enabled) {
+      enabled = true;
+    } else {
+      doUpdate(agendaItems[index]);
+      enabled = false;
+    }
+
+    setAgendaItems((agendaItems) => {
+      agendaItems[index].enabled = enabled;
+      return [...agendaItems];
+    });
+    console.log(agendaItems);
   };
 
   const createFakeEntry = (item) => {
@@ -144,24 +187,33 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
                   <DragIndicator />
                 </span>
                 {isLoading ? (
-                  <div>
+                  <div className="skeleton">
                     <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                   </div>
                 ) : (
-                  <p className="agenda-items-info">
-                    {getAgendaItemText(agendaItem)}
-                  </p>
+                  <input
+                    className="text-input"
+                    disabled={!agendaItem.enabled}
+                    onChange={(e) => handleDescriptionChange(index, e)}
+                    value={agendaItem.description}
+                  />
                 )}
-              </div>
-              <div>
-                <button
-                  className="delete-button"
-                  onClick={() => killAgendaItem(agendaItem.id)}
-                >
-                  -
-                </button>
+                <div className="button-div">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={(e) => editAgendaItem(index, e)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={(e) => killAgendaItem(agendaItem.id, e)}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
               </div>
             </div>
           )}
@@ -188,6 +240,21 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
+                <div className="button-div">
+                  <input
+                    className="text-input"
+                    placeholder="Add agenda item"
+                    onChange={(e) => setDescription(e.target.value)}
+                    value={description ? description : ""}
+                  />
+                  <IconButton
+                    aria-label="create"
+                    style={{ paddingLeft: "5px" }}
+                    onClick={() => makeAgendaItem()}
+                  >
+                    <SaveIcon />
+                  </IconButton>
+                </div>
                 {provided.placeholder}
               </div>
             )}

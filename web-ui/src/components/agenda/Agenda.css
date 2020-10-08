@@ -29,11 +29,10 @@
 }
 
 .description-field {
-  text-align: left;
-  width: 200px;
   align-items: center;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 .delete-button {
@@ -59,11 +58,7 @@
   align-items: center;
 }
 
-.skeleton {
-  width: 100%;
-}
-
-.image-div {
+.agenda-items-container .image-div {
   display: flex;
   cursor: auto;
   text-align: left;
@@ -71,6 +66,11 @@
   margin-top: 25px;
 }
 
-.info-div {
-  display: block;
+.description-field .text-input {
+  padding: 5px;
+  width: 100%;
+}
+
+.agenda-items .skeleton {
+  width: 100%;
 }
