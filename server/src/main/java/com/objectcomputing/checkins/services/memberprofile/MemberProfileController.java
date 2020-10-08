@@ -1,36 +1,26 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.xml.validation.Schema;
-
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
-import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Consumes;
-
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 
 @Controller("/services/member-profile")
 @Secured(SecurityRule.IS_AUTHENTICATED)
