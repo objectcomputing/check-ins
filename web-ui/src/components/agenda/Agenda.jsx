@@ -19,9 +19,8 @@ import { AppContext } from "../../context/AppContext";
 
 const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile } = state;
+  const { userProfile } = state;
   const { id } = userProfile && userProfile.memberProfile;
-  const checkinid = currentCheckin.id;
   const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -103,11 +102,11 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   };
 
   const makeAgendaItem = async () => {
-    if (!checkinid || !id || !description === "") {
+    if (!checkinId || !id || !description === "") {
       return;
     }
     let newAgendaItem = {
-      checkinid: checkinid,
+      checkinId: checkinId,
       createdbyid: id,
       description: description,
     };
