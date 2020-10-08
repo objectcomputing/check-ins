@@ -139,11 +139,7 @@ const CheckinsHistory = ({ history }) => {
             </Link>
           </div>
           <div>
-            <ActionItemsPanel mockActionItems={[
-                                                  {id: 'a1', description: 'first action item'},
-                                                  {id: 'a2', description: 'second action item'},
-                                                  {id: 'a3', description: 'third action item'}
-                                                ]} />
+            <ActionItemsPanel checkinId={currentCheckin.id} />
           </div>
         </div>
 
