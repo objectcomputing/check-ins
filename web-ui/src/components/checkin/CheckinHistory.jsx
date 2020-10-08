@@ -15,6 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 
 import "./Checkin.css";
+import ActionItemsPanel from "../action_item/ActionItemsPanel";
 
 const CheckinsHistory = ({ history }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -101,41 +102,47 @@ const CheckinsHistory = ({ history }) => {
   return (
     <div>
       {getCheckinDate() && (
-        <div className="date-picker">
-          <Link
-            className="arrow"
-            onClick={previousCheckin}
-            to={`${currentCheckin && currentCheckin.id}`}
-          >
-            <ArrowBackIcon
-              className={leftArrowClass}
-              style={{ fontSize: "50px" }}
+        <div>
+          <div className="date-picker">
+            <Link
+              className="arrow"
+              onClick={previousCheckin}
+              to={`${currentCheckin && currentCheckin.id}`}
+            >
+              <ArrowBackIcon
+                className={leftArrowClass}
+                style={{ fontSize: "50px" }}
+              />
+            </Link>
+            <DatePicker
+              closeOnScroll
+              customInput={<DateInput />}
+              dateFormat="MMMM dd, yyyy h:mm aa"
+              disabled={
+                !checkins.length ||
+                (currentCheckin && currentCheckin.completed === true)
+              }
+              onChange={pickDate}
+              selected={getCheckinDate()}
+              showTimeSelect
+              withPortal
             />
-          </Link>
-          <DatePicker
-            closeOnScroll
-            customInput={<DateInput />}
-            dateFormat="MMMM dd, yyyy h:mm aa"
-            disabled={
-              !checkins.length ||
-              (currentCheckin && currentCheckin.completed === true)
-            }
-            onChange={pickDate}
-            selected={getCheckinDate()}
-            showTimeSelect
-            withPortal
-          />
-          <Link
-            className="arrow"
-            onClick={nextCheckin}
-            to={`${currentCheckin && currentCheckin.id}`}
-          >
-            <ArrowForwardIcon
-              className={rightArrowClass}
-              style={{ fontSize: "50px" }}
-            />
-          </Link>
+            <Link
+              className="arrow"
+              onClick={nextCheckin}
+              to={`${currentCheckin && currentCheckin.id}`}
+            >
+              <ArrowForwardIcon
+                className={rightArrowClass}
+                style={{ fontSize: "50px" }}
+              />
+            </Link>
+          </div>
+          <div>
+            <ActionItemsPanel checkinId={currentCheckin.id} />
+          </div>
         </div>
+
       )}
     </div>
   );

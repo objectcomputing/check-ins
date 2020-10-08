@@ -29,7 +29,7 @@
 .action-items-info-hidden {
   background-color: lightgrey;
   color: lightgrey;
-  width: 100%;
+  width: 90%;
 }
 
 .image-div {
@@ -42,3 +42,19 @@
 .info-div {
   display: block;
 }
+
+ .text-input {
+   padding: 5px;
+   width: 100%;
+ }
+
+ .text-parent {
+    display: inline-block;
+    width: 100%;
+    padding-left: 25px;
+ }
+
+ .button-div {
+  display: flex;
+  flex-direction: row;
+ }
