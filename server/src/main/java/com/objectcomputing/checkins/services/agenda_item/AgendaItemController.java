@@ -80,7 +80,6 @@ public class AgendaItemController {
 
     @Error(exception = CompositeException.class)
     public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-        LOG.info("OH NO COMPOSITES");
 
         for (Throwable t : e.getExceptions()) {
             if (t instanceof AgendaItemBadArgException) {
