@@ -6,7 +6,6 @@ import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,9 +18,9 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     @Query("SELECT * " +
             "FROM member_profile mp " +
             "WHERE (:name IS NULL OR mp.name = :name) " +
-            "AND (:role IS NULL OR mp.role = :role) " +
+            "AND (:title IS NULL OR mp.title = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) ")
-    List<MemberProfile> search(@Nullable String name, @Nullable String role, @Nullable String pdlId, @Nullable String workEmail);
+    List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail);
     List<MemberProfile> findAll();
 }

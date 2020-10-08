@@ -82,17 +82,17 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by Name, Role, PdlId, workEmail or find all.
+     * Find Team Member profile by Name, title, PdlId, workEmail or find all.
      * @param name
-     * @param role
+     * @param title
      * @param pdlId
      * @param workEmail
      * @return
      */
-    @Get("/{?name,role,pdlId,workEmail}")
-    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String role,
+    @Get("/{?name,title,pdlId,workEmail}")
+    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
                                                                     @Nullable UUID pdlId, @Nullable String workEmail) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(name, role, pdlId, workEmail))
+        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(memberProfiles -> {
             List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
@@ -149,19 +149,19 @@ public class MemberProfileController {
         dto.setLocation(entity.getLocation());
         dto.setName(entity.getName());
         dto.setPdlId(entity.getPdlId());
-        dto.setRole(entity.getRole());
+        dto.setTitle(entity.getTitle());
         dto.setStartDate(entity.getStartDate());
         dto.setWorkEmail(entity.getWorkEmail());
         return dto;
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getId(), dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
+        return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
                 dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getRole(), dto.getPdlId(), dto.getLocation(),
+        return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
                 dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 }
