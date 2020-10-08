@@ -1,5 +1,7 @@
 .agenda-items-container {
-  border: solid 2px black;
+  border-top: solid 2px black;
+  border-left: solid 2px black;
+  border-right: solid 2px black;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -52,7 +54,17 @@
   width: 100%;
 }
 
+.drag-icon {
+  display: flex;
+  align-items: center;
+}
+
+.skeleton {
+  width: 100%;
+}
+
 .image-div {
+  display: flex;
   cursor: auto;
   text-align: left;
   margin-bottom: 25px;

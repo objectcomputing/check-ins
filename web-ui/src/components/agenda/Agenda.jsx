@@ -9,26 +9,30 @@ import {
 
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import AdjustIcon from "@material-ui/icons/Adjust";
-
-async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
-  if (mockAgendaItems) {
-    setAgendaItems(mockAgendaItems);
-    return;
-  }
-
-  let res = await getAgendaItem(checkinId, null);
-  if (res && res.payload) {
-    let agendaItemList =
-      res.payload.data && !res.error ? res.payload.data : undefined;
-    agendaItemList.sort((a, b) => {
-      return a.priority - b.priority;
-    });
-    setAgendaItems(agendaItemList);
-  }
-}
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
-  let [agendaItems, setAgendaItems] = useState();
+  const [agendaItems, setAgendaItems] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function getAgendaItems(checkinId, mockAgendaItems, setAgendaItems) {
+    if (mockAgendaItems) {
+      setAgendaItems(mockAgendaItems);
+      return;
+    }
+
+    setIsLoading(true);
+    let res = await getAgendaItem(checkinId, null);
+    if (res && res.payload) {
+      let agendaItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+      agendaItemList.sort((a, b) => {
+        return a.priority - b.priority;
+      });
+      setAgendaItems(agendaItemList);
+      setIsLoading(false);
+    }
+  }
 
   async function deleteItem(id) {
     if (id) {
@@ -46,13 +50,6 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
     getAgendaItems(checkinId, mockAgendaItems, setAgendaItems);
   }, [checkinId, mockAgendaItems, setAgendaItems]);
 
-  const getAgendaItemStyle = (agendaItem) => {
-    if (agendaItem && agendaItem.description) {
-      return "agenda-items-info";
-    }
-    return "agenda-items-info-hidden";
-  };
-
   const getAgendaItemText = (agendaItem) => {
     if (agendaItem && agendaItem.description) {
       return agendaItem.description;
@@ -65,24 +62,11 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
     list.splice(endIndex, 0, removed);
   };
 
-  const grid = 8;
-
-  const getListStyle = (isDraggingOver) => ({
-    padding: grid,
-  });
-
   const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: "none",
-    padding: grid * 2,
-    margin: "0 0 {grid}px 0",
-    textAlign: "left",
-    marginBottom: "1px",
-    marginTop: "1px",
+    borderBottom: "2px solid black",
     display: "flex",
-    flexDirection: "row",
-
+    padding: "12px 8px",
     background: isDragging ? "lightgreen" : "#fafafa",
-
     ...draggableStyle,
   });
 
@@ -114,7 +98,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
     }
   };
 
-  const killAgendaItem = (id, event) => {
+  const killAgendaItem = (id) => {
     deleteItem(id);
     let newItems = agendaItems.filter((agendaItem) => {
       return agendaItem.id !== id;
@@ -125,11 +109,13 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   const createFakeEntry = (item) => {
     return (
       <div key={item.id} className="image-div">
-        <span>
+        <div className="drag-icon">
           <DragIndicator />
-        </span>
-        <div className="description-field">
-          <p className="agenda-items-info-hidden">Lorem Ipsum etc</p>
+        </div>
+        <div className="skeleton">
+          <Skeleton variant="text" height={"2rem"} />
+          <Skeleton variant="text" height={"2rem"} />
+          <Skeleton variant="text" height={"2rem"} />
         </div>
       </div>
     );
@@ -157,14 +143,22 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
                 <span {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
-                <p className={getAgendaItemStyle(agendaItem)}>
-                  {getAgendaItemText(agendaItem)}
-                </p>
+                {isLoading ? (
+                  <div>
+                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                  </div>
+                ) : (
+                  <p className="agenda-items-info">
+                    {getAgendaItemText(agendaItem)}
+                  </p>
+                )}
               </div>
               <div>
                 <button
                   className="delete-button"
-                  onClick={(e) => killAgendaItem(agendaItem.id, e)}
+                  onClick={() => killAgendaItem(agendaItem.id)}
                 >
                   -
                 </button>
@@ -192,11 +186,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
-              >
+              <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
                 {provided.placeholder}
               </div>
