@@ -15,7 +15,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
 
 import "./Checkin.css";
-import ActionItemsPanel from "../action_item/ActionItemsPanel";
 
 const CheckinsHistory = ({ history }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -138,11 +137,7 @@ const CheckinsHistory = ({ history }) => {
               />
             </Link>
           </div>
-          <div>
-            <ActionItemsPanel checkinId={currentCheckin.id} />
-          </div>
         </div>
-
       )}
     </div>
   );

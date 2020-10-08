@@ -28,15 +28,11 @@
   width: 100%;
 }
 
-.description-field {
+.agenda-items .description-field {
   align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.delete-button {
-  background: red;
 }
 
 .agenda-items-info,
@@ -53,7 +49,7 @@
   width: 100%;
 }
 
-.drag-icon {
+.agenda-items .drag-icon {
   display: flex;
   align-items: center;
 }
@@ -66,11 +62,25 @@
   margin-top: 25px;
 }
 
-.description-field .text-input {
+.agenda-items .description-field .text-input {
   padding: 5px;
   width: 100%;
 }
 
 .agenda-items .skeleton {
   width: 100%;
+}
+
+.add-new-item {
+  border-bottom: "2px solid black";
+  display: "flex";
+  padding: "12px 8px";
+}
+
+.edit-icon:hover {
+  background-color: green !important;
+}
+
+.delete-icon:hover {
+  background-color: red !important;
 }

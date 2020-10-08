@@ -59,7 +59,6 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
 
   useEffect(() => {
     getAgendaItems(checkinId, mockAgendaItems, setAgendaItems);
-    console.log("getting items");
   }, [checkinId, mockAgendaItems, setAgendaItems]);
 
   const reorder = (list, startIndex, endIndex) => {
@@ -133,7 +132,6 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   };
 
   const editAgendaItem = (index, event) => {
-    console.log(agendaItems);
     let enabled;
     if (!agendaItems[index].enabled) {
       enabled = true;
@@ -146,7 +144,6 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
       agendaItems[index].enabled = enabled;
       return [...agendaItems];
     });
-    console.log(agendaItems);
   };
 
   const createFakeEntry = (item) => {
@@ -203,12 +200,14 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
                 <div className="button-div">
                   <IconButton
                     aria-label="edit"
+                    className="edit-icon"
                     onClick={(e) => editAgendaItem(index, e)}
                   >
                     <EditIcon />
                   </IconButton>
                   <IconButton
                     aria-label="delete"
+                    className="delete-icon"
                     onClick={(e) => killAgendaItem(agendaItem.id, e)}
                   >
                     <RemoveIcon />
@@ -240,7 +239,13 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
-                <div className="button-div">
+                <div
+                  style={{
+                    borderBottom: "2px solid black",
+                    display: "flex",
+                    padding: "12px 8px",
+                  }}
+                >
                   <input
                     className="text-input"
                     placeholder="Add agenda item"
@@ -249,7 +254,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
                   />
                   <IconButton
                     aria-label="create"
-                    style={{ paddingLeft: "5px" }}
+                    className="edit-icon"
                     onClick={() => makeAgendaItem()}
                   >
                     <SaveIcon />
