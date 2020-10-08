@@ -14,19 +14,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { AppContext } from "../../context/AppContext";
 
-async function getActionItems(checkinId, mockActionItems, setActionItems) {
-  if (mockActionItems) {
-    setActionItems(mockActionItems);
-    return;
-  }
-
-  let res = await findActionItem(checkinId, null);
-  if (res && res.payload) {
-    let actionItemList =
-      res.payload.data && !res.error ? res.payload.data : undefined;
-    setActionItems(actionItemList);
-  }
-}
 
 const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
   let [actionItems, setActionItems] = useState([]);
@@ -49,13 +36,29 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   async function doCreate(actionItem) {
     if (actionItem) {
-      await createActionItem(actionItem);
+      return await createActionItem(actionItem);
+    }
+  }
+
+  async function getActionItems(checkinId, mockActionItems) {
+    if (mockActionItems) {
+      setActionItems(mockActionItems);
+      return;
+    }
+
+    let res = await findActionItem(checkinId, null);
+    if (res && res.payload) {
+      let actionItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+        console.log("new action item");
+        console.log(actionItemList);
+        setActionItems(actionItemList);
     }
   }
 
   useEffect(() => {
-    getActionItems(checkinId, mockActionItems, setActionItems);
-  }, [checkinId, mockActionItems, setActionItems]);
+    getActionItems(checkinId, mockActionItems);
+  }, [actionItems, checkinId, mockActionItems]);
 
   /*const getActionItemStyle = (actionItem) => {
     if (actionItem && actionItem.description) {
@@ -104,7 +107,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
       return;
     }
 
-    actionItems = reorder(
+    let thisList = reorder(
       actionItems,
       result.source.index,
       result.destination.index
@@ -112,62 +115,48 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
     let precedingPriority = 0;
     if (result.destination.index > 0) {
-      precedingPriority = actionItems[result.destination.index - 1].priority;
+      precedingPriority = thisList[result.destination.index - 1].priority;
     }
 
-    let followingPriority = actionItems[actionItems.length - 1].priority + 1;
-    if (result.destination.index < actionItems.length - 1) {
-      followingPriority = actionItems[result.destination.index + 1].priority;
+    let followingPriority = thisList[thisList.length - 1].priority + 1;
+    if (result.destination.index < thisList.length - 1) {
+      followingPriority = thisList[result.destination.index + 1].priority;
     }
 
     let newPriority = (precedingPriority + followingPriority) / 2;
 
-    actionItems[result.destination.index].priority = newPriority;
+    thisList[result.destination.index].priority = newPriority;
 
-    doUpdate(actionItems[result.destination.index]);
+    doUpdate(thisList[result.destination.index]);
 
-    setActionItems((actionItems) => {
-      return [...actionItems];
-    });
+    getActionItems(checkinId, null);
+
   };
 
   const [newActionItemDescription, setNewActionItemDescription] = useState("");
 
   const makeActionItem = (newDesc, event) => {
-    console.log(actionItems);
     let newActionItem = {};
     newActionItem.description = newDesc;
     newActionItem.createdbyid = id;
     newActionItem.checkinid = checkinId;
 
     doCreate(newActionItem);
-    //actionItems = [...actionItems, newActionItem];
-    getActionItems(checkinId);
 
-    setActionItems((actionItems) => {
-      return [...actionItems];
-    });
-
-    console.log(actionItems);
+    setNewActionItemDescription("");
   };
 
   const editActionItem = (index, event) => {
-    console.log(actionItems);
-    let setValue;
     if (!actionItems[index].enabled) {
       console.log("enabling");
-      setValue = true;
+      actionItems[index].enabled = true;
     } else {
       console.log("disabling");
       doUpdate(actionItems[index]);
-      setValue = false;
+      getActionItems(checkinId, null);
+      actionItems[index].enabled = false;
     }
 
-    setActionItems((actionItems) => {
-      actionItems[index].enabled = setValue;
-      return [...actionItems];
-    });
-    console.log(actionItems);
   };
 
   const handleNewDescriptionChange = (event) => {
@@ -176,7 +165,6 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   const handleDescriptionChange = (index, event) => {
     actionItems[index].description = event.target.value;
-    setActionItems([...actionItems]);
   };
 
   const killActionItem = (id, event) => {
@@ -188,7 +176,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
         break;
       }
     }
-    setActionItems(arrayDupe);
+    getActionItems(checkinId, null);
   };
 
   /*const createFakeEntry = (item) => {
