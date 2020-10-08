@@ -23,8 +23,6 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import java.util.List;
@@ -36,8 +34,6 @@ import java.util.concurrent.ExecutorService;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin-note")
 public class CheckinNoteController {
-    private static final Logger LOG = LoggerFactory.getLogger(CheckinNoteController.class);
-
     private CheckinNoteServices checkinNoteServices;
     private EventLoopGroup eventLoopGroup;
     private ExecutorService ioExecutorService;
@@ -52,7 +48,6 @@ public class CheckinNoteController {
 
     @Error(exception = CheckinNotesBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckinNotesBadArgException e) {
-        LOG.info("Throwing the wrong exception");
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
@@ -62,7 +57,6 @@ public class CheckinNoteController {
 
     @Error(exception = CheckinNotesNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, CheckinNotesNotFoundException e) {
-        LOG.info("Throwing the right exception");
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
@@ -72,14 +66,12 @@ public class CheckinNoteController {
 
     @Error(exception = CheckinNotesBulkLoadException.class)
     public HttpResponse<?> handleBulkLoadException(HttpRequest<?> request, CheckinNotesBulkLoadException e) {
-        LOG.info("Throwing the right exception");
         return HttpResponse.badRequest(e.getErrors())
                 .headers(headers -> headers.location(request.getUri()));
     }
 
     @Error(exception = CompositeException.class)
     public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-        LOG.info("OH NO COMPOSITES");
 
         for (Throwable t : e.getExceptions()) {
             if (t instanceof CheckinNotesBadArgException) {
@@ -104,13 +96,11 @@ public class CheckinNoteController {
     @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
     public Single<HttpResponse<CheckinNote>> createCheckinNote(@Body @Valid CheckinNoteCreateDTO checkinNote,
                                                                     HttpRequest<CheckinNoteCreateDTO> request) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(),
                 checkinNote.getCreatedbyid(), checkinNote.getDescription())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdCheckinNote -> {
                     //Using code block rather than lambda so we can log what thread we're in
-                    LOG.info("Back on the main event loop in the controller");
                     return (HttpResponse<CheckinNote>) HttpResponse
                     .created(createdCheckinNote)
                     .headers(headers -> headers.location(
@@ -128,7 +118,6 @@ public class CheckinNoteController {
     @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
     public Single<HttpResponse<CheckinNote>> updateCheckinNote(@Body @Valid CheckinNote checkinNote,
                                             HttpRequest<CheckinNote> request) {
-        LOG.info("Entering controller on main event loop");
         if (checkinNote == null) {
             return Single.just(HttpResponse.ok());
         }
@@ -154,11 +143,9 @@ public class CheckinNoteController {
     @Get("/{?checkinid,createdbyid}")
     public Single<HttpResponse<Set<CheckinNote>>> findCheckinNotes(@Nullable UUID checkinid,
                                            @Nullable UUID createdbyid) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> checkinNoteServices.findByFields(checkinid, createdbyid))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(checkinNotes -> {
-                    LOG.info("Mapping on main event loop");
                     return (HttpResponse<Set<CheckinNote>>) HttpResponse.ok(checkinNotes);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
@@ -171,7 +158,6 @@ public class CheckinNoteController {
      */
     @Get("/{id}")
     public Single<HttpResponse<CheckinNote>> readCheckinNote(UUID id) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> {
             CheckinNote result = checkinNoteServices.read(id);
             if (result == null) {
@@ -181,7 +167,6 @@ public class CheckinNoteController {
         })
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(checkinNote -> {
-            LOG.info("Successful find");
             return (HttpResponse<CheckinNote>)HttpResponse.ok(checkinNote);
         }).subscribeOn(Schedulers.from(ioExecutorService));
     }
