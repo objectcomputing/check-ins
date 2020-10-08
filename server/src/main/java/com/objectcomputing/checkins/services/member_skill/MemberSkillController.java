@@ -99,7 +99,6 @@ public class MemberSkillController {
 
     @Post(value = "/")
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
-        MemberSkill newMemberSkill = memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(), memberSkill.getSkillid()));
 
         return Single.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
                 memberSkill.getSkillid())))
