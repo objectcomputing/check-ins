@@ -3,7 +3,11 @@ package com.objectcomputing.checkins.services.file;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecuredAnnotationRule;
 
@@ -26,6 +30,15 @@ public class FileController {
 
     public FileController(FileServices fileServices) {
         this.fileServices = fileServices;
+    }
+
+    @Error(exception = FileRetrievalException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, FileRetrievalException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
     }
 
     /**

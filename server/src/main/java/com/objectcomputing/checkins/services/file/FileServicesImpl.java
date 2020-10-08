@@ -59,12 +59,12 @@ public class FileServicesImpl implements FileServices {
     public HttpResponse<?> findFiles(@Nullable UUID checkInID) {
 
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
-            validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
             if (checkInID == null && isAdmin) {
                 //find all

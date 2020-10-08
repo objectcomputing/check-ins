@@ -172,8 +172,8 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,  responseException.getStatus());
-        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
+        assertEquals(HttpStatus.BAD_REQUEST,  responseException.getStatus());
+        assertEquals("You are not authorized to perform this operation", error);
     }
 
     @Test
