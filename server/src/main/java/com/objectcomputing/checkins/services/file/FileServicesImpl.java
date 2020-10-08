@@ -11,7 +11,9 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -42,22 +44,26 @@ public class FileServicesImpl implements FileServices {
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
+    private CurrentUserServices currentUserServices;
 
     public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, EmailSender emailSender,
                             SecurityService securityService, CheckInServices checkInServices,
                             CheckinDocumentServices checkinDocumentServices,
-                            MemberProfileServices memberProfileServices) {
+                            MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
         this.googleDriveAccessor = googleDriveAccessor;
         this.emailSender = emailSender;
         this.securityService = securityService;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
         this.memberProfileServices = memberProfileServices;
+        this.currentUserServices = currentUserServices;
     }
 
     @Override
     public HttpResponse<?> findFiles(@Nullable UUID checkInID) {
 
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
@@ -75,7 +81,11 @@ public class FileServicesImpl implements FileServices {
             } else if (checkInID != null) {
                 //find by CheckIn ID
                 CheckIn checkIn = checkInServices.read(checkInID);
-                validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
+                validate(checkIn == null, String.format("Unable to find checkin record with id %s", checkInID));
+
+                if(!isAdmin) {
+                    validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
+                }
 
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
                 for (CheckinDocument cd : checkinDocuments) {
@@ -98,6 +108,18 @@ public class FileServicesImpl implements FileServices {
 
     @Override
     public HttpResponse<?> downloadFiles(@NotNull String uploadDocId) {
+
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
+        CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
+        validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
+
+        CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
+        if(!isAdmin) {
+            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
+        }
 
         try {
             OutputStream outputStream = new ByteArrayOutputStream();
@@ -127,9 +149,17 @@ public class FileServicesImpl implements FileServices {
     @Override
     public HttpResponse<FileInfoDTO> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
 
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a file before uploading.");
+
         CheckIn checkIn = checkInServices.read(checkInID);
         validate(checkIn == null, "Unable to find checkin record with id %s", checkInID);
-        validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a file before uploading.");
+        if(!isAdmin) {
+            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
+            validate(checkIn.isCompleted(), "You are not authorized to perform this operation");
+        }
 
         // create folder name in the format name-date
         String subjectName = memberProfileServices.getById(checkIn.getTeamMemberId()).getName();
@@ -181,11 +211,23 @@ public class FileServicesImpl implements FileServices {
     @Override
     public HttpResponse<?> deleteFile(@NotNull String uploadDocId) {
 
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
+        CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
+        validate(cd == null, String.format("Unable to find record with id %s", uploadDocId));
+
+        CheckIn associatedCheckin = checkInServices.read(cd.getCheckinsId());
+        if(!isAdmin) {
+            validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
+        }
+
         try {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
-            checkinDocumentServices.deleteByUploadDocId(uploadDocId);
+            checkinDocumentServices.deleteByCheckinId(associatedCheckin.getId());
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             return HttpResponse

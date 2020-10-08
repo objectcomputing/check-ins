@@ -7,11 +7,11 @@ public interface CheckinDocumentServices {
 
     Set<CheckinDocument> read(UUID checkinsId);
 
+    CheckinDocument getFindByUploadDocId(String uploadDocId);
+
     CheckinDocument save(CheckinDocument checkinDocument);
 
     CheckinDocument update(CheckinDocument checkinDocument);
 
     void deleteByCheckinId(UUID checkinsId);
-
-    void deleteByUploadDocId(String uploadDocId);
 }

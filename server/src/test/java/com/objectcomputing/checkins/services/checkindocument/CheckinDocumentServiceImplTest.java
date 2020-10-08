@@ -68,6 +68,25 @@ public class CheckinDocumentServiceImplTest {
     }
 
     @Test
+    void testFindByUploadDocId() {
+
+        CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "exampleDocId");
+        when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.of(cd));
+        assertEquals(cd, services.getFindByUploadDocId(cd.getUploadDocId()));
+        verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
+    }
+
+    @Test
+    void testFindByUploadDocIdWhenRecordDoesNotExist() {
+
+        String id = "some.id";
+        when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.empty());
+        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.getFindByUploadDocId(id));
+        assertEquals(String.format("CheckinDocument with document id %s does not exist", id), exception.getMessage());
+        verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
+    }
+
+    @Test
     void testSave() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
         CheckIn checkin = new CheckIn();
@@ -259,28 +278,5 @@ public class CheckinDocumentServiceImplTest {
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));
-    }
-
-    @Test
-    void testDeleteByUploadDocId() {
-
-        when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(true);
-
-        services.deleteByUploadDocId("Test.Upload.Doc.Id");
-
-        verify(checkinDocumentRepository, times(1)).deleteByUploadDocId(any(String.class));
-        verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
-    }
-
-    @Test
-    void testDeleteNonExistingUploadDocId() {
-        String id = "Test.Id";
-        when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(false);
-
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByUploadDocId(id));
-
-        assertEquals(String.format("CheckinDocument with uploadDocId %s does not exist", id), exception.getMessage());
-        verify(checkinDocumentRepository, times(0)).deleteByUploadDocId(any(String.class));
-        verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
 }
