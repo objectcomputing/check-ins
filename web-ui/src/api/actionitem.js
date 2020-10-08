@@ -8,6 +8,7 @@ export const createActionItem = async(actionItem) => {
             url: `${BASE_API_URL}/services/action-item`,
             responseType: "json",
             data: actionItem,
+            withCredentials: true,
         })
     );
 };
@@ -19,6 +20,7 @@ export const updateActionItem = async(actionItem) => {
             url: `${BASE_API_URL}/services/action-item`,
             responseType: "json",
             data: actionItem,
+            withCredentials: true,
         })
     );
 };
@@ -29,6 +31,7 @@ export const deleteActionItem = async(id) => {
             method: "delete",
             url: `${BASE_API_URL}/services/action-item/${id}`,
             responseType: "json",
+            withCredentials: true,
         })
     );
 };
@@ -65,6 +68,7 @@ export const createMassActionItem = async(actionItems) => {
             url: `${BASE_API_URL}/services/action-item/items`,
             responseType: "json",
             data: actionItems,
+            withCredentials: true,
         })
     );
 };

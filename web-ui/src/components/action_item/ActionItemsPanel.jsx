@@ -30,13 +30,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   async function doUpdate(actionItem) {
     if (actionItem) {
-      await updateActionItem(actionItem);
-    }
-  }
-
-  async function doCreate(actionItem) {
-    if (actionItem) {
-      return await createActionItem(actionItem);
+      return await updateActionItem(actionItem);
     }
   }
 
@@ -58,21 +52,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   useEffect(() => {
     getActionItems(checkinId, mockActionItems);
-  }, [actionItems, checkinId, mockActionItems]);
-
-  /*const getActionItemStyle = (actionItem) => {
-    if (actionItem && actionItem.description) {
-      return "action-items-info";
-    }
-    return "action-items-info-hidden";
-  };
-
-  const getActionItemText = (actionItem) => {
-    if (actionItem && actionItem.description) {
-      return actionItem.description;
-    }
-    return "Lorem Ipsum Etcetera";
-  };*/
+  }, [checkinId, mockActionItems, setActionItems]);
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -107,56 +87,60 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
       return;
     }
 
-    let thisList = reorder(
-      actionItems,
-      result.source.index,
-      result.destination.index
-    );
+    const destIndex = result.destination.index;
+    const sourceIndex = result.source.index;
 
-    let precedingPriority = 0;
-    if (result.destination.index > 0) {
-      precedingPriority = thisList[result.destination.index - 1].priority;
+    if (destIndex !== sourceIndex) {
+      let tempArr = reorder(actionItems, sourceIndex, destIndex);
+      const lastIndex = actionItems.length - 1;
+      console.log(actionItems);
+      console.log(destIndex);
+      const precedingPriority =
+        destIndex === 0 ? 0 : actionItems[destIndex - 1].priority;
+      const followingPriority = destIndex === lastIndex
+        ? actionItems[lastIndex].priority + 1
+        : actionItems[destIndex].priority;
+
+      let newPriority = (precedingPriority + followingPriority) / 2;
+      tempArr[destIndex].priority = newPriority
+      setActionItems(tempArr);
+
+      doUpdate(actionItems[destIndex]);
     }
-
-    let followingPriority = thisList[thisList.length - 1].priority + 1;
-    if (result.destination.index < thisList.length - 1) {
-      followingPriority = thisList[result.destination.index + 1].priority;
-    }
-
-    let newPriority = (precedingPriority + followingPriority) / 2;
-
-    thisList[result.destination.index].priority = newPriority;
-
-    doUpdate(thisList[result.destination.index]);
-
-    getActionItems(checkinId, null);
-
   };
 
   const [newActionItemDescription, setNewActionItemDescription] = useState("");
 
-  const makeActionItem = (newDesc, event) => {
-    let newActionItem = {};
-    newActionItem.description = newDesc;
-    newActionItem.createdbyid = id;
-    newActionItem.checkinid = checkinId;
+  const makeActionItem = async () => {
+    if (!checkinId || !id || !newActionItemDescription === "") {
+        return;
+    }
+    let newActionItem = {
+      description: newActionItemDescription,
+      createdbyid: id,
+      checkinid: checkinId,
+    };
 
-    doCreate(newActionItem);
-
-    setNewActionItemDescription("");
+    const res = await createActionItem(newActionItem);
+    if (!res.error && res.payload && res.payload.data) {
+      setNewActionItemDescription("");
+      setActionItems([...actionItems, res.payload.data]);
+    }
   };
 
   const editActionItem = (index, event) => {
+    let enabled;
     if (!actionItems[index].enabled) {
-      console.log("enabling");
-      actionItems[index].enabled = true;
+      enabled = true;
     } else {
-      console.log("disabling");
       doUpdate(actionItems[index]);
-      getActionItems(checkinId, null);
-      actionItems[index].enabled = false;
+      enabled = false;
     }
 
+    setActionItems((actionItems) => {
+      actionItems[index].enabled = enabled;
+      return [...actionItems];
+    });
   };
 
   const handleNewDescriptionChange = (event) => {
@@ -165,30 +149,16 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   const handleDescriptionChange = (index, event) => {
     actionItems[index].description = event.target.value;
+    setActionItems([...actionItems]);
   };
 
   const killActionItem = (id, event) => {
     doDelete(id);
-    var arrayDupe = actionItems;
-    for (var i = 0; i < arrayDupe.length; i++) {
-      if (arrayDupe[i].id === id) {
-        arrayDupe.splice(i, 1);
-        break;
-      }
-    }
-    getActionItems(checkinId, null);
+    let newItems = actionItems.filter((actionItem) => {
+        return actionItem.id !== id;
+    });
+    setActionItems(newItems);
   };
-
-  /*const createFakeEntry = (item) => {
-    return (
-      <div key={item.id} className="image-div">
-        <span>
-          <DragIndicator />
-        </span>
-        <p className="action-items-info-hidden">Lorem Ipsum etc1</p>
-      </div>
-    );
-  };*/
 
   const createActionItemEntries = () => {
     if (actionItems && actionItems.length > 0) {
@@ -238,13 +208,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
           )}
         </Draggable>
       ));
-    } /*else {
-      let fake = Array(3);
-      for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
-      }
-      return fake;
-    }*/
+    } 
   };
 
   return (
