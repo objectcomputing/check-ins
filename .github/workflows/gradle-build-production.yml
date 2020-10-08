@@ -28,6 +28,8 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew assemble
+        env:
+          REACT_APP_API_URL: https://checkins-master-tuvcfzotpq-uc.a.run.app
       - name: Gradle runs tests
         run: ./gradlew check
       - name: Setup gcloud CLI
