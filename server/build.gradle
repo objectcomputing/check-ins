@@ -41,6 +41,8 @@ dependencies {
     annotationProcessor("io.micronaut.configuration:micronaut-openapi:1.5.1")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
 
+    compile 'com.google.auth:google-auth-library-oauth2-http:0.21.1'
+
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"
     implementation "io.micronaut:micronaut-validation"
