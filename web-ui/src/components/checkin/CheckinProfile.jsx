@@ -9,7 +9,7 @@ import "./Checkin.css";
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
   const { selectedProfile, userProfile } = state;
-  const { name, pdlId, role, workEmail } = selectedProfile
+  const { name, pdlId, title, workEmail } = selectedProfile
     ? selectedProfile
     : userProfile && userProfile.memberProfile
     ? userProfile.memberProfile
@@ -44,7 +44,7 @@ const CheckinProfile = () => {
       />
       <div className="info">
         <p>{name}</p>
-        <p>Role: {role}</p>
+        <p>Job Title: {title}</p>
         <p>PDL: {pdl}</p>
         <p>Company Email: {workEmail}</p>
       </div>

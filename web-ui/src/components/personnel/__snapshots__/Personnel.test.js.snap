@@ -9,6 +9,7 @@ exports[`renders correctly with null 1`] = `
   </legend>
   <div
     className="image-div"
+    onClick={[Function]}
   >
     <img
       alt="personnel pic"
@@ -33,6 +34,7 @@ exports[`renders correctly with null 1`] = `
   </div>
   <div
     className="image-div"
+    onClick={[Function]}
   >
     <img
       alt="personnel pic"
@@ -57,6 +59,7 @@ exports[`renders correctly with null 1`] = `
   </div>
   <div
     className="image-div"
+    onClick={[Function]}
   >
     <img
       alt="personnel pic"

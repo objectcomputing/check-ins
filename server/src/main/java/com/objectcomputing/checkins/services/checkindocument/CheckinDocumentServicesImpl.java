@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +26,14 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
             checkinDocument = checkinDocumentRepo.findByCheckinsId(checkinsId);
         }
         return checkinDocument;
+    }
+
+    public CheckinDocument getFindByUploadDocId(@NotNull String uploadDocId) {
+        Optional<CheckinDocument> cd = checkinDocumentRepo.findByUploadDocId(uploadDocId);
+        if(cd.isEmpty()) {
+            throw new CheckinDocumentBadArgException(String.format("CheckinDocument with document id %s does not exist", uploadDocId));
+        }
+        return cd.get();
     }
 
     public CheckinDocument save(CheckinDocument checkinDocument) {
@@ -68,7 +77,7 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
         return updatedCheckinDocument;
     }
 
-    public void delete(@NotNull UUID checkinsId) {
+    public void deleteByCheckinId(@NotNull UUID checkinsId) {
 
         if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
             throw new CheckinDocumentBadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
