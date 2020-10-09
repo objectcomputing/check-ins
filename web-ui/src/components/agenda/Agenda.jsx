@@ -17,7 +17,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { AppContext } from "../../context/AppContext";
 
-const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
+const AgendaItems = ({ checkinId, memberName }) => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { id } = userProfile && userProfile.memberProfile;
@@ -25,12 +25,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getAgendaItems = async (checkinId, mockAgendaItems, setAgendaItems) => {
-    if (mockAgendaItems) {
-      setAgendaItems(mockAgendaItems);
-      return;
-    }
-
+  const getAgendaItems = async (checkinId) => {
     setIsLoading(true);
     let res = await getAgendaItem(checkinId, null);
     if (res && res.payload) {
@@ -44,21 +39,21 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
     }
   };
 
-  async function deleteItem(id) {
+  const deleteItem = async (id) => {
     if (id) {
       await deleteAgendaItem(id);
     }
-  }
+  };
 
-  async function doUpdate(agendaItem) {
+  const doUpdate = async (agendaItem) => {
     if (agendaItem) {
       await updateAgendaItem(agendaItem);
     }
-  }
+  };
 
   useEffect(() => {
-    getAgendaItems(checkinId, mockAgendaItems, setAgendaItems);
-  }, [checkinId, mockAgendaItems, setAgendaItems]);
+    getAgendaItems(checkinId);
+  }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
     const [removed] = list.splice(startIndex, 1);
@@ -247,7 +242,7 @@ const AgendaItems = ({ checkinId, mockAgendaItems, memberName }) => {
                 >
                   <input
                     className="text-input"
-                    placeholder="Add agenda item"
+                    placeholder="Add an agenda item"
                     onChange={(e) => setDescription(e.target.value)}
                     value={description ? description : ""}
                   />
