@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -324,6 +326,49 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         assertEquals(String.format("Team %s does not exist, can't update.",team.getId()),error);
         assertEquals(request.getPath(), href);
+
+    }
+
+    @Test
+    void deleteTeamAsAdmin() {
+
+        Team team = createDeafultTeam();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", team.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+
+        final HttpResponse<Team> response = client.toBlocking().exchange(request, Team.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void deleteTeamAsPdl() {
+
+        Team team = createDeafultTeam();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", team.getId())).basicAuth(PDL_ROLE,PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.OK,responseException.getStatus());
+
+    }
+
+    @Test
+    void deleteTeamNotAsAdmin() {
+
+        Team team = createDeafultTeam();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", team.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
 
     }
 

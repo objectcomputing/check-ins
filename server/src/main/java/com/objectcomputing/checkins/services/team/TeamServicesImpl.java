@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+
 
 public class TeamServicesImpl implements TeamServices {
 
@@ -62,5 +64,9 @@ public class TeamServicesImpl implements TeamServices {
                     .filter(Objects::nonNull).collect(Collectors.toSet()));
         }
         return teams;
+    }
+
+    public void delete(@NotNull UUID id) {
+        teamsRepo.deleteById(id);
     }
 }
