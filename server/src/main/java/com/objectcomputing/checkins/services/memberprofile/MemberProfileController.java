@@ -7,6 +7,7 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
@@ -15,6 +16,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
+import javax.inject.Named;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -35,7 +37,7 @@ public class MemberProfileController {
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
-                                   ExecutorService ioExecutorService){
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
