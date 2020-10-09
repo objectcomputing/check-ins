@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import FileUploader from "./FileUploader";
-import { uploadFile } from "../../api/upload";
+import { getFile, getAllFiles, deleteFile, uploadFile } from "../../api/upload";
 import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
 import DescriptionIcon from "@material-ui/icons/Description";
@@ -36,6 +36,10 @@ const UploadDocs = () => {
       setLoading(false);
       return;
     }
+    // console.log({ formData, file });
+    // for (var key of formData.entries()) {
+    //   console.log(key);
+    // }
     setLoading(true);
     try {
       let res = await uploadFile(formData, checkinId);
@@ -89,7 +93,7 @@ const UploadDocs = () => {
 
   return (
     <div className="documents">
-      {canView && (
+      {pdlorAdmin && (
         <div>
           <h1 className="title">
             <DescriptionIcon />

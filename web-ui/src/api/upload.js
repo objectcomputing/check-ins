@@ -1,29 +1,55 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
-const uploadUrl = `${BASE_API_URL}/file`;
+const myAxios = axios.create({ withCredentials: true });
 
-export const getFile = async ({file, checkinId}) => {
+const fileUrl = `${BASE_API_URL}/services/file`;
+
+export const getFile = async (formData, checkinId) => {
   return await resolve(
-    axios({
+    myAxios({
       method: "get",
-      url: uploadUrl + `?${checkinId}`,
+      url: fileUrl + `?${checkinId}`,
       responseType: "json",
-      data: file,
-      withCredentials: true,
+      data: formData,
     })
   );
 };
 
-export const uploadFile = async ({file, checkinId}) => {
+export const getAllFiles = async () => {
   return await resolve(
-    axios({
+    myAxios({
+      method: "get",
+      url: fileUrl,
+      responseType: "json",
+    })
+  );
+};
+
+export const uploadFile = async (formData, checkinId) => {
+  for (var key of formData.entries()) {
+    console.log(key);
+  }
+  console.log({ checkinId });
+  return await resolve(
+    myAxios({
       headers: { "Content-Type": "multipart/form-data" },
       method: "post",
-      url: uploadUrl + `/${checkinId}`,
+      url: fileUrl + `/${checkinId}`,
       responseType: "json",
-      data: file,
-      withCredentials: true,
+      data: formData,
+    })
+  );
+};
+
+export const deleteFile = async (formData, checkinId) => {
+  return await resolve(
+    myAxios({
+      headers: { "Content-Type": "multipart/form-data" },
+      method: "delete",
+      url: fileUrl + `/${checkinId}`,
+      responseType: "json",
+      data: formData,
     })
   );
 };
