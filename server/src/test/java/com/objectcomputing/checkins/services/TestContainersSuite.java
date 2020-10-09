@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.inject.Inject;
 
-@MicronautTest(environments = {Environment.TEST, Environment.DEVELOPMENT}, transactional = false)
+@MicronautTest(environments = {Environment.TEST}, transactional = false)
 @Testcontainers
 public abstract class TestContainersSuite implements RepositoryFixture {
 
