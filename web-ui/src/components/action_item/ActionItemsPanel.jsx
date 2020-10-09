@@ -52,7 +52,7 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
 
   useEffect(() => {
     getActionItems(checkinId, mockActionItems);
-  }, [checkinId, mockActionItems, setActionItems]);
+  }, [checkinId, mockActionItems]);
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
