@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import io.micronaut.context.ApplicationContext;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
 
@@ -11,7 +13,7 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
-    private MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRepository memberProfileRepository;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
         this.memberProfileRepository = memberProfileRepository;
