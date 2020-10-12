@@ -227,7 +227,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
-            checkinDocumentServices.deleteByCheckinId(associatedCheckin.getId());
+            checkinDocumentServices.deleteByUploadDocId(uploadDocId);
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             return HttpResponse
