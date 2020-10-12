@@ -122,8 +122,7 @@ public class CheckinNoteController {
         }
         return Single.fromCallable(() -> checkinNoteServices.update(checkinNote))
             .observeOn(Schedulers.from(eventLoopGroup))
-            .map(updatedCheckinNote ->
-                    (HttpResponse<CheckinNote>) HttpResponse
+            .map(updatedCheckinNote ->(HttpResponse<CheckinNote>) HttpResponse
                     .ok()
                     .headers(headers -> headers.location(
                             URI.create(String.format("%s/%s", request.getPath(), updatedCheckinNote.getId()))))
