@@ -54,8 +54,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
             validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
             validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
             if (!isAdmin && isCompleted) {
-                validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
-                validate(!currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
+                validate(!currentUser.getId().equals(pdlId) || !currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
             }
 
             double lastDisplayOrder = 0;
@@ -97,19 +96,44 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItem update(ActionItem actionItem) {
         ActionItem actionItemRet = null;
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
         if (actionItem != null) {
             final UUID id = actionItem.getId();
-            final UUID guildId = actionItem.getCheckinid();
+            final UUID checkinId = actionItem.getCheckinid();
             final UUID createById = actionItem.getCreatedbyid();
-            if (guildId == null || createById == null) {
-                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
-            } else if (id == null || !actionItemRepo.findById(id).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Unable to locate actionItem to update with id %s", id));
-            } else if (!checkinRepo.findById(guildId).isPresent()) {
-                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
+
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+            validate(checkinId == null || createById == null, "Invalid action item %s", actionItem);
+            validate(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to update with id %s", actionItem.getId());
+            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+            if (!isAdmin && isCompleted) {
+                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
+//                validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
+//                validate(!currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
             }
+
+//
+//        if (actionItem != null) {
+//            final UUID id = actionItem.getId();
+//            final UUID guildId = actionItem.getCheckinid();
+//            final UUID createById = actionItem.getCreatedbyid();
+//            if (guildId == null || createById == null) {
+//                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
+//            } else if (id == null || !actionItemRepo.findById(id).isPresent()) {
+//                throw new ActionItemBadArgException(String.format("Unable to locate actionItem to update with id %s", id));
+//            } else if (!checkinRepo.findById(guildId).isPresent()) {
+//                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
+//            } else if (!memberRepo.findById(createById).isPresent()) {
+//                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
+//            }
 
             actionItemRet = actionItemRepo.update(actionItem);
         }
