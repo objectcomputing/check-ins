@@ -100,7 +100,6 @@ public class CheckinNoteController {
                 checkinNote.getCreatedbyid(), checkinNote.getDescription())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdCheckinNote -> {
-                    //Using code block rather than lambda so we can log what thread we're in
                     return (HttpResponse<CheckinNote>) HttpResponse
                     .created(createdCheckinNote)
                     .headers(headers -> headers.location(
@@ -123,7 +122,7 @@ public class CheckinNoteController {
         }
         return Single.fromCallable(() -> checkinNoteServices.update(checkinNote))
             .observeOn(Schedulers.from(eventLoopGroup))
-            .map(updatedCheckinNote -> //This lambda expression is the preferred way to do this kind of simple mapping.
+            .map(updatedCheckinNote ->
                     (HttpResponse<CheckinNote>) HttpResponse
                     .ok()
                     .headers(headers -> headers.location(

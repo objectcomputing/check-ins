@@ -16,12 +16,8 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
-    private static final Logger LOG = LoggerFactory.getLogger(CheckinNoteServicesImpl.class);
     private CheckInRepository checkinRepo;
     private CheckinNoteRepository checkinNoteRepository;
     private MemberProfileRepository memberRepo;
@@ -46,7 +42,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         if (checkinNote != null) {
-            LOG.info("Making multiple calls within this I/O thread as thread switching is costly.");
             final UUID checkinId = checkinNote.getCheckinid();
             final UUID createById = checkinNote.getCreatedbyid();
             CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
@@ -84,7 +79,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
     @Override
     public CheckinNote update(CheckinNote checkinNote) {
-        LOG.info("Updating on I/O loop");
         CheckinNote checkinNoteRet = null;
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
