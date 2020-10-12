@@ -2,7 +2,7 @@ import React from 'react';
 import CheckinProfile from './CheckinProfile';
 
 export default {
-    title: 'CheckinProfile',
+    title: 'Check-Ins/CheckinProfile',
     component: CheckinProfile
 };
 

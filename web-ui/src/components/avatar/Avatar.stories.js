@@ -3,7 +3,7 @@ import Avatar from './Avatar';
 import image from '../../logo.svg';
 
 export default {
-    title: 'Avatar',
+    title: 'Check Ins/Avatar',
     component: Avatar
 };
 
