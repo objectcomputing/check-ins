@@ -97,7 +97,7 @@ public class CheckinDocumentController {
     @Delete("/{checkinsId}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> delete(UUID checkinsId) {
-        checkinDocumentService.delete(checkinsId);
+        checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse
                 .noContent();
     }

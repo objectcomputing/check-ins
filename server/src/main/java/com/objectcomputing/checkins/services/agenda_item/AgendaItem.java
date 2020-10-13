@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class AgendaItem {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this agenda item", required = true)
+    @Schema(description = "UUID of agenda item", required = true)
     private UUID id;
 
     @NotNull
@@ -42,19 +42,31 @@ public class AgendaItem {
     @Schema(description = "description of the agenda item")
     private String description;
 
+    @Column(name = "priority")
+    @Schema(description = "Allow for a user defined display order")
+    private double priority;
+
     public AgendaItem(UUID checkinid, UUID createdbyid, String description) {
         this(null, checkinid, createdbyid, description);
     }
 
     public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
+        this(id,checkinid,createdbyid,description,1.0);
+    }
+
+    public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
+        this(null, checkinid, createdbyid, description, priority);
+    }
+
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description, double priority) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
+        this.priority = priority;
     }
-
     public UUID getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(UUID id) {
@@ -62,7 +74,7 @@ public class AgendaItem {
     }
 
     public UUID getCheckinid() {
-        return checkinid;
+        return this.checkinid;
     }
 
     public void setCheckinid(UUID checkinid) {
@@ -70,7 +82,7 @@ public class AgendaItem {
     }
 
     public UUID getCreatedbyid() {
-        return createdbyid;
+        return this.createdbyid;
     }
 
     public void setCreatedbyid(UUID createdbyid) {
@@ -78,20 +90,29 @@ public class AgendaItem {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(double priority) {
+        this.priority = priority;
+    }
+
     @Override
     public String toString() {
-        return "AgendaItem{" +
+        return "AgendaItems{" +
                 "id=" + id +
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
                 ", description='" + description + '\'' +
+                ", priority=" + priority +
                 '}';
     }
 
@@ -100,7 +121,8 @@ public class AgendaItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgendaItem that = (AgendaItem) o;
-        return Objects.equals(id, that.id) &&
+        return Double.compare(that.priority, priority) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
                 Objects.equals(description, that.description);
@@ -108,6 +130,8 @@ public class AgendaItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid, description);
+        return Objects.hash(id, checkinid, createdbyid, description,priority);
     }
+
 }
+

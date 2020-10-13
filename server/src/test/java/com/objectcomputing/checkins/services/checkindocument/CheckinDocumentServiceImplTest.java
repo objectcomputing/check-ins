@@ -68,6 +68,25 @@ public class CheckinDocumentServiceImplTest {
     }
 
     @Test
+    void testFindByUploadDocId() {
+
+        CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "exampleDocId");
+        when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.of(cd));
+        assertEquals(cd, services.getFindByUploadDocId(cd.getUploadDocId()));
+        verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
+    }
+
+    @Test
+    void testFindByUploadDocIdWhenRecordDoesNotExist() {
+
+        String id = "some.id";
+        when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.empty());
+        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.getFindByUploadDocId(id));
+        assertEquals(String.format("CheckinDocument with document id %s does not exist", id), exception.getMessage());
+        verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
+    }
+
+    @Test
     void testSave() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
         CheckIn checkin = new CheckIn();
@@ -240,11 +259,11 @@ public class CheckinDocumentServiceImplTest {
     }
 
     @Test
-    void testDelete() {
+    void testDeleteByCheckinId() {
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(true);
 
-        services.delete(UUID.randomUUID());
+        services.deleteByCheckinId(UUID.randomUUID());
 
         verify(checkinDocumentRepository, times(1)).deleteByCheckinsId(any(UUID.class));
     }
@@ -255,7 +274,7 @@ public class CheckinDocumentServiceImplTest {
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(false);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.delete(uuid));
+        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByCheckinId(uuid));
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));

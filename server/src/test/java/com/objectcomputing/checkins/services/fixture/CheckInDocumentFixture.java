@@ -9,4 +9,7 @@ public interface CheckInDocumentFixture extends RepositoryFixture {
         return getCheckInDocumentRepository().save(new CheckinDocument(checkIn.getId(),"doc1"));
     }
 
+    default CheckinDocument createACustomCheckInDocument(CheckIn checkIn, String uploadDocId) {
+        return getCheckInDocumentRepository().save(new CheckinDocument(checkIn.getId(), uploadDocId));
+    }
 }
