@@ -1,6 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FileUploader from "./FileUploader";
-import { getFile, getAllFiles, deleteFile, uploadFile } from "../../api/upload";
+import {
+  getFiles,
+  // getAllFiles,
+  deleteFile,
+  uploadFile,
+} from "../../api/upload";
 import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
 import DescriptionIcon from "@material-ui/icons/Description";
@@ -24,6 +29,32 @@ const UploadDocs = () => {
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
   const checkinId = currentCheckin && currentCheckin.id;
 
+  useEffect(() => {
+    async function getCheckinFiles() {
+      try {
+        let res = await getFiles(checkinId);
+        if (res.error) throw new Error(res.error);
+        let checkinFiles =
+          res.payload && res.payload.data && res.payload.data.length > 0
+            ? res.payload.data
+            : null;
+        if (checkinFiles) {
+          console.log({ checkinFiles });
+          setFiles(...files, checkinFiles);
+          checkinFiles.forEach((file) => {
+            setFileColors((fileColors) => ({
+              ...fileColors,
+              [file.name]: "green",
+            }));
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    getCheckinFiles();
+  }, [checkinId]);
+
   const handleFile = (file) => {
     setFiles([...files, file]);
     addFile(file);
@@ -32,28 +63,27 @@ const UploadDocs = () => {
   const addFile = async (file) => {
     let formData = new FormData();
     formData.append("file", file);
-    if (!file) {
+    if (!file || files.includes(file)) {
       setLoading(false);
       return;
     }
-    // console.log({ formData, file });
-    // for (var key of formData.entries()) {
-    //   console.log(key);
-    // }
     setLoading(true);
     try {
       let res = await uploadFile(formData, checkinId);
       if (res.error) throw new Error(res.error);
       const { data, status } = res.payload;
-      if (status !== 200) throw new Error("status equals " + status);
+      if (status !== 200) {
+        throw new Error("status equals " + status);
+      }
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: data.completeMessage,
+          toast: `${data.name} was successfully uploaded`,
         },
       });
       setFileColors((fileColors) => ({ ...fileColors, [file.name]: "green" }));
+      setFiles([...files, data]);
     } catch (e) {
       setFileColors((fileColors) => ({ ...fileColors, [file.name]: "red" }));
       console.log({ e });
@@ -68,11 +98,13 @@ const UploadDocs = () => {
         return null;
       } else {
         return (
-          <div key={file.name} style={{ color: fileColors[file.name] }}>
+          <div key={file.fileId} style={{ color: fileColors[file.name] }}>
             {file.name}
             <Button
               className="remove-file"
-              onClick={() => {
+              onClick={async () => {
+                console.log("file to delete", file);
+                await deleteFile(file.fileId);
                 setFiles(
                   files.filter((e) => {
                     return e.name !== file.name;
@@ -93,7 +125,7 @@ const UploadDocs = () => {
 
   return (
     <div className="documents">
-      {pdlorAdmin && (
+      {canView && (
         <div>
           <h1 className="title">
             <DescriptionIcon />
