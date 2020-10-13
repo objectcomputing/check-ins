@@ -39,7 +39,6 @@ const UploadDocs = () => {
             ? res.payload.data
             : null;
         if (checkinFiles) {
-          console.log({ checkinFiles });
           setFiles(...files, checkinFiles);
           checkinFiles.forEach((file) => {
             setFileColors((fileColors) => ({
@@ -53,6 +52,7 @@ const UploadDocs = () => {
       }
     }
     getCheckinFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkinId]);
 
   const handleFile = (file) => {
