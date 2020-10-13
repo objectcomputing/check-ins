@@ -11,6 +11,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.security.utils.SecurityService;
+import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.RoleType;
+
 
 public class TeamServicesImpl implements TeamServices {
 
@@ -18,6 +24,12 @@ public class TeamServicesImpl implements TeamServices {
     private TeamRepository teamsRepo;
     @Inject
     private TeamMemberRepository teamMemberRepo;
+    @Inject
+    private SecurityService securityService;
+    @Inject
+    private CurrentUserServices currentUserServices;
+    @Inject
+    private TeamMemberServices teamMemberServices;
 
     public Team save(Team team) {
         Team newTeam = null;
@@ -66,7 +78,22 @@ public class TeamServicesImpl implements TeamServices {
         return teams;
     }
 
+    // public void delete(@NotNull UUID id) {
+    //     teamsRepo.deleteById(id);
+    // }
+
     public void delete(@NotNull UUID id) {
-        teamsRepo.deleteById(id);
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
+        Team team = teamsRepo.findById(id).get();
+
+        Set<TeamMember> CurrentTeam = teamMemberServices.findByFields(team.getId(), currentUser.getId(), true);
+        if(isAdmin || !CurrentTeam.isEmpty()) {
+            teamsRepo.deleteById(id);
+        } else {
+            throw new TeamBadArgException(String.format("Team with %s Id was not found", id));
+        }
     }
 }

@@ -133,7 +133,7 @@ public class TeamController {
      */
     @Delete("/{id}")
     @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
-    public HttpResponse<?> deleteAgendaItem(UUID id) {
+    public HttpResponse<?> deleteTeam(UUID id) {
         teamService.delete(id);
         return HttpResponse
                 .ok();
