@@ -48,20 +48,23 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             final UUID createById = agendaItem.getCreatedbyid();
             double lastDisplayOrder = 0;
             try {
-                lastDisplayOrder = agendaItemRepo.findMaxPriorityByCheckinid(agendaItem.getCheckinid()).orElse(Double.valueOf(0));
+                lastDisplayOrder = agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid()).orElse(Double.valueOf(0));
             } catch (NullPointerException npe) {
                 //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
                 //nothing needs to happen here.
             }
             agendaItem.setPriority(lastDisplayOrder+1);
-            if (checkinId == null || createById == null) {
-                throw new AgendaItemBadArgException(String.format("Invalid agendaItem %s", agendaItem));
-            } else if (agendaItem.getId() != null) {
-                throw new AgendaItemBadArgException(String.format("Found unexpected id %s for agenda item", agendaItem.getId()));
-            } else if (!checkinRepo.findById(checkinId).isPresent()) {
-                throw new AgendaItemBadArgException(String.format("CheckIn %s doesn't exist", checkinId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
-                throw new AgendaItemBadArgException(String.format("Member %s doesn't exist", createById));
+            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            validate(checkinId == null || createById == null, "Invalid agenda item %s", agendaItem);
+            validate(agendaItem.getId() != null, "Found unexpected id %s for agenda item", agendaItem.getId());
+            validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+            validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+            if (!isAdmin && isCompleted) {
+                validate(true, "User is unauthorized to do this operation");
+            } else if (!isAdmin && !isCompleted) {
+                validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
             }
 
             agendaItemRet = agendaItemRepository.save(agendaItem);

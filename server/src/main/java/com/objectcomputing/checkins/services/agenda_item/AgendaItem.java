@@ -51,7 +51,7 @@ public class AgendaItem {
     }
 
     public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
-          this(id,checkinid,createdbyid,description,1.0);
+        this(id,checkinid,createdbyid,description,1.0);
     }
 
     public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
@@ -65,11 +65,6 @@ public class AgendaItem {
         this.description = description;
         this.priority = priority;
     }
-
-    public AgendaItem(UUID checkinid, UUID createdbyid, @Nullable String description) {
-        this(null, checkinid, createdbyid, description);
-    }
-
     public UUID getId() {
         return this.id;
     }
@@ -109,7 +104,6 @@ public class AgendaItem {
     public void setPriority(double priority) {
         this.priority = priority;
     }
-
 
     @Override
     public String toString() {
