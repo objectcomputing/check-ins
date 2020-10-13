@@ -101,7 +101,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
       return;
     }
     let newAgendaItem = {
-      checkinId: checkinId,
+      checkinid: checkinId,
       createdbyid: id,
       description: description,
     };
