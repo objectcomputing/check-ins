@@ -3,8 +3,6 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
-import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteCreateDTO;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.ActionItemFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
@@ -68,21 +66,21 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
-        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
-        checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
-        checkinNoteCreateDTO.setDescription("test");
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        actionItemCreateDTO.setDescription("dnc");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        CheckinNote checkinNote = response.body();
+        ActionItem actionItem= response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
-        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
-        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
+        assertEquals(actionItemCreateDTO.getCheckinid(), actionItem.getCheckinid());
+        assertEquals(actionItemCreateDTO.getCreatedbyid(), actionItem.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
     }
 
     @Test
@@ -92,21 +90,21 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
-        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
-        checkinNoteCreateDTO.setCreatedbyid(memberProfileOfUser.getId());
-        checkinNoteCreateDTO.setDescription("test");
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        actionItemCreateDTO.setDescription("dnc");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
-        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        CheckinNote checkinNote = response.body();
+        ActionItem actionItem= response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
-        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
-        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
+        assertEquals(actionItemCreateDTO.getCheckinid(), actionItem.getCheckinid());
+        assertEquals(actionItemCreateDTO.getCreatedbyid(), actionItem.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
     }
 
     @Test
@@ -370,7 +368,7 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testDeleteAnAgendaItemByPDLIdWhenCompleted() {
+    void testDeleteAnActionItemByPDLIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
