@@ -71,7 +71,7 @@ public class FileController {
      * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<FileInfoDTO> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+    public HttpResponse<?> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
         return fileServices.uploadFile(checkInId, file);
     }
 

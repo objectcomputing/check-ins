@@ -8,6 +8,6 @@ import java.util.UUID;
 public interface FileServices {
     HttpResponse<?> findFiles(UUID checkInId);
     HttpResponse<?> downloadFiles(String uploadDocId);
-    HttpResponse<FileInfoDTO> uploadFile(UUID checkInID, CompletedFileUpload file);
+    HttpResponse<?> uploadFile(UUID checkInID, CompletedFileUpload file);
     HttpResponse<?> deleteFile(String uploadDocId);
 }
