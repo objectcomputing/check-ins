@@ -310,17 +310,105 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void deleteActionItem() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    void testDeleteActionItemByAdmin() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
-        final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testDeleteActionItemByPdl() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteActionItemByMember() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+    @Test
+    void testDeleteAnActionItemByADMINIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testDeleteAnAgendaItemByPDLIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(),PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testDeleteAnActionItemByMEMBERIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
 
     }
 
