@@ -36,10 +36,8 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "agenda-item")
 public class AgendaItemController {
-    private static final Logger LOG = LoggerFactory.getLogger(AgendaItemController.class);
 
     private AgendaItemServices agendaItemServices;
-
     private EventLoopGroup eventLoopGroup;
     private ExecutorService ioExecutorService;
 
@@ -102,13 +100,11 @@ public class AgendaItemController {
     @Post("/")
     public Single<HttpResponse<AgendaItem>> createAgendaItem(@Body @Valid AgendaItemCreateDTO agendaItem,
                                                              HttpRequest<AgendaItemCreateDTO> request) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> agendaItemServices.save(new AgendaItem(agendaItem.getCheckinid(),
                 agendaItem.getCreatedbyid(), agendaItem.getDescription())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdAgendaItem -> {
                     //Using code block rather than lambda so we can log what thread we're in
-                    LOG.info("Back on the main event loop in the controller");
                     return (HttpResponse<AgendaItem>) HttpResponse
                             .created(createdAgendaItem)
                             .headers(headers -> headers.location(
@@ -125,7 +121,6 @@ public class AgendaItemController {
      */
     @Put("/")
     public Single<HttpResponse<AgendaItem>> updateAgendaItem(@Body @Valid AgendaItem agendaItem, HttpRequest<AgendaItem> request) {
-        LOG.info("Entering controller on main event loop");
         if (agendaItem == null) {
             return Single.just(HttpResponse.ok());
         }
@@ -150,11 +145,9 @@ public class AgendaItemController {
     @Get("/{?checkinid,createdbyid}")
     public Single<HttpResponse<Set<AgendaItem>>> findAgendaItems(@Nullable UUID checkinid,
                                                                  @Nullable UUID createdbyid) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> agendaItemServices.findByFields(checkinid, createdbyid))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(agendaItems -> {
-                    LOG.info("Mapping on main event loop");
                     return (HttpResponse<Set<AgendaItem>>) HttpResponse.ok(agendaItems);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
@@ -167,7 +160,6 @@ public class AgendaItemController {
      */
     @Get("/{id}")
     public Single<HttpResponse<AgendaItem>> readAgendaItem(UUID id) {
-        LOG.info("Entering controller on main event loop");
         return Single.fromCallable(() -> {
             AgendaItem result = agendaItemServices.read(id);
             if (result == null) {
@@ -177,7 +169,6 @@ public class AgendaItemController {
         })
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(agendaItem -> {
-            LOG.info("Successful find");
             return (HttpResponse<AgendaItem>)HttpResponse.ok(agendaItem);
         }).subscribeOn(Schedulers.from(ioExecutorService));
 
