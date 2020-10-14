@@ -103,13 +103,10 @@ public class MemberSkillController {
         return Single.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
                 memberSkill.getSkillid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdMemberSkill -> {
-                    //Using code block rather than lambda so we can log what thread we're in
-                    return (HttpResponse<MemberSkill>) HttpResponse
-                            .created(createdMemberSkill)
-                            .headers(headers -> headers.location(
-                                    URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                .map(createdMemberSkill -> (HttpResponse<MemberSkill>)HttpResponse
+                        .created(createdMemberSkill)
+                        .headers(headers -> headers.location(
+                            URI.create(String.format("%s/%s", request.getPath(), createdMemberSkill.getId()))))).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
