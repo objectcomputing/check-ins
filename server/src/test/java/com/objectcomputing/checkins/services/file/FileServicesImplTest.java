@@ -7,7 +7,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.testing.json.MockJsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.google.common.io.ByteStreams;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -27,6 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -78,15 +80,13 @@ public class FileServicesImplTest {
     @Mock
     private CompletedFileUpload completedFileUpload;
 
-    @Mock
-    private EmailSender emailSender;
-
     @InjectMocks
     private FileServicesImpl services;
 
     @BeforeAll
     void initMocksAndInitializeFile() throws IOException {
         MockitoAnnotations.initMocks(this);
+
         testFile = new File(filePath);
         FileWriter myWriter = new FileWriter(testFile);
         myWriter.write("This.Is.A.Test.File");
@@ -107,7 +107,6 @@ public class FileServicesImplTest {
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
         Mockito.reset(completedFileUpload);
-        Mockito.reset(emailSender);
     }
 
     @Test
@@ -350,44 +349,83 @@ public class FileServicesImplTest {
         verify(checkInServices, times(0)).read(any(UUID.class));
     }
 
-//    @Test
-//    void testDownloadFiles() throws IOException {
-//        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
-//        when(drive.files()).thenReturn(files);
-//        when(files.get(any(String.class))).thenReturn(get);
-//        when(get.executeMediaAndDownloadTo(any(OutputStream.class))).);
-//    }
+    @Test
+    void testDownloadFiles() throws IOException {
+        String testUploadDocId = "some.test.id";
+        UUID testCheckinId = UUID.randomUUID();
+        UUID testMemberId = UUID.randomUUID();
 
-//    @Test
-//    void testDownloadFilesAdminCanAccess() throws IOException {
-//        String testUploadDocId = "some.test.id";
-//        UUID testCheckinId = UUID.randomUUID();
-//
-//        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-//        when(authentication.getAttributes()).thenReturn(mockAttributes);
-//        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-//        when(mockAttributes.toString()).thenReturn("test.email");
-//        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
-//        when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
-//        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-//        when(testCd.getCheckinsId()).thenReturn(testCheckinId);
-//        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-//        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
-//        when(drive.files()).thenReturn(files);
-//        when(files.get(testUploadDocId)).thenReturn(get);
-//
-//        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
-//        java.io.File resultFile = (File) response.getBody().get();
-//        BufferedReader br = new BufferedReader(new FileReader(resultFile));
-//        String st;
-//        while ((st = br.readLine()) != null)
-//            System.out.println(st);
-//
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
-//        verify(checkInServices, times(1)).read(any(UUID.class));
-//        verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
-//    }
+        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
+        when(authentication.getAttributes()).thenReturn(mockAttributes);
+        when(mockAttributes.get("email")).thenReturn(mockAttributes);
+        when(mockAttributes.toString()).thenReturn("test.email");
+        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
+        when(testCd.getCheckinsId()).thenReturn(testCheckinId);
+        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
+        when(testMemberProfile.getId()).thenReturn(testMemberId);
+        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(drive.files()).thenReturn(files);
+        when(files.get(testUploadDocId)).thenReturn(get);
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) throws IOException {
+                OutputStream outputStream = invocation.getArgument(0);
+                InputStream inputstream = new FileInputStream(testFile);
+                ByteStreams.copy(inputstream, outputStream);
+                return null;
+            }
+        }).when(get).executeMediaAndDownloadTo(any(OutputStream.class));
+
+        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
+        java.io.File resultFile = (File) response.getBody().get();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(testFile.length(), resultFile.length());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(checkInServices, times(1)).read(any(UUID.class));
+        verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
+        verify(get, times(1)).executeMediaAndDownloadTo(any(OutputStream.class));
+    }
+
+    @Test
+    void testDownloadFilesAdminCanAccess() throws IOException {
+        String testUploadDocId = "some.test.id";
+        UUID testCheckinId = UUID.randomUUID();
+
+        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
+        when(authentication.getAttributes()).thenReturn(mockAttributes);
+        when(mockAttributes.get("email")).thenReturn(mockAttributes);
+        when(mockAttributes.toString()).thenReturn("test.email");
+        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
+        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(testCd.getCheckinsId()).thenReturn(testCheckinId);
+        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(drive.files()).thenReturn(files);
+        when(files.get(testUploadDocId)).thenReturn(get);
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) throws IOException {
+                OutputStream outputStream = invocation.getArgument(0);
+                InputStream inputstream = new FileInputStream(testFile);
+                ByteStreams.copy(inputstream, outputStream);
+                return null;
+            }
+        }).when(get).executeMediaAndDownloadTo(any(OutputStream.class));
+
+        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
+        java.io.File resultFile = (File) response.getBody().get();
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(testFile.length(), resultFile.length());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(checkInServices, times(1)).read(any(UUID.class));
+        verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
+        verify(get, times(1)).executeMediaAndDownloadTo(any(OutputStream.class));
+    }
 
     @Test
     void testDownloadFilesInvalidUploadDocId() throws IOException {
@@ -723,6 +761,8 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
+        Drive.Files.Create createForFileUpload = mock(Drive.Files.Create.class);
+
         when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
@@ -748,10 +788,10 @@ public class FileServicesImplTest {
         when(files.create(any(com.google.api.services.drive.model.File.class))).thenReturn(create);
         when(create.execute()).thenReturn(newFolderCreatedOnDrive);
 
-        when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
-        when(create.setSupportsAllDrives(true)).thenReturn(create);
-        when(create.setFields(any(String.class))).thenReturn(create);
-//        when(create.execute()).thenReturn(fileFromDrive);
+        when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(createForFileUpload);
+        when(createForFileUpload.setSupportsAllDrives(true)).thenReturn(createForFileUpload);
+        when(createForFileUpload.setFields(any(String.class))).thenReturn(createForFileUpload);
+        when(createForFileUpload.execute()).thenReturn(fileFromDrive);
 
         //act
         final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
@@ -883,7 +923,7 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testUploadFileThrowsErrorWhenFileNameIsEmpty() throws IOException {
+    void testUploadFileThrowsErrorWhenFileNameIsEmpty() {
         when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
@@ -898,7 +938,7 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testUploadFileThrowsErrorForInvalidCheckinId() throws IOException {
+    void testUploadFileThrowsErrorForInvalidCheckinId() {
         UUID testCheckinId = UUID.randomUUID();
 
         when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));

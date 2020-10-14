@@ -172,9 +172,7 @@ public class FileServicesImpl implements FileServices {
             Drive drive = googleDriveAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
-            /* check if folder already exists on google drive
-            * if exists, return folderId and name
-            * else, create a new folder in the format name-date */
+            // Check if folder already exists on google drive. If exists, return folderId and name
             FileList driveIndex = drive.files().list().setFields("files(id, name)").execute();
             validate((driveIndex.isEmpty() || driveIndex == null), "Error occurred while accessing Google Drive");
 
@@ -183,6 +181,7 @@ public class FileServicesImpl implements FileServices {
                                     .findFirst()
                                     .orElse(null);
 
+            // If folder does not exist on Drive, create a new folder in the format name-date
             if(folderOnDrive == null) {
                 folderOnDrive = createNewDirectoryOnDrive(drive, directoryName);
             }
