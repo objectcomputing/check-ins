@@ -99,12 +99,11 @@ public class CheckinNoteController {
         return Single.fromCallable(() -> checkinNoteServices.save(new CheckinNote(checkinNote.getCheckinid(),
                 checkinNote.getCreatedbyid(), checkinNote.getDescription())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdCheckinNote -> {
-                    return (HttpResponse<CheckinNote>) HttpResponse
+                .map(createdCheckinNote -> (HttpResponse<CheckinNote>) HttpResponse
                     .created(createdCheckinNote)
                     .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), createdCheckinNote.getId()))));
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                        URI.create(String.format("%s/%s", request.getPath(), createdCheckinNote.getId())))))
+                        .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
 /**
@@ -143,9 +142,8 @@ public class CheckinNoteController {
                                            @Nullable UUID createdbyid) {
         return Single.fromCallable(() -> checkinNoteServices.findByFields(checkinid, createdbyid))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(checkinNotes -> {
-                    return (HttpResponse<Set<CheckinNote>>) HttpResponse.ok(checkinNotes);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
+                .map(checkinNotes -> (HttpResponse<Set<CheckinNote>>) HttpResponse.ok(checkinNotes))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -164,8 +162,7 @@ public class CheckinNoteController {
             return result;
         })
         .observeOn(Schedulers.from(eventLoopGroup))
-        .map(checkinNote -> {
-            return (HttpResponse<CheckinNote>)HttpResponse.ok(checkinNote);
-        }).subscribeOn(Schedulers.from(ioExecutorService));
+        .map(checkinNote -> (HttpResponse<CheckinNote>)HttpResponse.ok(checkinNote))
+        .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }
