@@ -300,6 +300,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         assertEquals(request.getPath(), href);
         assertEquals("User is unauthorized to do this operation", error);
 
+
     }
 
     @Test
