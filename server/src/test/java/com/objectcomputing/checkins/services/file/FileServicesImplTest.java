@@ -109,6 +109,14 @@ public class FileServicesImplTest {
         Mockito.reset(completedFileUpload);
     }
 
+    private void setupMocksForAuth() {
+        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
+        when(authentication.getAttributes()).thenReturn(mockAttributes);
+        when(mockAttributes.get("email")).thenReturn(mockAttributes);
+        when(mockAttributes.toString()).thenReturn("test.email");
+        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+    }
+
     @Test
     void testFindFilesForFindAll() throws IOException {
 
@@ -119,11 +127,7 @@ public class FileServicesImplTest {
         mockFiles.add(file1);
         fileList.setFiles(mockFiles);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -143,12 +147,7 @@ public class FileServicesImplTest {
 
     @Test
     void testFindAllFailsIfNotAdmin() {
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
-
+        setupMocksForAuth();
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(null));
 
@@ -166,11 +165,7 @@ public class FileServicesImplTest {
         final Set<CheckinDocument> testCheckinDocument = new HashSet<>();
         testCheckinDocument.add(testCd);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
@@ -195,11 +190,7 @@ public class FileServicesImplTest {
     @Test
     void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(null);
@@ -219,11 +210,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
@@ -244,11 +231,7 @@ public class FileServicesImplTest {
     void testFindByCheckinIdForUnauthorizedUser() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
@@ -265,11 +248,7 @@ public class FileServicesImplTest {
 
     @Test
     void testFindFilesDriveCantConnect() throws IOException {
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
@@ -284,11 +263,7 @@ public class FileServicesImplTest {
 
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -309,11 +284,7 @@ public class FileServicesImplTest {
         testCheckinDocument.add(testCd);
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
@@ -333,11 +304,7 @@ public class FileServicesImplTest {
 
     @Test
     void testFindFilesThrowsIOException() throws IOException {
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
@@ -355,11 +322,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -394,11 +357,7 @@ public class FileServicesImplTest {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -431,11 +390,7 @@ public class FileServicesImplTest {
     void testDownloadFilesInvalidUploadDocId() throws IOException {
         String invalidUploadDocId = "some.test.id";
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(invalidUploadDocId)).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -452,11 +407,7 @@ public class FileServicesImplTest {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -477,11 +428,7 @@ public class FileServicesImplTest {
         String testUploadDocId = "some.test.id";
         UUID testMemberProfileId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
@@ -503,11 +450,7 @@ public class FileServicesImplTest {
         UUID testMemberProfileId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
@@ -530,11 +473,7 @@ public class FileServicesImplTest {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -556,11 +495,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -584,11 +519,7 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
@@ -611,11 +542,7 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -633,11 +560,7 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -663,11 +586,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -692,11 +611,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -721,11 +636,7 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -763,12 +674,7 @@ public class FileServicesImplTest {
 
         Drive.Files.Create createForFileUpload = mock(Drive.Files.Create.class);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
-
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -825,11 +731,7 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -883,11 +785,7 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -924,11 +822,7 @@ public class FileServicesImplTest {
 
     @Test
     void testUploadFileThrowsErrorWhenFileNameIsEmpty() {
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -941,11 +835,7 @@ public class FileServicesImplTest {
     void testUploadFileThrowsErrorForInvalidCheckinId() {
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("test.file.name");
         when(checkInServices.read(testCheckinId)).thenReturn(null);
 
@@ -959,12 +849,7 @@ public class FileServicesImplTest {
     void testUploadFileUnauthorizedUser() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
-
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -987,11 +872,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -1014,11 +895,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -1043,11 +920,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -1078,11 +951,7 @@ public class FileServicesImplTest {
         String memberName = "testName";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
-        when(authentication.getAttributes()).thenReturn(mockAttributes);
-        when(mockAttributes.get("email")).thenReturn(mockAttributes);
-        when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
