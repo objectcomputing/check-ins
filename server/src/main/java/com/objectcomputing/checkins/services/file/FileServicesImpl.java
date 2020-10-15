@@ -15,6 +15,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.googleApiAccess.GoogleAccessor;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -38,7 +39,7 @@ public class FileServicesImpl implements FileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
-    private final GoogleDriveAccessor googleDriveAccessor;
+    private final GoogleAccessor googleAccessor;
     private final EmailSender emailSender;
     private final SecurityService securityService;
     private final CheckInServices checkInServices;
@@ -46,11 +47,11 @@ public class FileServicesImpl implements FileServices {
     private final MemberProfileServices memberProfileServices;
     private CurrentUserServices currentUserServices;
 
-    public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, EmailSender emailSender,
+    public FileServicesImpl(GoogleAccessor googleAccessor, EmailSender emailSender,
                             SecurityService securityService, CheckInServices checkInServices,
                             CheckinDocumentServices checkinDocumentServices,
                             MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
-        this.googleDriveAccessor = googleDriveAccessor;
+        this.googleAccessor = googleAccessor;
         this.emailSender = emailSender;
         this.securityService = securityService;
         this.checkInServices = checkInServices;
@@ -69,7 +70,7 @@ public class FileServicesImpl implements FileServices {
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             if (checkInID == null && isAdmin) {
@@ -127,7 +128,7 @@ public class FileServicesImpl implements FileServices {
             file.deleteOnExit();
             FileWriter myWriter = new FileWriter(file);
 
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
@@ -168,7 +169,7 @@ public class FileServicesImpl implements FileServices {
         final String directoryName = sb;
 
         try {
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             /* check if folder already exists on google drive
@@ -224,7 +225,7 @@ public class FileServicesImpl implements FileServices {
         }
 
         try {
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
             checkinDocumentServices.deleteByCheckinId(associatedCheckin.getId());

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.file;
+package com.objectcomputing.checkins.util.googleApiAccess;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -14,15 +14,15 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 @Singleton
-public class GoogleDriveAccessor {
+public class GoogleAccessor {
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private final NetHttpTransport httpTransport;
     private final String applicationName;
     private GoogleAuthenticator authenticator;
 
-    public GoogleDriveAccessor(@Property(name = "check-ins.application.name") String applicationName,
-                               GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
+    public GoogleAccessor(@Property(name = "check-ins.application.name") String applicationName,
+                          GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {
         this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         this.applicationName = applicationName;
         this.authenticator = authenticator;
