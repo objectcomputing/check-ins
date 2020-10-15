@@ -83,10 +83,6 @@ public class TeamServicesImpl implements TeamServices {
         return teams;
     }
 
-    // public void delete(@NotNull UUID id) {
-    //     teamsRepo.deleteById(id);
-    // }
-
     public void delete(@NotNull UUID id) {
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
