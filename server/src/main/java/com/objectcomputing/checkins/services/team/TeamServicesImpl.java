@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.team;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,19 +17,24 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 
-
+@Singleton
 public class TeamServicesImpl implements TeamServices {
 
-    @Inject
     private TeamRepository teamsRepo;
-    @Inject
     private TeamMemberRepository teamMemberRepo;
-    @Inject
     private SecurityService securityService;
-    @Inject
     private CurrentUserServices currentUserServices;
-    @Inject
     private TeamMemberServices teamMemberServices;
+    
+    public TeamServicesImpl(TeamRepository teamsRepo, TeamMemberRepository teamMemberRepo,
+                            SecurityService securityService, CurrentUserServices currentUserServices,
+                            TeamMemberServices teamMemberServices) {
+        this.teamsRepo = teamsRepo;
+        this.teamMemberRepo = teamMemberRepo;
+        this.securityService = securityService;
+        this.currentUserServices = currentUserServices;
+        this.teamMemberServices = teamMemberServices;
+    }
 
     public Team save(Team team) {
         Team newTeam = null;
@@ -93,7 +98,7 @@ public class TeamServicesImpl implements TeamServices {
         if(isAdmin || !CurrentTeam.isEmpty()) {
             teamsRepo.deleteById(id);
         } else {
-            throw new TeamBadArgException(String.format("Team with %s Id was not found", id));
+            throw new TeamBadArgException("You are not authorized to perform this operation");
         }
     }
 }

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import com.objectcomputing.checkins.services.role.RoleType;
 
 @Controller("/services/team")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -132,8 +131,7 @@ public class TeamController {
      * @param id, id of {@link AgendaItem} to delete
      */
     @Delete("/{id}")
-    @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
-    public HttpResponse<?> deleteTeam(UUID id) {
+    public HttpResponse<?> deleteTeam(@NotNull UUID id) {
         teamService.delete(id);
         return HttpResponse
                 .ok();
