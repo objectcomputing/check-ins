@@ -20,8 +20,12 @@ const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
   const { currentCheckin, userProfile, selectedProfile } = state;
+  const memberProfile = userProfile ? userProfile.memberProfile : undefined;
+  const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const canViewPrivateNote =
+    memberProfile && id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {
@@ -51,31 +55,36 @@ const CheckinsPage = ({ history }) => {
                       }
                     />
                     <ActionItemsPanel checkinId={currentCheckin.id} />
-                    <AgendaItems checkinId={currentCheckin.id} memberName={
+                    <AgendaItems
+                      checkinId={currentCheckin.id}
+                      memberName={
                         selectedProfile
                           ? selectedProfile.name
                           : userProfile.name
-                      } />
+                      }
+                    />
                     <CheckinDocs />
                   </React.Fragment>
                 )}
               </div>
-              <div className="modal-container">
-                <Modal close={showModal} show={show}>
-                  The checkin will no longer be able to be edited. Are you sure
-                  that you are ready to close this check-in?
-                </Modal>
-                <Button
-                  style={{
-                    backgroundColor: "#3f51b5",
-                    color: "white",
-                    display: show ? "none" : "",
-                  }}
-                  onClick={() => showModal()}
-                >
-                  Submit
-                </Button>
-              </div>
+              {canViewPrivateNote && (
+                <div className="modal-container">
+                  <Modal close={showModal} show={show}>
+                    The checkin will no longer be able to be edited. Are you
+                    sure that you are ready to close this check-in?
+                  </Modal>
+                  <Button
+                    style={{
+                      backgroundColor: "#3f51b5",
+                      color: "white",
+                      display: show ? "none" : "",
+                    }}
+                    onClick={() => showModal()}
+                  >
+                    Submit
+                  </Button>
+                </div>
+              )}
             </Container>
           </Grid>
           <Grid item sm={3} justify="flex-end">

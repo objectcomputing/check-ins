@@ -15,10 +15,10 @@ import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { AppContext } from "../../context/AppContext";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
 const AgendaItems = ({ checkinId, memberName }) => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const { id } = userProfile && userProfile.memberProfile;
   const [agendaItems, setAgendaItems] = useState();
@@ -127,6 +127,16 @@ const AgendaItems = ({ checkinId, memberName }) => {
 
   const editAgendaItem = (index, event) => {
     let enabled;
+    if (agendaItems[index].createdbyid !== id) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Agenda Items can only be edited by creator",
+        },
+      });
+      return;
+    }
     if (!agendaItems[index].enabled) {
       enabled = true;
     } else {
@@ -142,13 +152,11 @@ const AgendaItems = ({ checkinId, memberName }) => {
 
   const createFakeEntry = (item) => {
     return (
-      <div key={item.id} className="image-div">
+      <div key={item.id} className="skeleton-div">
         <div className="drag-icon">
           <DragIndicator />
         </div>
         <div className="skeleton">
-          <Skeleton variant="text" height={"2rem"} />
-          <Skeleton variant="text" height={"2rem"} />
           <Skeleton variant="text" height={"2rem"} />
         </div>
       </div>
@@ -179,7 +187,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                 </span>
                 {isLoading ? (
                   <div className="skeleton">
-                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton className="test" variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                   </div>
