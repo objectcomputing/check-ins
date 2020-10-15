@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.file;
+package com.objectcomputing.checkins.util.googleApiAccess;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
