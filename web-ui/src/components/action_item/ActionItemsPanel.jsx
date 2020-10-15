@@ -62,17 +62,9 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: "none",
-    padding: "12px 8px",
-    margin: "0 0 {grid}px 0",
-    textAlign: "left",
-    marginBottom: "1px",
-    marginTop: "1px",
     display: "flex",
-    flexDirection: "row",
-
+    padding: "12px 8px",
     background: isDragging ? "lightgreen" : "#fafafa",
-
     ...draggableStyle,
   });
 
@@ -265,7 +257,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
           />
           <IconButton
             aria-label="create"
-            style={{ paddingLeft: "5px" }}
+            className="edit-icon"
             onClick={() => makeActionItem()}
           >
             <SaveIcon />

@@ -7,15 +7,23 @@ import {
   updateAgendaItem,
   createAgendaItem,
 } from "../../api/agenda.js";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
+import { debounce } from "lodash/function";
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import AdjustIcon from "@material-ui/icons/Adjust";
 import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
-import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+
+const doUpdate = async (agendaItem) => {
+  if (agendaItem) {
+    await updateAgendaItem(agendaItem);
+  }
+};
+
+const updateItem = debounce(doUpdate, 1500);
 
 const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -45,12 +53,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
     }
   };
 
-  const doUpdate = async (agendaItem) => {
-    if (agendaItem) {
-      await updateAgendaItem(agendaItem);
-    }
-  };
-
   useEffect(() => {
     getAgendaItems(checkinId);
   }, [checkinId]);
@@ -61,11 +63,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    display: "flex",
-    padding: "16px",
-    background: isDragging ? "lightgreen" : "#fafafa",
-    ...draggableStyle,
-    orderBottom: "2px solid black",
     display: "flex",
     padding: "12px 8px",
     background: isDragging ? "lightgreen" : "#fafafa",
@@ -125,13 +122,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     setAgendaItems(newItems);
   };
 
-  const handleDescriptionChange = (index, event) => {
-    agendaItems[index].description = event.target.value;
-    setAgendaItems([...agendaItems]);
-  };
-
-  const editAgendaItem = (index, event) => {
-    let enabled;
+  const handleDescriptionChange = (index, e) => {
     if (agendaItems[index].createdbyid !== id) {
       dispatch({
         type: UPDATE_TOAST,
@@ -142,15 +133,10 @@ const AgendaItems = ({ checkinId, memberName }) => {
       });
       return;
     }
-    if (!agendaItems[index].enabled) {
-      enabled = true;
-    } else {
-      doUpdate(agendaItems[index]);
-      enabled = false;
-    }
-
-    setAgendaItems((agendaItems) => {
-      agendaItems[index].enabled = enabled;
+    const { value } = e.target;
+    agendaItems[index].description = value;
+    setAgendaItems(() => {
+      updateItem(agendaItems[index]);
       return [...agendaItems];
     });
   };
@@ -199,19 +185,11 @@ const AgendaItems = ({ checkinId, memberName }) => {
                 ) : (
                   <input
                     className="text-input"
-                    disabled={!agendaItem.enabled}
                     onChange={(e) => handleDescriptionChange(index, e)}
                     value={agendaItem.description}
                   />
                 )}
                 <div className="agenda-item-button-div">
-                  <IconButton
-                    aria-label="edit"
-                    className="edit-icon"
-                    onClick={(e) => editAgendaItem(index, e)}
-                  >
-                    <EditIcon />
-                  </IconButton>
                   <IconButton
                     aria-label="delete"
                     className="delete-icon"
