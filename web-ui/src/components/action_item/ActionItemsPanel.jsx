@@ -132,6 +132,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     };
     const res = await createActionItem(newActionItem);
     if (!res.error && res.payload && res.payload.data) {
+      newActionItem.id = res.payload.data.id;
       setDescription("");
       setActionItems([...actionItems, newActionItem]);
     }
@@ -152,31 +153,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     actionItems[index].description = value;
     setActionItems(() => {
       updateItem(actionItems[index]);
-      return [...actionItems];
-    });
-  };
-
-  const editActionItem = (index, event) => {
-    let enabled;
-    // if (actionItems[index].createdbyid !== id) {
-    //   dispatch({
-    //     type: UPDATE_TOAST,
-    //     payload: {
-    //       severity: "error",
-    //       toast: "Action Items can only be edited by creator",
-    //     },
-    //   });
-    //   return;
-    // }
-    if (!actionItems[index].enabled) {
-      enabled = true;
-    } else {
-      doUpdate(actionItems[index]);
-      enabled = false;
-    }
-
-    setActionItems((actionItems) => {
-      actionItems[index].enabled = enabled;
       return [...actionItems];
     });
   };

@@ -116,6 +116,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     };
     const res = await createAgendaItem(newAgendaItem);
     if (!res.error && res.payload && res.payload.data) {
+      newAgendaItem.id = res.payload.data.id;
       setDescription("");
       setAgendaItems([...agendaItems, newAgendaItem]);
     }
