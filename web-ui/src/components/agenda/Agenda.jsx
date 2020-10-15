@@ -61,7 +61,11 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    borderBottom: "2px solid black",
+    display: "flex",
+    padding: "16px",
+    background: isDragging ? "lightgreen" : "#fafafa",
+    ...draggableStyle,
+    orderBottom: "2px solid black",
     display: "flex",
     padding: "12px 8px",
     background: isDragging ? "lightgreen" : "#fafafa",
@@ -72,19 +76,20 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (!result || !result.destination) {
       return;
     }
+    console.log({ result });
 
     const { index } = result.destination;
     const sourceIndex = result.source.index;
     if (index !== sourceIndex) {
       const lastIndex = agendaItems.length - 1;
-      const precedingPriority =
-        index === 0 ? 0 : agendaItems[index - 1].priority;
+      const precedingPriority = index === 0 ? 0 : agendaItems[index].priority;
       const followingPriority =
         index === lastIndex
           ? agendaItems[lastIndex].priority + 1
           : agendaItems[index].priority;
 
       let newPriority = (precedingPriority + followingPriority) / 2;
+      console.log({ newPriority, followingPriority, precedingPriority });
 
       setAgendaItems((agendaItems) => {
         agendaItems[sourceIndex].priority = newPriority;
@@ -97,7 +102,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const makeAgendaItem = async () => {
-    if (!checkinId || !id || !description === "") {
+    if (!checkinId || !id || description === "") {
       return;
     }
     let newAgendaItem = {
@@ -187,7 +192,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                 </span>
                 {isLoading ? (
                   <div className="skeleton">
-                    <Skeleton className="test" variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                   </div>
@@ -199,7 +204,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                     value={agendaItem.description}
                   />
                 )}
-                <div className="button-div">
+                <div className="agenda-item-button-div">
                   <IconButton
                     aria-label="edit"
                     className="edit-icon"
@@ -241,13 +246,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
-                <div
-                  style={{
-                    borderBottom: "2px solid black",
-                    display: "flex",
-                    padding: "12px 8px",
-                  }}
-                >
+                <div className="add-agenda-item-div">
                   <input
                     className="text-input"
                     placeholder="Add an agenda item"

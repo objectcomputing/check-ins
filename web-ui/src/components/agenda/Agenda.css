@@ -1,38 +1,28 @@
-.agenda-items-container {
-  border-top: solid 2px black;
-  border-left: solid 2px black;
-  border-right: solid 2px black;
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  justify-content: center;
-  width: 75%;
-}
-
-.agenda-items {
-  margin-top: 25px;
-}
-
 .agenda-items > h1 {
   display: flex;
   align-items: center;
+  margin: 10px auto;
+  width: 75%;
+}
+
+.agenda-items-container {
+  border: solid 2px black;
+  height: fit-content;
   margin: 0 auto;
   width: 75%;
 }
 
-.agenda-container {
+.add-agenda-item-div {
   display: flex;
-  justify-content: center;
-  border: 2px solid black;
-  min-height: 150px;
-  width: 100%;
+  padding: 12px 8px;
 }
 
 .agenda-items .description-field {
+  text-align: left;
+  width: 100%;
   align-items: center;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 }
 
 .agenda-items-info,
@@ -66,25 +56,9 @@
   display: flex;
 }
 
-.agenda-items .description-field .text-input {
-  padding: 5px;
-  width: 100%;
-}
-
 .agenda-items .skeleton {
   padding-right: 10px;
   width: 100%;
-}
-
-.agenda-items .skeleton .test {
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.add-new-item {
-  border-bottom: "2px solid black";
-  display: "flex";
-  padding: "12px 8px";
 }
 
 .edit-icon:hover {
@@ -93,4 +67,9 @@
 
 .delete-icon:hover {
   background-color: red !important;
+}
+
+.agenda-item-button-div {
+  display: flex;
+  flex-direction: row;
 }

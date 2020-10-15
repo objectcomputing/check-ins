@@ -7,69 +7,52 @@ import {
   updateActionItem,
   createActionItem,
 } from "../../api/actionitem.js";
+
 import DragIndicator from "@material-ui/icons/DragIndicator";
+import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { AppContext } from "../../context/AppContext";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
-async function getActionItems(checkinId, mockActionItems, setActionItems) {
-  if (mockActionItems) {
-    setActionItems(mockActionItems);
-    return;
-  }
-
-  let res = await findActionItem(checkinId, null);
-  if (res && res.payload) {
-    let actionItemList =
-      res.payload.data && !res.error ? res.payload.data : undefined;
-    setActionItems(actionItemList);
-  }
-}
-
-const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
-  let [actionItems, setActionItems] = useState([]);
-
-  const { state } = useContext(AppContext);
+const ActionItemsPanel = ({ checkinId, memberName }) => {
+  const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+  const { id } =
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
-  async function doDelete(id) {
+  const [actionItems, setActionItems] = useState([]);
+  const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getActionItems = async (checkinId) => {
+    setIsLoading(true);
+    let res = await findActionItem(checkinId, null);
+    if (res && res.payload) {
+      let actionItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+      setActionItems(actionItemList);
+      setIsLoading(false);
+    }
+  };
+
+  const deleteItem = async (id) => {
     if (id) {
       await deleteActionItem(id);
     }
-  }
+  };
 
-  async function doUpdate(actionItem) {
+  const doUpdate = async (actionItem) => {
     if (actionItem) {
       await updateActionItem(actionItem);
     }
-  }
-
-  async function doCreate(actionItem) {
-    if (actionItem) {
-      await createActionItem(actionItem);
-    }
-  }
-
-  useEffect(() => {
-    getActionItems(checkinId, mockActionItems, setActionItems);
-  }, [checkinId, mockActionItems, setActionItems]);
-
-  /*const getActionItemStyle = (actionItem) => {
-    if (actionItem && actionItem.description) {
-      return "action-items-info";
-    }
-    return "action-items-info-hidden";
   };
 
-  const getActionItemText = (actionItem) => {
-    if (actionItem && actionItem.description) {
-      return actionItem.description;
-    }
-    return "Lorem Ipsum Etcetera";
-  };*/
+  useEffect(() => {
+    getActionItems(checkinId);
+  }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -78,15 +61,9 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
     return result;
   };
 
-  const grid = 8;
-
-  const getListStyle = (isDraggingOver) => ({
-    padding: grid,
-  });
-
   const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: "none",
-    padding: grid * 2,
+    padding: "12px 8px",
     margin: "0 0 {grid}px 0",
     textAlign: "left",
     marginBottom: "1px",
@@ -103,75 +80,46 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
     if (!result || !result.destination) {
       return;
     }
+    console.log({ result });
 
-    actionItems = reorder(
-      actionItems,
-      result.source.index,
-      result.destination.index
-    );
+    const { index } = result.destination;
+    const sourceIndex = result.source.index;
+    if (index !== sourceIndex) {
+      const lastIndex = actionItems.length - 1;
+      const precedingPriority =
+        index === 0 ? 0 : actionItems[index - 1].priority;
+      const followingPriority =
+        index === lastIndex
+          ? actionItems[lastIndex].priority + 1
+          : actionItems[index].priority;
 
-    let precedingPriority = 0;
-    if (result.destination.index > 0) {
-      precedingPriority = actionItems[result.destination.index - 1].priority;
+      let newPriority = (precedingPriority + followingPriority) / 2;
+      console.log({ newPriority, followingPriority, precedingPriority });
+
+      setActionItems((actionItems) => {
+        actionItems[sourceIndex].priority = newPriority;
+        reorder(actionItems, sourceIndex, index);
+        return actionItems;
+      });
+
+      doUpdate(actionItems[result.destination.index]);
     }
-
-    let followingPriority = actionItems[actionItems.length - 1].priority + 1;
-    if (result.destination.index < actionItems.length - 1) {
-      followingPriority = actionItems[result.destination.index + 1].priority;
-    }
-
-    let newPriority = (precedingPriority + followingPriority) / 2;
-
-    actionItems[result.destination.index].priority = newPriority;
-
-    doUpdate(actionItems[result.destination.index]);
-
-    setActionItems((actionItems) => {
-      return [...actionItems];
-    });
   };
 
-  const [newActionItemDescription, setNewActionItemDescription] = useState("");
-
-  const makeActionItem = (newDesc, event) => {
-    console.log(actionItems);
-    let newActionItem = {};
-    newActionItem.description = newDesc;
-    newActionItem.createdbyid = id;
-    newActionItem.checkinid = checkinId;
-
-    doCreate(newActionItem);
-    //actionItems = [...actionItems, newActionItem];
-    getActionItems(checkinId);
-
-    setActionItems((actionItems) => {
-      return [...actionItems];
-    });
-
-    console.log(actionItems);
-  };
-
-  const editActionItem = (index, event) => {
-    console.log(actionItems);
-    let setValue;
-    if (!actionItems[index].enabled) {
-      console.log("enabling");
-      setValue = true;
-    } else {
-      console.log("disabling");
-      doUpdate(actionItems[index]);
-      setValue = false;
+  const makeActionItem = async () => {
+    if (!checkinId || !id || description === "") {
+      return;
     }
-
-    setActionItems((actionItems) => {
-      actionItems[index].enabled = setValue;
-      return [...actionItems];
-    });
-    console.log(actionItems);
-  };
-
-  const handleNewDescriptionChange = (event) => {
-    setNewActionItemDescription(event.target.value);
+    let newActionItem = {
+      checkinid: checkinId,
+      createdbyid: id,
+      description: description,
+    };
+    const res = await createActionItem(newActionItem);
+    if (!res.error && res.payload && res.payload.data) {
+      setDescription("");
+      setActionItems([...actionItems, newActionItem]);
+    }
   };
 
   const handleDescriptionChange = (index, event) => {
@@ -179,28 +127,51 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
     setActionItems([...actionItems]);
   };
 
-  const killActionItem = (id, event) => {
-    doDelete(id);
-    var arrayDupe = actionItems;
-    for (var i = 0; i < arrayDupe.length; i++) {
-      if (arrayDupe[i].id === id) {
-        arrayDupe.splice(i, 1);
-        break;
-      }
+  const editActionItem = (index, event) => {
+    let enabled;
+    // if (actionItems[index].createdbyid !== id) {
+    //   dispatch({
+    //     type: UPDATE_TOAST,
+    //     payload: {
+    //       severity: "error",
+    //       toast: "Action Items can only be edited by creator",
+    //     },
+    //   });
+    //   return;
+    // }
+    if (!actionItems[index].enabled) {
+      enabled = true;
+    } else {
+      doUpdate(actionItems[index]);
+      enabled = false;
     }
-    setActionItems(arrayDupe);
+
+    setActionItems((actionItems) => {
+      actionItems[index].enabled = enabled;
+      return [...actionItems];
+    });
   };
 
-  /*const createFakeEntry = (item) => {
+  const killActionItem = (id) => {
+    deleteItem(id);
+    let newItems = actionItems.filter((actionItem) => {
+      return actionItem.id !== id;
+    });
+    setActionItems(newItems);
+  };
+
+  const createFakeEntry = (item) => {
     return (
-      <div key={item.id} className="image-div">
-        <span>
+      <div key={item.id} className="skeleton-div">
+        <div className="drag-icon">
           <DragIndicator />
-        </span>
-        <p className="action-items-info-hidden">Lorem Ipsum etc1</p>
+        </div>
+        <div className="skeleton">
+          <Skeleton variant="text" height={"2rem"} />
+        </div>
       </div>
     );
-  };*/
+  };
 
   const createActionItemEntries = () => {
     if (actionItems && actionItems.length > 0) {
@@ -224,74 +195,84 @@ const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
                 <span style={{ cursor: "grab" }} {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
-                <input
-                  className="text-input"
-                  disabled={!actionItem.enabled}
-                  onChange={(e) => handleDescriptionChange(index, e)}
-                  value={actionItem.description}
-                />
-                {actionItem.enabled}
-              </div>
-              <div className="button-div">
-                <IconButton
-                  aria-label="edit"
-                  onClick={(e) => editActionItem(index, e)}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="delete"
-                  onClick={(e) => killActionItem(actionItem.id, e)}
-                >
-                  <RemoveIcon />
-                </IconButton>
+                {isLoading ? (
+                  <div className="skeleton">
+                    <Skeleton className="test" variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                  </div>
+                ) : (
+                  <input
+                    className="text-input"
+                    disabled={!actionItem.enabled}
+                    onChange={(e) => handleDescriptionChange(index, e)}
+                    value={actionItem.description}
+                  />
+                )}
+                <div className="action-item-button-div">
+                  <IconButton
+                    aria-label="edit"
+                    className="edit-icon"
+                    onClick={(e) => editActionItem(index, e)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    className="delete-icon"
+                    onClick={(e) => killActionItem(actionItem.id, e)}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
               </div>
             </div>
           )}
         </Draggable>
       ));
-    } /*else {
+    } else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
         fake[i] = createFakeEntry({ id: `${i + 1}Action` });
       }
       return fake;
-    }*/
+    }
   };
 
   return (
-    <fieldset className="action-items-container">
-      <legend>My Action Items</legend>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {createActionItemEntries()}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <div className="button-div">
-        <input
-          className="text-input"
-          placeholder="Add action item"
-          onChange={(e) => handleNewDescriptionChange(e)}
-          value={newActionItemDescription}
-        />
-        <IconButton
-          aria-label="create"
-          style={{ paddingLeft: "5px" }}
-          onClick={(e) => makeActionItem(newActionItemDescription, e)}
-        >
-          <SaveIcon />
-        </IconButton>
+    <div className="action-items">
+      <h1>
+        <ArrowForwardIcon style={{ fontSize: "larger", marginRight: "10px" }} />
+        My Action Items for {memberName}
+      </h1>
+      <div className="action-items-container">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {createActionItemEntries()}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <div className="add-action-item-div">
+          <input
+            className="text-input"
+            placeholder="Add action item"
+            onChange={(e) => setDescription(e.target.value)}
+            value={description ? description : ""}
+          />
+          <IconButton
+            aria-label="create"
+            style={{ paddingLeft: "5px" }}
+            onClick={() => makeActionItem()}
+          >
+            <SaveIcon />
+          </IconButton>
+        </div>
       </div>
-    </fieldset>
+    </div>
   );
 };
 

@@ -54,7 +54,14 @@ const CheckinsPage = ({ history }) => {
                           : userProfile.name
                       }
                     />
-                    <ActionItemsPanel checkinId={currentCheckin.id} />
+                    <ActionItemsPanel
+                      checkinId={currentCheckin.id}
+                      memberName={
+                        selectedProfile
+                          ? selectedProfile.name
+                          : userProfile.name
+                      }
+                    />
                     <AgendaItems
                       checkinId={currentCheckin.id}
                       memberName={
