@@ -229,6 +229,11 @@ const AgendaItems = ({ checkinId, memberName }) => {
                     className="text-input"
                     placeholder="Add an agenda item"
                     onChange={(e) => setDescription(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && description !== "") {
+                        makeAgendaItem();
+                      }
+                    }}
                     value={description ? description : ""}
                   />
                   <IconButton
