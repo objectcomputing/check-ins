@@ -165,7 +165,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
         validate(checkinId == null || createById == null, "Invalid action item %s", actionItem);
         validate(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to delete with id %s", actionItem.getId());
