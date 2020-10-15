@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import "./Agenda.css";
+
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   getAgendaItem,
@@ -17,6 +17,8 @@ import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import RemoveIcon from "@material-ui/icons/Remove";
 
+import "./Agenda.css";
+
 const doUpdate = async (agendaItem) => {
   if (agendaItem) {
     await updateAgendaItem(agendaItem);
@@ -28,7 +30,12 @@ const updateItem = debounce(doUpdate, 1500);
 const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } = userProfile && userProfile.memberProfile;
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
+  const pdlorAdmin =
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    userProfile.role.includes("ADMIN");
+
   const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -158,6 +165,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
         <Draggable
+          disabled={!pdlorAdmin}
           key={agendaItem.id}
           draggableId={agendaItem.id}
           index={index}

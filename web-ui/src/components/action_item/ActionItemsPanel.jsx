@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import "./ActionItemsPanel.css";
+
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   findActionItem,
@@ -7,7 +7,9 @@ import {
   updateActionItem,
   createActionItem,
 } from "../../api/actionitem.js";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
+import { debounce } from "lodash/function";
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
@@ -15,13 +17,25 @@ import SaveIcon from "@material-ui/icons/Done";
 import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+
+import "./ActionItemsPanel.css";
+
+const doUpdate = async (actionItem) => {
+  if (actionItem) {
+    await updateActionItem(actionItem);
+  }
+};
+
+const updateItem = debounce(doUpdate, 1500);
 
 const ActionItemsPanel = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { id } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
+  const pdlorAdmin =
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    userProfile.role.includes("ADMIN");
 
   const [actionItems, setActionItems] = useState([]);
   const [description, setDescription] = useState("");
@@ -44,11 +58,11 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     }
   };
 
-  const doUpdate = async (actionItem) => {
-    if (actionItem) {
-      await updateActionItem(actionItem);
-    }
-  };
+  // const doUpdate = async (actionItem) => {
+  //   if (actionItem) {
+  //     await updateActionItem(actionItem);
+  //   }
+  // };
 
   useEffect(() => {
     getActionItems(checkinId);
@@ -101,6 +115,15 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const makeActionItem = async () => {
     if (!checkinId || !id || description === "") {
       return;
+    } else if (!pdlorAdmin) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Must be PDL or Admin to add Action Item",
+        },
+      });
+      return;
     }
     let newActionItem = {
       checkinid: checkinId,
@@ -114,9 +137,23 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     }
   };
 
-  const handleDescriptionChange = (index, event) => {
-    actionItems[index].description = event.target.value;
-    setActionItems([...actionItems]);
+  const handleDescriptionChange = (index, e) => {
+    if (actionItems[index].createdbyid !== id) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Action Items can only be edited by creator",
+        },
+      });
+      return;
+    }
+    const { value } = e.target;
+    actionItems[index].description = value;
+    setActionItems(() => {
+      updateItem(actionItems[index]);
+      return [...actionItems];
+    });
   };
 
   const editActionItem = (index, event) => {
@@ -169,6 +206,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     if (actionItems && actionItems.length > 0) {
       return actionItems.map((actionItem, index) => (
         <Draggable
+          disabled={!pdlorAdmin}
           key={actionItem.id}
           draggableId={actionItem.id}
           index={index}
@@ -196,19 +234,11 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                 ) : (
                   <input
                     className="text-input"
-                    disabled={!actionItem.enabled}
                     onChange={(e) => handleDescriptionChange(index, e)}
                     value={actionItem.description}
                   />
                 )}
                 <div className="action-item-button-div">
-                  <IconButton
-                    aria-label="edit"
-                    className="edit-icon"
-                    onClick={(e) => editActionItem(index, e)}
-                  >
-                    <EditIcon />
-                  </IconButton>
                   <IconButton
                     aria-label="delete"
                     className="delete-icon"
@@ -243,7 +273,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createActionItemEntries()}
-                {provided.placeholder}
               </div>
             )}
           </Droppable>
@@ -253,6 +282,11 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
             className="text-input"
             placeholder="Add action item"
             onChange={(e) => setDescription(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && description !== "") {
+                makeActionItem();
+              }
+            }}
             value={description ? description : ""}
           />
           <IconButton
