@@ -59,5 +59,16 @@ jobs:
             --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.DEV_DB_USERNAME }}" \
             --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
             --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+            --set-env-vars "DIRECTORY_ID=${{ secrets.DEV_DIRECTORY_ID }}" \
+            --set-env-vars "TYPE=${{ secrets.DEV_TYPE }}" \
+            --set-env-vars "PROJECT_ID=${{ secrets.DEV_PROJECT_ID }}" \
+            --set-env-vars "PRIVATE_KEY_ID=${{ secrets.DEV_PRIVATE_KEY_ID }}" \
+            --set-env-vars "PRIVATE_KEY=${{ secrets.DEV_PRIVATE_KEY }}" \
+            --set-env-vars "CLIENT_EMAIL=${{ secrets.DEV_CLIENT_EMAIL }}" \
+            --set-env-vars "CLIENT_ID=${{ secrets.DEV_CLIENT_ID }}" \
+            --set-env-vars "AUTH_URI=${{ secrets.DEV_AUTH_URI }}" \
+            --set-env-vars "TOKEN_URI=${{ secrets.DEV_TOKEN_URI }}" \
+            --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.DEV_AUTH_PROVIDER_X509_CERT_URL }}" \
+            --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.DEV_CLIENT_X509_CERT_URL }}" \
             --platform "managed" \
             --allow-unauthenticated

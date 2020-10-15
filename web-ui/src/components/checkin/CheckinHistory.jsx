@@ -92,49 +92,51 @@ const CheckinsHistory = ({ history }) => {
   };
 
   const DateInput = React.forwardRef((props, ref) => (
-    <div className="date-input" ref={ref}>
+    <div className="date-input" onClick={props.onClick} ref={ref}>
       <p style={{ margin: "0px" }}>{props.value}</p>
-      <CalendarTodayIcon onClick={props.onClick}></CalendarTodayIcon>
+      <CalendarTodayIcon></CalendarTodayIcon>
     </div>
   ));
 
   return (
     <div>
       {getCheckinDate() && (
-        <div className="date-picker">
-          <Link
-            className="arrow"
-            onClick={previousCheckin}
-            to={`${currentCheckin && currentCheckin.id}`}
-          >
-            <ArrowBackIcon
-              className={leftArrowClass}
-              style={{ fontSize: "50px" }}
+        <div>
+          <div className="date-picker">
+            <Link
+              className="arrow"
+              onClick={previousCheckin}
+              to={`${currentCheckin && currentCheckin.id}`}
+            >
+              <ArrowBackIcon
+                className={leftArrowClass}
+                style={{ fontSize: "50px" }}
+              />
+            </Link>
+            <DatePicker
+              closeOnScroll
+              customInput={<DateInput />}
+              dateFormat="MMMM dd, yyyy h:mm aa"
+              disabled={
+                !checkins.length ||
+                (currentCheckin && currentCheckin.completed === true)
+              }
+              onChange={pickDate}
+              selected={getCheckinDate()}
+              showTimeSelect
+              withPortal
             />
-          </Link>
-          <DatePicker
-            closeOnScroll
-            customInput={<DateInput />}
-            dateFormat="MMMM dd, yyyy h:mm aa"
-            disabled={
-              !checkins.length ||
-              (currentCheckin && currentCheckin.completed === true)
-            }
-            onChange={pickDate}
-            selected={getCheckinDate()}
-            showTimeSelect
-            withPortal
-          />
-          <Link
-            className="arrow"
-            onClick={nextCheckin}
-            to={`${currentCheckin && currentCheckin.id}`}
-          >
-            <ArrowForwardIcon
-              className={rightArrowClass}
-              style={{ fontSize: "50px" }}
-            />
-          </Link>
+            <Link
+              className="arrow"
+              onClick={nextCheckin}
+              to={`${currentCheckin && currentCheckin.id}`}
+            >
+              <ArrowForwardIcon
+                className={rightArrowClass}
+                style={{ fontSize: "50px" }}
+              />
+            </Link>
+          </div>
         </div>
       )}
     </div>

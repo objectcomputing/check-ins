@@ -1,12 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import './ActionItemsPanel.css';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import React, { useState, useEffect, useContext } from "react";
+import "./ActionItemsPanel.css";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   findActionItem,
   deleteActionItem,
-  updateActionItem
-} from '../../api/actionitem.js';
-import DragIndicator from '@material-ui/icons/DragIndicator';
+  updateActionItem,
+  createActionItem,
+} from "../../api/actionitem.js";
+import DragIndicator from "@material-ui/icons/DragIndicator";
+import IconButton from "@material-ui/core/IconButton";
+import SaveIcon from "@material-ui/icons/Done";
+import EditIcon from "@material-ui/icons/Edit";
+import RemoveIcon from "@material-ui/icons/Remove";
+import { AppContext } from "../../context/AppContext";
 
 async function getActionItems(checkinId, mockActionItems, setActionItems) {
   if (mockActionItems) {
@@ -22,8 +28,12 @@ async function getActionItems(checkinId, mockActionItems, setActionItems) {
   }
 }
 
-const ActionItemsPanel = ({checkinId, mockActionItems}) => {
-  let [actionItems, setActionItems] = useState();
+const ActionItemsPanel = ({ checkinId, mockActionItems }) => {
+  let [actionItems, setActionItems] = useState([]);
+
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const { id } = userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
 
   async function doDelete(id) {
     if (id) {
@@ -37,23 +47,29 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     }
   }
 
+  async function doCreate(actionItem) {
+    if (actionItem) {
+      await createActionItem(actionItem);
+    }
+  }
+
   useEffect(() => {
-      getActionItems(checkinId, mockActionItems, setActionItems);
+    getActionItems(checkinId, mockActionItems, setActionItems);
   }, [checkinId, mockActionItems, setActionItems]);
 
-  const getActionItemStyle = actionItem => {
+  /*const getActionItemStyle = (actionItem) => {
     if (actionItem && actionItem.description) {
-      return 'action-items-info';
+      return "action-items-info";
     }
-    return 'action-items-info-hidden';
+    return "action-items-info-hidden";
   };
 
-  const getActionItemText = actionItem => {
+  const getActionItemText = (actionItem) => {
     if (actionItem && actionItem.description) {
       return actionItem.description;
     }
-    return 'Lorem Ipsum Etcetera';
-  };
+    return "Lorem Ipsum Etcetera";
+  };*/
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -64,26 +80,26 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
 
   const grid = 8;
 
-  const getListStyle = isDraggingOver => ({
-    padding: grid
+  const getListStyle = (isDraggingOver) => ({
+    padding: grid,
   });
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: 'none',
+    userSelect: "none",
     padding: grid * 2,
-    margin: '0 0 {grid}px 0',
-    textAlign: 'left',
-    marginBottom: '1px',
-    marginTop: '1px',
-    display: 'flex',
-    flexDirection: 'row',
+    margin: "0 0 {grid}px 0",
+    textAlign: "left",
+    marginBottom: "1px",
+    marginTop: "1px",
+    display: "flex",
+    flexDirection: "row",
 
-    background: isDragging ? 'lightgreen' : '#fafafa',
+    background: isDragging ? "lightgreen" : "#fafafa",
 
-    ...draggableStyle
+    ...draggableStyle,
   });
 
-  const onDragEnd = result => {
+  const onDragEnd = (result) => {
     if (!result || !result.destination) {
       return;
     }
@@ -109,6 +125,58 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     actionItems[result.destination.index].priority = newPriority;
 
     doUpdate(actionItems[result.destination.index]);
+
+    setActionItems((actionItems) => {
+      return [...actionItems];
+    });
+  };
+
+  const [newActionItemDescription, setNewActionItemDescription] = useState("");
+
+  const makeActionItem = (newDesc, event) => {
+    console.log(actionItems);
+    let newActionItem = {};
+    newActionItem.description = newDesc;
+    newActionItem.createdbyid = id;
+    newActionItem.checkinid = checkinId;
+
+    doCreate(newActionItem);
+    //actionItems = [...actionItems, newActionItem];
+    getActionItems(checkinId);
+
+    setActionItems((actionItems) => {
+      return [...actionItems];
+    });
+
+    console.log(actionItems);
+  };
+
+  const editActionItem = (index, event) => {
+    console.log(actionItems);
+    let setValue;
+    if (!actionItems[index].enabled) {
+      console.log("enabling");
+      setValue = true;
+    } else {
+      console.log("disabling");
+      doUpdate(actionItems[index]);
+      setValue = false;
+    }
+
+    setActionItems((actionItems) => {
+      actionItems[index].enabled = setValue;
+      return [...actionItems];
+    });
+    console.log(actionItems);
+  };
+
+  const handleNewDescriptionChange = (event) => {
+    setNewActionItemDescription(event.target.value);
+  };
+
+  const handleDescriptionChange = (index, event) => {
+    actionItems[index].description = event.target.value;
+    setActionItems([...actionItems]);
   };
 
   const killActionItem = (id, event) => {
@@ -123,18 +191,16 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     setActionItems(arrayDupe);
   };
 
-  const createFakeEntry = item => {
+  /*const createFakeEntry = (item) => {
     return (
       <div key={item.id} className="image-div">
         <span>
           <DragIndicator />
         </span>
-        <div className="description-field">
-          <p className="action-items-info-hidden">Lorem Ipsum etc</p>
-        </div>
+        <p className="action-items-info-hidden">Lorem Ipsum etc1</p>
       </div>
     );
-  };
+  };*/
 
   const createActionItemEntries = () => {
     if (actionItems && actionItems.length > 0) {
@@ -155,32 +221,42 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
               )}
             >
               <div className="description-field">
-                <span {...provided.dragHandleProps}>
+                <span style={{ cursor: "grab" }} {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
-                <p className={getActionItemStyle(actionItem)}>
-                  {getActionItemText(actionItem)}
-                </p>
+                <input
+                  className="text-input"
+                  disabled={!actionItem.enabled}
+                  onChange={(e) => handleDescriptionChange(index, e)}
+                  value={actionItem.description}
+                />
+                {actionItem.enabled}
               </div>
-              <div>
-                <button
-                  className="delete-button"
-                  onClick={e => killActionItem(actionItem.id, e)}
+              <div className="button-div">
+                <IconButton
+                  aria-label="edit"
+                  onClick={(e) => editActionItem(index, e)}
                 >
-                  -
-                </button>
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  aria-label="delete"
+                  onClick={(e) => killActionItem(actionItem.id, e)}
+                >
+                  <RemoveIcon />
+                </IconButton>
               </div>
             </div>
           )}
         </Draggable>
       ));
-    } else {
+    } /*else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({id: `${i + 1}Action`});
+        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
       }
       return fake;
-    }
+    }*/
   };
 
   return (
@@ -200,6 +276,21 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
           )}
         </Droppable>
       </DragDropContext>
+      <div className="button-div">
+        <input
+          className="text-input"
+          placeholder="Add action item"
+          onChange={(e) => handleNewDescriptionChange(e)}
+          value={newActionItemDescription}
+        />
+        <IconButton
+          aria-label="create"
+          style={{ paddingLeft: "5px" }}
+          onClick={(e) => makeActionItem(newActionItemDescription, e)}
+        >
+          <SaveIcon />
+        </IconButton>
+      </div>
     </fieldset>
   );
 };
