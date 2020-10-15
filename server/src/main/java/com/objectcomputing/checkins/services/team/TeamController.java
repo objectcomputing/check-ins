@@ -126,9 +126,9 @@ public class TeamController {
     }
 
     /**
-     * Delete agendaItem
+     * Delete Team
      *
-     * @param id, id of {@link AgendaItem} to delete
+     * @param id, id of {@link Team} to delete
      */
     @Delete("/{id}")
     public HttpResponse<?> deleteTeam(@NotNull UUID id) {
