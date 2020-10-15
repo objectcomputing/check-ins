@@ -68,7 +68,8 @@ check-ins:
   application:
     name: "OCI Check-ins"
     scopes:
-      - "https://www.googleapis.com/auth/drive.file"
+      scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
+      scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
 ---
 flyway:
   enabled: enabled
@@ -88,3 +89,5 @@ service-account-credentials:
   token_uri: ${ TOKEN_URI }
   auth_provider_x509_cert_url: ${ AUTH_PROVIDER_X509_CERT_URL }
   client_x509_cert_url: ${ CLIENT_X509_CERT_URL }
+  oauth_client_id: ${ OAUTH_CLIENT_ID }
+  oauth_client_secret: ${ OAUTH_CLIENT_SECRET }
