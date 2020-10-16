@@ -39,6 +39,11 @@
   width: 90%;
 }
 
+.action-items .drag-icon {
+  display: flex;
+  align-items: center;
+}
+
 .action-items .skeleton {
   padding-right: 10px;
   width: 100%;

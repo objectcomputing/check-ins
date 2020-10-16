@@ -57,21 +57,19 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     }
   };
 
-  // const doUpdate = async (actionItem) => {
-  //   if (actionItem) {
-  //     await updateActionItem(actionItem);
-  //   }
-  // };
+  const doUpdate = async (actionItem) => {
+    if (actionItem) {
+      await updateActionItem(actionItem);
+    }
+  };
 
   useEffect(() => {
     getActionItems(checkinId);
   }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
+    const [removed] = list.splice(startIndex, 1);
+    list.splice(endIndex, 0, removed);
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
@@ -85,7 +83,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     if (!result || !result.destination) {
       return;
     }
-    console.log({ result });
 
     const { index } = result.destination;
     const sourceIndex = result.source.index;
@@ -95,10 +92,13 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
         index === 0 ? 0 : actionItems[index - 1].priority;
       const followingPriority =
         index === lastIndex
-          ? actionItems[lastIndex].priority + 1
+          ? actionItems[lastIndex].priority
           : actionItems[index].priority;
 
       let newPriority = (precedingPriority + followingPriority) / 2;
+      if (actionItems[sourceIndex].priority <= followingPriority) {
+        newPriority += 1;
+      }
 
       setActionItems((actionItems) => {
         actionItems[sourceIndex].priority = newPriority;
@@ -131,6 +131,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     const res = await createActionItem(newActionItem);
     if (!res.error && res.payload && res.payload.data) {
       newActionItem.id = res.payload.data.id;
+      newActionItem.priority = res.payload.data.priority;
       setDescription("");
       setActionItems([...actionItems, newActionItem]);
     }
@@ -247,6 +248,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createActionItemEntries()}
+                {provided.placeholder}
               </div>
             )}
           </Droppable>

@@ -92,7 +92,10 @@ const AgendaItems = ({ checkinId, memberName }) => {
           ? agendaItems[lastIndex].priority + 1
           : agendaItems[index].priority;
 
-      const newPriority = (precedingPriority + followingPriority) / 2;
+      let newPriority = (precedingPriority + followingPriority) / 2;
+      if (agendaItems[sourceIndex].priority <= followingPriority) {
+        newPriority += 1;
+      }
 
       setAgendaItems((agendaItems) => {
         agendaItems[sourceIndex].priority = newPriority;
@@ -233,6 +236,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
+                {provided.placeholder}
                 <div className="add-agenda-item-div">
                   <input
                     className="text-input"
