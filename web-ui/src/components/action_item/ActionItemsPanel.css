@@ -39,6 +39,11 @@
   width: 90%;
 }
 
+.action-items .skeleton {
+  padding-right: 10px;
+  width: 100%;
+}
+
 .action-items-container .skeleton-div {
   display: flex;
 }

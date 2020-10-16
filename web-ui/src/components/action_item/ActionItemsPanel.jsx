@@ -14,7 +14,6 @@ import DragIndicator from "@material-ui/icons/DragIndicator";
 import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
-import EditIcon from "@material-ui/icons/Edit";
 import RemoveIcon from "@material-ui/icons/Remove";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
@@ -100,7 +99,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
           : actionItems[index].priority;
 
       let newPriority = (precedingPriority + followingPriority) / 2;
-      console.log({ newPriority, followingPriority, precedingPriority });
 
       setActionItems((actionItems) => {
         actionItems[sourceIndex].priority = newPriority;
@@ -241,7 +239,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     <div className="action-items">
       <h1>
         <ArrowForwardIcon style={{ fontSize: "larger", marginRight: "10px" }} />
-        My Action Items for {memberName}
+        Action Items for {memberName}
       </h1>
       <div className="action-items-container">
         <DragDropContext onDragEnd={onDragEnd}>

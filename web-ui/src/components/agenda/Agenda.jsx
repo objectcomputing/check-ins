@@ -80,20 +80,19 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (!result || !result.destination) {
       return;
     }
-    console.log({ result });
 
     const { index } = result.destination;
     const sourceIndex = result.source.index;
     if (index !== sourceIndex) {
       const lastIndex = agendaItems.length - 1;
-      const precedingPriority = index === 0 ? 0 : agendaItems[index].priority;
+      const precedingPriority =
+        index === 0 ? 0 : agendaItems[index - 1].priority;
       const followingPriority =
         index === lastIndex
           ? agendaItems[lastIndex].priority + 1
           : agendaItems[index].priority;
 
-      let newPriority = (precedingPriority + followingPriority) / 2;
-      console.log({ newPriority, followingPriority, precedingPriority });
+      const newPriority = (precedingPriority + followingPriority) / 2;
 
       setAgendaItems((agendaItems) => {
         agendaItems[sourceIndex].priority = newPriority;
@@ -117,6 +116,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     const res = await createAgendaItem(newAgendaItem);
     if (!res.error && res.payload && res.payload.data) {
       newAgendaItem.id = res.payload.data.id;
+      newAgendaItem.priority = res.payload.data.priority;
       setDescription("");
       setAgendaItems([...agendaItems, newAgendaItem]);
     }
