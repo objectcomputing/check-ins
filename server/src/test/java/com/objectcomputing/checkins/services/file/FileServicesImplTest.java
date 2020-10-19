@@ -44,20 +44,46 @@ public class FileServicesImplTest {
 
     private static File testFile;
     private final static String filePath = "testFile.txt";
-    final static Authentication authentication = mock(Authentication.class);
-    final static Map mockAttributes = mock(Map.class);
-    final static Drive drive = mock(Drive.class);
-    final static Drive.Files files = mock(Drive.Files.class);
-    final static Drive.Files.List list = mock(Drive.Files.List.class);
-    final static Drive.Files.Get get = mock(Drive.Files.Get.class);
-    final static Drive.Files.Delete delete = mock(Drive.Files.Delete.class);
-    final static Drive.Files.Create create = mock(Drive.Files.Create.class);
-    final static CompletedFileUpload fileToUpload = mock(CompletedFileUpload.class);
-    final static MemberProfile testMemberProfile = mock(MemberProfile.class);
-    final static CheckIn testCheckIn = mock(CheckIn.class);
-    final static CheckinDocument testCd = mock(CheckinDocument.class);
-    final static InputStream mockInputStream = mock(InputStream.class);
     final static JsonFactory jsonFactory = new MockJsonFactory();
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private Map mockAttributes;
+
+    @Mock
+    private Drive drive;
+
+    @Mock
+    private Drive.Files files;
+
+    @Mock
+    private Drive.Files.List list;
+
+    @Mock
+    private Drive.Files.Get get;
+
+    @Mock
+    private Drive.Files.Delete delete;
+
+    @Mock
+    private Drive.Files.Create create;
+
+    @Mock
+    private CompletedFileUpload fileToUpload;
+
+    @Mock
+    private MemberProfile testMemberProfile;
+
+    @Mock
+    private CheckIn testCheckIn;
+
+    @Mock
+    private CheckinDocument testCd;
+
+    @Mock
+    private InputStream mockInputStream;
 
     @Mock
     private CheckInServices checkInServices;
@@ -100,6 +126,19 @@ public class FileServicesImplTest {
 
     @BeforeEach
     void resetMocks() {
+        Mockito.reset(authentication);
+        Mockito.reset(mockAttributes);
+        Mockito.reset(drive);
+        Mockito.reset(files);
+        Mockito.reset(list);
+        Mockito.reset(get);
+        Mockito.reset(delete);
+        Mockito.reset(create);
+        Mockito.reset(fileToUpload);
+        Mockito.reset(testMemberProfile);
+        Mockito.reset(testCheckIn);
+        Mockito.reset(testCd);
+        Mockito.reset(mockInputStream);
         Mockito.reset(checkInServices);
         Mockito.reset(checkinDocumentServices);
         Mockito.reset(googleDriveAccessor);
