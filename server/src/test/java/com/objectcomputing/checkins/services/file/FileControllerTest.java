@@ -15,7 +15,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -40,19 +39,15 @@ public class FileControllerTest {
 
     private static File testFile;
     private final static String filePath = "testFile.txt";
-    private final static HttpResponse expectedResponse = mock(HttpResponse.class);
 
     @Inject
     private FileServices fileServices;
 
-    @MockBean(FileServices.class)
-    public FileServices fileServices() {
-        return mock(FileServices.class);
-    }
+    @Inject
+    private HttpResponse expectedResponse;
 
     @BeforeAll
     void createTestFile() throws IOException {
-        MockitoAnnotations.initMocks(this);
         testFile = new File(filePath);
         FileWriter myWriter = new FileWriter(testFile);
         myWriter.write("This.Is.A.Test.File");
@@ -167,5 +162,15 @@ public class FileControllerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
         verify(fileServices, times(1)).deleteFile(uploadDocId);
+    }
+
+    @MockBean(FileServices.class)
+    public FileServices fileServices() {
+        return mock(FileServices.class);
+    }
+
+    @MockBean(HttpResponse.class)
+    public HttpResponse expectedResponse() {
+        return mock(HttpResponse.class);
     }
 }
