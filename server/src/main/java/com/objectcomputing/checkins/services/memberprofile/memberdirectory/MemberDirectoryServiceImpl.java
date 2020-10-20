@@ -2,9 +2,10 @@ package com.objectcomputing.checkins.services.memberprofile.memberdirectory;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.User;
+import com.google.api.services.admin.directory.model.UserPhoto;
 import com.google.api.services.admin.directory.model.Users;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
+import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,26 +17,18 @@ import java.util.List;
 public class MemberDirectoryServiceImpl implements MemberDirectoryService{
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberDirectoryServiceImpl.class);
-    private final GoogleAccessor googleAccessor;
+    private final GoogleApiAccess googleApiAccess;
 
-    public MemberDirectoryServiceImpl(GoogleAccessor googleAccessor) {
-        this.googleAccessor = googleAccessor;
+    public MemberDirectoryServiceImpl(GoogleApiAccess googleApiAccess) {
+        this.googleApiAccess = googleApiAccess;
     }
 
     @Override
     public MemberProfile getByEmailAddress(String workEmail) {
         try {
-            Directory directory = googleAccessor.accessGoogleDirectory();
-            Users result = directory.users().list().execute();
-            List<User> users = result.getUsers();
-            if (users == null || users.size() == 0) {
-                System.out.println("No users found.");
-            } else {
-                System.out.println("Users:");
-                for (User user : users) {
-                    System.out.println(user.getName().getFullName());
-                }
-            }
+            Directory directory = googleApiAccess.getDirectory();
+
+            UserPhoto abcd = directory.users().photos().get("bagurp@objectcomputing.com").execute();
 
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Directory API", e);
