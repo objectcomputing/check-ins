@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+
 import Avatar from "@material-ui/core/Avatar";
 
-const AvatarComponent = ({ loggedIn = false, profile = {} }) => {
-  const { image_url } = profile;
-  const src = !image_url || loggedIn === false ? "" : image_url;
+const AvatarComponent = () => {
+  const { state } = useContext(AppContext);
+  const { selectedProfile, userProfile } = state;
+  const { imageUrl } = selectedProfile
+    ? selectedProfile
+    : userProfile
+    ? userProfile
+    : {};
   return (
     <Avatar
       style={{
@@ -13,7 +20,7 @@ const AvatarComponent = ({ loggedIn = false, profile = {} }) => {
         right: "5px",
         top: "10px",
       }}
-      src={src}
+      src={imageUrl ? imageUrl : "/default_profile.jpg"}
     ></Avatar>
   );
 };
