@@ -90,7 +90,7 @@ const Notes = (props) => {
       setIsLoading(false);
     }
     getNotes();
-  }, [currentCheckinId, pdlId, id, selectedProfilePDLId]);
+  }, [currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
 
   const handleNoteChange = (e) => {
     if (Object.keys(note) === 0) {
