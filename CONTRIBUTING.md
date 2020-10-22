@@ -11,7 +11,7 @@
   - [Deploy](#deploy)
 - [Task Workflow](#task-workflow)
 - [Definition of Done](#definition-of-done)
-
+- [Technologies Used and Dev Setup](#technologies-used-and-dev-setup)
 <!-- /TOC -->
 
 # Contributing
@@ -117,3 +117,16 @@ A task is complete when
 - All manual tests pass (e.g: Functional, user interface testing)
 - Necessary documentation is reviewed
 - Implementation is deployed to the appropriate environment
+
+# Technologies Used and Dev Setup
+<a id="markdown-technologies-used-and-dev-setup" name="technologies-used-and-dev-setup"></a>
+The following technologies are required for development
+- Install NVM, use NVM to install latest version of Node.js
+- Java 11
+- Micronaut 2.0 or above
+- Docker (latest version)
+- Gradle 6.3
+
+*Note - If you are getting a error of 
+`org.postgresql.util.PSQLException: FATAL: database "checkinsdb" does not exist` 
+you will need to delete your local copy of postgres and only use the docker version*
