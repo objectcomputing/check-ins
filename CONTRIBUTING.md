@@ -12,6 +12,7 @@
 - [Task Workflow](#task-workflow)
 - [Definition of Done](#definition-of-done)
 - [Technologies Used and Dev Setup](#technologies-used-and-dev-setup)
+
 <!-- /TOC -->
 
 # Contributing
