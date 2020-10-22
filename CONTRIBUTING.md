@@ -127,3 +127,7 @@ The following technologies are required for development
 - Micronaut 2.0 or above
 - Docker (latest version)
 - Gradle 6.3
+
+*Note - If you are getting a error of 
+`org.postgresql.util.PSQLException: FATAL: database "checkinsdb" does not exist` 
+you will need to delete your local copy of postgres and only use the docker version*
