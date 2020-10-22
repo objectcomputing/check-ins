@@ -1,6 +1,7 @@
-import React from 'react';
-import {fireEvent, render} from '@testing-library/react';
-import ActionItemsPanel from './ActionItemsPanel';
+import React from "react";
+import { fireEvent, render } from "@testing-library/react";
+import ActionItemsPanel from "./ActionItemsPanel";
+import { AppContextProvider } from "../../context/AppContext";
 
 global.requestAnimationFrame = function (callback) {
   setTimeout(callback, 0);
@@ -9,38 +10,52 @@ global.requestAnimationFrame = function (callback) {
 function dumpElements(root, depth = 1) {
   const keys = Object.keys(root);
   const element = root[keys[0]];
-  console.log(depth, 'type', element.type, element.textContent);
+  console.log(depth, "type", element.type, element.textContent);
   //if (element.type === 'p') console.log(element);
   for (const child of root.children) {
     dumpElements(child, depth + 1);
   }
 }
 
-it('renders correctly', () => {
-  snapshot(<ActionItemsPanel />);
+const initialState = {
+  state: {
+    userProfile: {
+      memberProfile: {
+        id: "912834091823",
+      },
+    },
+  },
+};
+
+it("renders correctly", () => {
+  snapshot(
+    <AppContextProvider value={initialState}>
+      <ActionItemsPanel checkinId="394810298371" memberName="mr. test" />
+    </AppContextProvider>
+  );
 });
 
-it('handles drag and drop', () => {
+it("handles drag and drop", () => {
   const actionItems = [
-    {id: 'a1', description: 'first action item'},
-    {id: 'a2', description: 'second action item'},
-    {id: 'a3', description: 'third action item'}
+    { id: "a1", description: "first action item" },
+    { id: "a2", description: "second action item" },
+    { id: "a3", description: "third action item" },
   ];
-  const {container} = render(
+  const { container } = render(
     <ActionItemsPanel mockActionItems={actionItems} />
   );
 
   //TODO: Is this really necessary?
   const createBubbledEvent = (type, props = {}) => {
-    const event = new Event(type, {bubbles: true});
+    const event = new Event(type, { bubbles: true });
     Object.assign(event, props);
     return event;
   };
 
-  let aic = container.querySelector('.action-items-container');
+  let aic = container.querySelector(".action-items-container");
   expect(aic).not.toBeNull();
 
-  let droppable = aic.querySelector(':scope > div');
+  let droppable = aic.querySelector(":scope > div");
   expect(droppable).not.toBeNull();
   //dumpElements(droppable);
 
@@ -52,11 +67,11 @@ it('handles drag and drop', () => {
   // Get the DOM element for the first and second action items.
   let [firstActionItem, secondActionItem] = draggables;
   // Get the text in the first and second action items.
-  const firstText = firstActionItem.querySelector('p').textContent;
-  const secondText = secondActionItem.querySelector('p').textContent;
+  const firstText = firstActionItem.querySelector("p").textContent;
+  const secondText = secondActionItem.querySelector("p").textContent;
 
   // Get the DOM element for the drag handle of the first action item.
-  const dragHandle = firstActionItem.querySelector('span');
+  const dragHandle = firstActionItem.querySelector("span");
 
   // Get the center x and center y of the first drag handle.
   // We can't do this because the getBoundingClientRect method
@@ -79,25 +94,25 @@ it('handles drag and drop', () => {
   const secondItemBottomY = 0;
 
   dragHandle.dispatchEvent(
-    createBubbledEvent('dragstart', {
+    createBubbledEvent("dragstart", {
       clientX: dragHandleX,
-      clientY: dragHandleY
+      clientY: dragHandleY,
     })
   );
   droppable.dispatchEvent(
-    createBubbledEvent('drop', {clientX: 0, clientY: secondItemBottomY})
+    createBubbledEvent("drop", { clientX: 0, clientY: secondItemBottomY })
   );
 
   // Get all the DOM elements for the action items.
-  aic = container.querySelector('.action-items-container');
-  droppable = aic.querySelector(':scope > div');
+  aic = container.querySelector(".action-items-container");
+  droppable = aic.querySelector(":scope > div");
   draggables = droppable.children;
   [firstActionItem, secondActionItem] = draggables;
 
   // Verify that the DOM element for what was
   // the first action item is now the second.
-  const newFirstText = firstActionItem.querySelector('p').textContent;
-  const newSecondText = secondActionItem.querySelector('p').textContent;
+  const newFirstText = firstActionItem.querySelector("p").textContent;
+  const newSecondText = secondActionItem.querySelector("p").textContent;
   expect(newFirstText).toBe(actionItems[0].description);
   expect(newSecondText).toBe(actionItems[1].description);
 });
