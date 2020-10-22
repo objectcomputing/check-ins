@@ -25,7 +25,7 @@ const CheckinsPage = ({ history }) => {
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const canViewPrivateNote =
-    memberProfile && id !== currentCheckin.teamMemberId;
+    memberProfile && currentCheckin && id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {
