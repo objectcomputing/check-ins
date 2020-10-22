@@ -9,4 +9,8 @@ public interface TeamMemberFixture extends RepositoryFixture{
     default TeamMember createDeafultTeamMember(Team team, MemberProfile memberProfile) {
         return getTeamMemberRepository().save(new TeamMember(team.getId(),memberProfile.getId(),false));
     }
+
+    default TeamMember createLeadTeamMember(Team team, MemberProfile memberProfile) {
+        return getTeamMemberRepository().save(new TeamMember(team.getId(),memberProfile.getId(),true));
+    }
 }

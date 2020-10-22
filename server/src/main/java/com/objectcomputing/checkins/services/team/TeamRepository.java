@@ -16,6 +16,8 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
 
     Optional<Team> findByName(String name);
 
+    Optional<Team> findById(UUID id);
+
     List<Team> findByNameIlike(String name);
 
     @Override
