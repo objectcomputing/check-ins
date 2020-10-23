@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -33,12 +35,21 @@ public class ActionItemController {
         this.actionItemServices = actionItemServices;
     }
 
-    @Error(exception = ActionItemBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, ActionItemBadArgException e) {
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = PermissionException.class)
+    public HttpResponse<?> handleBadPermissions(HttpRequest<?> request, PermissionException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>unauthorized()
                 .body(error);
     }
 
@@ -129,7 +140,7 @@ public class ActionItemController {
             try {
                 actionItemServices.save(actionItem);
                 actionItemsCreated.add(actionItem);
-            } catch (ActionItemBadArgException e) {
+            } catch (BadArgException e) {
                 errors.add(String.format("Member %s's action item was not added to CheckIn %s because: %s", actionItem.getCreatedbyid(),
                         actionItem.getCheckinid(), e.getMessage()));
             }
