@@ -169,7 +169,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
         <Draggable
-          disabled={!pdlorAdmin}
           key={agendaItem.id}
           draggableId={agendaItem.id}
           index={index}

@@ -113,15 +113,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const makeActionItem = async () => {
     if (!checkinId || !id || description === "") {
       return;
-    } else if (!pdlorAdmin) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Must be PDL or Admin to add Action Item",
-        },
-      });
-      return;
     }
     let newActionItem = {
       checkinid: checkinId,
@@ -181,7 +172,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     if (actionItems && actionItems.length > 0) {
       return actionItems.map((actionItem, index) => (
         <Draggable
-          disabled={!pdlorAdmin}
           key={actionItem.id}
           draggableId={actionItem.id}
           index={index}
