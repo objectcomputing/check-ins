@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -21,16 +22,18 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class ActionItemServicesImpl implements ActionItemServices {
 
     private final CheckInRepository checkinRepo;
+    private final CheckInServices checkInServices;
     private final ActionItemRepository actionItemRepo;
     private final MemberProfileRepository memberRepo;
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
     private final Validation validation;
 
-    public ActionItemServicesImpl(CheckInRepository checkinRepo, ActionItemRepository actionItemRepo,
+    public ActionItemServicesImpl(CheckInRepository checkinRepo, CheckInServices checkInServices, ActionItemRepository actionItemRepo,
                                   MemberProfileRepository memberRepo, SecurityService securityService,
                                   CurrentUserServices currentUserServices, Validation validation) {
         this.checkinRepo = checkinRepo;
+        this.checkInServices = checkInServices;
         this.actionItemRepo = actionItemRepo;
         this.memberRepo = memberRepo;
         this.securityService = securityService;
@@ -48,7 +51,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
             final UUID checkinId = actionItem.getCheckinid();
             final UUID createdById = actionItem.getCreatedbyid();
 
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            CheckIn checkinRecord = checkInServices.findByFields(checkinId).orElse(null);
+//            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
