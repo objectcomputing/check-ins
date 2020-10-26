@@ -1,0 +1,113 @@
+import React, { useState } from "react";
+
+import { updateMember } from "../../api/member";
+
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
+// import Autocomplete from "@material-ui/lab/Autocomplete";
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import { Button } from "@material-ui/core";
+
+import "./MemberModal.css";
+
+const MemberModal = ({ member = {}, open, onSave, onClose }) => {
+  const [editedMember, setMember] = useState(member);
+  let date = new Date(editedMember.startDate);
+  return (
+    <Modal open={open} onClose={onClose}>
+      <div className="member-modal">
+        <TextField
+          id="member-email-input"
+          label="Member Email"
+          required
+          className="halfWidth"
+          placeholder="Creative Email"
+          value={editedMember.workEmail ? editedMember.workEmail : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, workEmail: e.target.value })
+          }
+        />
+        <TextField
+          id="member-title-input"
+          label="Member title"
+          required
+          className="halfWidth"
+          placeholder="Glorious title"
+          value={editedMember.title ? editedMember.title : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, title: e.target.value })
+          }
+        />
+        <TextField
+          id="member-location-input"
+          label="Member location"
+          required
+          className="halfWidth"
+          placeholder="Somewhere by the beach"
+          value={editedMember.location ? editedMember.location : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, location: e.target.value })
+          }
+        />
+        <TextField
+          id="member-insperityId-input"
+          label="InsperityId"
+          required
+          className="halfWidth"
+          placeholder="Somewhere by the beach"
+          value={editedMember.insperityId ? editedMember.insperityId : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, insperityId: e.target.value })
+          }
+        />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            margin="normal"
+            id="member-datepicker-dialog"
+            required
+            label="Start Date"
+            format="MM/dd/yyyy"
+            value={date}
+            onChange={(e) => {
+              setMember({ ...editedMember, startDate: e });
+            }}
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+          />
+        </MuiPickersUtilsProvider>
+        {/* <TextField
+          id="member-supervisor-input"
+          label="supervisor"
+          required
+          className="halfWidth"
+          placeholder="Somewhere by the beach"
+          value={editedMember.supervisor ? editedMember.supervisor : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, supervisor: e.target.value })
+          }
+        /> */}
+        <div className="member-modal-actions fullWidth">
+          <Button onClick={onClose} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              onSave(editedMember);
+              await updateMember(editedMember);
+            }}
+            color="primary"
+          >
+            Save Member
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default MemberModal;

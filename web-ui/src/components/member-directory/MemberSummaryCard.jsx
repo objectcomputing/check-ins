@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -7,12 +7,23 @@ import {
   CardHeader,
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
+import MemberModal from "./MemberModal";
 
 import "./MemberSummaryCard.css";
 
 const MemberSummaryCard = ({ member }) => {
   const { imageURL, name, workEmail, title, manager } = member;
-  console.log({ member });
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+  // const [selectValue, setSelectValue] = useState("terminate");
+
+  // const handleSelectChange = (e) => {
+  //   setSelectValue(e.target.value);
+  // };
+
   return (
     <Card className="member-card">
       <CardHeader title={name} />
@@ -39,8 +50,23 @@ const MemberSummaryCard = ({ member }) => {
           </div>
         </div>
         <CardActions>
-          <Button>Edit Member</Button>
-          <Button>Delete Member</Button>
+          <Button onClick={handleOpen}>Edit Member</Button>
+          <Button>Terminate Member</Button>
+          <MemberModal
+            member={member}
+            open={open}
+            onClose={handleClose}
+            onSave={(member) => {
+              handleClose();
+            }}
+          />
+          {/* <div>
+            <select value={selectValue} onChange={handleSelectChange}>
+              <option value="terminate">Terminate</option>
+              <option value="delete">Delete</option>
+            </select> */}
+          {/* <Button>{selectValue} Member</Button> */}
+          {/* </div> */}
         </CardActions>
       </CardContent>
     </Card>
