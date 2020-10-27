@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -213,8 +214,6 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     }
 
-
-
     @Test
     void testFindByName() {
 
@@ -327,4 +326,74 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     }
 
+    @Test
+    void deleteTeamByMember() {
+        // setup team
+        Team team = createDeafultTeam();
+        // create members
+        MemberProfile memberProfileofTeamLead = createADefaultMemberProfile();
+        MemberProfile memberProfileOfTeamMember = createADefaultMemberProfileForPdl(memberProfileofTeamLead);
+        //add members to team
+        createLeadTeamMember(team, memberProfileofTeamLead);
+        createDeafultTeamMember(team, memberProfileOfTeamMember);
+
+        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(memberProfileOfTeamMember.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+        () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void deleteTeamByAdmin() {
+        // setup team
+        Team team = createDeafultTeam();
+        // create members
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        //add members to team
+        createDeafultTeamMember(team, memberProfileOfAdmin);
+
+        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Team> response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void deleteTeamByTeamLead() {
+        // setup team
+        Team team = createDeafultTeam();
+        // create members
+        MemberProfile memberProfileofTeamLead = createADefaultMemberProfile();
+        //add members to team
+        createLeadTeamMember(team, memberProfileofTeamLead);
+        // createDeafultTeamMember(team, memberProfileOfTeamMember);
+
+        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(memberProfileofTeamLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Team> response = client.toBlocking().exchange(request);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void deleteTeamByUnrelatedUser() {
+        // setup team
+        Team team = createDeafultTeam();
+        // create members
+        MemberProfile user = createAnUnrelatedUser();
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(user.getWorkEmail(), MEMBER_ROLE);
+
+        //throw error
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+        () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
 }

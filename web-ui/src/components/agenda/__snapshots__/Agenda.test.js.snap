@@ -1,0 +1,234 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="agenda-items"
+>
+  <h1>
+    <svg
+      aria-hidden={true}
+      className="MuiSvgIcon-root"
+      focusable="false"
+      style={
+        Object {
+          "fontSize": "larger",
+          "marginRight": "10px",
+        }
+      }
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"
+      />
+    </svg>
+    Agenda Items for 
+    mr. test
+  </h1>
+  <div
+    className="agenda-items-container"
+  >
+    <div
+      data-rbd-droppable-context-id="0"
+      data-rbd-droppable-id="droppable"
+    >
+      <div
+        className="image-div"
+      >
+        <div
+          className="drag-icon"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
+          </svg>
+        </div>
+        <div
+          className="skeleton"
+        >
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+        </div>
+      </div>
+      <div
+        className="image-div"
+      >
+        <div
+          className="drag-icon"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
+          </svg>
+        </div>
+        <div
+          className="skeleton"
+        >
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+        </div>
+      </div>
+      <div
+        className="image-div"
+      >
+        <div
+          className="drag-icon"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+            />
+          </svg>
+        </div>
+        <div
+          className="skeleton"
+        >
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+          <span
+            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+            style={
+              Object {
+                "height": "2rem",
+                "width": undefined,
+              }
+            }
+          />
+        </div>
+      </div>
+      <div
+        style={
+          Object {
+            "borderBottom": "2px solid black",
+            "display": "flex",
+            "padding": "12px 8px",
+          }
+        }
+      >
+        <input
+          className="text-input"
+          onChange={[Function]}
+          placeholder="Add agenda item"
+          value=""
+        />
+        <button
+          aria-label="create"
+          className="MuiButtonBase-root MuiIconButton-root edit-icon"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+              />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

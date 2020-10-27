@@ -124,4 +124,16 @@ public class TeamController {
                 .body(updatedTeam);
 
     }
+
+    /**
+     * Delete Team
+     *
+     * @param id, id of {@link Team} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteTeam(@NotNull UUID id) {
+        teamService.delete(id);
+        return HttpResponse
+                .ok();
+    }
 }

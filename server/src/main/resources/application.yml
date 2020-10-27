@@ -50,7 +50,11 @@ micronaut:
       forbidden:
         url: /forbidden
     session:
-      enabled: true 
+      enabled: true
+    netty:
+      event-loops:
+        io:
+          num-threads: 4 #Matching number in database thread pool as that is currently our only use of I/O
 ---
 datasources:
   default:
