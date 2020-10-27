@@ -22,22 +22,18 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class ActionItemServicesImpl implements ActionItemServices {
 
-    private final CheckInRepository checkinRepo;
     private final CheckInServices checkInServices;
     private final ActionItemRepository actionItemRepo;
-    private final MemberProfileRepository memberRepo;
     private final MemberProfileServices memberServices;
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
     private final Validation validation;
 
-    public ActionItemServicesImpl(CheckInRepository checkinRepo, CheckInServices checkInServices, ActionItemRepository actionItemRepo,
-                                  MemberProfileRepository memberRepo, MemberProfileServices memberServices, SecurityService securityService,
+    public ActionItemServicesImpl(CheckInServices checkInServices, ActionItemRepository actionItemRepo,
+                                  MemberProfileServices memberServices, SecurityService securityService,
                                   CurrentUserServices currentUserServices, Validation validation) {
-        this.checkinRepo = checkinRepo;
         this.checkInServices = checkInServices;
         this.actionItemRepo = actionItemRepo;
-        this.memberRepo = memberRepo;
         this.memberServices = memberServices;
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
@@ -63,7 +59,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
             validation.validateArguments(actionItem.getId() != null, "Found unexpected id %s for action item", actionItem.getId());
             validation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
             validation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-//            validation.validateArguments(memberRepo.findById(createdById).isEmpty(), "Member %s doesn't exist", createdById);
 
             if (!isAdmin && isCompleted) {
                 validation.validatePermissions(true, "User is unauthorized to do this operation");
@@ -187,7 +182,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validation.validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to delete with id %s", actionItem.getId());
         validation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
         validation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-//        validation.validateArguments(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
 
         if (!isAdmin && isCompleted) {
             validation.validatePermissions(true, "User is unauthorized to do this operation");
