@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
-import { AppContext } from "../../context/AppContext";
+import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
 
 import {
   Button,
@@ -14,12 +14,13 @@ import Avatar from "@material-ui/core/Avatar";
 
 import "./MemberSummaryCard.css";
 
-const MemberSummaryCard = ({ member }) => {
-  const { state } = useContext(AppContext);
-  const { userProfile } = state;
+const MemberSummaryCard = ({ member, index }) => {
+  const { state, dispatch } = useContext(AppContext);
+  const { memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { imageURL, name, workEmail, title, manager } = member;
+  const { imageURL, name, workEmail, title } = member;
+  const [currentMember, setCurrentMember] = useState(member);
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -33,39 +34,42 @@ const MemberSummaryCard = ({ member }) => {
 
   return (
     <Card className="member-card">
-      <CardHeader title={name} />
-      <CardContent>
-        <div className="member-summary-parent">
-          <Avatar alt={name} className="member-summary-avatar" src={imageURL} />
-          <div className="member-summary-info">
-            <div>
-              <strong>Name: </strong>
-              {name}
-            </div>
-            <div>
-              <strong>Email: </strong>
-              {workEmail}
-            </div>
-            <div>
-              <strong>Title: </strong>
-              {title}
-            </div>
-            <div>
-              <strong>Manager: </strong>
-              {manager}
-            </div>
+      <CardHeader
+        avatar={
+          <Avatar
+            alt={name}
+            className="member-summary-avatar"
+            src={imageURL}
+            style={{ margin: "0px" }}
+          />
+        }
+        subheader={
+          <div>
+            {title}
+            <br />
+            {workEmail}
           </div>
-        </div>
+        }
+        title={name}
+      />
+      <CardContent>
         {isAdmin && (
           <div className="member-card-actions">
             <CardActions>
               <Button onClick={handleOpen}>Edit Member</Button>
               <Button>Terminate Member</Button>
               <MemberModal
-                member={member}
+                member={currentMember}
                 open={open}
                 onClose={handleClose}
                 onSave={(member) => {
+                  setCurrentMember(member);
+                  const copy = [...memberProfiles];
+                  copy[index] = member;
+                  dispatch({
+                    type: UPDATE_MEMBER_PROFILES,
+                    payload: copy,
+                  });
                   handleClose();
                 }}
               />

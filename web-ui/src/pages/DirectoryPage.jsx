@@ -26,6 +26,7 @@ const DirectoryPage = () => {
   );
   const [member, setMember] = useState({});
   const [open, setOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const { location, name, startDate, title, workEmail } = member;
 
@@ -42,14 +43,31 @@ const DirectoryPage = () => {
 
   const handleClose = () => setOpen(false);
 
-  const createMemberCards = members.map((member) => {
-    return (
-      <MemberSummaryCard key={`${member.name}-${member.id}`} member={member} />
-    );
+  const createMemberCards = members.map((member, index) => {
+    if (member.name.toLowerCase().includes(searchText.toLowerCase())) {
+      return (
+        <MemberSummaryCard
+          key={`${member.name}-${member.id}`}
+          index={index}
+          member={member}
+        />
+      );
+    }
   });
 
   return (
     <div className="directory-page">
+      <div className="search">
+        <TextField
+          className="fullWidth"
+          label="Search Members"
+          placeholder="Member Name"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+        />
+      </div>
       {isAdmin && (
         <div className="add-member">
           <Avatar />

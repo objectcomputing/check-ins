@@ -47,3 +47,8 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
+
+.directory-page .search {
+  display: flex;
+  justify-content: center;
+}

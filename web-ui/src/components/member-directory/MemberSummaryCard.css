@@ -3,11 +3,6 @@
   width: 45%;
 }
 
-.member-card-actions {
-  display: flex;
-  justify-content: center;
-}
-
 .member-summary-avatar {
   height: 80px !important;
   width: 80px !important;
