@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.validate.Validation;
@@ -25,17 +26,19 @@ public class ActionItemServicesImpl implements ActionItemServices {
     private final CheckInServices checkInServices;
     private final ActionItemRepository actionItemRepo;
     private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberServices;
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
     private final Validation validation;
 
     public ActionItemServicesImpl(CheckInRepository checkinRepo, CheckInServices checkInServices, ActionItemRepository actionItemRepo,
-                                  MemberProfileRepository memberRepo, SecurityService securityService,
+                                  MemberProfileRepository memberRepo, MemberProfileServices memberServices, SecurityService securityService,
                                   CurrentUserServices currentUserServices, Validation validation) {
         this.checkinRepo = checkinRepo;
         this.checkInServices = checkInServices;
         this.actionItemRepo = actionItemRepo;
         this.memberRepo = memberRepo;
+        this.memberServices = memberServices;
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
         this.validation = validation;
@@ -51,16 +54,16 @@ public class ActionItemServicesImpl implements ActionItemServices {
             final UUID checkinId = actionItem.getCheckinid();
             final UUID createdById = actionItem.getCreatedbyid();
 
-            CheckIn checkinRecord = checkInServices.findByFields(checkinId).orElse(null);
-//            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            CheckIn checkinRecord = checkInServices.read(checkinId);
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
             validation.validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
             validation.validateArguments(actionItem.getId() != null, "Found unexpected id %s for action item", actionItem.getId());
-            validation.validateArguments(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validation.validateArguments(memberRepo.findById(createdById).isEmpty(), "Member %s doesn't exist", createdById);
+            validation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
+            validation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+//            validation.validateArguments(memberRepo.findById(createdById).isEmpty(), "Member %s doesn't exist", createdById);
 
             if (!isAdmin && isCompleted) {
                 validation.validatePermissions(true, "User is unauthorized to do this operation");
@@ -95,7 +98,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validation.validateArguments(actionItemResult == null, "Invalid action item id %s", id);
 
         if (!isAdmin) {
-            CheckIn checkinRecord = checkinRepo.findById(actionItemResult.getCheckinid()).orElse(null);
+            CheckIn checkinRecord = checkInServices.read(actionItemResult.getCheckinid());
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
@@ -114,22 +117,22 @@ public class ActionItemServicesImpl implements ActionItemServices {
         if (actionItem != null) {
             final UUID id = actionItem.getId();
             final UUID checkinId = actionItem.getCheckinid();
-            final UUID createById = actionItem.getCreatedbyid();
+            final UUID createdById = actionItem.getCreatedbyid();
 
-            CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+            CheckIn checkinRecord = checkInServices.read(checkinId);
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
-            validation.validateArguments(checkinId == null || createById == null, "Invalid action item %s", actionItem);
+            validation.validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
             validation.validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to update with id %s", actionItem.getId());
-            validation.validateArguments(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-            validation.validateArguments(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+            validation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
+            validation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
             if (!isAdmin && isCompleted) {
                 validation.validatePermissions(true, "User is unauthorized to do this operation");
             } else if (!isAdmin && !isCompleted) {
-                validation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+                validation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
             }
 
             actionItemRet = actionItemRepo.update(actionItem);
@@ -143,14 +146,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         if (checkinid != null) {
-            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
+            CheckIn checkinRecord = checkInServices.read(checkinid);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validation.validatePermissions(!currentUser.getId().equals(pdlId) &&
                     !currentUser.getId().equals(teamMemberId) &&
                     !isAdmin, "User is unauthorized to do this operation");
         } else if (createdbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createdbyid).orElse(null);
+            MemberProfile memberRecord = memberServices.getById(createdbyid);
             validation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
                     !isAdmin, "User is unauthorized to do this operation");
         } else {
@@ -174,21 +177,22 @@ public class ActionItemServicesImpl implements ActionItemServices {
         validation.validateArguments(actionItem == null, "invalid action item %s", id);
 
         final UUID checkinId = actionItem.getCheckinid();
-        final UUID createById = actionItem.getCreatedbyid();
+        final UUID createdById = actionItem.getCreatedbyid();
 
-        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+        CheckIn checkinRecord = checkInServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
-        validation.validateArguments(checkinId == null || createById == null, "Invalid action item %s", actionItem);
+        validation.validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
         validation.validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to delete with id %s", actionItem.getId());
-        validation.validateArguments(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-        validation.validateArguments(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+        validation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
+        validation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+//        validation.validateArguments(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
 
         if (!isAdmin && isCompleted) {
             validation.validatePermissions(true, "User is unauthorized to do this operation");
         } else if (!isAdmin && !isCompleted) {
-            validation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+            validation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
         }
 
         actionItemRepo.deleteById(id);

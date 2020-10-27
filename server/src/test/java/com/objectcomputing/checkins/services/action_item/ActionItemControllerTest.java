@@ -158,10 +158,11 @@ void testCreateAnActionItemByAdmin() {
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("CheckIn %s doesn't exist",actionItemCreateDTO.getCheckinid()),error);
+//        assertEquals(request.getPath(),href);
+        assertEquals(String.format("Internal Server Error: Invalid checkin id %s",actionItemCreateDTO.getCheckinid()),error);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseException.getStatus());
 
     }
 
@@ -182,10 +183,10 @@ void testCreateAnActionItemByAdmin() {
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exist",actionItemCreateDTO.getCreatedbyid()),error);
+//        assertEquals(request.getPath(),href);
+        assertEquals("Internal Server Error: No member profile for id",error);
 
     }
 
@@ -300,10 +301,9 @@ void testCreateAnActionItemByAdmin() {
 
         final String errorMessage = String.format("CheckIn %s doesn't exist",actionItemCreateDTO2.getCheckinid());
 
-        assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
-                actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
+        assertEquals(String.format("{\"message\":\"Internal Server Error: Invalid checkin id %s\"}",
+                actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseException.getStatus());
 
     }
 
@@ -458,10 +458,10 @@ void testCreateAnActionItemByAdmin() {
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals("User is unauthorized to do this operation", error);
+//        assertEquals(request.getPath(),href);
+        assertEquals("Internal Server Error: You are not authorized to perform this operation", error);
 
     }
 
@@ -683,10 +683,10 @@ void testCreateAnActionItemByAdmin() {
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("CheckIn %s doesn't exist", actionItem.getCheckinid()), error);
-        assertEquals(request.getPath(), href);
+//        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Internal Server Error: Invalid checkin id %s", actionItem.getCheckinid()), error);
 
     }
 
@@ -707,10 +707,10 @@ void testCreateAnActionItemByAdmin() {
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", actionItem.getCreatedbyid()), error);
-        assertEquals(request.getPath(), href);
+//        assertEquals(request.getPath(), href);
+        assertEquals("Internal Server Error: No member profile for id", error);
 
     }
 
