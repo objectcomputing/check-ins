@@ -57,25 +57,27 @@ const MemberSummaryCard = ({ member }) => {
           </div>
         </div>
         {isAdmin && (
-          <CardActions>
-            <Button onClick={handleOpen}>Edit Member</Button>
-            <Button>Terminate Member</Button>
-            <MemberModal
-              member={member}
-              open={open}
-              onClose={handleClose}
-              onSave={(member) => {
-                handleClose();
-              }}
-            />
-            {/* <div>
+          <div className="member-card-actions">
+            <CardActions>
+              <Button onClick={handleOpen}>Edit Member</Button>
+              <Button>Terminate Member</Button>
+              <MemberModal
+                member={member}
+                open={open}
+                onClose={handleClose}
+                onSave={(member) => {
+                  handleClose();
+                }}
+              />
+              {/* <div>
             <select value={selectValue} onChange={handleSelectChange}>
               <option value="terminate">Terminate</option>
               <option value="delete">Delete</option>
             </select> */}
-            {/* <Button>{selectValue} Member</Button> */}
-            {/* </div> */}
-          </CardActions>
+              {/* <Button>{selectValue} Member</Button> */}
+              {/* </div> */}
+            </CardActions>
+          </div>
         )}
       </CardContent>
     </Card>

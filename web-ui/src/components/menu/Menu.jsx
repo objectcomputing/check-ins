@@ -116,12 +116,6 @@ function Menu() {
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/directory">
-          Directory
-        </Link>
-      </Button>
-      <br />
       <Button
         onClick={() =>
           dispatch({
@@ -134,6 +128,12 @@ function Menu() {
       >
         <Link style={linkStyle} to="/checkins">
           Check-ins
+        </Link>
+      </Button>
+      <br />
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/directory">
+          Directory
         </Link>
       </Button>
       <br />

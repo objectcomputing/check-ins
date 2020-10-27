@@ -43,7 +43,9 @@ const DirectoryPage = () => {
   const handleClose = () => setOpen(false);
 
   const createMemberCards = members.map((member) => {
-    return <MemberSummaryCard member={member} />;
+    return (
+      <MemberSummaryCard key={`${member.name}-${member.id}`} member={member} />
+    );
   });
 
   return (
@@ -167,7 +169,7 @@ const DirectoryPage = () => {
           </Modal>
         </div>
       )}
-      <div>{createMemberCards}</div>
+      <div className="members">{createMemberCards}</div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 .add-member {
   display: flex;
+  justify-content: center;
   margin: 20px;
 }
 
@@ -39,4 +40,10 @@
 .add-member-modal .MuiTextField-root {
   margin: 0.5rem;
   width: 25ch;
+}
+
+.directory-page .members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }

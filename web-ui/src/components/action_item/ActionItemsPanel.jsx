@@ -32,9 +32,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const { userProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
-  const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
-    userProfile.role.includes("ADMIN");
 
   const [actionItems, setActionItems] = useState([]);
   const [description, setDescription] = useState("");

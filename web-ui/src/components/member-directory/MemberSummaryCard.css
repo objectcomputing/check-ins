@@ -1,6 +1,11 @@
 .member-card {
   margin: 20px;
-  width: 50%;
+  width: 45%;
+}
+
+.member-card-actions {
+  display: flex;
+  justify-content: center;
 }
 
 .member-summary-avatar {
