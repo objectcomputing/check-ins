@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+
+import MemberModal from "./MemberModal";
+import { AppContext } from "../../context/AppContext";
+
 import {
   Button,
   Card,
@@ -7,11 +11,14 @@ import {
   CardHeader,
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
-import MemberModal from "./MemberModal";
 
 import "./MemberSummaryCard.css";
 
 const MemberSummaryCard = ({ member }) => {
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const isAdmin =
+    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { imageURL, name, workEmail, title, manager } = member;
   const [open, setOpen] = useState(false);
 
@@ -49,25 +56,27 @@ const MemberSummaryCard = ({ member }) => {
             </div>
           </div>
         </div>
-        <CardActions>
-          <Button onClick={handleOpen}>Edit Member</Button>
-          <Button>Terminate Member</Button>
-          <MemberModal
-            member={member}
-            open={open}
-            onClose={handleClose}
-            onSave={(member) => {
-              handleClose();
-            }}
-          />
-          {/* <div>
+        {isAdmin && (
+          <CardActions>
+            <Button onClick={handleOpen}>Edit Member</Button>
+            <Button>Terminate Member</Button>
+            <MemberModal
+              member={member}
+              open={open}
+              onClose={handleClose}
+              onSave={(member) => {
+                handleClose();
+              }}
+            />
+            {/* <div>
             <select value={selectValue} onChange={handleSelectChange}>
               <option value="terminate">Terminate</option>
               <option value="delete">Delete</option>
             </select> */}
-          {/* <Button>{selectValue} Member</Button> */}
-          {/* </div> */}
-        </CardActions>
+            {/* <Button>{selectValue} Member</Button> */}
+            {/* </div> */}
+          </CardActions>
+        )}
       </CardContent>
     </Card>
   );

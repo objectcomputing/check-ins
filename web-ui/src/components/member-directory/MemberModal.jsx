@@ -2,8 +2,7 @@ import React, { useState } from "react";
 
 import { updateMember } from "../../api/member";
 
-import Modal from "@material-ui/core/Modal";
-import TextField from "@material-ui/core/TextField";
+import {Modal, TextField} from "@material-ui/core";
 // import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   KeyboardDatePicker,
@@ -80,6 +79,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             }}
           />
         </MuiPickersUtilsProvider>
+        {/* need supervisor property on member */}
         {/* <TextField
           id="member-supervisor-input"
           label="supervisor"
