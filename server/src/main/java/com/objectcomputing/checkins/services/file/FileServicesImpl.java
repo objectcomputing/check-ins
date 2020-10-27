@@ -1,12 +1,10 @@
 package com.objectcomputing.checkins.services.file;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -15,8 +13,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.utils.SecurityService;
@@ -31,7 +27,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 public class FileServicesImpl implements FileServices {
@@ -39,19 +38,16 @@ public class FileServicesImpl implements FileServices {
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
     private final GoogleDriveAccessor googleDriveAccessor;
-    private final EmailSender emailSender;
     private final SecurityService securityService;
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
     private CurrentUserServices currentUserServices;
 
-    public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, EmailSender emailSender,
-                            SecurityService securityService, CheckInServices checkInServices,
-                            CheckinDocumentServices checkinDocumentServices,
+    public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, SecurityService securityService,
+                            CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,
                             MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
         this.googleDriveAccessor = googleDriveAccessor;
-        this.emailSender = emailSender;
         this.securityService = securityService;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
@@ -60,7 +56,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public HttpResponse<?> findFiles(@Nullable UUID checkInID) {
+    public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -94,20 +90,15 @@ public class FileServicesImpl implements FileServices {
                 }
             }
 
-            return HttpResponse.ok(result);
-        } catch (GoogleJsonResponseException e) {
-            LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse
-                    .status(HttpStatus.valueOf(e.getStatusCode()))
-                    .body(e.getContent());
+            return result;
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileRetrievalException(e.getMessage());
         }
     }
 
     @Override
-    public HttpResponse<?> downloadFiles(@NotNull String uploadDocId) {
+    public java.io.File downloadFiles(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -135,20 +126,15 @@ public class FileServicesImpl implements FileServices {
             myWriter.write(String.valueOf(outputStream));
             myWriter.close();
 
-            return HttpResponse.status(HttpStatus.OK).body(file);
-        }  catch (HttpResponseException e) {
-            LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse
-                    .status(HttpStatus.valueOf(e.getStatusCode()))
-                    .body(e.getContent());
+            return file;
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileRetrievalException(e.getMessage());
         }
     }
 
     @Override
-    public HttpResponse<?> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
+    public FileInfoDTO uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -174,7 +160,7 @@ public class FileServicesImpl implements FileServices {
 
             // Check if folder already exists on google drive. If exists, return folderId and name
             FileList driveIndex = drive.files().list().setFields("files(id, name)").execute();
-            validate((driveIndex.isEmpty() || driveIndex == null), "Error occurred while accessing Google Drive");
+            validate(driveIndex.isEmpty(), "Error occurred while accessing Google Drive");
 
             File folderOnDrive = driveIndex.getFiles().stream()
                                     .filter(s -> directoryName.contains(s.getName()))
@@ -205,22 +191,18 @@ public class FileServicesImpl implements FileServices {
 
 //            emailSender.sendEmail("New Check-in Notes", "New check-in notes have been uploaded. Please check the Google Drive folder.");
 
-            return HttpResponse
-                    .status(HttpStatus.CREATED)
-                    .body(setFileInfo(uploadedFile, cd));
+            return setFileInfo(uploadedFile, cd);
         } catch (GoogleJsonResponseException e) {
             LOG.error("Error occurred while accessing Google Drive.", e);
-            return HttpResponse
-                    .status(HttpStatus.valueOf(e.getStatusCode()))
-                    .body(e.getContent());
+            throw new FileRetrievalException(e.getMessage());
         } catch (IOException e) {
             LOG.error("Unexpected error processing file upload.", e);
-            return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileRetrievalException(e.getMessage());
         }
     }
 
     @Override
-    public HttpResponse<?> deleteFile(@NotNull String uploadDocId) {
+    public void deleteFile(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -239,17 +221,10 @@ public class FileServicesImpl implements FileServices {
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
             checkinDocumentServices.deleteByUploadDocId(uploadDocId);
-        } catch (GoogleJsonResponseException e) {
-            LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse
-                    .status(HttpStatus.valueOf(e.getStatusCode()))
-                    .body(e.getContent());
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
-            return HttpResponse.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new FileRetrievalException(e.getMessage());
         }
-
-        return HttpResponse.ok();
     }
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {

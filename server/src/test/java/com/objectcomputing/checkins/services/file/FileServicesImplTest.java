@@ -16,8 +16,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
@@ -146,9 +144,7 @@ public class FileServicesImplTest {
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
         Mockito.reset(completedFileUpload);
-    }
 
-    private void setupMocksForAuth() {
         when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
@@ -166,18 +162,15 @@ public class FileServicesImplTest {
         mockFiles.add(file1);
         fileList.setFiles(mockFiles);
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
 
-        final HttpResponse<?> response = services.findFiles(null);
-        Set<FileInfoDTO> result = (Set<FileInfoDTO>) response.getBody().get();
+        final Set<FileInfoDTO> result = services.findFiles(null);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
+        assertNotNull(result);
         assertEquals(fileList.getFiles().iterator().next().getId(), result.iterator().next().getFileId());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
@@ -186,7 +179,6 @@ public class FileServicesImplTest {
 
     @Test
     void testFindAllFailsIfNotAdmin() {
-        setupMocksForAuth();
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(null));
 
@@ -204,7 +196,6 @@ public class FileServicesImplTest {
         final Set<CheckinDocument> testCheckinDocument = new HashSet<>();
         testCheckinDocument.add(testCd);
 
-        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
@@ -215,11 +206,9 @@ public class FileServicesImplTest {
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
 
-        final HttpResponse<?> response = services.findFiles(testCheckinId);
-        Set<FileInfoDTO> result = (Set<FileInfoDTO>) response.getBody().get();
+        final Set<FileInfoDTO> result = services.findFiles(testCheckinId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
+        assertNotNull(result);
         assertEquals(file.getId(), result.iterator().next().getFileId());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
@@ -229,7 +218,6 @@ public class FileServicesImplTest {
     @Test
     void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(null);
@@ -248,19 +236,16 @@ public class FileServicesImplTest {
 
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(Collections.emptySet());
 
-        final HttpResponse<?> response = services.findFiles(testCheckinId);
+        final Set<FileInfoDTO> result = services.findFiles(testCheckinId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertTrue(response.getBody().isPresent());
-        assertEquals(Collections.emptySet(), response.getBody().get());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(any(UUID.class));
         verify(checkInServices, times(1)).read(any(UUID.class));
@@ -269,8 +254,6 @@ public class FileServicesImplTest {
     @Test
     void testFindByCheckinIdForUnauthorizedUser() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
@@ -287,7 +270,6 @@ public class FileServicesImplTest {
 
     @Test
     void testFindFilesDriveCantConnect() throws IOException {
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
@@ -301,17 +283,16 @@ public class FileServicesImplTest {
     void testFindAllFilesThrowsGoogleJsonResponseException() throws IOException {
 
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
-
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.execute()).thenThrow(testException);
 
-        final HttpResponse<?> response = services.findFiles(null);
+        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+                () -> services.findFiles(null));
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(testException.getMessage(), responseException.getMessage());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
     }
 
@@ -323,7 +304,6 @@ public class FileServicesImplTest {
         testCheckinDocument.add(testCd);
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
@@ -333,9 +313,10 @@ public class FileServicesImplTest {
         when(files.get(any(String.class))).thenReturn(get);
         when(get.execute()).thenThrow(testException);
 
-        final HttpResponse<?> response = services.findFiles(testCheckinId);
+        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+                                                            () -> services.findFiles(testCheckinId));
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(testException.getMessage(), responseException.getMessage());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -343,13 +324,10 @@ public class FileServicesImplTest {
 
     @Test
     void testFindFilesThrowsIOException() throws IOException {
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
-        final HttpResponse<?> response = services.findFiles(null);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus());
+        assertThrows(FileRetrievalException.class, () -> services.findFiles(null));
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
         verify(checkInServices, times(0)).read(any(UUID.class));
@@ -361,7 +339,6 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -379,12 +356,9 @@ public class FileServicesImplTest {
             }
         }).when(get).executeMediaAndDownloadTo(any(OutputStream.class));
 
-        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
-        java.io.File resultFile = (File) response.getBody().get();
+        final java.io.File resultFile = services.downloadFiles(testUploadDocId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(testFile.length(), resultFile.length());
-        assertEquals(HttpStatus.OK, response.getStatus());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(any(UUID.class));
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
@@ -396,7 +370,6 @@ public class FileServicesImplTest {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -413,12 +386,9 @@ public class FileServicesImplTest {
             }
         }).when(get).executeMediaAndDownloadTo(any(OutputStream.class));
 
-        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
-        java.io.File resultFile = (File) response.getBody().get();
+        final java.io.File resultFile = services.downloadFiles(testUploadDocId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(testFile.length(), resultFile.length());
-        assertEquals(HttpStatus.OK, response.getStatus());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(any(UUID.class));
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
@@ -428,8 +398,6 @@ public class FileServicesImplTest {
     @Test
     void testDownloadFilesInvalidUploadDocId() throws IOException {
         String invalidUploadDocId = "some.test.id";
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(invalidUploadDocId)).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -445,8 +413,6 @@ public class FileServicesImplTest {
     void testDownloadFilesUnauthorizedUser() throws IOException {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -466,13 +432,10 @@ public class FileServicesImplTest {
     void testDownloadFilesDriveCantConnect() throws IOException {
         String testUploadDocId = "some.test.id";
         UUID testMemberProfileId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
-
         when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -489,7 +452,6 @@ public class FileServicesImplTest {
         UUID testMemberProfileId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
@@ -499,9 +461,10 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenThrow(testException);
 
-        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
+        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+                                                            () -> services.downloadFiles(testUploadDocId));
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(testException.getMessage(), responseException.getMessage());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(any());
@@ -511,17 +474,13 @@ public class FileServicesImplTest {
     void testDownloadFileThrowsIOException() throws IOException {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
-        final HttpResponse<?> response = services.downloadFiles(testUploadDocId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus());
+        assertThrows(FileRetrievalException.class, () -> services.downloadFiles(testUploadDocId));
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -533,8 +492,6 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -544,9 +501,8 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
-        final HttpResponse<?> response = services.deleteFile(uploadDocId);
+        services.deleteFile(uploadDocId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
@@ -557,8 +513,6 @@ public class FileServicesImplTest {
     void testDeleteFilesAdminCanAccess() throws IOException {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
@@ -567,9 +521,8 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
-        final HttpResponse<?> response = services.deleteFile(uploadDocId);
+        services.deleteFile(uploadDocId);
 
-        assertEquals(HttpStatus.OK, response.getStatus());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
@@ -580,8 +533,6 @@ public class FileServicesImplTest {
     void testDeleteFileWhenCheckinDocDoesntExist() throws IOException {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -598,8 +549,6 @@ public class FileServicesImplTest {
     void testDeleteFileByUnauthorizedUser() throws IOException {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -624,8 +573,6 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -649,8 +596,6 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
-
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
@@ -660,9 +605,12 @@ public class FileServicesImplTest {
         when(files.delete(uploadDocId)).thenReturn(delete);
         when(delete.execute()).thenThrow(testException);
 
-        final HttpResponse<?> response = services.deleteFile(uploadDocId);
+        //act
+        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+                () -> services.deleteFile(uploadDocId));
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        //assert
+        assertEquals(testException.getMessage(), responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
@@ -674,17 +622,13 @@ public class FileServicesImplTest {
 
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
-
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
-        final HttpResponse<?> response = services.deleteFile(uploadDocId);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus());
+        assertThrows(FileRetrievalException.class, () -> services.deleteFile(uploadDocId));
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
@@ -713,7 +657,6 @@ public class FileServicesImplTest {
 
         Drive.Files.Create createForFileUpload = mock(Drive.Files.Create.class);
 
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -739,12 +682,10 @@ public class FileServicesImplTest {
         when(createForFileUpload.execute()).thenReturn(fileFromDrive);
 
         //act
-        final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
-        FileInfoDTO result = (FileInfoDTO) response.getBody().get();
+        FileInfoDTO result = services.uploadFile(testCheckinId, fileToUpload);
 
         //assert
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertTrue(response.getBody().isPresent());
+        assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
@@ -770,7 +711,6 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -793,12 +733,10 @@ public class FileServicesImplTest {
         when(create.execute()).thenReturn(fileFromDrive);
 
         //act
-        final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
-        FileInfoDTO result = (FileInfoDTO) response.getBody().get();
+        FileInfoDTO result = services.uploadFile(testCheckinId, fileToUpload);
 
         //assert
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertTrue(response.getBody().isPresent());
+        assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
@@ -824,7 +762,6 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -846,12 +783,10 @@ public class FileServicesImplTest {
         when(create.execute()).thenReturn(fileFromDrive);
 
         //act
-        final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
-        FileInfoDTO result = (FileInfoDTO) response.getBody().get();
+        FileInfoDTO result = services.uploadFile(testCheckinId, fileToUpload);
 
         //assert
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertTrue(response.getBody().isPresent());
+        assertNotNull(result);
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
@@ -861,7 +796,6 @@ public class FileServicesImplTest {
 
     @Test
     void testUploadFileThrowsErrorWhenFileNameIsEmpty() {
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -874,7 +808,6 @@ public class FileServicesImplTest {
     void testUploadFileThrowsErrorForInvalidCheckinId() {
         UUID testCheckinId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("test.file.name");
         when(checkInServices.read(testCheckinId)).thenReturn(null);
 
@@ -888,7 +821,6 @@ public class FileServicesImplTest {
     void testUploadFileUnauthorizedUser() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -911,7 +843,6 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -934,7 +865,6 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -959,7 +889,6 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -974,9 +903,7 @@ public class FileServicesImplTest {
         when(list.setFields(anyString())).thenReturn(list);
         when(list.execute()).thenThrow(IOException.class);
 
-        final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatus());
+        assertThrows(FileRetrievalException.class, () -> services.uploadFile(testCheckinId, fileToUpload));
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
@@ -990,7 +917,6 @@ public class FileServicesImplTest {
         String memberName = "testName";
         UUID testCheckinId = UUID.randomUUID();
 
-        setupMocksForAuth();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
@@ -1007,10 +933,11 @@ public class FileServicesImplTest {
         when(list.execute()).thenThrow(testException);
 
         //act
-        final HttpResponse<?> response = services.uploadFile(testCheckinId, fileToUpload);
+        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
+                () -> services.uploadFile(testCheckinId, fileToUpload));
 
         //assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(testException.getMessage(), responseException.getMessage());
         verify(googleDriveAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any());

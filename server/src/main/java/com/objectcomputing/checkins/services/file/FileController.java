@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.annotation.Error;
 import io.micronaut.http.hateoas.JsonError;
@@ -17,6 +18,7 @@ import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.io.File;
 import java.util.Set;
 import java.util.UUID;
 
@@ -48,8 +50,11 @@ public class FileController {
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
     @Get("{?id}")
-    public HttpResponse<?> findDocuments(@Nullable UUID id) {
-        return fileServices.findFiles(id);
+    public HttpResponse<Set<FileInfoDTO>> findDocuments(@Nullable UUID id) {
+        Set<FileInfoDTO> filesFromDrive = fileServices.findFiles(id);
+        return HttpResponse
+                .status(HttpStatus.OK)
+                .body(filesFromDrive);
     }
 
     /**
@@ -59,9 +64,11 @@ public class FileController {
      * @return {@link HttpResponse<java.io.File>} Returns file
      */
     @Get("/{uploadDocId}/download")
-    @Produces(MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<?> downloadDocument(@NotNull String uploadDocId) {
-        return fileServices.downloadFiles(uploadDocId);
+    public HttpResponse<File> downloadDocument(@NotNull String uploadDocId) {
+        File fileFromDrive = fileServices.downloadFiles(uploadDocId);
+        return HttpResponse
+                .status(HttpStatus.OK)
+                .body(fileFromDrive);
     }
 
     /**
@@ -71,8 +78,11 @@ public class FileController {
      * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<?> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
-        return fileServices.uploadFile(checkInId, file);
+    public HttpResponse<FileInfoDTO> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+        FileInfoDTO uploadedFile = fileServices.uploadFile(checkInId, file);
+        return HttpResponse
+                .status(HttpStatus.CREATED)
+                .body(uploadedFile);
     }
 
     /**
@@ -82,7 +92,9 @@ public class FileController {
      * @return HttpResponse
      */
     @Delete("/{uploadDocId}")
-    public HttpResponse<?> delete(@NotNull String uploadDocId) {
-        return fileServices.deleteFile(uploadDocId);
+    public HttpResponse delete(@NotNull String uploadDocId) {
+        fileServices.deleteFile(uploadDocId);
+        return HttpResponse
+                .status(HttpStatus.OK);
     }
 }

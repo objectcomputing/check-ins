@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.file;
 
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -43,9 +43,6 @@ public class FileControllerTest {
     @Inject
     private FileServices fileServices;
 
-    @Inject
-    private HttpResponse expectedResponse;
-
     @BeforeAll
     void createTestFile() throws IOException {
         testFile = new File(filePath);
@@ -62,12 +59,29 @@ public class FileControllerTest {
     @Test
     public void testFindAll() {
 
-        when(fileServices.findFiles(null)).thenReturn(expectedResponse);
+        UUID testCheckinId = UUID.randomUUID();
+
+        FileInfoDTO testFileInfoDto = new FileInfoDTO();
+        testFileInfoDto.setFileId("some.id");
+        testFileInfoDto.setName(testFile.getName());
+        testFileInfoDto.setCheckInId(testCheckinId);
+        testFileInfoDto.setSize(testFile.length());
+
+        Set<FileInfoDTO> testResultFromService = new HashSet<>();
+        testResultFromService.add(testFileInfoDto);
+
+        when(fileServices.findFiles(null)).thenReturn(testResultFromService);
 
         final HttpRequest<?> request = HttpRequest.GET("").basicAuth("some.email.id", MEMBER_ROLE);
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
+        final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
 
         assertNotNull(response);
+        Set<FileInfoDTO> result = response.getBody().get();
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(testFileInfoDto.getSize(), result.iterator().next().getSize());
+        assertEquals(testFileInfoDto.getFileId(), result.iterator().next().getFileId());
+        assertEquals(testFileInfoDto.getCheckInId(), result.iterator().next().getCheckInId());
+        assertEquals(testFileInfoDto.getName(), result.iterator().next().getName());
         verify(fileServices, times(1)).findFiles(null);
     }
 
@@ -75,12 +89,28 @@ public class FileControllerTest {
     public void testFindByCheckinId() {
 
         UUID testCheckinId = UUID.randomUUID();
-        when(fileServices.findFiles(testCheckinId)).thenReturn(expectedResponse);
+
+        FileInfoDTO testFileInfoDto = new FileInfoDTO();
+        testFileInfoDto.setFileId("some.id");
+        testFileInfoDto.setName(testFile.getName());
+        testFileInfoDto.setCheckInId(testCheckinId);
+        testFileInfoDto.setSize(testFile.length());
+
+        Set<FileInfoDTO> testResultFromService = new HashSet<>();
+        testResultFromService.add(testFileInfoDto);
+
+        when(fileServices.findFiles(testCheckinId)).thenReturn(testResultFromService);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", testCheckinId)).basicAuth("some.email.id", MEMBER_ROLE);
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
+        final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
 
         assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatus());
+        Set<FileInfoDTO> result = response.getBody().get();
+        assertEquals(testFileInfoDto.getSize(), result.iterator().next().getSize());
+        assertEquals(testFileInfoDto.getFileId(), result.iterator().next().getFileId());
+        assertEquals(testFileInfoDto.getCheckInId(), result.iterator().next().getCheckInId());
+        assertEquals(testFileInfoDto.getName(), result.iterator().next().getName());
         verify(fileServices, times(1)).findFiles(testCheckinId);
     }
 
@@ -88,14 +118,14 @@ public class FileControllerTest {
     public void testDownloadDocument() {
 
         String uploadDocId = "some.upload.id";
-        when(fileServices.downloadFiles(uploadDocId)).thenReturn(expectedResponse);
+        when(fileServices.downloadFiles(uploadDocId)).thenReturn(testFile);
 
         final HttpRequest<?> request= HttpRequest.GET(String.format("/%s/download", uploadDocId))
                                                             .basicAuth("some.email", MEMBER_ROLE);
         final HttpResponse<File> response = client.toBlocking().exchange(request, File.class);
 
         assertNotNull(response);
-        assertEquals(MediaType.MULTIPART_FORM_DATA, response.getContentType().get().toString());
+        assertEquals(HttpStatus.OK, response.getStatus());
         verify(fileServices, times(1)).downloadFiles(uploadDocId);
     }
 
@@ -103,7 +133,14 @@ public class FileControllerTest {
     public void testUploadEndpoint() {
 
         UUID testCheckinId = UUID.randomUUID();
-        when(fileServices.uploadFile(any(UUID.class), any(CompletedFileUpload.class))).thenReturn(expectedResponse);
+
+        FileInfoDTO testFileInfoDto = new FileInfoDTO();
+        testFileInfoDto.setFileId("some.id");
+        testFileInfoDto.setName(testFile.getName());
+        testFileInfoDto.setCheckInId(testCheckinId);
+        testFileInfoDto.setSize(testFile.length());
+
+        when(fileServices.uploadFile(any(UUID.class), any(CompletedFileUpload.class))).thenReturn(testFileInfoDto);
 
         final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", testCheckinId), MultipartBody.builder()
                                         .addPart("file", testFile).build())
@@ -112,6 +149,12 @@ public class FileControllerTest {
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
 
         assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        FileInfoDTO result = response.getBody().get();
+        assertEquals(testFileInfoDto.getSize(), result.getSize());
+        assertEquals(testFileInfoDto.getFileId(), result.getFileId());
+        assertEquals(testFileInfoDto.getCheckInId(), result.getCheckInId());
+        assertEquals(testFileInfoDto.getName(), result.getName());
         verify(fileServices, times(1)).uploadFile(any(UUID.class), any(CompletedFileUpload.class));
     }
 
@@ -138,13 +181,14 @@ public class FileControllerTest {
     public void testDeleteEndpoint() {
 
         String uploadDocId = "some.upload.id";
-        when(fileServices.deleteFile(uploadDocId)).thenReturn(expectedResponse);
+        doNothing().when(fileServices).deleteFile(uploadDocId);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
                                         .basicAuth("some.email.id", MEMBER_ROLE);
         final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatus());
         verify(fileServices, times(1)).deleteFile(uploadDocId);
     }
 
@@ -152,7 +196,7 @@ public class FileControllerTest {
     public void testHandleBadArgs() {
 
         String uploadDocId = "some.upload.id";
-        when(fileServices.deleteFile(uploadDocId)).thenThrow(FileRetrievalException.class);
+        doThrow(FileRetrievalException.class).when(fileServices).deleteFile(uploadDocId);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
                 .basicAuth("some.email.id", MEMBER_ROLE);
@@ -167,10 +211,5 @@ public class FileControllerTest {
     @MockBean(FileServices.class)
     public FileServices fileServices() {
         return mock(FileServices.class);
-    }
-
-    @MockBean(HttpResponse.class)
-    public HttpResponse expectedResponse() {
-        return mock(HttpResponse.class);
     }
 }
