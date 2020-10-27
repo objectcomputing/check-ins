@@ -707,10 +707,10 @@ void testCreateAnActionItemByAdmin() {
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-//        assertEquals(request.getPath(), href);
-        assertEquals("Internal Server Error: No member profile for id", error);
+        assertEquals(request.getPath(), href);
+        assertEquals("No member profile for id", error);
 
     }
 

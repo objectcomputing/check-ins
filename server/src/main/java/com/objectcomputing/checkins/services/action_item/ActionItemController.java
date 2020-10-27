@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -33,6 +34,15 @@ public class ActionItemController {
     private ActionItemServices actionItemServices;
     public ActionItemController(ActionItemServices actionItemServices) {
         this.actionItemServices = actionItemServices;
+    }
+
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, NotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
     }
 
     @Error(exception = BadArgException.class)
