@@ -21,10 +21,10 @@ public class CsrfModelProcessor{
     @Get("/cookie")
     public Map getCsrfToken()  {
         SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
+        byte[] randomBytes = new byte[24];
+        random.nextBytes(randomBytes);
 
-        return CollectionUtils.mapOf("_csrf", base64Encoder.encodeToString(bytes));
+        return CollectionUtils.mapOf("_csrf", base64Encoder.encodeToString(randomBytes));
 
     }
 }

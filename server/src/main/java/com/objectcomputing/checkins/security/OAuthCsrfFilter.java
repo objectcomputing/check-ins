@@ -12,14 +12,14 @@ import io.micronaut.http.filter.ServerFilterChain;
 import org.reactivestreams.Publisher;
 
 
-@Filter(value = {"/services/check-in", "/services/check-in/*"})
+@Filter(value = {"/services/*", "/services/*"})
 public class OAuthCsrfFilter extends OncePerRequestHttpServerFilter {
 
     @Override
     protected Publisher<MutableHttpResponse<?>> doFilterOnce(HttpRequest<?> request, ServerFilterChain chain) {
-        String requestParameter = request.getParameters().get("myCat");
+        String requestParameter = request.getParameters().get("_csrf");
         System.out.println("request paramater is:::"+requestParameter);
-        String cookieValue = request.getCookies().findCookie("myCat").map(Cookie::getValue).orElse(null);
+        String cookieValue = request.getCookies().findCookie("_csrf").map(Cookie::getValue).orElse(null);
         System.out.println("request cookie is:::"+cookieValue);
 
 
