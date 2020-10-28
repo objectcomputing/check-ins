@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { updateMember } from "../../api/member";
+import { getAllPDLs, getMember, updateMember } from "../../api/member";
 
-import {Modal, TextField} from "@material-ui/core";
-// import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Modal, TextField } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -15,7 +15,31 @@ import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const [editedMember, setMember] = useState(member);
+  const [pdls, setPdls] = useState([]);
+
+  const getPdls = async () => {
+    let res = await getAllPDLs();
+    let promises = res.payload.data.map((member) => getMember(member.memberid));
+    const results = await Promise.all(promises);
+    const pdlArray = results.map((res) => res.payload.data);
+    setPdls(pdlArray);
+  };
+
+  useEffect(() => {
+    if (open) {
+      getPdls();
+    }
+  }, [open]);
+
   let date = new Date(editedMember.startDate);
+
+  const onPdlChange = (event, newValue) => {
+    setMember({
+      ...editedMember,
+      pdlId: newValue ? newValue.id : "",
+    });
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <div className="member-modal">
@@ -62,6 +86,20 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           onChange={(e) =>
             setMember({ ...editedMember, insperityId: e.target.value })
           }
+        />
+        <Autocomplete
+          options={["", ...pdls]}
+          value={pdls.find((pdl) => pdl.id === editedMember.pdlId) || ""}
+          onChange={onPdlChange}
+          getOptionLabel={(option) => option.name || ""}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="fullWidth"
+              label="PDLs"
+              placeholder="Change PDL"
+            />
+          )}
         />
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker

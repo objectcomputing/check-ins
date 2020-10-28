@@ -9,7 +9,18 @@ export const getAllMembers = async () => {
       method: "get",
       url: memberProfileUrl,
       responseType: "json",
-      withCredentials: true
+      withCredentials: true,
+    })
+  );
+};
+
+export const getAllPDLs = async () => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: `${BASE_API_URL}/services/role?role=PDL`,
+      responseType: "json",
+      withCredentials: true,
     })
   );
 };
@@ -86,4 +97,4 @@ export const createMember = async (newMember) => {
       withCredentials: true,
     })
   );
-}
+};
