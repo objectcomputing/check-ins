@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import {
   getNoteByCheckinId,
@@ -22,6 +22,7 @@ const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
+  const noteRef = useRef([]);
   const { userProfile, currentCheckin, selectedProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
@@ -33,10 +34,8 @@ const Notes = (props) => {
   const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
   const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
-    (memberProfile &&
-      userProfile.role &&
-      userProfile.role.includes("PDL")) ||
-      userProfile.role.includes("ADMIN");
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    userProfile.role.includes("ADMIN");
 
   const canViewPrivateNote =
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
@@ -59,6 +58,22 @@ const Notes = (props) => {
         if (currentNote) {
           setNote(currentNote);
         } else if (id === selectedProfilePDLId) {
+          if (!noteRef.current.some((id) => id === currentCheckinId)) {
+            noteRef.current.push(currentCheckinId);
+            res = await createCheckinNote({
+              checkinid: currentCheckinId,
+              createdbyid: id,
+              description: "",
+            });
+            noteRef.current = noteRef.current.filter(
+              (id) => id !== currentCheckinId
+            );
+            if (res.error) throw new Error(res.error);
+            if (res && res.payload && res.payload.data) {
+              setNote(res.payload.data);
+            }
+          }
+        } else if (pdlorAdmin) {
           res = await createCheckinNote({
             checkinid: currentCheckinId,
             createdbyid: id,
@@ -75,9 +90,12 @@ const Notes = (props) => {
       setIsLoading(false);
     }
     getNotes();
-  }, [currentCheckinId, pdlId, id, selectedProfilePDLId]);
+  }, [currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
 
   const handleNoteChange = (e) => {
+    if (Object.keys(note) === 0) {
+      return;
+    }
     const { value } = e.target;
     setNote((note) => {
       const newNote = { ...note, description: value };
@@ -93,28 +111,32 @@ const Notes = (props) => {
   return (
     <div className="notes">
       <div>
-          <div>
-            <h1>
-              <NotesIcon style={{ marginRight: "10px" }} />
-              Notes for {memberName}
-            </h1>
-            <div className="container">
-              {isLoading ? (
-                <div className="skeleton">
-                  <Skeleton variant="text" height={"2rem"} />
-                  <Skeleton variant="text" height={"2rem"} />
-                  <Skeleton variant="text" height={"2rem"} />
-                  <Skeleton variant="text" height={"2rem"} />
-                </div>
-              ) : (
-                <textarea
-                  disabled={!pdlorAdmin || currentCheckin.completed === true}
-                  onChange={handleNoteChange}
-                  value={note && note.description ? note.description : ""}
-                ></textarea>
-              )}
-            </div>
+        <div>
+          <h1>
+            <NotesIcon style={{ marginRight: "10px" }} />
+            Notes for {memberName}
+          </h1>
+          <div className="container">
+            {isLoading ? (
+              <div className="skeleton">
+                <Skeleton variant="text" height={"2rem"} />
+                <Skeleton variant="text" height={"2rem"} />
+                <Skeleton variant="text" height={"2rem"} />
+                <Skeleton variant="text" height={"2rem"} />
+              </div>
+            ) : (
+              <textarea
+                disabled={
+                  !pdlorAdmin ||
+                  currentCheckin.completed === true ||
+                  Object.keys(note) === 0
+                }
+                onChange={handleNoteChange}
+                value={note && note.description ? note.description : ""}
+              ></textarea>
+            )}
           </div>
+        </div>
       </div>
       {canViewPrivateNote && (
         <div>

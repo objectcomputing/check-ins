@@ -1,21 +1,28 @@
-.action-items-container {
+.action-items > h1 {
+  display: flex;
+  align-items: center;
+  margin: 10px auto;
   width: 75%;
-  height: fit-content;
-  border: solid 2px black;
-  margin: 0 auto;
-  margin-top: 25px;
 }
 
-.description-field {
+.action-items-container {
+  border: solid 2px black;
+  height: fit-content;
+  margin: 0 auto;
+  width: 75%;
+}
+
+.add-action-item-div {
+  display: flex;
+  padding: 12px 8px;
+}
+
+.action-items .description-field {
   text-align: left;
   width: 100%;
   align-items: center;
   display: flex;
   flex-direction: row;
-}
-
-.delete-button {
-  background: red;
 }
 
 .action-items-info,
@@ -29,16 +36,37 @@
 .action-items-info-hidden {
   background-color: lightgrey;
   color: lightgrey;
+  width: 90%;
+}
+
+.action-items .drag-icon {
+  display: flex;
+  align-items: center;
+}
+
+.action-items .skeleton {
+  padding-right: 10px;
   width: 100%;
 }
 
-.image-div {
+.action-items-container .skeleton-div {
+  display: flex;
+}
+
+.action-items-container .image-div {
+  display: flex;
   cursor: auto;
   text-align: left;
   margin-bottom: 25px;
   margin-top: 25px;
 }
 
-.info-div {
-  display: block;
+.text-input {
+  padding: 5px;
+  width: 100%;
+}
+
+.action-item-button-div {
+  display: flex;
+  flex-direction: row;
 }

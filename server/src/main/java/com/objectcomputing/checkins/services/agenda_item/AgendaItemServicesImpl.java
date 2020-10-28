@@ -46,6 +46,14 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         if (agendaItem != null) {
             final UUID checkinId = agendaItem.getCheckinid();
             final UUID createById = agendaItem.getCreatedbyid();
+            double lastDisplayOrder = 0;
+            try {
+                lastDisplayOrder = agendaItemRepository.findMaxPriorityByCheckinid(agendaItem.getCheckinid()).orElse(Double.valueOf(0));
+            } catch (NullPointerException npe) {
+                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+                //nothing needs to happen here.
+            }
+            agendaItem.setPriority(lastDisplayOrder+1);
             CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
             Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;

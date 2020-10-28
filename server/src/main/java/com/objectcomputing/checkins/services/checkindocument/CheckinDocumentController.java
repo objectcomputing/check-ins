@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -24,18 +23,33 @@ import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.concurrent.ExecutorService;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+import io.micronaut.scheduling.TaskExecutors;
 
 @Controller("/services/checkin-document")
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "checkin document")
+
 public class CheckinDocumentController {
+        
+    private final CheckinDocumentServices checkinDocumentService;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-    @Inject
-    CheckinDocumentServices checkinDocumentService;
-
+    public CheckinDocumentController(CheckinDocumentServices checkinDocumentService,
+                                    EventLoopGroup eventLoopGroup,
+                                    @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
+        this.checkinDocumentService = checkinDocumentService;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
+    
     @Error(exception = CheckinDocumentBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckinDocumentBadArgException e) {
         JsonError error = new JsonError(e.getMessage())
@@ -53,8 +67,11 @@ public class CheckinDocumentController {
      */
 
     @Get("/{?checkinsId}")
-    public Set<CheckinDocument> findCheckinDocuments(@Nullable UUID checkinsId) {
-        return checkinDocumentService.read(checkinsId);
+    public Single<HttpResponse<Set<CheckinDocument>>> findCheckinDocument(@Nullable UUID checkinsId) {
+        return Single.fromCallable(() -> checkinDocumentService.read(checkinsId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(checkinDocuments -> {return (HttpResponse<Set<CheckinDocument>>) HttpResponse.ok(checkinDocuments);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -64,13 +81,15 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
 
-    @Post(value = "/")
-    public HttpResponse<CheckinDocument> createACheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
-                                                                HttpRequest<CheckinDocumentCreateDTO> request) {
-        CheckinDocument newCheckinDocument = checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(), checkinDocument.getUploadDocId()));
-        return HttpResponse
-                .created(newCheckinDocument)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newCheckinDocument.getId()))));
+    @Post("/")
+    public Single<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
+                                                                    HttpRequest<CheckinDocumentCreateDTO> request) {
+        return Single.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(createdCheckinDocument -> {return (HttpResponse<CheckinDocument>) HttpResponse
+                    .created(createdCheckinDocument)
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdCheckinDocument.getId()))));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -80,12 +99,19 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
     @Put("/")
-    public HttpResponse<CheckinDocument> update(@Body @Valid CheckinDocument checkinDocument, HttpRequest<CheckinDocument> request) {
-        CheckinDocument updatedCheckinDocument = checkinDocumentService.update(checkinDocument);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), updatedCheckinDocument.getId()))))
-                .body(updatedCheckinDocument);
+    public Single<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
+                                            HttpRequest<CheckinDocument> request) {
+        if (checkinDocument == null) {
+            return Single.just(HttpResponse.ok());
+        }
+        return Single.fromCallable(() -> checkinDocumentService.update(checkinDocument))
+            .observeOn(Schedulers.from(eventLoopGroup))
+            .map(updatedCheckinDocument -> (HttpResponse<CheckinDocument>) HttpResponse
+                    .ok()
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedCheckinDocument.getId()))))
+                    .body(updatedCheckinDocument))
+            .subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
     /**
@@ -97,7 +123,7 @@ public class CheckinDocumentController {
     @Delete("/{checkinsId}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> delete(UUID checkinsId) {
-        checkinDocumentService.delete(checkinsId);
+        checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse
                 .noContent();
     }

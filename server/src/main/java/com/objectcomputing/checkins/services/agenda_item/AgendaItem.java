@@ -42,17 +42,29 @@ public class AgendaItem {
     @Schema(description = "description of the agenda item")
     private String description;
 
-    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, @Nullable String description) {
+    @Column(name = "priority")
+    @Schema(description = "Allow for a user defined display order")
+    private double priority;
+
+    public AgendaItem(UUID checkinid, UUID createdbyid, String description) {
+        this(null, checkinid, createdbyid, description);
+    }
+
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
+        this(id,checkinid,createdbyid,description,1.0);
+    }
+
+    public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
+        this(null, checkinid, createdbyid, description, priority);
+    }
+
+    public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description, double priority) {
         this.id = id;
         this.checkinid = checkinid;
         this.createdbyid = createdbyid;
         this.description = description;
+        this.priority = priority;
     }
-
-    public AgendaItem(UUID checkinid, UUID createdbyid, @Nullable String description) {
-        this(null, checkinid, createdbyid, description);
-    }
-
     public UUID getId() {
         return this.id;
     }
@@ -85,6 +97,14 @@ public class AgendaItem {
         this.description = description;
     }
 
+    public double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(double priority) {
+        this.priority = priority;
+    }
+
     @Override
     public String toString() {
         return "AgendaItems{" +
@@ -92,6 +112,7 @@ public class AgendaItem {
                 ", checkinid=" + checkinid +
                 ", createdbyid=" + createdbyid +
                 ", description='" + description + '\'' +
+                ", priority=" + priority +
                 '}';
     }
 
@@ -100,7 +121,8 @@ public class AgendaItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgendaItem that = (AgendaItem) o;
-        return Objects.equals(id, that.id) &&
+        return Double.compare(that.priority, priority) == 0 &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(checkinid, that.checkinid) &&
                 Objects.equals(createdbyid, that.createdbyid) &&
                 Objects.equals(description, that.description);
@@ -108,7 +130,7 @@ public class AgendaItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid, description);
+        return Objects.hash(id, checkinid, createdbyid, description,priority);
     }
 
 }
