@@ -1,33 +1,33 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
-  findActionItem,
-  deleteActionItem,
-  updateActionItem,
-  createActionItem,
-} from "../../api/actionitem.js";
+  getAgendaItem,
+  deleteAgendaItem,
+  updateAgendaItem,
+  createAgendaItem,
+} from "../../api/agenda.js";
 import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
 import { debounce } from "lodash/function";
 import DragIndicator from "@material-ui/icons/DragIndicator";
+import AdjustIcon from "@material-ui/icons/Adjust";
 import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import RemoveIcon from "@material-ui/icons/Remove";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-import "./ActionItemsPanel.css";
+import "./Agenda.css";
 
-const doUpdate = async (actionItem) => {
-  if (actionItem) {
-    await updateActionItem(actionItem);
+const doUpdate = async (agendaItem) => {
+  if (agendaItem) {
+    await updateAgendaItem(agendaItem);
   }
 };
 
 const updateItem = debounce(doUpdate, 1500);
 
-const ActionItemsPanel = ({ checkinId, memberName }) => {
+const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const { memberProfile } = userProfile;
@@ -36,35 +36,32 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
 
-  const [actionItems, setActionItems] = useState([]);
+  const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getActionItems = async (checkinId) => {
+  const getAgendaItems = async (checkinId) => {
     setIsLoading(true);
-    let res = await findActionItem(checkinId, null);
+    let res = await getAgendaItem(checkinId, null);
     if (res && res.payload) {
-      let actionItemList =
+      let agendaItemList =
         res.payload.data && !res.error ? res.payload.data : undefined;
-      setActionItems(actionItemList);
+      agendaItemList.sort((a, b) => {
+        return a.priority - b.priority;
+      });
+      setAgendaItems(agendaItemList);
       setIsLoading(false);
     }
   };
 
   const deleteItem = async (id) => {
     if (id) {
-      await deleteActionItem(id);
-    }
-  };
-
-  const doUpdate = async (actionItem) => {
-    if (actionItem) {
-      await updateActionItem(actionItem);
+      await deleteAgendaItem(id);
     }
   };
 
   useEffect(() => {
-    getActionItems(checkinId);
+    getAgendaItems(checkinId);
   }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
@@ -87,81 +84,72 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     const { index } = result.destination;
     const sourceIndex = result.source.index;
     if (index !== sourceIndex) {
-      const lastIndex = actionItems.length - 1;
+      const lastIndex = agendaItems.length - 1;
       const precedingPriority =
-        index === 0 ? 0 : actionItems[index - 1].priority;
+        index === 0 ? 0 : agendaItems[index - 1].priority;
       const followingPriority =
         index === lastIndex
-          ? actionItems[lastIndex].priority
-          : actionItems[index].priority;
+          ? agendaItems[lastIndex].priority + 1
+          : agendaItems[index].priority;
 
       let newPriority = (precedingPriority + followingPriority) / 2;
-      if (actionItems[sourceIndex].priority <= followingPriority) {
+      if (agendaItems[sourceIndex].priority <= followingPriority) {
         newPriority += 1;
       }
 
-      setActionItems((actionItems) => {
-        actionItems[sourceIndex].priority = newPriority;
-        reorder(actionItems, sourceIndex, index);
-        return actionItems;
+      setAgendaItems((agendaItems) => {
+        agendaItems[sourceIndex].priority = newPriority;
+        reorder(agendaItems, sourceIndex, index);
+        return agendaItems;
       });
 
-      doUpdate(actionItems[result.destination.index]);
+      doUpdate(agendaItems[result.destination.index]);
     }
   };
 
-  const makeActionItem = async () => {
+  const makeAgendaItem = async () => {
     if (!checkinId || !id || description === "") {
       return;
-    } else if (!pdlorAdmin) {
-      dispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast: "Must be PDL or Admin to add Action Item",
-        },
-      });
-      return;
     }
-    let newActionItem = {
+    let newAgendaItem = {
       checkinid: checkinId,
       createdbyid: id,
       description: description,
     };
-    const res = await createActionItem(newActionItem);
+    const res = await createAgendaItem(newAgendaItem);
     if (!res.error && res.payload && res.payload.data) {
-      newActionItem.id = res.payload.data.id;
-      newActionItem.priority = res.payload.data.priority;
+      newAgendaItem.id = res.payload.data.id;
+      newAgendaItem.priority = res.payload.data.priority;
       setDescription("");
-      setActionItems([...actionItems, newActionItem]);
+      setAgendaItems([...agendaItems, newAgendaItem]);
     }
   };
 
+  const killAgendaItem = (id) => {
+    deleteItem(id);
+    let newItems = agendaItems.filter((agendaItem) => {
+      return agendaItem.id !== id;
+    });
+    setAgendaItems(newItems);
+  };
+
   const handleDescriptionChange = (index, e) => {
-    if (actionItems[index].createdbyid !== id) {
+    if (agendaItems[index].createdbyid !== id) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: "Action Items can only be edited by creator",
+          toast: "Agenda Items can only be edited by creator",
         },
       });
       return;
     }
     const { value } = e.target;
-    actionItems[index].description = value;
-    setActionItems(() => {
-      updateItem(actionItems[index]);
-      return [...actionItems];
+    agendaItems[index].description = value;
+    setAgendaItems(() => {
+      updateItem(agendaItems[index]);
+      return [...agendaItems];
     });
-  };
-
-  const killActionItem = (id) => {
-    deleteItem(id);
-    let newItems = actionItems.filter((actionItem) => {
-      return actionItem.id !== id;
-    });
-    setActionItems(newItems);
   };
 
   const createFakeEntry = (item) => {
@@ -177,18 +165,18 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     );
   };
 
-  const createActionItemEntries = () => {
-    if (actionItems && actionItems.length > 0) {
-      return actionItems.map((actionItem, index) => (
+  const createAgendaItemEntries = () => {
+    if (agendaItems && agendaItems.length > 0) {
+      return agendaItems.map((agendaItem, index) => (
         <Draggable
           disabled={!pdlorAdmin}
-          key={actionItem.id}
-          draggableId={actionItem.id}
+          key={agendaItem.id}
+          draggableId={agendaItem.id}
           index={index}
         >
           {(provided, snapshot) => (
             <div
-              key={actionItem.id}
+              key={agendaItem.id}
               ref={provided.innerRef}
               {...provided.draggableProps}
               style={getItemStyle(
@@ -197,12 +185,12 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
               )}
             >
               <div className="description-field">
-                <span style={{ cursor: "grab" }} {...provided.dragHandleProps}>
+                <span {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
                 {isLoading ? (
                   <div className="skeleton">
-                    <Skeleton className="test" variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                     <Skeleton variant="text" height={"2rem"} />
                   </div>
@@ -210,14 +198,14 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                   <input
                     className="text-input"
                     onChange={(e) => handleDescriptionChange(index, e)}
-                    value={actionItem.description}
+                    value={agendaItem.description}
                   />
                 )}
-                <div className="action-item-button-div">
+                <div className="agenda-item-button-div">
                   <IconButton
                     aria-label="delete"
                     className="delete-icon"
-                    onClick={(e) => killActionItem(actionItem.id, e)}
+                    onClick={(e) => killAgendaItem(agendaItem.id, e)}
                   >
                     <RemoveIcon />
                   </IconButton>
@@ -230,52 +218,53 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     } else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
+        fake[i] = createFakeEntry({ id: `${i + 1}Agenda` });
       }
       return fake;
     }
   };
 
   return (
-    <div className="action-items">
+    <div className="agenda-items">
       <h1>
-        <ArrowForwardIcon style={{ fontSize: "larger", marginRight: "10px" }} />
-        Action Items for {memberName}
+        <AdjustIcon style={{ fontSize: "larger", marginRight: "10px" }} />
+        Agenda Items for {memberName}
       </h1>
-      <div className="action-items-container">
+      <div className="agenda-items-container">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                {createActionItemEntries()}
+                {createAgendaItemEntries()}
+                {provided.placeholder}
+                <div className="add-agenda-item-div">
+                  <input
+                    className="text-input"
+                    placeholder="Add an agenda item"
+                    onChange={(e) => setDescription(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && description !== "") {
+                        makeAgendaItem();
+                      }
+                    }}
+                    value={description ? description : ""}
+                  />
+                  <IconButton
+                    aria-label="create"
+                    className="edit-icon"
+                    onClick={() => makeAgendaItem()}
+                  >
+                    <SaveIcon />
+                  </IconButton>
+                </div>
                 {provided.placeholder}
               </div>
             )}
           </Droppable>
         </DragDropContext>
-        <div className="add-action-item-div">
-          <input
-            className="text-input"
-            placeholder="Add action item"
-            onChange={(e) => setDescription(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && description !== "") {
-                makeActionItem();
-              }
-            }}
-            value={description ? description : ""}
-          />
-          <IconButton
-            aria-label="create"
-            className="edit-icon"
-            onClick={() => makeActionItem()}
-          >
-            <SaveIcon />
-          </IconButton>
-        </div>
       </div>
     </div>
   );
 };
 
-export default ActionItemsPanel;
+export default AgendaItems;

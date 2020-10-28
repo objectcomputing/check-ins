@@ -11,4 +11,6 @@ public interface TeamServices {
     Team update(Team g);
 
     Set<Team> findByFields(String name, UUID memberid);
+
+    void delete(UUID id);
 }

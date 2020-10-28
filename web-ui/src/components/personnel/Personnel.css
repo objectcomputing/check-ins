@@ -10,7 +10,8 @@
   margin: auto;
 }
 
-.personnel-info, .personnel-info-hidden {
+.personnel-info,
+.personnel-info-hidden {
   text-align: left;
   margin-left: 15px;
   display: inline-block;
@@ -24,9 +25,9 @@
   width: 100%;
 }
 
-.image-div {
-  cursor: auto;
-  margin-left : 15px;
+.personnel-container .image-div {
+  cursor: pointer;
+  margin-left: 15px;
   text-align: left;
   margin-bottom: 25px;
   margin-top: 25px;
