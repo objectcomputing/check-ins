@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -137,7 +138,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if(isError) {
-            throw new CheckInBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }

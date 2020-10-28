@@ -1,33 +1,23 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.net.URI;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-import javax.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Consumes;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
-import io.micronaut.security.authentication.Authentication;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-import io.micronaut.http.annotation.Error;
+import javax.annotation.Nullable;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.util.Set;
+import java.util.UUID;
 
 @Controller("/services/check-in")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -42,8 +32,8 @@ public class CheckInController {
         this.checkInServices = checkInServices;
     }
 
-    @Error(exception = CheckInBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckInBadArgException e) {
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
