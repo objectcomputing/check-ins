@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.memberdirectory;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.User;
+import com.google.api.services.admin.directory.model.UserPhoto;
 import com.google.api.services.admin.directory.model.Users;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
@@ -26,20 +27,8 @@ public class MemberDirectoryServiceImpl implements MemberDirectoryService{
     public MemberProfile getByEmailAddress(String workEmail) {
         try {
             Directory directory = googleApiAccess.getDirectory();
-            Users result = directory.users().list()
-                            .setDomain("objectcomputing.com")
-                            .setMaxResults(10)
-                            .setOrderBy("email")
-                            .execute();
-            List<User> users = result.getUsers();
-            if (users == null || users.size() == 0) {
-                System.out.println("No users found.");
-            } else {
-                System.out.println("Users:");
-                for (User user : users) {
-                    System.out.println(user.getName().getFullName());
-                }
-            }
+
+            UserPhoto abcd = directory.users().photos().get("bagurp@objectcomputing.com").execute();
 
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Directory API", e);
