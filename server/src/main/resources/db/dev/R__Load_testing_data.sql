@@ -126,11 +126,6 @@ VALUES
 INSERT INTO role
     (id, role, memberid)
 VALUES
-    ('9ec3a49e-18a0-11eb-adc1-0242ac120002', 'PDL', '6884ab96-2275-4af9-89d8-ad84254d8759');
-
-INSERT INTO role
-    (id, role, memberid)
-VALUES
     ('883250f1-e26e-490e-bcec-be19d1e0538c', 'MEMBER', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
 INSERT INTO role
