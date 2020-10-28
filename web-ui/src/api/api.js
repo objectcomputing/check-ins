@@ -12,6 +12,7 @@ export const resolve = async (promise) => {
 
   try {
     resolved.payload = await promise;
+    resolved.cookies = sessionStorage.getItem("_csrf");
   } catch (e) {
     resolved.error = e;
     console.log(e);

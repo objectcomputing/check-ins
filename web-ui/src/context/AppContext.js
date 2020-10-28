@@ -2,11 +2,9 @@ import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
-import Cookies from 'universal-cookie';
+// import Cookies from "universal-cookie";
 import axios from "axios";
-import {resolve} from '../api/api.js'
-
-
+import { resolve } from "../api/api.js";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const UPDATE_USER_BIO = "@@check-ins/update_bio";
@@ -18,7 +16,6 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
-export const GET_COOKIE="@@check-ins/get_cookie";
 
 const AppContext = React.createContext();
 
@@ -64,8 +61,6 @@ const reducer = (state, action) => {
         state.checkins = [];
       }
       break;
-    case GET_COOKIE:
-       state._csrf = action.payload
     default:
   }
   return { ...state };
@@ -83,7 +78,6 @@ const initialState = {
     toast: "",
   },
   userProfile: undefined,
-  _csrf:undefined,
 };
 
 const getCheckins = async (id, pdlId, date, dispatch) => {
@@ -137,29 +131,30 @@ const AppContextProvider = (props) => {
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
+
   const getCookie = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: 'http://localhost:8080/csrf/cookie',
-      responseType: "json",
-      withCredentials: true,
-    })
-  );
-};
-//let _csrf;
- useEffect(async()  => {
- let res = await getCookie()
- console.log({res})
- if(res&&res.payload&&res.payload.data){
-    const {_csrf}= res.payload.data
-    dispatch({type: GET_COOKIE, payload: _csrf})}
-    }, []);
- if(state._csrf){
- const cookies = new Cookies();
- cookies.set('_csrf', state._csrf, { path: '/' });
- console.log(state._csrf)
- }
+    return await resolve(
+      axios({
+        method: "get",
+        url: "http://localhost:8080/csrf/cookie",
+        responseType: "text",
+        withCredentials: true,
+      })
+    );
+  };
+
+  // const cookies = new Cookies();
+
+  useEffect(async () => {
+    let res = await getCookie();
+    if (res && res.payload && res.payload.data) {
+      console.log({ res });
+      const { _csrf } = res.payload.data;
+      // cookies.set("_csrf", _csrf, { path: "/" });
+      sessionStorage.setItem("_csrf", _csrf);
+    }
+  }, []);
+
   useEffect(() => {
     async function updateUserProfile() {
       let res = await getCurrentUser();
