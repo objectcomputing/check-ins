@@ -26,11 +26,6 @@ const MemberSummaryCard = ({ member, index }) => {
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
-  // const [selectValue, setSelectValue] = useState("terminate");
-
-  // const handleSelectChange = (e) => {
-  //   setSelectValue(e.target.value);
-  // };
 
   return (
     <Card className="member-card">
@@ -58,6 +53,7 @@ const MemberSummaryCard = ({ member, index }) => {
             <CardActions>
               <Button onClick={handleOpen}>Edit Member</Button>
               <Button>Terminate Member</Button>
+              <Button>Delete Member</Button>
               <MemberModal
                 member={currentMember}
                 open={open}
@@ -73,13 +69,6 @@ const MemberSummaryCard = ({ member, index }) => {
                   handleClose();
                 }}
               />
-              {/* <div>
-            <select value={selectValue} onChange={handleSelectChange}>
-              <option value="terminate">Terminate</option>
-              <option value="delete">Delete</option>
-            </select> */}
-              {/* <Button>{selectValue} Member</Button> */}
-              {/* </div> */}
             </CardActions>
           </div>
         )}
