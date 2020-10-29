@@ -15,6 +15,7 @@ import io.micronaut.context.env.Environment;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,10 +65,11 @@ public class GoogleAccessor {
 
         String apiScope = environment.getProperty("check-ins.application.scopes.scopeForDirectoryApi", String.class).orElse("");
         String delegatedUser = environment.getProperty("check-ins.application.google-api.delegated-user", String.class).orElse("");
-        List<String> scope = Collections.singletonList(apiScope);
+        List<String> scope = Arrays.asList(apiScope.split(","));
 
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
                 authenticator.setupServiceAccountCredentials(scope, delegatedUser));
+
         return new Directory
                 .Builder(httpTransport, JSON_FACTORY, requestInitializer)
                 .setApplicationName(applicationName)
