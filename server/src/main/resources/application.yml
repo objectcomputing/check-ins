@@ -68,7 +68,7 @@ check-ins:
   application:
     name: "OCI Check-ins"
     google-api:
-      impersonated-user: "mckiernanc@objectcomputing.com"
+      delegated-user: "kimberlinm@objectcomputing.com"
     scopes:
       scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
       scopeForDirectoryApi:

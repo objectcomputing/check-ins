@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ImpersonatedCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Requires;
@@ -50,25 +49,21 @@ public class GoogleAuthenticator {
     }
 
     /**
-     * Creates an authorized ImpersonatedCredentials object.
+     * Creates an authorized ServiceAccountCredentials object.
      * @param scopes, the scope(s) of access to request for this application
-     * @param impersonatedUser, the email of the impersonated user
-     * @return An authorized ImpersonatedCredentials object.
+     * @param delegatedUser, the email of the delegated user
+     * @return An authorized ServiceAccountCredentials object.
      * @throws IOException If the service account configurations cannot be found.
      */
-    ImpersonatedCredentials setupImpersonatedCredentials(@NotNull final List<String> scopes, @NotNull final String impersonatedUser) throws IOException {
-        ImpersonatedCredentials targetCredentials = null;
-        ServiceAccountCredentials sourceCredentials;
+    ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) throws IOException {
+        ServiceAccountCredentials sourceCredentials = null;
         try(InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8))) {
             sourceCredentials = ServiceAccountCredentials.fromStream(in);
-            sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes);
-            targetCredentials = ImpersonatedCredentials.create(sourceCredentials,
-                    impersonatedUser, null, scopes, 3600);
-
+            sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return targetCredentials;
+        return sourceCredentials;
     }
 }
 
