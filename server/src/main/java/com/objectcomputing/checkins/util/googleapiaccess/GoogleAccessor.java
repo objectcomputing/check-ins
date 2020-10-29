@@ -63,11 +63,11 @@ public class GoogleAccessor {
     public Directory accessGoogleDirectory() throws IOException {
 
         String apiScope = environment.getProperty("check-ins.application.scopes.scopeForDirectoryApi", String.class).orElse("");
-        String impersonatedUser = environment.getProperty("check-ins.application.google-api.impersonated-user", String.class).orElse("");
+        String delegatedUser = environment.getProperty("check-ins.application.google-api.delegated-user", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
 
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
-                authenticator.setupImpersonatedCredentials(scope, impersonatedUser));
+                authenticator.setupServiceAccountCredentials(scope, delegatedUser));
         return new Directory
                 .Builder(httpTransport, JSON_FACTORY, requestInitializer)
                 .setApplicationName(applicationName)
