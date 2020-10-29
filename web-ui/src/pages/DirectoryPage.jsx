@@ -52,7 +52,7 @@ const DirectoryPage = () => {
           member={member}
         />
       );
-    }
+    } else return null;
   });
 
   return (
