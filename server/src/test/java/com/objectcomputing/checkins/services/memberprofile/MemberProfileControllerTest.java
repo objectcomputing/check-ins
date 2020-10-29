@@ -174,8 +174,6 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testPUTUpdateMemberProfile() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        // MemberProfileUpdateDTO memberProfile = mkUpdateMemberProfileDTO();
-        // startDate=LocalDate.now();
         memberProfile.setStartDate(LocalDate.of(2019, 1, 01));
 
         final HttpRequest<MemberProfile> request = HttpRequest.PUT("/", memberProfile)
@@ -192,7 +190,6 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
         memberProfileCreateDTO.setName("reincarnation");
-        // memberProfileCreateDTO.setPending(true);
 
         final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.
                 PUT("/", memberProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -216,7 +213,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     }
 
-    // Find By id - when no user data exists
+    // Find By id - when no user data exists for POST
     @Test
     public void testPostValidationFailures() {
 
@@ -232,7 +229,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    // Find By id - when no user data exists
+    // Find By id - when no user data exists for PUT
     @Test
     public void testPutValidationFailures() {
 
