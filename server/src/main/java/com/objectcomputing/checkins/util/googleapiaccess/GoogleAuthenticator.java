@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ImpersonatedCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -45,6 +47,28 @@ public class GoogleAuthenticator {
         }
 
         return scopes.isEmpty() ? credentials : credentials.createScoped(scopes);
+    }
+
+    /**
+     * Creates an authorized ImpersonatedCredentials object.
+     * @param scopes, the scope(s) of access to request for this application
+     * @param impersonatedUser, the email of the impersonated user
+     * @return An authorized ImpersonatedCredentials object.
+     * @throws IOException If the service account configurations cannot be found.
+     */
+    ImpersonatedCredentials setupImpersonatedCredentials(@NotNull final List<String> scopes, @NotNull final String impersonatedUser) throws IOException {
+        ImpersonatedCredentials targetCredentials = null;
+        ServiceAccountCredentials sourceCredentials;
+        try(InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8))) {
+            sourceCredentials = ServiceAccountCredentials.fromStream(in);
+            sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes);
+            targetCredentials = ImpersonatedCredentials.create(sourceCredentials,
+                    impersonatedUser, null, scopes, 3600);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return targetCredentials;
     }
 }
 
