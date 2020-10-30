@@ -63,7 +63,7 @@ public class GoogleAccessor {
      */
     public Directory accessGoogleDirectory() throws IOException {
 
-        String apiScope = environment.getProperty("check-ins.application.scopes.scopeForDirectoryApi", String.class).orElse("");
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDirectoryApi", String.class).orElse("");
         String delegatedUser = environment.getProperty("check-ins.application.google-api.delegated-user", String.class).orElse("");
         List<String> scope = Arrays.asList(apiScope.split(","));
 

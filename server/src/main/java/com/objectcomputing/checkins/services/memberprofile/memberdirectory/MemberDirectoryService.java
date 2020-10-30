@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile.memberdirectory;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import java.io.IOException;
+import java.util.HashMap;
 
 public interface MemberDirectoryService {
-    MemberProfile getByEmailAddress(String workEmail);
+    HashMap<String, String> getImagesOfAllUsers();
+    String getImageByEmailAddress(String workEmail);
+    void setImagesOfAllUsers() throws IOException;
 }

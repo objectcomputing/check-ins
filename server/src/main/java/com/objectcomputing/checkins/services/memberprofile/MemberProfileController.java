@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -87,9 +88,10 @@ public class MemberProfileController {
      */
     @Get("/{?name,title,pdlId,workEmail}")
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
-                                                                    @Nullable UUID pdlId, @Nullable String workEmail) {
+                                                                    @Nullable UUID pdlId, @Nullable String workEmail) throws IOException {
 
-        MemberProfile test = memberDirectoryService.getByEmailAddress(workEmail);
+        memberDirectoryService.setImagesOfAllUsers();
+
         return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(memberProfiles -> {

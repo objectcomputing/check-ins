@@ -68,12 +68,10 @@ check-ins:
   application:
     name: "OCI Check-ins"
     google-api:
-      delegated-user: "kimberlinm@objectcomputing.com"
-    scopes:
-      scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
-      scopeForDirectoryApi:
-        - "https://www.googleapis.com/auth/admin.directory.user.readonly"
-        - "https://www.googleapis.com/auth/admin.directory.user"
+      delegated-user: ${ GSUITE_SUPER_ADMIN }
+      scopes:
+        scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
+        scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
 ---
 flyway:
   enabled: enabled

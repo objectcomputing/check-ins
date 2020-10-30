@@ -4,36 +4,59 @@ import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.User;
 import com.google.api.services.admin.directory.model.UserPhoto;
 import com.google.api.services.admin.directory.model.Users;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.util.List;
+import java.util.Base64;
+import java.util.HashMap;
 
 @Singleton
 public class MemberDirectoryServiceImpl implements MemberDirectoryService{
 
-    private static final Logger LOG = LoggerFactory.getLogger(MemberDirectoryServiceImpl.class);
     private final GoogleApiAccess googleApiAccess;
 
     public MemberDirectoryServiceImpl(GoogleApiAccess googleApiAccess) {
         this.googleApiAccess = googleApiAccess;
     }
 
+    HashMap<String, String> googlePhotos = new HashMap<String, String>();
+
     @Override
-    public MemberProfile getByEmailAddress(String workEmail) {
-        try {
-            Directory directory = googleApiAccess.getDirectory();
+    public HashMap<String, String> getImagesOfAllUsers() {
+        return this.googlePhotos;
+    }
 
-            UserPhoto abcd = directory.users().photos().get("bagurp@objectcomputing.com").execute();
+    @Override
+    public String getImageByEmailAddress(String workEmail) {
+        return googlePhotos.get(workEmail);
+    }
 
-        } catch (IOException e) {
-            LOG.error("Error occurred while retrieving files from Google Directory API", e);
+    @Override
+    public void setImagesOfAllUsers() throws IOException {
+
+        Directory directory = googleApiAccess.getDirectory();
+        Users userDirectory = directory.users().list()
+                                .setDomain("objectcomputing.com")
+                                .setMaxResults(500)
+                                .execute();
+
+        for (User user : userDirectory.getUsers()) {
+            String email = user.getPrimaryEmail();
+            if(user.getThumbnailPhotoUrl() != null) {
+                UserPhoto userPhoto = directory.users().photos().get(email).execute();
+                String photoData = convertPhotoData(userPhoto.getPhotoData());
+                googlePhotos.put(email, photoData);
+            } else {
+                googlePhotos.put(email, "");
+            }
         }
+    }
 
-        return null;
+    private String convertPhotoData(String photoData) {
+        // converts an encoded URL to String URL
+        byte[] actualByte = Base64.getUrlDecoder().decode(photoData);
+        byte[] encodedByte = Base64.getEncoder().encode(actualByte);
+        return new String(encodedByte);
     }
 }
