@@ -1,158 +1,177 @@
-import React, {useState} from 'react';
-import './ActionItemsPanel.css';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import React, { useState, useEffect, useContext } from "react";
+
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   findActionItem,
   deleteActionItem,
-  updateActionItem
-} from '../../api/actionitem.js';
-import DragIndicator from '@material-ui/icons/DragIndicator';
+  updateActionItem,
+  createActionItem,
+} from "../../api/actionitem.js";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
-const ActionItemsPanel = ({checkinId, mockActionItems}) => {
-  let [actionItems, setActionItems] = useState();
+import { debounce } from "lodash/function";
+import DragIndicator from "@material-ui/icons/DragIndicator";
+import Skeleton from "@material-ui/lab/Skeleton";
+import IconButton from "@material-ui/core/IconButton";
+import SaveIcon from "@material-ui/icons/Done";
+import RemoveIcon from "@material-ui/icons/Remove";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
-  async function doDelete(id) {
-    if (id) {
-      await deleteActionItem(id);
-    }
+import "./ActionItemsPanel.css";
+
+const doUpdate = async (actionItem) => {
+  if (actionItem) {
+    await updateActionItem(actionItem);
   }
+};
 
-  async function doUpdate(actionItem) {
-    if (actionItem) {
-      await updateActionItem(actionItem);
-    }
-  }
+const updateItem = debounce(doUpdate, 1500);
 
-  let [prevActionItems, setPrevActionItems] = useState();
+const ActionItemsPanel = ({ checkinId, memberName }) => {
+  const { state, dispatch } = useContext(AppContext);
+  const { userProfile } = state;
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
+  const pdlorAdmin =
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    userProfile.role.includes("ADMIN");
 
-  const actionItemsCompare = currItems => {
-    if (!prevActionItems) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    if (prevActionItems.length !== currItems.length) {
-      setPrevActionItems(currItems);
-      return true;
-    }
-    for (var i = 0; i < prevActionItems.length; i++) {
-      if (prevActionItems[i].id !== currItems[i].id) {
-        setPrevActionItems(currItems);
-        return true;
-      }
-    }
-    return false;
-  };
+  const [actionItems, setActionItems] = useState([]);
+  const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function getActionItems() {
-    if (mockActionItems) {
-      setActionItems(mockActionItems);
-      return;
-    }
-
+  const getActionItems = async (checkinId) => {
+    setIsLoading(true);
     let res = await findActionItem(checkinId, null);
     if (res && res.payload) {
       let actionItemList =
         res.payload.data && !res.error ? res.payload.data : undefined;
       setActionItems(actionItemList);
+      setIsLoading(false);
     }
-  }
-
-  React.useEffect(() => {
-    if (actionItemsCompare(actionItems)) {
-      getActionItems();
-    }
-  });
-
-  const getActionItemStyle = actionItem => {
-    if (actionItem && actionItem.description) {
-      return 'action-items-info';
-    }
-    return 'action-items-info-hidden';
   };
 
-  const getActionItemText = actionItem => {
-    if (actionItem && actionItem.description) {
-      return actionItem.description;
+  const deleteItem = async (id) => {
+    if (id) {
+      await deleteActionItem(id);
     }
-    return 'Lorem Ipsum Etcetera';
   };
+
+  const doUpdate = async (actionItem) => {
+    if (actionItem) {
+      await updateActionItem(actionItem);
+    }
+  };
+
+  useEffect(() => {
+    getActionItems(checkinId);
+  }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
+    const [removed] = list.splice(startIndex, 1);
+    list.splice(endIndex, 0, removed);
   };
 
-  const grid = 8;
-
-  const getListStyle = isDraggingOver => ({
-    padding: grid
-  });
-
   const getItemStyle = (isDragging, draggableStyle) => ({
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: '0 0 {grid}px 0',
-    textAlign: 'left',
-    marginBottom: '1px',
-    marginTop: '1px',
-    display: 'flex',
-    flexDirection: 'row',
-
-    background: isDragging ? 'lightgreen' : '#fafafa',
-
-    ...draggableStyle
+    display: "flex",
+    padding: "12px 8px",
+    background: isDragging ? "lightgreen" : "#fafafa",
+    ...draggableStyle,
   });
 
-  const onDragEnd = result => {
+  const onDragEnd = (result) => {
     if (!result || !result.destination) {
       return;
     }
 
-    actionItems = reorder(
-      actionItems,
-      result.source.index,
-      result.destination.index
-    );
+    const { index } = result.destination;
+    const sourceIndex = result.source.index;
+    if (index !== sourceIndex) {
+      const lastIndex = actionItems.length - 1;
+      const precedingPriority =
+        index === 0 ? 0 : actionItems[index - 1].priority;
+      const followingPriority =
+        index === lastIndex
+          ? actionItems[lastIndex].priority
+          : actionItems[index].priority;
 
-    let precedingPriority = 0;
-    if (result.destination.index > 0) {
-      precedingPriority = actionItems[result.destination.index - 1].priority;
-    }
-
-    let followingPriority = actionItems[actionItems.length - 1].priority + 1;
-    if (result.destination.index < actionItems.length - 1) {
-      followingPriority = actionItems[result.destination.index + 1].priority;
-    }
-
-    let newPriority = (precedingPriority + followingPriority) / 2;
-
-    actionItems[result.destination.index].priority = newPriority;
-
-    doUpdate(actionItems[result.destination.index]);
-  };
-
-  const killActionItem = (id, event) => {
-    doDelete(id);
-    var arrayDupe = actionItems;
-    for (var i = 0; i < arrayDupe.length; i++) {
-      if (arrayDupe[i].id === id) {
-        arrayDupe.splice(i, 1);
-        break;
+      let newPriority = (precedingPriority + followingPriority) / 2;
+      if (actionItems[sourceIndex].priority <= followingPriority) {
+        newPriority += 1;
       }
+
+      setActionItems((actionItems) => {
+        actionItems[sourceIndex].priority = newPriority;
+        reorder(actionItems, sourceIndex, index);
+        return actionItems;
+      });
+
+      doUpdate(actionItems[result.destination.index]);
     }
-    setActionItems(arrayDupe);
   };
 
-  const createFakeEntry = item => {
+  const makeActionItem = async () => {
+    if (!checkinId || !id || description === "") {
+      return;
+    } else if (!pdlorAdmin) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Must be PDL or Admin to add Action Item",
+        },
+      });
+      return;
+    }
+    let newActionItem = {
+      checkinid: checkinId,
+      createdbyid: id,
+      description: description,
+    };
+    const res = await createActionItem(newActionItem);
+    if (!res.error && res.payload && res.payload.data) {
+      newActionItem.id = res.payload.data.id;
+      newActionItem.priority = res.payload.data.priority;
+      setDescription("");
+      setActionItems([...actionItems, newActionItem]);
+    }
+  };
+
+  const handleDescriptionChange = (index, e) => {
+    if (actionItems[index].createdbyid !== id) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "Action Items can only be edited by creator",
+        },
+      });
+      return;
+    }
+    const { value } = e.target;
+    actionItems[index].description = value;
+    setActionItems(() => {
+      updateItem(actionItems[index]);
+      return [...actionItems];
+    });
+  };
+
+  const killActionItem = (id) => {
+    deleteItem(id);
+    let newItems = actionItems.filter((actionItem) => {
+      return actionItem.id !== id;
+    });
+    setActionItems(newItems);
+  };
+
+  const createFakeEntry = (item) => {
     return (
-      <div key={item.id} className="image-div">
-        <span>
+      <div key={item.id} className="skeleton-div">
+        <div className="drag-icon">
           <DragIndicator />
-        </span>
-        <div className="description-field">
-          <p className="action-items-info-hidden">Lorem Ipsum etc</p>
+        </div>
+        <div className="skeleton">
+          <Skeleton variant="text" height={"2rem"} />
         </div>
       </div>
     );
@@ -162,6 +181,7 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     if (actionItems && actionItems.length > 0) {
       return actionItems.map((actionItem, index) => (
         <Draggable
+          disabled={!pdlorAdmin}
           key={actionItem.id}
           draggableId={actionItem.id}
           index={index}
@@ -177,20 +197,31 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
               )}
             >
               <div className="description-field">
-                <span {...provided.dragHandleProps}>
+                <span style={{ cursor: "grab" }} {...provided.dragHandleProps}>
                   <DragIndicator />
                 </span>
-                <p className={getActionItemStyle(actionItem)}>
-                  {getActionItemText(actionItem)}
-                </p>
-              </div>
-              <div>
-                <button
-                  className="delete-button"
-                  onClick={e => killActionItem(actionItem.id, e)}
-                >
-                  -
-                </button>
+                {isLoading ? (
+                  <div className="skeleton">
+                    <Skeleton className="test" variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                    <Skeleton variant="text" height={"2rem"} />
+                  </div>
+                ) : (
+                  <input
+                    className="text-input"
+                    onChange={(e) => handleDescriptionChange(index, e)}
+                    value={actionItem.description}
+                  />
+                )}
+                <div className="action-item-button-div">
+                  <IconButton
+                    aria-label="delete"
+                    className="delete-icon"
+                    onClick={(e) => killActionItem(actionItem.id, e)}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </div>
               </div>
             </div>
           )}
@@ -199,30 +230,51 @@ const ActionItemsPanel = ({checkinId, mockActionItems}) => {
     } else {
       let fake = Array(3);
       for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({id: `${i + 1}Action`});
+        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
       }
       return fake;
     }
   };
 
   return (
-    <fieldset className="action-items-container">
-      <legend>My Action Items</legend>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {createActionItemEntries()}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </fieldset>
+    <div className="action-items">
+      <h1>
+        <ArrowForwardIcon style={{ fontSize: "larger", marginRight: "10px" }} />
+        Action Items for {memberName}
+      </h1>
+      <div className="action-items-container">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {createActionItemEntries()}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <div className="add-action-item-div">
+          <input
+            className="text-input"
+            placeholder="Add action item"
+            onChange={(e) => setDescription(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && description !== "") {
+                makeActionItem();
+              }
+            }}
+            value={description ? description : ""}
+          />
+          <IconButton
+            aria-label="create"
+            className="edit-icon"
+            onClick={() => makeActionItem()}
+          >
+            <SaveIcon />
+          </IconButton>
+        </div>
+      </div>
+    </div>
   );
 };
 

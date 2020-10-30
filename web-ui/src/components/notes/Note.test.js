@@ -13,6 +13,11 @@ const initialState = {
   state: {
     userProfile: {
       name: "holmes",
+      memberProfile: {
+        pdlId: "",
+        title: "Tester",
+        workEmail: "test@tester.com",
+      },
       role: ["MEMBER"],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",

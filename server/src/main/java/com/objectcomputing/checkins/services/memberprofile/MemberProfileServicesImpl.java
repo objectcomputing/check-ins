@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import io.micronaut.context.ApplicationContext;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
 
@@ -11,7 +13,7 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
-    private MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRepository memberProfileRepository;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
         this.memberProfileRepository = memberProfileRepository;
@@ -27,9 +29,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String role,@Nullable UUID pdlId, @Nullable String workEmail) {
+    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
         Set<MemberProfile> memberProfiles = new HashSet<>(
-                memberProfileRepository.search(name, role, nullSafeUUIDToString(pdlId), workEmail));
+                memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId), workEmail));
 
         return memberProfiles;
     }

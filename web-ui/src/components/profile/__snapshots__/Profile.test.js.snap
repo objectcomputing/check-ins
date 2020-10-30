@@ -68,7 +68,7 @@ exports[`renders correctly 1`] = `
         </h2>
         <div>
           <span>
-            Role: 
+            Job Title: 
           </span>
         </div>
         <div>
@@ -196,7 +196,7 @@ exports[`renders image_url 1`] = `
         </h2>
         <div>
           <span>
-            Role: 
+            Job Title: 
           </span>
         </div>
         <div>

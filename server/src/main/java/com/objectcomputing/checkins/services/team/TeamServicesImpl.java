@@ -3,19 +3,38 @@ package com.objectcomputing.checkins.services.team;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.security.utils.SecurityService;
+import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.RoleType;
+
+@Singleton
 public class TeamServicesImpl implements TeamServices {
 
-    @Inject
     private TeamRepository teamsRepo;
-    @Inject
     private TeamMemberRepository teamMemberRepo;
+    private SecurityService securityService;
+    private CurrentUserServices currentUserServices;
+    private TeamMemberServices teamMemberServices;
+    
+    public TeamServicesImpl(TeamRepository teamsRepo, TeamMemberRepository teamMemberRepo,
+                            SecurityService securityService, CurrentUserServices currentUserServices,
+                            TeamMemberServices teamMemberServices) {
+        this.teamsRepo = teamsRepo;
+        this.teamMemberRepo = teamMemberRepo;
+        this.securityService = securityService;
+        this.currentUserServices = currentUserServices;
+        this.teamMemberServices = teamMemberServices;
+    }
 
     public Team save(Team team) {
         Team newTeam = null;
@@ -62,5 +81,20 @@ public class TeamServicesImpl implements TeamServices {
                     .filter(Objects::nonNull).collect(Collectors.toSet()));
         }
         return teams;
+    }
+
+    public void delete(@NotNull UUID id) {
+        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+
+        Team team = teamsRepo.findById(id).get();
+
+        Set<TeamMember> CurrentTeam = teamMemberServices.findByFields(team.getId(), currentUser.getId(), true);
+        if(isAdmin || !CurrentTeam.isEmpty()) {
+            teamsRepo.deleteById(id);
+        } else {
+            throw new TeamBadArgException("You are not authorized to perform this operation");
+        }
     }
 }

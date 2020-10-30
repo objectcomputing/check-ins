@@ -32,10 +32,10 @@ public class MemberProfile {
     @Schema(description = "full name of the employee", required = true)
     private String name;
 
-    @Column(name="role")
+    @Column(name="title")
     @Nullable
-    @Schema(description = "employee's role at the company")
-    private String role ;
+    @Schema(description = "employee's title at the company")
+    private String title ;
     
     @Column(name="pdlId")
     @TypeDef(type=DataType.STRING)
@@ -68,18 +68,18 @@ public class MemberProfile {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(String name, @Nullable String role, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
-       this(null, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfile(UUID id, String name, @Nullable String role, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
         this.id = id;
         this.name=name;
-        this.role=role;
+        this.title=title;
         this.pdlId=pdlId;
         this.location=location;
         this.workEmail=workEmail;
@@ -107,12 +107,12 @@ public class MemberProfile {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public String getTitle() {
+        return title;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public UUID getPdlId() {
@@ -170,7 +170,7 @@ public class MemberProfile {
         MemberProfile that = (MemberProfile) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(role, that.role) &&
+                Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(workEmail, that.workEmail) &&
@@ -181,7 +181,7 @@ public class MemberProfile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, role, pdlId, location, workEmail, insperityId, startDate, bioText);
+        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class MemberProfile {
         return "MemberProfile{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", role='" + role + '\'' +
+                ", title='" + title + '\'' +
                 ", pdlId=" + pdlId +
                 ", location='" + location + '\'' +
                 ", workEmail='" + workEmail + '\'' +

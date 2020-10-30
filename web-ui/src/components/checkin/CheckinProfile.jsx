@@ -1,14 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getMember } from "../../api/member";
+import { AppContext } from "../../context/AppContext";
+
 import Avatar from "@material-ui/core/Avatar";
 
 import "./Checkin.css";
 
-const CheckinProfile = ({ state }) => {
-  const { userProfile } = state;
-  const { workEmail, role, pdlId } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const { imageUrl, name } = userProfile ? userProfile : {};
+const CheckinProfile = () => {
+  const { state } = useContext(AppContext);
+  const { selectedProfile, userProfile } = state;
+  const { name, pdlId, title, workEmail } = selectedProfile
+    ? selectedProfile
+    : userProfile && userProfile.memberProfile
+    ? userProfile.memberProfile
+    : {};
+  const { imageUrl } = selectedProfile
+    ? selectedProfile
+    : userProfile
+    ? userProfile
+    : {};
   const [pdl, setPDL] = useState();
 
   // Get PDL's name
@@ -34,7 +44,7 @@ const CheckinProfile = ({ state }) => {
       />
       <div className="info">
         <p>{name}</p>
-        <p>Role: {role}</p>
+        <p>Job Title: {title}</p>
         <p>PDL: {pdl}</p>
         <p>Company Email: {workEmail}</p>
       </div>

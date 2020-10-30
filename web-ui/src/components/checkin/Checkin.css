@@ -17,6 +17,7 @@
 .date-input {
   display: flex;
   align-items: center;
+  cursor: pointer
 }
 
 .documents {
