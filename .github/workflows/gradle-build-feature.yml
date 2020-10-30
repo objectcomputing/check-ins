@@ -28,7 +28,7 @@ jobs:
       - name: Do SonarQube checks
         run: |
           ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN
-          curl -u "${SONAR_LOGIN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=css-acg > result.json
+          curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY > result.json
           cat result.json
           if [[ $(jq -r '.projectStatus.status' result.json) = ERROR ]] ; then exit 1;fi
 
