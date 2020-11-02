@@ -12,8 +12,8 @@ import java.util.Objects;
 @Introspected
 public class CurrentUserDTO {
 
-    @NotNull
-    @Schema(description = "full name of the user", required = true)
+    @Nullable
+    @Schema(description = "full name of the user")
     private String name;
 
     @Nullable
@@ -28,11 +28,12 @@ public class CurrentUserDTO {
     @Schema(implementation = MemberProfile.class, required = true)
     private MemberProfile memberProfile;
 
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 
