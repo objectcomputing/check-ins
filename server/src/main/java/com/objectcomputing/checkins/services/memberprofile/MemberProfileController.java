@@ -90,7 +90,8 @@ public class MemberProfileController {
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
                                                                     @Nullable UUID pdlId, @Nullable String workEmail) throws IOException {
 
-        memberDirectoryService.setImagesOfAllUsers();
+        String photoData = memberDirectoryService.getImageByEmailAddress(workEmail);
+        System.out.println("Photo data from google Directory API = " + photoData);
 
         return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
         .observeOn(Schedulers.from(eventLoopGroup))

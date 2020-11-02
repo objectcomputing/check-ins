@@ -1,56 +1,50 @@
 package com.objectcomputing.checkins.services.memberprofile.memberdirectory;
 
 import com.google.api.services.admin.directory.Directory;
-import com.google.api.services.admin.directory.model.User;
 import com.google.api.services.admin.directory.model.UserPhoto;
-import com.google.api.services.admin.directory.model.Users;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.CachePut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 
 @Singleton
-public class MemberDirectoryServiceImpl implements MemberDirectoryService{
+@CacheConfig("photo-cache")
+public class MemberDirectoryServiceImpl implements MemberDirectoryService {
 
     private final GoogleApiAccess googleApiAccess;
+    private static final Logger LOG = LoggerFactory.getLogger(MemberDirectoryServiceImpl.class);
 
     public MemberDirectoryServiceImpl(GoogleApiAccess googleApiAccess) {
         this.googleApiAccess = googleApiAccess;
     }
 
-    HashMap<String, String> googlePhotos = new HashMap<String, String>();
+    HashMap<String, String> googlePhotos = new HashMap<>();
 
     @Override
-    public HashMap<String, String> getImagesOfAllUsers() {
-        return this.googlePhotos;
-    }
+    @CachePut(parameters = {"workEmail"})
+    public String getImageByEmailAddress(@NotNull String workEmail) {
 
-    @Override
-    public String getImageByEmailAddress(String workEmail) {
-        return googlePhotos.get(workEmail);
-    }
+        if (!googlePhotos.containsKey(workEmail)) {
+            Directory directory = googleApiAccess.getDirectory();
 
-    @Override
-    public void setImagesOfAllUsers() throws IOException {
-
-        Directory directory = googleApiAccess.getDirectory();
-        Users userDirectory = directory.users().list()
-                                .setDomain("objectcomputing.com")
-                                .setMaxResults(500)
-                                .execute();
-
-        for (User user : userDirectory.getUsers()) {
-            String email = user.getPrimaryEmail();
-            if(user.getThumbnailPhotoUrl() != null) {
-                UserPhoto userPhoto = directory.users().photos().get(email).execute();
+            try {
+                UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
                 String photoData = convertPhotoData(userPhoto.getPhotoData());
-                googlePhotos.put(email, photoData);
-            } else {
-                googlePhotos.put(email, "");
+                googlePhotos.put(workEmail, photoData);
+            } catch (IOException e) {
+                LOG.error("Error occurred while retrieving files from Google Directory API.", e);
+                googlePhotos.put(workEmail, "");
             }
         }
+
+        return googlePhotos.get(workEmail);
     }
 
     private String convertPhotoData(String photoData) {

@@ -71,6 +71,7 @@ dependencies {
     implementation "io.micronaut.security:micronaut-security-oauth2:$micronautSecurityVersion"
     implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
     implementation "io.micronaut.views:micronaut-views-thymeleaf"
+    implementation "io.micronaut.cache:micronaut-cache-core"
 
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"

@@ -7,6 +7,11 @@ micronaut:
     max-request-size: 100MB
     multipart:
       max-file-size: 100MB
+  caches:
+    photo-cache:
+      maximumSize: 2
+      charset: 'UTF-8'
+      enabled: true
 
   router:
     static-resources:
