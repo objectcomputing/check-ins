@@ -2,9 +2,6 @@ import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
-// import Cookies from "universal-cookie";
-import axios from "axios";
-import { resolve } from "../api/api.js";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const UPDATE_USER_BIO = "@@check-ins/update_bio";
@@ -132,31 +129,8 @@ const AppContextProvider = (props) => {
 
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
 
-  const getCookie = async () => {
-    return await resolve(
-      axios({
-        method: "get",
-        url: "http://localhost:8080/csrf/cookie",
-        responseType: "text",
-        withCredentials: true,
-      })
-    );
-  };
-
-  // const cookies = new Cookies();
-
-  useEffect(async () => {
-    let res = await getCookie();
-    if (res && res.payload && res.payload.data) {
-      console.log({ res });
-      const { _csrf } = res.payload.data;
-      // cookies.set("_csrf", _csrf, { path: "/" });
-      sessionStorage.setItem("_csrf", _csrf);
-    }
-  }, []);
-
   useEffect(() => {
-    async function updateUserProfile() {
+    const updateUserProfile = async () => {
       let res = await getCurrentUser();
       let profile =
         res.payload && res.payload.data && !res.error
@@ -166,7 +140,7 @@ const AppContextProvider = (props) => {
       if (profile) {
         dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
       }
-    }
+    };
     updateUserProfile();
   }, []);
 

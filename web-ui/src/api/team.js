@@ -1,54 +1,42 @@
-import axios from "axios";
-import { resolve, BASE_API_URL } from "./api.js";
+import { resolve } from "./api.js";
 
-const teamUrl = `${BASE_API_URL}/services/team`;
-const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
+const teamUrl = "/services/team";
+const teamMemberUrl = "/services/team/member";
+
 export const getAllTeamMembers = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamMemberUrl,
-      responseType: "json",
-      withCredentials: true
-    })
-  );
+  return resolve({
+    method: "get",
+    url: teamMemberUrl,
+    responseType: "json",
+  });
 };
 
 export const getMembersByTeam = async (id) => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamMemberUrl,
-      responseType: "json",
-      params: {
-        teamid: id,
-      },
-      withCredentials: true
-    })
-  );
+  return resolve({
+    method: "get",
+    url: teamMemberUrl,
+    responseType: "json",
+    params: {
+      teamid: id,
+    },
+  });
 };
 
 export const getTeamsByMember = async (id) => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamMemberUrl,
-      responseType: "json",
-      params: {
-        memberid: id,
-      },
-      withCredentials: true
-    })
-  );
+  return resolve({
+    method: "get",
+    url: teamMemberUrl,
+    responseType: "json",
+    params: {
+      memberid: id,
+    },
+  });
 };
 
 export const getAllTeams = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamUrl,
-      responseType: "json",
-      withCredentials: true
-    })
-  )
+  return resolve({
+    method: "get",
+    url: teamUrl,
+    responseType: "json",
+  });
 };
