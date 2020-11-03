@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-@Controller("/services/member-profile/member-directory")
+@Controller("/services/member-profile/member-photo")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Tag(name = "member directory")
+@Tag(name = "member photo")
 public class MemberPhotoController {
 
     @Inject
