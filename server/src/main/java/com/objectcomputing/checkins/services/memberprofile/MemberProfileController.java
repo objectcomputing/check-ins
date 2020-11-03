@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.services.memberprofile.memberdirectory.MemberDirectoryService;
+import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -36,16 +35,16 @@ public class MemberProfileController {
     private final MemberProfileServices memberProfileServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
-    private final MemberDirectoryService memberDirectoryService;
+    private final MemberPhotoService memberPhotoService;
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
                                    @Named(TaskExecutors.IO) ExecutorService ioExecutorService,
-                                   MemberDirectoryService memberDirectoryService){
+                                   MemberPhotoService memberPhotoService){
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-        this.memberDirectoryService = memberDirectoryService;
+        this.memberPhotoService = memberPhotoService;
     }
 
     @Error(exception = MemberProfileBadArgException.class)
@@ -88,10 +87,7 @@ public class MemberProfileController {
      */
     @Get("/{?name,title,pdlId,workEmail}")
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
-                                                                    @Nullable UUID pdlId, @Nullable String workEmail) throws IOException {
-
-        String photoData = memberDirectoryService.getImageByEmailAddress(workEmail);
-        System.out.println("Photo data from google Directory API = " + photoData);
+                                                                    @Nullable UUID pdlId, @Nullable String workEmail) {
 
         return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
         .observeOn(Schedulers.from(eventLoopGroup))

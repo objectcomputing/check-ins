@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
-import com.objectcomputing.checkins.services.memberprofile.memberdirectory.MemberDirectoryService;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;

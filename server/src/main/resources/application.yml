@@ -7,11 +7,6 @@ micronaut:
     max-request-size: 100MB
     multipart:
       max-file-size: 100MB
-  caches:
-    photo-cache:
-      maximumSize: 2
-      charset: 'UTF-8'
-      enabled: true
 
   router:
     static-resources:
@@ -98,3 +93,10 @@ service-account-credentials:
   client_x509_cert_url: ${ CLIENT_X509_CERT_URL }
   oauth_client_id: ${ OAUTH_CLIENT_ID }
   oauth_client_secret: ${ OAUTH_CLIENT_SECRET }
+---
+ehcache:
+  caches:
+    photo-cache:
+      enabled: true
+      heap:
+        max-entries: 20

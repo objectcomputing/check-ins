@@ -1,7 +1,10 @@
-package com.objectcomputing.checkins.services.memberprofile.memberdirectory;
+package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.UserPhoto;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.CachePut;
@@ -13,38 +16,45 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Set;
 
 @Singleton
 @CacheConfig("photo-cache")
-public class MemberDirectoryServiceImpl implements MemberDirectoryService {
+public class MemberPhotoServiceImpl implements MemberPhotoService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
     private final GoogleApiAccess googleApiAccess;
-    private static final Logger LOG = LoggerFactory.getLogger(MemberDirectoryServiceImpl.class);
+    private MemberProfileServices memberProfileServices;
+    private static HashMap<String, String> photos = new HashMap<>();
 
-    public MemberDirectoryServiceImpl(GoogleApiAccess googleApiAccess) {
+    public MemberPhotoServiceImpl(GoogleApiAccess googleApiAccess, MemberProfileServices memberProfileServices) {
         this.googleApiAccess = googleApiAccess;
+        this.memberProfileServices = memberProfileServices;;
     }
-
-    HashMap<String, String> googlePhotos = new HashMap<>();
 
     @Override
     @CachePut(parameters = {"workEmail"})
     public String getImageByEmailAddress(@NotNull String workEmail) {
 
-        if (!googlePhotos.containsKey(workEmail)) {
+        Set<MemberProfile> memberProfile = memberProfileServices.findByValues(null, null, null, workEmail);
+        if(memberProfile.isEmpty()) {
+            throw new MemberProfileDoesNotExistException(String.format("No member profile exists for the email %s", workEmail));
+        }
+
+        if (!photos.containsKey(workEmail)) {
             Directory directory = googleApiAccess.getDirectory();
 
             try {
                 UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
                 String photoData = convertPhotoData(userPhoto.getPhotoData());
-                googlePhotos.put(workEmail, photoData);
+                photos.put(workEmail, photoData);
             } catch (IOException e) {
                 LOG.error("Error occurred while retrieving files from Google Directory API.", e);
-                googlePhotos.put(workEmail, "");
+                photos.put(workEmail, "");
             }
         }
 
-        return googlePhotos.get(workEmail);
+        return photos.get(workEmail);
     }
 
     private String convertPhotoData(String photoData) {
