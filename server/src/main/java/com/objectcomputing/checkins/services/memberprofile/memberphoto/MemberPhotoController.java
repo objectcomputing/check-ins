@@ -21,7 +21,7 @@ public class MemberPhotoController {
     /**
      * Get user photo data from Google Directory API
      *
-     * @param workEmail {@link String workEmail} Email address of member
+     * @param workEmail
      * @return {@link HttpResponse<String>} StringURL of photo data
      */
     @Get

@@ -149,6 +149,7 @@ public class MemberProfileController {
         dto.setTitle(entity.getTitle());
         dto.setStartDate(entity.getStartDate());
         dto.setWorkEmail(entity.getWorkEmail());
+        dto.setPhotoData(memberPhotoService.getImageByEmailAddress(entity.getWorkEmail()));
         return dto;
     }
 
