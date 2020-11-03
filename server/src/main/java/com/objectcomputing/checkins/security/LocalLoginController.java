@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
@@ -68,8 +68,8 @@ public class LocalLoginController {
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
-                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
-                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "name", memberProfile.getName(),
+                MemberProfileEntity memberProfileEntity = currentUserServices.findOrSaveUser(email, email);
+                userDetails.setAttributes(Map.of("email", memberProfileEntity.getWorkEmail(), "name", memberProfileEntity.getName(),
                         "picture", ""));
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
                 return loginHandler.loginSuccess(userDetails, request);

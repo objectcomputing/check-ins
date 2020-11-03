@@ -11,8 +11,8 @@ const CheckinProfile = () => {
   const { selectedProfile, userProfile } = state;
   const { name, pdlId, title, workEmail } = selectedProfile
     ? selectedProfile
-    : userProfile && userProfile.memberProfile
-    ? userProfile.memberProfile
+    : userProfile && userProfile.memberProfileEntity
+    ? userProfile.memberProfileEntity
     : {};
   const { imageUrl } = selectedProfile
     ? selectedProfile

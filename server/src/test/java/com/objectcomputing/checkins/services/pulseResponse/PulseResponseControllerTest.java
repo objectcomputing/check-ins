@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -34,12 +34,12 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     @Test
     public void testCreateAPulseResponse(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.now());
         pulseResponseCreateDTO.setUpdatedDate(LocalDate.now());
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
+        pulseResponseCreateDTO.setTeamMemberId(memberProfileEntity.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
@@ -111,11 +111,11 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
 
     @Test
     void testCreateAPulseResponseForInvalidDate() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
         PulseResponseCreateDTO pulseResponseCreateDTO = new PulseResponseCreateDTO();
         pulseResponseCreateDTO.setSubmissionDate(LocalDate.of(1965,11,12));
         pulseResponseCreateDTO.setUpdatedDate(LocalDate.of(1965,11,12));
-        pulseResponseCreateDTO.setTeamMemberId(memberProfile.getId());
+        pulseResponseCreateDTO.setTeamMemberId(memberProfileEntity.getId());
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
@@ -134,10 +134,10 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
     @Test
     public void testGetFindByTeamMemberId() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
@@ -153,9 +153,9 @@ public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
     LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
     LocalDate testDateTo = LocalDate.of(2019, 02, 01);
 
-    MemberProfile memberProfile = createADefaultMemberProfile();
+    MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
     final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
     final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
@@ -167,9 +167,9 @@ public void testGetFindBySubmissionDateBetweenReturnsEmptyBody() {
 @Test
 public void testGetFindByfindBySubmissionDateBetween() {
 
-    MemberProfile memberProfile = createADefaultMemberProfile();
+    MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+    PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
     LocalDate testDateFrom = LocalDate.of(2019, 01, 01);  
     LocalDate testDateTo = LocalDate.of(2021, 01, 01);
@@ -184,9 +184,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
     @Test
     public void testGetFindById() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", pulseResponse.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
@@ -197,9 +197,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testFindPulseResponseAllParams(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", pulseResponse.getTeamMemberId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Set<PulseResponse>> response = client.toBlocking().exchange(request, Argument.setOf(PulseResponse.class));
@@ -222,9 +222,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdatePulseResponse(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -237,9 +237,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateNonExistingPulseResponse(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
         pulseResponse.setId(UUID.randomUUID());
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -258,9 +258,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateNotExistingMemberPulseResponse(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
         pulseResponse.setTeamMemberId(UUID.randomUUID());
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -279,9 +279,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateNotMemberPulseResponseWithoutId(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
         pulseResponse.setId(null);
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)
@@ -328,9 +328,9 @@ public void testGetFindByfindBySubmissionDateBetween() {
 
     @Test
     void testUpdateInvalidDatePulseResponse(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfile);
+        PulseResponse pulseResponse  = createADefaultPulseResponse(memberProfileEntity);
         pulseResponse.setSubmissionDate(LocalDate.of(1965,12,11));
 
         final HttpRequest<PulseResponse> request = HttpRequest.PUT("", pulseResponse)

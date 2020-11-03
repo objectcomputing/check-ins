@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -57,15 +57,15 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testUploadEndpoint() {
 
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
 
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
 
         // test folder creation and file upload
         final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                                         .addPart("file", testFile).build())
-                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                        .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> response = client.toBlocking().exchange(request, FileInfoDTO.class);
 
@@ -78,7 +78,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         // test usage of existing upload directory to upload file
         final HttpRequest<?> requestExistingFolder = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                                                         .addPart("file", testFile).build())
-                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> responseExistingFolder = client.toBlocking().exchange(requestExistingFolder, FileInfoDTO.class);
 
@@ -92,14 +92,14 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testUploadEndpointFailsForInvalidFile() {
 
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
         File badFile = new File("");
 
         final HttpRequest<?> request = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                 .addPart("file", badFile).build())
-                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                 .contentType(MULTIPART_FORM_DATA);
 
         final IllegalArgumentException responseException = assertThrows(IllegalArgumentException.class, () ->
@@ -114,13 +114,13 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         //arrange
         String expected = Files.readString(Path.of(filePath));
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
 
         final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                                                         .addPart("file", testFile).build())
-                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
         assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
@@ -128,7 +128,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
         //act
         final HttpRequest<?> requestForDownloadEndpoint= HttpRequest.GET(String.format("/%s/download",
                                                             responseFromPostEndpoint.getBody().get().getFileId()))
-                                                            .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+                                                            .basicAuth(memberProfileEntityOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<File> responseFromDownloadEndpoint = client.toBlocking().exchange(requestForDownloadEndpoint, File.class);
         String actual = responseFromDownloadEndpoint.getBody().get().toString();
 
@@ -139,7 +139,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
     @Test
     public void testDownloadEndpointThrowsExceptionIfDocIdDoesNotExist() {
-        MemberProfile user = createAnUnrelatedUser();
+        MemberProfileEntity user = createAnUnrelatedUser();
 
         final HttpRequest<?> request = HttpRequest.GET("/test.file.id/download")
                 .basicAuth(user.getWorkEmail(), MEMBER_ROLE);
@@ -151,7 +151,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
     @Test
     public void testFindAllEndpointAdmin() {
-        MemberProfile user = createAnUnrelatedUser();
+        MemberProfileEntity user = createAnUnrelatedUser();
         final HttpRequest<?> request = HttpRequest.GET("").basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<FileInfoDTO>> response = client.toBlocking().exchange(request, Argument.setOf(FileInfoDTO.class));
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -161,7 +161,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testFindAllFailsIfNotAdmin() {
 
-        MemberProfile user = createAnUnrelatedUser();
+        MemberProfileEntity user = createAnUnrelatedUser();
 
         final HttpRequest<?> request = HttpRequest.GET("").basicAuth(user.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -178,13 +178,13 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     public void testFindByCheckInId() {
 
         //arrange
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
 
         final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                                                         .addPart("file", testFile).build())
-                                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                                                        .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                                                         .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
         assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
@@ -192,7 +192,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         //act
         final HttpRequest<?> requestForFindById = HttpRequest.GET(String.format("?id=%s", checkin.getId()))
-                                                    .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+                                                    .basicAuth(memberProfileEntityOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<FileInfoDTO>> responseFromFindById = client.toBlocking().exchange(requestForFindById, Argument.setOf(FileInfoDTO.class));
         FileInfoDTO result = Objects.requireNonNull(responseFromFindById.body()).iterator().next();
 
@@ -207,14 +207,14 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testFindByCheckInIdFailsForUnrelatedUser() {
 
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("?id=%s", checkin.getId()))
-                                        .basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+                                        .basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -227,14 +227,14 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
     @Test
     public void testFindByCheckInIdThrowsExceptionIfDocDoesNotExist() {
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
 
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
         createADefaultCheckInDocument(checkin);
 
         final HttpRequest<?> request= HttpRequest.GET(String.format("?id=%s", checkin.getId()))
-                                        .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+                                        .basicAuth(memberProfileEntityOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -248,13 +248,13 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testDeleteEndpoint() {
         //arrange
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        CheckIn checkin  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        CheckIn checkin  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
 
         final HttpRequest<?> requestForPostEndpoint = HttpRequest.POST(String.format("/%s", checkin.getId()), MultipartBody.builder()
                 .addPart("file", testFile).build())
-                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE)
+                .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE)
                 .contentType(MULTIPART_FORM_DATA);
         final HttpResponse<FileInfoDTO> responseFromPostEndpoint = client.toBlocking().exchange(requestForPostEndpoint, FileInfoDTO.class);
         assertEquals(HttpStatus.OK, responseFromPostEndpoint.getStatus());
@@ -262,7 +262,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
 
         //act
         final HttpRequest<?> requestForDelete = HttpRequest.DELETE(String.format("/%s", resultFromPost.getFileId()))
-                .basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileEntityOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<FileInfoDTO>> responseFromDelete = client.toBlocking().exchange(requestForDelete);
 
         //assert
@@ -273,7 +273,7 @@ public class FileControllerTest extends TestContainersSuite implements MemberPro
     @Test
     public void testDeleteEndpointThrowsExceptionIfDocDoesNotExist() {
         //arrange
-        MemberProfile user = createAnUnrelatedUser();
+        MemberProfileEntity user = createAnUnrelatedUser();
 
         //act
         final HttpRequest<?> request = HttpRequest.DELETE("/test.file.id")

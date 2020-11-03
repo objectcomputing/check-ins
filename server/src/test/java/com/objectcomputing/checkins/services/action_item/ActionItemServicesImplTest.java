@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -79,7 +79,7 @@ class ActionItemServicesImplTest {
         actionItem.setPriority(7.0);
 
         when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
-        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfileEntity()));
         when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.of(currentActionItem.getPriority()));
         when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
 
@@ -98,7 +98,7 @@ class ActionItemServicesImplTest {
         actionItem.setPriority(1.0);
 
         when(checkinRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new CheckIn()));
-        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(actionItem.getCheckinid())).thenReturn(Optional.of(new MemberProfileEntity()));
         when(actionItemRepository.findMaxPriorityByCheckinid(actionItem.getCheckinid())).thenReturn(Optional.empty());
         when(actionItemRepository.save(actionItem)).thenReturn(actionItem);
 
@@ -113,7 +113,7 @@ class ActionItemServicesImplTest {
         CheckIn checkin = new CheckIn();
 
         when(checkinRepository.findById(eq(actionItem.getCheckinid()))).thenReturn(Optional.of(checkin));
-        when(memberProfileRepository.findById(eq(actionItem.getCreatedbyid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(actionItem.getCreatedbyid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(actionItemRepository.save(eq(actionItem))).thenReturn(actionItem);
 
         assertEquals(actionItem, services.save(actionItem));
@@ -203,7 +203,7 @@ class ActionItemServicesImplTest {
         CheckIn checkin = new CheckIn();
 
         when(checkinRepository.findById(eq(actionItem.getCheckinid()))).thenReturn(Optional.of(checkin));
-        when(memberProfileRepository.findById(eq(actionItem.getCreatedbyid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(actionItem.getCreatedbyid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(actionItemRepository.findById(actionItem.getId())).thenReturn(Optional.of(actionItem));
         when(actionItemRepository.update(eq(actionItem))).thenReturn(actionItem);
 

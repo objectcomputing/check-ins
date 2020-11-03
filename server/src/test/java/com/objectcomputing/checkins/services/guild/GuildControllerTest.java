@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -186,7 +186,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testFindGuildS() {
 
         Guild g = createDeafultGuild();
-        MemberProfile mp = createADefaultMemberProfile();
+        MemberProfileEntity mp = createADefaultMemberProfile();
         GuildMember gm = createDeafultGuildMember(g, mp);
         Set<Guild> guilds = Collections.singleton(g);
 
@@ -203,7 +203,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testFindGuildSByMemeberid() {
 
         Guild g = createDeafultGuild();
-        MemberProfile mp = createADefaultMemberProfile();
+        MemberProfileEntity mp = createADefaultMemberProfile();
         GuildMember gm = createDeafultGuildMember(g, mp);
         Set<Guild> guilds = Collections.singleton(g);
 
@@ -219,7 +219,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testFindAllGuilds() {
 
         Guild g = createDeafultGuild();
-        MemberProfile mp = createADefaultMemberProfile();
+        MemberProfileEntity mp = createADefaultMemberProfile();
 
         final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Guild>> response = client.toBlocking().exchange(request, Argument.setOf(Guild.class));

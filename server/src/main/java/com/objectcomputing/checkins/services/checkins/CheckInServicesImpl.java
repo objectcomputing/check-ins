@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -37,7 +37,7 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         validate(checkIn.getId()!=null, "Found unexpected id for checkin %s", checkIn.getId());
@@ -58,7 +58,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public CheckIn read(@NotNull UUID id) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         CheckIn result = checkinRepo.findById(id).orElse(null);
@@ -81,7 +81,7 @@ public class CheckInServicesImpl implements CheckInServices {
         LocalDateTime chkInDate = checkIn.getCheckInDate();
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         validate((id==null||!checkinRepo.findById(id).isPresent()), "Unable to find checkin record with id %s", checkIn.getId());
@@ -103,7 +103,7 @@ public class CheckInServicesImpl implements CheckInServices {
     public Set<CheckIn> findByFields(UUID teamMemberId, UUID pdlId, Boolean completed) {
         Set<CheckIn> checkIn = new HashSet<>();
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         checkinRepo.findAll().forEach(checkIn::add);

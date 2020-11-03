@@ -35,8 +35,8 @@ public class MemberProfileTestUtil {
         return dto;
     }
 
-    public static MemberProfile mkMemberProfile(String seed) {
-        return new MemberProfile("TestName" + seed,
+    public static MemberProfileEntity mkMemberProfile(String seed) {
+        return new MemberProfileEntity("TestName" + seed,
                 "TestRole" + seed,
                 null,
                 "TestLocation" + seed,
@@ -46,11 +46,11 @@ public class MemberProfileTestUtil {
                 "TestBio" + seed);
     }
 
-    public static MemberProfile mkMemberProfile() {
+    public static MemberProfileEntity mkMemberProfile() {
         return mkMemberProfile("");
     }
 
-    public static void assertProfilesEqual(MemberProfile entity, MemberProfileResponseDTO dto) {
+    public static void assertProfilesEqual(MemberProfileEntity entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());

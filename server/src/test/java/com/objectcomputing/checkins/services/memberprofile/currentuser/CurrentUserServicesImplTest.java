@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServicesImpl;
 import com.objectcomputing.checkins.services.role.Role;
@@ -44,19 +44,19 @@ public class CurrentUserServicesImplTest {
 
     @Test
     public void testFindOrSaveUserForNewUser() {
-        MemberProfile expected = mkMemberProfile();
+        MemberProfileEntity expected = mkMemberProfile();
         expected.setWorkEmail("test.email");
 
         when(memberProfileRepo.findByWorkEmail(expected.getWorkEmail())).thenReturn(java.util.Optional.of(expected));
 
-        MemberProfile actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
+        MemberProfileEntity actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testFindOrSaveUserForExistingUser() {
-        MemberProfile expected = mkMemberProfile();
+        MemberProfileEntity expected = mkMemberProfile();
         expected.setId(UUID.randomUUID());
         expected.setWorkEmail("test.email");
         Role mockRole = new Role(RoleType.MEMBER, expected.getId());
@@ -65,7 +65,7 @@ public class CurrentUserServicesImplTest {
         when(memberProfileServicesImpl.saveProfile(any())).thenReturn(expected);
         when(roleServices.save(mockRole)).thenReturn(mockRole);
 
-        MemberProfile actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
+        MemberProfileEntity actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
 
         assertEquals(expected, actual);
         verify(roleServices, times(1)).save(any(Role.class));

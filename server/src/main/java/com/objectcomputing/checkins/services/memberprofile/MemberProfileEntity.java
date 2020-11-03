@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name ="member_profile")
-public class MemberProfile {
+public class MemberProfileEntity {
 
     @Id
     @Column(name="id")
@@ -68,15 +68,15 @@ public class MemberProfile {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                         @Nullable String bioText) {
+    public MemberProfileEntity(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                               String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                               @Nullable String bioText) {
        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfile(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                         @Nullable String bioText) {
+    public MemberProfileEntity(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                               String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                               @Nullable String bioText) {
         this.id = id;
         this.name=name;
         this.title=title;
@@ -88,7 +88,7 @@ public class MemberProfile {
         this.bioText=bioText;
     }
 
-    public MemberProfile() {
+    public MemberProfileEntity() {
     }
 
     public UUID getId() {
@@ -167,7 +167,7 @@ public class MemberProfile {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MemberProfile that = (MemberProfile) o;
+        MemberProfileEntity that = (MemberProfileEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(title, that.title) &&

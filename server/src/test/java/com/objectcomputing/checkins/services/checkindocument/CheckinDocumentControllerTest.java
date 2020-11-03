@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.fixture.CheckInDocumentFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -38,10 +38,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void testCreateACheckinDocument() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocumentCreateDTO checkinDocumentCreateDTO = new CheckinDocumentCreateDTO();
         checkinDocumentCreateDTO.setCheckinsId(checkIn.getId());
@@ -93,10 +93,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void testCreateCheckinDocumentThrowsExceptionForMemberRole() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocumentCreateDTO checkinDocumentCreateDTO = new CheckinDocumentCreateDTO();
         checkinDocumentCreateDTO.setCheckinsId(checkIn.getId());
@@ -131,10 +131,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
 
     @Test
     void testCreateACheckInDocumentForExistingDocumentId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -156,10 +156,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
 
     @Test
     void testFindCheckinDocument() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -183,10 +183,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void testFindCheckinDocumentThrowsExceptionForMemberRole() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -203,10 +203,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     void testUpdateCheckinDocument() {
 
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -221,10 +221,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
 
     @Test
     void testUpdateAnInvalidCheckinDocument() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(null);
@@ -264,10 +264,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateCheckinDocumentThrowsExceptionForMemberRole() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -281,10 +281,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
 
     @Test
     void testUpdateNotExistingCheckInDocument(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setId(UUID.randomUUID());
@@ -305,10 +305,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
 
     @Test
     void testUpdateNotExistingCheckInId(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(UUID.randomUUID());
@@ -373,10 +373,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void deleteCheckinDocumentIfAdmin() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -390,10 +390,10 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void deleteCheckinDocumentNotExistCheckIn() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(UUID.randomUUID());

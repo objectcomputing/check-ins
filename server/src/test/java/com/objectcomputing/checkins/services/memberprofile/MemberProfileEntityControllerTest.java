@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
-public class MemberProfileControllerTest {
+public class MemberProfileEntityControllerTest {
 
     @Inject
     @Client("/services/member-profile")
@@ -102,10 +102,10 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindByNameReturnsEmptyBody() {
 
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setName(memberProfile.getName());
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
+        memberProfileEntity.setName(memberProfileEntity.getName());
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
+        when(mockMemberServices.findByValues(memberProfileEntity.getName(), null, null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?name=%s", testUser))
@@ -119,10 +119,10 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindByRoleReturnsEmptyBody() {
 
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setName(memberProfile.getName());
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
+        memberProfileEntity.setName(memberProfileEntity.getName());
 
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
+        when(mockMemberServices.findByValues(null, memberProfileEntity.getTitle(), null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?role=%s", testRole))
@@ -136,13 +136,13 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindByPdlIdReturnsEmptyBody() {
 
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setPdlId(testPdlId);
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
+        memberProfileEntity.setPdlId(testPdlId);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
+        when(mockMemberServices.findByValues(null, null, memberProfileEntity.getPdlId(), null))
                 .thenReturn(Collections.EMPTY_SET);
 
-        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
+        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfileEntity.getPdlId()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         List<MemberProfileResponseDTO> response = client.toBlocking().retrieve(request, Argument.listOf(MemberProfileResponseDTO.class));
 
@@ -152,8 +152,8 @@ public class MemberProfileControllerTest {
     // test Find All
     @Test
     public void testGetFindAll() {
-        MemberProfile profileOne = mkMemberProfile();
-        MemberProfile profileTwo = mkMemberProfile("2");
+        MemberProfileEntity profileOne = mkMemberProfile();
+        MemberProfileEntity profileTwo = mkMemberProfile("2");
         when(mockMemberServices.findByValues(null, null, null, null))
                 .thenReturn(Set.of(profileOne, profileTwo));
 
@@ -168,30 +168,30 @@ public class MemberProfileControllerTest {
     @Test
     public void testGetFindById() {
 
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setId(testUuid);
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
+        memberProfileEntity.setId(testUuid);
 
-        when(mockMemberServices.getById(memberProfile.getId())).thenReturn(memberProfile);
+        when(mockMemberServices.getById(memberProfileEntity.getId())).thenReturn(memberProfileEntity);
 
-        HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfile.getId()))
+        HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfileEntity.getId()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(requestFindById, MemberProfileResponseDTO.class);
         
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotNull(response.body());
-        assertProfilesEqual(memberProfile, response.body());
+        assertProfilesEqual(memberProfileEntity, response.body());
     }
 
     // test Find By Name
     @Test
     public void testGetFindByName() {
 
-        MemberProfile memberProfile = mkMemberProfile();
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
-                .thenReturn(Collections.singleton(memberProfile));
+        when(mockMemberServices.findByValues(memberProfileEntity.getName(), null, null, null))
+                .thenReturn(Collections.singleton(memberProfileEntity));
 
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", memberProfile.getName()))
+        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", memberProfileEntity.getName()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
 
@@ -200,18 +200,18 @@ public class MemberProfileControllerTest {
         List<MemberProfileResponseDTO> responseBody = response.body();
 
         assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
+        assertProfilesEqual(memberProfileEntity, responseBody.get(0));
     }
 
     // test Find By Role
     @Test
     public void testGetFindByRole() {
-        MemberProfile memberProfile = mkMemberProfile();
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
-                .thenReturn(Collections.singleton(memberProfile));
+        when(mockMemberServices.findByValues(null, memberProfileEntity.getTitle(), null, null))
+                .thenReturn(Collections.singleton(memberProfileEntity));
 
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?title=%s", memberProfile.getTitle()))
+        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?title=%s", memberProfileEntity.getTitle()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
 
@@ -220,19 +220,19 @@ public class MemberProfileControllerTest {
         List<MemberProfileResponseDTO> responseBody = response.body();
 
         assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
+        assertProfilesEqual(memberProfileEntity, responseBody.get(0));
     }
 
     // test Find By PdlId
     @Test
     public void testGetFindByPdlId() {
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setPdlId(testUuid);
+        MemberProfileEntity memberProfileEntity = mkMemberProfile();
+        memberProfileEntity.setPdlId(testUuid);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
-                .thenReturn(Collections.singleton(memberProfile));
+        when(mockMemberServices.findByValues(null, null, memberProfileEntity.getPdlId(), null))
+                .thenReturn(Collections.singleton(memberProfileEntity));
 
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
+        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?pdlId=%s", memberProfileEntity.getPdlId()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
 
@@ -241,7 +241,7 @@ public class MemberProfileControllerTest {
         List<MemberProfileResponseDTO> responseBody = response.body();
 
         assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
+        assertProfilesEqual(memberProfileEntity, responseBody.get(0));
 
     }
 
@@ -251,7 +251,7 @@ public class MemberProfileControllerTest {
 
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
 
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(mkMemberProfile());
+        when(mockMemberServices.saveProfile(any(MemberProfileEntity.class))).thenReturn(mkMemberProfile());
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()
@@ -269,10 +269,10 @@ public class MemberProfileControllerTest {
 
         MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
 
-        MemberProfile expected = mkMemberProfile();
+        MemberProfileEntity expected = mkMemberProfile();
         expected.setId(requestBody.getId());
 
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+        when(mockMemberServices.saveProfile(any(MemberProfileEntity.class))).thenReturn(expected);
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()

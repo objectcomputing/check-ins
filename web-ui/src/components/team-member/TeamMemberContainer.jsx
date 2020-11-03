@@ -10,15 +10,15 @@ const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const id =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile.id
+    userProfile && userProfile.memberProfileEntity
+      ? userProfile.memberProfileEntity.id
       : undefined;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,
     imageUrl: null,
   });
-  const [teamMembers, setTeamMembers] = useState({});
-  const [teams, setTeams] = useState([]);
+  const [teamMemberEntities, setTeamMembers] = useState({});
+  const [teamEntities, setTeams] = useState([]);
   const [currentTeam, setCurrentTeam] = useState([]);
   const {
     bioText,
@@ -46,7 +46,7 @@ const TeamMemberContainer = () => {
     getPDLName();
   }, [pdlId]);
 
-  // Get member teams
+  // Get member teamEntities
   React.useEffect(() => {
     async function updateTeams() {
       if (id) {
@@ -62,11 +62,11 @@ const TeamMemberContainer = () => {
 
   React.useEffect(() => {
     async function updateTeamMembers() {
-      if (teams) {
+      if (teamEntities) {
         const teamMemberMap = Object.assign(
           {},
           ...(await Promise.all(
-            teams.map(async (team) => {
+            teamEntities.map(async (team) => {
               let res = await getMembersByTeam(team.uuid);
               let data =
                 res && res.payload && res.payload.status === 200
@@ -98,7 +98,7 @@ const TeamMemberContainer = () => {
       }
     }
     updateTeamMembers();
-  }, [teams]);
+  }, [teamEntities]);
 
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
@@ -115,11 +115,11 @@ const TeamMemberContainer = () => {
   };
   let team = teamProfile(currentTeam);
 
-  const mapTeams = teams.map((team) => {
+  const mapTeams = teamEntities.map((team) => {
     return (
       <div
         key={`team-${team.uuid}`}
-        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
+        onClick={async () => setCurrentTeam(teamMemberEntities[team.uuid])}
       >
         {team.name.toUpperCase()}
       </div>

@@ -4,9 +4,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface MemberProfileServices {
-    MemberProfile getById(UUID id);
+    MemberProfileEntity getById(UUID id);
 
-    Set<MemberProfile> findByValues(String name, String title, UUID pdlId, String workEmail);
+    Set<MemberProfileEntity> findByValues(String name, String title, UUID pdlId, String workEmail);
 
-    MemberProfile saveProfile(MemberProfile memberProfile);
+    MemberProfileEntity saveProfile(MemberProfileEntity memberProfileEntity);
 }

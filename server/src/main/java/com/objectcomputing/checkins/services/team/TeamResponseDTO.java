@@ -1,12 +1,15 @@
 package com.objectcomputing.checkins.services.team;
 
-import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
-@Introspected
-public class TeamCreateDTO {
+public class TeamResponseDTO {
+    @NotNull
+    private UUID id;
+
     @NotBlank
     @Schema(required = true, description = "name of the team")
     private String name;
@@ -15,13 +18,12 @@ public class TeamCreateDTO {
     @Schema(required = true, description = "description of the team")
     private String description;
 
-    public TeamCreateDTO(String name, String description) {
-        this.name = name;
-        this.description = description;
+    public UUID getId() {
+        return id;
     }
 
-    public TeamCreateDTO() {
-
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {

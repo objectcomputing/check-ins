@@ -17,16 +17,16 @@ import "./Checkin.css";
 const UploadDocs = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile, currentCheckin } = state;
-  const { memberProfile } = userProfile;
+  const { memberProfileEntity } = userProfile;
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileColors, setFileColors] = useState({});
 
   const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    (memberProfileEntity && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
   const canView =
-    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
+    pdlorAdmin && memberProfileEntity.id !== currentCheckin.teamMemberId;
   const checkinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {

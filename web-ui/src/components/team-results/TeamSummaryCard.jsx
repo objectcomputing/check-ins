@@ -16,17 +16,17 @@ const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team }) => {
     const {state} = useContext(AppContext);
-    const teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
+    const teamMemberEntities = AppContext.selectMemberProfilesByTeamId(state)(team.id);
 
-    let leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
-    let nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
+    let leads = teamMemberEntities == null ? null : teamMemberEntities.filter((teamMemberEntity) => teamMemberEntity.lead);
+    let nonLeads = teamMemberEntities == null ? null : teamMemberEntities.filter((teamMemberEntity) => !teamMemberEntity.lead);
 
     return (
         <Card>
             <CardHeader title={team.name} subheader={team.description} />
             <CardContent>
                 {
-                    teamMembers == null ?
+                    teamMemberEntities == null ?
                         <React.Fragment>
                             <Skeleton />
                             <Skeleton />

@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -63,7 +63,7 @@ class RoleServicesImplTest {
     void testSave() {
         Role role = new Role(RoleType.ADMIN, UUID.randomUUID());
 
-        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(roleRepository
                 .findByRoleAndMemberid(eq(role.getRole()), eq(role.getMemberid())))
                 .thenReturn(Optional.empty());
@@ -149,7 +149,7 @@ class RoleServicesImplTest {
     void testSaveRoleAlreadyExistingMember() {
         Role role = new Role(RoleType.MEMBER, UUID.randomUUID());
 
-        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(roleRepository.findByRoleAndMemberid(eq(role.getRole()), eq(role.getMemberid())))
                 .thenReturn(Optional.of(role));
 
@@ -167,7 +167,7 @@ class RoleServicesImplTest {
     void testUpdate() {
         Role role = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
 
-        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(role.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
         when(roleRepository.update(eq(role))).thenReturn(role);
 

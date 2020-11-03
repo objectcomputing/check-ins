@@ -4,12 +4,12 @@ import Avatar from "@material-ui/core/Avatar";
 import "./TeamMemberSelect.css";
 
 const TeamMemberSelect = (props) => {
-  const { teamMembers, onChange, singleSelect = false } = props;
-  const [filteredTeamMembers, setFilteredTeamMembers] = useState(teamMembers);
+  const { teamMemberEntities, onChange, singleSelect = false } = props;
+  const [filteredTeamMembers, setFilteredTeamMembers] = useState(teamMemberEntities);
 
   const filterTeamMembers = (e) => {
     let searchInput = e.target.value.toLowerCase();
-    let filtered = teamMembers.filter((member) => {
+    let filtered = teamMemberEntities.filter((member) => {
       return member.name.toLowerCase().includes(searchInput);
     });
     setFilteredTeamMembers(filtered);

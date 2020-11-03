@@ -1,10 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
-import io.micronaut.context.ApplicationContext;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
 
@@ -20,8 +18,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public MemberProfile getById(UUID id) {
-        Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
+    public MemberProfileEntity getById(UUID id) {
+        Optional<MemberProfileEntity> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
             throw new MemberProfileDoesNotExistException("No member profile for id");
         }
@@ -29,26 +27,26 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
-        Set<MemberProfile> memberProfiles = new HashSet<>(
+    public Set<MemberProfileEntity> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
+        Set<MemberProfileEntity> memberProfileEntities = new HashSet<>(
                 memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId), workEmail));
 
-        return memberProfiles;
+        return memberProfileEntities;
     }
 
     @Override
-    public MemberProfile saveProfile(MemberProfile memberProfile) {
-        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
-        if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
+    public MemberProfileEntity saveProfile(MemberProfileEntity memberProfileEntity) {
+        MemberProfileEntity emailProfile = memberProfileRepository.findByWorkEmail(memberProfileEntity.getWorkEmail()).orElse(null);
+        if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfileEntity.getId(), emailProfile.getId())) {
             throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
-                    memberProfile.getWorkEmail()));
+                    memberProfileEntity.getWorkEmail()));
         }
-        if (memberProfile.getId() == null) {
-            return memberProfileRepository.save(memberProfile);
+        if (memberProfileEntity.getId() == null) {
+            return memberProfileRepository.save(memberProfileEntity);
         }
-        if (memberProfileRepository.findById(memberProfile.getId()) == null) {
+        if (memberProfileRepository.findById(memberProfileEntity.getId()) == null) {
             throw new MemberProfileBadArgException("No member profile exists for the ID");
         }
-        return memberProfileRepository.update(memberProfile);
+        return memberProfileRepository.update(memberProfileEntity);
     }
 }

@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
-public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {
+public interface MemberProfileRepository extends CrudRepository<MemberProfileEntity, UUID> {
 
-    Optional<MemberProfile> findByWorkEmail(String workEmail);
+    Optional<MemberProfileEntity> findByWorkEmail(String workEmail);
 
     @Query("SELECT * " +
             "FROM member_profile mp " +
@@ -21,6 +21,6 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "AND (:title IS NULL OR mp.title = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) ")
-    List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail);
-    List<MemberProfile> findAll();
+    List<MemberProfileEntity> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail);
+    List<MemberProfileEntity> findAll();
 }

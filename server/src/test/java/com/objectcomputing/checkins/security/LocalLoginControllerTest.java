@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.security;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
@@ -71,28 +71,28 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testPostLoginAlreadyExistingUserNoOverrides() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        createDefaultRole(RoleType.ADMIN, memberProfileEntity);
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfileEntity.getWorkEmail(), "role", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
         assertTrue(response.contains("\"roles\":[\"ADMIN\"]"));
-        assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfile.getWorkEmail())));
+        assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfileEntity.getWorkEmail())));
         assertTrue(response.contains("\"access_token\":\""));
     }
 
     @Test
     void testPostLoginAlreadyExistingUserWithOverrides() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
-        createDefaultRole(RoleType.PDL, memberProfile);
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", RoleType.Constants.MEMBER_ROLE))
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        createDefaultRole(RoleType.ADMIN, memberProfileEntity);
+        createDefaultRole(RoleType.PDL, memberProfileEntity);
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfileEntity.getWorkEmail(), "role", RoleType.Constants.MEMBER_ROLE))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
         assertTrue(response.contains("\"roles\":[\"MEMBER\"]"));
-        assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfile.getWorkEmail())));
+        assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfileEntity.getWorkEmail())));
         assertTrue(response.contains("\"access_token\":\""));
     }
 }

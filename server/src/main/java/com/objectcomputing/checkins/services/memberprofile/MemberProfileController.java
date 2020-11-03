@@ -133,7 +133,7 @@ public class MemberProfileController {
         return URI.create("/member-profile/" + id);
     }
 
-    private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
+    private MemberProfileResponseDTO fromEntity(MemberProfileEntity entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
         dto.setBioText(entity.getBioText());
@@ -147,13 +147,13 @@ public class MemberProfileController {
         return dto;
     }
 
-    private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
+    private MemberProfileEntity fromDTO(MemberProfileUpdateDTO dto) {
+        return new MemberProfileEntity(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
                 dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 
-    private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
+    private MemberProfileEntity fromDTO(MemberProfileCreateDTO dto) {
+        return new MemberProfileEntity(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
                 dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
     }
 }

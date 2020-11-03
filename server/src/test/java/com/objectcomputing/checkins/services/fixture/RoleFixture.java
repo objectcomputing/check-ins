@@ -1,18 +1,18 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 
 import java.util.UUID;
 
 public interface RoleFixture extends RepositoryFixture {
-    default Role createDefaultRole(MemberProfile memberProfile) {
-        return createDefaultRole(RoleType.ADMIN, memberProfile);
+    default Role createDefaultRole(MemberProfileEntity memberProfileEntity) {
+        return createDefaultRole(RoleType.ADMIN, memberProfileEntity);
     }
 
-    default Role createDefaultRole(RoleType type, MemberProfile memberProfile) {
-        return getRoleRepository().save(new Role(type, memberProfile.getId()));
+    default Role createDefaultRole(RoleType type, MemberProfileEntity memberProfileEntity) {
+        return getRoleRepository().save(new Role(type, memberProfileEntity.getId()));
     }
 
     default Role findRole(Role role) {

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -32,11 +32,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateARole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(memberProfile.getId());
+        roleCreateDTO.setMemberid(memberProfileEntity.getId());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -52,8 +52,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateARoleAlreadyExists() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfileEntity);
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(alreadyExistingRole.getRole());
         roleCreateDTO.setMemberid(alreadyExistingRole.getMemberid());
@@ -144,15 +144,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testLoadRoles() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(memberProfile.getId());
+        roleCreateDTO.setMemberid(memberProfileEntity.getId());
 
         RoleCreateDTO roleCreateDTO2 = new RoleCreateDTO();
         roleCreateDTO2.setRole(RoleType.ADMIN);
-        roleCreateDTO2.setMemberid(memberProfile.getId());
+        roleCreateDTO2.setMemberid(memberProfileEntity.getId());
 
         List<RoleCreateDTO> dtoList = List.of(roleCreateDTO, roleCreateDTO2);
 
@@ -215,8 +215,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testReadRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
 
         final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
@@ -236,11 +236,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testFindRoles() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
-                createDefaultRole(RoleType.PDL, memberProfile));
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfileEntity),
+                createDefaultRole(RoleType.PDL, memberProfileEntity));
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfileEntity.getId()))
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
@@ -250,8 +250,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testFindRolesAllParams() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getRole(),
                 role.getMemberid())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -273,8 +273,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -287,8 +287,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingMember() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
 
         role.setMemberid(UUID.randomUUID());
 
@@ -307,8 +307,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingRoleType() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role roleToUpdate = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role roleToUpdate = createDefaultRole(memberProfileEntity);
 
         Map<String, String> role = new HashMap<>();
         role.put("id", roleToUpdate.getId().toString());
@@ -330,8 +330,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getId());
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfileEntity.getId());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -348,8 +348,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateWithoutId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfileEntity);
         role.setId(null);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
@@ -380,8 +380,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateAnInvalidRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
         role.setMemberid(null);
         role.setRole(null);
 
@@ -418,8 +418,8 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void deleteRole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        Role role = createDefaultRole(memberProfileEntity);
 
         assertNotNull(findRole(role));
 

@@ -1,100 +1,106 @@
 package com.objectcomputing.checkins.services.team;
 
-import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
 import javax.inject.Singleton;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.security.utils.SecurityService;
-import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import nu.studer.sample.tables.pojos.Team;
+import nu.studer.sample.tables.pojos.TeamMember;
 
 @Singleton
 public class TeamServicesImpl implements TeamServices {
 
-    private TeamRepository teamsRepo;
-    private TeamMemberRepository teamMemberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
-    private TeamMemberServices teamMemberServices;
+    private final TeamRepository teamsRepo;
+    private final TeamMemberRepository teamMemberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
     
     public TeamServicesImpl(TeamRepository teamsRepo, TeamMemberRepository teamMemberRepo,
-                            SecurityService securityService, CurrentUserServices currentUserServices,
-                            TeamMemberServices teamMemberServices) {
+                            SecurityService securityService, CurrentUserServices currentUserServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberRepo = teamMemberRepo;
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
-        this.teamMemberServices = teamMemberServices;
     }
 
-    public Team save(Team team) {
-        Team newTeam = null;
-        if (team != null) {
-            if (team.getId() != null) {
-                throw new TeamBadArgException(String.format("Found unexpected id %s, please try updating instead",
-                        team.getId()));
-            } else if (teamsRepo.findByName(team.getName()).isPresent()) {
-                throw new TeamBadArgException(String.format("Team with name %s already exists", team.getName()));
+    public TeamResponseDTO save(TeamCreateDTO teamDTO) {
+        Team newTeamEntity = null;
+        if (teamDTO != null) {
+            if (teamsRepo.findByName(teamDTO.getName()).isPresent()) {
+                throw new TeamBadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
-                newTeam = teamsRepo.save(team);
+                newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
             }
         }
 
-        return newTeam;
+        return fromEntity(newTeamEntity);
     }
 
-    public Team read(UUID teamId) {
-        return teamId != null ? teamsRepo.findById(teamId).orElse(null) : null;
+    public TeamResponseDTO read(UUID teamId) {
+        return teamId != null ? fromEntity(teamsRepo.findById(teamId).orElse(null)) : null;
     }
 
-    public Team update(Team team) {
-        Team newTeam = null;
-        if (team != null) {
-            if (team.getId() != null && teamsRepo.findById(team.getId()).isPresent()) {
-                newTeam = teamsRepo.update(team);
+    public TeamResponseDTO update(TeamUpdateDTO teamEntity) {
+        Team newTeamEntity = null;
+        if (teamEntity != null) {
+            if (teamEntity.getId() != null && teamsRepo.findById(teamEntity.getId()).isPresent()) {
+                newTeamEntity = teamsRepo.update(fromDTO(teamEntity));
             } else {
-                throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", team.getId()));
+                throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", teamEntity.getId()));
             }
         }
 
-        return newTeam;
+        return fromEntity(newTeamEntity);
     }
 
-    public Set<Team> findByFields(String name, UUID memberid) {
-        Set<Team> teams = new HashSet<>();
-        teamsRepo.findAll().forEach(teams::add);
-        if (name != null) {
-            teams.retainAll(teamsRepo.findByNameIlike(name));
-        }
-        if (memberid != null) {
-            teams.retainAll(teamMemberRepo.findByMemberid(memberid)
-                    .stream().map(TeamMember::getTeamid).map(gid -> teamsRepo.findById(gid).orElse(null))
-                    .filter(Objects::nonNull).collect(Collectors.toSet()));
-        }
-        return teams;
+    public Set<TeamResponseDTO> findByFields(String name, UUID memberid) {
+        return teamsRepo.search(name, memberid).stream().map(this::fromEntity).collect(Collectors.toSet());
     }
 
     public void delete(@NotNull UUID id) {
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        Team team = teamsRepo.findById(id).get();
+        teamMemberRepo.deleteByTeamId(id);
 
-        Set<TeamMember> CurrentTeam = teamMemberServices.findByFields(team.getId(), currentUser.getId(), true);
+        List<TeamMember> CurrentTeam = teamMemberRepo.search(id, currentUser.getId(), true);
         if(isAdmin || !CurrentTeam.isEmpty()) {
             teamsRepo.deleteById(id);
         } else {
             throw new TeamBadArgException("You are not authorized to perform this operation");
         }
+    }
+
+    private Team fromDTO(TeamUpdateDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        return new Team(dto.getId().toString(), dto.getName(), dto.getDescription());
+    }
+
+    private TeamResponseDTO fromEntity(Team entity) {
+        if (entity == null) {
+            return null;
+        }
+        TeamResponseDTO dto = new TeamResponseDTO();
+        dto.setId(UUID.fromString(entity.getId()));
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        return dto;
+    }
+
+    private Team fromDTO(TeamCreateDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        return new Team(null, dto.getName(), dto.getDescription());
     }
 }

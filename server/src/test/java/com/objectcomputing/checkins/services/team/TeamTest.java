@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.team;
 
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
+import nu.studer.sample.tables.pojos.Team;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -25,9 +26,9 @@ class TeamTest {
     void testTeamInstantiation() {
         final String name = "name";
         final String description = "description";
-        Team team = new Team(name, description);
-        assertEquals(team.getName(), name);
-        assertEquals(team.getDescription(), description);
+        Team teamEntity = new Team(null, name, description);
+        assertEquals(teamEntity.getName(), name);
+        assertEquals(teamEntity.getDescription(), description);
     }
 
     @Test
@@ -35,12 +36,12 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team team = new Team(uuid, name, description);
-        assertEquals(team.getId(), uuid);
-        assertEquals(team.getName(), name);
-        assertEquals(team.getDescription(), description);
+        Team teamEntity = new Team(uuid.toString(), name, description);
+        assertEquals(teamEntity.getId(), uuid.toString());
+        assertEquals(teamEntity.getName(), name);
+        assertEquals(teamEntity.getDescription(), description);
 
-        Set<ConstraintViolation<Team>> violations = validator.validate(team);
+        Set<ConstraintViolation<Team>> violations = validator.validate(teamEntity);
         assertTrue(violations.isEmpty());
     }
 
@@ -50,12 +51,9 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team team = new Team(uuid, name, description);
+        Team teamEntity = new Team(uuid.toString(), name, description);
 
-        team.setName("");
-        team.setDescription("");
-
-        Set<ConstraintViolation<Team>> violations = validator.validate(team);
+        Set<ConstraintViolation<Team>> violations = validator.validate(new Team(teamEntity.getId(), "", ""));
         assertEquals(violations.size(), 2);
         for (ConstraintViolation<Team> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
@@ -67,14 +65,14 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team tm = new Team(uuid, name, description);
-        Team tm2 = new Team(uuid, name, description);
+        Team tm = new Team(uuid.toString(), name, description);
+        Team tm2 = new Team(uuid.toString(), name, description);
 
         assertEquals(tm, tm2);
 
-        tm2.setId(null);
+        Team nullId = new Team(null, tm2.getName(), tm2.getDescription());
 
-        assertNotEquals(tm, tm2);
+        assertNotEquals(tm, nullId);
     }
 
     @Test
@@ -83,7 +81,7 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name";
         final String description = "description";
-        Team tm = new Team(uuid, name, description);
+        Team tm = new Team(uuid.toString(), name, description);
 
         map.put(tm, true);
 
@@ -95,7 +93,7 @@ class TeamTest {
         final UUID uuid = UUID.randomUUID();
         final String name = "name------name";
         final String description = "description------description";
-        Team tm = new Team(uuid, name, description);
+        Team tm = new Team(uuid.toString(), name, description);
 
         assertTrue(tm.toString().contains(name));
         assertTrue(tm.toString().contains(uuid.toString()));

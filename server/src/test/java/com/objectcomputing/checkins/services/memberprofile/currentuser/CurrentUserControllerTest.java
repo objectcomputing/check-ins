@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.security.authentication.Authentication;
@@ -65,7 +65,7 @@ public class CurrentUserControllerTest {
             }
         };
 
-        MemberProfile expected = mkMemberProfile();
+        MemberProfileEntity expected = mkMemberProfile();
         expected.setWorkEmail(userEmail);
 
         when(currentUserServices.findOrSaveUser(userName, userEmail)).thenReturn(expected);

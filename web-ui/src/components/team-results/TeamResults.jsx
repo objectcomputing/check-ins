@@ -7,7 +7,7 @@ import { getAllTeams } from '../../api/team';
 import './TeamResults.css'
 
 const propTypes = {
-    teams: PropTypes.arrayOf(PropTypes.shape({
+    teamEntities: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string,
         name: PropTypes.string,
         description: PropTypes.string
@@ -18,7 +18,7 @@ const displayName = "TeamResults";
 
 const TeamResults = () => {
     const { state, dispatch } = useContext(AppContext);
-    const { teams } = state;
+    const { teamEntities } = state;
 
     useEffect(() => {
         async function getTeams() {
@@ -39,7 +39,7 @@ const TeamResults = () => {
 
     return (
         <Container maxWidth="md">
-            {teams.map((team) => (
+            {teamEntities.map((team) => (
                 <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
             ))}
         </Container>

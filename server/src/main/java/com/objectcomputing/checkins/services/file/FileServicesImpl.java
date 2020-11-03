@@ -11,7 +11,7 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -63,7 +63,7 @@ public class FileServicesImpl implements FileServices {
     public HttpResponse<?> findFiles(@Nullable UUID checkInID) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
@@ -110,7 +110,7 @@ public class FileServicesImpl implements FileServices {
     public HttpResponse<?> downloadFiles(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);
@@ -150,7 +150,7 @@ public class FileServicesImpl implements FileServices {
     public HttpResponse<FileInfoDTO> uploadFile(@NotNull UUID checkInID, @NotNull CompletedFileUpload file) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         validate((file.getFilename() == null || file.getFilename().equals("")), "Please select a file before uploading.");
 
@@ -212,7 +212,7 @@ public class FileServicesImpl implements FileServices {
     public HttpResponse<?> deleteFile(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         CheckinDocument cd = checkinDocumentServices.getFindByUploadDocId(uploadDocId);

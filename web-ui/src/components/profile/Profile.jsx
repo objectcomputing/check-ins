@@ -22,7 +22,7 @@ const Profile = () => {
 
   const [mySkills, setMySkills] = useState([]);
   const { bioText, workEmail, name, title, id, pdlId } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+    userProfile && userProfile.memberProfileEntity ? userProfile.memberProfileEntity : {};
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();

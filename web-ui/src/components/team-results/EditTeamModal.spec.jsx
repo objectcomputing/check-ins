@@ -28,7 +28,7 @@ const testTeam = {
     name: "Test Team",
     description: "A team used for testing.",
     teamLeads: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}],
-    teamMembers: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
+    teamMemberEntities: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
 };
 
 const initialState = {
@@ -56,7 +56,7 @@ const initialState = {
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
     index: 0,
-    memberProfiles: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}, {id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
+    memberProfileEntities: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}, {id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
   }
 }
 

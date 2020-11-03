@@ -30,10 +30,10 @@ const updateItem = debounce(doUpdate, 1500);
 const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
-  const { memberProfile } = userProfile;
-  const { id } = memberProfile;
+  const { memberProfileEntity } = userProfile;
+  const { id } = memberProfileEntity;
   const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
+    (memberProfileEntity && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
 
   const [agendaItems, setAgendaItems] = useState();

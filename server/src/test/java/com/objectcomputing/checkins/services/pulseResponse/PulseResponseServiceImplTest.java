@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -67,7 +67,7 @@ public class PulseResponseServiceImplTest {
     @Test
     void testSave() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
-        MemberProfile memberprofile = new MemberProfile();
+        MemberProfileEntity memberprofile = new MemberProfileEntity();
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
         when(pulseResponseRepository.save(eq(cd))).thenReturn(cd);
@@ -134,7 +134,7 @@ public class PulseResponseServiceImplTest {
     @Test
     void testUpdate() {
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
-        MemberProfile memberprofile = new MemberProfile();
+        MemberProfileEntity memberprofile = new MemberProfileEntity();
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.of(memberprofile));
         when(pulseResponseRepository.findById(cd.getId())).thenReturn(Optional.of(cd));

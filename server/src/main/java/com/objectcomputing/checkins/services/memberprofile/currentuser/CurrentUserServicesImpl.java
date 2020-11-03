@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.role.Role;
@@ -28,9 +28,9 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     @Override
-    public MemberProfile findOrSaveUser(@Nullable String name, @NotNull String workEmail) {
+    public MemberProfileEntity findOrSaveUser(@Nullable String name, @NotNull String workEmail) {
 
-        Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
+        Optional<MemberProfileEntity> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
         if(userProfile.isPresent()) {
             return userProfile.get();
         }
@@ -38,8 +38,8 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return saveNewUser(name, workEmail);
     }
 
-    private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
-        MemberProfile user = memberProfileServices.saveProfile(new MemberProfile(name, "", null,
+    private MemberProfileEntity saveNewUser(@Nullable String name, @NotNull String workEmail) {
+        MemberProfileEntity user = memberProfileServices.saveProfile(new MemberProfileEntity(name, "", null,
                 "", workEmail, "", null, ""));
 
         roleServices.save(new Role(RoleType.MEMBER, user.getId()));

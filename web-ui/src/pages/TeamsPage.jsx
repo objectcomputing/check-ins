@@ -6,7 +6,7 @@ const displayName = "TeamsPage";
 
 const TeamsPage = () => {
     return (
-        <div className="teams-page">
+        <div className="teamEntities-page">
             <TeamsActions />
             <TeamResults />
         </div>

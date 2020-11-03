@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class CurrentUserDtoTest {
         dto.setName("some.name");
         assertEquals("some.name", dto.getName());
 
-        dto.setMemberProfile(new MemberProfile());
+        dto.setMemberProfile(new MemberProfileEntity());
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

@@ -8,10 +8,10 @@ import { AppContext } from '../../context/AppContext';
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     const { state } = useContext(AppContext);
-    const { memberProfiles } = state;
+    const { memberProfileEntities } = state;
     const [editedTeam, setTeam] = useState(team);
 
-    const teamMemberOptions = memberProfiles;
+    const teamMemberOptions = memberProfileEntities;
 
     const onLeadsChange = (event, newValue) => {
         setTeam({
@@ -23,7 +23,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     const onTeamMembersChange = (event, newValue) => {
         setTeam({
             ...editedTeam,
-            teamMembers: newValue
+            teamMemberEntities: newValue
         });
     };
 
@@ -71,7 +71,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                 <Autocomplete
                     multiple
                     options={teamMemberOptions}
-                    value={editedTeam.teamMembers ? editedTeam.teamMembers : []}
+                    value={editedTeam.teamMemberEntities ? editedTeam.teamMemberEntities : []}
                     onChange={onTeamMembersChange}
                     getOptionLabel={(option) => option.name}
                     getOptionSelected={(option, value) => value ? value.id === option.id : false}

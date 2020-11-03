@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -70,7 +70,7 @@ class MemberSkillServiceImplTest {
         Skill skill = new Skill();
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(skill));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(memberSkillRepository.save(eq(memberSkill))).thenReturn(memberSkill);
 
         assertEquals(memberSkill, memberSkillsServices.save(memberSkill));
@@ -130,7 +130,7 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.of(new Skill()));
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
         when(memberSkillRepository.findByMemberidAndSkillid(eq(memberSkill.getMemberid()), eq(memberSkill.getSkillid())))
         .thenReturn(Optional.of(memberSkill));
 
@@ -149,7 +149,7 @@ class MemberSkillServiceImplTest {
         MemberSkill memberSkill = new MemberSkill(UUID.randomUUID(), UUID.randomUUID());
 
         when(skillRepository.findById(eq(memberSkill.getSkillid()))).thenReturn(Optional.empty());
-        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
+        when(memberProfileRepository.findById(eq(memberSkill.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
 
         MemberSkillBadArgException exception = assertThrows(MemberSkillBadArgException.class, () -> memberSkillsServices.save(memberSkill));
         assertEquals(String.format("Skill %s doesn't exist", memberSkill.getSkillid()), exception.getMessage());
