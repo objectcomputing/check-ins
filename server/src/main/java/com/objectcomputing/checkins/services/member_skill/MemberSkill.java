@@ -5,11 +5,13 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,6 +37,18 @@ public class MemberSkill {
     @TypeDef(type= DataType.STRING)
     @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
+
+    @Nullable
+    @Column(name="skilllevel")
+    @TypeDef(type= DataType.STRING)
+    @Schema(description = "the level of the skill")
+    private String skilllevel;
+
+    @Nullable
+    @Column(name="lastuseddate")
+    @TypeDef(type= DataType.DATE)
+    @Schema(description = "the last used date of the skill")
+    private Date lastuseddate;
 
     public MemberSkill() {
     }
