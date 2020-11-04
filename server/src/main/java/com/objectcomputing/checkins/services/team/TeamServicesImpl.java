@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.team;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
 import javax.inject.Singleton;
@@ -21,13 +23,18 @@ public class TeamServicesImpl implements TeamServices {
     private final TeamMemberRepository teamMemberRepo;
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
+    private final MemberProfileServices memberProfileServices;
     
-    public TeamServicesImpl(TeamRepository teamsRepo, TeamMemberRepository teamMemberRepo,
-                            SecurityService securityService, CurrentUserServices currentUserServices) {
+    public TeamServicesImpl(TeamRepository teamsRepo,
+                            TeamMemberRepository teamMemberRepo,
+                            SecurityService securityService,
+                            CurrentUserServices currentUserServices,
+                            MemberProfileServices memberProfileServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberRepo = teamMemberRepo;
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
+        this.memberProfileServices = memberProfileServices;
     }
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
@@ -61,7 +68,15 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public Set<TeamResponseDTO> findByFields(String name, UUID memberid) {
-        return teamsRepo.search(name, memberid).stream().map(this::fromEntity).collect(Collectors.toSet());
+        Set<TeamResponseDTO> foundTeams = teamsRepo.search(name, memberid).stream().map(this::fromEntity).collect(Collectors.toSet());
+        //TODO: revisit this in a way that will allow joins. May require not using the generated POJOs.
+        for (TeamResponseDTO foundTeam : foundTeams) {
+            List<TeamMember> foundMembers = teamMemberRepo.findByTeamid(foundTeam.getId());
+            for (TeamMember foundMember : foundMembers) {
+                foundTeam.getTeamMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(UUID.fromString(foundMember.getMemberid()))));
+            }
+        }
+        return foundTeams;
     }
 
     public boolean delete(@NotNull UUID id) {
@@ -98,5 +113,12 @@ public class TeamServicesImpl implements TeamServices {
             return null;
         }
         return new Team(null, dto.getName(), dto.getDescription());
+    }
+
+    private TeamMemberDTO fromMemberEntity(TeamMember teamMember, MemberProfileEntity memberProfile) {
+        if (teamMember == null || memberProfile == null) {
+            return null;
+        }
+        return new TeamMemberDTO(teamMember.getId(), memberProfile.getName(), teamMember.getLead() );
     }
 }

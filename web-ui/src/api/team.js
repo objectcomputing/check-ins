@@ -2,8 +2,8 @@ import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
 const teamUrl = `${BASE_API_URL}/services/team`;
-const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
-export const getAllTeamMembers = async () => {
+//const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
+/*export const getAllTeamMembers = async () => {
   return await resolve(
     axios({
       method: "get",
@@ -26,13 +26,13 @@ export const getMembersByTeam = async (id) => {
       withCredentials: true
     })
   );
-};
+};*/
 
 export const getTeamsByMember = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: teamMemberUrl,
+      url: teamUrl,
       responseType: "json",
       params: {
         memberid: id,

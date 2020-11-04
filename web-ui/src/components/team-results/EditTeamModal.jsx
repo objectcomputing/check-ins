@@ -23,7 +23,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     const onTeamMembersChange = (event, newValue) => {
         setTeam({
             ...editedTeam,
-            teamMemberEntities: newValue
+            teamMembers: newValue
         });
     };
 
@@ -71,7 +71,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                 <Autocomplete
                     multiple
                     options={teamMemberOptions}
-                    value={editedTeam.teamMemberEntities ? editedTeam.teamMemberEntities : []}
+                    value={editedTeam.teamMembers ? editedTeam.teamMembers : []}
                     onChange={onTeamMembersChange}
                     getOptionLabel={(option) => option.name}
                     getOptionSelected={(option, value) => value ? value.id === option.id : false}

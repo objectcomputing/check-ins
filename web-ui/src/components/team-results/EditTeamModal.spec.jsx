@@ -28,7 +28,7 @@ const testTeam = {
     name: "Test Team",
     description: "A team used for testing.",
     teamLeads: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}],
-    teamMemberEntities: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
+    teamMembers: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
 };
 
 const initialState = {

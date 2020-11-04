@@ -111,7 +111,7 @@ function Menu() {
       </Button>
       <br />
       <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teamEntities">
+        <Link style={linkStyle} to="/teams">
           Teams
         </Link>
       </Button>

@@ -1,9 +1,12 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,6 +21,8 @@ public class TeamResponseDTO {
     @NotBlank
     @Schema(required = true, description = "description of the team")
     private String description;
+
+    List<TeamMemberDTO> teamMembers;
 
     public TeamResponseDTO(UUID id, String name, String description) {
         this.id = id;
@@ -53,6 +58,17 @@ public class TeamResponseDTO {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description);
+    }
+
+    public List<TeamMemberDTO> getTeamMembers() {
+        if (teamMembers == null) {
+            teamMembers = new ArrayList<>();
+        }
+        return teamMembers;
+    }
+
+    public void setTeamMembers(List<TeamMemberDTO> teamMembers) {
+        this.teamMembers = teamMembers;
     }
 
     public UUID getId() {

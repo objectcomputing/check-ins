@@ -179,7 +179,7 @@ const AppContextProvider = (props) => {
     getMemberProfiles();
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     async function getTeamMembers() {
       let res = await getAllTeamMembers();
       let teamMembers =
@@ -192,7 +192,7 @@ const AppContextProvider = (props) => {
       }
     }
     getTeamMembers();
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     if (id && state.checkins.length === 0) {

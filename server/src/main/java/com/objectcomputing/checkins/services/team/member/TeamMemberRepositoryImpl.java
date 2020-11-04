@@ -31,7 +31,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
     @Transactional
     public List<TeamMember> findByTeamid(@NotNull UUID teamid) {
         return dslContext
-                .select()
+                .select(TEAM_MEMBER.ID, TEAM_MEMBER.TEAMID, TEAM_MEMBER.MEMBERID, TEAM_MEMBER.LEAD)
                 .from(TEAM_MEMBER)
                 .join(TEAM)
                     .on(TEAM.ID.eq(TEAM_MEMBER.TEAMID))

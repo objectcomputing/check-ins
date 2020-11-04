@@ -17,8 +17,8 @@ const TeamMemberContainer = () => {
     name: null,
     imageUrl: null,
   });
-  const [teamMemberEntities, setTeamMembers] = useState({});
-  const [teamEntities, setTeams] = useState([]);
+  const [teamMembers, setTeamMembers] = useState({});
+  const [teams, setTeams] = useState([]);
   const [currentTeam, setCurrentTeam] = useState([]);
   const {
     bioText,
@@ -46,7 +46,7 @@ const TeamMemberContainer = () => {
     getPDLName();
   }, [pdlId]);
 
-  // Get member teamEntities
+  // Get member teams
   React.useEffect(() => {
     async function updateTeams() {
       if (id) {
@@ -62,11 +62,11 @@ const TeamMemberContainer = () => {
 
   React.useEffect(() => {
     async function updateTeamMembers() {
-      if (teamEntities) {
+      if (teams) {
         const teamMemberMap = Object.assign(
           {},
           ...(await Promise.all(
-            teamEntities.map(async (team) => {
+            teams.map(async (team) => {
               let res = await getMembersByTeam(team.uuid);
               let data =
                 res && res.payload && res.payload.status === 200
@@ -98,7 +98,7 @@ const TeamMemberContainer = () => {
       }
     }
     updateTeamMembers();
-  }, [teamEntities]);
+  }, [teams]);
 
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {
@@ -115,11 +115,11 @@ const TeamMemberContainer = () => {
   };
   let team = teamProfile(currentTeam);
 
-  const mapTeams = teamEntities.map((team) => {
+  const mapTeams = teams.map((team) => {
     return (
       <div
         key={`team-${team.uuid}`}
-        onClick={async () => setCurrentTeam(teamMemberEntities[team.uuid])}
+        onClick={async () => setCurrentTeam(teamMembers[team.uuid])}
       >
         {team.name.toUpperCase()}
       </div>
