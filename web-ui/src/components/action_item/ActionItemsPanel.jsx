@@ -19,9 +19,9 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 import "./ActionItemsPanel.css";
 
-const doUpdate = async (actionItem) => {
-  if (actionItem) {
-    await updateActionItem(actionItem);
+const doUpdate = async (actionItem, csrf) => {
+  if (actionItem && csrf) {
+    await updateActionItem(actionItem, csrf);
   }
 };
 
@@ -29,7 +29,7 @@ const updateItem = debounce(doUpdate, 1500);
 
 const ActionItemsPanel = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile } = state;
+  const { csrf, userProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
   const pdlorAdmin =
@@ -40,32 +40,37 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getActionItems = async (checkinId) => {
-    setIsLoading(true);
-    let res = await findActionItem(checkinId, null);
-    if (res && res.payload) {
-      let actionItemList =
-        res.payload.data && !res.error ? res.payload.data : undefined;
-      setActionItems(actionItemList);
-      setIsLoading(false);
+  const getActionItems = async (checkinId, csrf) => {
+    if (csrf) {
+      setIsLoading(true);
+      let res = await findActionItem(checkinId, null, csrf);
+      if (res && res.payload) {
+        let actionItemList =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setActionItems(actionItemList);
+        setIsLoading(false);
+      }
     }
   };
 
-  const deleteItem = async (id) => {
-    if (id) {
-      await deleteActionItem(id);
+  const deleteItem = async (id, csrf) => {
+    if (id && csrf) {
+      await deleteActionItem(id, csrf);
     }
   };
 
-  const doUpdate = async (actionItem) => {
-    if (actionItem) {
-      await updateActionItem(actionItem);
+  const doUpdate = async (actionItem, csrf) => {
+    if (actionItem && csrf) {
+      await updateActionItem(actionItem, csrf);
     }
   };
 
   useEffect(() => {
-    getActionItems(checkinId);
-  }, [checkinId]);
+    if (csrf) {
+      getActionItems(checkinId, csrf);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkinId, csrf]);
 
   const reorder = (list, startIndex, endIndex) => {
     const [removed] = list.splice(startIndex, 1);
@@ -106,12 +111,12 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
         return actionItems;
       });
 
-      doUpdate(actionItems[result.destination.index]);
+      doUpdate(actionItems[result.destination.index], csrf);
     }
   };
 
   const makeActionItem = async () => {
-    if (!checkinId || !id || description === "") {
+    if (!checkinId || !id || description === "" || !csrf) {
       return;
     } else if (!pdlorAdmin) {
       dispatch({
@@ -128,7 +133,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
       createdbyid: id,
       description: description,
     };
-    const res = await createActionItem(newActionItem);
+    const res = await createActionItem(newActionItem, csrf);
     if (!res.error && res.payload && res.payload.data) {
       newActionItem.id = res.payload.data.id;
       newActionItem.priority = res.payload.data.priority;
@@ -157,7 +162,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   const killActionItem = (id) => {
-    deleteItem(id);
+    deleteItem(id, csrf);
     let newItems = actionItems.filter((actionItem) => {
       return actionItem.id !== id;
     });

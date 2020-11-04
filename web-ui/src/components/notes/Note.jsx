@@ -14,8 +14,8 @@ import Skeleton from "@material-ui/lab/Skeleton";
 
 import "./Note.css";
 
-async function realUpdate(note) {
-  await updateCheckinNote(note);
+async function realUpdate(note, csrf) {
+  await updateCheckinNote(note, csrf);
 }
 
 const updateNote = debounce(realUpdate, 1000);
@@ -23,7 +23,7 @@ const updateNote = debounce(realUpdate, 1000);
 const Notes = (props) => {
   const { state } = useContext(AppContext);
   const noteRef = useRef([]);
-  const { userProfile, currentCheckin, selectedProfile } = state;
+  const { csrf, userProfile, currentCheckin, selectedProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
   const { memberName } = props;
@@ -48,7 +48,7 @@ const Notes = (props) => {
       }
       setIsLoading(true);
       try {
-        let res = await getNoteByCheckinId(currentCheckinId);
+        let res = await getNoteByCheckinId(currentCheckinId, csrf);
         if (res.error) throw new Error(res.error);
 
         const currentNote =
@@ -64,6 +64,7 @@ const Notes = (props) => {
               checkinid: currentCheckinId,
               createdbyid: id,
               description: "",
+              csrf,
             });
             noteRef.current = noteRef.current.filter(
               (id) => id !== currentCheckinId
@@ -78,6 +79,7 @@ const Notes = (props) => {
             checkinid: currentCheckinId,
             createdbyid: id,
             description: "",
+            csrf,
           });
           if (res.error) throw new Error(res.error);
           if (res && res.payload && res.payload.data) {
@@ -89,17 +91,19 @@ const Notes = (props) => {
       }
       setIsLoading(false);
     }
-    getNotes();
-  }, [currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
+    if (csrf) {
+      getNotes();
+    }
+  }, [csrf, currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
 
   const handleNoteChange = (e) => {
-    if (Object.keys(note) === 0) {
+    if (Object.keys(note) === 0 || !csrf) {
       return;
     }
     const { value } = e.target;
     setNote((note) => {
       const newNote = { ...note, description: value };
-      updateNote(newNote);
+      updateNote(newNote, csrf);
       return newNote;
     });
   };

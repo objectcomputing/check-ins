@@ -2,7 +2,7 @@ import { resolve } from "./api.js";
 
 const checkinsUrl = "/services/check-in";
 const checkinsNoteUrl = "/services/checkin-note";
-export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
+export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
     method: "get",
     url: checkinsUrl,
@@ -11,10 +11,11 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId) => {
       teamMemberId: memberId,
       pdlId: pdlId,
     },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
-export const getCheckinByMemberId = async (id) => {
+export const getCheckinByMemberId = async (id, cookie) => {
   return resolve({
     method: "get",
     url: checkinsUrl,
@@ -22,10 +23,11 @@ export const getCheckinByMemberId = async (id) => {
     params: {
       teamMemberId: id,
     },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
-export const getCheckinByPdlId = async (id) => {
+export const getCheckinByPdlId = async (id, cookie) => {
   return resolve({
     method: "get",
     url: checkinsUrl,
@@ -33,6 +35,7 @@ export const getCheckinByPdlId = async (id) => {
     params: {
       pdlId: id,
     },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
@@ -41,16 +44,18 @@ export const createCheckin = async ({
   pdlId,
   checkInDate,
   completed,
+  cookie,
 }) => {
   return resolve({
     method: "post",
     url: checkinsUrl,
     responseType: "json",
     data: { teamMemberId, pdlId, checkInDate, completed },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
-export const getNoteByCheckinId = async (id) => {
+export const getNoteByCheckinId = async (id, cookie) => {
   return resolve({
     method: "get",
     url: checkinsNoteUrl,
@@ -58,6 +63,7 @@ export const getNoteByCheckinId = async (id) => {
     params: {
       checkinid: id,
     },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
@@ -67,21 +73,29 @@ export const updateCheckin = async ({
   teamMemberId,
   pdlId,
   checkInDate,
+  cookie,
 }) => {
   return resolve({
     method: "put",
     url: checkinsUrl,
     responseType: "json",
     data: { completed, id, teamMemberId, pdlId, checkInDate },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
-export const createCheckinNote = async ({ checkinid, createdbyid, description }) => {
+export const createCheckinNote = async ({
+  checkinid,
+  createdbyid,
+  description,
+  cookie,
+}) => {
   return resolve({
     method: "post",
     url: checkinsNoteUrl,
     responseType: "json",
     data: { checkinid, createdbyid, description },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
@@ -90,12 +104,14 @@ export const updateCheckinNote = async ({
   checkinid,
   createdbyid,
   description,
+  cookie,
 }) => {
   return resolve({
     method: "put",
     url: checkinsNoteUrl,
     responseType: "json",
     data: { id, checkinid, createdbyid, description },
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
