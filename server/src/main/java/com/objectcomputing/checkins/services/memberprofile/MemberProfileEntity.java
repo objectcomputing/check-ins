@@ -27,9 +27,9 @@ public class MemberProfileEntity {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotNull
-    @Column(name = "name", nullable = false)
-    @Schema(description = "full name of the employee", required = true)
+    @Nullable
+    @Column(name = "name")
+    @Schema(description = "full name of the employee")
     private String name;
 
     @Column(name="title")
@@ -68,15 +68,15 @@ public class MemberProfileEntity {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfileEntity(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                               String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                               @Nullable String bioText) {
+    public MemberProfileEntity(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfileEntity(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                               String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                               @Nullable String bioText) {
+    public MemberProfileEntity(UUID id, @Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
+                         @Nullable String bioText) {
         this.id = id;
         this.name=name;
         this.title=title;

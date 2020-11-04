@@ -30,11 +30,16 @@ const updateItem = debounce(doUpdate, 1500);
 const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
+<<<<<<< HEAD
   const { memberProfileEntity } = userProfile;
   const { id } = memberProfileEntity;
   const pdlorAdmin =
     (memberProfileEntity && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
+=======
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
+>>>>>>> origin/develop
 
   const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
@@ -169,7 +174,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
         <Draggable
-          disabled={!pdlorAdmin}
           key={agendaItem.id}
           draggableId={agendaItem.id}
           index={index}

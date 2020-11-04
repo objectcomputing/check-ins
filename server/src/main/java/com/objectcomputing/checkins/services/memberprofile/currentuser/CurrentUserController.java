@@ -38,8 +38,7 @@ public class CurrentUserController {
     public HttpResponse<CurrentUserDTO> currentUser(@Nullable Authentication authentication) {
 
         if (authentication == null) {
-            return HttpResponse
-                    .notFound();
+            return HttpResponse.unauthorized();
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();

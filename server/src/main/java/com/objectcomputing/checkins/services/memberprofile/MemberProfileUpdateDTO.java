@@ -17,8 +17,8 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotBlank
-    @Schema(description = "full name of the employee", required = true)
+    @Nullable
+    @Schema(description = "full name of the employee")
     private String name;
 
     @Nullable
@@ -58,11 +58,12 @@ public class MemberProfileUpdateDTO {
         this.id = id;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 

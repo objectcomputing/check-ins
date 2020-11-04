@@ -31,7 +31,7 @@ public class CurrentUserDtoTest {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
+        assertEquals(violations.size(), 1);
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }

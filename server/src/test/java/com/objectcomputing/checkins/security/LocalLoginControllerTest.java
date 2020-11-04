@@ -95,4 +95,18 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
         assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfileEntity.getWorkEmail())));
         assertTrue(response.contains("\"access_token\":\""));
     }
+
+    @Test
+    void testPostLoginDoesNotThrowNullPointerIfUserNameIsNull() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        memberProfile.setName(null);
+        createDefaultRole(RoleType.ADMIN, memberProfile);
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String response = client.toBlocking().retrieve(request);
+        assertNotNull(response);
+        assertTrue(response.contains("\"roles\":[\"ADMIN\"]"));
+        assertTrue(response.contains(String.format("\"username\":\"%s\"", memberProfile.getWorkEmail())));
+        assertTrue(response.contains("\"access_token\":\""));
+    }
 }
