@@ -1,11 +1,17 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.util.Util;
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.UUID;
 
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDFromString;
+
+@Introspected
 public class TeamUpdateDTO {
     @NotNull
     private UUID id;
@@ -25,7 +31,33 @@ public class TeamUpdateDTO {
     }
 
     public TeamUpdateDTO(String id, String name, String description) {
-        this(UUID.fromString(id), name, description);
+        this(nullSafeUUIDFromString(id), name, description);
+    }
+
+    public TeamUpdateDTO() {}
+
+    @Override
+    public String toString() {
+        return "TeamUpdateDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TeamUpdateDTO updateDTO = (TeamUpdateDTO) o;
+        return Objects.equals(id, updateDTO.id) &&
+                Objects.equals(name, updateDTO.name) &&
+                Objects.equals(description, updateDTO.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
     }
 
     public UUID getId() {

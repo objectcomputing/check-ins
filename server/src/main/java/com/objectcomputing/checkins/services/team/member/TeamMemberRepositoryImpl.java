@@ -1,23 +1,21 @@
 package com.objectcomputing.checkins.services.team.member;
 
-import com.objectcomputing.checkins.util.Util;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import nu.studer.sample.tables.pojos.TeamMember;
 import org.jooq.DSLContext;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
-import static nu.studer.sample.tables.TeamMember.TEAM_MEMBER;
-import static nu.studer.sample.tables.Team.TEAM;
 import static nu.studer.sample.tables.MemberProfile.MEMBER_PROFILE;
+import static nu.studer.sample.tables.Team.TEAM;
+import static nu.studer.sample.tables.TeamMember.TEAM_MEMBER;
+import static org.jooq.impl.DSL.asterisk;
 import static org.jooq.impl.DSL.condition;
 
 @Singleton
@@ -36,7 +34,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
                 .select()
                 .from(TEAM_MEMBER)
                 .join(TEAM)
-                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAM_ID))
+                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAMID))
                 .where(TEAM.ID.eq(teamid.toString()))
                 .fetchInto(TeamMember.class);
     }
@@ -48,7 +46,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
                 .select()
                 .from(TEAM_MEMBER)
                 .join(MEMBER_PROFILE)
-                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAM_ID))
+                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAMID))
                 .where(MEMBER_PROFILE.ID.eq(memberid.toString()))
                 .fetchInto(TeamMember.class);
     }
@@ -79,9 +77,9 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
     public TeamMember save(@NotNull TeamMember entity) {
         return dslContext
                 .insertInto(TEAM_MEMBER)
-                .columns(TEAM_MEMBER.ID, TEAM_MEMBER.TEAM_ID, TEAM_MEMBER.MEMBERID, TEAM_MEMBER.LEAD)
-                .values(UUID.randomUUID().toString(), entity.getTeamId(), entity.getMemberid(), entity.getLead())
-                .returningResult().fetchOne().into(TeamMember.class);
+                .columns(TEAM_MEMBER.ID, TEAM_MEMBER.TEAMID, TEAM_MEMBER.MEMBERID, TEAM_MEMBER.LEAD)
+                .values(UUID.randomUUID().toString(), entity.getTeamid(), entity.getMemberid(), entity.getLead())
+                .returningResult(asterisk()).fetchOne().into(TeamMember.class);
     }
 
     @Override
@@ -89,7 +87,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
     public void deleteByTeamId(@NotNull UUID id) {
         dslContext
                 .delete(TEAM_MEMBER)
-                .where(TEAM_MEMBER.TEAM_ID.eq(id.toString()));
+                .where(TEAM_MEMBER.TEAMID.eq(id.toString()));
     }
 
     @Override
@@ -98,7 +96,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
         return dslContext
                 .select()
                 .from(TEAM_MEMBER)
-                .where(condition(teamId == null).or(TEAM_MEMBER.TEAM_ID.eq(nullSafeUUIDToString(teamId))))
+                .where(condition(teamId == null).or(TEAM_MEMBER.TEAMID.eq(nullSafeUUIDToString(teamId))))
                 .and(condition(memberId == null).or(TEAM_MEMBER.MEMBERID.eq(nullSafeUUIDToString(memberId))))
                 .and(condition(lead == null).or(TEAM_MEMBER.LEAD.eq(lead)))
                 .fetchInto(TeamMember.class);

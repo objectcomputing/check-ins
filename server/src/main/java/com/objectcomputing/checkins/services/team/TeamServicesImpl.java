@@ -43,8 +43,8 @@ public class TeamServicesImpl implements TeamServices {
         return fromEntity(newTeamEntity);
     }
 
-    public TeamResponseDTO read(UUID teamId) {
-        return teamId != null ? fromEntity(teamsRepo.findById(teamId).orElse(null)) : null;
+    public TeamResponseDTO read(@NotNull UUID teamId) {
+        return fromEntity(teamsRepo.findById(teamId).orElseThrow(TeamNotFoundException::new));
     }
 
     public TeamResponseDTO update(TeamUpdateDTO teamEntity) {
@@ -64,19 +64,19 @@ public class TeamServicesImpl implements TeamServices {
         return teamsRepo.search(name, memberid).stream().map(this::fromEntity).collect(Collectors.toSet());
     }
 
-    public void delete(@NotNull UUID id) {
+    public boolean delete(@NotNull UUID id) {
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfileEntity currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        teamMemberRepo.deleteByTeamId(id);
-
         List<TeamMember> CurrentTeam = teamMemberRepo.search(id, currentUser.getId(), true);
         if(isAdmin || !CurrentTeam.isEmpty()) {
+            teamMemberRepo.deleteByTeamId(id);
             teamsRepo.deleteById(id);
         } else {
             throw new TeamBadArgException("You are not authorized to perform this operation");
         }
+        return true;
     }
 
     private Team fromDTO(TeamUpdateDTO dto) {
@@ -90,11 +90,7 @@ public class TeamServicesImpl implements TeamServices {
         if (entity == null) {
             return null;
         }
-        TeamResponseDTO dto = new TeamResponseDTO();
-        dto.setId(UUID.fromString(entity.getId()));
-        dto.setName(entity.getName());
-        dto.setDescription(entity.getDescription());
-        return dto;
+        return new TeamResponseDTO(UUID.fromString(entity.getId()), entity.getName(), entity.getDescription());
     }
 
     private Team fromDTO(TeamCreateDTO dto) {

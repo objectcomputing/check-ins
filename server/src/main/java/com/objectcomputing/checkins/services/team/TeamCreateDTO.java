@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @Introspected
 public class TeamCreateDTO {
@@ -22,6 +23,20 @@ public class TeamCreateDTO {
 
     public TeamCreateDTO() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TeamCreateDTO that = (TeamCreateDTO) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description);
     }
 
     public String getName() {

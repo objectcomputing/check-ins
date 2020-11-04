@@ -80,7 +80,12 @@ public class RoleController {
      */
     @Get("/{id}")
     public Role readRole(UUID id) {
-        return roleServices.read(id);
+        try {
+            return roleServices.read(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

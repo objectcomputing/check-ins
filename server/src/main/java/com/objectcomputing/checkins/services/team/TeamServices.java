@@ -12,5 +12,5 @@ public interface TeamServices {
 
     Set<TeamResponseDTO> findByFields(String name, UUID memberid);
 
-    void delete(UUID id);
+    boolean delete(UUID id);
 }

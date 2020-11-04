@@ -11,6 +11,7 @@ import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +50,15 @@ public class TeamController {
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = TeamNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, TeamNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
                 .body(error);
     }
 
@@ -104,16 +114,16 @@ public class TeamController {
     /**
      * Update team.
      *
-     * @param teamDto, {@link TeamUpdateDTO}
+     * @param team, {@link TeamUpdateDTO}
      * @return {@link HttpResponse< TeamResponseDTO >}
      */
     @Put("/")
-    public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO teamDto, HttpRequest<TeamUpdateDTO> request) {
-        return Single.fromCallable(() -> teamService.update(teamDto))
+    public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
+        return Single.fromCallable(() -> teamService.update(team))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(updated -> (HttpResponse<TeamResponseDTO>)HttpResponse
                         .ok()
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), teamDto.getId()))))
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
                         .body(updated))
                 .subscribeOn(Schedulers.from(ioExecutorService));
 
@@ -127,9 +137,9 @@ public class TeamController {
      */
     @Delete("/{id}")
     public Single<HttpResponse> deleteTeam(@NotNull UUID id) {
-        return Single.fromCallable(() -> {teamService.delete(id);return null;})
+        return Single.fromCallable(() -> teamService.delete(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map((o) -> (HttpResponse)HttpResponse.ok())
+                .map(success -> (HttpResponse)HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

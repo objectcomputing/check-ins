@@ -13,6 +13,7 @@ plugins {
     id "idea"
     id "groovy"
     id 'nu.studer.jooq' version '5.2'
+    id "org.flywaydb.flyway" version "7.1.1"
 }
 
 targetCompatibility = "11"
@@ -62,6 +63,7 @@ dependencies {
     }
     implementation "io.micronaut.sql:micronaut-jooq"
     jooqGenerator  'org.postgresql:postgresql:42.2.12'
+    implementation  'org.postgresql:postgresql:42.2.12'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
     implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     implementation 'io.micronaut.flyway:micronaut-flyway'
@@ -160,6 +162,14 @@ appengine {
     }
 }
 
+flyway {
+    url = 'jdbc:postgresql://localhost:5432/checkinsdb'
+    user = 'postgres'
+    password = 'postgres'
+    schemas = ['public']
+    locations = ["classpath:db/common", "classpath:db/dev"]
+}
+
 jooq {
     version = '3.13.4'  // default (can be omitted)
     edition = nu.studer.gradle.jooq.JooqEdition.OSS  // default (can be omitted)
@@ -216,3 +226,5 @@ jooq {
         }
     }
 }
+
+generateJooq.dependsOn("flywayMigrate")

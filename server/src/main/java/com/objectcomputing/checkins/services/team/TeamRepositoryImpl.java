@@ -14,6 +14,7 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 import static nu.studer.sample.tables.Team.TEAM;
 import static nu.studer.sample.tables.TeamMember.TEAM_MEMBER;
+import static org.jooq.impl.DSL.asterisk;
 import static org.jooq.impl.DSL.condition;
 
 @Singleton
@@ -26,6 +27,7 @@ public class TeamRepositoryImpl implements TeamRepository {
     }
 
     @Override
+    @Transactional
     public Optional<Team> findById(@NotNull UUID id) {
         return dslContext
                 .select()
@@ -52,7 +54,7 @@ public class TeamRepositoryImpl implements TeamRepository {
                 .insertInto(TEAM)
                 .columns(TEAM.ID, TEAM.NAME, TEAM.DESCRIPTION)
                 .values(insertId.toString(), saveMe.getName(), saveMe.getDescription())
-                .returningResult().fetch().into(Team.class);
+                .returningResult(asterisk()).fetchOne().into(Team.class);
     }
 
     @Override
@@ -63,17 +65,17 @@ public class TeamRepositoryImpl implements TeamRepository {
                 .set(TEAM.NAME, updateMe.getName())
                 .set(TEAM.DESCRIPTION, updateMe.getDescription())
                 .where(TEAM.ID.eq(updateMe.getId()))
-                .returningResult().fetchOne().into(Team.class);
+                .returningResult(asterisk()).fetchOne().into(Team.class);
     }
 
     @Override
     @Transactional
     public List<Team> search(@Nullable String name, @Nullable UUID memberId) {
         return dslContext
-                .select()
+                .select(TEAM.ID, TEAM.NAME, TEAM.DESCRIPTION)
                 .from(TEAM)
                 .leftJoin(TEAM_MEMBER)
-                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAM_ID))
+                    .on(TEAM.ID.eq(TEAM_MEMBER.TEAMID))
                 .where(condition(name == null).or(TEAM.NAME.likeIgnoreCase("%" + name + "%")))
                 .or(condition(memberId == null).or(TEAM_MEMBER.MEMBERID.eq(nullSafeUUIDToString(memberId))))
                 .fetchInto(Team.class);
