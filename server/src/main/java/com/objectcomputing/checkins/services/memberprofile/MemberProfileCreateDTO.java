@@ -14,8 +14,8 @@ import java.util.UUID;
 @Introspected
 public class MemberProfileCreateDTO {
 
-    @NotBlank
-    @Schema(description = "full name of the employee", required = true)
+    @Nullable
+    @Schema(description = "full name of the employee")
     private String name;
 
     @NotBlank
@@ -47,11 +47,12 @@ public class MemberProfileCreateDTO {
     @Schema(description = "employee's biography")
     private String bioText;
 
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 

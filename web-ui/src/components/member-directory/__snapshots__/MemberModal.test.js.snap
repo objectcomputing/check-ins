@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root member-card MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-avatar"
+    >
+      <div
+        className="MuiAvatar-root MuiAvatar-circle member-summary-avatar"
+        style={
+          Object {
+            "margin": "0px",
+          }
+        }
+      >
+        <img
+          alt="testerson"
+          className="MuiAvatar-img"
+          src="url.com"
+        />
+      </div>
+    </div>
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-body2 MuiTypography-displayBlock"
+      >
+        testerson
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        <div>
+          engineer
+          <br />
+          testerson@oci.com
+        </div>
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  />
+</div>
+`;
