@@ -27,9 +27,9 @@ public class MemberProfile {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotNull
-    @Column(name = "name", nullable = false)
-    @Schema(description = "full name of the employee", required = true)
+    @Nullable
+    @Column(name = "name")
+    @Schema(description = "full name of the employee")
     private String name;
 
     @Column(name="title")
@@ -68,13 +68,13 @@ public class MemberProfile {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfile(UUID id, String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(UUID id, @Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
         this.id = id;

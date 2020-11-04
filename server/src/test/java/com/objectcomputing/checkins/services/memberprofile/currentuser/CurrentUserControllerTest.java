@@ -44,10 +44,9 @@ public class CurrentUserControllerTest {
     }
 
     @Test
-    public void testCurrentUserReturnsNotFoundWhenAuthenticationFails() {
-
+    public void testCurrentUserReturnsUnauthorizedWhenAuthenticationFails() {
         HttpResponse<CurrentUserDTO> response = currentUserController.currentUser(null);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatus());
     }
 
     @Test
