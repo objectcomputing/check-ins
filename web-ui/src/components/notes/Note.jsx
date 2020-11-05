@@ -24,21 +24,21 @@ const Notes = (props) => {
   const { state } = useContext(AppContext);
   const noteRef = useRef([]);
   const { userProfile, currentCheckin, selectedProfile } = state;
-  const { memberProfileEntity } = userProfile;
-  const { id } = memberProfileEntity;
+  const { memberProfile } = userProfile;
+  const { id } = memberProfile;
   const { memberName } = props;
   const [note, setNote] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
   const [privateNote, setPrivateNote] = useState("Private note");
   const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
-  const pdlId = memberProfileEntity && memberProfileEntity.pdlId;
+  const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
-    (memberProfileEntity && userProfile.role && userProfile.role.includes("PDL")) ||
+    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
 
   const canViewPrivateNote =
-    pdlorAdmin && memberProfileEntity.id !== currentCheckin.teamMemberId;
+    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
   const currentCheckinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {

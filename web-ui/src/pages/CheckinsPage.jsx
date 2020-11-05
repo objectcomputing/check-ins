@@ -20,12 +20,12 @@ const CheckinsPage = ({ history }) => {
   const [show, setShow] = useState(false);
   const { state } = useContext(AppContext);
   const { currentCheckin, userProfile, selectedProfile } = state;
-  const memberProfileEntity = userProfile ? userProfile.memberProfileEntity : undefined;
-  const id = memberProfileEntity && memberProfileEntity.id ? memberProfileEntity.id : undefined;
+  const memberProfile = userProfile ? userProfile.memberProfile : undefined;
+  const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const canViewPrivateNote =
-    memberProfileEntity && currentCheckin && id !== currentCheckin.teamMemberId;
+    memberProfile && currentCheckin && id !== currentCheckin.teamMemberId;
 
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {

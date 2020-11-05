@@ -39,8 +39,8 @@ const TeamResults = () => {
 
     return (
         <Container maxWidth="md">
-            {teams.map((team) => (
-                <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
+            {teams.map((team, index) => (
+                <TeamSummaryCard key={`team-summary-${team.id}`} team={team} index={index}/>
             ))}
         </Container>
     )

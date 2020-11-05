@@ -9,8 +9,8 @@ const Personnel = () => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const id =
-    userProfile && userProfile.memberProfileEntity
-      ? userProfile.memberProfileEntity.id
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.id
       : undefined;
   const [personnel, setPersonnel] = useState();
   const [checkins, setCheckins] = useState([]);

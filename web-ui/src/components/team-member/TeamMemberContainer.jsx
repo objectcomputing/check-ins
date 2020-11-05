@@ -10,8 +10,8 @@ const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const id =
-    userProfile && userProfile.memberProfileEntity
-      ? userProfile.memberProfileEntity.id
+    userProfile && userProfile.memberProfile
+      ? userProfile.memberProfile.id
       : undefined;
   const [selectedProfile, setSelectedProfile] = useState({
     name: null,

@@ -38,6 +38,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setName("name");
         teamCreateDTO.setDescription("description");
+        teamCreateDTO.setTeamMembers(new ArrayList<>());
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
@@ -94,6 +95,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setDescription("test");
         teamCreateDTO.setName(teamEntity.getName());
+        teamCreateDTO.setTeamMembers(new ArrayList<>());
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -262,8 +264,12 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testUpdateTeam() {
         Team teamEntity = createDeafultTeam();
+        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
 
-        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", updateFromEntity(teamEntity)).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
+        requestBody.setTeamMembers(Collections.singletonList(createDefaultTeamMemberDto(teamEntity, memberProfileEntity)));
+
+        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
 
         assertEntityDTOEqual(teamEntity, response.body());
@@ -275,7 +281,10 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     void testUpdateAnInvalidTeam() {
         Team teamEntity = createDeafultTeam();
 
-        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", new TeamUpdateDTO(teamEntity.getId(), null, null))
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(teamEntity.getId(), null, null);
+        requestBody.setTeamMembers(new ArrayList<>());
+
+        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -312,9 +321,10 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     void testUpdateTeamThrowException() {
         Team teamEntity = createDeafultTeam();
         UUID requestId = UUID.randomUUID();
+        TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription());
+        requestBody.setTeamMembers(new ArrayList<>());
 
-        final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("",
-                new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription()))
+        final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));

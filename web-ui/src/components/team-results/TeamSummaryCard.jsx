@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import { AppContext } from '../../context/AppContext';
+import { AppContext, UPDATE_TEAMS } from '../../context/AppContext';
+import EditTeamModal from "./EditTeamModal";
 
 const propTypes = {
     team: PropTypes.shape({
@@ -14,11 +15,17 @@ const propTypes = {
 
 const displayName = "TeamSummaryCard";
 
-const TeamSummaryCard = ({ team }) => {
-    const {state} = useContext(AppContext);
+const TeamSummaryCard = ({ team, index }) => {
+    const { state, dispatch } = useContext(AppContext);
+    const { teams } = state;
+    const [open, setOpen] = useState(false);
 
     let leads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => teamMember.lead);
     let nonLeads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => !teamMember.lead);
+
+    const handleOpen = () => setOpen(true);
+
+    const handleClose = () => setOpen(false);
 
     return (
         <Card>
@@ -48,9 +55,23 @@ const TeamSummaryCard = ({ team }) => {
                 }
             </CardContent>
             <CardActions>
-                <Button>Edit Team</Button>
+                <Button onClick={handleOpen}>Edit Team</Button>
                 <Button>Delete Team</Button>
             </CardActions>
+            <EditTeamModal
+                team={team}
+                open={open}
+                onClose={handleClose}
+                onSave={(team) => {
+                    const copy = [...teams];
+                    copy[index] = team;
+                    dispatch({
+                        type: UPDATE_TEAMS,
+                        payload: copy,
+                    });
+                    handleClose();
+                }}
+            />
         </Card>
     );
 };

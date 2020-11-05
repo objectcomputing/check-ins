@@ -268,10 +268,10 @@ public class MemberProfileEntityControllerTest {
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
         requestBody.setName(null);
 
-        MemberProfile expected = mkMemberProfile();
+        MemberProfileEntity expected = mkMemberProfile();
         expected.setName(null);
 
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+        when(mockMemberServices.saveProfile(any(MemberProfileEntity.class))).thenReturn(expected);
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()

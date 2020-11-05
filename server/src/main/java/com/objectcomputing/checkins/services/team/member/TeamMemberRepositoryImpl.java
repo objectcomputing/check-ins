@@ -87,7 +87,7 @@ public class TeamMemberRepositoryImpl implements TeamMemberRepository {
     public void deleteByTeamId(@NotNull UUID id) {
         dslContext
                 .delete(TEAM_MEMBER)
-                .where(TEAM_MEMBER.TEAMID.eq(id.toString()));
+                .where(TEAM_MEMBER.TEAMID.eq(id.toString())).execute();
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.member_skill.MemberSkillNotFoundException;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -48,5 +50,14 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             throw new MemberProfileBadArgException("No member profile exists for the ID");
         }
         return memberProfileRepository.update(memberProfileEntity);
+    }
+
+    @Override
+    public MemberProfileEntity findByName(@NotNull String name) {
+        List<MemberProfileEntity> searchResult = memberProfileRepository.search(name, null, null, null);
+        if (searchResult.size() != 1) {
+            throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
+        }
+        return searchResult.get(0);
     }
 }

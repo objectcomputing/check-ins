@@ -162,13 +162,13 @@ appengine {
     }
 }
 
-flyway {
+/*flyway {
     url = 'jdbc:postgresql://localhost:5432/checkinsdb'
     user = 'postgres'
     password = 'postgres'
     schemas = ['public']
-    locations = ["classpath:db/common", "classpath:db/dev"]
-}
+    locations = ['classpath:/db/common', 'classpath:/db/dev']
+}*/
 
 jooq {
     version = '3.13.4'  // default (can be omitted)
@@ -227,4 +227,4 @@ jooq {
     }
 }
 
-generateJooq.dependsOn("flywayMigrate")
+//generateJooq.dependsOn("flywayMigrate")

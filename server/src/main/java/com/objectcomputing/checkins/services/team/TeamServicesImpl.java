@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
@@ -39,32 +40,60 @@ public class TeamServicesImpl implements TeamServices {
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
         Team newTeamEntity = null;
+        List<TeamMemberDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
             if (teamsRepo.findByName(teamDTO.getName()).isPresent()) {
                 throw new TeamBadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
+                if (teamDTO.getTeamMembers() != null) {
+                    for (TeamMemberDTO memberDTO : teamDTO.getTeamMembers()) {
+                        try {
+                            MemberProfileEntity existingMember = memberProfileServices.findByName(memberDTO.getName());
+                            newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, UUID.fromString(newTeamEntity.getId()), existingMember)), existingMember));
+                        } catch (MemberProfileDoesNotExistException mpdnee) {
+                            throw new TeamBadArgException("No member profile found for name: " + memberDTO.getName());
+                        }
+                    }
+                }
             }
         }
 
-        return fromEntity(newTeamEntity);
+        return fromEntity(newTeamEntity, newMembers);
     }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
-        return fromEntity(teamsRepo.findById(teamId).orElseThrow(TeamNotFoundException::new));
+        List<TeamMemberDTO> teamMembers = teamMemberRepo
+                .findByTeamid(teamId)
+                .stream()
+                .map(teamMember ->
+                        fromMemberEntity(teamMember, memberProfileServices.getById(UUID.fromString(teamMember.getMemberid())))).collect(Collectors.toList());
+        return fromEntity(teamsRepo.findById(teamId).orElseThrow(TeamNotFoundException::new), teamMembers);
     }
 
     public TeamResponseDTO update(TeamUpdateDTO teamEntity) {
         Team newTeamEntity = null;
+        List<TeamMemberDTO> newMembers = new ArrayList<>();
         if (teamEntity != null) {
             if (teamEntity.getId() != null && teamsRepo.findById(teamEntity.getId()).isPresent()) {
+                teamMemberRepo.deleteByTeamId(teamEntity.getId());
                 newTeamEntity = teamsRepo.update(fromDTO(teamEntity));
+                if (teamEntity.getTeamMembers() != null) {
+                    for (TeamMemberDTO memberDTO : teamEntity.getTeamMembers()) {
+                        try {
+                            MemberProfileEntity existingMember = memberProfileServices.findByName(memberDTO.getName());
+                            newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamEntity.getId(), existingMember)), existingMember));
+                        } catch (MemberProfileDoesNotExistException mpdnee) {
+                            throw new TeamBadArgException("No member profile found for name: " + memberDTO.getName());
+                        }
+                    }
+                }
             } else {
                 throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", teamEntity.getId()));
             }
         }
 
-        return fromEntity(newTeamEntity);
+        return fromEntity(newTeamEntity, newMembers);
     }
 
     public Set<TeamResponseDTO> findByFields(String name, UUID memberid) {
@@ -101,11 +130,21 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(dto.getId().toString(), dto.getName(), dto.getDescription());
     }
 
+    private TeamMember fromMemberDTO(TeamMemberDTO memberDTO, UUID teamId, MemberProfileEntity savedMember) {
+        return new TeamMember(memberDTO.getId() == null ? null : memberDTO.getId().toString(), teamId.toString(), savedMember.getId().toString(), memberDTO.isLead());
+    }
+
     private TeamResponseDTO fromEntity(Team entity) {
+        return fromEntity(entity, new ArrayList<>());
+    }
+
+    private TeamResponseDTO fromEntity(Team entity, List<TeamMemberDTO> memberEntities) {
         if (entity == null) {
             return null;
         }
-        return new TeamResponseDTO(UUID.fromString(entity.getId()), entity.getName(), entity.getDescription());
+        TeamResponseDTO dto = new TeamResponseDTO(UUID.fromString(entity.getId()), entity.getName(), entity.getDescription());
+        dto.setTeamMembers(memberEntities);
+        return dto;
     }
 
     private Team fromDTO(TeamCreateDTO dto) {

@@ -28,6 +28,18 @@ export const getMembersByTeam = async (id) => {
   );
 };*/
 
+export const updateTeam = async (team) => {
+  return await resolve(
+    axios({
+      method: "put",
+      url: teamUrl,
+      responseType: "json",
+      data: team,
+      withCredentials: true,
+    })
+  );
+};
+
 export const getTeamsByMember = async (id) => {
   return await resolve(
     axios({

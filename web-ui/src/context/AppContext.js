@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
-import { getAllTeamMembers } from "../api/team";
+//import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";

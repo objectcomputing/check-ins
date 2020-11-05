@@ -1,9 +1,12 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
 @Introspected
@@ -15,6 +18,9 @@ public class TeamCreateDTO {
     @NotBlank
     @Schema(required = true, description = "description of the team")
     private String description;
+
+    @Schema(required = false, description = "members of this team")
+    private List<TeamMemberDTO> teamMembers;
 
     public TeamCreateDTO(String name, String description) {
         this.name = name;
@@ -37,6 +43,14 @@ public class TeamCreateDTO {
     @Override
     public int hashCode() {
         return Objects.hash(name, description);
+    }
+
+    public List<TeamMemberDTO> getTeamMembers() {
+        return teamMembers;
+    }
+
+    public void setTeamMembers(List<TeamMemberDTO> teamMembers) {
+        this.teamMembers = teamMembers;
     }
 
     public String getName() {

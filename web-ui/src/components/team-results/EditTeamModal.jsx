@@ -5,25 +5,29 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import './EditTeamModal.css';
 import { Button } from '@material-ui/core';
 import { AppContext } from '../../context/AppContext';
+import { updateTeam } from "../../api/team";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     const { state } = useContext(AppContext);
-    const { memberProfileEntities } = state;
+    const { memberProfiles } = state;
     const [editedTeam, setTeam] = useState(team);
-
-    const teamMemberOptions = memberProfileEntities;
+    const teamMemberOptions = memberProfiles;
 
     const onLeadsChange = (event, newValue) => {
+        let extantMembers = editedTeam.teamMembers.filter((teamMember) => !teamMember.lead);
+        newValue.forEach((lead) => lead.lead = true);
         setTeam({
             ...editedTeam,
-            teamLeads: newValue
+            teamMembers: [...extantMembers, ...newValue]
         });
     };
 
     const onTeamMembersChange = (event, newValue) => {
+        let extantLeads = editedTeam.teamMembers.filter((teamMember) => teamMember.lead);
+        newValue.forEach((lead) => lead.lead = false);
         setTeam({
             ...editedTeam,
-            teamMembers: newValue
+            teamMembers: [...extantLeads, ...newValue]
         });
     };
 
@@ -55,7 +59,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                 <Autocomplete
                     multiple
                     options={teamMemberOptions}
-                    value={editedTeam.teamLeads ? editedTeam.teamLeads : []}
+                    value={editedTeam.teamMembers ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead) : []}
                     onChange={onLeadsChange}
                     getOptionLabel={(option) => option.name}
                     getOptionSelected={(option, value) => value ? value.id === option.id : false}
@@ -71,7 +75,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                 <Autocomplete
                     multiple
                     options={teamMemberOptions}
-                    value={editedTeam.teamMembers ? editedTeam.teamMembers : []}
+                    value={editedTeam.teamMembers ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead) : []}
                     onChange={onTeamMembersChange}
                     getOptionLabel={(option) => option.name}
                     getOptionSelected={(option, value) => value ? value.id === option.id : false}
@@ -88,7 +92,12 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
                     <Button onClick={onClose} color="secondary">
                         Cancel
                     </Button>
-                    <Button onClick={() => onSave(editedTeam)} color="primary">
+                    <Button
+                        onClick={async () => {
+                            onSave(editedTeam);
+                            await updateTeam(editedTeam);
+                        }}
+                        color="primary">
                         Save Team
                     </Button>
                 </div>

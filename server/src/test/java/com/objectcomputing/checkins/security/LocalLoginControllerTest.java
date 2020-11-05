@@ -98,7 +98,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testPostLoginDoesNotThrowNullPointerIfUserNameIsNull() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfileEntity memberProfile = createADefaultMemberProfile();
         memberProfile.setName(null);
         createDefaultRole(RoleType.ADMIN, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
