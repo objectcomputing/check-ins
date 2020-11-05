@@ -110,11 +110,8 @@ public class CheckInController {
      * @return {@link HttpResponse<CheckIn>}
      */
     @Put("/")
-    public Single<HttpResponse<CheckIn>> update(@Body @Valid CheckIn checkIn,
+    public Single<HttpResponse<CheckIn>> update(@Body @Valid @NotNull CheckIn checkIn,
                                             HttpRequest<CheckIn> request) {
-        if (checkIn == null) {
-            return Single.just(HttpResponse.ok());
-        }
         return Single.fromCallable(() -> checkInServices.update(checkIn))
             .observeOn(Schedulers.from(eventLoopGroup))
             .map(updatedCheckIn -> (HttpResponse<CheckIn>) HttpResponse
@@ -134,9 +131,6 @@ public class CheckInController {
     public Single<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id){
         return Single.fromCallable(() -> {
             CheckIn result = checkInServices.read(id);
-            if (result == null) {
-                throw new CheckInNotFoundException("No checkin for UUID");
-            }
             return result;
         })
         .observeOn(Schedulers.from(eventLoopGroup))
