@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -39,7 +38,6 @@ public class MemberProfileCreateDTO {
     private String insperityId;
 
     @NotNull
-    @Past
     @Schema(description = "employee's date of hire", required = true)
     private LocalDate startDate;
 

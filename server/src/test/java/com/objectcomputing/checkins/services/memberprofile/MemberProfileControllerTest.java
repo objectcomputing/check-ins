@@ -15,9 +15,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.*;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
+import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -261,6 +263,29 @@ public class MemberProfileControllerTest {
         assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
     }
 
+    // POST - Future Start Date
+    @Test
+    public void testPostForFutureStartDate() {
+
+        MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
+        requestBody.setStartDate(LocalDate.MAX);
+
+        MemberProfile expected = mkMemberProfile();
+        expected.setStartDate(requestBody.getStartDate());
+
+        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+
+        final HttpResponse<MemberProfileResponseDTO> response = client
+                .toBlocking()
+                .exchange(HttpRequest.POST("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertNotNull(response.body());
+        assertProfilesEqual(requestBody, response.body());
+        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+    }
+
     // POST - Nullable MemberProfile name
     @Test
     public void testPostWithNullName() {
@@ -299,6 +324,28 @@ public class MemberProfileControllerTest {
                 .toBlocking()
                 .exchange(HttpRequest.PUT("", requestBody)
                         .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertProfilesEqual(requestBody, response.body());
+    }
+
+    // PUT - Future Start Date
+    @Test
+    public void testPutFutureStartDate() {
+
+        MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
+        requestBody.setStartDate(LocalDate.MAX);
+
+        MemberProfile expected = mkMemberProfile();
+        expected.setId(requestBody.getId());
+        expected.setStartDate(requestBody.getStartDate());
+
+        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+
+        final HttpResponse<MemberProfileResponseDTO> response = client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+
         assertEquals(HttpStatus.OK, response.getStatus());
         assertProfilesEqual(requestBody, response.body());
     }
