@@ -90,10 +90,7 @@ import io.micronaut.scheduling.TaskExecutors;
      */
     @Put("/")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<Role>> update(@Body @Valid Role role, HttpRequest<Role> request) {
-        if (role == null) {
-            return Single.just(HttpResponse.ok());
-        }
+    public Single<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
         return Single.fromCallable(() -> roleServices.update(role))
             .observeOn(Schedulers.from(eventLoopGroup))
             .map(updatedRole -> (HttpResponse<Role>) HttpResponse
@@ -110,7 +107,7 @@ import io.micronaut.scheduling.TaskExecutors;
      * @return {@link Role}
      */
     @Get("/{id}")
-    public Single<HttpResponse<Role>> readRole(UUID id) {
+    public Single<HttpResponse<Role>> readRole(@NotNull UUID id) {
         return Single.fromCallable(() -> {
             Role result = roleServices.read(id);
             if (result == null) {
