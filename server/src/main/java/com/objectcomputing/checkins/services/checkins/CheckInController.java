@@ -62,6 +62,15 @@ public class CheckInController {
                 .body(error);
     }
 
+    @Error(exception = CheckInNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, CheckInNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
+
     /**
      * Find Check-in details by Member Id or PDL Id. 
      * @param teamMemberId
@@ -122,7 +131,18 @@ public class CheckInController {
      * @return
      */
     @Get("/{id}")
-    public CheckIn readCheckIn(@NotNull UUID id){
-        return checkInServices.read(id);
+    public Single<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id){
+        return Single.fromCallable(() -> {
+            CheckIn result = checkInServices.read(id);
+            if (result == null) {
+                throw new CheckInNotFoundException("No checkin for UUID");
+            }
+            return result;
+        })
+        .observeOn(Schedulers.from(eventLoopGroup))
+        .map(checkIn -> {
+            return (HttpResponse<CheckIn>)HttpResponse.ok(checkIn);
+        }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 }
