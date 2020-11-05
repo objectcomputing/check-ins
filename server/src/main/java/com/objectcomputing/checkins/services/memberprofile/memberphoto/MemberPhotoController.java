@@ -1,14 +1,25 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+import java.util.concurrent.ExecutorService;
 
 import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
@@ -19,11 +30,24 @@ public class MemberPhotoController {
 
     private final String expiry;
     private final MemberPhotoService memberPhotoService;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-    public MemberPhotoController(@Property(name = "ehcache.caches.photo-cache.expiry") String expiry,
-                                 MemberPhotoService memberPhotoService) {
+    public MemberPhotoController(@Property(name = "ehcache.caches.photo-cache.expiry.time-to-live-seconds") String expiry,
+                                 MemberPhotoService memberPhotoService,
+                                 EventLoopGroup eventLoopGroup,
+                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.expiry = expiry;
         this.memberPhotoService = memberPhotoService;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
+
+    @Error(exception = MemberProfileDoesNotExistException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileDoesNotExistException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound().body(error);
     }
 
     /**
@@ -33,10 +57,13 @@ public class MemberPhotoController {
      * @return {@link HttpResponse<String>} StringURL of photo data
      */
     @Get
-    public HttpResponse<String> userImage(@NotNull String workEmail) {
-        return HttpResponse
-                .ok()
-                .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry))
-                .body(memberPhotoService.getImageByEmailAddress(workEmail));
+    public Single<HttpResponse<String>> userImage(@NotNull String workEmail) {
+
+        return Single.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(photoData -> (HttpResponse<String>) HttpResponse
+                        .ok(photoData)
+                        .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry)))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }
