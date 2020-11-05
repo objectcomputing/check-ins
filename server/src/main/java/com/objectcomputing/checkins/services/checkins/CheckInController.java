@@ -131,6 +131,9 @@ public class CheckInController {
     public Single<HttpResponse<CheckIn>> readCheckIn(@NotNull UUID id){
         return Single.fromCallable(() -> {
             CheckIn result = checkInServices.read(id);
+            if (result == null) {
+                throw new CheckInNotFoundException("No checkin for UUID");
+            }
             return result;
         })
         .observeOn(Schedulers.from(eventLoopGroup))
