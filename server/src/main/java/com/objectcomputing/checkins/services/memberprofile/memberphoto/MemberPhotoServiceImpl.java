@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.CachePut;
+import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,6 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
     private final GoogleApiAccess googleApiAccess;
     private MemberProfileServices memberProfileServices;
-    private static HashMap<String, String> photos = new HashMap<>();
 
     public MemberPhotoServiceImpl(GoogleApiAccess googleApiAccess, MemberProfileServices memberProfileServices) {
         this.googleApiAccess = googleApiAccess;
@@ -33,28 +33,26 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
     }
 
     @Override
-    @CachePut(parameters = {"workEmail"})
+    @Cacheable
     public String getImageByEmailAddress(@NotNull String workEmail) {
+
+        String photoData = "";
 
         Set<MemberProfile> memberProfile = memberProfileServices.findByValues(null, null, null, workEmail);
         if(memberProfile.isEmpty()) {
             throw new MemberProfileDoesNotExistException(String.format("No member profile exists for the email %s", workEmail));
         }
 
-        if (!photos.containsKey(workEmail)) {
-            Directory directory = googleApiAccess.getDirectory();
+        Directory directory = googleApiAccess.getDirectory();
 
-            try {
-                UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
-                String photoData = convertPhotoData(userPhoto.getPhotoData());
-                photos.put(workEmail, photoData);
-            } catch (IOException e) {
-                LOG.error("Error occurred while retrieving files from Google Directory API.", e);
-                photos.put(workEmail, "");
-            }
+        try {
+            UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
+            photoData = convertPhotoData(userPhoto.getPhotoData());
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving files from Google Directory API.", e);
         }
 
-        return photos.get(workEmail);
+        return photoData;
     }
 
     private String convertPhotoData(String photoData) {

@@ -98,5 +98,8 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
+      expiry: 20
       heap:
-        max-entries: 20
+        max-entries: 5
+#        time-to-live-seconds: 30
+#         expire-after-access: 15
