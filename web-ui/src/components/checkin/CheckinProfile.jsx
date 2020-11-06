@@ -8,7 +8,7 @@ import "./Checkin.css";
 
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
-  const { selectedProfile, userProfile } = state;
+  const { csrf, selectedProfile, userProfile } = state;
   const { name, pdlId, title, workEmail } = selectedProfile
     ? selectedProfile
     : userProfile && userProfile.memberProfile
@@ -25,7 +25,7 @@ const CheckinProfile = () => {
   useEffect(() => {
     async function getPDLName() {
       if (pdlId) {
-        let res = await getMember(pdlId);
+        let res = await getMember(pdlId, csrf);
         let pdlProfile =
           res.payload && res.payload.data && !res.error
             ? res.payload.data
@@ -33,8 +33,10 @@ const CheckinProfile = () => {
         setPDL(pdlProfile ? pdlProfile.name : "");
       }
     }
-    getPDLName();
-  }, [pdlId]);
+    if (csrf) {
+      getPDLName();
+    }
+  }, [csrf, pdlId]);
 
   return (
     <div className="profile-section">

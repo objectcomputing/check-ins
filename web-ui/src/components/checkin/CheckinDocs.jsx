@@ -16,7 +16,7 @@ import "./Checkin.css";
 
 const UploadDocs = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile, currentCheckin } = state;
+  const { csrf, currentCheckin, userProfile } = state;
   const { memberProfile } = userProfile;
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
@@ -32,7 +32,7 @@ const UploadDocs = () => {
   useEffect(() => {
     async function getCheckinFiles() {
       try {
-        let res = await getFiles(checkinId);
+        let res = await getFiles(checkinId, csrf);
         if (res.error) throw new Error(res.error);
         let checkinFiles =
           res.payload && res.payload.data && res.payload.data.length > 0
@@ -51,13 +51,17 @@ const UploadDocs = () => {
         console.log(e);
       }
     }
-    getCheckinFiles();
+    if (csrf) {
+      getCheckinFiles();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkinId]);
+  }, [checkinId, csrf]);
 
   const handleFile = (file) => {
-    setFiles([...files, file]);
-    addFile(file);
+    if (csrf) {
+      setFiles([...files, file]);
+      addFile(file);
+    }
   };
 
   const addFile = async (file) => {
@@ -69,7 +73,7 @@ const UploadDocs = () => {
     }
     setLoading(true);
     try {
-      let res = await uploadFile(formData, checkinId);
+      let res = await uploadFile(formData, checkinId, csrf);
       if (res.error) throw new Error(res.error);
       const { data, status } = res.payload;
       if (status !== 200) {
@@ -103,13 +107,14 @@ const UploadDocs = () => {
             <Button
               className="remove-file"
               onClick={async () => {
-                console.log("file to delete", file);
-                await deleteFile(file.fileId);
-                setFiles(
-                  files.filter((e) => {
-                    return e.name !== file.name;
-                  })
-                );
+                if (csrf) {
+                  await deleteFile(file.fileId, csrf);
+                  setFiles(
+                    files.filter((e) => {
+                      return e.name !== file.name;
+                    })
+                  );
+                }
               }}
             >
               X
