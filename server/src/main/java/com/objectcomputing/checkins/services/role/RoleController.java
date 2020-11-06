@@ -76,9 +76,9 @@ import io.micronaut.scheduling.TaskExecutors;
     HttpRequest<RoleCreateDTO> request){
         return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getMemberid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdRole -> {return (HttpResponse<Role>) HttpResponse
-                    .created(createdRole)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdRole.getId()))));
+                .map(userRole -> {return (HttpResponse<Role>) HttpResponse
+                    .created(userRole)
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -116,8 +116,8 @@ import io.micronaut.scheduling.TaskExecutors;
             return result;
         })
         .observeOn(Schedulers.from(eventLoopGroup))
-        .map(createdRole -> {
-            return (HttpResponse<Role>)HttpResponse.ok(createdRole);
+        .map(userRole -> {
+            return (HttpResponse<Role>)HttpResponse.ok(userRole);
         }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
@@ -134,7 +134,7 @@ import io.micronaut.scheduling.TaskExecutors;
     @Nullable UUID memberid) {
         return Single.fromCallable(() -> roleServices.findByFields(role, memberid))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdRole -> (HttpResponse<Set<Role>>) HttpResponse.ok(createdRole))
+                .map(userRole -> (HttpResponse<Set<Role>>) HttpResponse.ok(userRole))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
