@@ -7,6 +7,9 @@ micronaut:
     max-request-size: 100MB
     multipart:
       max-file-size: 100MB
+  caches:
+    photo-cache:
+      expire-after-write: 20
 
   router:
     static-resources:
@@ -98,7 +101,3 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
-      expiry:
-        time-to-live-seconds: 20
-      heap:
-        max-entries: 5

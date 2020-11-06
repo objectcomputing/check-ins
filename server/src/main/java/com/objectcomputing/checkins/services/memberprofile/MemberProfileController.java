@@ -35,16 +35,13 @@ public class MemberProfileController {
     private final MemberProfileServices memberProfileServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
-    private final MemberPhotoService memberPhotoService;
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService,
-                                   MemberPhotoService memberPhotoService){
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-        this.memberPhotoService = memberPhotoService;
     }
 
     @Error(exception = MemberProfileBadArgException.class)
@@ -149,7 +146,6 @@ public class MemberProfileController {
         dto.setTitle(entity.getTitle());
         dto.setStartDate(entity.getStartDate());
         dto.setWorkEmail(entity.getWorkEmail());
-        dto.setPhotoData(memberPhotoService.getImageByEmailAddress(entity.getWorkEmail()));
         return dto;
     }
 

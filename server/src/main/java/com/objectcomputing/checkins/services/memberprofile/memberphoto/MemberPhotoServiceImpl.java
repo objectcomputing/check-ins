@@ -27,14 +27,14 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
 
     public MemberPhotoServiceImpl(GoogleApiAccess googleApiAccess, MemberProfileServices memberProfileServices) {
         this.googleApiAccess = googleApiAccess;
-        this.memberProfileServices = memberProfileServices;;
+        this.memberProfileServices = memberProfileServices;
     }
 
     @Override
     @Cacheable
-    public String getImageByEmailAddress(@NotNull String workEmail) {
+    public byte[] getImageByEmailAddress(@NotNull String workEmail) {
 
-        String photoData = "";
+        byte[] photoData = new byte[0];
 
         Set<MemberProfile> memberProfile = memberProfileServices.findByValues(null, null, null, workEmail);
         if(memberProfile.isEmpty()) {
@@ -45,18 +45,11 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
 
         try {
             UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
-            photoData = convertPhotoData(userPhoto.getPhotoData());
+            photoData = Base64.getUrlDecoder().decode(userPhoto.getPhotoData());
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Directory API.", e);
         }
 
         return photoData;
-    }
-
-    private String convertPhotoData(String photoData) {
-        // converts an encoded URL to String URL
-        byte[] actualByte = Base64.getUrlDecoder().decode(photoData);
-        byte[] encodedByte = Base64.getEncoder().encode(actualByte);
-        return new String(encodedByte);
     }
 }

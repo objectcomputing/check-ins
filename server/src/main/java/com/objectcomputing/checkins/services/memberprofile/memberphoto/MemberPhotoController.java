@@ -4,9 +4,11 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotE
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
@@ -25,6 +27,7 @@ import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
 @Controller("/services/member-profile/member-photo")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Produces(MediaType.IMAGE_PNG)
 @Tag(name = "member photo")
 public class MemberPhotoController {
 
@@ -33,7 +36,7 @@ public class MemberPhotoController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public MemberPhotoController(@Property(name = "ehcache.caches.photo-cache.expiry.time-to-live-seconds") String expiry,
+    public MemberPhotoController(@Property(name = "micronaut.caches.photo-cache.expire-after-write") String expiry,
                                  MemberPhotoService memberPhotoService,
                                  EventLoopGroup eventLoopGroup,
                                  @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
@@ -56,12 +59,12 @@ public class MemberPhotoController {
      * @param workEmail
      * @return {@link HttpResponse<String>} StringURL of photo data
      */
-    @Get
-    public Single<HttpResponse<String>> userImage(@NotNull String workEmail) {
+    @Get("/{workEmail}")
+    public Single<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
 
         return Single.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(photoData -> (HttpResponse<String>) HttpResponse
+                .map(photoData -> (HttpResponse<byte[]>) HttpResponse
                         .ok(photoData)
                         .header(CACHE_CONTROL, String.format("public, max-age=%s", expiry)))
                 .subscribeOn(Schedulers.from(ioExecutorService));

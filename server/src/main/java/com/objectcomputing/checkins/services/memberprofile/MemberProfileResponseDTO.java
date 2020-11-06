@@ -50,10 +50,6 @@ public class MemberProfileResponseDTO {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    @NotNull
-    @Schema(description = "employee's photo data in the format StringURL", required = true)
-    private String photoData;
-
     public UUID getId() {
         return id;
     }
@@ -127,13 +123,5 @@ public class MemberProfileResponseDTO {
 
     public void setBioText(@Nullable String bioText) {
         this.bioText = bioText;
-    }
-
-    public String getPhotoData() {
-        return photoData;
-    }
-
-    public void setPhotoData(String photoData) {
-        this.photoData = photoData;
     }
 }
