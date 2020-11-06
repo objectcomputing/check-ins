@@ -27,7 +27,7 @@ public class CsrfModelProcessor{
 
         return HttpResponse.ok()
         // set cookie
-                .cookie(new NettyCookie("another-cookie", cookieValue).path("/"));
+                .cookie(new NettyCookie("_csrf", cookieValue).path("/"));
 
 
     }

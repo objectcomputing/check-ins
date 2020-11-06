@@ -13,37 +13,15 @@ import org.reactivestreams.Publisher;
 import java.util.*;
 
 
-@Filter(value = {"/*", "/*"})
+@Filter(value = {"/services/*", "/services/*"})
 public class OAuthCsrfFilter extends OncePerRequestHttpServerFilter {
 
     @Override
     protected Publisher<MutableHttpResponse<?>> doFilterOnce(HttpRequest<?> request, ServerFilterChain chain) {
-
-        Map<String, String> map = new HashMap<String, String>();
         HttpHeaders headers = request.getHeaders();
-        String connectValue = headers.get("host", String.class).orElse("").toLowerCase(Locale.ENGLISH);
-
-
-        Iterator it = headers.iterator();
 
         String connectValue1 = headers.get("cookie", String.class).orElse("").toLowerCase(Locale.ENGLISH);
-
-
-        while(it.hasNext()) {
-            System.out.println("value::"+it.next());
-        }
-
-
-        Collection<MediaType> headerNames = request.accept();
-//        while (headerNames.)headerNames {
-//            String key = (String) headerNames.nextElement();
-//            String value = request.getHeader(key);
-//            map.put(key, value);
-//        }
-
-
-        String requestParameter = request.getParameters().get("_csrf");
-        System.out.println("request paramater is:::"+requestParameter);
+        System.out.println("request paramater is:::"+connectValue1);
         String cookieValue = request.getCookies().findCookie("_csrf").map(Cookie::getValue).orElse(null);
         System.out.println("request cookie is:::"+cookieValue);
 
