@@ -9,7 +9,7 @@ micronaut:
       max-file-size: 100MB
   caches:
     photo-cache:
-      expire-after-write: 20
+      expire-after-write: 1200
 
   router:
     static-resources:
