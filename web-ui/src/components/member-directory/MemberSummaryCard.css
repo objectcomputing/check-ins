@@ -1,0 +1,15 @@
+.member-card {
+  margin: 20px;
+  width: 45%;
+}
+
+.member-summary-avatar {
+  height: 80px !important;
+  width: 80px !important;
+  margin-right: 20px;
+}
+
+.member-summary-parent {
+  display: flex;
+  align-items: center;
+}
