@@ -4,6 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
@@ -16,6 +17,12 @@ public class MemberSkillCreateDTO {
     @NotNull
     @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
+
+    @Schema(description = "the level of the skill")
+    private String skilllevel;
+
+    @Schema(description = "the last used date of the skill")
+    private LocalDate lastuseddate;
 
     public UUID getMemberid() {
         return memberid;
@@ -31,5 +38,21 @@ public class MemberSkillCreateDTO {
 
     public void setSkillid(UUID skillid) {
         this.skillid = skillid;
+    }
+
+    public String getSkilllevel() {
+        return skilllevel;
+    }
+
+    public void setSkilllevel(String skilllevel) {
+        this.skilllevel = skilllevel;
+    }
+
+    public LocalDate getLastuseddate() {
+        return lastuseddate;
+    }
+
+    public void setLastuseddate(LocalDate lastuseddate) {
+        this.lastuseddate = lastuseddate;
     }
 }

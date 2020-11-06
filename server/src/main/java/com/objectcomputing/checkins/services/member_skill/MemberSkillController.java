@@ -101,7 +101,7 @@ public class MemberSkillController {
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
         return Single.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
-                memberSkill.getSkillid())))
+                memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdMemberSkill -> (HttpResponse<MemberSkill>)HttpResponse
                         .created(createdMemberSkill)
