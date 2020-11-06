@@ -65,6 +65,15 @@ import io.micronaut.scheduling.TaskExecutors;
                     .body(error);
         }
 
+        @Error(exception = PulseResponseNotFoundException.class)
+        public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
+            JsonError error = new JsonError(e.getMessage())
+                    .link(Link.SELF, Link.of(request.getUri()));
+    
+            return HttpResponse.<JsonError>notFound()
+                    .body(error);
+        }
+
     /**
      * Find Pulse Response by Team Member or Date Range.
      * 
@@ -77,7 +86,7 @@ import io.micronaut.scheduling.TaskExecutors;
     public Single<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom, @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,@Nullable UUID teamMemberId) {
         return Single.fromCallable(() -> pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdPulseResponse -> (HttpResponse<Set<PulseResponse>>) HttpResponse.ok(createdPulseResponse))
+                .map(pulseresponse -> (HttpResponse<Set<PulseResponse>>) HttpResponse.ok(pulseresponse))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -93,9 +102,9 @@ import io.micronaut.scheduling.TaskExecutors;
                                                                     HttpRequest<PulseResponseCreateDTO> request) {
         return Single.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdPulseResponse -> {return (HttpResponse<PulseResponse>) HttpResponse
-                    .created(createdPulseResponse)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdPulseResponse.getId()))));
+                .map(pulseresponse -> {return (HttpResponse<PulseResponse>) HttpResponse
+                    .created(pulseresponse)
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))));
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -106,11 +115,8 @@ import io.micronaut.scheduling.TaskExecutors;
      * @return {@link HttpResponse<PulseResponse>}
      */
     @Put("/")
-    public Single<HttpResponse<PulseResponse>> update(@Body @Valid PulseResponse pulseResponse,
+    public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                             HttpRequest<PulseResponse> request) {
-        if (pulseResponse == null) {
-            return Single.just(HttpResponse.ok());
-        }
         return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))
             .observeOn(Schedulers.from(eventLoopGroup))
             .map(updatedPulseResponse -> (HttpResponse<PulseResponse>) HttpResponse
@@ -127,7 +133,18 @@ import io.micronaut.scheduling.TaskExecutors;
      * @return
      */
     @Get("/{id}")
-    public PulseResponse readPulseResponse(@NotNull UUID id){
-        return pulseResponseServices.read(id);
+    public Single<HttpResponse<PulseResponse>> readRole(@NotNull UUID id) {
+        return Single.fromCallable(() -> {
+            PulseResponse result = pulseResponseServices.read(id);
+            if (result == null) {
+                throw new PulseResponseNotFoundException("No role item for UUID");
+            }
+            return result;
+        })
+        .observeOn(Schedulers.from(eventLoopGroup))
+        .map(pulseresponse -> {
+            return (HttpResponse<PulseResponse>)HttpResponse.ok(pulseresponse);
+        }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 }
