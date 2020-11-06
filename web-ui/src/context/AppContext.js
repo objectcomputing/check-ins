@@ -139,7 +139,6 @@ const AppContextProvider = (props) => {
   const { csrf } = state;
 
   useEffect(() => {
-    let cookie = null;
     const getCsrf = async () => {
       if (!csrf) {
         const res = await axios({
@@ -148,8 +147,7 @@ const AppContextProvider = (props) => {
           withCredentials: true,
         });
         if (res && res.data) {
-          cookie = res.data._csrf;
-          dispatch({ type: SET_CSRF, payload: cookie });
+          dispatch({ type: SET_CSRF, payload: res.data });
         }
       }
     };
@@ -169,6 +167,7 @@ const AppContextProvider = (props) => {
       }
     };
     if (csrf) {
+      console.log({ csrf });
       updateUserProfile();
     }
   }, [csrf]);

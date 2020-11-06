@@ -19,7 +19,7 @@ public class CsrfModelProcessor{
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
     @Get("/cookie")
-    public HttpResponse getCsrfToken()  {
+    public HttpResponse <?> getCsrfToken()  {
         SecureRandom random = new SecureRandom();
         byte[] randomBytes = new byte[24];
         random.nextBytes(randomBytes);
@@ -27,7 +27,7 @@ public class CsrfModelProcessor{
 
         return HttpResponse.ok()
         // set cookie
-                .cookie(new NettyCookie("_csrf", cookieValue).path("/"));
+                .cookie(new NettyCookie("_csrf", cookieValue).path("/")).body(cookieValue);
 
 
     }
