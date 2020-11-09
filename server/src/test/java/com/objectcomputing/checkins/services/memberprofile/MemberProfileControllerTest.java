@@ -35,12 +35,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Client("/services/member-profile")
     private HttpClient client;
 
-    private String encodeValue(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
+    private String encodeValue(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
     @Test
@@ -56,7 +52,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETFindByNameReturnsEmptyBody() {
+    public void testGETFindByNameReturnsEmptyBody() throws UnsupportedEncodingException {
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -67,7 +63,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testGETFindByValueName() {
+    public void testGETFindByValueName() throws UnsupportedEncodingException {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.
@@ -107,7 +103,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void testFindByMemberName() {
+    void testFindByMemberName() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -118,7 +114,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void testFindByMemberRole() {
+    void testFindByMemberRole() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?title=%s", encodeValue(memberProfile.getTitle()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
