@@ -27,7 +27,7 @@ const doUpdate = async (actionItem) => {
 
 const updateItem = debounce(doUpdate, 1500);
 
-const ActionItemsPanel = ({ checkinId, memberName }) => {
+const ActionItemsPanel = ({ checkinId, memberName, mockActionItems }) => {
   const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
   const { memberProfile } = userProfile;
@@ -38,6 +38,10 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getActionItems = async (checkinId) => {
+    if (mockActionItems) {
+      setActionItems(mockActionItems);
+      return;
+    }
     setIsLoading(true);
     let res = await findActionItem(checkinId, null);
     if (res && res.payload) {
