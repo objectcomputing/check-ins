@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkUpdateMemberProfileDTO;
+import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +35,13 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Client("/services/member-profile")
     private HttpClient client;
 
+    /*
+    * LocalDate.Max cannot be used for end-to-end tests
+    * LocalDate.Max year = 999999999
+    * POSTGRES supported date range = 4713 BC - 5874897 AD
+    */
+    private LocalDate maxDate = LocalDate.of(2099, 12, 31);
+
     private String encodeValue(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
@@ -43,7 +50,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testGETNonExistingEndpointReturns404() {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.GET("/12345678-9123-4567-abcd-123456789abc")
+            client.toBlocking().exchange(HttpRequest.GET(String.valueOf(UUID.randomUUID()))
                     .basicAuth(MEMBER_ROLE,MEMBER_ROLE));
         });
 
@@ -177,7 +184,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(5, errors.size());
+        assertEquals(4, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
@@ -250,6 +257,41 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
     }
 
+    // POST - Future Start Date
+    @Test
+    public void testPostForFutureStartDate() {
+        MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
+        requestBody.setStartDate(maxDate);
+
+        final HttpResponse<MemberProfileResponseDTO> response = client
+                .toBlocking()
+                .exchange(HttpRequest.POST("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertNotNull(response.body());
+        assertProfilesEqual(requestBody, response.body());
+        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+    }
+
+    // POST - Nullable MemberProfile name
+    @Test
+    public void testPostWithNullName() {
+
+        MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
+        requestBody.setName(null);
+
+        final HttpResponse<MemberProfileResponseDTO> response = client
+                .toBlocking()
+                .exchange(HttpRequest.POST("", requestBody)
+                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertNotNull(response.body());
+        assertProfilesEqual(requestBody, response.body());
+        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+    }
+
     // Find By id - when no user data exists for PUT
     @Test
     public void testPutValidationFailures() {
@@ -262,8 +304,24 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(3, errors.size());
+        assertEquals(2, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    // PUT - Future Start Date
+    @Test
+    public void testPutFutureStartDate() {
+
+        MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
+        requestBody.setStartDate(maxDate);
+
+        final HttpResponse<MemberProfileResponseDTO> response = client
+                .toBlocking()
+                .exchange(HttpRequest.PUT("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertProfilesEqual(requestBody, response.body());
     }
 
     // PUT - Request with empty body
@@ -276,18 +334,4 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals("memberProfile.id: must not be null", thrown.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
-
-    // PUT - Request with invalid body - missing ID
-    @Test
-    public void testPutUpdateWithMissingField() {
-        MemberProfileUpdateDTO testMemberProfile = mkUpdateMemberProfileDTO();
-        testMemberProfile.setName(null);
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest.PUT("", testMemberProfile)
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
-        assertEquals("memberProfile.name: must not be blank", thrown.getMessage());
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
-    }
 }
-

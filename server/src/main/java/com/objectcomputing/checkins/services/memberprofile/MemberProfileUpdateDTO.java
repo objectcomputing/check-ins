@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -17,8 +16,8 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotBlank
-    @Schema(description = "full name of the employee", required = true)
+    @Nullable
+    @Schema(description = "full name of the employee")
     private String name;
 
     @Nullable
@@ -42,7 +41,6 @@ public class MemberProfileUpdateDTO {
     private String insperityId;
 
     @Nullable
-    @Past
     @Schema(description = "employee's date of hire")
     private LocalDate startDate;
 
@@ -58,11 +56,12 @@ public class MemberProfileUpdateDTO {
         this.id = id;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 
