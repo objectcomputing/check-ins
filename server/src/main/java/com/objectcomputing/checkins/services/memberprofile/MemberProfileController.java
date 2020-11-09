@@ -43,18 +43,18 @@ public class MemberProfileController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = MemberProfileBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileBadArgException e) {
-        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest().body(error);
-    }
-
     @Error(exception = MemberProfileDoesNotExistException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileDoesNotExistException e) {
         JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>notFound().body(error);
+    }
+
+    @Error(exception = MemberProfileAlreadyExistsException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileAlreadyExistsException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest().body(error);
     }
 
     /**
