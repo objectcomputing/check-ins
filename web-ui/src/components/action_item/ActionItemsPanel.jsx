@@ -65,8 +65,8 @@ const ActionItemsPanel = ({ checkinId, memberName, mockActionItems }) => {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     getActionItems(checkinId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkinId]);
 
   const reorder = (list, startIndex, endIndex) => {
