@@ -18,7 +18,7 @@ public class MemberSkillCreateDTO {
     @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
 
-    @Schema(description = "the level of the skill")
+    @Schema(description = "the member's expertise level for this skill")
     private String skilllevel;
 
     @Schema(description = "the last used date of the skill")

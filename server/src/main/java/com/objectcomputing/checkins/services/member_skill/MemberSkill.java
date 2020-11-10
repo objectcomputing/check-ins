@@ -39,7 +39,7 @@ public class MemberSkill {
 
     @Column(name="skilllevel")
     @TypeDef(type= DataType.STRING)
-    @Schema(description = "the level of the skill")
+    @Schema(description = "the member's expertise level for this skill")
     private String skilllevel;
 
     @Column(name="lastuseddate")
