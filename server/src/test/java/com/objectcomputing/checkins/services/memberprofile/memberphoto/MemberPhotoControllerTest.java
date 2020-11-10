@@ -16,7 +16,6 @@ import org.junit.jupiter.api.TestInstance;
 import javax.inject.Inject;
 import java.util.Base64;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,7 +44,7 @@ public class MemberPhotoControllerTest {
 
         when(memberPhotoService.getImageByEmailAddress(testEmail)).thenReturn(testData);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", testEmail)).basicAuth("some.email.id", MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", testEmail));
         final HttpResponse<byte[]> response = client.toBlocking().exchange(request, byte[].class);
 
         assertNotNull(response);
@@ -64,8 +63,7 @@ public class MemberPhotoControllerTest {
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest
-                    .GET(String.format("/%s", testEmail))
-                    .basicAuth("some.email.id", MEMBER_ROLE));
+                    .GET(String.format("/%s", testEmail)));
         });
         assertEquals(String.format("No member profile exists for the email %s", testEmail), thrown.getMessage());
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
