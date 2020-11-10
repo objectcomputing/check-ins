@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import "./Avatar.css";
 
 import Avatar from "@material-ui/core/Avatar";

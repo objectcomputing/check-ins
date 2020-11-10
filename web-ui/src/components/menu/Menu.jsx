@@ -19,7 +19,6 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Grow from "@material-ui/core/Grow";
 
 import "./Menu.css";
-import Avatar from "@material-ui/core/Avatar";
 
 const drawerWidth = 150;
 
