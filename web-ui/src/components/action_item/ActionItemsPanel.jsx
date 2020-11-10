@@ -65,6 +65,7 @@ const ActionItemsPanel = ({ checkinId, memberName, mockActionItems }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     getActionItems(checkinId);
   }, [checkinId]);
 
