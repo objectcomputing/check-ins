@@ -11,5 +11,5 @@ public interface TeamMemberServices {
 
     TeamMember update(TeamMember teamMember);
 
-    Set<TeamMember> findByFields(UUID teamid, UUID memberid, Boolean lead);
+    Set<TeamMember> findByFields(UUID teamid, UUID memberid, Boolean lead, UUID supervisorid);
 }

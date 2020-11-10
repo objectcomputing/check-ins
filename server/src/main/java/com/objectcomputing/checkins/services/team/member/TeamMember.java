@@ -43,15 +43,21 @@ public class TeamMember {
             nullable = true)
     private Boolean lead;
 
-    public TeamMember(UUID teamid, UUID memberid, Boolean lead) {
-        this(null, teamid, memberid, lead);
+    @Nullable
+    @Column(name = "supervisorid")
+    @Schema(description = "id of the supervisor this member is associated with", nullable = true)
+    private UUID supervisorid;
+
+    public TeamMember(UUID teamid, UUID memberid, @Nullable Boolean lead, @Nullable UUID supervisorid) {
+        this(null, teamid, memberid, lead, supervisorid);
     }
 
-    public TeamMember(UUID id, UUID teamid, UUID memberid, Boolean lead) {
+    public TeamMember(UUID id, UUID teamid, UUID memberid, @Nullable Boolean lead, @Nullable UUID supervisorid) {
         this.id = id;
         this.teamid = teamid;
         this.memberid = memberid;
         this.lead = lead;
+        this.supervisorid = supervisorid;
     }
 
     public UUID getId() {
@@ -86,6 +92,15 @@ public class TeamMember {
         this.lead = lead;
     }
 
+    @Nullable
+    public UUID getSupervisorid() {
+        return supervisorid;
+    }
+
+    public void setSupervisorid(@Nullable UUID supervisorid) {
+        this.supervisorid = supervisorid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,12 +109,13 @@ public class TeamMember {
         return Objects.equals(id, that.id) &&
                 Objects.equals(teamid, that.teamid) &&
                 Objects.equals(memberid, that.memberid) &&
-                Objects.equals(lead, that.lead);
+                Objects.equals(lead, that.lead) &&
+                Objects.equals(supervisorid, that.supervisorid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, teamid, memberid, lead);
+        return Objects.hash(id, teamid, memberid, lead, supervisorid);
     }
 
     @Override
@@ -109,6 +125,7 @@ public class TeamMember {
                 ", teamid=" + teamid +
                 ", memberid=" + memberid +
                 ", lead=" + isLead() +
+                ", supervisorid=" + supervisorid +
                 '}';
     }
 }

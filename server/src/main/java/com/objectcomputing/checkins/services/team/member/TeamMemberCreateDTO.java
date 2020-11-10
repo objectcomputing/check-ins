@@ -20,6 +20,9 @@ public class TeamMemberCreateDTO {
             nullable = true)
     private Boolean lead;
 
+    @Schema(description = "id of the supervisor this member is associated with", nullable = true)
+    private UUID supervisorid;
+
     public UUID getTeamid() {
         return teamid;
     }
@@ -42,5 +45,13 @@ public class TeamMemberCreateDTO {
 
     public void setLead(Boolean lead) {
         this.lead = lead;
+    }
+
+    public UUID getSupervisorid() {
+        return supervisorid;
+    }
+
+    public void setSupervisorid(UUID supervisorid) {
+        this.supervisorid = supervisorid;
     }
 }

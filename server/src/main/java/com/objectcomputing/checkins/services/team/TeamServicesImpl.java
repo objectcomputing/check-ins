@@ -90,7 +90,7 @@ public class TeamServicesImpl implements TeamServices {
 
         Team team = teamsRepo.findById(id).get();
 
-        Set<TeamMember> CurrentTeam = teamMemberServices.findByFields(team.getId(), currentUser.getId(), true);
+        Set<TeamMember> CurrentTeam = teamMemberServices.findByFields(team.getId(), currentUser.getId(), true, null);
         if(isAdmin || !CurrentTeam.isEmpty()) {
             teamsRepo.deleteById(id);
         } else {

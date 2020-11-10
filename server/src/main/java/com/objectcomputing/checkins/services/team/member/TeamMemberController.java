@@ -50,7 +50,7 @@ public class TeamMemberController {
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                    HttpRequest<TeamMemberCreateDTO> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
-                teamMember.getMemberid(), teamMember.isLead()));
+                teamMember.getMemberid(), teamMember.isLead(), teamMember.getSupervisorid()));
         return HttpResponse
                 .created(newTeamMember)
                 .headers(headers -> headers.location(
@@ -90,14 +90,16 @@ public class TeamMemberController {
      *
      * @param teamid  {@link UUID} of team
      * @param memberid {@link UUID} of member
-     * @param lead,    is lead of the team
+     * @param lead, {@link Boolean} is lead of the team
+     * @param supervisorid {@link UUID} of supervisor
      * @return {@link List < Team > list of teams}
      */
     @Get("/{?teamid,memberid,lead}")
     public Set<TeamMember> findTeamMembers(@Nullable UUID teamid,
-                                             @Nullable UUID memberid,
-                                             @Nullable Boolean lead) {
-        return teamMemberServices.findByFields(teamid, memberid, lead);
+                                           @Nullable UUID memberid,
+                                           @Nullable Boolean lead,
+                                           @Nullable UUID supervisorid) {
+        return teamMemberServices.findByFields(teamid, memberid, lead, supervisorid);
     }
 
     /**
@@ -113,7 +115,7 @@ public class TeamMemberController {
         List<TeamMember> membersCreated = new ArrayList<>();
         for (TeamMemberCreateDTO teamMemberDTO : teamMembers) {
             TeamMember teamMember = new TeamMember(teamMemberDTO.getTeamid(),
-                    teamMemberDTO.getMemberid(), teamMemberDTO.isLead());
+                    teamMemberDTO.getMemberid(), teamMemberDTO.isLead(), teamMemberDTO.getSupervisorid());
             try {
                 teamMemberServices.save(teamMember);
                 membersCreated.add(teamMember);
