@@ -32,7 +32,8 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     if (open && csrf) {
       getPdls();
     }
-  }, [open, csrf, getPdls]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, csrf]);
 
   let date = new Date(editedMember.startDate);
 
