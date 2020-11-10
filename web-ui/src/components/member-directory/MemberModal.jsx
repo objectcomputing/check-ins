@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { getAllPDLs, getMember, updateMember } from "../../api/member";
+import { AppContext } from "../../context/AppContext";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -14,11 +15,13 @@ import { Button } from "@material-ui/core";
 import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
+  const { state } = useContext(AppContext);
+  const { csrf } = state;
   const [editedMember, setMember] = useState(member);
   const [pdls, setPdls] = useState([]);
 
   const getPdls = async () => {
-    let res = await getAllPDLs();
+    let res = await getAllPDLs(csrf);
     let promises = res.payload.data.map((member) => getMember(member.memberid));
     const results = await Promise.all(promises);
     const pdlArray = results.map((res) => res.payload.data);
@@ -26,10 +29,10 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   };
 
   useEffect(() => {
-    if (open) {
+    if (open && csrf) {
       getPdls();
     }
-  }, [open]);
+  }, [open, csrf]);
 
   let date = new Date(editedMember.startDate);
 

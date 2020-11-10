@@ -167,7 +167,6 @@ const AppContextProvider = (props) => {
       }
     };
     if (csrf) {
-      console.log({ csrf });
       updateUserProfile();
     }
   }, [csrf]);
