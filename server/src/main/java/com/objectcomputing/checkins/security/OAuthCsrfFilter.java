@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.security;
 
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.*;
 import io.micronaut.http.annotation.Filter;
@@ -11,6 +13,7 @@ import org.reactivestreams.Publisher;
 
 
 @Filter(value = {"/services/*", "/services/*"})
+@Requires(env = Environment.GOOGLE_COMPUTE)
 public class OAuthCsrfFilter extends OncePerRequestHttpServerFilter {
 
     @Override
