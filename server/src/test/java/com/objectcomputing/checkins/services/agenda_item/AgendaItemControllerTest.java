@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.AgendaItemFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -34,17 +34,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAgendaItemByAdmin() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfileEntityOfPDL.getId());
+        agendaItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         AgendaItem agendaItem = response.body();
@@ -59,17 +59,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAgendaItemByPdl() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfileEntityOfPDL.getId());
+        agendaItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityOfUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         AgendaItem agendaItem = response.body();
@@ -83,17 +83,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAgendaItemByMember() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
-        agendaItemCreateDTO.setCreatedbyid(memberProfileEntityOfPDL.getId());
+        agendaItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         AgendaItem agendaItem = response.body();
@@ -144,17 +144,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAAgendaItemForNonExistingCheckInId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(UUID.randomUUID());
-        agendaItemCreateDTO.setCreatedbyid(memberProfileEntity.getId());
+        agendaItemCreateDTO.setCreatedbyid(memberProfile.getId());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -168,17 +168,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAAgendaItemForNonExistingMemberId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
         agendaItemCreateDTO.setCreatedbyid(UUID.randomUUID());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -192,17 +192,17 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testCreateAAgendaItemByPLDIdWhenCompleted() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createACompletedCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         AgendaItemCreateDTO agendaItemCreateDTO = new AgendaItemCreateDTO();
         agendaItemCreateDTO.setCheckinid(checkIn.getId());
         agendaItemCreateDTO.setCreatedbyid(checkIn.getPdlId());
         agendaItemCreateDTO.setDescription("test");
 
-        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<AgendaItemCreateDTO> request = HttpRequest.POST("", agendaItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -216,14 +216,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testReadAgendaItemByPDL() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -232,14 +232,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testReadAgendaItemByMember() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -248,14 +248,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testReadAgendaItemByAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -264,10 +264,10 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testReadAgendaItemNotFound() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
 
         UUID randomCheckinID = UUID.randomUUID();
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -281,16 +281,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testReadAgendaItemNotFoundByUnrelatedUser() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -305,15 +305,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAllAgendaItemByAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -323,15 +323,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAllAgendaItemByNonAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -345,15 +345,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByBothCheckinIdAndCreateByid() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", agendaItem.getCheckinid(), agendaItem.getCreatedbyid()))
-                .basicAuth(memberProfileEntity.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -364,16 +364,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByMemberIdForAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntityForUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", agendaItem.getCreatedbyid()))
-                .basicAuth(memberProfileEntityForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -383,16 +383,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByCheckinIdForAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntityForUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", agendaItem.getCheckinid()))
-                .basicAuth(memberProfileEntityForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -402,15 +402,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByCheckinIdForPDL() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", agendaItem.getCheckinid()))
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -420,16 +420,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByCheckinIdForUnrelatedUser() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntity1 = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfile1 = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", agendaItem.getCheckinid()))
-                .basicAuth(memberProfileEntity1.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -441,15 +441,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByCreatedByIdByMember() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntityForPDL);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileForPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", agendaItem.getCreatedbyid()))
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -459,16 +459,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testFindAgendaItemByCreatedByIdByUnrelatedUser() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntity1 = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfile1 = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntityForPDL);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileForPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", agendaItem.getCreatedbyid()))
-                .basicAuth(memberProfileEntity1.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -481,14 +481,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateAgendaItemByAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileEntityForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         assertEquals(agendaItem, response.body());
@@ -497,14 +497,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateAgendaItemByPDL() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         assertEquals(agendaItem, response.body());
@@ -514,14 +514,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateAgendaItemByMember() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileEntityForPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("", agendaItem).basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         assertEquals(agendaItem, response.body());
@@ -530,12 +530,12 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateInvalidAgendaItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
         agendaItem.setCreatedbyid(null);
         agendaItem.setCheckinid(null);
 
@@ -584,16 +584,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateNonExistingAgendaItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
         agendaItem.setId(UUID.randomUUID());
 
         final HttpRequest<AgendaItem> request = HttpRequest.PUT("", agendaItem)
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -608,16 +608,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateNonExistingAgendaItemForCheckInId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
         agendaItem.setCheckinid(UUID.randomUUID());
 
         final HttpRequest<AgendaItem> request = HttpRequest.PUT("", agendaItem)
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -632,16 +632,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateNonExistingAgendaItemForMemberId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
         agendaItem.setCreatedbyid(UUID.randomUUID());
 
         final HttpRequest<AgendaItem> request = HttpRequest.PUT("", agendaItem)
-                .basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -656,16 +656,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateAgendaItemForUnrelatedUserByPdlWhenCompleted() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-        CheckIn checkIn = createACompletedCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createACompletedCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<AgendaItem> request = HttpRequest.PUT("", agendaItem)
-                .basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -680,16 +680,16 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testUpdateAgendaItemForUnrelatedUserByAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<AgendaItem> request = HttpRequest.PUT("", agendaItem)
-                .basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<AgendaItem> response = client.toBlocking().exchange(request, AgendaItem.class);
 
         assertEquals(agendaItem, response.body());
@@ -699,14 +699,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAgendaItemByAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -714,14 +714,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAgendaItemByPdl() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -729,14 +729,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAgendaItemByMember() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntity);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityForPDL.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
         
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -744,14 +744,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAAgendaItemByADMINIdWhenCompleted() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createACompletedCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntityOfPDL);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
         
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -760,14 +760,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAAgendaItemByPDLIdWhenCompleted() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createACompletedCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntityOfPDL);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(),PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(),PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -781,14 +781,14 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testDeleteAAgendaItemByMEMBERIdWhenCompleted() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createACompletedCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUser);
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileEntityOfPDL);
+        AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", agendaItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);

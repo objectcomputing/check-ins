@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 public interface CurrentUserServices {
 
-    MemberProfileEntity findOrSaveUser(String name, String workEmail);
+    MemberProfile findOrSaveUser(String name, String workEmail);
 }

@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.security;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
@@ -34,7 +34,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
     @Override
     public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
         String email = authReq.getIdentity().toString();
-        MemberProfileEntity memberProfileEntity = currentUserServices.findOrSaveUser(email, email);
+        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
 
         List<String> roles;
         String role;
@@ -44,22 +44,22 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
                 return Flowable.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
             }
 
-            List<String> currentRoles = roleRepository.findByMemberid(memberProfileEntity.getId()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
+            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getId()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
             currentRoles.removeAll(roles);
 
             // Create the roles if they don't already exist, delete roles not asked for
             for (String curRole : currentRoles) {
-                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfileEntity.getId());
+                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getId());
             }
 
             for (String curRole : roles) {
                 RoleType roleType = RoleType.valueOf(curRole);
-                if (roleRepository.findByRoleAndMemberid(roleType, memberProfileEntity.getId()).isEmpty()) {
-                    roleRepository.save(new Role(roleType, memberProfileEntity.getId()));
+                if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getId()).isEmpty()) {
+                    roleRepository.save(new Role(roleType, memberProfile.getId()));
                 }
             }
         } else {
-            roles = roleRepository.findByMemberid(memberProfileEntity.getId()).stream().map((r) -> r.getRole().toString())
+            roles = roleRepository.findByMemberid(memberProfile.getId()).stream().map((r) -> r.getRole().toString())
                     .collect(Collectors.toList());
         }
 

@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.guild.member;
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildBadArgException;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -74,7 +74,7 @@ class GuildMemberServicesImplTest {
         Guild guild = new Guild(guildMember.getGuildid(), "Wayne's", "World");
 
         when(guildRepository.findById(eq(guildMember.getGuildid()))).thenReturn(Optional.of(guild));
-        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
+        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
         when(guildMemberRepository.save(eq(guildMember))).thenReturn(guildMember);
 
         assertEquals(guildMember, services.save(guildMember));
@@ -162,7 +162,7 @@ class GuildMemberServicesImplTest {
         GuildMember guildMember = new GuildMember(UUID.randomUUID(), UUID.randomUUID(), true);
 
         when(guildRepository.findById(eq(guildMember.getGuildid()))).thenReturn(Optional.of(new Guild("n", "d")));
-        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
+        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
 
         when(guildMemberRepository.search(eq(guildMember.getGuildid().toString()), eq(guildMember.getMemberid().toString()),
                 eq(guildMember.isLead())))
@@ -183,7 +183,7 @@ class GuildMemberServicesImplTest {
         Guild guild = new Guild(guildMember.getGuildid(), "Wayne's", "World");
 
         when(guildRepository.findById(eq(guildMember.getGuildid()))).thenReturn(Optional.of(guild));
-        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfileEntity()));
+        when(memberProfileRepository.findById(eq(guildMember.getMemberid()))).thenReturn(Optional.of(new MemberProfile()));
         when(guildMemberRepository.findById(guildMember.getId())).thenReturn(Optional.of(guildMember));
         when(guildMemberRepository.update(eq(guildMember))).thenReturn(guildMember);
 

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class MemberProfileEntityServicesImplTest {
+public class MemberProfileServicesImplTest {
 
     @Mock
     private MemberProfileRepository mockMemberProfileRepository;
@@ -32,14 +32,14 @@ public class MemberProfileEntityServicesImplTest {
 
     @Test
     public void testFindAll() {
-        MemberProfileEntity profileOne = mkMemberProfile();
-        MemberProfileEntity profileTwo = mkMemberProfile("2");
-        MemberProfileEntity profileThree = mkMemberProfile("3");
+        MemberProfile profileOne = mkMemberProfile();
+        MemberProfile profileTwo = mkMemberProfile("2");
+        MemberProfile profileThree = mkMemberProfile("3");
 
         when(mockMemberProfileRepository.search(null, null, null, null))
                 .thenReturn(List.of(profileOne, profileTwo, profileThree));
 
-        Set<MemberProfileEntity> actual = testObject.findByValues(null, null, null, null);
+        Set<MemberProfile> actual = testObject.findByValues(null, null, null, null);
 
         assertEquals(3, actual.size());
         assertTrue(actual.contains(profileOne));
@@ -49,19 +49,19 @@ public class MemberProfileEntityServicesImplTest {
 
     @Test
     public void testFindSpecific() {
-        MemberProfileEntity profileOne = mkMemberProfile();
+        MemberProfile profileOne = mkMemberProfile();
         profileOne.setPdlId(testPdlId);
-        MemberProfileEntity profileTwo = mkMemberProfile("2");
+        MemberProfile profileTwo = mkMemberProfile("2");
         profileTwo.setName(profileOne.getName());
         profileTwo.setTitle(profileOne.getTitle());
-        MemberProfileEntity profileThree = mkMemberProfile("3");
+        MemberProfile profileThree = mkMemberProfile("3");
         profileThree.setName(profileOne.getName());
         profileThree.setPdlId(testPdlId);
 
         when(mockMemberProfileRepository.search(profileOne.getName(), profileOne.getTitle(), profileOne.getPdlId().toString(), profileOne.getWorkEmail()))
                 .thenReturn(Collections.singletonList(profileOne));
 
-        Set<MemberProfileEntity> actual = testObject.findByValues(profileOne.getName(), profileOne.getTitle(), profileOne.getPdlId(), profileOne.getWorkEmail());
+        Set<MemberProfile> actual = testObject.findByValues(profileOne.getName(), profileOne.getTitle(), profileOne.getPdlId(), profileOne.getWorkEmail());
 
         assertEquals(1, actual.size());
         assertTrue(actual.contains(profileOne));
@@ -69,19 +69,19 @@ public class MemberProfileEntityServicesImplTest {
 
     @Test
     public void testFindByIdSuccess() {
-        MemberProfileEntity expected = mkMemberProfile();
+        MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
         when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(java.util.Optional.of(expected));
 
-        MemberProfileEntity actual = testObject.getById(expected.getId());
+        MemberProfile actual = testObject.getById(expected.getId());
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testFindByIdNotFound() {
-        MemberProfileEntity expected = mkMemberProfile();
+        MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
         when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(Optional.empty());
@@ -96,25 +96,25 @@ public class MemberProfileEntityServicesImplTest {
 
     @Test
     public void testSaveNew() {
-        MemberProfileEntity in = mkMemberProfile();
-        MemberProfileEntity expected = mkMemberProfile();
+        MemberProfile in = mkMemberProfile();
+        MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
         when(mockMemberProfileRepository.save(in)).thenReturn(expected);
 
-        MemberProfileEntity actual = testObject.saveProfile(in);
+        MemberProfile actual = testObject.saveProfile(in);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testSaveMemberSameEmail() {
-        MemberProfileEntity alreadyExists = mkMemberProfile();
+        MemberProfile alreadyExists = mkMemberProfile();
         alreadyExists.setId(UUID.randomUUID());
 
         when(mockMemberProfileRepository.findByWorkEmail(eq(alreadyExists.getWorkEmail()))).thenReturn(java.util.Optional.of(alreadyExists));
 
-        MemberProfileEntity in = mkMemberProfile("3");
+        MemberProfile in = mkMemberProfile("3");
         in.setWorkEmail(alreadyExists.getWorkEmail());
 
         MemberSkillAlreadyExistsException response = assertThrows(MemberSkillAlreadyExistsException.class, () -> testObject.saveProfile(in));
@@ -124,20 +124,20 @@ public class MemberProfileEntityServicesImplTest {
 
     @Test
     public void testSaveUpdate() {
-        MemberProfileEntity expected = mkMemberProfile();
+        MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
         when(mockMemberProfileRepository.findById(testUuid)).thenReturn(java.util.Optional.of(expected));
         when(mockMemberProfileRepository.update(expected)).thenReturn(expected);
 
-        MemberProfileEntity actual = testObject.saveProfile(expected);
+        MemberProfile actual = testObject.saveProfile(expected);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testSaveUpdateNoExistingRecord() {
-        MemberProfileEntity expected = mkMemberProfile();
+        MemberProfile expected = mkMemberProfile();
         expected.setId(testUuid);
 
         when(mockMemberProfileRepository.findById(testUuid)).thenReturn(null);

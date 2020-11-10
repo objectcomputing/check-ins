@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.guild.Guild;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -35,11 +35,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testCreateAGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -93,11 +93,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testCreateDuplicateGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -116,11 +116,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testCreateAGuildMemberWithNonExistingGuild() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(UUID.randomUUID());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(false);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -139,7 +139,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testCreateAGuildMemberWithNonExistingMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
@@ -163,18 +163,18 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testLoadGuildMembers() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
-        MemberProfileEntity memberProfileEntity1 = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile1 = createADefaultMemberProfileForPdl(memberProfile);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
         guildMemberCreateDTO2.setGuildid(guild.getId());
-        guildMemberCreateDTO2.setMemberid(memberProfileEntity1.getId());
+        guildMemberCreateDTO2.setMemberid(memberProfile1.getId());
         guildMemberCreateDTO2.setLead(true);
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);
@@ -192,11 +192,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testLoadGuildMembersInvalidGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
@@ -222,16 +222,16 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testLoadGuildMembersThrowException() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO.setMemberid(memberProfile.getId());
         guildMemberCreateDTO.setLead(true);
 
         GuildMemberCreateDTO guildMemberCreateDTO2 = new GuildMemberCreateDTO();
         guildMemberCreateDTO2.setGuildid(guild.getId());
-        guildMemberCreateDTO2.setMemberid(memberProfileEntity.getId());
+        guildMemberCreateDTO2.setMemberid(memberProfile.getId());
         guildMemberCreateDTO2.setLead(true);
 
         List<GuildMemberCreateDTO> dtoList = List.of(guildMemberCreateDTO, guildMemberCreateDTO2);
@@ -253,9 +253,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testReadGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildMember.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
@@ -279,8 +279,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testFindGuildMembers() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
 
         Set<GuildMember> guilds = Collections.singleton(guildMember);
 
@@ -297,8 +297,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testFindGuildMembersAllParams() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
 
         Set<GuildMember> guilds = Collections.singleton(guildMember);
 
@@ -315,8 +315,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testUpdateGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
 
         final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
@@ -331,8 +331,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testUpdateAnInvalidGuildMember() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         guildMember.setGuildid(null);
         guildMember.setMemberid(null);
 
@@ -372,8 +372,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     void testUpdateGuildMemberThrowException() {
 
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         guildMember.setMemberid(UUID.randomUUID());
         guildMember.setGuildid(guildMember.getGuildid());
 
@@ -394,9 +394,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testUpdateGuildMemberThrowExceptionWithNoGuild() {
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(UUID.randomUUID());
 
@@ -417,9 +417,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testUpdateGuildMemberThrowExceptionWithInvalidId() {
         Guild guild = createDeafultGuild();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfileEntity);
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
         guildMember.setId(UUID.randomUUID());
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(guildMember.getGuildid());

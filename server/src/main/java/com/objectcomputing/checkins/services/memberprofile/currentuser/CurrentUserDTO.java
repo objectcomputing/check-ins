@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -25,8 +25,8 @@ public class CurrentUserDTO {
     private String imageUrl;
 
     @NotNull
-    @Schema(implementation = MemberProfileEntity.class, required = true)
-    private MemberProfileEntity memberProfileEntity;
+    @Schema(implementation = MemberProfile.class, required = true)
+    private MemberProfile memberProfile;
 
     @Nullable
     public String getName() {
@@ -55,12 +55,12 @@ public class CurrentUserDTO {
         this.imageUrl = imageUrl;
     }
 
-    public MemberProfileEntity getMemberProfile() {
-        return memberProfileEntity;
+    public MemberProfile getMemberProfile() {
+        return memberProfile;
     }
 
-    public void setMemberProfile(MemberProfileEntity memberProfileEntity) {
-        this.memberProfileEntity = memberProfileEntity;
+    public void setMemberProfile(MemberProfile memberProfile) {
+        this.memberProfile = memberProfile;
     }
 
     @Override
@@ -71,11 +71,11 @@ public class CurrentUserDTO {
         return name.equals(that.name) &&
                 Objects.equals(role, that.role) &&
                 Objects.equals(imageUrl, that.imageUrl) &&
-                memberProfileEntity.equals(that.memberProfileEntity);
+                memberProfile.equals(that.memberProfile);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, role, imageUrl, memberProfileEntity);
+        return Objects.hash(name, role, imageUrl, memberProfile);
     }
 }

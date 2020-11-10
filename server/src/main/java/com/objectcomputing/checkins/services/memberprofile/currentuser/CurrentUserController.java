@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -45,7 +45,7 @@ public class CurrentUserController {
         String name = authentication.getAttributes().get("name").toString();
         String imageUrl = authentication.getAttributes().get("picture").toString();
 
-        MemberProfileEntity user = currentUserServices.findOrSaveUser(name, workEmail);
+        MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
         List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
@@ -58,7 +58,7 @@ public class CurrentUserController {
         return URI.create("/services/member-profile/" + uuid);
     }
 
-    private CurrentUserDTO fromEntity(MemberProfileEntity entity, String imageUrl, List<String> roles) {
+    private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
         dto.setName(entity.getName());
         dto.setRole(roles);

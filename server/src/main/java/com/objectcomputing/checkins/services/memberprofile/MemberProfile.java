@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name ="member_profile")
-public class MemberProfileEntity {
+public class MemberProfile {
 
     @Id
     @Column(name="id")
@@ -68,13 +68,13 @@ public class MemberProfileEntity {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfileEntity(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
     }
 
-    public MemberProfileEntity(UUID id, @Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
+    public MemberProfile(UUID id, @Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
                          String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
                          @Nullable String bioText) {
         this.id = id;
@@ -88,7 +88,7 @@ public class MemberProfileEntity {
         this.bioText=bioText;
     }
 
-    public MemberProfileEntity() {
+    public MemberProfile() {
     }
 
     public UUID getId() {
@@ -167,7 +167,7 @@ public class MemberProfileEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MemberProfileEntity that = (MemberProfileEntity) o;
+        MemberProfile that = (MemberProfile) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(title, that.title) &&

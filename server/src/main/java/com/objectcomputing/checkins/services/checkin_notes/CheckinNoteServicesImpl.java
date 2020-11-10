@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -40,7 +40,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public CheckinNote save(CheckinNote checkinNote) {
         CheckinNote checkinNoteRet = null;
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfileEntity currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         if (checkinNote != null) {
@@ -65,7 +65,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     @Override
     public CheckinNote read(@NotNull UUID id) {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfileEntity currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         CheckinNote checkInNoteResult = checkinNoteRepository.findById(id).orElse(null);
         validate(checkInNoteResult == null, "Invalid checkin note id %s", id);
@@ -84,7 +84,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public CheckinNote update(CheckinNote checkinNote) {
         CheckinNote checkinNoteRet = null;
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfileEntity currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         if (checkinNote != null) {
@@ -111,7 +111,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     @Override
     public Set<CheckinNote> findByFields(UUID checkinid, UUID createbyid) {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfileEntity currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
         if (checkinid != null) {
@@ -120,7 +120,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfileEntity memberRecord = memberRepo.findById(createbyid).orElse(null);
+            MemberProfile memberRecord = memberRepo.findById(createbyid).orElse(null);
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
         } else {
             validate(!isAdmin, "User is unauthorized to do this operation");

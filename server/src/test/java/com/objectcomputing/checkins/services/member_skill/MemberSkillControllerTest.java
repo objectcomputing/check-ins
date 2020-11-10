@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -35,11 +35,11 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     @Test
     void testCreateAMemberSkill() {
 
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill() ;
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
-        memberSkillCreateDTO.setMemberid(memberProfileEntity.getId());
+        memberSkillCreateDTO.setMemberid(memberProfile.getId());
         memberSkillCreateDTO.setSkillid(skill.getId());
 
         final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -110,10 +110,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void createAMemeberSkillForExistingSkill() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
-        memberSkillCreateDTO.setMemberid(memberProfileEntity.getId());
+        memberSkillCreateDTO.setMemberid(memberProfile.getId());
         memberSkillCreateDTO.setSkillid(UUID.randomUUID());
 
         final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -131,10 +131,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void createAMemeberSkillForExistingSkillAndMember() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
         memberSkillCreateDTO.setMemberid(memberSkill.getMemberid());
         memberSkillCreateDTO.setSkillid(memberSkill.getSkillid());
@@ -155,10 +155,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void deleteMemberSkillAsAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<Object> request = HttpRequest.DELETE(memberSkill.getId().toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -168,10 +168,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void deleteMemberSkillNotAsAdmin() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<Object> request = HttpRequest.DELETE(memberSkill.getId().toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
@@ -183,10 +183,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testReadAllMemberSkills() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s","","")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
@@ -198,10 +198,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testReadMemberSkill() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", memberSkill.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
@@ -222,10 +222,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testFindMemberSkills() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", memberSkill.getMemberid(),
                 memberSkill.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -238,10 +238,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testFindMemberSkillsByMemberId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberSkill.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
@@ -253,10 +253,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testFindMemberSkillsBySkillId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfileEntity,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?skillid=%s", memberSkill.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));

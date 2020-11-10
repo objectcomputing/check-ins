@@ -4,7 +4,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
@@ -36,17 +36,17 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
     @Test
     void testCreateAuthenticationResponse() {
         CheckinsOpenIdUserDetailMapper checkinsOpenIdUserDetailMapper = (CheckinsOpenIdUserDetailMapper) openIdUserDetailsMapper;
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
         for (String role : roles) {
-            createDefaultRole(RoleType.valueOf(role), memberProfileEntity);
+            createDefaultRole(RoleType.valueOf(role), memberProfile);
         }
         String provider = "Test";
         OpenIdTokenResponse openIdTokenResponse = new OpenIdTokenResponse();
         OpenIdClaims openIdClaims = new JWTOpenIdClaims(
                 new JWTClaimsSet.Builder().
-                        claim("email", memberProfileEntity.getWorkEmail())
-                        .claim("sub", memberProfileEntity.getName())
+                        claim("email", memberProfile.getWorkEmail())
+                        .claim("sub", memberProfile.getName())
                         .build());
         AuthenticationResponse auth = checkinsOpenIdUserDetailMapper.createAuthenticationResponse(provider,
                 openIdTokenResponse, openIdClaims, null);
@@ -54,7 +54,7 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         assertNotNull(auth);
         UserDetails userDetails = auth.getUserDetails().orElse(null);
         assertNotNull(userDetails);
-        assertEquals(memberProfileEntity.getName(), userDetails.getUsername());
+        assertEquals(memberProfile.getName(), userDetails.getUsername());
         assertEquals(roles, userDetails.getRoles());
     }
 }

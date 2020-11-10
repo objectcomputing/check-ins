@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -33,16 +33,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testCreateACheckInByAdmin() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
-        checkInCreateDTO.setPdlId(memberProfileEntityOfPDL.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
+        checkInCreateDTO.setPdlId(memberProfileOfPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request,CheckIn.class);
 
         CheckIn checkInResponse = response.body();
@@ -56,16 +56,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testCreateACheckInByMember() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
-        checkInCreateDTO.setPdlId(memberProfileEntityOfPDL.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
+        checkInCreateDTO.setPdlId(memberProfileOfPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request,CheckIn.class);
 
         CheckIn checkInResponse = response.body();
@@ -79,16 +79,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testCreateACheckInByPDL() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
-        checkInCreateDTO.setPdlId(memberProfileEntityOfPDL.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
+        checkInCreateDTO.setPdlId(memberProfileOfPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request,CheckIn.class);
 
         CheckIn checkInResponse = response.body();
@@ -102,17 +102,17 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testCreateACheckInByUnrelatedUser() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
-        checkInCreateDTO.setPdlId(memberProfileEntityOfPDL.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
+        checkInCreateDTO.setPdlId(memberProfileOfPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -126,17 +126,17 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testCreateACheckInForSamePDLAndMember() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn existingCheckIn = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn existingCheckIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
         checkInCreateDTO.setTeamMemberId(existingCheckIn.getTeamMemberId());
         checkInCreateDTO.setPdlId(existingCheckIn.getTeamMemberId());
         checkInCreateDTO.setCheckInDate(existingCheckIn.getCheckInDate());
         checkInCreateDTO.setCompleted(existingCheckIn.isCompleted());
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -170,7 +170,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testCreateCheckInForNonExistingMember() {
 
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
         checkInCreateDTO.setTeamMemberId(UUID.randomUUID());
@@ -178,7 +178,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         checkInCreateDTO.setCompleted(true);
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
 
-        HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), MEMBER_ROLE);
+        HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfMrNobody.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -206,16 +206,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testCreateACheckInForInvalidPdlID() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
         checkInCreateDTO.setPdlId(UUID.randomUUID());
         checkInCreateDTO.setCheckInDate(LocalDateTime.now());
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -229,16 +229,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testCreateACheckInForInvalidDate() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
-        checkInCreateDTO.setTeamMemberId(memberProfileEntityOfUser.getId());
-        checkInCreateDTO.setPdlId(memberProfileEntityOfPDL.getId());
+        checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
+        checkInCreateDTO.setPdlId(memberProfileOfPDL.getId());
         checkInCreateDTO.setCheckInDate(LocalDateTime.of(1965, 11, 12, 15, 56));
         checkInCreateDTO.setCompleted(true);
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -264,12 +264,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetReadByIdByAdmin() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn expected  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn expected  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
         CheckIn actual = response.body();
 
@@ -282,12 +282,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetReadByIdByPDL() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn expected  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn expected  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
         CheckIn actual = response.body();
 
@@ -300,12 +300,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetReadByIdByMember() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn expected  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn expected  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
         CheckIn actual = response.body();
 
@@ -317,13 +317,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testGetReadByIdByUnrelatedUser() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-        CheckIn expected  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn expected  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", expected.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -338,10 +338,10 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testGetReadCheckInDoesNotExist() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         UUID randomCheckinID = UUID.randomUUID();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -355,12 +355,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateCheckInByAdmin() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
 
         assertEquals(checkIn, response.body());
@@ -370,12 +370,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateCheckInByPDL() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
 
         assertEquals(checkIn, response.body());
@@ -385,12 +385,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateCheckInByMember() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
 
         assertEquals(checkIn, response.body());
@@ -400,13 +400,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateCheckInByUnrelatedUser() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfMrNobody.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -420,13 +420,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateNonExistingCheckIn() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setId(UUID.randomUUID());
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -441,13 +441,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateNotExistingMemberCheckIn() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setTeamMemberId(UUID.randomUUID());
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -461,14 +461,14 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateNotMemberCheckInWithoutId() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setId(null);
 
         final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
-                .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -494,10 +494,10 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateInvalidCheckIn() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile, memberProfileForPDL);
         checkIn.setTeamMemberId(null);
         checkIn.setPdlId(null);
 
@@ -534,13 +534,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     public void testUpdateACheckInForInvalidPdlID() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setPdlId(UUID.randomUUID());
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -554,14 +554,14 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testUpdateInvalidDateCheckIn() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         checkIn.setCheckInDate(LocalDateTime.of(1965, 11, 12, 15, 56));
 
         final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn)
-                .basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -575,12 +575,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testCannotUpdateCheckInIfCompletedIsTrue() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -592,12 +592,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
 
     @Test
     void testCannotUpdateCheckIfCompletedIsTrueUnlessMadeByAdmin() {
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckIn> request = HttpRequest.PUT("", checkIn).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<CheckIn> response = client.toBlocking().exchange(request, CheckIn.class);
 
         assertEquals(checkIn, response.body());
@@ -608,12 +608,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByTeamMemberIdByMember() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
         assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -622,12 +622,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByTeamMemberIdByPdl() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
         assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -636,13 +636,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByTeamMemberIdByAdmin() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfAdmin = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileEntityOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
         assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -651,13 +651,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByTeamMemberIdByUnrelatedUser() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", checkIn.getTeamMemberId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -670,12 +670,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByPDLIdByMember() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -688,12 +688,12 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByPDLIdByPDL() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
         assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -702,13 +702,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByPDLIdByAdmin() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfAdmin = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileEntityOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
         assertEquals(Set.of(checkIn), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -717,13 +717,13 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByPDLIdByUnrelatedUser() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", checkIn.getPdlId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -736,15 +736,15 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByCompletedByAdmin() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn1  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn2  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn3  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         Set<CheckIn> expected = new HashSet<>();
@@ -759,16 +759,16 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByCompletedByMember() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn1  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn2  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn3  = createACompletedCheckIn(memberProfileEntityOfUnrelatedUser, memberProfileEntityOfPDL);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUnrelatedUser, memberProfileOfPDL);
 
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileEntityOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -779,15 +779,15 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testGetFindByCompletedByPDL() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn1  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn2  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn3  = createACompletedCheckIn(memberProfileEntityOfPDL, memberProfileEntityOfUnrelatedUser);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUnrelatedUser);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileEntityOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", checkIn2.isCompleted())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         Set<CheckIn> expected = new HashSet<>();
@@ -802,15 +802,15 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testFindAllCheckInsByAdmin() {
 
-        MemberProfileEntity memberProfileEntityOfPDL = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityOfUser = createADefaultMemberProfileForPdl(memberProfileEntityOfPDL);
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        CheckIn checkIn1  = createADefaultCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn2  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
-        CheckIn checkIn3  = createACompletedCheckIn(memberProfileEntityOfUser, memberProfileEntityOfPDL);
+        CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        CheckIn checkIn3  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         Set<CheckIn> expected = new HashSet<>();
@@ -826,9 +826,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testFindAllCheckInsByMember() {
 
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -842,9 +842,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testFindAllCheckInsByPDL() {
 
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -857,9 +857,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testCheckInDoesNotExistForTeamMemberID() {
 
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", memberProfileEntityOfUnrelatedUser.getId())).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamMemberId=%s", memberProfileOfUnrelatedUser.getId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         assertEquals(Set.of(), response.body());
@@ -869,9 +869,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     void testCheckInDoesNotExistForPdlId() {
 
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfileEntityOfUnrelatedUser.getId())).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfileOfUnrelatedUser.getId())).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), PDL_ROLE);
         HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         assertEquals(Set.of(), response.body());
@@ -881,9 +881,9 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     @Test
     public void testCheckInDoesNotExistForCompleted() {
 
-        MemberProfileEntity memberProfileEntityOfUnrelatedUser = createAnUnrelatedUser();
+        MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", true)).basicAuth(memberProfileEntityOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?completed=%s", true)).basicAuth(memberProfileOfUnrelatedUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<CheckIn>> response = client.toBlocking().exchange(request, Argument.setOf(CheckIn.class));
 
         assertEquals(HttpStatus.OK,response.getStatus());

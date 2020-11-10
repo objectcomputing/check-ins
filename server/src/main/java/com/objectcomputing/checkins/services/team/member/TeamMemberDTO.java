@@ -21,12 +21,29 @@ public class TeamMemberDTO {
             nullable = true)
     private Boolean lead;
 
-    public TeamMemberDTO(String id, String name, Boolean lead) {
-        if (id != null) {
-            this.id = UUID.fromString(id);
-        }
+    private UUID teamid;
+    private UUID memberid;
+
+    public TeamMemberDTO(UUID id, String name, Boolean lead) {
+        this.id = id;
         this.name = name;
         this.lead = lead;
+    }
+
+    public UUID getMemberid() {
+        return memberid;
+    }
+
+    public void setMemberid(UUID memberid) {
+        this.memberid = memberid;
+    }
+
+    public UUID getTeamid() {
+        return teamid;
+    }
+
+    public void setTeamid(UUID teamid) {
+        this.teamid = teamid;
     }
 
     public UUID getId() {

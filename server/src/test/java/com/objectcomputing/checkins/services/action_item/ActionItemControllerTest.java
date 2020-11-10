@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.ActionItemFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -39,14 +39,14 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Test
     void testCreateAnActionItem() {
 
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -98,11 +98,11 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testCreateAnActionItemForExistingCheckInId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("test");
 
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -119,10 +119,10 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testCreateAnActionItemForExistingMemberIdId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
@@ -144,19 +144,19 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testLoadActionItems() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(checkIn.getId());
-        actionItemCreateDTO2.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
@@ -202,19 +202,19 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testLoadActionItemsThrowException() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("dnc");
 
         ActionItemCreateDTO actionItemCreateDTO2 = new ActionItemCreateDTO();
         actionItemCreateDTO2.setCheckinid(UUID.randomUUID());
-        actionItemCreateDTO2.setCreatedbyid(memberProfileEntity.getId());
+        actionItemCreateDTO2.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO2.setDescription("dnc");
 
         List<ActionItemCreateDTO> dtoList = List.of(actionItemCreateDTO, actionItemCreateDTO2);
@@ -234,12 +234,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void deleteActionItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
@@ -249,12 +249,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testReadActionItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -274,12 +274,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testFindActionItems() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
                 actionItem.getCreatedbyid())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -291,12 +291,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testUpdateActionItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -308,12 +308,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testUpdateAnInvalidActionItem() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         actionItem.setCreatedbyid(null);
         actionItem.setCheckinid(null);
 
@@ -361,12 +361,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testUpdateNonExistingActionItem(){
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         actionItem.setId(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -385,12 +385,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testUpdateNonExistingActionItemForCheckInId(){
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         actionItem.setCheckinid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -409,12 +409,12 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
     @Test
     void testUpdateNonExistingActionItemForMemberId(){
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileEntityForPDL = createADefaultMemberProfileForPdl(memberProfileEntity);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileEntity, memberProfileEntityForPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileEntity);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         actionItem.setCreatedbyid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)

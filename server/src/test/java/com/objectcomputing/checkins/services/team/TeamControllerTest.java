@@ -6,7 +6,8 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileEntity;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.team.member.TeamMember;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -15,8 +16,6 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import nu.studer.sample.tables.pojos.Team;
-import nu.studer.sample.tables.pojos.TeamMember;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -232,10 +231,10 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testFindByMemberId() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Team teamEntity = createDeafultTeam();
 
-        TeamMember teamMemberEntity = createDeafultTeamMember(teamEntity, memberProfileEntity);
+        TeamMember teamMemberEntity = createDeafultTeamMember(teamEntity, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", teamMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(TeamResponseDTO.class));
@@ -247,10 +246,10 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testFindTeams() {
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
         Team teamEntity = createDeafultTeam();
 
-        TeamMember teamMemberEntity = createDeafultTeamMember(teamEntity, memberProfileEntity);
+        TeamMember teamMemberEntity = createDeafultTeamMember(teamEntity, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", teamEntity.getName(),
                 teamMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -264,10 +263,10 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testUpdateTeam() {
         Team teamEntity = createDeafultTeam();
-        MemberProfileEntity memberProfileEntity = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
-        requestBody.setTeamMembers(Collections.singletonList(createDefaultTeamMemberDto(teamEntity, memberProfileEntity)));
+        requestBody.setTeamMembers(Collections.singletonList(createDefaultTeamMemberDto(teamEntity, memberProfile)));
 
         final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
@@ -343,8 +342,8 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         // setup team
         Team teamEntity = createDeafultTeam();
         // create members
-        MemberProfileEntity memberProfileofTeamLeadEntity = createADefaultMemberProfile();
-        MemberProfileEntity memberProfileOfTeamMember = createADefaultMemberProfileForPdl(memberProfileofTeamLeadEntity);
+        MemberProfile memberProfileofTeamLeadEntity = createADefaultMemberProfile();
+        MemberProfile memberProfileOfTeamMember = createADefaultMemberProfileForPdl(memberProfileofTeamLeadEntity);
         //add members to team
         createLeadTeamMember(teamEntity, memberProfileofTeamLeadEntity);
         createDeafultTeamMember(teamEntity, memberProfileOfTeamMember);
@@ -364,11 +363,11 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         // setup team
         Team teamEntity = createDeafultTeam();
         // create members
-        MemberProfileEntity memberProfileEntityOfAdmin = createAnUnrelatedUser();
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         //add members to team
-        createDeafultTeamMember(teamEntity, memberProfileEntityOfAdmin);
+        createDeafultTeamMember(teamEntity, memberProfileOfAdmin);
 
-        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileEntityOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -379,7 +378,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         // setup team
         Team teamEntity = createDeafultTeam();
         // create members
-        MemberProfileEntity memberProfileofTeamLeadEntity = createADefaultMemberProfile();
+        MemberProfile memberProfileofTeamLeadEntity = createADefaultMemberProfile();
         //add members to team
         createLeadTeamMember(teamEntity, memberProfileofTeamLeadEntity);
         // createDeafultTeamMember(team, memberProfileOfTeamMember);
@@ -395,7 +394,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         // setup team
         Team teamEntity = createDeafultTeam();
         // create members
-        MemberProfileEntity user = createAnUnrelatedUser();
+        MemberProfile user = createAnUnrelatedUser();
 
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(user.getWorkEmail(), MEMBER_ROLE);
 
@@ -419,7 +418,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     }
 
     private void assertEntityDTOEqual(Team entity, TeamResponseDTO dto) {
-        assertEquals(UUID.fromString(entity.getId()), dto.getId());
+        assertEquals(entity.getId(), dto.getId());
         assertEquals(entity.getName(), dto.getName());
         assertEquals(entity.getDescription(), dto.getDescription());
     }
