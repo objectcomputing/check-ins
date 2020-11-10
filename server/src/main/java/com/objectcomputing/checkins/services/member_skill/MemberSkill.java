@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,6 +37,16 @@ public class MemberSkill {
     @Schema(description = "the id of the skill", required = true)
     private UUID skillid;
 
+    @Column(name="skilllevel")
+    @TypeDef(type= DataType.STRING)
+    @Schema(description = "the member's expertise level for this skill")
+    private String skilllevel;
+
+    @Column(name="lastuseddate")
+    @TypeDef(type= DataType.DATE)
+    @Schema(description = "the last used date of the skill")
+    private LocalDate lastuseddate;
+
     public MemberSkill() {
     }
 
@@ -48,6 +59,13 @@ public class MemberSkill {
         this.id = id;
         this.memberid = memberid;
         this.skillid = skillid;
+    }
+
+    public MemberSkill(UUID memberid, UUID skillid, String skilllevel, LocalDate lastuseddate) {
+        this.memberid = memberid;
+        this.skillid = skillid;
+        this.skilllevel = skilllevel;
+        this.lastuseddate = lastuseddate;
     }
 
     public UUID getId() {
@@ -72,6 +90,22 @@ public class MemberSkill {
 
     public void setSkillid(UUID skillid) {
         this.skillid = skillid;
+    }
+
+    public String getSkilllevel() {
+        return skilllevel;
+    }
+
+    public void setSkilllevel(String skilllevel) {
+        this.skilllevel = skilllevel;
+    }
+
+    public LocalDate getLastuseddate() {
+        return lastuseddate;
+    }
+
+    public void setLastuseddate(LocalDate lastuseddate) {
+        this.lastuseddate = lastuseddate;
     }
 
     @Override

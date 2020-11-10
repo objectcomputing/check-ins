@@ -32,9 +32,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
   const { csrf, userProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
-  const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
-    userProfile.role.includes("ADMIN");
 
   const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
@@ -177,7 +174,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
         <Draggable
-          disabled={!pdlorAdmin}
           key={agendaItem.id}
           draggableId={agendaItem.id}
           index={index}
