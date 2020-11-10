@@ -92,8 +92,6 @@ it("handles drag and drop", async () => {
   // Get the DOM element for the first and second action items.
   let [firstActionItem, secondActionItem] = draggables;
 
-  console.log("DRAGGABLES => "+draggables.length);
-
   // Get the text in the first and second action items.
   const firstText = firstActionItem.querySelector("input").value;
   const secondText = secondActionItem.querySelector("input").value;
