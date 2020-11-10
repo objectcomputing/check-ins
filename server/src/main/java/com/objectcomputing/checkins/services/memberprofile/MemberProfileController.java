@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -37,7 +38,7 @@ public class MemberProfileController {
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
@@ -84,6 +85,7 @@ public class MemberProfileController {
     @Get("/{?name,title,pdlId,workEmail}")
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
                                                                     @Nullable UUID pdlId, @Nullable String workEmail) {
+
         return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(memberProfiles -> {
