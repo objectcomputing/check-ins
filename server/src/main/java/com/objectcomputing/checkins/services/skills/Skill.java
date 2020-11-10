@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,21 +34,34 @@ public class Skill {
     @Schema(description = "the pending status (approved or not) of the skill")
     private boolean pending = true;
 
+    @Column(name = "description")
+    @Schema(description = "the description of the skill")
+    private String description;
+
+    @NotNull
+    @Column(name = "extraneous")
+    @Schema(description = "the skill is extraneous (or not)", required = true)
+    private boolean extraneous = false;
+
     public Skill() {
     }
 
     public Skill(String name) {
-        this(name, true);
+        this(name, true, null, false);
     }
 
-    public Skill(String name, boolean pending) {
+    public Skill(String name, boolean pending, String description, boolean extraneous) {
         this.name = name;
         this.pending = pending;
+        this.description = description;
+        this.extraneous = extraneous;
     }
 
-    public Skill(UUID id, String name, boolean pending) {
+    public Skill(UUID id, String name, boolean pending, String description, boolean extraneous) {
         this.name = name;
         this.pending = pending;
+        this.description = description;
+        this.extraneous = extraneous;
     }
 
     public UUID getId() {
@@ -72,6 +86,22 @@ public class Skill {
 
     public void setPending(boolean pending) {
         this.pending = pending;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isExtraneous() {
+        return extraneous;
+    }
+
+    public void setExtraneous(boolean extraneous) {
+        this.extraneous = extraneous;
     }
 
     @Override
