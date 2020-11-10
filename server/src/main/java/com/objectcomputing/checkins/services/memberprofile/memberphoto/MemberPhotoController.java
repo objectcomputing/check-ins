@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import static io.micronaut.http.HttpHeaders.CACHE_CONTROL;
 
 @Controller("/services/member-profile/member-photo")
-@Secured(SecurityRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_ANONYMOUS)
 @Produces(MediaType.IMAGE_PNG)
 @Tag(name = "member photo")
 public class MemberPhotoController {
@@ -61,6 +61,8 @@ public class MemberPhotoController {
      */
     @Get("/{workEmail}")
     public Single<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
+
+        System.out.println("Hit Controller!");
 
         return Single.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
                 .observeOn(Schedulers.from(eventLoopGroup))

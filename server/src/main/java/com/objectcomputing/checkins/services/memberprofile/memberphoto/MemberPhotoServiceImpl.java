@@ -6,13 +6,11 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
-import io.micronaut.cache.CacheManager;
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -26,9 +24,6 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
     private final GoogleApiAccess googleApiAccess;
     private final MemberProfileServices memberProfileServices;
-
-    @Inject
-    private CacheManager cacheManager;
 
     public MemberPhotoServiceImpl(GoogleApiAccess googleApiAccess, MemberProfileServices memberProfileServices) {
         this.googleApiAccess = googleApiAccess;
@@ -55,7 +50,6 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
             LOG.error("Error occurred while retrieving files from Google Directory API.", e);
         }
 
-        System.out.println("set of cache names = " + cacheManager.getCacheNames());
         return photoData;
     }
 }

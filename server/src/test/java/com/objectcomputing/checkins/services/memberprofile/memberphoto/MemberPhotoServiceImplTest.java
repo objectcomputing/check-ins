@@ -5,17 +5,13 @@ import com.google.api.services.admin.directory.model.UserPhoto;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
-import io.micronaut.cache.CacheConfiguration;
-import io.micronaut.cache.ehcache.configuration.EhcacheCacheManagerConfiguration;
 import io.micronaut.test.annotation.MicronautTest;
-import org.ehcache.config.builders.CacheManagerBuilder;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -26,7 +22,6 @@ import static com.objectcomputing.checkins.services.memberprofile.MemberProfileT
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MemberPhotoServiceImplTest {
@@ -68,7 +63,6 @@ public class MemberPhotoServiceImplTest {
     }
 
     // happy path
-    @Order(1)
     @Test
     public void testGetImageByEmailAddress() throws IOException {
         String testEmail = "test@test.com";
@@ -100,7 +94,6 @@ public class MemberPhotoServiceImplTest {
         verify(mockGet, times(1)).execute();
     }
 
-    @Order(2)
     @Test
     public void testWorkEmailDoesntExist() throws IOException {
         String testEmail = "test@test.com";
@@ -116,7 +109,6 @@ public class MemberPhotoServiceImplTest {
         verify(mockGet, times(0)).execute();
     }
 
-    @Order(3)
     @Test
     public void testDirectoryServiceThrowsIOException() throws IOException {
         String testEmail = "test@test.com";
