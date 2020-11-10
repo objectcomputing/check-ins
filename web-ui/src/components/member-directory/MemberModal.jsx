@@ -32,7 +32,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     if (open && csrf) {
       getPdls();
     }
-  }, [open, csrf]);
+  }, [open, csrf, getPdls]);
 
   let date = new Date(editedMember.startDate);
 
