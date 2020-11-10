@@ -1,7 +1,33 @@
 import React from "react";
-import { fireEvent, render } from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import ActionItemsPanel from "./ActionItemsPanel";
 import { AppContextProvider } from "../../context/AppContext";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+
+window.snackDispatch = jest.fn();
+
+const actionItems = [
+  { id: "a1", description: "first action item" },
+  { id: "a2", description: "second action item" },
+  { id: "a3", description: "third action item" },
+];
+
+const server = setupServer(
+    rest.get('http://localhost:8080/services/member-profile/current', (req, res, ctx) => {
+      return res(ctx.json({ id: "12345", name: "Test User" }));
+    }),
+    rest.get('http://localhost:8080/services/team/member', (req, res, ctx) => {
+      return res(ctx.json([{ id: "12345", name: "Test User" }]));
+    }),
+    rest.get('http://localhost:8080/services/action-item?checkinid=394810298371&createdbyid=912834091823', (req, res, ctx) => {
+      return res(ctx.json(actionItems));
+    })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 global.requestAnimationFrame = function (callback) {
   setTimeout(callback, 0);
@@ -35,15 +61,14 @@ it("renders correctly", () => {
   );
 });
 
-it("handles drag and drop", () => {
-  const actionItems = [
-    { id: "a1", description: "first action item" },
-    { id: "a2", description: "second action item" },
-    { id: "a3", description: "third action item" },
-  ];
+it("handles drag and drop", async () => {
   const { container } = render(
-    <ActionItemsPanel mockActionItems={actionItems} />
+    <AppContextProvider value={initialState}>
+      <ActionItemsPanel />
+    </AppContextProvider>
   );
+
+  await waitFor(() => screen.getByDisplayValue(/first action item/i));
 
   //TODO: Is this really necessary?
   const createBubbledEvent = (type, props = {}) => {
@@ -66,9 +91,12 @@ it("handles drag and drop", () => {
 
   // Get the DOM element for the first and second action items.
   let [firstActionItem, secondActionItem] = draggables;
+
+  console.log("DRAGGABLES => "+draggables.length);
+
   // Get the text in the first and second action items.
-  const firstText = firstActionItem.querySelector("p").textContent;
-  const secondText = secondActionItem.querySelector("p").textContent;
+  const firstText = firstActionItem.querySelector("input").value;
+  const secondText = secondActionItem.querySelector("input").value;
 
   // Get the DOM element for the drag handle of the first action item.
   const dragHandle = firstActionItem.querySelector("span");
@@ -111,8 +139,8 @@ it("handles drag and drop", () => {
 
   // Verify that the DOM element for what was
   // the first action item is now the second.
-  const newFirstText = firstActionItem.querySelector("p").textContent;
-  const newSecondText = secondActionItem.querySelector("p").textContent;
+  const newFirstText = firstActionItem.querySelector("input").value;
+  const newSecondText = secondActionItem.querySelector("input").value;
   expect(newFirstText).toBe(actionItems[0].description);
   expect(newSecondText).toBe(actionItems[1].description);
 });
