@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
-import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ public class TeamResponseDTO {
     @Schema(required = true, description = "description of the team")
     private String description;
 
-    List<TeamMemberDTO> teamMembers;
+    List<TeamMemberResponseDTO> teamMembers;
 
     public TeamResponseDTO(UUID id, String name, String description) {
         this.id = id;
@@ -60,14 +60,14 @@ public class TeamResponseDTO {
         return Objects.hash(id, name, description);
     }
 
-    public List<TeamMemberDTO> getTeamMembers() {
+    public List<TeamMemberResponseDTO> getTeamMembers() {
         if (teamMembers == null) {
             teamMembers = new ArrayList<>();
         }
         return teamMembers;
     }
 
-    public void setTeamMembers(List<TeamMemberDTO> teamMembers) {
+    public void setTeamMembers(List<TeamMemberResponseDTO> teamMembers) {
         this.teamMembers = teamMembers;
     }
 

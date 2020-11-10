@@ -7,13 +7,11 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class TeamMemberDTO {
+public class TeamMemberResponseDTO {
 
-    @NotNull
     @Schema(description = "id of the entry", required = true)
     private UUID id;
 
-    @NotNull
     @Schema(description = "name of the member this entry is associated with", required = true)
     private String name;
 
@@ -24,9 +22,15 @@ public class TeamMemberDTO {
     private UUID teamid;
     private UUID memberid;
 
-    public TeamMemberDTO(UUID id, String name, Boolean lead) {
+    public TeamMemberResponseDTO(UUID id, String name, Boolean lead) {
         this.id = id;
         this.name = name;
+        this.lead = lead;
+    }
+
+    public TeamMemberResponseDTO(UUID teamid, UUID memberid, Boolean lead) {
+        this.teamid = teamid;
+        this.memberid = memberid;
         this.lead = lead;
     }
 

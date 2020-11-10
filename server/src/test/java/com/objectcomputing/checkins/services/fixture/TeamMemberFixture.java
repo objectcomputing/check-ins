@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 
 
 public interface TeamMemberFixture extends RepositoryFixture{
@@ -15,11 +15,11 @@ public interface TeamMemberFixture extends RepositoryFixture{
         return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(),true));
     }
 
-    default TeamMemberDTO createDefaultTeamMemberDto(Team teamEntity, MemberProfile memberProfile) {
+    default TeamMemberResponseDTO createDefaultTeamMemberDto(Team teamEntity, MemberProfile memberProfile) {
         return dtoFromEntity(createDeafultTeamMember(teamEntity, memberProfile), memberProfile);
     }
 
-    default TeamMemberDTO dtoFromEntity(TeamMember memberEntity, MemberProfile memberProfile) {
-        return new TeamMemberDTO(memberEntity.getId(), memberProfile.getName(), memberEntity.isLead());
+    default TeamMemberResponseDTO dtoFromEntity(TeamMember memberEntity, MemberProfile memberProfile) {
+        return new TeamMemberResponseDTO(memberEntity.getId(), memberProfile.getName(), memberEntity.isLead());
     }
 }

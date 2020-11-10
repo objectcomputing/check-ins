@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.security.utils.SecurityService;
 
@@ -43,14 +43,14 @@ public class TeamServicesImpl implements TeamServices {
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
         Team newTeamEntity = null;
-        List<TeamMemberDTO> newMembers = new ArrayList<>();
+        List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
             if (teamsRepo.findByName(teamDTO.getName()).isPresent()) {
                 throw new TeamBadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 if (teamDTO.getTeamMembers() != null) {
-                    for (TeamMemberDTO memberDTO : teamDTO.getTeamMembers()) {
+                    for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
                         try {
                             MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
                             newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
@@ -66,7 +66,7 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
-        List<TeamMemberDTO> teamMembers = teamMemberRepo
+        List<TeamMemberResponseDTO> teamMembers = teamMemberRepo
                 .findByTeamid(teamId)
                 .stream()
                 .map(teamMember ->
@@ -76,13 +76,13 @@ public class TeamServicesImpl implements TeamServices {
 
     public TeamResponseDTO update(TeamUpdateDTO teamEntity) {
         Team newTeamEntity = null;
-        List<TeamMemberDTO> newMembers = new ArrayList<>();
+        List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamEntity != null) {
             if (teamEntity.getId() != null && teamsRepo.findById(teamEntity.getId()).isPresent()) {
                 teamMemberRepo.deleteByTeamId(teamEntity.getId().toString());
                 newTeamEntity = teamsRepo.update(fromDTO(teamEntity));
                 if (teamEntity.getTeamMembers() != null) {
-                    for (TeamMemberDTO memberDTO : teamEntity.getTeamMembers()) {
+                    for (TeamMemberResponseDTO memberDTO : teamEntity.getTeamMembers()) {
                         try {
                             MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
                             newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamEntity.getId(), existingMember)), existingMember));
@@ -133,7 +133,7 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(dto.getId(), dto.getName(), dto.getDescription());
     }
 
-    private TeamMember fromMemberDTO(TeamMemberDTO memberDTO, UUID teamId, MemberProfile savedMember) {
+    private TeamMember fromMemberDTO(TeamMemberResponseDTO memberDTO, UUID teamId, MemberProfile savedMember) {
         return new TeamMember(memberDTO.getId() == null ? null : memberDTO.getId(), teamId, savedMember.getId(), memberDTO.isLead());
     }
 
@@ -141,7 +141,7 @@ public class TeamServicesImpl implements TeamServices {
         return fromEntity(entity, new ArrayList<>());
     }
 
-    private TeamResponseDTO fromEntity(Team entity, List<TeamMemberDTO> memberEntities) {
+    private TeamResponseDTO fromEntity(Team entity, List<TeamMemberResponseDTO> memberEntities) {
         if (entity == null) {
             return null;
         }
@@ -157,10 +157,10 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(null, dto.getName(), dto.getDescription());
     }
 
-    private TeamMemberDTO fromMemberEntity(TeamMember teamMember, MemberProfile memberProfile) {
+    private TeamMemberResponseDTO fromMemberEntity(TeamMember teamMember, MemberProfile memberProfile) {
         if (teamMember == null || memberProfile == null) {
             return null;
         }
-        return new TeamMemberDTO(teamMember.getId(), memberProfile.getName(), teamMember.isLead() );
+        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), teamMember.isLead() );
     }
 }
