@@ -1,0 +1,75 @@
+.agenda-items > h1 {
+  display: flex;
+  align-items: center;
+  margin: 10px auto;
+  width: 75%;
+}
+
+.agenda-items-container {
+  border: solid 2px black;
+  height: fit-content;
+  margin: 0 auto;
+  width: 75%;
+}
+
+.add-agenda-item-div {
+  display: flex;
+  padding: 12px 8px;
+}
+
+.agenda-items .description-field {
+  text-align: left;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.agenda-items-info,
+.agenda-items-info-hidden {
+  text-align: left;
+  display: inline-block;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.agenda-items-info-hidden {
+  background-color: lightgrey;
+  color: lightgrey;
+  width: 100%;
+}
+
+.agenda-items .drag-icon {
+  display: flex;
+  align-items: center;
+}
+
+.agenda-items-container .image-div {
+  display: flex;
+  cursor: auto;
+  text-align: left;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.agenda-items-container .skeleton-div {
+  display: flex;
+}
+
+.agenda-items .skeleton {
+  padding-right: 10px;
+  width: 100%;
+}
+
+.edit-icon:hover {
+  background-color: green !important;
+}
+
+.delete-icon:hover {
+  background-color: red !important;
+}
+
+.agenda-item-button-div {
+  display: flex;
+  flex-direction: row;
+}

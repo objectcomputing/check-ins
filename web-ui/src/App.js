@@ -8,9 +8,11 @@ import Header from "./components/header/Header";
 import Profile from "./components/profile/Profile";
 import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
+import DirectoryPage from './pages/DirectoryPage'
 import { AppContextProvider } from "./context/AppContext";
-import GroupIcon from '@material-ui/icons/Group';
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
+
+import GroupIcon from '@material-ui/icons/Group';
 
 import "./App.css";
 
@@ -45,6 +47,10 @@ function App() {
               <Route path="/profile">
                 <Header title="My Profile" />
                 <Profile />
+              </Route>
+              <Route path="/directory">
+                <Header title="Member Directory" />
+                <DirectoryPage />
               </Route>
               <Route path="/checkins">
                 <Header title="Check-ins" />

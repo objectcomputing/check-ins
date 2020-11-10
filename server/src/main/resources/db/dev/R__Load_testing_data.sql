@@ -91,6 +91,11 @@ VALUES
 INSERT INTO role
     (id, role, memberid)
 VALUES
+    ('b72789ec-18a0-11eb-adc1-0242ac120002', 'ADMIN', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
     ('1cf0b520-925e-43b1-8cd3-c06559b402b7', 'PDL', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO role
@@ -117,6 +122,66 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('58f21738-43a9-4e3d-ac6d-8d9acb9b1fb9', 'PDL', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('883250f1-e26e-490e-bcec-be19d1e0538c', 'MEMBER', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('f7222c46-5200-4db7-a2ad-f991bb1a3137', 'MEMBER', '2559a257-ae84-4076-9ed4-3820c427beeb');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('906ef6cc-261e-4920-b305-d35926325854', 'MEMBER', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('fae1416d-0f21-4e7b-8fa5-5097573f2eb6', 'MEMBER', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('859f20cc-cf45-4559-9ea8-b6038c098fac', 'MEMBER', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('14af8d18-0932-4a8c-aa5a-0fb794ade388', 'MEMBER', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('111c71c9-ecd9-4e8b-ab27-e2049d40de58', 'MEMBER', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('d18ff24d-fa2f-4eaf-adf8-99617bbf782c', 'MEMBER', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('7115d961-031d-42de-8918-1ab5c1806bcb', 'MEMBER', '1b4f99da-ef70-4a76-9b37-8bb783b749ad');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('4b2fb1e4-7761-45d4-b727-8d8f11e97f95', 'MEMBER', 'b2d35288-7f1e-4549-aa2b-68396b162490');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('cfc5b0f8-e072-4160-91a5-1dddb085fb8b', 'MEMBER', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('58199639-e670-4702-bba0-8fc63457cd02', 'MEMBER', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
 INSERT INTO team
     (id, name, description)
