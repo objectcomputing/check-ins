@@ -45,6 +45,7 @@ public class TeamMember {
 
     @Nullable
     @Column(name = "supervisorid")
+    @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 

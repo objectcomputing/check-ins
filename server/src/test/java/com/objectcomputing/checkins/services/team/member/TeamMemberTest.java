@@ -26,10 +26,14 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember teamMember = new TeamMember(teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember teamMember = new TeamMember(teamId, memberId, lead, supervisorId);
+
         assertEquals(teamId, teamMember.getTeamid());
         assertEquals(memberId, teamMember.getMemberid());
         assertEquals(lead, teamMember.isLead());
+        assertEquals(supervisorId, teamMember.getSupervisorid());
     }
 
     @Test
@@ -38,11 +42,15 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead, supervisorId);
+
         assertEquals(id, teamMember.getId());
         assertEquals(teamId, teamMember.getTeamid());
         assertEquals(memberId, teamMember.getMemberid());
         assertEquals(teamMember.isLead(), lead);
+        assertEquals(supervisorId, teamMember.getSupervisorid());
 
         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
         assertTrue(violations.isEmpty());
@@ -55,10 +63,13 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember teamMember = new TeamMember(id, teamId, memberId, lead, supervisorId);
 
         teamMember.setTeamid(null);
         teamMember.setMemberid(null);
+        teamMember.setSupervisorid(null);
 
         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
         assertEquals(2, violations.size());
@@ -73,8 +84,10 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
-        TeamMember tm2 = new TeamMember(id, teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead, supervisorId);
+        TeamMember tm2 = new TeamMember(id, teamId, memberId, lead, supervisorId);
 
         assertEquals(tm, tm2);
 
@@ -98,7 +111,9 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead, supervisorId);
 
         map.put(tm, true);
 
@@ -111,12 +126,15 @@ class TeamMemberTest {
         final UUID teamId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        TeamMember tm = new TeamMember(id, teamId, memberId, lead);
+        final UUID supervisorId = UUID.randomUUID();
+
+        TeamMember tm = new TeamMember(id, teamId, memberId, lead, supervisorId);
 
         String toString = tm.toString();
         assertTrue(toString.contains(teamId.toString()));
         assertTrue(toString.contains(id.toString()));
         assertTrue(toString.contains(memberId.toString()));
         assertTrue(toString.contains(String.valueOf(lead)));
+        assertTrue(toString.contains(supervisorId.toString()));
     }
 }

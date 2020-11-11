@@ -232,7 +232,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         Team team = createDeafultTeam();
 
-        TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", teamMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Team>> response = client.toBlocking().exchange(request, Argument.setOf(Team.class));
@@ -247,7 +247,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         Team team = createDeafultTeam();
 
-        TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", team.getName(),
                 teamMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -335,7 +335,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfileOfTeamMember = createADefaultMemberProfileForPdl(memberProfileofTeamLead);
         //add members to team
         createLeadTeamMember(team, memberProfileofTeamLead);
-        createDeafultTeamMember(team, memberProfileOfTeamMember);
+        createDefaultTeamMember(team, memberProfileOfTeamMember);
 
         final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(memberProfileOfTeamMember.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -354,7 +354,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         // create members
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
         //add members to team
-        createDeafultTeamMember(team, memberProfileOfAdmin);
+        createDefaultTeamMember(team, memberProfileOfAdmin);
 
         final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", team.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Team> response = client.toBlocking().exchange(request);

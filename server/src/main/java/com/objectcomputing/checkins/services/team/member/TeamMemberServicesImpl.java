@@ -15,9 +15,9 @@ import java.util.UUID;
 @Singleton
 public class TeamMemberServicesImpl implements TeamMemberServices {
 
-    private TeamRepository teamRepo;
-    private TeamMemberRepository teamMemberRepo;
-    private MemberProfileRepository memberRepo;
+    private final TeamRepository teamRepo;
+    private final TeamMemberRepository teamMemberRepo;
+    private final MemberProfileRepository memberRepo;
 
     public TeamMemberServicesImpl(TeamRepository teamRepo,
                                   TeamMemberRepository teamMemberRepo,
@@ -37,14 +37,13 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new TeamBadArgException(String.format("Invalid teamMember %s", teamMember));
         } else if (teamMember.getId() != null) {
             throw new TeamBadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
-        } else if (!teamRepo.findById(teamId).isPresent()) {
+        } else if (teamRepo.findById(teamId).isEmpty()) {
             throw new TeamBadArgException(String.format("Team %s doesn't exist", teamId));
-        } else if (!memberRepo.findById(memberId).isPresent()) {
+        } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new TeamBadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(),
-                teamMember.getMemberid()).isPresent()) {
+        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
             throw new TeamBadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        } else if (supervisorId != null && !memberRepo.findById(supervisorId).isPresent()) {
+        } else if (supervisorId != null && memberRepo.findById(supervisorId).isEmpty()) {
             throw new TeamBadArgException(String.format("Supervisor %s doesn't exist", supervisorId));
         }
 
@@ -65,13 +64,13 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         if (teamId == null || memberId == null) {
             throw new TeamBadArgException(String.format("Invalid teamMember %s", teamMember));
-        } else if (id == null || !teamMemberRepo.findById(id).isPresent()) {
+        } else if (id == null || teamMemberRepo.findById(id).isEmpty()) {
             throw new TeamBadArgException(String.format("Unable to locate teamMember to update with id %s", id));
-        } else if (!teamRepo.findById(teamId).isPresent()) {
+        } else if (teamRepo.findById(teamId).isEmpty()) {
             throw new TeamBadArgException(String.format("Team %s doesn't exist", teamId));
-        } else if (!memberRepo.findById(memberId).isPresent()) {
+        } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new TeamBadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (supervisorId != null && !memberRepo.findById(supervisorId).isPresent()) {
+        } else if (supervisorId != null && memberRepo.findById(supervisorId).isEmpty()) {
             throw new TeamBadArgException(String.format("Supervisor %s doesn't exist", supervisorId));
         }
 

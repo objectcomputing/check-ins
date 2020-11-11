@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.team;
 
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +27,6 @@ class TeamServicesImplTest {
 
     @Mock
     private TeamMemberRepository teamMemberRepository;
-
-    @Mock
-    private MemberProfileRepository memberProfileRepository;
 
     @InjectMocks
     private TeamServicesImpl services;
@@ -172,11 +168,14 @@ class TeamServicesImplTest {
         );
 
         final UUID memberId = UUID.randomUUID();
+        final UUID supervisorId = UUID.randomUUID();
         List<Team> teamToFind = List.of(team.get(0));
+
         when(teamRepository.findAll()).thenReturn(team);
         when(teamRepository.findById(eq(teamToFind.get(0).getId()))).thenReturn(Optional.of(teamToFind.get(0)));
         when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true)));
+                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true, supervisorId)));
+
         assertEquals(new HashSet<>(teamToFind), services.findByFields(null, memberId));
         verify(teamRepository, times(1)).findAll();
         verify(teamRepository, times(1)).findById(any(UUID.class));
@@ -192,13 +191,16 @@ class TeamServicesImplTest {
         );
 
         final UUID memberId = UUID.randomUUID();
+        final UUID supervisorId = UUID.randomUUID();
         final String nameSearch = "World";
         List<Team> teamToFind = List.of(team.get(0));
+
         when(teamRepository.findAll()).thenReturn(team);
         when(teamRepository.findByNameIlike(eq(nameSearch))).thenReturn(teamToFind);
         when(teamRepository.findById(eq(teamToFind.get(0).getId()))).thenReturn(Optional.of(teamToFind.get(0)));
         when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true)));
+                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true, supervisorId)));
+
         assertEquals(new HashSet<>(teamToFind), services.findByFields(nameSearch, memberId));
         verify(teamRepository, times(1)).findAll();
         verify(teamRepository, times(1)).findById(any(UUID.class));
