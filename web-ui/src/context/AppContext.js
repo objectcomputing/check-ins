@@ -46,6 +46,8 @@ const reducer = (state, action) => {
       break;
     case ADD_TEAM:
       state.teams = [...state.teams, action.payload];
+      //sort by name
+      state.teams.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_TEAMS:
       state.teams = action.payload;
