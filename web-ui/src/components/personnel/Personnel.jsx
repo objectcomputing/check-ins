@@ -7,7 +7,7 @@ import "./Personnel.css";
 
 const Personnel = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile } = state;
+  const { csrf, userProfile } = state;
   const id =
     userProfile && userProfile.memberProfile
       ? userProfile.memberProfile.id
@@ -19,7 +19,7 @@ const Personnel = () => {
   useEffect(() => {
     async function updatePersonnel() {
       if (id) {
-        let res = await getMembersByPDL(id);
+        let res = await getMembersByPDL(id, csrf);
         let data =
           res.payload &&
           res.payload.data &&
@@ -32,8 +32,10 @@ const Personnel = () => {
         }
       }
     }
-    updatePersonnel();
-  }, [id]);
+    if (csrf) {
+      updatePersonnel();
+    }
+  }, [csrf, id]);
 
   // Get checkins per personnel
   useEffect(() => {
@@ -41,7 +43,7 @@ const Personnel = () => {
       if (personnel) {
         const tmpCheckins = [];
         for (const person of personnel) {
-          let res = await getCheckinByMemberId(person.id);
+          let res = await getCheckinByMemberId(person.id, csrf);
           let newCheckins = [];
           let data =
             res && res.payload && res.payload.status === 200
@@ -58,8 +60,10 @@ const Personnel = () => {
         setCheckins(tmpCheckins);
       }
     }
-    updateCheckins();
-  }, [personnel]);
+    if (csrf) {
+      updateCheckins();
+    }
+  }, [csrf, personnel]);
 
   // Create entry of member and their last checkin
   function createEntry(person, checkins, keyInput) {
@@ -69,7 +73,9 @@ const Personnel = () => {
     let infoClassName = "personnel-info-hidden";
     if (checkins && checkins.length) {
       const lastCheckin = checkins[checkins.length - 1];
-      lastCheckInDate = new Date(...lastCheckin.checkInDate).toLocaleDateString();
+      lastCheckInDate = new Date(
+        ...lastCheckin.checkInDate
+      ).toLocaleDateString();
     }
 
     if (person) {

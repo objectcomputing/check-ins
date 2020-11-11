@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import MemberIcon from "./MemberIcon";
 import { AppContext } from "../../context/AppContext";
 import { getMembersByTeam, getTeamsByMember } from "../../api/team";
@@ -8,7 +8,7 @@ import "./TeamMember.css";
 
 const TeamMemberContainer = () => {
   const { state } = useContext(AppContext);
-  const { userProfile } = state;
+  const { csrf, userProfile } = state;
   const id =
     userProfile && userProfile.memberProfile
       ? userProfile.memberProfile.id
@@ -34,40 +34,44 @@ const TeamMemberContainer = () => {
   const [pdl, setPDL] = useState();
 
   // Get PDL's name
-  React.useEffect(() => {
+  useEffect(() => {
     async function getPDLName() {
       if (pdlId) {
-        let res = await getMember(pdlId);
+        let res = await getMember(pdlId, csrf);
         let pdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
         setPDL(pdlProfile ? pdlProfile.name : "");
       }
     }
-    getPDLName();
-  }, [pdlId]);
+    if (csrf) {
+      getPDLName();
+    }
+  }, [csrf, pdlId]);
 
   // Get member teams
-  React.useEffect(() => {
+  useEffect(() => {
     async function updateTeams() {
       if (id) {
-        let res = await getTeamsByMember(id);
+        let res = await getTeamsByMember(id, csrf);
         let data =
           res.payload && res.payload.status === 200 ? res.payload.data : null;
         let memberTeams = data && !res.error ? data : [];
         setTeams(memberTeams);
       }
     }
-    updateTeams();
-  }, [id]);
+    if (csrf) {
+      updateTeams();
+    }
+  }, [csrf, id]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function updateTeamMembers() {
       if (teams) {
         const teamMemberMap = Object.assign(
           {},
           ...(await Promise.all(
             teams.map(async (team) => {
-              let res = await getMembersByTeam(team.uuid);
+              let res = await getMembersByTeam(team.uuid, csrf);
               let data =
                 res && res.payload && res.payload.status === 200
                   ? res.payload.data
@@ -76,7 +80,7 @@ const TeamMemberContainer = () => {
                 return {
                   [team.uuid]: await Promise.all(
                     data.map(async (member) => {
-                      let res = await getMember(member.memberid);
+                      let res = await getMember(member.memberid, csrf);
                       let data =
                         res &&
                         res.payload &&
@@ -97,8 +101,10 @@ const TeamMemberContainer = () => {
         setTeamMembers(teamMemberMap);
       }
     }
-    updateTeamMembers();
-  }, [teams]);
+    if (csrf) {
+      updateTeamMembers();
+    }
+  }, [csrf, teams]);
 
   let teamProfile = (profiles) => {
     let team = profiles.map((profile) => {

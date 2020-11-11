@@ -1,8 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import EditIcon from "@material-ui/icons/Edit";
-import Button from "@material-ui/core/Button";
-import CancelIcon from "@material-ui/icons/Cancel";
-import Avatar from "@material-ui/core/Avatar";
+
 import { AppContext, UPDATE_USER_BIO } from "../../context/AppContext";
 import Search from "./Search";
 import { getSkills, getSkill, createSkill } from "../../api/skill.js";
@@ -13,11 +10,16 @@ import {
 } from "../../api/memberskill.js";
 import { getMember } from "../../api/member";
 
+import EditIcon from "@material-ui/icons/Edit";
+import Button from "@material-ui/core/Button";
+import CancelIcon from "@material-ui/icons/Cancel";
+import Avatar from "@material-ui/core/Avatar";
+
 import "./Profile.css";
 
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile } = state;
+  const { csrf, userProfile } = state;
   const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
@@ -33,11 +35,13 @@ const Profile = () => {
   // Get skills list
   useEffect(() => {
     async function updateSkillsList() {
-      let res = await getSkills();
+      let res = await getSkills(csrf);
       setSkillsList(res.payload && res.payload.data ? res.payload.data : []);
     }
-    updateSkillsList();
-  }, []);
+    if (csrf) {
+      updateSkillsList();
+    }
+  }, [csrf]);
 
   useEffect(() => {
     async function updateBio() {
@@ -50,24 +54,24 @@ const Profile = () => {
   useEffect(() => {
     async function getPDLName() {
       if (pdlId) {
-        let res = await getMember(pdlId);
+        let res = await getMember(pdlId, csrf);
         let pdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
         setPDL(pdlProfile ? pdlProfile.name : "");
       }
     }
-    getPDLName();
-  }, [pdlId]);
+    if (csrf) {
+      getPDLName();
+    }
+  }, [csrf, pdlId]);
 
   useEffect(() => {
     async function updateMySkills() {
       let updatedMySkills = {};
       if (id) {
-        let res = await getMemberSkills(id);
-
+        let res = await getMemberSkills(id, csrf);
         let data =
           res.payload && res.payload.status === 200 ? res.payload.data : null;
-
         updatedMySkills =
           data && !res.error && data.length > 0
             ? Object.assign(
@@ -87,20 +91,24 @@ const Profile = () => {
               )
             : {};
       }
-
       setMySkills(updatedMySkills);
     }
-    updateMySkills();
-  }, [id]);
+    if (csrf) {
+      updateMySkills();
+    }
+  }, [csrf, id]);
 
   const addSkill = async (name) => {
+    if (!csrf) {
+      return;
+    }
     const inSkillsList = skillsList.find(
       (skill) => skill.name.toUpperCase() === name.toUpperCase()
     );
 
     let curSkill = inSkillsList;
     if (!inSkillsList) {
-      let res = await createSkill({ name: name, pending: true });
+      let res = await createSkill({ name: name, pending: true }, csrf);
       let data =
         res && res.payload && res.payload.status === 201
           ? res.payload.data
@@ -115,10 +123,10 @@ const Profile = () => {
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
         )
       ) {
-        let res = await createMemberSkill({
-          skillid: curSkill.id,
-          memberid: id,
-        });
+        let res = await createMemberSkill(
+          { skillid: curSkill.id, memberid: id },
+          csrf
+        );
         let data =
           res && res.payload && res.payload.status === 201
             ? res.payload.data
@@ -139,8 +147,8 @@ const Profile = () => {
     });
   };
 
-  const removeSkill = async (id) => {
-    await deleteMemberSkill(id);
+  const removeSkill = async (id, csrf) => {
+    await deleteMemberSkill(id, csrf);
     let mySkillsTemp = { ...mySkills };
     delete mySkillsTemp[id];
     setMySkills(mySkillsTemp);
@@ -223,7 +231,9 @@ const Profile = () => {
                 {skill.name}
                 <CancelIcon
                   onClick={() => {
-                    removeSkill(id);
+                    if (csrf) {
+                      removeSkill(id, csrf);
+                    }
                   }}
                   style={{
                     cursor: "pointer",

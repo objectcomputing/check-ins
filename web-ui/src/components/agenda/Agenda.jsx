@@ -19,9 +19,9 @@ import RemoveIcon from "@material-ui/icons/Remove";
 
 import "./Agenda.css";
 
-const doUpdate = async (agendaItem) => {
-  if (agendaItem) {
-    await updateAgendaItem(agendaItem);
+const doUpdate = async (agendaItem, csrf) => {
+  if (agendaItem && csrf) {
+    await updateAgendaItem(agendaItem, csrf);
   }
 };
 
@@ -29,7 +29,7 @@ const updateItem = debounce(doUpdate, 1500);
 
 const AgendaItems = ({ checkinId, memberName }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { userProfile } = state;
+  const { csrf, userProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
 
@@ -37,29 +37,33 @@ const AgendaItems = ({ checkinId, memberName }) => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getAgendaItems = async (checkinId) => {
-    setIsLoading(true);
-    let res = await getAgendaItem(checkinId, null);
-    if (res && res.payload) {
-      let agendaItemList =
-        res.payload.data && !res.error ? res.payload.data : undefined;
-      agendaItemList.sort((a, b) => {
-        return a.priority - b.priority;
-      });
-      setAgendaItems(agendaItemList);
-      setIsLoading(false);
+  const getAgendaItems = async (checkinId, csrf) => {
+    if (csrf) {
+      setIsLoading(true);
+      let res = await getAgendaItem(checkinId, null, csrf);
+      if (res && res.payload) {
+        let agendaItemList =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        agendaItemList.sort((a, b) => {
+          return a.priority - b.priority;
+        });
+        setAgendaItems(agendaItemList);
+        setIsLoading(false);
+      }
     }
   };
 
-  const deleteItem = async (id) => {
-    if (id) {
-      await deleteAgendaItem(id);
+  const deleteItem = async (id, csrf) => {
+    if (id && csrf) {
+      await deleteAgendaItem(id, csrf);
     }
   };
 
   useEffect(() => {
-    getAgendaItems(checkinId);
-  }, [checkinId]);
+    if (csrf) {
+      getAgendaItems(checkinId, csrf);
+    }
+  }, [checkinId, csrf]);
 
   const reorder = (list, startIndex, endIndex) => {
     const [removed] = list.splice(startIndex, 1);
@@ -100,12 +104,12 @@ const AgendaItems = ({ checkinId, memberName }) => {
         return agendaItems;
       });
 
-      doUpdate(agendaItems[result.destination.index]);
+      doUpdate(agendaItems[result.destination.index], csrf);
     }
   };
 
   const makeAgendaItem = async () => {
-    if (!checkinId || !id || description === "") {
+    if (!checkinId || !id || description === "" || !csrf) {
       return;
     }
     let newAgendaItem = {
@@ -113,7 +117,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
       createdbyid: id,
       description: description,
     };
-    const res = await createAgendaItem(newAgendaItem);
+    const res = await createAgendaItem(newAgendaItem, csrf);
     if (!res.error && res.payload && res.payload.data) {
       newAgendaItem.id = res.payload.data.id;
       newAgendaItem.priority = res.payload.data.priority;
@@ -123,11 +127,13 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const killAgendaItem = (id) => {
-    deleteItem(id);
-    let newItems = agendaItems.filter((agendaItem) => {
-      return agendaItem.id !== id;
-    });
-    setAgendaItems(newItems);
+    if (csrf) {
+      deleteItem(id, csrf);
+      let newItems = agendaItems.filter((agendaItem) => {
+        return agendaItem.id !== id;
+      });
+      setAgendaItems(newItems);
+    }
   };
 
   const handleDescriptionChange = (index, e) => {
@@ -144,8 +150,10 @@ const AgendaItems = ({ checkinId, memberName }) => {
     const { value } = e.target;
     agendaItems[index].description = value;
     setAgendaItems(() => {
-      updateItem(agendaItems[index]);
-      return [...agendaItems];
+      if (csrf) {
+        updateItem(agendaItems[index]);
+        return [...agendaItems];
+      }
     });
   };
 
