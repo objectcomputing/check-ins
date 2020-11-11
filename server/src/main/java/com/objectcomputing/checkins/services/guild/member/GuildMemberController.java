@@ -10,6 +10,7 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/guild/member")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -28,6 +30,8 @@ import java.util.UUID;
 public class GuildMemberController {
 
     private final GuildMemberServices guildMemberServices;
+    private EventLoopGroup eventLoopGroup;
+    private ExecutorService ioExecutorService;
 
     public GuildMemberController(GuildMemberServices guildMemberServices) {
         this.guildMemberServices = guildMemberServices;
