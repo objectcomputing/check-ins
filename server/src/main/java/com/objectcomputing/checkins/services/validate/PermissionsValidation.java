@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.validate;
 import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -18,7 +17,6 @@ import java.util.UUID;
 
 @Singleton
 public class PermissionsValidation {
-
 
     String workEmail;
     MemberProfile currentUser;
@@ -39,7 +37,7 @@ public class PermissionsValidation {
     public void validatePermissions(@NotNull boolean isError, @NotNull String message, Object... args) {
 
         if (isError) {
-            throw new BadArgException(String.format(message, args));
+            throw new PermissionException(String.format(message, args));
         }
     }
 
@@ -61,6 +59,22 @@ public class PermissionsValidation {
         } else if (!isAdmin && !isCompleted) {
             validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
         }
+
+    }
+
+    public void validateActionItemReadPermissions(@Valid ActionItem actionItem) {
+
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+
+        if (!isAdmin) {
+            CheckIn checkinRecord = checkInServices.read(actionItem.getCheckinid());
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+            validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+        }
+
 
     }
 

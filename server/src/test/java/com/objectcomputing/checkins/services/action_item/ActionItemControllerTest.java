@@ -214,6 +214,54 @@ void testCreateAnActionItemByAdmin() {
 
     }
 
+    @Test
+    void testCreateAnActionItemByMemberIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(checkIn.getTeamMemberId());
+        actionItemCreateDTO.setDescription("test");
+
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testCreateAnActionItemByMemberIdWhenNotCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(checkIn.getTeamMemberId());
+        actionItemCreateDTO.setDescription("test");
+
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
+
+        ActionItem actionItem= response.body();
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(actionItemCreateDTO.getCheckinid(), actionItem.getCheckinid());
+        assertEquals(actionItemCreateDTO.getCreatedbyid(), actionItem.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
+
+    }
 
     @Test
     void testLoadActionItems() {
@@ -478,7 +526,7 @@ void testCreateAnActionItemByAdmin() {
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid action item id %s", randomCheckinID), error);
+        assertEquals(String.format("ActionItem %s doesn't exist", randomCheckinID), error);
 
     }
 

@@ -29,7 +29,7 @@ public class ArgumentsValidation {
         }
     }
 
-    public void validateActionItemArguments(@Valid ActionItem actionItem) {
+    public void validateActionItemArgumentsForSave(@Valid ActionItem actionItem) {
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
         CheckIn checkinRecord = checkInServices.read(checkinId);
@@ -41,16 +41,22 @@ public class ArgumentsValidation {
         validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
         validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
-//        if (isError) {
-//            throw new BadArgException(String.format(message, args));
-//        }
     }
 
-//    public void validatePermissions(@NotNull boolean isError, @NotNull String message, Object... args) {
-//        if (isError) {
-//            throw new PermissionException(String.format(message, args));
-//        }
-//    }
+    public void validateActionItemArgumentsForRead(@Valid ActionItem actionItem, @NotNull UUID id) {
+        validateArguments(actionItem == null, "ActionItem %s doesn't exist", id);
 
+        final UUID checkinId = actionItem.getCheckinid();
+        final UUID createdById = actionItem.getCreatedbyid();
+
+        CheckIn checkinRecord = checkInServices.read(checkinId);
+
+        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+        validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
+        validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+
+    }
 
 }

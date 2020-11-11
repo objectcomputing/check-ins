@@ -32,7 +32,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItemServicesImpl(CheckInServices checkInServices, ActionItemRepository actionItemRepo,
                                   MemberProfileServices memberServices, SecurityService securityService,
-                                  CurrentUserServices currentUserServices, ArgumentsValidation argumentsValidation, PermissionsValidation permissionsValidation) {
+                                  CurrentUserServices currentUserServices, ArgumentsValidation argumentsValidation,
+                                  PermissionsValidation permissionsValidation) {
         this.checkInServices = checkInServices;
         this.actionItemRepo = actionItemRepo;
         this.memberServices = memberServices;
@@ -48,7 +49,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         if (actionItem != null) {
 
-            argumentsValidation.validateActionItemArguments(actionItem);
+            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
             permissionsValidation.validateActionItemPermissions(actionItem);
 
             double lastDisplayOrder = 0;
@@ -70,21 +71,10 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItem read(@NotNull UUID id) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateArguments(actionItemResult == null, "Invalid action item id %s", id);
-
-        if (!isAdmin) {
-            CheckIn checkinRecord = checkInServices.read(actionItemResult.getCheckinid());
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
-//            argumentsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
-        }
+        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
+        permissionsValidation.validateActionItemReadPermissions(actionItemResult);
 
         return actionItemResult;
 
@@ -113,10 +103,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
             if (!isAdmin && isCompleted) {
                 permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-//                argumentsValidation.validatePermissions(true, "User is unauthorized to do this operation");
             } else if (!isAdmin && !isCompleted) {
                 permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
-//                argumentsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
             }
 
             actionItemRet = actionItemRepo.update(actionItem);
@@ -133,18 +121,15 @@ public class ActionItemServicesImpl implements ActionItemServices {
             CheckIn checkinRecord = checkInServices.read(checkinid);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-//            argumentsValidation.validatePermissions(!currentUser.getId().equals(pdlId) &&
             permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) &&
                     !currentUser.getId().equals(teamMemberId) &&
                     !isAdmin, "User is unauthorized to do this operation");
         } else if (createdbyid != null) {
             MemberProfile memberRecord = memberServices.getById(createdbyid);
-//            argumentsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
             permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
                     !isAdmin, "User is unauthorized to do this operation");
         } else {
             permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
-//            argumentsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         }
 
         Set<ActionItem> actionItems = new LinkedHashSet<>(
@@ -177,10 +162,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         if (!isAdmin && isCompleted) {
             permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-//            argumentsValidation.validatePermissions(true, "User is unauthorized to do this operation");
         } else if (!isAdmin && !isCompleted) {
             permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
-//            argumentsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
         }
 
         actionItemRepo.deleteById(id);
