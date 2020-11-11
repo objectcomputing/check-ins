@@ -42,37 +42,37 @@ import io.micronaut.scheduling.TaskExecutors;
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="pulse-response")
 
-    public class PulseResponseController {
+public class PulseResponseController {
 
-        private final PulseResponseService pulseResponseServices;
-        private final EventLoopGroup eventLoopGroup;
-        private final ExecutorService ioExecutorService;
-    
-            public PulseResponseController(PulseResponseService pulseResponseServices,
-                                        EventLoopGroup eventLoopGroup,
-                                        @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
-            this.pulseResponseServices = pulseResponseServices;
-            this.eventLoopGroup = eventLoopGroup;
-            this.ioExecutorService = ioExecutorService;
-        }
-        
-        @Error(exception = PulseResponseBadArgException.class)
-        public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
-            JsonError error = new JsonError(e.getMessage())
-                    .link(Link.SELF, Link.of(request.getUri()));
-    
-            return HttpResponse.<JsonError>badRequest()
-                    .body(error);
-        }
+    private final PulseResponseService pulseResponseServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-        @Error(exception = PulseResponseNotFoundException.class)
-        public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
-            JsonError error = new JsonError(e.getMessage())
-                    .link(Link.SELF, Link.of(request.getUri()));
-    
-            return HttpResponse.<JsonError>notFound()
-                    .body(error);
-        }
+    public PulseResponseController(PulseResponseService pulseResponseServices,
+                                   EventLoopGroup eventLoopGroup,
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+        this.pulseResponseServices = pulseResponseServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
+
+    @Error(exception = PulseResponseBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = PulseResponseNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
 
     /**
      * Find Pulse Response by Team Member or Date Range.
@@ -83,7 +83,9 @@ import io.micronaut.scheduling.TaskExecutors;
      * @return
      */
     @Get("/{?teamMemberId,dateFrom,dateTo}")
-    public Single<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom, @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,@Nullable UUID teamMemberId) {
+    public Single<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
+                                                                       @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,
+                                                                       @Nullable UUID teamMemberId) {
         return Single.fromCallable(() -> pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(pulseresponse -> (HttpResponse<Set<PulseResponse>>) HttpResponse.ok(pulseresponse))
@@ -116,7 +118,7 @@ import io.micronaut.scheduling.TaskExecutors;
      */
     @Put("/")
     public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
-                                            HttpRequest<PulseResponse> request) {
+                                                      HttpRequest<PulseResponse> request) {
         return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))
             .observeOn(Schedulers.from(eventLoopGroup))
             .map(updatedPulseResponse -> (HttpResponse<PulseResponse>) HttpResponse

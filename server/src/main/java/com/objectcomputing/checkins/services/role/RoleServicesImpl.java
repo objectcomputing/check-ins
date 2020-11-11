@@ -2,18 +2,23 @@ package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class RoleServicesImpl implements RoleServices {
 
-    @Inject
-    private RoleRepository roleRepo;
-    @Inject
-    private MemberProfileRepository memberRepo;
+    private final RoleRepository roleRepo;
+    private final MemberProfileRepository memberRepo;
+
+    public RoleServicesImpl(RoleRepository roleRepo,
+                            MemberProfileRepository memberRepo) {
+        this.roleRepo = roleRepo;
+        this.memberRepo = memberRepo;
+    }
 
     public Role save(Role role) {
         Role roleRet = null;

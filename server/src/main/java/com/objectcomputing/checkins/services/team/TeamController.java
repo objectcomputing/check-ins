@@ -12,7 +12,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -27,8 +26,11 @@ import java.util.UUID;
 @Tag(name = "team")
 public class TeamController {
 
-    @Inject
-    private TeamServices teamService;
+    private final TeamServices teamService;
+
+    public TeamController(TeamServices teamService) {
+        this.teamService = teamService;
+    }
 
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {

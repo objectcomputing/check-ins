@@ -13,7 +13,7 @@ import java.util.Collection;
 public class GoogleAuthenticator {
 
     private final Collection<String> scopes;
-    private GoogleServiceConfiguration gServiceConfig;
+    private final GoogleServiceConfiguration gServiceConfig;
 
     /**
      * Creates a google drive utility for quick access
