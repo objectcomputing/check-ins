@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -30,24 +29,50 @@ import io.micronaut.http.annotation.Error;
 import java.time.LocalDate;
 import io.micronaut.core.convert.format.Format;
 
+import javax.inject.Named;
+import java.util.concurrent.ExecutorService;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+import io.micronaut.scheduling.TaskExecutors;
+
 @Controller("/services/pulse-response")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="pulse-response")
-public class PulseResponseController {
+
+    public class PulseResponseController {
+
+        private final PulseResponseService pulseResponseServices;
+        private final EventLoopGroup eventLoopGroup;
+        private final ExecutorService ioExecutorService;
     
-    @Inject
-    PulseResponseService pulseResponseServices ;
+            public PulseResponseController(PulseResponseService pulseResponseServices,
+                                        EventLoopGroup eventLoopGroup,
+                                        @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
+            this.pulseResponseServices = pulseResponseServices;
+            this.eventLoopGroup = eventLoopGroup;
+            this.ioExecutorService = ioExecutorService;
+        }
+        
+        @Error(exception = PulseResponseBadArgException.class)
+        public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
+            JsonError error = new JsonError(e.getMessage())
+                    .link(Link.SELF, Link.of(request.getUri()));
+    
+            return HttpResponse.<JsonError>badRequest()
+                    .body(error);
+        }
 
-    @Error(exception = PulseResponseBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
+        @Error(exception = PulseResponseNotFoundException.class)
+        public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
+            JsonError error = new JsonError(e.getMessage())
+                    .link(Link.SELF, Link.of(request.getUri()));
+    
+            return HttpResponse.<JsonError>notFound()
+                    .body(error);
+        }
 
     /**
      * Find Pulse Response by Team Member or Date Range.
@@ -58,39 +83,48 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{?teamMemberId,dateFrom,dateTo}")
-    public Set<PulseResponse> findByValue(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom, @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,@Nullable UUID teamMemberId) {          
-            return pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo);
+    public Single<HttpResponse<Set<PulseResponse>>> findPulseResponses(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom, @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,@Nullable UUID teamMemberId) {
+        return Single.fromCallable(() -> pulseResponseServices.findByFields(teamMemberId, dateFrom, dateTo))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(pulseresponse -> (HttpResponse<Set<PulseResponse>>) HttpResponse.ok(pulseresponse))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    /**
+     /**
      * Create and save a new PulseResponse.
      *
      * @param pulseResponse, {@link PulseResponseCreateDTO}
      * @return {@link HttpResponse<PulseResponse>}
      */
 
-    @Post(value = "/")
-    public HttpResponse<PulseResponse> createAPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
-                                                                HttpRequest<PulseResponseCreateDTO> request) {
-        PulseResponse newMemberPulseResponse = pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings()));
-        return HttpResponse
-                .created(newMemberPulseResponse)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newMemberPulseResponse.getId()))));
+    @Post("/")
+    public Single<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
+                                                                    HttpRequest<PulseResponseCreateDTO> request) {
+        return Single.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(pulseresponse -> {return (HttpResponse<PulseResponse>) HttpResponse
+                    .created(pulseresponse)
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), pulseresponse.getId()))));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    /**
-     * Update pulseresponse details
-     * @param pulseResponse
-     * @return
+     /**
+     * Update a PulseResponse
+     *
+     * @param pulseResponse, {@link PulseResponse}
+     * @return {@link HttpResponse<PulseResponse>}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid PulseResponse pulseResponse,HttpRequest<PulseResponseCreateDTO> request) {
-
-            PulseResponse updatedMemberPulseResponse = pulseResponseServices.update(pulseResponse);
-            return HttpResponse
+    public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
+                                            HttpRequest<PulseResponse> request) {
+        return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))
+            .observeOn(Schedulers.from(eventLoopGroup))
+            .map(updatedPulseResponse -> (HttpResponse<PulseResponse>) HttpResponse
                     .ok()
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(),updatedMemberPulseResponse.getId()))))
-                    .body(updatedMemberPulseResponse);                  
+                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedPulseResponse.getId()))))
+                    .body(updatedPulseResponse))
+            .subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
     /**
@@ -99,7 +133,18 @@ public class PulseResponseController {
      * @return
      */
     @Get("/{id}")
-    public PulseResponse readPulseResponse(@NotNull UUID id){
-        return pulseResponseServices.read(id);
+    public Single<HttpResponse<PulseResponse>> readRole(@NotNull UUID id) {
+        return Single.fromCallable(() -> {
+            PulseResponse result = pulseResponseServices.read(id);
+            if (result == null) {
+                throw new PulseResponseNotFoundException("No role item for UUID");
+            }
+            return result;
+        })
+        .observeOn(Schedulers.from(eventLoopGroup))
+        .map(pulseresponse -> {
+            return (HttpResponse<PulseResponse>)HttpResponse.ok(pulseresponse);
+        }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 }

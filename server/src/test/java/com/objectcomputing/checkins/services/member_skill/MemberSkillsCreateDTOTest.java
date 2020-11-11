@@ -22,6 +22,8 @@ public class MemberSkillsCreateDTOTest {
         MemberSkillCreateDTO dto = new MemberSkillCreateDTO();
         assertNull(dto.getMemberid());
         assertNull(dto.getSkillid());
+        assertNull(dto.getSkilllevel());
+        assertNull(dto.getLastuseddate());
     }
 
     @Test

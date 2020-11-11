@@ -2,6 +2,32 @@ import React from "react";
 import { render } from "@testing-library/react";
 import ActionItemsPanel from "./ActionItemsPanel";
 import { AppContextProvider } from "../../context/AppContext";
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+
+window.snackDispatch = jest.fn();
+
+const actionItems = [
+  { id: "a1", description: "first action item" },
+  { id: "a2", description: "second action item" },
+  { id: "a3", description: "third action item" },
+];
+
+const server = setupServer(
+    rest.get('http://localhost:8080/services/member-profile/current', (req, res, ctx) => {
+      return res(ctx.json({ id: "12345", name: "Test User" }));
+    }),
+    rest.get('http://localhost:8080/services/team/member', (req, res, ctx) => {
+      return res(ctx.json([{ id: "12345", name: "Test User" }]));
+    }),
+    rest.get('http://localhost:8080/services/action-item?checkinid=394810298371&createdbyid=912834091823', (req, res, ctx) => {
+      return res(ctx.json(actionItems));
+    })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 global.requestAnimationFrame = function (callback) {
   setTimeout(callback, 0);

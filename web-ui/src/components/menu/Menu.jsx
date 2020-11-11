@@ -59,6 +59,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Menu() {
   const { dispatch } = useContext(AppContext);
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const { imageUrl } = userProfile
+      ? userProfile
+      : {};
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -168,7 +173,11 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <AvatarComponent />
+          <AvatarComponent imageUrl={imageUrl} style={{
+              position: "absolute",
+              right: "5px",
+              top: "10px",
+          }} />
         </div>
         <Popper
           open={open}
