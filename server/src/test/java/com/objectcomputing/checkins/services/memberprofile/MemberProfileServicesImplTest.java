@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.security.utils.SecurityService;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,12 +25,34 @@ public class MemberProfileServicesImplTest {
     @Mock
     private MemberProfileRepository mockMemberProfileRepository;
 
+    @Mock
+    private CurrentUserServices mockCurrentUserService;
+
     @InjectMocks
     private MemberProfileServicesImpl testObject;
 
     @BeforeAll
     public void before() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testDeleteSuccess() {
+        UUID deleteMe = UUID.nameUUIDFromBytes("deleteMe".getBytes());
+
+        when(mockCurrentUserService.isAdmin()).thenReturn(true);
+
+        boolean successFlag = testObject.deleteProfile(deleteMe);
+
+        assertTrue(successFlag);
+        verify(mockMemberProfileRepository).deleteById(deleteMe);
+    }
+
+    @Test
+    public void testDeleteNotAdmin() {
+        when(mockCurrentUserService.isAdmin()).thenReturn(false);
+
+        assertThrows(InsufficientPrivelegesException.class, () -> testObject.deleteProfile(UUID.randomUUID()));
     }
 
     @Test

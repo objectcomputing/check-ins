@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -12,9 +15,15 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
     private final MemberProfileRepository memberProfileRepository;
+    private final CurrentUserServices currentUserServices;
+    private final TeamMemberRepository teamMemberRepository;
 
-    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
+    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
+                                     CurrentUserServices currentUserServices,
+                                     TeamMemberRepository teamMemberRepository) {
         this.memberProfileRepository = memberProfileRepository;
+        this.currentUserServices = currentUserServices;
+        this.teamMemberRepository = teamMemberRepository;
     }
 
     @Override
@@ -48,5 +57,19 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             throw new MemberProfileBadArgException("No member profile exists for the ID");
         }
         return memberProfileRepository.update(memberProfile);
+    }
+
+    @Override
+    public Boolean deleteProfile(UUID id) {
+        if (!currentUserServices.isAdmin()) {
+            throw new InsufficientPrivelegesException("Requires admin privileges");
+        }
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null);
+        for (MemberProfile member : pdlFor) {
+            member.setPdlId(null);
+            memberProfileRepository.update(member);
+        }
+        memberProfileRepository.deleteById(id);
+        return true;
     }
 }

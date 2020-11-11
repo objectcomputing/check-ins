@@ -9,4 +9,6 @@ public interface MemberProfileServices {
     Set<MemberProfile> findByValues(String name, String title, UUID pdlId, String workEmail);
 
     MemberProfile saveProfile(MemberProfile memberProfile);
+
+    Boolean deleteProfile(UUID id);
 }
