@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 
 import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
@@ -24,6 +24,7 @@ const displayName = "TeamResults";
 const TeamResults = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, teams } = state;
+  const [newTeams, setNewTeams] = useState(teams);
 
   useEffect(() => {
     async function getTeams() {
@@ -44,9 +45,13 @@ const TeamResults = () => {
     }
   }, [csrf, dispatch]);
 
+  useEffect(() => {
+    setNewTeams(teams);
+  }, [teams]);
+
   return (
     <Container maxWidth="md">
-      {teams.map((team) => (
+      {newTeams.map((team) => (
         <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
       ))}
     </Container>

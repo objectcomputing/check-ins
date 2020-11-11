@@ -15,6 +15,8 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+export const ADD_TEAM = "@@check-ins/add_team";
+
 const SET_CSRF = "@@check-ins/update_csrf";
 
 const AppContext = React.createContext();
@@ -42,6 +44,9 @@ const reducer = (state, action) => {
     case UPDATE_TOAST:
       state.toast = action.payload;
       break;
+    case ADD_TEAM:
+      state.teams = [...state.teams, action.payload];
+      break;
     case UPDATE_TEAMS:
       state.teams = action.payload;
       break;
@@ -49,7 +54,9 @@ const reducer = (state, action) => {
       state.memberProfiles = action.payload;
       break;
     case UPDATE_TEAM_MEMBERS:
-      state.teamMembers = action.payload;
+      state.teamMembers
+        ? (state.teamMembers = [...state.teamMembers, action.payload])
+        : (state.teamMembers = action.payload);
       break;
     case UPDATE_CURRENT_CHECKIN:
       state.currentCheckin = action.payload;
