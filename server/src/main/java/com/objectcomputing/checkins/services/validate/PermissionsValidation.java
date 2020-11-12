@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.validate;
 
 import com.objectcomputing.checkins.services.action_item.ActionItem;
+import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.exceptions.PermissionException;
@@ -18,16 +19,16 @@ import java.util.UUID;
 @Singleton
 public class PermissionsValidation {
 
-    String workEmail;
-    MemberProfile currentUser;
-    Boolean isAdmin;
-
+    private final ActionItemRepository actionItemRepo;
     private final CheckInServices checkInServices;
     private final MemberProfileServices memberServices;
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
 
-    public PermissionsValidation(CheckInServices checkInServices, MemberProfileServices memberServices, SecurityService securityService, CurrentUserServices currentUserServices) {
+    public PermissionsValidation(ActionItemRepository actionItemRepo, CheckInServices checkInServices,
+                                 MemberProfileServices memberServices, SecurityService securityService,
+                                 CurrentUserServices currentUserServices) {
+        this.actionItemRepo = actionItemRepo;
         this.checkInServices = checkInServices;
         this.memberServices = memberServices;
         this.securityService = securityService;
@@ -43,9 +44,8 @@ public class PermissionsValidation {
 
     public void validateActionItemPermissions(@Valid ActionItem actionItem) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        CurrentUserInfo currentUserInfo = new CurrentUserInfo();
+        currentUserInfo.get();
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -54,34 +54,32 @@ public class PermissionsValidation {
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
         final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
-        if (!isAdmin && isCompleted) {
+        if (!currentUserInfo.isAdmin && isCompleted) {
             validatePermissions(true, "User is unauthorized to do this operation");
-        } else if (!isAdmin && !isCompleted) {
-            validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
+        } else if (!currentUserInfo.isAdmin && !isCompleted) {
+            validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) && !currentUserInfo.currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
         }
 
     }
 
     public void validateActionItemReadPermissions(@Valid ActionItem actionItem) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        CurrentUserInfo currentUserInfo = new CurrentUserInfo();
+        currentUserInfo.get();
 
-        if (!isAdmin) {
+        if (!currentUserInfo.isAdmin) {
             CheckIn checkinRecord = checkInServices.read(actionItem.getCheckinid());
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+            validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) && !currentUserInfo.currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
 
     }
 
     public void validateActionItemUpdatePermissions(@Valid ActionItem actionItem) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        CurrentUserInfo currentUserInfo = new CurrentUserInfo();
+        currentUserInfo.get();
 
         if (actionItem != null) {
             final UUID id = actionItem.getId();
@@ -93,22 +91,71 @@ public class PermissionsValidation {
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
-            if (!isAdmin && isCompleted) {
+            if (!currentUserInfo.isAdmin && isCompleted) {
                 validatePermissions(true, "User is unauthorized to do this operation");
-            } else if (!isAdmin && !isCompleted) {
-                validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
+            } else if (!currentUserInfo.isAdmin && !isCompleted) {
+                validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) && !currentUserInfo.currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
             }
 
         }
 
     }
 
-    public void getCurrentUserInfo() {
+    public void validateActionItemPermissionsForFindByFields(UUID checkinid, UUID createdbyid) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        CurrentUserInfo currentUserInfo = new CurrentUserInfo();
+        currentUserInfo.get();
+
+        if (checkinid != null) {
+            CheckIn checkinRecord = checkInServices.read(checkinid);
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+            validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) &&
+                    !currentUserInfo.currentUser.getId().equals(teamMemberId) &&
+                    !currentUserInfo.isAdmin, "User is unauthorized to do this operation");
+        } else if (createdbyid != null) {
+            MemberProfile memberRecord = memberServices.getById(createdbyid);
+            validatePermissions(!currentUserInfo.currentUser.getId().equals(memberRecord.getId()) &&
+                    !currentUserInfo.isAdmin, "User is unauthorized to do this operation");
+        } else {
+            validatePermissions(!currentUserInfo.isAdmin, "User is unauthorized to do this operation");
+        }
 
     }
 
+    public void validateActionItemPermissionsForDelete(UUID id) {
+
+        CurrentUserInfo currentUserInfo = new CurrentUserInfo();
+        currentUserInfo.get();
+
+        ActionItem actionItem = actionItemRepo.findById(id).orElse(null);
+        final UUID checkinId = actionItem.getCheckinid();
+        final UUID createdById = actionItem.getCreatedbyid();
+
+        CheckIn checkinRecord = checkInServices.read(checkinId);
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+
+        if (!currentUserInfo.isAdmin && isCompleted) {
+            validatePermissions(true, "User is unauthorized to do this operation");
+        } else if (!currentUserInfo.isAdmin && !isCompleted) {
+            validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) && !currentUserInfo.currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
+        }
+
+    }
+
+    class CurrentUserInfo {
+        String workEmail;
+        MemberProfile currentUser;
+        Boolean isAdmin;
+
+        public void get() {
+
+            this.workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+            this.currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+            this.isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+
+        }
+
+    }
 }

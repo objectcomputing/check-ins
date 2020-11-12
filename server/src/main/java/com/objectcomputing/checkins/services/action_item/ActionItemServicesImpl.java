@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -93,24 +92,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
-        if (checkinid != null) {
-            CheckIn checkinRecord = checkInServices.read(checkinid);
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) &&
-                    !currentUser.getId().equals(teamMemberId) &&
-                    !isAdmin, "User is unauthorized to do this operation");
-        } else if (createdbyid != null) {
-            MemberProfile memberRecord = memberServices.getById(createdbyid);
-            permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&
-                    !isAdmin, "User is unauthorized to do this operation");
-        } else {
-            permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
-        }
+        permissionsValidation.validateActionItemPermissionsForFindByFields(checkinid, createdbyid);
 
         Set<ActionItem> actionItems = new LinkedHashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
@@ -124,27 +107,9 @@ public class ActionItemServicesImpl implements ActionItemServices {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-        ActionItem actionItem = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateArguments(actionItem == null, "invalid action item %s", id);
-
-        final UUID checkinId = actionItem.getCheckinid();
-        final UUID createdById = actionItem.getCreatedbyid();
-
-        CheckIn checkinRecord = checkInServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-
-        argumentsValidation.validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
-        argumentsValidation.validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to delete with id %s", actionItem.getId());
-        argumentsValidation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
-        argumentsValidation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-
-        if (!isAdmin && isCompleted) {
-            permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-        } else if (!isAdmin && !isCompleted) {
-            permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
-        }
+        argumentsValidation.validateActionItemArgumentsForDelete(id);
+        permissionsValidation.validateActionItemPermissionsForDelete(id);
 
         actionItemRepo.deleteById(id);
 

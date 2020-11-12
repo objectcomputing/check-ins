@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, ActionItemFixture {
@@ -549,6 +548,23 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
+    void testFindActionItemsByAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
+                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(Set.of(actionItem), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
@@ -589,6 +605,40 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     }
 
     @Test
+    void testFindActionItemsBYCreatedby() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s",
+                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(Set.of(actionItem), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testFindActionItemsBYCreatedbyAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s",
+                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
+
+        assertEquals(Set.of(actionItem), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
     void testUpdateActionItem() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -604,7 +654,6 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
     }
 
-
     @Test
     void testUpdateActionItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -619,6 +668,29 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         assertEquals(actionItem, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testUpdateCompletedActionItemByAdmin() {  //!admin and isCompleted
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("User is unauthorized to do this operation", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+
     }
 
     @Test
