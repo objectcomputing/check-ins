@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
-//import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
@@ -178,21 +177,6 @@ const AppContextProvider = (props) => {
     }
     getMemberProfiles();
   }, []);
-
-  /*useEffect(() => {
-    async function getTeamMembers() {
-      let res = await getAllTeamMembers();
-      let teamMembers =
-        res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : undefined;
-
-      if (teamMembers) {
-        dispatch({ type: UPDATE_TEAM_MEMBERS, payload: teamMembers });
-      }
-    }
-    getTeamMembers();
-  }, []);*/
 
   useEffect(() => {
     if (id && state.checkins.length === 0) {

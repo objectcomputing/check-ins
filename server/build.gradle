@@ -26,7 +26,6 @@ repositories {
     maven { url "https://jcenter.bintray.com" }
 }
 
-sourceSets.main.java.srcDirs = ['src/main/java', 'build/generated-src/jooq/main']
 
 configurations {
     // for dependencies that are needed for development only
@@ -94,7 +93,6 @@ dependencies {
     testCompile "org.testcontainers:testcontainers:1.14.3"
     testCompile "org.testcontainers:junit-jupiter:1.14.3"
     testImplementation("org.testcontainers:postgresql")
-    testImplementation  'org.postgresql:postgresql:42.2.12'
 
     publicResources project(':web-ui')
 }

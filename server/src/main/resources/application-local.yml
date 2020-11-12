@@ -29,13 +29,6 @@ datasources:
     username: postgres
     password: "postgres"
 ---
-jooq:
-  datasources:
-    default:
-      url: ${JDBC_URL:`jdbc:postgresql://localhost:5432/checkinsdb`}
-      username: postgres
-      password: postgres
----
 credentials:
   roles:
     SUPER:

@@ -14,7 +14,7 @@
 
 # Check-ins
 <a id="markdown-check-ins" name="check-ins"></a>
-This web application is written in [Micronaut](https://micronaut.io) for uploading files and tracking skill set of teamEntity members. This application will also be used for PDL checkins and to auto-generate resumes from the skill set.
+This web application is written in [Micronaut](https://micronaut.io) for uploading files and tracking skill set of team members. This application will also be used for PDL checkins and to auto-generate resumes from the skill set.
 
 # Project Links
 <a id="markdown-project-links" name="project-links"></a>
