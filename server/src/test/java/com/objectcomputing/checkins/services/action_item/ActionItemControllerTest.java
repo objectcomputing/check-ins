@@ -34,30 +34,30 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Client("/services/action-item")
     HttpClient client;
 
-@Test
-void testCreateAnActionItemByAdmin() {
+    @Test
+    void testCreateAnActionItemByAdmin() {
 
-    MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-    MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-    CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-    ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
-    actionItemCreateDTO.setCheckinid(checkIn.getId());
-    actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
-    actionItemCreateDTO.setDescription("dnc");
+        ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
+        actionItemCreateDTO.setCheckinid(checkIn.getId());
+        actionItemCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        actionItemCreateDTO.setDescription("dnc");
 
-    final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
-    final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-    ActionItem actionItem= response.body();
+        ActionItem actionItem = response.body();
 
-    assertNotNull(response);
-    assertEquals(HttpStatus.CREATED, response.getStatus());
-    assertEquals(actionItemCreateDTO.getCheckinid(),actionItem.getCheckinid());
-    assertEquals(actionItemCreateDTO.getCreatedbyid(),actionItem.getCreatedbyid());
-    assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
-}
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(actionItemCreateDTO.getCheckinid(), actionItem.getCheckinid());
+        assertEquals(actionItemCreateDTO.getCreatedbyid(), actionItem.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), actionItem.getId()), response.getHeaders().get("location"));
+    }
 
     @Test
     void testCreateActionItemByPdl() {
@@ -74,7 +74,7 @@ void testCreateAnActionItemByAdmin() {
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        ActionItem actionItem= response.body();
+        ActionItem actionItem = response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -98,7 +98,7 @@ void testCreateAnActionItemByAdmin() {
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        ActionItem actionItem= response.body();
+        ActionItem actionItem = response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -111,7 +111,7 @@ void testCreateAnActionItemByAdmin() {
     void testCreateAnInvalidActionItem() {
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth("test@test.com",ADMIN_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -129,7 +129,7 @@ void testCreateAnActionItemByAdmin() {
     @Test
     void testCreateANullActionItem() {
 
-        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE,PDL_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE, PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -153,15 +153,15 @@ void testCreateAnActionItemByAdmin() {
         actionItemCreateDTO.setCreatedbyid(memberProfile.getId());
         actionItemCreateDTO.setDescription("test");
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Invalid checkin id %s",actionItemCreateDTO.getCheckinid()),error);
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Invalid checkin id %s", actionItemCreateDTO.getCheckinid()), error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
     }
@@ -171,22 +171,22 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
         actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
         actionItemCreateDTO.setDescription("test");
 
-        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("",actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
-        assertEquals("No member profile for id",error);
+        assertEquals(request.getPath(), href);
+        assertEquals("No member profile for id", error);
 
     }
 
@@ -253,7 +253,7 @@ void testCreateAnActionItemByAdmin() {
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
 
-        ActionItem actionItem= response.body();
+        ActionItem actionItem = response.body();
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -268,7 +268,7 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
@@ -285,7 +285,7 @@ void testCreateAnActionItemByAdmin() {
         final MutableHttpRequest<List<ActionItemCreateDTO>> request = HttpRequest.POST("items", dtoList).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<List<ActionItem>> response = client.toBlocking().exchange(request, Argument.listOf(ActionItem.class));
 
-        List<ActionItem> actionItem= response.body();
+        List<ActionItem> actionItem = response.body();
 
         assertNotNull(response);
         assertEquals(actionItem.get(0).getCheckinid(), actionItemCreateDTO.getCheckinid());
@@ -329,7 +329,7 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser,memberProfileOfPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
@@ -347,7 +347,7 @@ void testCreateAnActionItemByAdmin() {
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
-        final String errorMessage = String.format("Invalid checkin id %s",actionItemCreateDTO2.getCheckinid());
+        final String errorMessage = String.format("Invalid checkin id %s", actionItemCreateDTO2.getCheckinid());
 
         assertEquals(String.format("[\"Member %s's action item was not added to CheckIn %s because: %s\"]",
                 actionItemCreateDTO2.getCreatedbyid(), actionItemCreateDTO2.getCheckinid(), errorMessage), responseException.getResponse().body());
@@ -360,9 +360,9 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
         final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
@@ -377,7 +377,7 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -392,13 +392,14 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
+
     @Test
     void testDeleteAnActionItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
@@ -406,7 +407,7 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -422,9 +423,9 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(),PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -444,7 +445,7 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -463,11 +464,11 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(memberProfileForPDL.getWorkEmail(),PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
@@ -476,15 +477,15 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testReadActionItemByAdmin(){
+    void testReadActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",actionItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(),ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
@@ -492,23 +493,23 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testReadActionItemFoundByUnrelatedUser(){
+    void testReadActionItemFoundByUnrelatedUser() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s",actionItem.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(),PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
+        assertEquals(request.getPath(), href);
         assertEquals("You are not authorized to perform this operation", error);
 
     }
@@ -535,12 +536,12 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
-                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(),MEMBER_ROLE);
+                actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
@@ -552,12 +553,12 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(),ADMIN_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());
@@ -570,19 +571,19 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(),MEMBER_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(request.getPath(),href);
+        assertEquals(request.getPath(), href);
         assertEquals("User is unauthorized to do this operation", error);
 
     }
@@ -593,7 +594,7 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -611,7 +612,7 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -627,7 +628,7 @@ void testCreateAnActionItemByAdmin() {
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfUser);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -642,9 +643,9 @@ void testCreateAnActionItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfile);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
         actionItem.setCreatedbyid(null);
         actionItem.setCheckinid(null);
 
@@ -666,7 +667,7 @@ void testCreateAnActionItemByAdmin() {
     @Test
     void testUpdateANullActionItem() {
 
-        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -680,7 +681,7 @@ void testCreateAnActionItemByAdmin() {
 
     @Test
     void testUpdateUnAuthorized() {
-        ActionItem actionItem = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),"test");
+        ActionItem actionItem = new ActionItem(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "test");
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -691,13 +692,13 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testUpdateNonExistingActionItem(){
+    void testUpdateNonExistingActionItem() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfMember);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setId(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -715,13 +716,13 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testUpdateNonExistingActionItemForCheckInId(){
+    void testUpdateNonExistingActionItemForCheckInId() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfMember);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setCheckinid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -739,13 +740,13 @@ void testCreateAnActionItemByAdmin() {
     }
 
     @Test
-    void testUpdateNonExistingActionItemForMemberId(){
+    void testUpdateNonExistingActionItemForMemberId() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfileOfPDL,memberProfileOfMember);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn,memberProfileOfPDL);
+        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setCreatedbyid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)

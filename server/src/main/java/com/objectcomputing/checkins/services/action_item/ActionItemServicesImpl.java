@@ -82,34 +82,14 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public ActionItem update(ActionItem actionItem) {
         ActionItem actionItemRet = null;
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
-        if (actionItem != null) {
-            final UUID id = actionItem.getId();
-            final UUID checkinId = actionItem.getCheckinid();
-            final UUID createdById = actionItem.getCreatedbyid();
+        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
+        permissionsValidation.validateActionItemUpdatePermissions(actionItem);
 
-            CheckIn checkinRecord = checkInServices.read(checkinId);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+        actionItemRet = actionItemRepo.update(actionItem);
 
-            argumentsValidation.validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
-            argumentsValidation.validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to update with id %s", actionItem.getId());
-            argumentsValidation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
-            argumentsValidation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-
-            if (!isAdmin && isCompleted) {
-                permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
-            } else if (!isAdmin && !isCompleted) {
-                permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
-            }
-
-            actionItemRet = actionItemRepo.update(actionItem);
-        }
         return actionItemRet;
+
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {

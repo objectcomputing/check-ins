@@ -75,6 +75,31 @@ public class PermissionsValidation {
             validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
 
+    }
+
+    public void validateActionItemUpdatePermissions(@Valid ActionItem actionItem) {
+
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+
+        if (actionItem != null) {
+            final UUID id = actionItem.getId();
+            final UUID checkinId = actionItem.getCheckinid();
+            final UUID createdById = actionItem.getCreatedbyid();
+
+            CheckIn checkinRecord = checkInServices.read(checkinId);
+            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+            if (!isAdmin && isCompleted) {
+                validatePermissions(true, "User is unauthorized to do this operation");
+            } else if (!isAdmin && !isCompleted) {
+                validatePermissions(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
+            }
+
+        }
 
     }
 
