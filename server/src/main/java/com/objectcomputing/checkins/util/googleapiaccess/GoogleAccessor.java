@@ -9,6 +9,7 @@ import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Requires(notEnv = Environment.TEST)
 @Singleton
 public class GoogleAccessor {
 

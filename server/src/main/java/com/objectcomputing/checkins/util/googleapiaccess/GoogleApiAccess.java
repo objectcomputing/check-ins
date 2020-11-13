@@ -2,6 +2,8 @@ package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.runtime.server.event.ServerStartupEvent;
 import io.micronaut.scheduling.annotation.Async;
@@ -10,6 +12,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
+@Requires(notEnv = Environment.TEST)
 @Singleton
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {
 

@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
-import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -31,9 +30,6 @@ public class MemberPhotoControllerTest {
     @Inject
     private MemberPhotoService memberPhotoService;
 
-    @Inject
-    private GoogleApiAccess googleApiAccess;
-
     //Happy path
     @Test
     public void testGetForValidInput() {
@@ -49,6 +45,7 @@ public class MemberPhotoControllerTest {
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         byte[] result = response.getBody().get();
         assertEquals(new String(testData), new String(result));
     }
@@ -74,8 +71,4 @@ public class MemberPhotoControllerTest {
         return mock(MemberPhotoService.class);
     }
 
-    @MockBean(GoogleApiAccess.class)
-    public GoogleApiAccess googleApiAccess() {
-        return mock(GoogleApiAccess.class);
-    }
 }
