@@ -57,7 +57,8 @@ public class SkillController {
 
     @Post(value = "/")
     public HttpResponse<Skill> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
-        Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending()));
+        Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending(), skill.getDescription(),
+                skill.isExtraneous()));
 
         return HttpResponse
                 .created(newSkill)

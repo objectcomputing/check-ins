@@ -224,7 +224,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testReadAllMemberSkills() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
-        String skillLevel = "";
+        String skillLevel = null;
         LocalDate skillDate = LocalDate.now();
 
         MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
@@ -241,7 +241,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testReadMemberSkill() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
-        String skillLevel = "";
+        String skillLevel = null;
         LocalDate skillDate = LocalDate.now();
 
         MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
@@ -267,7 +267,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkills() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
-        String skillLevel = "";
+        String skillLevel = null;
         LocalDate skillDate = LocalDate.now();
 
         MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
@@ -285,7 +285,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkillsByMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
-        String skillLevel = "";
+        String skillLevel = null;
         LocalDate skillDate = LocalDate.now();
 
         MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
@@ -302,7 +302,7 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkillsBySkillId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
-        String skillLevel = "";
+        String skillLevel = null;
         LocalDate skillDate = LocalDate.now();
 
         MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
