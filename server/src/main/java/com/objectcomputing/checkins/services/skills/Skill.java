@@ -111,19 +111,23 @@ public class Skill {
         Skill skill = (Skill) o;
         return pending == skill.pending &&
                 Objects.equals(id, skill.id) &&
-                Objects.equals(name, skill.name);
+                Objects.equals(name, skill.name) &&
+                Objects.equals(description, skill.description) &&
+                extraneous == skill.extraneous;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, pending);
+        return Objects.hash(id, name, pending, description, extraneous);
     }
 
     @Override
     public String toString() {
         return "Skill {" +
                 "name='" + name + '\'' +
-                ", pending=" + pending +
+                ", pending=" + pending + '\'' +
+                ", description=" + description + '\'' +
+                ", extraneous=" + extraneous + '\'' +
                 '}';
     }
 }
