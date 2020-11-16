@@ -13,7 +13,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -28,8 +27,11 @@ import java.util.stream.Collectors;
 @Tag(name="questions")
 public class QuestionController {
 
-    @Inject
-    private QuestionServices questionService;
+    private final QuestionServices questionService;
+
+    public QuestionController(QuestionServices questionService) {
+        this.questionService = questionService;
+    }
 
     @Error(exception = QuestionNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, QuestionNotFoundException e) {

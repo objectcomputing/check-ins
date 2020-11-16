@@ -17,12 +17,15 @@ import io.micronaut.security.utils.SecurityService;
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
 
-    private CheckInRepository checkinRepo;
-    private MemberProfileRepository memberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
+    private final CheckInRepository checkinRepo;
+    private final MemberProfileRepository memberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
 
-    public CheckInServicesImpl(CheckInRepository checkinRepo, MemberProfileRepository memberRepo, SecurityService securityService, CurrentUserServices currentUserServices) {
+    public CheckInServicesImpl(CheckInRepository checkinRepo,
+                               MemberProfileRepository memberRepo,
+                               SecurityService securityService,
+                               CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.securityService = securityService;

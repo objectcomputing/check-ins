@@ -19,7 +19,7 @@ public class GoogleDriveAccessor {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private final NetHttpTransport httpTransport;
     private final String applicationName;
-    private GoogleAuthenticator authenticator;
+    private final GoogleAuthenticator authenticator;
 
     public GoogleDriveAccessor(@Property(name = "check-ins.application.name") String applicationName,
                                GoogleAuthenticator authenticator) throws GeneralSecurityException, IOException {

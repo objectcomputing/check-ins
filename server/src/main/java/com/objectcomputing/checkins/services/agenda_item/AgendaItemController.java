@@ -15,21 +15,17 @@ import io.reactivex.Single;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller("/services/agenda-item")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -37,9 +33,9 @@ import java.util.List;
 @Tag(name = "agenda-item")
 public class AgendaItemController {
 
-    private AgendaItemServices agendaItemServices;
-    private EventLoopGroup eventLoopGroup;
-    private ExecutorService ioExecutorService;
+    private final AgendaItemServices agendaItemServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
     public AgendaItemController(AgendaItemServices agendaItemServices,
                                 EventLoopGroup eventLoopGroup,

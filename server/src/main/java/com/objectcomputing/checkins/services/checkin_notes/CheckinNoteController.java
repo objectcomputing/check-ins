@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -14,14 +13,11 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
-
 
 @Controller("/services/checkin-note")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -29,12 +25,11 @@ import java.util.UUID;
 @Tag(name = "checkin-note")
 public class CheckinNoteController {
 
-    private CheckinNoteServices checkinNoteServices;
+    private final CheckinNoteServices checkinNoteServices;
 
     public CheckinNoteController(CheckinNoteServices checkinNoteServices) {
         this.checkinNoteServices = checkinNoteServices;
     }
-
 
     @Error(exception = CheckinNotesBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckinNotesBadArgException e) {
