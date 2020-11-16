@@ -36,9 +36,6 @@ public class ArgumentsValidation {
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
         CheckIn checkinRecord = checkInServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
         validateArguments(actionItem.getId() != null, "Found unexpected id %s for action item", actionItem.getId());
         validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
@@ -52,11 +49,6 @@ public class ArgumentsValidation {
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
 
-        CheckIn checkinRecord = checkInServices.read(checkinId);
-
-        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-
         validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
         validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
 
@@ -69,11 +61,6 @@ public class ArgumentsValidation {
             final UUID id = actionItem.getId();
             final UUID checkinId = actionItem.getCheckinid();
             final UUID createdById = actionItem.getCreatedbyid();
-
-            CheckIn checkinRecord = checkInServices.read(checkinId);
-            Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
             validateArguments(checkinId == null || createdById == null, "Invalid action item %s", actionItem);
             validateArguments(id == null || actionItemRepo.findById(id).isEmpty(), "Unable to locate action item to update with id %s", actionItem.getId());

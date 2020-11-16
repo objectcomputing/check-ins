@@ -1,10 +1,8 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import io.micronaut.security.utils.SecurityService;
@@ -42,11 +40,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
         this.permissionsValidation = permissionsValidation;
     }
 
-    public ActionItem save(@Valid ActionItem actionItem) {
+    public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
-        ActionItem validActionItem = null;
-
-        if (actionItem != null) {
 
             argumentsValidation.validateActionItemArgumentsForSave(actionItem);
             permissionsValidation.validateActionItemPermissions(actionItem);
@@ -62,8 +57,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
             actionItemRet = actionItemRepo.save(actionItem);
 
-        }
-
         return actionItemRet;
 
     }
@@ -73,17 +66,17 @@ public class ActionItemServicesImpl implements ActionItemServices {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
         argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
-        permissionsValidation.validateActionItemReadPermissions(actionItemResult);
+        permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
 
         return actionItemResult;
 
     }
 
-    public ActionItem update(ActionItem actionItem) {
+    public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
         argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
-        permissionsValidation.validateActionItemUpdatePermissions(actionItem);
+        permissionsValidation.validateActionItemPermissionsForUpdate(actionItem);
 
         actionItemRet = actionItemRepo.update(actionItem);
 
@@ -103,10 +96,6 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public void delete(@NotNull UUID id) {
-
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
 
         argumentsValidation.validateActionItemArgumentsForDelete(id);
         permissionsValidation.validateActionItemPermissionsForDelete(id);

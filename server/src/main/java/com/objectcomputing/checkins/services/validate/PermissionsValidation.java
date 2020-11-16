@@ -42,10 +42,9 @@ public class PermissionsValidation {
         }
     }
 
-    public void validateActionItemPermissions(@Valid ActionItem actionItem) {
+    public void validateActionItemPermissions(@Valid @NotNull ActionItem actionItem) {
 
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
-        currentUserInfo.get();
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -62,10 +61,9 @@ public class PermissionsValidation {
 
     }
 
-    public void validateActionItemReadPermissions(@Valid ActionItem actionItem) {
+    public void validateActionItemPermissionsForRead(@Valid @NotNull ActionItem actionItem) {
 
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
-        currentUserInfo.get();
 
         if (!currentUserInfo.isAdmin) {
             CheckIn checkinRecord = checkInServices.read(actionItem.getCheckinid());
@@ -76,10 +74,9 @@ public class PermissionsValidation {
 
     }
 
-    public void validateActionItemUpdatePermissions(@Valid ActionItem actionItem) {
+    public void validateActionItemPermissionsForUpdate(@Valid @NotNull ActionItem actionItem) {
 
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
-        currentUserInfo.get();
 
         if (actionItem != null) {
             final UUID id = actionItem.getId();
@@ -104,7 +101,6 @@ public class PermissionsValidation {
     public void validateActionItemPermissionsForFindByFields(UUID checkinid, UUID createdbyid) {
 
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
-        currentUserInfo.get();
 
         if (checkinid != null) {
             CheckIn checkinRecord = checkInServices.read(checkinid);
@@ -123,10 +119,9 @@ public class PermissionsValidation {
 
     }
 
-    public void validateActionItemPermissionsForDelete(UUID id) {
+    public void validateActionItemPermissionsForDelete(@NotNull UUID id) {
 
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
-        currentUserInfo.get();
 
         ActionItem actionItem = actionItemRepo.findById(id).orElse(null);
         final UUID checkinId = actionItem.getCheckinid();
@@ -149,12 +144,10 @@ public class PermissionsValidation {
         MemberProfile currentUser;
         Boolean isAdmin;
 
-        public void get() {
-
+        public CurrentUserInfo() {
             this.workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
             this.currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
             this.isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
-
         }
 
     }
