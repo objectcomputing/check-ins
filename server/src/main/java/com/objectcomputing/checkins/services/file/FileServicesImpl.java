@@ -42,7 +42,7 @@ public class FileServicesImpl implements FileServices {
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
-    private CurrentUserServices currentUserServices;
+    private final CurrentUserServices currentUserServices;
 
     public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, SecurityService securityService,
                             CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,

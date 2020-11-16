@@ -14,7 +14,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -28,8 +27,11 @@ import java.util.UUID;
 @Tag(name = "skill")
 public class SkillController {
 
-    @Inject
-    private SkillServices skillServices;
+    private final SkillServices skillServices;
+
+    public SkillController(SkillServices skillServices) {
+        this.skillServices = skillServices;
+    }
 
     @Error(exception = SkillBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
