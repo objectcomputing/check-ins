@@ -11,7 +11,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -22,11 +21,14 @@ import java.util.stream.Collectors;
 @Tag(name = "current user")
 public class CurrentUserController {
 
-    @Inject
-    private CurrentUserServices currentUserServices;
+    private final CurrentUserServices currentUserServices;
+    private final RoleRepository roleRepository;
 
-    @Inject
-    private RoleRepository roleRepository;
+    public CurrentUserController(CurrentUserServices currentUserServices,
+                                 RoleRepository roleRepository) {
+        this.currentUserServices = currentUserServices;
+        this.roleRepository = roleRepository;
+    }
 
     /**
      * Get user details from Google authentication

@@ -115,12 +115,14 @@ public class MemberSkill {
         MemberSkill that = (MemberSkill) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(memberid, that.memberid) &&
-                Objects.equals(skillid, that.skillid);
+                Objects.equals(skillid, that.skillid) &&
+                Objects.equals(skilllevel, that.skilllevel) &&
+                Objects.equals(lastuseddate, that.lastuseddate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, memberid, skillid);
+        return Objects.hash(id, memberid, skillid, skilllevel, lastuseddate);
     }
 
     @Override
@@ -128,7 +130,9 @@ public class MemberSkill {
         return "MemberSkill {" +
                 "id='" + id + '\'' +
                 "memberid='" + memberid + '\'' +
-                ", skillid=" + skillid +
+                ", skillid=" + skillid + '\'' +
+                ", skilllevel=" + skilllevel + '\'' +
+                ", lastuseddate=" + lastuseddate +
                 '}';
     }
 }
