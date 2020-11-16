@@ -9,16 +9,22 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/skill")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -27,10 +33,15 @@ import java.util.UUID;
 @Tag(name = "skill")
 public class SkillController {
 
-    private final SkillServices skillServices;
 
-    public SkillController(SkillServices skillServices) {
+    private final SkillServices skillServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
+
+    public SkillController(SkillServices skillServices, EventLoopGroup eventLoopGroup,  @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.skillServices = skillServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
     }
 
     @Error(exception = SkillBadArgException.class)
@@ -50,6 +61,15 @@ public class SkillController {
         return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
     }
 
+    @Error(exception = SkillNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, SkillNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
+
     /**
      * Create and save a new skill.
      *
@@ -58,14 +78,13 @@ public class SkillController {
      */
 
     @Post(value = "/")
-    public HttpResponse<Skill> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
-        Skill newSkill = skillServices.save(new Skill(skill.getName(), skill.isPending(), skill.getDescription(),
-                skill.isExtraneous()));
+    public Single<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
 
-        return HttpResponse
-                .created(newSkill)
+        return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(),skill.isPending(),skill.getDescription(),skill.isExtraneous())))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(createdSkill -> {return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
                 .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newSkill.getId()))));
+                        URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));}).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -77,9 +96,16 @@ public class SkillController {
      */
 
     @Get("/{id}")
-    public Skill getById(@NotNull UUID id) {
+    public Single<HttpResponse<Skill>> getById(@NotNull UUID id) {
 
-        return skillServices.readSkill(id);
+        return Single.fromCallable(() -> {
+            Skill result = skillServices.readSkill(id);
+            if(result == null) {
+                throw new SkillNotFoundException("No skill for UUID");
+            } return result;
+        }).observeOn(Schedulers.from(eventLoopGroup)).map(skills -> {
+            return(HttpResponse<Skill>) HttpResponse.ok(skills);
+        }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -92,10 +118,13 @@ public class SkillController {
      */
 
     @Get("/{?name,pending}")
-    public Set<Skill> findByValue(@Nullable String name,
+    public Single<HttpResponse<Set<Skill>>> findByValue(@Nullable String name,
                                   @Nullable Boolean pending) {
 
-        return skillServices.findByValue(name, pending);
+        return Single.fromCallable(() -> skillServices.findByValue(name,pending))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(skills -> (HttpResponse<Set<Skill>>) HttpResponse.ok(skills))
+                .subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -106,13 +135,16 @@ public class SkillController {
      * @return {@link HttpResponse< Skill >}
      */
     @Put("/")
-    public HttpResponse<?> update(@Body @Valid Skill skill, HttpRequest<Skill> request) {
+    public Single<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<Skill> request) {
 
-        Skill updatedSkill = skillServices.update(skill);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), skill.getId()))))
-                .body(updatedSkill);
+        return Single.fromCallable(() -> skillServices.update(skill))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedSkill -> (HttpResponse<Skill>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId()))))
+                        .body(updatedSkill))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+
 
     }
 
