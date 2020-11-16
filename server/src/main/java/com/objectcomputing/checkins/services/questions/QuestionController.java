@@ -8,13 +8,18 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.exceptions.CompositeException;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -35,6 +40,13 @@ public class QuestionController {
     private EventLoopGroup eventLoopGroup;
     private ExecutorService ioExecutorService;
 
+    public QuestionController(QuestionServices questionService, EventLoopGroup eventLoopGroup,
+                              @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+        this.questionService = questionService;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
+
     @Error(exception = QuestionNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, QuestionNotFoundException e) {
         JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
@@ -53,6 +65,21 @@ public class QuestionController {
         return HttpResponse.badRequest().body(error);
     }
 
+    @Error(exception = CompositeException.class)
+    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
+
+        for (Throwable t : e.getExceptions()) {
+            if (t instanceof QuestionBadArgException) {
+                return handleBadArgs(request, (QuestionBadArgException) t);
+            } else if (t instanceof QuestionNotFoundException) {
+                return handleNotFound(request, (QuestionNotFoundException) t);
+            } else if (t instanceof QuestionDuplicateException) {
+                return handleDupe(request, (QuestionDuplicateException) t);
+            }
+        }
+        return HttpResponse.<JsonError>serverError();
+    }
+
     /**
      * Create and save a new question.
      *
@@ -61,13 +88,15 @@ public class QuestionController {
      */
 
     @Post(value = "/")
-    public HttpResponse<QuestionResponseDTO> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
-        Question newQuestion = questionService.saveQuestion(toModel(question));
+    public Single<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
 
-        return HttpResponse
-                .created(fromModel(newQuestion))
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newQuestion.getId()))));
+        return Single.fromCallable(() -> questionService.saveQuestion(toModel(question)))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(newQuestion -> (HttpResponse<QuestionResponseDTO>) HttpResponse
+                        .created(fromModel(newQuestion))
+                        .headers(headers -> headers.location(
+                                URI.create(String.format("%s/%s", request.getPath(), newQuestion.getId())))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -79,10 +108,17 @@ public class QuestionController {
      */
 
     @Get("/{id}")
-    public HttpResponse<QuestionResponseDTO> getById(UUID id) {
-        Question found = questionService.findById(id);
-
-        return HttpResponse.ok(fromModel(found));
+    public Single<HttpResponse<QuestionResponseDTO>> getById(UUID id) {
+        return Single.fromCallable(() -> {
+            Question found = questionService.findById(id);
+            if (found == null) {
+                throw new QuestionNotFoundException("No question for UUID");
+            }
+            return found;
+        })
+        .observeOn(Schedulers.from(eventLoopGroup))
+        .map(question -> (HttpResponse<QuestionResponseDTO>)HttpResponse.ok(fromModel(question)))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -92,19 +128,22 @@ public class QuestionController {
      * * @return {@link List HttpResponse< QuestionResponseDTO >}
      */
     @Get("/{?text}")
-    public HttpResponse<List<QuestionResponseDTO>> findByText(@Nullable Optional<String> text) {
-        Set<Question> found = null;
-        if(text.isPresent()) {
-            found = questionService.findByText(text.get());
-        } else {
-            found = questionService.readAllQuestions();
-        }
-
-        List<QuestionResponseDTO> responseBody = found.stream()
+    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable Optional<String> text) {
+        return Single.fromCallable(() -> {
+                if(text.isPresent()) {
+                    return questionService.findByText(text.get());
+                } else {
+                    return questionService.readAllQuestions();
+                }
+            })
+            .observeOn(Schedulers.from(eventLoopGroup))
+            .map(questions -> {
+                Set<QuestionResponseDTO> responseBody = questions.stream()
                 .map(question -> fromModel(question))
-                .collect(Collectors.toList());
-        return HttpResponse.ok(responseBody);
-
+                .collect(Collectors.toSet());
+                return (HttpResponse<Set<QuestionResponseDTO>>)HttpResponse.ok(responseBody);
+            })
+            .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -113,14 +152,18 @@ public class QuestionController {
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
     @Put("/")
-    public HttpResponse<QuestionResponseDTO> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<QuestionCreateDTO> request) {
-
-        Question updatedQuestion = questionService.update(toModel(question));
-
-        return HttpResponse
-                .created(fromModel(updatedQuestion))
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedQuestion.getId()))));
+    public Single<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<QuestionCreateDTO> request) {
+        if (question == null) {
+            return Single.just(HttpResponse.ok());
+        }
+        return Single.fromCallable(() -> questionService.update(toModel(question)))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedQuestion ->
+                        (HttpResponse<QuestionResponseDTO>) HttpResponse
+                                .created(fromModel(updatedQuestion))
+                                .headers(headers -> headers.location(
+                                        URI.create(String.format("%s/%s", request.getPath(), updatedQuestion.getId())))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
