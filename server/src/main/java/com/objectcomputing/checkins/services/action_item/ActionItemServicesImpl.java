@@ -10,7 +10,6 @@ import io.micronaut.security.utils.SecurityService;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -20,23 +19,14 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class ActionItemServicesImpl implements ActionItemServices {
 
-    private final CheckInServices checkInServices;
     private final ActionItemRepository actionItemRepo;
-    private final MemberProfileServices memberServices;
-    private final SecurityService securityService;
-    private final CurrentUserServices currentUserServices;
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;
 
-    public ActionItemServicesImpl(CheckInServices checkInServices, ActionItemRepository actionItemRepo,
-                                  MemberProfileServices memberServices, SecurityService securityService,
-                                  CurrentUserServices currentUserServices, ArgumentsValidation argumentsValidation,
+    public ActionItemServicesImpl( ActionItemRepository actionItemRepo,
+                                  ArgumentsValidation argumentsValidation,
                                   PermissionsValidation permissionsValidation) {
-        this.checkInServices = checkInServices;
         this.actionItemRepo = actionItemRepo;
-        this.memberServices = memberServices;
-        this.securityService = securityService;
-        this.currentUserServices = currentUserServices;
         this.argumentsValidation = argumentsValidation;
         this.permissionsValidation = permissionsValidation;
     }
