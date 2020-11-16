@@ -313,3 +313,59 @@ Values('a6e2c822-feab-4c8b-b164-78158b2d4993', 'cf806bb5-7269-48ee-8b72-0b2762c7
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)
 Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', 'Action Item for Pramukh Bagur');
+
+INSERT INTO skill_tags
+    (id, name, description)
+    values ('0ead3434-82e7-47b4-a0ef-d1f44d01732c', 'Java', 'This skill involves the use of Java')
+
+INSERT INTO skill_tags
+    (id, name, description)
+    values ('0ead3434-82e7-47b4-a0ef-d1f44d01732d', 'Core', 'This is a core skill everyone should have')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732c', '8cae8210-6bd2-422d-ba6b-a14930a0278c')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732c', 'dbc6ed19-5e71-4645-a044-b3a8e75f1c41')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732c', '17740b2f-f49c-4448-8a90-d5dd660df79b')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732c', '22b5a8f5-57da-4858-9031-9594248cb61b')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732c', 'ef918c6c-810f-4c11-b175-a38b76fd9140')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', 'a419829f-62b0-40e3-8024-70ea7109e3c4')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', '91d37bcc-f6f5-454d-bc05-efbe20f83799')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', '64a8aa24-36b5-45bd-b002-e30f4142ddb9')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', 'dbc6ed19-5e71-4645-a044-b3a8e75f1c41')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', 'ef918c6c-810f-4c11-b175-a38b76fd9140')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', '05b81afa-daca-4585-bc2a-6bcce3510570')
+
+INSERT INTO skills_skill_tags
+    (id, tag_id, skill_id)
+    values('0ead3434-82e7-47b4-a0ef-d1f44d01732e', '0ead3434-82e7-47b4-a0ef-d1f44d01732d', '54d04431-e579-4a4f-b33b-4a114256c54e')
