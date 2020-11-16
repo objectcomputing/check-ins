@@ -3,22 +3,26 @@ package com.objectcomputing.checkins.services.member_skill;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class MemberSkillServiceImpl implements MemberSkillServices {
 
-    @Inject
-    private MemberSkillRepository memberSkillRepository;
+    private final MemberSkillRepository memberSkillRepository;
+    private final MemberProfileRepository memberProfileRepository;
+    private final SkillRepository skillRepository;
 
-    @Inject
-    private MemberProfileRepository memberProfileRepository;
-
-    @Inject
-    private SkillRepository skillRepository;
+    public MemberSkillServiceImpl(MemberSkillRepository memberSkillRepository,
+                                  MemberProfileRepository memberProfileRepository,
+                                  SkillRepository skillRepository) {
+        this.memberSkillRepository = memberSkillRepository;
+        this.memberProfileRepository = memberProfileRepository;
+        this.skillRepository = skillRepository;
+    }
 
     public MemberSkill save(MemberSkill memberSkill) {
         MemberSkill memberSkillRet = null;

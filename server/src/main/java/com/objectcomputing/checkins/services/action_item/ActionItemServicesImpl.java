@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.action_item;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -12,14 +12,20 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
+@Singleton
 public class ActionItemServicesImpl implements ActionItemServices {
 
-    @Inject
-    private CheckInRepository checkinRepo;
-    @Inject
-    private ActionItemRepository actionItemRepo;
-    @Inject
-    private MemberProfileRepository memberRepo;
+    private final CheckInRepository checkinRepo;
+    private final ActionItemRepository actionItemRepo;
+    private final MemberProfileRepository memberRepo;
+
+    public ActionItemServicesImpl(CheckInRepository checkinRepo,
+                                  ActionItemRepository actionItemRepo,
+                                  MemberProfileRepository memberRepo) {
+        this.checkinRepo = checkinRepo;
+        this.actionItemRepo = actionItemRepo;
+        this.memberRepo = memberRepo;
+    }
 
     public ActionItem save(ActionItem actionItem) {
         ActionItem actionItemRet = null;

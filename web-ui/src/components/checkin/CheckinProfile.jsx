@@ -5,6 +5,7 @@ import { AppContext } from "../../context/AppContext";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./Checkin.css";
+const displayName = "CheckinProfile";
 
 const CheckinProfile = () => {
   const { state } = useContext(AppContext);
@@ -52,4 +53,5 @@ const CheckinProfile = () => {
   );
 };
 
+CheckinProfile.displayName = displayName;
 export default CheckinProfile;
