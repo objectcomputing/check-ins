@@ -80,7 +80,7 @@ public class SkillController {
     @Post(value = "/")
     public Single<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
 
-        return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(),skill.isPending())))
+        return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(),skill.isPending(),skill.getDescription(),skill.isExtraneous())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdSkill -> {return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
                 .headers(headers -> headers.location(
