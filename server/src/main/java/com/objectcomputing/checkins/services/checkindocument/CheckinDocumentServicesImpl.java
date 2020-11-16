@@ -2,21 +2,24 @@ package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
-    @Inject
-    private CheckinDocumentRepository checkinDocumentRepo;
+    private final CheckinDocumentRepository checkinDocumentRepo;
+    private final CheckInRepository checkinRepo;
 
-    @Inject
-    private CheckInRepository checkinRepo;
+    public CheckinDocumentServicesImpl(CheckinDocumentRepository checkinDocumentRepo,
+                                       CheckInRepository checkinRepo) {
+        this.checkinDocumentRepo = checkinDocumentRepo;
+        this.checkinRepo = checkinRepo;
+    }
 
     public Set<CheckinDocument> read(UUID checkinsId) {
 

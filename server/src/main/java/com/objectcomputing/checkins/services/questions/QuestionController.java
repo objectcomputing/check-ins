@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
 public class QuestionController {
 
     @Inject
-    private QuestionServices questionService;
-    private EventLoopGroup eventLoopGroup;
-    private ExecutorService ioExecutorService;
+    private final QuestionServices questionService;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
     public QuestionController(QuestionServices questionService, EventLoopGroup eventLoopGroup,
                               @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {

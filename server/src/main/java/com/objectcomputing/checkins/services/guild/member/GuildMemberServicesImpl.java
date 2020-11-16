@@ -15,11 +15,9 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class GuildMemberServicesImpl implements GuildMemberServices {
 
-    private GuildRepository guildRepo;
-
-    private GuildMemberRepository guildMemberRepo;
-
-    private MemberProfileRepository memberRepo;
+    private final GuildRepository guildRepo;
+    private final GuildMemberRepository guildMemberRepo;
+    private final MemberProfileRepository memberRepo;
 
     public GuildMemberServicesImpl(GuildRepository guildRepo, GuildMemberRepository guildMemberRepo, MemberProfileRepository memberRepo) {
         this.guildRepo = guildRepo;

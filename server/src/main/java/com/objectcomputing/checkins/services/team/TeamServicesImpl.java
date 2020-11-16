@@ -20,14 +20,16 @@ import com.objectcomputing.checkins.services.role.RoleType;
 @Singleton
 public class TeamServicesImpl implements TeamServices {
 
-    private TeamRepository teamsRepo;
-    private TeamMemberRepository teamMemberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
-    private TeamMemberServices teamMemberServices;
+    private final TeamRepository teamsRepo;
+    private final TeamMemberRepository teamMemberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
+    private final TeamMemberServices teamMemberServices;
     
-    public TeamServicesImpl(TeamRepository teamsRepo, TeamMemberRepository teamMemberRepo,
-                            SecurityService securityService, CurrentUserServices currentUserServices,
+    public TeamServicesImpl(TeamRepository teamsRepo,
+                            TeamMemberRepository teamMemberRepo,
+                            SecurityService securityService,
+                            CurrentUserServices currentUserServices,
                             TeamMemberServices teamMemberServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberRepo = teamMemberRepo;

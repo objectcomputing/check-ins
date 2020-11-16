@@ -1,23 +1,29 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import com.objectcomputing.checkins.services.team.TeamRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Singleton
 public class TeamMemberServicesImpl implements TeamMemberServices {
 
-    @Inject
-    private TeamRepository teamRepo;
-    @Inject
-    private TeamMemberRepository teamMemberRepo;
-    @Inject
-    private MemberProfileRepository memberRepo;
+    private final TeamRepository teamRepo;
+    private final TeamMemberRepository teamMemberRepo;
+    private final MemberProfileRepository memberRepo;
+
+    public TeamMemberServicesImpl(TeamRepository teamRepo,
+                                  TeamMemberRepository teamMemberRepo,
+                                  MemberProfileRepository memberRepo) {
+        this.teamRepo = teamRepo;
+        this.teamMemberRepo = teamMemberRepo;
+        this.memberRepo = memberRepo;
+    }
 
     public TeamMember save(TeamMember teamMember) {
         TeamMember teamMemberRet = null;
