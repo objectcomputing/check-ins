@@ -10,6 +10,7 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Controller("/services/questions")
@@ -30,6 +32,8 @@ public class QuestionController {
 
     @Inject
     private QuestionServices questionService;
+    private EventLoopGroup eventLoopGroup;
+    private ExecutorService ioExecutorService;
 
     @Error(exception = QuestionNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, QuestionNotFoundException e) {
