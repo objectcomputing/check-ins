@@ -3,6 +3,7 @@ import { resolve, BASE_API_URL } from "./api.js";
 
 const teamUrl = `${BASE_API_URL}/services/team`;
 const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
+
 export const getAllTeamMembers = async () => {
   return await resolve(
     axios({
@@ -43,6 +44,17 @@ export const getTeamsByMember = async (id) => {
 };
 
 export const getAllTeams = async () => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: teamUrl,
+      responseType: "json",
+      withCredentials: true
+    })
+  )
+};
+
+export const createTeam = async () => {
   return await resolve(
     axios({
       method: "get",

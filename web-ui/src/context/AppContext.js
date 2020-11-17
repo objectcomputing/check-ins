@@ -13,6 +13,7 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+export const UPDATE_SKILLS = "@@check-ins/update_skills";
 
 const AppContext = React.createContext();
 
@@ -32,6 +33,9 @@ const reducer = (state, action) => {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       state.currentCheckin = state.checkins[state.checkins.length - 1];
+      break;
+    case UPDATE_SKILLS:
+      state.skills = action.payload;
       break;
     case UPDATE_TOAST:
       state.toast = action.payload;
@@ -66,10 +70,11 @@ const reducer = (state, action) => {
 const initialState = {
   checkins: [],
   currentCheckin: {},
-  teams: [],
-  memberProfiles: [],
   index: 0,
+  memberProfiles: [],
   selectedProfile: undefined,
+  skills: [],
+  teams: [],
   toast: {
     severity: "",
     toast: "",
@@ -237,6 +242,9 @@ const selectMembersByTeamId = ({ teamMembers }) => (id) => {
   return members;
 };
 
+const selectMemberProfileById = ({ memberProfiles }) => (id) =>
+  memberProfiles.find((member) => member.id === id);
+
 const selectMemberProfilesByTeamId = (state) => (id) =>
   selectMembersByTeamId(state)(id).map((member) => {
     return { ...selectProfileMap(state)[member.memberid], ...member };
@@ -244,5 +252,6 @@ const selectMemberProfilesByTeamId = (state) => (id) =>
 
 AppContext.selectProfileById = selectProfileMap;
 AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
+AppContext.selectMemberProfileById = selectMemberProfileById;
 
 export { AppContext, AppContextProvider };

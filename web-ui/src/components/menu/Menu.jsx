@@ -64,6 +64,8 @@ function Menu() {
   const { imageUrl } = userProfile
       ? userProfile
       : {};
+ const isAdmin =
+    userProfile && userProfile.role && userProfile.role.includes("ADMIN")
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -115,12 +117,6 @@ function Menu() {
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teams">
-          Teams
-        </Link>
-      </Button>
-      <br />
       <Button
         onClick={() =>
           dispatch({
@@ -142,6 +138,19 @@ function Menu() {
         </Link>
       </Button>
       <br />
+      {isAdmin &&
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/pending-skills">
+          Pending Skills
+        </Link>
+      </Button>
+      }
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/teams">
+          Teams
+        </Link>
+      </Button>
+      <br/>
       {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">

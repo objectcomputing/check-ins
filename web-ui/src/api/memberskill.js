@@ -16,6 +16,20 @@ export const getMemberSkills = async (id) => {
   );
 };
 
+export const getSkillMembers = async (id) => {
+  return await resolve(
+    axios({
+      method: "get",
+      url: memberSkillUrl,
+      responseType: "json",
+      params: {
+        skillid: id,
+      },
+      withCredentials: true
+    })
+  );
+};
+
 export const deleteMemberSkill = async (id) => {
   return await resolve(
     axios({
