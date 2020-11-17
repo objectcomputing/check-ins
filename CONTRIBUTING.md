@@ -123,7 +123,7 @@ A task is complete when
 <a id="markdown-technologies-used-and-dev-setup" name="technologies-used-and-dev-setup"></a>
 The following technologies are required for development
 - Install NVM, use NVM to install latest version of Node.js
-- Java 11
+- Java 14
 - Micronaut 2.0 or above
 - Docker (latest version)
 - Gradle 6.3

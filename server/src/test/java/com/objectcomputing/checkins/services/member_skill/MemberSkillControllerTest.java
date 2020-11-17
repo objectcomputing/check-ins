@@ -17,6 +17,7 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,10 +38,15 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill() ;
+        String skillLevel = "Guru";
+        LocalDate lastUsedDate = LocalDate.now();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
         memberSkillCreateDTO.setMemberid(memberProfile.getId());
         memberSkillCreateDTO.setSkillid(skill.getId());
+        memberSkillCreateDTO.setSkilllevel(skillLevel);
+        memberSkillCreateDTO.setLastuseddate(lastUsedDate);
+
 
         final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
@@ -50,6 +56,33 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
         assertEquals(memberSkill, response.body());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), memberSkill.getId()), response.getHeaders().get("location"));
+        assertEquals(memberSkill.getSkilllevel(), skillLevel);
+        assertEquals(memberSkill.getLastuseddate(), lastUsedDate);
+    }
+
+    @Test
+    void testCreateAMemberSkillWithNullableFieldsNull() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Skill skill = createADefaultSkill() ;
+
+        MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
+        memberSkillCreateDTO.setMemberid(memberProfile.getId());
+        memberSkillCreateDTO.setSkillid(skill.getId());
+        memberSkillCreateDTO.setSkilllevel(null);
+        memberSkillCreateDTO.setLastuseddate(null);
+
+
+        final HttpRequest<MemberSkillCreateDTO> request = HttpRequest.POST("", memberSkillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
+
+        MemberSkill memberSkill = response.body();
+
+        assertEquals(memberSkill, response.body());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), memberSkill.getId()), response.getHeaders().get("location"));
+        assertEquals(memberSkill.getSkilllevel(), null);
+        assertEquals(memberSkill.getLastuseddate(), null);
     }
 
     @Test
@@ -133,8 +166,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void createAMemeberSkillForExistingSkillAndMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = "";
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
         memberSkillCreateDTO.setMemberid(memberSkill.getMemberid());
         memberSkillCreateDTO.setSkillid(memberSkill.getSkillid());
@@ -157,8 +192,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void deleteMemberSkillAsAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = "";
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<Object> request = HttpRequest.DELETE(memberSkill.getId().toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -170,8 +207,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void deleteMemberSkillNotAsAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = "";
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<Object> request = HttpRequest.DELETE(memberSkill.getId().toString()).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
@@ -185,8 +224,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testReadAllMemberSkills() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s","","")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
@@ -200,8 +241,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testReadMemberSkill() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/%s", memberSkill.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
@@ -224,8 +267,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkills() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s&skillid=%s", memberSkill.getMemberid(),
                 memberSkill.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -240,8 +285,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkillsByMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberSkill.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));
@@ -255,8 +302,10 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
     void testFindMemberSkillsBySkillId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
 
-        MemberSkill memberSkill = createMemberSkill(memberProfile,skill);
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?skillid=%s", memberSkill.getSkillid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberSkill>> response = client.toBlocking().exchange(request, Argument.setOf(MemberSkill.class));

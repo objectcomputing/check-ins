@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.*;
@@ -19,7 +20,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new MemberProfileDoesNotExistException("No member profile for id");
+            throw new NotFoundException("No member profile for id");
         }
         return memberProfile.get();
     }
