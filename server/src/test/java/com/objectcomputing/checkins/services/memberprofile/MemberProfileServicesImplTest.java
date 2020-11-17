@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,7 +88,7 @@ public class MemberProfileServicesImplTest {
 
         when(mockMemberProfileRepository.findById(expected.getId())).thenReturn(Optional.empty());
 
-        MemberProfileDoesNotExistException thrown = assertThrows(MemberProfileDoesNotExistException.class, () -> {
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> {
             testObject.getById(testUuid);
         });
 
@@ -142,7 +144,7 @@ public class MemberProfileServicesImplTest {
 
         when(mockMemberProfileRepository.findById(testUuid)).thenReturn(null);
 
-        MemberProfileBadArgException thrown = assertThrows(MemberProfileBadArgException.class, () -> {
+        BadArgException thrown = assertThrows(BadArgException.class, () -> {
             testObject.saveProfile(expected);
         });
 
