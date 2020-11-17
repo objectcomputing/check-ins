@@ -151,12 +151,16 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         final MutableHttpRequest<List<GuildCreateDTO>> request = HttpRequest.POST("guilds", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, String.class));
+                client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(String.format("[\"Guild name was not added because: %s\"]", errorMessage), responseException.getResponse().body());
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        
+        assertEquals(errorMessage, error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
-
+        assertEquals(request.getPath(), href.asText());
     }
 
     @Test

@@ -20,38 +20,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-
-
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller("/services/guild")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -98,61 +74,6 @@ public class GuildController {
                 .body(error);
     }
 
-    @Error(exception = CompositeException.class)
-    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-
-        for (Throwable t : e.getExceptions()) {
-            if (t instanceof GuildBadArgException) {
-                return handleBadArgs(request, (GuildBadArgException) t);
-            }
-            else if (t instanceof GuildNotFoundException) {
-                return handleNotFound(request, (GuildNotFoundException) t);
-            }
-        }
-
-        return HttpResponse.<JsonError>serverError();
-    }
-
-// @Controller("/services/guild")
-// @Secured(SecurityRule.IS_AUTHENTICATED)
-// @Produces(MediaType.APPLICATION_JSON)
-// @Tag(name = "guild")
-// public class GuildController {
-
-//     private final GuildServices guildService;
-
-//     public GuildController(GuildServices guildService) {
-//         this.guildService = guildService;
-//     }
-
-//     @Error(exception = GuildBadArgException.class)
-//     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
-//         JsonError error = new JsonError(e.getMessage())
-//                 .link(Link.SELF, Link.of(request.getUri()));
-
-//         return HttpResponse.<JsonError>badRequest()
-//                 .body(error);
-//     }
-
-
-
-
-
-    // /**
-    //  * Create and save a new guild.
-    //  *
-    //  * @param guild, {@link GuildCreateDTO}
-    //  * @return {@link HttpResponse<Guild>}
-    //  */
-
-    // @Post(value = "/")
-    // public HttpResponse<Guild> createAGuild(@Body @Valid GuildCreateDTO guild, HttpRequest<GuildCreateDTO> request) {
-    //     Guild newGuild = guildService.save(new Guild(guild.getName(), guild.getDescription()));
-    //     return HttpResponse
-    //             .created(newGuild)
-    //             .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), newGuild.getId()))));
-    // }
-
     /**
      * Create and save a new guild.
      *
@@ -174,79 +95,35 @@ public class GuildController {
 
     }
 
-    // /**
-    //  * Load the current guilds into checkinsdb.
-    //  *
-    //  * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
-    //  */
+     /**
+      * Load the current guilds into checkinsdb.
+      *
+      * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
+      */
+     @Post("/guilds")
+     public Single<HttpResponse<?>> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
 
-    // @Post("/guilds")
-    // public HttpResponse<?> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
-    //     List<String> errors = new ArrayList<>();
-    //     List<Guild> guildsCreated = new ArrayList<>();
-    //     for (GuildCreateDTO guildDTO : guildsList) {
-    //         Guild guild = new Guild(guildDTO.getName(), guildDTO.getDescription());
-    //         try {
-    //             guildService.save(guild);
-    //             guildsCreated.add(guild);
-    //         } catch (GuildBadArgException e) {
-    //             errors.add(String.format("Guild %s was not added because: %s", guild.getName(), e.getMessage()));
-    //         }
-    //     }
-    //     if (errors.isEmpty()) {
-    //         return HttpResponse.created(guildsCreated).headers(headers ->
-    //                 headers.location(request.getUri()));
-    //     } else {
-    //         return HttpResponse.badRequest(errors).headers(headers ->
-    //                 headers.location(request.getUri()));
-    //     }
-    // }
-
-    /**
-     * Load the current guilds into checkinsdb.
-     *
-     * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
-     */
-    @Post("/guilds")
-    public Single<HttpResponse<?>> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
-        return Single.fromCallable(() -> {
-            List<String> errors = new ArrayList<>();
-            List<Guild> guildsCreated = new ArrayList<>();
-            for (GuildCreateDTO guildDTO : guildsList) {
-                Guild guild = new Guild(guildDTO.getName(), guildDTO.getDescription());
-                try {
-                    guildService.save(guild);
-                    guildsCreated.add(guild);
-                } catch (CompositeException e) {
-                    errors.add(String.format("Guild %s was not added because: %s", guild.getName(), e.getMessage()));
-                }
-            }
-            if (errors.isEmpty()) {
-                return guildsCreated;
-            }
-            throw new GuildBulkLoadException(errors);
-        }).map(guildsCreated -> HttpResponse.created(guildsCreated)
-                  .headers(headers -> headers.location(request.getUri())));
-    }
-
-    // /**
-    //  * Get guild based on id
-    //  *
-    //  * @param id {@link UUID} of guild
-    //  * @return {@link Guild guild matching id}
-    //  */
-
-    // @Get("/{id}")
-    // public Guild readGuild(UUID id) {
-    //     return guildService.read(id);
-    // }
-
-    // /**
-    //  * Get guild based on id
-    //  *
-    //  * @param id {@link UUID} of guild
-    //  * @return {@link Guild guild matching id}
-    //  */
+         return Single.fromCallable(() -> {
+             List<String> errors = new ArrayList<>();
+             List<Guild> guildCreated = new ArrayList<>();
+             for (GuildCreateDTO guildDTO : guildsList) {
+                 Guild guild = new Guild(guildDTO.getName(),
+                         guildDTO.getDescription());
+                 try {
+                     guildService.save(guild);
+                     guildCreated.add(guild);
+                 } catch (CompositeException e) {
+                     errors.add(String.format("Guild %s was not added because: %s", guild.getName(),
+                             guild.getDescription(), e.getMessage()));
+                 }
+             }
+             if (errors.isEmpty()) {
+                 return guildCreated;
+             }
+             throw new GuildBulkLoadException(errors);
+         }).map(guildCreated -> HttpResponse.created(guildCreated)
+                 .headers(headers -> headers.location(request.getUri())));
+     }
 
     /**
      * Get guild based on id
@@ -270,12 +147,6 @@ public class GuildController {
 
     }
 
-    // @Get("/{?name,memberid}")
-    // public Set<Guild> findGuilds(@Nullable String name, @Nullable UUID memberid) {
-    //     Set<Guild> g = guildService.findByFields(name, memberid);
-    //     return guildService.findByFields(name, memberid);
-    // }
-
     /**
      * Find guild(s) given a combination of the following parameters
      *
@@ -292,22 +163,6 @@ public class GuildController {
                     return (HttpResponse<Set<Guild>>) HttpResponse.ok(guilds);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
-
-    // /**
-    //  * Update guild.
-    //  *
-    //  * @param guild, {@link Guild}
-    //  * @return {@link HttpResponse<Guild>}
-    //  */
-    // @Put("/")
-    // public HttpResponse<?> update(@Body @Valid Guild guild, HttpRequest<Guild> request) {
-    //     Guild updatedGuild = guildService.update(guild);
-    //     return HttpResponse
-    //             .ok()
-    //             .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), guild.getId()))))
-    //             .body(updatedGuild);
-
-    // }
 
     /**
      * Update guild.
