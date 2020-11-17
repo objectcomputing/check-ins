@@ -43,7 +43,8 @@ public class MemberProfileTestUtil {
                 "TestEmail" + seed,
                 "TestInsperityId" + seed,
                 LocalDate.of(2019, 1, 1),
-                "TestBio" + seed);
+                "TestBio" + seed,
+                null);
     }
 
     public static MemberProfile mkMemberProfile() {
@@ -59,6 +60,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
@@ -71,6 +73,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 
     public static void assertProfilesEqual(MemberProfileCreateDTO entity, MemberProfileResponseDTO dto) {
@@ -82,5 +85,6 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 }

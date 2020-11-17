@@ -105,7 +105,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setName(memberProfile.getName());
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
+        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?name=%s", testUser))
@@ -122,7 +122,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setName(memberProfile.getName());
 
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
+        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?role=%s", testRole))
@@ -139,7 +139,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setPdlId(testPdlId);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
+        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null, null))
                 .thenReturn(Collections.EMPTY_SET);
 
         HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
@@ -154,7 +154,7 @@ public class MemberProfileControllerTest {
     public void testGetFindAll() {
         MemberProfile profileOne = mkMemberProfile();
         MemberProfile profileTwo = mkMemberProfile("2");
-        when(mockMemberServices.findByValues(null, null, null, null))
+        when(mockMemberServices.findByValues(null, null, null, null, null))
                 .thenReturn(Set.of(profileOne, profileTwo));
 
         HttpRequest requestFindAll = HttpRequest.GET("")
@@ -176,7 +176,7 @@ public class MemberProfileControllerTest {
         HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfile.getId()))
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(requestFindById, MemberProfileResponseDTO.class);
-        
+
         assertEquals(HttpStatus.OK, response.getStatus());
         assertNotNull(response.body());
         assertProfilesEqual(memberProfile, response.body());
@@ -188,7 +188,7 @@ public class MemberProfileControllerTest {
 
         MemberProfile memberProfile = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
+        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", memberProfile.getName()))
@@ -208,7 +208,7 @@ public class MemberProfileControllerTest {
     public void testGetFindByRole() {
         MemberProfile memberProfile = mkMemberProfile();
 
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
+        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?title=%s", memberProfile.getTitle()))
@@ -229,7 +229,7 @@ public class MemberProfileControllerTest {
         MemberProfile memberProfile = mkMemberProfile();
         memberProfile.setPdlId(testUuid);
 
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
+        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null, null))
                 .thenReturn(Collections.singleton(memberProfile));
 
         HttpRequest requestFindByName = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
@@ -347,7 +347,7 @@ public class MemberProfileControllerTest {
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertProfilesEqual(requestBody, response.body());
+        assertProfilesEqual(requestBody,  response.body());
     }
 
     // PUT - Request with empty body
