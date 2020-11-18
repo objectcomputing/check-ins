@@ -15,13 +15,15 @@ export const resolve = async (promise) => {
   } catch (e) {
     resolved.error = e;
     console.log(e);
-    window.snackDispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "error",
-        toast: e.message,
-      },
-    });
+    if (window.snackDispatch) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: e.message,
+        },
+      });
+    }
   }
 
   return resolved;
