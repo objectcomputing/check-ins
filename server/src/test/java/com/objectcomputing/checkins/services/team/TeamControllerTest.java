@@ -172,7 +172,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         final MutableHttpRequest<List<TeamCreateDTO>> request = HttpRequest.POST("teams", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, String.class));
+                client.toBlocking().exchange(request, Map.class));
 
 
         assertEquals(String.format("[\"Team %s was not added because: %s\"]", teamCreateDTO2.getName(),errorMessage), responseException.getResponse().body());
