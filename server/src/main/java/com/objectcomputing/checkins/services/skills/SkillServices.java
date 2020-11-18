@@ -14,4 +14,6 @@ public interface SkillServices {
     Set<Skill> findByValue(String name, Boolean pending);
 
     void delete(UUID id);
+
+    Skill tagSkill(UUID skillId, UUID tagId);
 }

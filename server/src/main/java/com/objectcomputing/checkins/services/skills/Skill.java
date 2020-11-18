@@ -42,7 +42,9 @@ public class Skill {
     @Schema(description = "the skill is extraneous (or not)", required = true)
     private boolean extraneous = false;
 
-    @ManyToMany(mappedBy = "skills", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "skills",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
     private List<SkillTag> tags;
 
     public Skill() {
@@ -104,6 +106,14 @@ public class Skill {
 
     public void setExtraneous(boolean extraneous) {
         this.extraneous = extraneous;
+    }
+
+    public List<SkillTag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<SkillTag> tags) {
+        this.tags = tags;
     }
 
     @Override

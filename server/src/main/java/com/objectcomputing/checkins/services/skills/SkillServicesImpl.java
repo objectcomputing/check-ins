@@ -1,19 +1,24 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.skills.tags.*;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class SkillServicesImpl implements SkillServices {
 
     private final SkillRepository skillRepository;
+    private final SkillSkillTagLookupRepository skillTagLookupRepository;
+    private final SkillTagRepository skillTagRepository;
 
-    public SkillServicesImpl(SkillRepository skillRepository) {
+    public SkillServicesImpl(SkillRepository skillRepository,
+                             SkillSkillTagLookupRepository skillTagLookupRepository,
+                             SkillTagRepository skillTagRepository) {
         this.skillRepository = skillRepository;
+        this.skillTagLookupRepository = skillTagLookupRepository;
+        this.skillTagRepository = skillTagRepository;
     }
 
     public Skill save(Skill skill) {
@@ -57,6 +62,18 @@ public class SkillServicesImpl implements SkillServices {
 
     public void delete(@NotNull UUID id) {
         skillRepository.deleteById(id);
+    }
+
+    @Override
+    public Skill tagSkill(UUID skillId, UUID tagId) {
+        Skill tagMe = skillRepository.findById(skillId).orElseThrow(SkillNotFoundException::new);
+        if (tagMe.getTags() == null) {
+            tagMe.setTags(new ArrayList<>());
+        }
+        SkillTag tag = skillTagRepository.findById(tagId).orElseThrow(SkillTagNotFoundException::new);
+        tagMe.getTags().add(tag);
+        skillTagLookupRepository.save(new SkillSkillTagLookup(skillId, tagId));
+        return skillRepository.findById(skillId).get();
     }
 
     protected List<Skill> findByNameLike(String name) {

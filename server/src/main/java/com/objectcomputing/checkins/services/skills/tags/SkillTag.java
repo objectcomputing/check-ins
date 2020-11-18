@@ -35,7 +35,8 @@ public class SkillTag {
     @Schema(description = "the description of the skill tag", required = false)
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     @JoinTable(name = "skills_skill_tags",
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))

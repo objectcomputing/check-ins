@@ -13,6 +13,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -48,6 +49,11 @@ public class SkillController {
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @Put("/{skillId}/tag/{tagId}")
+    public HttpResponse<Skill> tagSkill(@NotNull UUID skillId, @NotNull UUID tagId) {
+        return HttpResponse.ok(skillServices.tagSkill(skillId, tagId));
     }
 
     /**
