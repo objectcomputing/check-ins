@@ -16,6 +16,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
@@ -90,7 +91,7 @@ public class FileServicesImplTest {
     private CheckinDocumentServices checkinDocumentServices;
 
     @Mock
-    private GoogleDriveAccessor googleDriveAccessor;
+    private GoogleAccessor googleAccessor;
 
     @Mock
     private SecurityService securityService;
@@ -139,7 +140,7 @@ public class FileServicesImplTest {
         Mockito.reset(mockInputStream);
         Mockito.reset(checkInServices);
         Mockito.reset(checkinDocumentServices);
-        Mockito.reset(googleDriveAccessor);
+        Mockito.reset(googleAccessor);
         Mockito.reset(securityService);
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
@@ -163,7 +164,7 @@ public class FileServicesImplTest {
         fileList.setFiles(mockFiles);
 
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
@@ -172,7 +173,7 @@ public class FileServicesImplTest {
 
         assertNotNull(result);
         assertEquals(fileList.getFiles().iterator().next().getId(), result.iterator().next().getFileId());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
         verify(checkInServices, times(0)).read(any(UUID.class));
     }
@@ -196,7 +197,7 @@ public class FileServicesImplTest {
         final Set<CheckinDocument> testCheckinDocument = new HashSet<>();
         testCheckinDocument.add(testCd);
 
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
         when(get.execute()).thenReturn(file);
@@ -210,7 +211,7 @@ public class FileServicesImplTest {
 
         assertNotNull(result);
         assertEquals(file.getId(), result.iterator().next().getFileId());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
         verify(checkInServices, times(1)).read(testCheckinId);
     }
@@ -219,14 +220,14 @@ public class FileServicesImplTest {
     void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(testCheckinId));
 
         assertEquals(String.format("Unable to find checkin record with id %s", testCheckinId), responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
         verify(checkInServices, times(1)).read(testCheckinId);
     }
@@ -236,7 +237,7 @@ public class FileServicesImplTest {
 
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -246,7 +247,7 @@ public class FileServicesImplTest {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(any(UUID.class));
         verify(checkInServices, times(1)).read(any(UUID.class));
     }
@@ -254,7 +255,7 @@ public class FileServicesImplTest {
     @Test
     void testFindByCheckinIdForUnauthorizedUser() throws IOException {
         UUID testCheckinId = UUID.randomUUID();
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
@@ -263,7 +264,7 @@ public class FileServicesImplTest {
                 services.findFiles(testCheckinId));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
     }
@@ -271,7 +272,7 @@ public class FileServicesImplTest {
     @Test
     void testFindFilesDriveCantConnect() throws IOException {
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.findFiles(null));
@@ -284,7 +285,7 @@ public class FileServicesImplTest {
 
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.execute()).thenThrow(testException);
@@ -293,7 +294,7 @@ public class FileServicesImplTest {
                 () -> services.findFiles(null));
 
         assertEquals(testException.getMessage(), responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
     }
 
     @Test
@@ -308,7 +309,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
         when(get.execute()).thenThrow(testException);
@@ -317,7 +318,7 @@ public class FileServicesImplTest {
                                                             () -> services.findFiles(testCheckinId));
 
         assertEquals(testException.getMessage(), responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
         verify(checkInServices, times(1)).read(testCheckinId);
     }
@@ -325,10 +326,10 @@ public class FileServicesImplTest {
     @Test
     void testFindFilesThrowsIOException() throws IOException {
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
-        when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
+        when(googleAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
         assertThrows(FileRetrievalException.class, () -> services.findFiles(null));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
         verify(checkInServices, times(0)).read(any(UUID.class));
     }
@@ -344,7 +345,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenReturn(get);
         doAnswer(new Answer<Void>() {
@@ -359,7 +360,7 @@ public class FileServicesImplTest {
         final java.io.File resultFile = services.downloadFiles(testUploadDocId);
 
         assertEquals(testFile.length(), resultFile.length());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(any(UUID.class));
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(get, times(1)).executeMediaAndDownloadTo(any(OutputStream.class));
@@ -374,7 +375,7 @@ public class FileServicesImplTest {
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenReturn(get);
         doAnswer(new Answer<Void>() {
@@ -389,7 +390,7 @@ public class FileServicesImplTest {
         final java.io.File resultFile = services.downloadFiles(testUploadDocId);
 
         assertEquals(testFile.length(), resultFile.length());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(any(UUID.class));
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(get, times(1)).executeMediaAndDownloadTo(any(OutputStream.class));
@@ -404,7 +405,7 @@ public class FileServicesImplTest {
                 services.downloadFiles(invalidUploadDocId));
 
         assertEquals(String.format("Unable to find record with id %s", invalidUploadDocId), responseException.getMessage());
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkInServices, times(0)).read(any(UUID.class));
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(invalidUploadDocId);
     }
@@ -423,7 +424,7 @@ public class FileServicesImplTest {
                 services.downloadFiles(testUploadDocId));
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
     }
@@ -436,13 +437,13 @@ public class FileServicesImplTest {
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.downloadFiles(testUploadDocId));
 
         assertEquals("Unable to access Google Drive", responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
     }
 
     @Test
@@ -457,7 +458,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenThrow(testException);
 
@@ -465,7 +466,7 @@ public class FileServicesImplTest {
                                                             () -> services.downloadFiles(testUploadDocId));
 
         assertEquals(testException.getMessage(), responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(any());
     }
@@ -478,10 +479,10 @@ public class FileServicesImplTest {
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
+        when(googleAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
         assertThrows(FileRetrievalException.class, () -> services.downloadFiles(testUploadDocId));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(testUploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
     }
@@ -497,13 +498,13 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
         services.deleteFile(uploadDocId);
 
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -517,13 +518,13 @@ public class FileServicesImplTest {
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
         services.deleteFile(uploadDocId);
 
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
@@ -541,7 +542,7 @@ public class FileServicesImplTest {
         assertEquals(String.format("Unable to find record with id %s", uploadDocId), responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(0)).read(testCheckinId);
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
 
@@ -554,7 +555,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
@@ -564,7 +565,7 @@ public class FileServicesImplTest {
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
 
@@ -578,7 +579,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.deleteFile(uploadDocId));
@@ -586,7 +587,7 @@ public class FileServicesImplTest {
         assertEquals("Unable to access Google Drive", responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
 
@@ -600,7 +601,7 @@ public class FileServicesImplTest {
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
         when(delete.execute()).thenThrow(testException);
@@ -613,7 +614,7 @@ public class FileServicesImplTest {
         assertEquals(testException.getMessage(), responseException.getMessage());
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkInServices, times(1)).read(testCheckinId);
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
 
@@ -626,10 +627,10 @@ public class FileServicesImplTest {
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(googleDriveAccessor.accessGoogleDrive()).thenThrow(IOException.class);
+        when(googleAccessor.accessGoogleDrive()).thenThrow(IOException.class);
 
         assertThrows(FileRetrievalException.class, () -> services.deleteFile(uploadDocId));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).deleteByUploadDocId(uploadDocId);
     }
 
@@ -667,7 +668,7 @@ public class FileServicesImplTest {
         when(testMemberProfile.getName()).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.setFields(any(String.class))).thenReturn(list);
@@ -689,7 +690,7 @@ public class FileServicesImplTest {
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
 
@@ -721,7 +722,7 @@ public class FileServicesImplTest {
         when(testMemberProfile.getName()).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
@@ -740,7 +741,7 @@ public class FileServicesImplTest {
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
 
@@ -771,7 +772,7 @@ public class FileServicesImplTest {
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn(memberName);
 
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
@@ -790,7 +791,7 @@ public class FileServicesImplTest {
         assertEquals(fileToUpload.getFilename(), result.getName());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).save(any(CheckinDocument.class));
     }
 
@@ -834,7 +835,7 @@ public class FileServicesImplTest {
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(0)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
 
@@ -856,7 +857,7 @@ public class FileServicesImplTest {
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(0)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(0)).accessGoogleDrive();
+        verify(googleAccessor, times(0)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
 
@@ -872,7 +873,7 @@ public class FileServicesImplTest {
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn("test.name");
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(null);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
                 services.uploadFile(testCheckinId, fileToUpload));
@@ -880,7 +881,7 @@ public class FileServicesImplTest {
         assertEquals("Unable to access Google Drive", responseException.getMessage());
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
 
@@ -897,7 +898,7 @@ public class FileServicesImplTest {
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn("test.name");
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.setFields(anyString())).thenReturn(list);
@@ -906,7 +907,7 @@ public class FileServicesImplTest {
         assertThrows(FileRetrievalException.class, () -> services.uploadFile(testCheckinId, fileToUpload));
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any(UUID.class));
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(0)).save(any());
     }
 
@@ -926,7 +927,7 @@ public class FileServicesImplTest {
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn(memberName);
 
-        when(googleDriveAccessor.accessGoogleDrive()).thenReturn(drive);
+        when(googleAccessor.accessGoogleDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.setFields(any(String.class))).thenReturn(list);
@@ -938,7 +939,7 @@ public class FileServicesImplTest {
 
         //assert
         assertEquals(testException.getMessage(), responseException.getMessage());
-        verify(googleDriveAccessor, times(1)).accessGoogleDrive();
+        verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkInServices, times(1)).read(testCheckinId);
         verify(memberProfileServices, times(1)).getById(any());
         verify(checkinDocumentServices, times(0)).save(any());

@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -37,24 +38,24 @@ public class MemberProfileController {
 
     public MemberProfileController(MemberProfileServices memberProfileServices,
                                    EventLoopGroup eventLoopGroup,
-                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
+                                   @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = MemberProfileBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileBadArgException e) {
-        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest().body(error);
-    }
-
-    @Error(exception = MemberProfileDoesNotExistException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileDoesNotExistException e) {
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, NotFoundException e) {
         JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>notFound().body(error);
+    }
+
+    @Error(exception = MemberProfileAlreadyExistsException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileAlreadyExistsException e) {
+        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest().body(error);
     }
 
     /**

@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
-
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.*;
@@ -42,15 +39,14 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
         if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
+            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database",
                     memberProfile.getWorkEmail()));
         }
+
         if (memberProfile.getId() == null) {
             return memberProfileRepository.save(memberProfile);
         }
-        if (memberProfileRepository.findById(memberProfile.getId()) == null) {
-            throw new BadArgException("No member profile exists for the ID");
-        }
+
         return memberProfileRepository.update(memberProfile);
     }
 }

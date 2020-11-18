@@ -7,9 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MemberProfileTestUtil {
 
-    public static UUID testPdlId = UUID.fromString("e134d349-abcd-4a58-b9d3-42cc48375628");
-    public static UUID testUuid = UUID.fromString("e134d349-cf02-4a58-b9d3-42cc48375628");
-
     public static MemberProfileCreateDTO mkCreateMemberProfileDTO() {
         MemberProfileCreateDTO dto = new MemberProfileCreateDTO();
         dto.setName("TestName");
