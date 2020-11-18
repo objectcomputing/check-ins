@@ -19,11 +19,11 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class AgendaItemServicesImpl implements AgendaItemServices {
 
-    private CheckInRepository checkinRepo;
-    private AgendaItemRepository agendaItemRepository;
-    private MemberProfileRepository memberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
+    private final CheckInRepository checkinRepo;
+    private final AgendaItemRepository agendaItemRepository;
+    private final MemberProfileRepository memberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
 
     public AgendaItemServicesImpl(CheckInRepository checkinRepo, AgendaItemRepository agendaItemRepository,
                                    MemberProfileRepository memberRepo, SecurityService securityService,
@@ -34,7 +34,6 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
     }
-
 
     @Override
     public AgendaItem save(AgendaItem agendaItem) {

@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,13 +33,13 @@ import java.util.concurrent.ExecutorService;
 @Tag(name = "member-skill")
 public class MemberSkillController {
 
-    @Inject
-    private MemberSkillServices memberSkillsService;
-    private EventLoopGroup eventLoopGroup;
-    private ExecutorService ioExecutorService;
+    private final MemberSkillServices memberSkillsService;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
     public MemberSkillController(MemberSkillServices memberSkillServices,
-                                 EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+                                 EventLoopGroup eventLoopGroup,
+                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.memberSkillsService = memberSkillServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
@@ -101,7 +100,7 @@ public class MemberSkillController {
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
         return Single.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
-                memberSkill.getSkillid())))
+                memberSkill.getSkillid(), memberSkill.getSkilllevel(), memberSkill.getLastuseddate())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdMemberSkill -> (HttpResponse<MemberSkill>)HttpResponse
                         .created(createdMemberSkill)

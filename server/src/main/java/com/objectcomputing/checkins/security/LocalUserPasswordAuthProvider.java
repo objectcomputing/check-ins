@@ -21,11 +21,13 @@ import java.util.stream.Collectors;
 @Requires(env = "local")
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
-    private CurrentUserServices currentUserServices;
-    private RoleRepository roleRepository;
-    private UsersStore usersStore;
+    private final CurrentUserServices currentUserServices;
+    private final RoleRepository roleRepository;
+    private final UsersStore usersStore;
 
-    public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices, RoleRepository roleRepository, UsersStore usersStore) {
+    public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices,
+                                         RoleRepository roleRepository,
+                                         UsersStore usersStore) {
         this.currentUserServices = currentUserServices;
         this.roleRepository = roleRepository;
         this.usersStore = usersStore;

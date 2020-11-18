@@ -143,7 +143,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    void testCreateACheckInNoteForNonExistingMemberIdId() {
+    void testCreateACheckInNoteForNonExistingMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 

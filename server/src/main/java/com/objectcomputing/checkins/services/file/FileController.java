@@ -28,7 +28,7 @@ import java.util.UUID;
 @Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
 public class FileController {
 
-    private FileServices fileServices;
+    private final FileServices fileServices;
 
     public FileController(FileServices fileServices) {
         this.fileServices = fileServices;

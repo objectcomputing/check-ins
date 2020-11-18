@@ -100,7 +100,7 @@ const getCheckins = async (id, pdlId, date, dispatch) => {
         data.push(checkin);
       }
     }
-  } else if (data.length === 0) {
+  } else if (data && data.length === 0) {
     if (pdlId) {
       const res = await createCheckin({
         teamMemberId: id,
@@ -113,7 +113,10 @@ const getCheckins = async (id, pdlId, date, dispatch) => {
       data = [checkin];
     }
   }
-  dispatch({ type: UPDATE_CHECKINS, payload: data });
+  //without this check you get infinite checkin calls
+  if (data.length > 0) {
+    dispatch({ type: UPDATE_CHECKINS, payload: data });
+  }
 };
 
 const AppContextProvider = (props) => {

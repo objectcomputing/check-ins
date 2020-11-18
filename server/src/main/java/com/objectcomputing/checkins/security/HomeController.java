@@ -9,7 +9,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.views.View;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,11 @@ import java.util.Optional;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class HomeController {
 
-    @Inject
-    Environment environment;
+    private final Environment environment;
+
+    public HomeController(Environment environment) {
+        this.environment = environment;
+    }
 
     @Get("/forbidden")
     @View("forbidden")

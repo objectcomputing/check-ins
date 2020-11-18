@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -12,7 +15,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -27,15 +29,35 @@ import java.util.UUID;
 @Tag(name = "action-item")
 public class ActionItemController {
 
-    @Inject
     private ActionItemServices actionItemServices;
+    public ActionItemController(ActionItemServices actionItemServices) {
+        this.actionItemServices = actionItemServices;
+    }
 
-    @Error(exception = ActionItemBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, ActionItemBadArgException e) {
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, NotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
+
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = PermissionException.class)
+    public HttpResponse<?> handleBadPermissions(HttpRequest<?> request, PermissionException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>unauthorized()
                 .body(error);
     }
 
@@ -126,7 +148,7 @@ public class ActionItemController {
             try {
                 actionItemServices.save(actionItem);
                 actionItemsCreated.add(actionItem);
-            } catch (ActionItemBadArgException e) {
+            } catch (BadArgException e) {
                 errors.add(String.format("Member %s's action item was not added to CheckIn %s because: %s", actionItem.getCreatedbyid(),
                         actionItem.getCheckinid(), e.getMessage()));
             }

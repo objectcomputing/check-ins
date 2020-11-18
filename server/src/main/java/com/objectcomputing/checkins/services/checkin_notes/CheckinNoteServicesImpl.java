@@ -19,11 +19,11 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
-    private CheckInRepository checkinRepo;
-    private CheckinNoteRepository checkinNoteRepository;
-    private MemberProfileRepository memberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
+    private final CheckInRepository checkinRepo;
+    private final CheckinNoteRepository checkinNoteRepository;
+    private final MemberProfileRepository memberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
 
     public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckinNoteRepository checkinNoteRepository,
                                    MemberProfileRepository memberRepo, SecurityService securityService,
@@ -34,7 +34,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
     }
-
 
     @Override
     public CheckinNote save(CheckinNote checkinNote) {
@@ -79,7 +78,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         return checkInNoteResult;
     }
 
-
     @Override
     public CheckinNote update(CheckinNote checkinNote) {
         CheckinNote checkinNoteRet = null;
@@ -106,7 +104,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         }
         return checkinNoteRet;
     }
-
 
     @Override
     public Set<CheckinNote> findByFields(UUID checkinid, UUID createbyid) {
