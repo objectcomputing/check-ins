@@ -14,15 +14,21 @@ const actionItems = [
 ];
 
 const server = setupServer(
-    rest.get('http://localhost:8080/services/member-profile/current', (req, res, ctx) => {
+  rest.get(
+    "http://localhost:8080/services/member-profile/current",
+    (req, res, ctx) => {
       return res(ctx.json({ id: "12345", name: "Test User" }));
-    }),
-    rest.get('http://localhost:8080/services/team/member', (req, res, ctx) => {
-      return res(ctx.json([{ id: "12345", name: "Test User" }]));
-    }),
-    rest.get('http://localhost:8080/services/action-item?checkinid=394810298371&createdbyid=912834091823', (req, res, ctx) => {
+    }
+  ),
+  rest.get("http://localhost:8080/services/team/member", (req, res, ctx) => {
+    return res(ctx.json([{ id: "12345", name: "Test User" }]));
+  }),
+  rest.get(
+    "http://localhost:8080/services/action-item?checkinid=394810298371&createdbyid=912834091823",
+    (req, res, ctx) => {
       return res(ctx.json(actionItems));
-    })
+    }
+  )
 );
 
 beforeAll(() => server.listen());
@@ -84,7 +90,7 @@ it.skip("handles drag and drop", () => {
   ];
   const { container } = render(
     <AppContextProvider value={initialState}>
-      <ActionItemsPanel memberName="ms. test" mockActionItems={actionItems} />
+      <ActionItemsPanel checkinId="394810371" memberName="ms. test" />
     </AppContextProvider>
   );
 
