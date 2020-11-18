@@ -30,6 +30,8 @@ public class GoogleServiceConfigurationTest {
         assertNull(googleServiceConfiguration.getToken_uri());
         assertNull(googleServiceConfiguration.getAuth_provider_x509_cert_url());
         assertNull(googleServiceConfiguration.getClient_x509_cert_url());
+        assertNull(googleServiceConfiguration.getOauth_client_id());
+        assertNull(googleServiceConfiguration.getOauth_client_secret());
     }
 
     @Test
@@ -37,7 +39,7 @@ public class GoogleServiceConfigurationTest {
         GoogleServiceConfiguration googleServiceConfiguration = new GoogleServiceConfiguration();
 
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
-        assertEquals(violations.size(), 11);
+        assertEquals(13, violations.size());
         for (ConstraintViolation<GoogleServiceConfiguration> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -80,6 +82,12 @@ public class GoogleServiceConfigurationTest {
         googleServiceConfiguration.setClient_x509_cert_url("some.cert.url");
         assertEquals("some.cert.url", googleServiceConfiguration.getClient_x509_cert_url());
 
+        googleServiceConfiguration.setOauth_client_id("some.client.id");
+        assertEquals("some.client.id", googleServiceConfiguration.getClient_id());
+
+        googleServiceConfiguration.setOauth_client_secret("some.client.secret");
+        assertEquals("some.client.secret", googleServiceConfiguration.getOauth_client_secret());
+
         String toString = googleServiceConfiguration.toString();
         assertTrue(toString.contains("some.directory.id"));
         assertTrue(toString.contains("some.type"));
@@ -92,6 +100,8 @@ public class GoogleServiceConfigurationTest {
         assertTrue(toString.contains("some.token.uri"));
         assertTrue(toString.contains("some.auth.provider"));
         assertTrue(toString.contains("some.cert.url"));
+        assertTrue(toString.contains("some.client.id"));
+        assertTrue(toString.contains("some.client.secret"));
 
         Set<ConstraintViolation<GoogleServiceConfiguration>> violations = validator.validate(googleServiceConfiguration);
         assertTrue(violations.isEmpty());

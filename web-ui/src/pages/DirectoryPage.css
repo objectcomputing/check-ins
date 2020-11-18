@@ -1,7 +1,6 @@
 .add-member {
+  align-items: center;
   display: flex;
-  justify-content: center;
-  margin: 20px;
 }
 
 .add-member-modal {
@@ -50,5 +49,15 @@
 
 .directory-page .search {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.directory-page .MuiContainer-root {
+  margin: 0px;
+  max-width: 420px;
+  padding-right: 0px;
+  padding-left: 6px;
 }

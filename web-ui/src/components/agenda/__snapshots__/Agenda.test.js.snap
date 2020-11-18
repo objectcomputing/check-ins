@@ -32,7 +32,7 @@ exports[`renders correctly 1`] = `
       data-rbd-droppable-id="droppable"
     >
       <div
-        className="image-div"
+        className="skeleton-div"
       >
         <div
           className="drag-icon"
@@ -60,28 +60,10 @@ exports[`renders correctly 1`] = `
               }
             }
           />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
         </div>
       </div>
       <div
-        className="image-div"
+        className="skeleton-div"
       >
         <div
           className="drag-icon"
@@ -109,28 +91,10 @@ exports[`renders correctly 1`] = `
               }
             }
           />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
         </div>
       </div>
       <div
-        className="image-div"
+        className="skeleton-div"
       >
         <div
           className="drag-icon"
@@ -158,39 +122,16 @@ exports[`renders correctly 1`] = `
               }
             }
           />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
-            }
-          />
         </div>
       </div>
       <div
-        style={
-          Object {
-            "borderBottom": "2px solid black",
-            "display": "flex",
-            "padding": "12px 8px",
-          }
-        }
+        className="add-agenda-item-div"
       >
         <input
           className="text-input"
           onChange={[Function]}
-          placeholder="Add agenda item"
+          onKeyPress={[Function]}
+          placeholder="Add an agenda item"
           value=""
         />
         <button

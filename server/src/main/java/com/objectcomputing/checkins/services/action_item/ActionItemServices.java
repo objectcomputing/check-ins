@@ -9,8 +9,6 @@ public interface ActionItemServices {
 
     ActionItem read(UUID id);
 
-    Set<ActionItem> readAll();
-
     ActionItem update(ActionItem actionItem);
 
     Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid);

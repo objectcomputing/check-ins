@@ -40,6 +40,8 @@ exports[`renders correctly 1`] = `
           engineer
           <br />
           testerson@oci.com
+          <br />
+          STL
         </div>
       </span>
     </div>

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -11,8 +10,11 @@ import java.util.UUID;
 @Singleton
 public class SkillServicesImpl implements SkillServices {
 
-    @Inject
-    private SkillRepository skillRepository;
+    private final SkillRepository skillRepository;
+
+    public SkillServicesImpl(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
+    }
 
     public Skill save(Skill skill) {
         Skill newSkill = null;

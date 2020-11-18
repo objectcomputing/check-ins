@@ -19,7 +19,7 @@ const MemberSummaryCard = ({ member, index }) => {
   const { memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { imageURL, name, workEmail, title } = member;
+  const { imageURL, location, name, workEmail, title } = member;
   const [currentMember, setCurrentMember] = useState(member);
   const [open, setOpen] = useState(false);
 
@@ -43,6 +43,8 @@ const MemberSummaryCard = ({ member, index }) => {
             {title}
             <br />
             {workEmail}
+            <br />
+            {location}
           </div>
         }
         title={name}
@@ -51,9 +53,9 @@ const MemberSummaryCard = ({ member, index }) => {
         {isAdmin && (
           <div className="member-card-actions">
             <CardActions>
-              <Button onClick={handleOpen}>Edit Member</Button>
-              <Button>Terminate Member</Button>
-              <Button>Delete Member</Button>
+              <Button onClick={handleOpen}>Edit</Button>
+              <Button>Terminate</Button>
+              <Button>Delete</Button>
               <MemberModal
                 member={currentMember}
                 open={open}

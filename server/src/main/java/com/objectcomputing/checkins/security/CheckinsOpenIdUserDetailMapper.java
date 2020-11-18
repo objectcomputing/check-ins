@@ -11,7 +11,6 @@ import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.*;
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +22,14 @@ import java.util.stream.Collectors;
 @Replaces(DefaultOpenIdUserDetailsMapper.class)
 public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
-    @Inject
-    private MemberProfileRepository memberProfileRepository;
+    private final MemberProfileRepository memberProfileRepository;
+    private final RoleRepository roleRepository;
 
-    @Inject
-    private RoleRepository roleRepository;
+    public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
+                                          RoleRepository roleRepository) {
+        this.memberProfileRepository = memberProfileRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @NonNull
     @Override

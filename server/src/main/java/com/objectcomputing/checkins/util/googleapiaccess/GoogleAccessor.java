@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Singleton
 @Requires(notEnv = Environment.TEST)
+@Singleton
 public class GoogleAccessor {
 
     private final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();

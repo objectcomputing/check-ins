@@ -15,8 +15,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@Singleton
 @Requires(notEnv = Environment.TEST)
+@Singleton
 public class GoogleAuthenticator {
 
     private GoogleServiceConfiguration gServiceConfig;

@@ -59,6 +59,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Menu() {
   const { dispatch } = useContext(AppContext);
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
+  const { imageUrl } = userProfile
+      ? userProfile
+      : {};
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -109,12 +114,7 @@ function Menu() {
           Home
         </Link>
       </Button>
-      <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teams">
-          Teams
-        </Link>
-      </Button>
+
       <br />
       <Button
         onClick={() =>
@@ -137,6 +137,11 @@ function Menu() {
         </Link>
       </Button>
       <br />
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/teams">
+          Teams
+        </Link>
+      </Button>
       {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">
@@ -173,7 +178,11 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <AvatarComponent />
+          <AvatarComponent imageUrl={imageUrl} style={{
+              position: "absolute",
+              right: "5px",
+              top: "10px",
+          }} />
         </div>
         <Popper
           open={open}
