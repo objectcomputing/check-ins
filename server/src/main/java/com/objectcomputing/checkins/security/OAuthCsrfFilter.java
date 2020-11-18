@@ -12,7 +12,7 @@ import org.reactivestreams.Publisher;
 
 
 
-@Filter(value = {"/services/*", "/services/*"})
+@Filter(value = {"/services/*"})
 @Requires(env = Environment.GOOGLE_COMPUTE)
 public class OAuthCsrfFilter extends OncePerRequestHttpServerFilter {
 
