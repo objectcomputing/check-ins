@@ -11,6 +11,15 @@ export const getAllMembers = async (cookie) => {
   });
 };
 
+export const getAllPDLs = async (cookie) => {
+  return resolve({
+    method: "get",
+    url: "/services/role?role=PDL",
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getMembersByPDL = async (id, cookie) => {
   return resolve({
     method: "get",
@@ -59,6 +68,16 @@ export const getCurrentUser = async (cookie) => {
     method: "get",
     url: `${memberProfileUrl}/current`,
     responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const createMember = async (newMember, cookie) => {
+  return resolve({
+    method: "post",
+    url: memberProfileUrl,
+    responseType: "json",
+    data: newMember,
     headers: { "X-CSRF-Header": cookie },
   });
 };
