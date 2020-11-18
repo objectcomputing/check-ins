@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.UserPhoto;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.cache.annotation.CacheConfig;
@@ -36,9 +36,9 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
 
         byte[] photoData = new byte[0];
 
-        Set<MemberProfile> memberProfile = memberProfileServices.findByValues(null, null, null, workEmail);
+        Set<MemberProfile> memberProfile = memberProfileServices.findByValues(null, null, null, workEmail, null);
         if(memberProfile.isEmpty()) {
-            throw new MemberProfileDoesNotExistException(String.format("No member profile exists for the email %s", workEmail));
+            throw new NotFoundException(String.format("No member profile exists for the email %s", workEmail));
         }
 
         Directory directory = googleApiAccess.getDirectory();

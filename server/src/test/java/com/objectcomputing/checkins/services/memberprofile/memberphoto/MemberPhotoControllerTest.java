@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -56,7 +56,7 @@ public class MemberPhotoControllerTest {
         String testEmail = "test@test.com";
 
         when(memberPhotoService.getImageByEmailAddress(testEmail))
-                .thenThrow(new MemberProfileDoesNotExistException(String.format("No member profile exists for the email %s", testEmail)));
+                .thenThrow(new NotFoundException(String.format("No member profile exists for the email %s", testEmail)));
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
             client.toBlocking().exchange(HttpRequest
