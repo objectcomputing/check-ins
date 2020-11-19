@@ -15,9 +15,9 @@ import java.util.Optional;
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    private MemberProfileServices memberProfileServices;
-    private MemberProfileRepository memberProfileRepo;
-    private RoleServices roleServices;
+    private final MemberProfileServices memberProfileServices;
+    private final MemberProfileRepository memberProfileRepo;
+    private final RoleServices roleServices;
 
     public CurrentUserServicesImpl(MemberProfileServices memberProfileServices,
                                    MemberProfileRepository memberProfileRepository,
@@ -40,7 +40,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
         MemberProfile user = memberProfileServices.saveProfile(new MemberProfile(name, "", null,
-                "", workEmail, "", null, ""));
+                "", workEmail, "", null, "", null));
 
         roleServices.save(new Role(RoleType.MEMBER, user.getId()));
 

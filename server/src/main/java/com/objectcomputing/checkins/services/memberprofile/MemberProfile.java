@@ -68,15 +68,34 @@ public class MemberProfile {
     @Schema(description = "employee's biography")
     private String bioText;
 
-    public MemberProfile(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                         @Nullable String bioText) {
-       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
+    @Nullable
+    @Column(name = "supervisorid")
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the supervisor this member is associated with", nullable = true)
+    private UUID supervisorid;
+
+    public MemberProfile(@Nullable String name,
+                         @Nullable String title,
+                         @Nullable UUID pdlId,
+                         @Nullable String location,
+                         String workEmail,
+                         @Nullable String insperityId,
+                         @Nullable LocalDate startDate,
+                         @Nullable String bioText,
+                         @Nullable UUID supervisorid) {
+       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
     }
 
-    public MemberProfile(UUID id, @Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String location,
-                         String workEmail, @Nullable String insperityId, @Nullable LocalDate startDate,
-                         @Nullable String bioText) {
+    public MemberProfile(UUID id,
+                         @Nullable String name,
+                         @Nullable String title,
+                         @Nullable UUID pdlId,
+                         @Nullable String location,
+                         String workEmail,
+                         @Nullable String insperityId,
+                         @Nullable LocalDate startDate,
+                         @Nullable String bioText,
+                         @Nullable UUID supervisorid) {
         this.id = id;
         this.name=name;
         this.title=title;
@@ -86,6 +105,7 @@ public class MemberProfile {
         this.insperityId=insperityId;
         this.startDate=startDate;
         this.bioText=bioText;
+        this.supervisorid=supervisorid;
     }
 
     public MemberProfile() {
@@ -163,6 +183,15 @@ public class MemberProfile {
         this.bioText = bioText;
     }
 
+    @Nullable
+    public UUID getSupervisorid() {
+        return supervisorid;
+    }
+
+    public void setSupervisorid(@Nullable UUID supervisorid) {
+        this.supervisorid = supervisorid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -176,12 +205,13 @@ public class MemberProfile {
                 Objects.equals(workEmail, that.workEmail) &&
                 Objects.equals(insperityId, that.insperityId) &&
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(bioText, that.bioText);
+                Objects.equals(bioText, that.bioText) &&
+                Objects.equals(supervisorid, that.supervisorid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
+        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
     }
 
     @Override
@@ -196,6 +226,7 @@ public class MemberProfile {
                 ", insperityId='" + insperityId + '\'' +
                 ", startDate=" + startDate +
                 ", bioText='" + bioText + '\'' +
+                ", supervisorid=" + supervisorid +
                 '}';
     }
 }

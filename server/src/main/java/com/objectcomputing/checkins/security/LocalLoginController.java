@@ -51,7 +51,6 @@ public class LocalLoginController {
         this.currentUserServices = currentUserServices;
     }
 
-
     @View("login")
     @Get
     public Map<String, String> login() {

@@ -50,7 +50,6 @@ const Notes = (props) => {
       try {
         let res = await getNoteByCheckinId(currentCheckinId, csrf);
         if (res.error) throw new Error(res.error);
-
         const currentNote =
           res.payload && res.payload.data && res.payload.data.length > 0
             ? res.payload.data[0]
@@ -74,10 +73,10 @@ const Notes = (props) => {
               setNote(res.payload.data);
             }
           }
-        } else if (pdlorAdmin) {
+        } else {
           res = await createCheckinNote({
             checkinid: currentCheckinId,
-            createdbyid: id,
+            createdbyid: pdlId,
             description: "",
             csrf,
           });

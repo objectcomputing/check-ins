@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.security;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.cookie.SameSite;
 import io.micronaut.http.netty.cookies.NettyCookie;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -27,7 +28,7 @@ public class CsrfModelProcessor{
 
         return HttpResponse.ok()
         // set cookie
-                .cookie(new NettyCookie("_csrf", cookieValue).path("/")).body(cookieValue);
+                .cookie(new NettyCookie("_csrf", cookieValue).path("/").sameSite(SameSite.Strict)).body(cookieValue);
 
 
     }
