@@ -1,9 +1,9 @@
 import React from "react";
 
-import { Avatar, Chip, Card, CardHeader } from "@material-ui/core";
+import { Avatar, Chip, Card, CardHeader, CardContent } from "@material-ui/core";
 
 const PendingSkillsCard = ({ pendingSkill }) => {
-  const { name, members } = pendingSkill;
+  const { description, name, members } = pendingSkill;
 
   const chip = (position) => {
     return (
@@ -35,11 +35,14 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   };
 
   return (
-    <Card className="pending-skill">
+    <Card className="pending-skills-card">
       <CardHeader
         subheader={members[0] ? submittedBy(members) : ""}
         title={name}
       />
+      <CardContent>
+        <div>{description}</div>
+      </CardContent>
     </Card>
   );
 };

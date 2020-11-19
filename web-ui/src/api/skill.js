@@ -45,3 +45,27 @@ export const createSkill = async (skill) => {
     })
   );
 };
+
+export const updateSkill = async (skill) => {
+  return await resolve(
+    axios({
+      method: "put",
+      url: skillUrl,
+      responseType: "json",
+      data: skill,
+      withCredentials: true,
+    })
+  );
+};
+
+export const removeSkill = async (id) => {
+  return await resolve(
+    axios({
+      method: "delete",
+      url: skillUrl,
+      responseType: "json",
+      data: id,
+      withCredentials: true,
+    })
+  );
+};

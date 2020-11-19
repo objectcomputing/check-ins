@@ -4,12 +4,23 @@ import { AppContext, UPDATE_SKILLS } from "../context/AppContext";
 import { getSkillMembers } from "../api/memberskill";
 import { getPendingSkills } from "../api/skill";
 import PendingSkillsCard from "../components/pending_skills/PendingSkillsCard";
+import EditPendingSkillsModal from "../components/pending_skills/EditPendingSkillsModal";
+
+import { Button } from "@material-ui/core";
+
+import "./PendingSkillsPage.css";
 
 const PendingSkillsPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const { selectMemberProfileById } = AppContext;
   const { memberProfiles, skills } = state;
+
   const [allSkills, setSkills] = useState(skills);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     const getSkills = async () => {
@@ -52,16 +63,20 @@ const PendingSkillsPage = () => {
   }, [memberProfiles]);
 
   return (
-    <div>
-      {allSkills.map(
-        (skill) =>
-          skill.pending && (
-            <PendingSkillsCard
-              key={"pending-skill-" + skill.id}
-              pendingSkill={skill}
-            />
-          )
-      )}
+    <div className="pending-skills-page">
+      <Button onClick={handleOpen}>Combine Skills</Button>
+      <EditPendingSkillsModal open={open} onClose={handleClose} />
+      <div>
+        {allSkills.map(
+          (skill) =>
+            skill.pending && (
+              <PendingSkillsCard
+                key={"pending-skill-" + skill.id}
+                pendingSkill={skill}
+              />
+            )
+        )}
+      </div>
     </div>
   );
 };
