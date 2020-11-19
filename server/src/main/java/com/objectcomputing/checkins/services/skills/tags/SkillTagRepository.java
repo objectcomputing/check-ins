@@ -5,6 +5,7 @@ import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +17,12 @@ public interface SkillTagRepository extends CrudRepository<SkillTag, UUID> {
     Optional<SkillTag> findByName(@NotNull String name);
 
     @Query("SELECT * " +
-            "FROM skill_tag st_ " +
-            "OUTER JOIN skill_skill_tag sst_ " +
+            "FROM skill_tags st_ " +
+            "LEFT JOIN skill_skill_tag sst_ " +
             "   ON st_.id = sst_.skill_tag_id " +
-            "OUTER JOIN skills s_ " +
-            "   ON s_.id = sst.skill_id " +
-            "WHERE (:name IS NULL OR st_.name = :name) " +
+            "LEFT JOIN skills s_ " +
+            "   ON sst_.skill_id = s_.id " +
+            "WHERE (:name IS NULL OR st_.name LIKE :name) " +
             "AND (:skillId IS NULL OR s_.id = :skillId)")
-    List<SkillTagResponseDTO> search(String name, String skillId);
+    List<SkillTag> search(@Nullable String name, @Nullable String skillId);
 }

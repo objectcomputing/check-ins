@@ -42,6 +42,13 @@ public class SkillTag {
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills;
 
+    public SkillTag() {}
+
+    public SkillTag(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "SkillTag{" +

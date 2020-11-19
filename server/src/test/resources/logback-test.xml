@@ -13,4 +13,5 @@
     </root>
 
     <logger name="org.flywaydb" level="ERROR"/>
+    <logger name="io.micronaut.data.query" level="trace" />
 </configuration>

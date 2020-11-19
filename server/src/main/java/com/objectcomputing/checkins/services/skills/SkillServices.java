@@ -16,4 +16,6 @@ public interface SkillServices {
     void delete(UUID id);
 
     Skill tagSkill(UUID skillId, UUID tagId);
+
+    Skill untagSkill(UUID skillId, UUID tagId);
 }

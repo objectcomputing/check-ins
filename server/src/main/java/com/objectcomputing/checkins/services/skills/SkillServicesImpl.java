@@ -66,13 +66,30 @@ public class SkillServicesImpl implements SkillServices {
 
     @Override
     public Skill tagSkill(UUID skillId, UUID tagId) {
-        Skill tagMe = skillRepository.findById(skillId).orElseThrow(SkillNotFoundException::new);
+        Skill tagMe = skillRepository.findById(skillId)
+                .orElseThrow(() -> {
+                    throw new SkillNotFoundException(String.format("Skill with id %s does not exist", skillId));
+                });
         if (tagMe.getTags() == null) {
             tagMe.setTags(new ArrayList<>());
         }
-        SkillTag tag = skillTagRepository.findById(tagId).orElseThrow(SkillTagNotFoundException::new);
+        SkillTag tag = skillTagRepository.findById(tagId).orElseThrow(() -> {
+            throw new SkillTagNotFoundException(String.format("Tag with id %s does not exist", tagId));
+        });
         tagMe.getTags().add(tag);
         skillTagLookupRepository.save(new SkillSkillTagLookup(skillId, tagId));
+        return skillRepository.findById(skillId).get();
+    }
+
+    @Override
+    public Skill untagSkill(UUID skillId, UUID tagId) {
+        skillRepository.findById(skillId).orElseThrow(() -> {
+            throw new SkillNotFoundException(String.format("Skill with id %s does not exist", skillId));
+        });
+        skillTagRepository.findById(tagId).orElseThrow(() -> {
+            throw new SkillTagNotFoundException(String.format("Tag with id %s does not exist", tagId));
+        });
+        skillTagLookupRepository.deleteByTagId(tagId);
         return skillRepository.findById(skillId).get();
     }
 

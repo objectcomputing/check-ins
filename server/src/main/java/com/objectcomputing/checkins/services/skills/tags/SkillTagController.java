@@ -1,10 +1,16 @@
 package com.objectcomputing.checkins.services.skills.tags;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -18,7 +24,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Tag(name = "services/skilltags")
+@Tag(name = "skilltags")
+@Secured(SecurityRule.IS_AUTHENTICATED)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Controller("/services/skillTags")
 public class SkillTagController {
     private final SkillTagService skillTagService;
     private final EventLoopGroup eventLoopGroup;
@@ -30,6 +40,14 @@ public class SkillTagController {
         this.skillTagService = skillTagService;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
+    }
+
+    @Error(exception = SkillTagNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, SkillTagNotFoundException stnfe) {
+        JsonError error = new JsonError(stnfe.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @Get("/{id}")
@@ -50,8 +68,8 @@ public class SkillTagController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    @Post
-    public Single<HttpResponse<SkillTagResponseDTO>> save(@Valid SkillTagCreateDTO dto) {
+    @Post("/")
+    public Single<HttpResponse<SkillTagResponseDTO>> save(@Valid @NotNull SkillTagCreateDTO dto) {
         return Single.fromCallable(() -> skillTagService.save(dto))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skillTagResponseDTO -> (HttpResponse<SkillTagResponseDTO>)HttpResponse
@@ -59,7 +77,7 @@ public class SkillTagController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    @Put
+    @Put("/")
     public Single<HttpResponse<SkillTagResponseDTO>> update(@Valid SkillTagUpdateDTO dto) {
         return Single.fromCallable(() -> skillTagService.update(dto))
                 .observeOn(Schedulers.from(eventLoopGroup))

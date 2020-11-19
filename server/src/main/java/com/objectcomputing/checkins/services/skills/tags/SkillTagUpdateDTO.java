@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skills.tags;
 
 import com.objectcomputing.checkins.services.skills.SkillResponseDTO;
+import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+@Introspected
 public class SkillTagUpdateDTO {
     @Schema(description = "unique identifier of the tag", required = true)
     @NotNull

@@ -21,11 +21,10 @@ public interface SkillRepository extends CrudRepository<Skill, UUID> {
     List<Skill> findByPending(boolean pending);
 
     @Override
-    @Join("tags")
+    @Join(value = "tags", type = Join.Type.LEFT_FETCH)
     Optional<Skill> findById(@NonNull @NotNull UUID id);
 
     @NonNull
-    @Join(value = "tags", type = Join.Type.OUTER)
     Skill update(@NonNull @NotNull Skill updateMe);
 
 }

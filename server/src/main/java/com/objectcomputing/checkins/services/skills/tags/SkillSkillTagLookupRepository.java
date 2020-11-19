@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SkillSkillTagLookupRepository extends CrudRepository<SkillSkillTagLookup, UUID> {
+    void deleteByTagId(UUID tagId);
 }

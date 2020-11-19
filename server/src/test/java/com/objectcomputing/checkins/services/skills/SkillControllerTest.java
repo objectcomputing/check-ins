@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.skills;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
+import com.objectcomputing.checkins.services.skills.tags.SkillTag;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -9,6 +10,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import io.micronaut.http.hateoas.JsonError;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -22,6 +24,7 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,6 +40,103 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         } catch (UnsupportedEncodingException e) {
             return "";
         }
+    }
+
+    @Test
+    public void testUntagSkillBadTagId() {
+        UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
+        Skill skill = createADefaultTaggedSkill();
+        getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        final HttpRequest<String> request = HttpRequest.
+                DELETE(String.format("/" + skill.getId() + "/tag/" + badId, encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
+
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals("Tag with id " + badId + " does not exist", thrown.getMessage());
+        assertEquals("Tag with id " + badId + " does not exist", thrown.getResponse().getBody(JsonError.class).get().getMessage());
+    }
+
+    @Test
+    public void testUntagSkillBadSkillId() {
+        UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
+        createADefaultTaggedSkill();
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        final HttpRequest<String> request = HttpRequest.
+                DELETE(String.format("/" + badId + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
+
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals("Skill with id " + badId + " does not exist", thrown.getMessage());
+        assertEquals("Skill with id " + badId + " does not exist", thrown.getResponse().getBody(JsonError.class).get().getMessage());
+    }
+
+    @Test
+    public void testUntagSkillHappyPath() {
+
+        Skill skill = createADefaultTaggedSkill();
+        final HttpRequest<String> request = HttpRequest.
+                DELETE(String.format("/" + skill.getId() + "/tag/" + skill.getTags().get(0).getId(), encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Skill> response = client.toBlocking().exchange(request, Argument.of(Skill.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNull(response.getBody().get().getTags());
+    }
+
+    @Test
+    public void testTagSkillBadTagId() {
+        UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
+        Skill skill = createADefaultTaggedSkill();
+        getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        final HttpRequest<String> request = HttpRequest.
+                PUT(String.format("/" + skill.getId() + "/tag/" + badId, encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
+
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals("Tag with id " + badId + " does not exist", thrown.getMessage());
+        assertEquals("Tag with id " + badId + " does not exist", thrown.getResponse().getBody(JsonError.class).get().getMessage());
+    }
+
+    @Test
+    public void testTagSkillBadSkillId() {
+        UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
+        createADefaultTaggedSkill();
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        final HttpRequest<String> request = HttpRequest.
+                PUT(String.format("/" + badId + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
+
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals("Skill with id " + badId + " does not exist", thrown.getMessage());
+        assertEquals("Skill with id " + badId + " does not exist", thrown.getResponse().getBody(JsonError.class).get().getMessage());
+    }
+
+    @Test
+    public void testTagSkillHappyPath() {
+
+        Skill skill = createADefaultTaggedSkill();
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        final HttpRequest<String> request = HttpRequest.
+                PUT(String.format("/" + skill.getId() + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
+                .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Skill> response = client.toBlocking().exchange(request, Argument.of(Skill.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getBody().get().getTags().size());
     }
 
     @Test

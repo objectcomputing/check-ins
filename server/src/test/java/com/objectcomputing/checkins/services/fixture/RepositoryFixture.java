@@ -13,6 +13,8 @@ import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
+import com.objectcomputing.checkins.services.skills.tags.SkillSkillTagLookupRepository;
+import com.objectcomputing.checkins.services.skills.tags.SkillTagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
@@ -32,6 +34,15 @@ public interface RepositoryFixture {
     default PulseResponseRepository getPulseResponseRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(PulseResponseRepository.class);
     }
+
+    default SkillSkillTagLookupRepository getSkillTagLookupRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SkillSkillTagLookupRepository.class);
+    }
+
+    default SkillTagRepository getSkillTagRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SkillTagRepository.class);
+    }
+
     default SkillRepository getSkillRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(SkillRepository.class);
     }

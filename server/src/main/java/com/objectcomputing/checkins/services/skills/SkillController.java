@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.skills;
 
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.skills.tags.SkillTagNotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -51,9 +52,30 @@ public class SkillController {
         return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
     }
 
+    @Error(exception = SkillNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, SkillNotFoundException snfe) {
+        JsonError error = new JsonError(snfe.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @Error(exception = SkillTagNotFoundException.class)
+    public HttpResponse<?> handleTagNotFound(HttpRequest<?> request, SkillTagNotFoundException snfe) {
+        JsonError error = new JsonError(snfe.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @Put("/{skillId}/tag/{tagId}")
     public HttpResponse<Skill> tagSkill(@NotNull UUID skillId, @NotNull UUID tagId) {
         return HttpResponse.ok(skillServices.tagSkill(skillId, tagId));
+    }
+
+    @Delete("/{skillId}/tag/{tagId}")
+    public HttpResponse<Skill> untagSkill(@NotNull UUID skillId, @NotNull UUID tagId) {
+        return HttpResponse.ok(skillServices.untagSkill(skillId, tagId));
     }
 
     /**

@@ -7,7 +7,8 @@ import java.util.UUID;
 public class SkillNotFoundException extends RuntimeException {
     private final List<UUID> missingSkills;
 
-    public SkillNotFoundException(){
+    public SkillNotFoundException(String message){
+        super(message);
         missingSkills = new ArrayList<>();
     }
 
