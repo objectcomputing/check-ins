@@ -2,9 +2,9 @@ package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.UserPhoto;
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
+import io.micronaut.context.env.Environment;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +15,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Collections;
-import java.util.Set;
+import java.util.Optional;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @MicronautTest
@@ -47,6 +51,9 @@ public class MemberPhotoServiceImplTest {
     @Mock
     private Directory.Users.Photos.Get mockGet;
 
+    @Mock
+    private Environment mockEnvironment;
+
     @InjectMocks
     private MemberPhotoServiceImpl services;
 
@@ -63,6 +70,7 @@ public class MemberPhotoServiceImplTest {
         Mockito.reset(mockUsers);
         Mockito.reset(mockPhotos);
         Mockito.reset(mockGet);
+        Mockito.reset(mockEnvironment);
     }
 
     // happy path
@@ -80,8 +88,6 @@ public class MemberPhotoServiceImplTest {
         testUserPhoto.setMimeType("test.mime.type");
         testUserPhoto.setPhotoData(new String(testData));
 
-        when(mockMemberProfileServices.findByValues(null, null, null, testEmail, null))
-                .thenReturn((Set.of(mkMemberProfile())));
         when(mockGoogleApiAccess.getDirectory()).thenReturn(mockDirectory);
         when(mockDirectory.users()).thenReturn(mockUsers);
         when(mockUsers.photos()).thenReturn(mockPhotos);
@@ -92,44 +98,44 @@ public class MemberPhotoServiceImplTest {
 
         assertNotNull(result);
         assertEquals(testPhotoData, new String(result, StandardCharsets.UTF_8));
-        verify(mockMemberProfileServices, times(1)).findByValues(null, null, null, testEmail, null);
         verify(mockGoogleApiAccess, times(1)).getDirectory();
         verify(mockGet, times(1)).execute();
-    }
-
-    @Test
-    public void testWorkEmailDoesntExist() throws IOException {
-        String testEmail = "test@test.com";
-        when(mockMemberProfileServices.findByValues(null, null, null, testEmail, null))
-                .thenReturn(Collections.emptySet());
-
-        final NotFoundException responseException = assertThrows(NotFoundException.class,
-                                                            () -> services.getImageByEmailAddress(testEmail));
-
-        assertEquals(String.format("No member profile exists for the email %s", testEmail), responseException.getMessage());
-        verify(mockMemberProfileServices, times(1)).findByValues(null, null, null, testEmail, null);
-        verify(mockGoogleApiAccess, times(0)).getDirectory();
-        verify(mockGet, times(0)).execute();
     }
 
     @Test
     public void testDirectoryServiceThrowsIOException() throws IOException {
         String testEmail = "test@test.com";
+        String testPhotoData = "test.photo.data";
+        InputStream testInputStream = new ByteArrayInputStream(testPhotoData.getBytes(StandardCharsets.UTF_8));
+        final URL mockUrl = this.setupUrl();
 
-        when(mockMemberProfileServices.findByValues(null, null, null, testEmail, null))
-                .thenReturn((Set.of(mkMemberProfile())));
         when(mockGoogleApiAccess.getDirectory()).thenReturn(mockDirectory);
         when(mockDirectory.users()).thenReturn(mockUsers);
         when(mockUsers.photos()).thenReturn(mockPhotos);
         when(mockPhotos.get(testEmail)).thenReturn(mockGet);
         when(mockGet.execute()).thenThrow(IOException.class);
+        when(mockEnvironment.getResource(anyString())).thenReturn(Optional.of(mockUrl));
+        when(mockUrl.openStream()).thenReturn(testInputStream);
 
         final byte[] result = services.getImageByEmailAddress(testEmail);
 
         assertNotNull(result);
-        assertEquals(0, result.length);
-        verify(mockMemberProfileServices, times(1)).findByValues(null, null, null, testEmail, null);
+        assertEquals(testPhotoData, new String(result, StandardCharsets.UTF_8));
         verify(mockGoogleApiAccess, times(1)).getDirectory();
         verify(mockGet, times(1)).execute();
+    }
+
+    private URL setupUrl() throws IOException {
+        //URL is a final class and cannot be mocked directly
+        final URLConnection mockConnection = Mockito.mock(URLConnection.class);
+        final URLStreamHandler handler = new URLStreamHandler() {
+
+            @Override
+            protected URLConnection openConnection(final URL arg0) {
+                return mockConnection;
+            }
+        };
+
+        return new URL("http://foo.bar", "foo.bar", 80, "", handler);
     }
 }
