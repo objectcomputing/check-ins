@@ -1,12 +1,11 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 
 import TeamSummaryCard from "./TeamSummaryCard";
-import TeamsActions from "./TeamsActions";
 import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
 import { getAllTeams } from "../../api/team";
 
 import PropTypes from "prop-types";
-import { TextField } from "@material-ui/core";
+import Container from "@material-ui/core/Container";
 
 import "./TeamResults.css";
 
@@ -24,12 +23,11 @@ const displayName = "TeamResults";
 
 const TeamResults = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { teams } = state;
-  const [searchText, setSearchText] = useState("");
+  const { csrf, teams } = state;
 
   useEffect(() => {
     async function getTeams() {
-      let res = await getAllTeams();
+      let res = await getAllTeams(csrf);
       let data =
         res.payload &&
         res.payload.data &&
@@ -41,32 +39,17 @@ const TeamResults = () => {
         dispatch({ type: UPDATE_TEAMS, payload: data });
       }
     }
-    getTeams();
-  }, [dispatch]);
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, dispatch]);
 
   return (
-    <div>
-      <div className="team-search">
-        <TextField
-          className="fullWidth"
-          label="Search Teams"
-          placeholder="Team Name"
-          style={{ marginBottom: "1rem" }}
-          value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-        />
-        <TeamsActions />
-      </div>
-      <div className="teams">
-        {teams.map((team) =>
-          team.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-            <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
-          ) : null
-        )}
-      </div>
-    </div>
+    <Container maxWidth="md">
+      {teams.map((team) => (
+        <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
+      ))}
+    </Container>
   );
 };
 
