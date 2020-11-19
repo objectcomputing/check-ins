@@ -13,17 +13,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import io.micronaut.scheduling.TaskExecutors;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
-import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Named;
@@ -65,15 +61,6 @@ public class GuildController {
                 .body(error);
     }
 
-    @Error(exception = GuildBulkLoadException.class)
-    public HttpResponse<?> handleBulkLoadException(HttpRequest<?> request, GuildBulkLoadException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
     /**
      * Create and save a new guild.
      *
@@ -94,36 +81,6 @@ public class GuildController {
                 }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
-
-     /**
-      * Load the current guilds into checkinsdb.
-      *
-      * @param guildsList, array of {@link GuildCreateDTO guild create dto} to load {@link Guild guild(s)}
-      */
-     @Post("/guilds")
-     public Single<HttpResponse<?>> loadGuilds(@Body @NotNull @Valid List<GuildCreateDTO> guildsList, HttpRequest<List<GuildCreateDTO>> request) {
-
-         return Single.fromCallable(() -> {
-             List<String> errors = new ArrayList<>();
-             List<Guild> guildCreated = new ArrayList<>();
-             for (GuildCreateDTO guildDTO : guildsList) {
-                 Guild guild = new Guild(guildDTO.getName(),
-                         guildDTO.getDescription());
-                 try {
-                     guildService.save(guild);
-                     guildCreated.add(guild);
-                 } catch (CompositeException e) {
-                     errors.add(String.format("Guild %s was not added because: %s", guild.getName(),
-                             guild.getDescription(), e.getMessage()));
-                 }
-             }
-             if (errors.isEmpty()) {
-                 return guildCreated;
-             }
-             throw new GuildBulkLoadException(errors);
-         }).map(guildCreated -> HttpResponse.created(guildCreated)
-                 .headers(headers -> headers.location(request.getUri())));
-     }
 
     /**
      * Get guild based on id
