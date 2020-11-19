@@ -18,7 +18,7 @@ import "./Checkin.css";
 
 const CheckinsHistory = ({ history }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { checkins, currentCheckin } = state;
+  const { checkins, currentCheckin, csrf } = state;
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -65,30 +65,33 @@ const CheckinsHistory = ({ history }) => {
   };
 
   const pickDate = async (date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const checkin = checkins[index];
-    const dateArray = [year, month, day, hours, minutes, 0];
-    const updatedCheckin = await updateCheckin({
-      ...checkin,
-      checkInDate: dateArray,
-    });
-    const newCheckin = updatedCheckin.payload.data;
-    const filtered = checkins.filter((e) => {
-      return e.id !== checkin.id;
-    });
-    filtered.push(newCheckin);
-    dispatch({
-      type: UPDATE_CHECKINS,
-      payload: filtered,
-    });
-    dispatch({
-      type: UPDATE_CURRENT_CHECKIN,
-      payload: newCheckin,
-    });
+    if (csrf) {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const checkin = checkins[index];
+      const dateArray = [year, month, day, hours, minutes, 0];
+      const updatedCheckin = await updateCheckin({
+        ...checkin,
+        checkInDate: dateArray,
+        csrf,
+      });
+      const newCheckin = updatedCheckin.payload.data;
+      const filtered = checkins.filter((e) => {
+        return e.id !== checkin.id;
+      });
+      filtered.push(newCheckin);
+      dispatch({
+        type: UPDATE_CHECKINS,
+        payload: filtered,
+      });
+      dispatch({
+        type: UPDATE_CURRENT_CHECKIN,
+        payload: newCheckin,
+      });
+    }
   };
 
   const DateInput = React.forwardRef((props, ref) => (

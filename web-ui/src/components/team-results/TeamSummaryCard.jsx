@@ -1,5 +1,9 @@
 import React, { useContext } from "react";
+
+import { AppContext } from "../../context/AppContext";
+
 import PropTypes from "prop-types";
+import { Skeleton } from "@material-ui/lab";
 import {
   Button,
   Card,
@@ -7,10 +11,6 @@ import {
   CardContent,
   CardHeader,
 } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
-import { AppContext } from "../../context/AppContext";
-
-import "./TeamResults.css";
 
 const propTypes = {
   team: PropTypes.shape({
@@ -36,9 +36,9 @@ const TeamSummaryCard = ({ team }) => {
       : teamMembers.filter((teamMember) => !teamMember.lead);
 
   return (
-    <Card className="summary-card" >
+    <Card>
       <CardHeader title={team.name} subheader={team.description} />
-      <CardContent style={{ wordWrap: "break-word" }}>
+      <CardContent>
         {teamMembers == null ? (
           <React.Fragment>
             <Skeleton />
@@ -61,8 +61,8 @@ const TeamSummaryCard = ({ team }) => {
         )}
       </CardContent>
       <CardActions>
-        <Button>Edit</Button>
-        <Button>Delete</Button>
+        <Button>Edit Team</Button>
+        <Button>Delete Team</Button>
       </CardActions>
     </Card>
   );

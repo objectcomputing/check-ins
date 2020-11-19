@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { getAllPDLs, getMember, updateMember } from "../../api/member";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -15,12 +15,13 @@ import { Button } from "@material-ui/core";
 import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
-  const { dispatch } = useContext(AppContext);
+  const { state } = useContext(AppContext);
+  const { csrf } = state;
   const [editedMember, setMember] = useState(member);
   const [pdls, setPdls] = useState([]);
 
   const getPdls = async () => {
-    let res = await getAllPDLs();
+    let res = await getAllPDLs(csrf);
     let promises = res.payload.data.map((member) => getMember(member.memberid));
     const results = await Promise.all(promises);
     const pdlArray = results.map((res) => res.payload.data);
@@ -28,10 +29,11 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   };
 
   useEffect(() => {
-    if (open) {
+    if (open && csrf) {
       getPdls();
     }
-  }, [open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, csrf]);
 
   let date = new Date(editedMember.startDate);
 
@@ -81,6 +83,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
         <TextField
           id="member-insperityId-input"
           label="InsperityId"
+          required
           className="halfWidth"
           placeholder="Somewhere by the beach"
           value={editedMember.insperityId ? editedMember.insperityId : ""}
@@ -136,22 +139,8 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           </Button>
           <Button
             onClick={async () => {
-              if (
-                editedMember.workEmail &&
-                editedMember.title &&
-                editedMember.location &&
-                editedMember.startDate
-              ) {
-                onSave(editedMember);
-                await updateMember(editedMember);
-              } else
-                dispatch({
-                  type: UPDATE_TOAST,
-                  payload: {
-                    severity: "error",
-                    toast: "Must fill all required fields",
-                  },
-                });
+              onSave(editedMember);
+              await updateMember(editedMember);
             }}
             color="primary"
           >

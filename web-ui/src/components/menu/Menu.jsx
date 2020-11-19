@@ -152,6 +152,11 @@ function Menu() {
     </div>
   );
 
+  const logout = () => {
+    window.location.reload();
+    sessionStorage.removeItem("csrf");
+  };
+
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />
@@ -202,7 +207,7 @@ function Menu() {
                         Profile
                       </Link>
                     </MenuItem>
-                    <MenuItem onClick={() => window.location.reload()}>
+                    <MenuItem onClick={logout}>
                       <Link style={{ textDecoration: "none" }} to={`/logout`}>
                         Logout
                       </Link>
