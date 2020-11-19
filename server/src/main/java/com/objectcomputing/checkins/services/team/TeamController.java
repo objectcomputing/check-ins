@@ -109,34 +109,6 @@ public class TeamController {
                 }). subscribeOn(Schedulers.from(ioExecutorService));
     }
 
-    /**
-     * Create and save multiple teams
-     *
-     * @param teamsList, array of {@link TeamCreateDTO team create dto} to load {@link Team team(s)}
-     * @return
-     */
-
-    @Post("/teams")
-    public Single<HttpResponse<?>> loadTeams(@Body @NotNull @Valid List<TeamCreateDTO> teamsList, HttpRequest<List<TeamCreateDTO>> request) {
-
-        return Single.fromCallable(() -> {
-            List<String> errors = new ArrayList<>();
-            List<Team> teamsCreated = new ArrayList<>();
-            for (TeamCreateDTO teamDTO : teamsList) {
-                Team team = new Team(teamDTO.getName(), teamDTO.getDescription());
-                try {
-                    teamService.save(team);
-                    teamsCreated.add(team);
-                } catch (CompositeException e) {
-                    errors.add(String.format("Team %s was not added because: %s", team.getName(), e.getMessage()));
-                }
-            }   if (errors.isEmpty()) {
-                return teamsCreated;
-            }
-            throw new TeamBulkLoadException(errors);
-        }).map(teamsCreated -> HttpResponse.created(teamsCreated)
-                .headers(headers -> headers.location(request.getUri())));
-    }
 
     /**
      * Get team based on id
