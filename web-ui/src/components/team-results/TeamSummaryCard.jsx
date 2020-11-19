@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { AppContext } from '../../context/AppContext';
+import { deleteTeam } from "../../api/team.js";
 
 const propTypes = {
     team: PropTypes.shape({
@@ -20,6 +21,17 @@ const TeamSummaryCard = ({ team }) => {
 
     let leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
     let nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
+    console.log("TeamSummaryCard team = " + team);
+
+    const deleteATeam = (id) => {
+        if (id) {
+            deleteTeam(id);
+            // let newItems = agendaItems.filter((agendaItem) => {
+            //     return agendaItem.id !== id;
+            // });
+            // setAgendaItems(newItems);
+        }
+    };
 
     return (
         <Card>
@@ -50,7 +62,11 @@ const TeamSummaryCard = ({ team }) => {
             </CardContent>
             <CardActions>
                 <Button>Edit Team</Button>
-                <Button>Delete Team</Button>
+                <Button
+                    onClick={(e) => {
+                        console.log("delete clicked " + team.id);
+                        deleteATeam(team.id, e)}} >Delete Team</Button>
+
             </CardActions>
         </Card>
     );

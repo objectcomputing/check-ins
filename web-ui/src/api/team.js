@@ -1,8 +1,11 @@
 import axios from "axios";
 import { resolve, BASE_API_URL } from "./api.js";
 
+const myAxios = axios.create({ withCredentials: true });
+
 const teamUrl = `${BASE_API_URL}/services/team`;
 const teamMemberUrl = `${BASE_API_URL}/services/team/member`;
+
 export const getAllTeamMembers = async () => {
   return await resolve(
     axios({
@@ -51,4 +54,15 @@ export const getAllTeams = async () => {
       withCredentials: true
     })
   )
+};
+
+export const deleteTeam = async (id) => {
+    return await resolve(
+        myAxios({
+            method: "delete",
+            url: `${teamUrl}/${id}`,
+            responseType: "json",
+            withCredentials: true
+        })
+    );
 };
