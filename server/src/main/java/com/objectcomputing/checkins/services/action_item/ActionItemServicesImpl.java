@@ -1,11 +1,15 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.checkins.CheckInServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
+import com.objectcomputing.checkins.services.validate.PermissionsValidation;
+import io.micronaut.security.utils.SecurityService;
 
 import javax.inject.Singleton;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -15,23 +19,24 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class ActionItemServicesImpl implements ActionItemServices {
 
-    private final CheckInRepository checkinRepo;
     private final ActionItemRepository actionItemRepo;
-    private final MemberProfileRepository memberRepo;
+    private final ArgumentsValidation argumentsValidation;
+    private final PermissionsValidation permissionsValidation;
 
-    public ActionItemServicesImpl(CheckInRepository checkinRepo,
-                                  ActionItemRepository actionItemRepo,
-                                  MemberProfileRepository memberRepo) {
-        this.checkinRepo = checkinRepo;
+    public ActionItemServicesImpl( ActionItemRepository actionItemRepo,
+                                  ArgumentsValidation argumentsValidation,
+                                  PermissionsValidation permissionsValidation) {
         this.actionItemRepo = actionItemRepo;
-        this.memberRepo = memberRepo;
+        this.argumentsValidation = argumentsValidation;
+        this.permissionsValidation = permissionsValidation;
     }
 
-    public ActionItem save(ActionItem actionItem) {
+    public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
-        if (actionItem != null) {
-            final UUID guildId = actionItem.getCheckinid();
-            final UUID createById = actionItem.getCreatedbyid();
+
+            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
+            permissionsValidation.validateActionItemPermissions(actionItem);
+
             double lastDisplayOrder = 0;
             try {
                 lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
@@ -39,63 +44,57 @@ public class ActionItemServicesImpl implements ActionItemServices {
                 //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
                 //nothing needs to happen here.
             }
-            actionItem.setPriority(lastDisplayOrder+1);
-            if (guildId == null || createById == null) {
-                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
-            } else if (actionItem.getId() != null) {
-                throw new ActionItemBadArgException(String.format("Found unexpected id %s for action item", actionItem.getId()));
-            } else if (!checkinRepo.findById(guildId).isPresent()) {
-                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
-            }
+            actionItem.setPriority(lastDisplayOrder + 1);
 
             actionItemRet = actionItemRepo.save(actionItem);
-        }
+
         return actionItemRet;
+
     }
 
     public ActionItem read(@NotNull UUID id) {
-        return actionItemRepo.findById(id).orElse(null);
+
+        ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
+
+        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
+        permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
+
+        return actionItemResult;
 
     }
 
-    public Set<ActionItem> readAll() {
-        Set<ActionItem> actionItems = new HashSet<>();
-        actionItemRepo.findAll().forEach(actionItems::add);
-        return actionItems;
-    }
-
-    public ActionItem update(ActionItem actionItem) {
+    public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
-        if (actionItem != null) {
-            final UUID id = actionItem.getId();
-            final UUID guildId = actionItem.getCheckinid();
-            final UUID createById = actionItem.getCreatedbyid();
-            if (guildId == null || createById == null) {
-                throw new ActionItemBadArgException(String.format("Invalid actionItem %s", actionItem));
-            } else if (id == null || !actionItemRepo.findById(id).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Unable to locate actionItem to update with id %s", id));
-            } else if (!checkinRepo.findById(guildId).isPresent()) {
-                throw new ActionItemBadArgException(String.format("CheckIn %s doesn't exist", guildId));
-            } else if (!memberRepo.findById(createById).isPresent()) {
-                throw new ActionItemBadArgException(String.format("Member %s doesn't exist", createById));
-            }
 
-            actionItemRet = actionItemRepo.update(actionItem);
-        }
+        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
+        permissionsValidation.validateActionItemPermissionsForUpdate(actionItem);
+
+        actionItemRet = actionItemRepo.update(actionItem);
+
         return actionItemRet;
+
     }
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
 
-        return new LinkedHashSet<>(
+        permissionsValidation.validateActionItemPermissionsForFindByFields(checkinid, createdbyid);
+
+        Set<ActionItem> actionItems = new LinkedHashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
+
+        return actionItems;
+
     }
 
     public void delete(@NotNull UUID id) {
+
+        argumentsValidation.validateActionItemArgumentsForDelete(id);
+        permissionsValidation.validateActionItemPermissionsForDelete(id);
+
         actionItemRepo.deleteById(id);
+
     }
+
 }
 
 

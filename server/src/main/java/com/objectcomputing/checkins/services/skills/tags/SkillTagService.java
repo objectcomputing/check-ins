@@ -8,7 +8,6 @@ import java.util.UUID;
 public interface SkillTagService {
     SkillTagResponseDTO save(SkillTagCreateDTO saveMe);
     SkillTagResponseDTO update(SkillTagUpdateDTO updateMe);
-    SkillTagResponseDTO findByName(@NotNull String name);
     SkillTagResponseDTO findById(@NotNull UUID id);
     List<SkillTagResponseDTO> search(@Nullable String name, @Nullable UUID skillId);
 }

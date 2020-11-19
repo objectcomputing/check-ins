@@ -22,11 +22,8 @@ export const getCheckinByMemberId = async (id) => {
   return await resolve(
     axios({
       method: "get",
-      url: checkinsUrl,
+      url: `${checkinsUrl}?teamMemberId=${id}`,
       responseType: "json",
-      params: {
-        teamMemberId: id,
-      },
       withCredentials: true,
     })
   );

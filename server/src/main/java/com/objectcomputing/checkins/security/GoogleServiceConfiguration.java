@@ -42,6 +42,12 @@ public class GoogleServiceConfiguration {
     @NotNull
     public String client_x509_cert_url;
 
+    @NotNull
+    public String oauth_client_id;
+
+    @NotNull
+    public String oauth_client_secret;
+
     public String getDirectory_id() {
         return directory_id;
     }
@@ -130,6 +136,22 @@ public class GoogleServiceConfiguration {
         this.client_x509_cert_url = client_x509_cert_url;
     }
 
+    public String getOauth_client_id() {
+        return oauth_client_id;
+    }
+
+    public void setOauth_client_id(String oauth_client_id) {
+        this.oauth_client_id = oauth_client_id;
+    }
+
+    public String getOauth_client_secret() {
+        return oauth_client_secret;
+    }
+
+    public void setOauth_client_secret(String oauth_client_secret) {
+        this.oauth_client_secret = oauth_client_secret;
+    }
+
     public String toString() {
         return "{" +
                 "\"directory_id\":\"" + directory_id +
@@ -143,6 +165,8 @@ public class GoogleServiceConfiguration {
                 "\", \"token_uri\":\"" + token_uri +
                 "\", \"auth_provider_x509_cert_url\":\"" + auth_provider_x509_cert_url +
                 "\", \"client_x509_cert_url\":\"" + client_x509_cert_url +
+                "\", \"oauth_client_id\":\"" + oauth_client_id +
+                "\", \"oauth_client_secret\":\"" + oauth_client_secret +
                 "\"}";
     }
 }

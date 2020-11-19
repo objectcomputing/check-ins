@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.skills.tags;
 import com.objectcomputing.checkins.services.skills.SkillNotFoundException;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.skills.SkillResponseDTO;
-import com.objectcomputing.checkins.util.Util;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -62,12 +61,6 @@ public class SkillTagServiceImpl implements SkillTagService {
                 });
         SkillTag entity = fromUpdateDto(updateMe);
         return fromEntity(skillTagRepository.update(entity));
-    }
-
-    @Override
-    public SkillTagResponseDTO findByName(@NotNull String name) {
-        return skillTagRepository.findByName(name)
-                .map(this::fromEntity).orElse(null);
     }
 
     @Override

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { getAllPDLs, getMember, updateMember } from "../../api/member";
+import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -14,6 +15,7 @@ import { Button } from "@material-ui/core";
 import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
+  const { dispatch } = useContext(AppContext);
   const [editedMember, setMember] = useState(member);
   const [pdls, setPdls] = useState([]);
 
@@ -79,7 +81,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
         <TextField
           id="member-insperityId-input"
           label="InsperityId"
-          required
           className="halfWidth"
           placeholder="Somewhere by the beach"
           value={editedMember.insperityId ? editedMember.insperityId : ""}
@@ -135,8 +136,22 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           </Button>
           <Button
             onClick={async () => {
-              onSave(editedMember);
-              await updateMember(editedMember);
+              if (
+                editedMember.workEmail &&
+                editedMember.title &&
+                editedMember.location &&
+                editedMember.startDate
+              ) {
+                onSave(editedMember);
+                await updateMember(editedMember);
+              } else
+                dispatch({
+                  type: UPDATE_TOAST,
+                  payload: {
+                    severity: "error",
+                    toast: "Must fill all required fields",
+                  },
+                });
             }}
             color="primary"
           >

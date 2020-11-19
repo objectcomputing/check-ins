@@ -214,6 +214,26 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
 
 
     @Test
+    public void testGETGetByIdWithSkill() {
+
+        Skill skill = createADefaultTaggedSkill();
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", skill.getTags().get(0).getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<SkillTagResponseDTO> response = client.toBlocking().exchange(request, SkillTagResponseDTO.class);
+        SkillTag expected = new SkillTag(skill.getTags().get(0).getName(), skill.getTags().get(0).getDescription());
+        expected.setId(skill.getTags().get(0).getId());
+        skill.setTags(null);
+        expected.setSkills(new ArrayList<>());
+        expected.getSkills().add(skill);
+        assertEntityDtoEqual(expected, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+
+    @Test
     public void testGETGetByIdHappyPath() {
 
         SkillTag tag = createADefaultSkillTag();

@@ -14,8 +14,6 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface SkillTagRepository extends CrudRepository<SkillTag, UUID> {
 
-    Optional<SkillTag> findByName(@NotNull String name);
-
     @Query("SELECT * " +
             "FROM skill_tags st_ " +
             "LEFT JOIN skill_skill_tag sst_ " +
