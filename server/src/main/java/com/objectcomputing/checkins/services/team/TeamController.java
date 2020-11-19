@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
-import com.objectcomputing.checkins.services.agenda_item.AgendaItem;
-import com.objectcomputing.checkins.services.agenda_item.AgendaItemBadArgException;
-import com.objectcomputing.checkins.services.agenda_item.AgendaItemNotFoundException;
-import com.objectcomputing.checkins.services.agenda_item.AgendaItemsBulkLoadException;
+
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -15,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
-import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -23,7 +19,6 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -76,20 +71,6 @@ public class TeamController {
                 .body(error);
     }
 
-    @Error(exception = CompositeException.class)
-    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-
-        for (Throwable t : e.getExceptions()) {
-            if (t instanceof TeamBadArgException) {
-                return handleBadArgs(request, (TeamBadArgException) t);
-            }
-            else if (t instanceof TeamNotFoundException) {
-                return handleNotFound(request, (TeamNotFoundException) t);
-            }
-        }
-
-        return HttpResponse.<JsonError>serverError();
-    }
 
     /**
      * Create and save a new team
