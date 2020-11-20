@@ -4,7 +4,6 @@ const memberProfileUrl = "/services/member-profile";
 
 export const getAllMembers = async (cookie) => {
   return resolve({
-    method: "get",
     url: memberProfileUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -13,7 +12,6 @@ export const getAllMembers = async (cookie) => {
 
 export const getAllPDLs = async (cookie) => {
   return resolve({
-    method: "get",
     url: "/services/role?role=PDL",
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -22,7 +20,6 @@ export const getAllPDLs = async (cookie) => {
 
 export const getMembersByPDL = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: memberProfileUrl,
     responseType: "json",
     params: {
@@ -34,7 +31,6 @@ export const getMembersByPDL = async (id, cookie) => {
 
 export const getMemberByEmail = async (email, cookie) => {
   return resolve({
-    method: "get",
     url: memberProfileUrl,
     responseType: "json",
     params: {
@@ -46,7 +42,6 @@ export const getMemberByEmail = async (email, cookie) => {
 
 export const getMember = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: `${memberProfileUrl}/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -65,7 +60,6 @@ export const updateMember = async (member, cookie) => {
 
 export const getCurrentUser = async (cookie) => {
   return resolve({
-    method: "get",
     url: `${memberProfileUrl}/current`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

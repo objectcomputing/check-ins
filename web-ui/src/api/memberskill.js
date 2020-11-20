@@ -5,7 +5,6 @@ const memberSkillUrl = "/services/member-skill";
 
 export const getMemberSkills = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: memberSkillUrl,
     responseType: "json",
     params: {
@@ -17,7 +16,6 @@ export const getMemberSkills = async (id, cookie) => {
 
 export const getSkillMembers = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: memberSkillUrl,
     responseType: "json",
     params: {

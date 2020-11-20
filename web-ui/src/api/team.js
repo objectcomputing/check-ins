@@ -5,7 +5,6 @@ const teamMemberUrl = "/services/team/member";
 
 export const getAllTeamMembers = async (cookie) => {
   return resolve({
-    method: "get",
     url: teamMemberUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -14,7 +13,6 @@ export const getAllTeamMembers = async (cookie) => {
 
 export const getMembersByTeam = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: teamMemberUrl,
     responseType: "json",
     params: {
@@ -26,7 +24,6 @@ export const getMembersByTeam = async (id, cookie) => {
 
 export const getTeamsByMember = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: teamMemberUrl,
     responseType: "json",
     params: {
@@ -38,7 +35,6 @@ export const getTeamsByMember = async (id, cookie) => {
 
 export const getAllTeams = async (cookie) => {
   return resolve({
-    method: "get",
     url: teamUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -47,7 +43,7 @@ export const getAllTeams = async (cookie) => {
 
 export const createTeam = async (cookie) => {
   return resolve({
-    method: "get",
+    method: "post",
     url: teamUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

@@ -13,7 +13,6 @@ export const getSkills = async (cookie) => {
 
 export const getSkill = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: `${skillUrl}/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -22,7 +21,6 @@ export const getSkill = async (id, cookie) => {
 
 export const getPendingSkills = async (cookie) => {
   return resolve({
-    method: "get",
     url: skillUrl + "?pending=true",
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
