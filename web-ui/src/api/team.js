@@ -3,11 +3,12 @@ import { resolve } from "./api.js";
 const teamUrl = "/services/team";
 const teamMemberUrl = "/services/team/member";
 
-export const getAllTeamMembers = async () => {
+export const getAllTeamMembers = async (cookie) => {
   return resolve({
     url: teamMemberUrl,
     responseType: "json",
     withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
   });
 };
 
