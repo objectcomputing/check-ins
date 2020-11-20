@@ -45,13 +45,11 @@ export const getAllTeams = async (cookie) => {
   });
 };
 
-export const createTeam = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamUrl,
-      responseType: "json",
-      withCredentials: true
-    })
-  )
+export const createTeam = async (cookie) => {
+  return resolve({
+    method: "get",
+    url: teamUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };

@@ -20,6 +20,15 @@ export const getSkill = async (id, cookie) => {
   });
 };
 
+export const getPendingSkills = async (cookie) => {
+  return resolve({
+    method: "get",
+    url: skillUrl + "?pending=true",
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const createSkill = async (skill, cookie) => {
   return resolve({
     method: "post",

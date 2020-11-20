@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-// import { removeSkill, updateSkill } from "../../api/skill";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Checkbox, Modal, TextField } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
-import "./EditPendingSkillsModal.css";
+import "./PendingSkillsModal.css";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -24,7 +23,8 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
     id: "",
   });
 
-  console.log({ editedSkill, skillsToChange });
+  //to avoid eslint issues until modal story is complete
+  console.log({ skillsToChange });
 
   useEffect(() => {
     setPendingSkills(skills);
@@ -34,11 +34,6 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
     setSkillsToChange(values);
     setEditedSkill(values[0]);
   };
-
-  //   const updateSkills = async (skill) => {
-  //     let res = await updateSkill(skill)
-  //     if()
-  //   }
 
   return (
     <Modal open={open} onClose={onClose}>

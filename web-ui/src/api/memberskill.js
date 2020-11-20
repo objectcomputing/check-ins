@@ -15,6 +15,18 @@ export const getMemberSkills = async (id, cookie) => {
   });
 };
 
+export const getSkillMembers = async (id, cookie) => {
+  return resolve({
+    method: "get",
+    url: memberSkillUrl,
+    responseType: "json",
+    params: {
+      skillid: id,
+    },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const deleteMemberSkill = async (id, cookie) => {
   return resolve({
     method: "DELETE",

@@ -39,6 +39,7 @@ const reducer = (state, action) => {
       break;
     case UPDATE_SKILLS:
       state.skills = action.payload;
+      break;
     case SET_CSRF:
       state.csrf = action.payload;
       break;

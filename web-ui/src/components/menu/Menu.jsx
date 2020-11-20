@@ -61,11 +61,9 @@ function Menu() {
   const { dispatch } = useContext(AppContext);
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { imageUrl } = userProfile
-      ? userProfile
-      : {};
- const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN")
+  const { imageUrl } = userProfile ? userProfile : {};
+  const isAdmin =
+    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -138,6 +136,13 @@ function Menu() {
         </Link>
       </Button>
       <br />
+      {isAdmin && (
+        <Button size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/pending-skills">
+            Pending Skills
+          </Link>
+        </Button>
+      )}
       <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
@@ -179,11 +184,14 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <AvatarComponent imageUrl={imageUrl} style={{
+          <AvatarComponent
+            imageUrl={imageUrl}
+            style={{
               position: "absolute",
               right: "5px",
               top: "10px",
-          }} />
+            }}
+          />
         </div>
         <Popper
           open={open}
