@@ -62,14 +62,6 @@ public class TeamController {
                 .body(error);
     }
 
-    @Error(exception = TeamBulkLoadException.class)
-    public HttpResponse<?> handleBulkLoadException(HttpRequest<?> request, TeamNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
 
 
     /**
