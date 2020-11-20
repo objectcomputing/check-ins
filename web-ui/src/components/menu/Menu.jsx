@@ -114,12 +114,7 @@ function Menu() {
           Home
         </Link>
       </Button>
-      <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teams">
-          Teams
-        </Link>
-      </Button>
+
       <br />
       <Button
         onClick={() =>
@@ -142,6 +137,11 @@ function Menu() {
         </Link>
       </Button>
       <br />
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/teams">
+          Teams
+        </Link>
+      </Button>
       {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">
@@ -151,6 +151,11 @@ function Menu() {
       )} */}
     </div>
   );
+
+  const logout = () => {
+    window.location.reload();
+    sessionStorage.removeItem("csrf");
+  };
 
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
@@ -202,7 +207,7 @@ function Menu() {
                         Profile
                       </Link>
                     </MenuItem>
-                    <MenuItem onClick={() => window.location.reload()}>
+                    <MenuItem onClick={logout}>
                       <Link style={{ textDecoration: "none" }} to={`/logout`}>
                         Logout
                       </Link>

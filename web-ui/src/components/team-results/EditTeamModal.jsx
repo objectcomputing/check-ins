@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
+
+import { AppContext } from '../../context/AppContext';
+
+import { Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import './EditTeamModal.css';
-import { Button } from '@material-ui/core';
-import { AppContext } from '../../context/AppContext';
 import { updateTeam } from "../../api/team";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {

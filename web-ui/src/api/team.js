@@ -1,41 +1,36 @@
-import axios from "axios";
-import { resolve, BASE_API_URL } from "./api.js";
+import { resolve } from "./api.js";
 
-const teamUrl = `${BASE_API_URL}/services/team`;
+const teamUrl = `/services/team`;
 
-export const updateTeam = async (team) => {
-  return await resolve(
-    axios({
+export const updateTeam = async (team, cookie) => {
+  return await resolve({
       method: "put",
       url: teamUrl,
       responseType: "json",
       data: team,
       withCredentials: true,
-    })
-  );
+      headers: { "X-CSRF-Header": cookie },
+    });
 };
 
-export const getTeamsByMember = async (id) => {
-  return await resolve(
-    axios({
+export const getTeamsByMember = async (id, cookie) => {
+  return await resolve({
       method: "get",
       url: teamUrl,
       responseType: "json",
       params: {
         memberid: id,
       },
-      withCredentials: true
-    })
-  );
+      withCredentials: true,
+      headers: { "X-CSRF-Header": cookie },
+    });
 };
 
-export const getAllTeams = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: teamUrl,
-      responseType: "json",
-      withCredentials: true
-    })
-  )
+export const getAllTeams = async (cookie) => {
+  return resolve({
+    method: "get",
+    url: teamUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };

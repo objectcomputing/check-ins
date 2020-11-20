@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -46,8 +46,8 @@ public class MemberPhotoController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = MemberProfileDoesNotExistException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileDoesNotExistException e) {
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, NotFoundException e) {
         JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>notFound().body(error);
@@ -61,8 +61,6 @@ public class MemberPhotoController {
      */
     @Get("/{workEmail}")
     public Single<HttpResponse<byte[]>> userImage(@NotNull String workEmail) {
-
-        System.out.println("Hit Controller!");
 
         return Single.fromCallable(() -> memberPhotoService.getImageByEmailAddress(workEmail))
                 .observeOn(Schedulers.from(eventLoopGroup))

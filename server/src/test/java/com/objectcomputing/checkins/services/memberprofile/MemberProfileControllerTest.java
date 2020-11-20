@@ -40,7 +40,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     * LocalDate.Max year = 999999999
     * POSTGRES supported date range = 4713 BC - 5874897 AD
     */
-    private LocalDate maxDate = LocalDate.of(2099, 12, 31);
+    private final LocalDate maxDate = LocalDate.of(2099, 12, 31);
 
     private String encodeValue(String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
@@ -144,6 +144,19 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
+    void testFindBySupervisorId() {
+        MemberProfile memberProfileOfPdl = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPdl);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?supervisorId=%s",memberProfileOfUser.getSupervisorid()))
+                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfileOfUser), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
     public void testPOSTCreateAMemberProfile() {
 
         MemberProfileUpdateDTO dto = mkUpdateMemberProfileDTO();
@@ -190,7 +203,6 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
     @Test
     public void testPOSTSaveMemberSameEmailThrowsException() {
-
         // create a user
         MemberProfileUpdateDTO firstUser = mkUpdateMemberProfileDTO();
 
@@ -321,7 +333,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertProfilesEqual(requestBody, response.body());
+        assertProfilesEqual(requestBody, Objects.requireNonNull(response.body()));
     }
 
     // PUT - Request with empty body

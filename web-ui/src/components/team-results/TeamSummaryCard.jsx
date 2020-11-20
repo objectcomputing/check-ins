@@ -1,17 +1,23 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, CardActions, CardContent, CardHeader } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { AppContext, UPDATE_TEAMS } from '../../context/AppContext';
 import EditTeamModal from "./EditTeamModal";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+} from "@material-ui/core";
 
 const propTypes = {
-    team: PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string,
-        description: PropTypes.string
-    })
-}
+  team: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    description: PropTypes.string,
+  }),
+};
 
 const displayName = "TeamSummaryCard";
 

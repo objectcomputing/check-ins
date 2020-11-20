@@ -1,6 +1,8 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
+import { BASE_API_URL } from "../api/api";
+import axios from "axios";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const UPDATE_USER_BIO = "@@check-ins/update_bio";
@@ -12,6 +14,7 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+const SET_CSRF = "@@check-ins/update_csrf";
 
 const AppContext = React.createContext();
 
@@ -31,6 +34,9 @@ const reducer = (state, action) => {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       state.currentCheckin = state.checkins[state.checkins.length - 1];
+      break;
+    case SET_CSRF:
+      state.csrf = action.payload;
       break;
     case UPDATE_TOAST:
       state.toast = action.payload;
@@ -64,6 +70,7 @@ const reducer = (state, action) => {
 
 const initialState = {
   checkins: [],
+  csrf: undefined,
   currentCheckin: {},
   teams: [],
   memberProfiles: [],
@@ -76,8 +83,8 @@ const initialState = {
   userProfile: undefined,
 };
 
-const getCheckins = async (id, pdlId, date, dispatch) => {
-  const res = await getCheckinByMemberId(id);
+const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
+  const res = await getCheckinByMemberId(id, csrf);
   let data =
     res.payload && res.payload.data && res.payload.status === 200 && !res.error
       ? res.payload.data
@@ -129,11 +136,28 @@ const AppContextProvider = (props) => {
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
-  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
+
+  const { csrf } = state;
 
   useEffect(() => {
-    async function updateUserProfile() {
-      let res = await getCurrentUser();
+    const getCsrf = async () => {
+      if (!csrf) {
+        const res = await axios({
+          url: `${BASE_API_URL}/csrf/cookie`,
+          responseType: "text",
+          withCredentials: true,
+        });
+        if (res && res.data) {
+          dispatch({ type: SET_CSRF, payload: res.data });
+        }
+      }
+    };
+    getCsrf();
+  }, [csrf]);
+
+  useEffect(() => {
+    const updateUserProfile = async () => {
+      let res = await getCurrentUser(csrf);
       let profile =
         res.payload && res.payload.data && !res.error
           ? res.payload.data
@@ -142,9 +166,11 @@ const AppContextProvider = (props) => {
       if (profile) {
         dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
       }
+    };
+    if (csrf) {
+      updateUserProfile();
     }
-    updateUserProfile();
-  }, []);
+  }, [csrf]);
 
   const date = (months, prevCheckinDate) => {
     let currentMonth = new Date().getMonth() + 1;
@@ -168,7 +194,7 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     async function getMemberProfiles() {
-      let res = await getAllMembers();
+      let res = await getAllMembers(csrf);
       let profiles =
         res.payload && res.payload.data && !res.error
           ? res.payload.data
@@ -178,20 +204,16 @@ const AppContextProvider = (props) => {
         dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
       }
     }
-    getMemberProfiles();
-  }, []);
+    if (csrf) {
+      getMemberProfiles();
+    }
+  }, [csrf]);
 
   useEffect(() => {
-    if (id && state.checkins.length === 0) {
-      getCheckins(id, pdlId, date, dispatch);
+    if (selectedId && csrf) {
+      getCheckins(selectedId, id, date, dispatch, csrf);
     }
-  }, [state.checkins, id, pdlId]);
-
-  useEffect(() => {
-    if (selectedId) {
-      getCheckins(selectedId, id, date, dispatch);
-    }
-  }, [selectedId, id]);
+  }, [csrf, selectedId, id]);
 
   const value = useMemo(() => {
     return { state, dispatch };

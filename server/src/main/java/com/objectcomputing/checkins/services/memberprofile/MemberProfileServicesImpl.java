@@ -27,11 +27,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
-        Set<MemberProfile> memberProfileEntities = new HashSet<>(
-                memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId), workEmail));
-
-        return memberProfileEntities;
+    public Set<MemberProfile> findByValues(@Nullable String name,
+                                           @Nullable String title,
+                                           @Nullable UUID pdlId,
+                                           @Nullable String workEmail,
+                                           @Nullable UUID supervisorId) {
+        return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
+                                                            workEmail, nullSafeUUIDToString(supervisorId)));
     }
 
     @Override
@@ -51,7 +53,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile findByName(@NotNull String name) {
-        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null);
+        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
         }

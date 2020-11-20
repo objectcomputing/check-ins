@@ -75,18 +75,21 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by Name, title, PdlId, workEmail or find all.
+     * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId or find all.
      * @param name
      * @param title
      * @param pdlId
      * @param workEmail
+     * @param supervisorId
      * @return
      */
-    @Get("/{?name,title,pdlId,workEmail}")
-    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name, @Nullable String title,
-                                                                    @Nullable UUID pdlId, @Nullable String workEmail) {
-
-        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail))
+    @Get("/{?name,title,pdlId,workEmail,supervisorId}")
+    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name,
+                                                                            @Nullable String title,
+                                                                            @Nullable UUID pdlId,
+                                                                            @Nullable String workEmail,
+                                                                            @Nullable UUID supervisorId) {
+        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId))
         .observeOn(Schedulers.from(eventLoopGroup))
         .map(memberProfiles -> {
             List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
@@ -102,7 +105,7 @@ public class MemberProfileController {
      * @param memberProfile
      * @return
      */
-    @Post("/")
+    @Post()
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
         return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
@@ -116,7 +119,7 @@ public class MemberProfileController {
      * @param memberProfile
      * @return
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
 
         return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
@@ -138,24 +141,25 @@ public class MemberProfileController {
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
-        dto.setBioText(entity.getBioText());
-        dto.setInsperityId(entity.getInsperityId());
-        dto.setLocation(entity.getLocation());
         dto.setName(entity.getName());
-        dto.setPdlId(entity.getPdlId());
         dto.setTitle(entity.getTitle());
-        dto.setStartDate(entity.getStartDate());
+        dto.setPdlId(entity.getPdlId());
+        dto.setLocation(entity.getLocation());
         dto.setWorkEmail(entity.getWorkEmail());
+        dto.setInsperityId(entity.getInsperityId());
+        dto.setStartDate(entity.getStartDate());
+        dto.setBioText(entity.getBioText());
+        dto.setSupervisorid(entity.getSupervisorid());
         return dto;
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
         return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid());
     }
 }
