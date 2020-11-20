@@ -45,13 +45,27 @@ export const getAllTeams = async (cookie) => {
   });
 };
 
-export const deleteTeam = async (id) => {
-  return await resolve(
-      myAxios({
+export const deleteTeam = async (id, cookie) => {
+  return resolve(
+      {
         method: "delete",
-        url: `${teamUrl}/${id}`,
+        url: teamUrl,
         responseType: "json",
-        withCredentials: true
-      })
+        params: {
+          memberid: id,
+        },
+        headers: { "X-CSRF-Header": cookie },
+      }
   );
 };
+//
+// export const deleteTeam = async (id) => {
+//   return resolve(
+//       {
+//         method: "delete",
+//         url: `${teamUrl}/${id}`,
+//         responseType: "json",
+//         withCredentials: true
+//       }
+//   );
+// };

@@ -73,7 +73,10 @@ const TeamSummaryCard = ({ team }) => {
       </CardContent>
       <CardActions>
         <Button>Edit Team</Button>
-        <Button>Delete Team</Button>
+          <Button
+              onClick={(e) => {
+                  console.log("delete clicked " + team.id);
+                  deleteATeam(team.id, e)}} >Delete Team</Button>
       </CardActions>
     </Card>
   );
