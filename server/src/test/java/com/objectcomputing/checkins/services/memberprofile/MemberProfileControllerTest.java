@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -9,48 +11,181 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.Resource;
-import io.micronaut.test.annotation.MicronautTest;
-import io.micronaut.test.annotation.MockBean;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@MicronautTest
-public class MemberProfileControllerTest {
+public class MemberProfileControllerTest extends TestContainersSuite implements MemberProfileFixture {
 
     @Inject
     @Client("/services/member-profile")
     private HttpClient client;
 
-    @Inject
-    MemberProfileServices mockMemberServices;
+    /*
+    * LocalDate.Max cannot be used for end-to-end tests
+    * LocalDate.Max year = 999999999
+    * POSTGRES supported date range = 4713 BC - 5874897 AD
+    */
+    private final LocalDate maxDate = LocalDate.of(2099, 12, 31);
 
-    @MockBean(MemberProfileServices.class)
-    public MemberProfileServices getMockMemberServices() {
-        return mock(MemberProfileServices.class);
+    private String encodeValue(String value) throws UnsupportedEncodingException {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
-    private static final String testUser = "testName";
-    private static final String testRole = "testRole";
+    @Test
+    public void testGETNonExistingEndpointReturns404() {
 
-    @BeforeEach
-    void setup() {
-        reset(mockMemberServices);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.GET(String.valueOf(UUID.randomUUID()))
+                    .basicAuth(MEMBER_ROLE,MEMBER_ROLE));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
-    // Find By id - when no user data exists
+    @Test
+    public void testGETFindByNameReturnsEmptyBody() throws UnsupportedEncodingException {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?name=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    public void testGETFindByValueName() throws UnsupportedEncodingException {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfile), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    public void testGETGetByIdHappyPath() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", memberProfile.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(request, MemberProfile.class);
+
+        assertEquals(memberProfile, response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
+    @Test
+    public void testGETGetByIdNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/%s", UUID.randomUUID().toString())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+    }
+
+    @Test
+    void testFindByMemberName() throws UnsupportedEncodingException {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfile), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testFindByMemberRole() throws UnsupportedEncodingException {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?title=%s", encodeValue(memberProfile.getTitle()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfile), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testFindByMemberPdlId() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfilePdl = createADefaultMemberProfileForPdl(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pdlId=%s",memberProfilePdl.getPdlId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfilePdl), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testFindBySupervisorId() {
+        MemberProfile memberProfileOfPdl = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPdl);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?supervisorId=%s",memberProfileOfUser.getSupervisorid()))
+                                        .basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
+
+        assertEquals(Set.of(memberProfileOfUser), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    public void testPOSTCreateAMemberProfile() {
+
+        MemberProfileUpdateDTO dto = mkUpdateMemberProfileDTO();
+
+        final HttpRequest<?> request = HttpRequest.
+                POST("/", dto).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(request,MemberProfile.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(dto.getName(), response.body().getName());
+        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()),"/services" + response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPOSTCreateANullMemberProfile() {
+
+        MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
+
+        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.
+                POST("/", memberProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
+    }
+
+    // Find By id - when no user data exists for POST
     @Test
     public void testPostValidationFailures() {
 
@@ -66,214 +201,79 @@ public class MemberProfileControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
-    // Find By id - when no user data exists
     @Test
-    public void testPutValidationFailures() {
+    public void testPOSTSaveMemberSameEmailThrowsException() {
+        // create a user
+        MemberProfileUpdateDTO firstUser = mkUpdateMemberProfileDTO();
 
-        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.PUT("", new MemberProfileCreateDTO())
+        final HttpRequest<?> requestFirstUser = HttpRequest.POST("/", firstUser).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<MemberProfile> responseFirstUser = client.toBlocking().exchange(requestFirstUser,MemberProfile.class);
+
+        assertNotNull(responseFirstUser);
+        assertEquals(HttpStatus.CREATED, responseFirstUser.getStatus());
+
+        // create another user with same email address
+        MemberProfileUpdateDTO secondUser = mkUpdateMemberProfileDTO();
+        final HttpRequest<?> requestSecondUser = HttpRequest.POST("/", secondUser).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(requestSecondUser, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(requestSecondUser.getPath(), href);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(String.format("Email %s already exists in database", firstUser.getWorkEmail()), error);
+    }
+
+    @Test
+    public void testPUTUpdateMemberProfile() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        memberProfile.setStartDate(LocalDate.of(2019, 1, 01));
+
+        final HttpRequest<MemberProfile> request = HttpRequest.PUT("/", memberProfile)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(request, MemberProfile.class);
+
+        assertEquals(memberProfile, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(),  memberProfile.getId()),"/services" +response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPUTUpdateNonexistentMemberProfile() {
+
+        MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
+        memberProfileCreateDTO.setName("reincarnation");
+
+        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.
+                PUT("/", memberProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
-
-        assertEquals(2, errors.size());
-        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
     }
 
-    // Find By id - when no user data exists
     @Test
-    public void testGetFindByIdReturns404() {
+    public void testPUTUpdateNullMemberProfile() {
 
-        when(mockMemberServices.getById(testUuid))
-                .thenThrow(new MemberProfileDoesNotExistException("testMessage"));
+        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest
-                    .GET(String.format("/%s", testUuid))
-                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
-        });
-        assertEquals("testMessage", thrown.getMessage());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
-    }
-
-    // Find By Name - when no user data exists
-    @Test
-    public void testGetFindByNameReturnsEmptyBody() {
-
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setName(memberProfile.getName());
-
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
-                .thenReturn(Collections.EMPTY_SET);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?name=%s", testUser))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<MemberProfileResponseDTO> response = client.toBlocking().retrieve(request, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(0, response.size());
-    }
-
-    // Find By Role - when no user data exists
-    @Test
-    public void testGetFindByRoleReturnsEmptyBody() {
-
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setName(memberProfile.getName());
-
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
-                .thenReturn(Collections.EMPTY_SET);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?role=%s", testRole))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<MemberProfileResponseDTO> response = client.toBlocking().retrieve(request, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(0, response.size());
-    }
-
-    // Find By PdlId - when no user data exists
-    @Test
-    public void testGetFindByPdlIdReturnsEmptyBody() {
-
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setPdlId(testPdlId);
-
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
-                .thenReturn(Collections.EMPTY_SET);
-
-        HttpRequest request = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<MemberProfileResponseDTO> response = client.toBlocking().retrieve(request, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(0, response.size());
-    }
-
-    // test Find All
-    @Test
-    public void testGetFindAll() {
-        MemberProfile profileOne = mkMemberProfile();
-        MemberProfile profileTwo = mkMemberProfile("2");
-        when(mockMemberServices.findByValues(null, null, null, null))
-                .thenReturn(Set.of(profileOne, profileTwo));
-
-        HttpRequest requestFindAll = HttpRequest.GET("")
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        List<MemberProfileResponseDTO> responseFindAll = client.toBlocking().retrieve(requestFindAll, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(2, responseFindAll.size());
-    }
-
-    // test Find By Id
-    @Test
-    public void testGetFindById() {
-
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setId(testUuid);
-
-        when(mockMemberServices.getById(memberProfile.getId())).thenReturn(memberProfile);
-
-        HttpRequest requestFindById = HttpRequest.GET(String.format("/%s", memberProfile.getId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(requestFindById, MemberProfileResponseDTO.class);
-        
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.body());
-        assertProfilesEqual(memberProfile, response.body());
-    }
-
-    // test Find By Name
-    @Test
-    public void testGetFindByName() {
-
-        MemberProfile memberProfile = mkMemberProfile();
-
-        when(mockMemberServices.findByValues(memberProfile.getName(), null, null, null))
-                .thenReturn(Collections.singleton(memberProfile));
-
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?name=%s", memberProfile.getName()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        List<MemberProfileResponseDTO> responseBody = response.body();
-
-        assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
-    }
-
-    // test Find By Role
-    @Test
-    public void testGetFindByRole() {
-        MemberProfile memberProfile = mkMemberProfile();
-
-        when(mockMemberServices.findByValues(null, memberProfile.getTitle(), null, null))
-                .thenReturn(Collections.singleton(memberProfile));
-
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?title=%s", memberProfile.getTitle()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        List<MemberProfileResponseDTO> responseBody = response.body();
-
-        assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
-    }
-
-    // test Find By PdlId
-    @Test
-    public void testGetFindByPdlId() {
-        MemberProfile memberProfile = mkMemberProfile();
-        memberProfile.setPdlId(testUuid);
-
-        when(mockMemberServices.findByValues(null, null, memberProfile.getPdlId(), null))
-                .thenReturn(Collections.singleton(memberProfile));
-
-        HttpRequest requestFindByName = HttpRequest.GET(String.format("/?pdlId=%s", memberProfile.getPdlId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpResponse<List<MemberProfileResponseDTO>> response = client.toBlocking().exchange(requestFindByName, Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-        List<MemberProfileResponseDTO> responseBody = response.body();
-
-        assertEquals(1, responseBody.size());
-        assertProfilesEqual(memberProfile, responseBody.get(0));
-
-    }
-
-    // POST - Valid Body
-    @Test
-    public void testPostSave() {
-
-        MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
-
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(mkMemberProfile());
-
-        final HttpResponse<MemberProfileResponseDTO> response = client
-                .toBlocking()
-                .exchange(HttpRequest.POST("", requestBody)
-                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.body());
-        assertProfilesEqual(requestBody, response.body());
-        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
     }
 
     // POST - Future Start Date
     @Test
     public void testPostForFutureStartDate() {
-
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
-        requestBody.setStartDate(LocalDate.MAX);
-
-        MemberProfile expected = mkMemberProfile();
-        expected.setStartDate(requestBody.getStartDate());
-
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+        requestBody.setStartDate(maxDate);
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()
@@ -293,11 +293,6 @@ public class MemberProfileControllerTest {
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
         requestBody.setName(null);
 
-        MemberProfile expected = mkMemberProfile();
-        expected.setName(null);
-
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
-
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()
                 .exchange(HttpRequest.POST("", requestBody)
@@ -309,23 +304,20 @@ public class MemberProfileControllerTest {
         assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
     }
 
-    // PUT - Valid Body
+    // Find By id - when no user data exists for PUT
     @Test
-    public void testPutUpdate() {
+    public void testPutValidationFailures() {
 
-        MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
+        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.PUT("", new MemberProfileCreateDTO())
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        MemberProfile expected = mkMemberProfile();
-        expected.setId(requestBody.getId());
+        JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
-
-        final HttpResponse<MemberProfileResponseDTO> response = client
-                .toBlocking()
-                .exchange(HttpRequest.PUT("", requestBody)
-                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertProfilesEqual(requestBody, response.body());
+        assertEquals(2, errors.size());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
     // PUT - Future Start Date
@@ -333,13 +325,7 @@ public class MemberProfileControllerTest {
     public void testPutFutureStartDate() {
 
         MemberProfileUpdateDTO requestBody = mkUpdateMemberProfileDTO();
-        requestBody.setStartDate(LocalDate.MAX);
-
-        MemberProfile expected = mkMemberProfile();
-        expected.setId(requestBody.getId());
-        expected.setStartDate(requestBody.getStartDate());
-
-        when(mockMemberServices.saveProfile(any(MemberProfile.class))).thenReturn(expected);
+        requestBody.setStartDate(maxDate);
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()
@@ -347,7 +333,7 @@ public class MemberProfileControllerTest {
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertProfilesEqual(requestBody, response.body());
+        assertProfilesEqual(requestBody, Objects.requireNonNull(response.body()));
     }
 
     // PUT - Request with empty body

@@ -1,71 +1,51 @@
-import axios from "axios";
-import { resolve, BASE_API_URL } from "./api.js";
+import { resolve } from "./api.js";
 
-const skillUrl = `${BASE_API_URL}/services/skill`;
-export const getSkills = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: skillUrl,
-      responseType: "json",
-      withCredentials: true,
-    })
-  );
-};
-export const getPendingSkills = async () => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: skillUrl + "?pending=true",
-      responseType: "json",
-      withCredentials: true,
-    })
-  );
+const skillUrl = "/services/skill";
+
+export const getSkills = async (cookie) => {
+  return resolve({
+    method: "get",
+    url: skillUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const getSkill = async (id) => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: `${skillUrl}/${id}`,
-      responseType: "json",
-      withCredentials: true,
-    })
-  );
+export const getSkill = async (id, cookie) => {
+  return resolve({
+    method: "get",
+    url: `${skillUrl}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const createSkill = async (skill) => {
-  return await resolve(
-    axios({
-      method: "post",
-      url: skillUrl,
-      responseType: "json",
-      data: skill,
-      withCredentials: true,
-    })
-  );
+export const createSkill = async (skill, cookie) => {
+  return resolve({
+    method: "post",
+    url: skillUrl,
+    responseType: "json",
+    data: skill,
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const updateSkill = async (skill) => {
-  return await resolve(
-    axios({
-      method: "put",
-      url: skillUrl,
-      responseType: "json",
-      data: skill,
-      withCredentials: true,
-    })
-  );
+export const updateSkill = async (skill, cookie) => {
+  return resolve({
+    method: "put",
+    url: skillUrl,
+    responseType: "json",
+    data: skill,
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const removeSkill = async (id) => {
-  return await resolve(
-    axios({
-      method: "delete",
-      url: skillUrl,
-      responseType: "json",
-      data: id,
-      withCredentials: true,
-    })
-  );
+export const removeSkill = async (id, cookie) => {
+  return resolve({
+    method: "delete",
+    url: skillUrl,
+    responseType: "json",
+    data: id,
+    headers: { "X-CSRF-Header": cookie },
+  });
 };

@@ -1,11 +1,22 @@
 import React from "react";
-import Avatar from "./Avatar";
+import AvatarComponent from "./Avatar";
+import { AppContextProvider } from "../../context/AppContext";
 import renderer from "react-test-renderer";
 
-it("renders correctly", () => {
-  snapshot(<Avatar />);
-});
+const initialState = {
+  state: {
+    userProfile: {
+      memberProfile: {
+        id: "912834091823",
+      },
+    },
+  },
+};
 
-it("renders image_url", () => {
-  snapshot(<Avatar image_url={"http://someurl.com/das.png"} />);
+it("renders correctly", () => {
+  snapshot(
+    <AppContextProvider value={initialState}>
+      <AvatarComponent />
+    </AppContextProvider>
+  );
 });

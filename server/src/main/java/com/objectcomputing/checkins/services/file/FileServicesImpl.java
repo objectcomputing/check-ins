@@ -13,6 +13,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.utils.SecurityService;
@@ -37,17 +38,20 @@ public class FileServicesImpl implements FileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
-    private final GoogleDriveAccessor googleDriveAccessor;
+    private final GoogleAccessor googleAccessor;
     private final SecurityService securityService;
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
-    private CurrentUserServices currentUserServices;
+    private final CurrentUserServices currentUserServices;
 
-    public FileServicesImpl(GoogleDriveAccessor googleDriveAccessor, SecurityService securityService,
-                            CheckInServices checkInServices, CheckinDocumentServices checkinDocumentServices,
-                            MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
-        this.googleDriveAccessor = googleDriveAccessor;
+    public FileServicesImpl(GoogleAccessor googleAccessor,
+                            SecurityService securityService,
+                            CheckInServices checkInServices,
+                            CheckinDocumentServices checkinDocumentServices,
+                            MemberProfileServices memberProfileServices,
+                            CurrentUserServices currentUserServices) {
+        this.googleAccessor = googleAccessor;
         this.securityService = securityService;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
@@ -65,7 +69,7 @@ public class FileServicesImpl implements FileServices {
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             if (checkInID == null && isAdmin) {
@@ -119,7 +123,7 @@ public class FileServicesImpl implements FileServices {
             file.deleteOnExit();
             FileWriter myWriter = new FileWriter(file);
 
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
@@ -155,7 +159,7 @@ public class FileServicesImpl implements FileServices {
         final String directoryName = sb;
 
         try {
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             // Check if folder already exists on google drive. If exists, return folderId and name
@@ -217,7 +221,7 @@ public class FileServicesImpl implements FileServices {
         }
 
         try {
-            Drive drive = googleDriveAccessor.accessGoogleDrive();
+            Drive drive = googleAccessor.accessGoogleDrive();
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
             checkinDocumentServices.deleteByUploadDocId(uploadDocId);

@@ -126,6 +126,8 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
         skillCreateDTO.setPending(true);
+        skillCreateDTO.setExtraneous(true);
+        skillCreateDTO.setDescription("Bring back from the dead");
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
                 POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -134,6 +136,8 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED,response.getStatus());
         assertEquals(skillCreateDTO.getName(), response.body().getName());
+        assertEquals(skillCreateDTO.isExtraneous(), response.body().isExtraneous());
+        assertEquals(skillCreateDTO.getDescription(), response.body().getDescription());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
     }
 

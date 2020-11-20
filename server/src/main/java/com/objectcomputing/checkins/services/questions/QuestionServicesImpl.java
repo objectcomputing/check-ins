@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.questions;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Set;
 import java.util.UUID;
@@ -8,8 +7,11 @@ import java.util.UUID;
 @Singleton
 public class QuestionServicesImpl implements QuestionServices {
 
-    @Inject
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
+
+    public QuestionServicesImpl(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
+    }
 
     public Question saveQuestion(Question question) {
 

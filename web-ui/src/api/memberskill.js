@@ -1,54 +1,35 @@
-import axios from "axios";
-import { resolve, BASE_API_URL } from "./api.js";
+// import axios from "axios";
+import { resolve } from "./api.js";
 
-const memberSkillUrl = `${BASE_API_URL}/services/member-skill`;
-export const getMemberSkills = async (id) => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: memberSkillUrl,
-      responseType: "json",
-      params: {
-        memberid: id,
-      },
-      withCredentials: true
-    })
-  );
+const memberSkillUrl = "/services/member-skill";
+
+export const getMemberSkills = async (id, cookie) => {
+  return resolve({
+    method: "get",
+    url: memberSkillUrl,
+    responseType: "json",
+    params: {
+      memberid: id,
+    },
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const getSkillMembers = async (id) => {
-  return await resolve(
-    axios({
-      method: "get",
-      url: memberSkillUrl,
-      responseType: "json",
-      params: {
-        skillid: id,
-      },
-      withCredentials: true
-    })
-  );
+export const deleteMemberSkill = async (id, cookie) => {
+  return resolve({
+    method: "DELETE",
+    url: `${memberSkillUrl}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
 
-export const deleteMemberSkill = async (id) => {
-  return await resolve(
-    axios({
-      method: "DELETE",
-      url: `${memberSkillUrl}/${id}`,
-      responseType: "json",
-      withCredentials: true
-    })
-  );
-};
-
-export const createMemberSkill = async (memberskill) => {
-  return await resolve(
-    axios({
-      method: "post",
-      url: memberSkillUrl,
-      responseType: "json",
-      data: memberskill,
-      withCredentials: true
-    })
-  );
+export const createMemberSkill = async (memberskill, cookie) => {
+  return resolve({
+    method: "post",
+    url: memberSkillUrl,
+    responseType: "json",
+    data: memberskill,
+    headers: { "X-CSRF-Header": cookie },
+  });
 };

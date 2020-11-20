@@ -1,11 +1,13 @@
 .member-card {
-  margin: 20px;
+  max-height: 11rem;
+  max-width: 32%;
+  min-width: 32%;
 }
 
-.member-summary-avatar {
-  height: 80px !important;
-  width: 80px !important;
-  margin-right: 20px;
+.member-card .member-summary-avatar {
+  height: 5rem;
+  width: 5rem;
+  margin-right: 1.25rem;
 }
 
 .member-summary-parent {

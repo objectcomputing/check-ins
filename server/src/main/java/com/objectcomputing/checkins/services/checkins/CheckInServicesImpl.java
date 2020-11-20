@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -17,12 +18,15 @@ import io.micronaut.security.utils.SecurityService;
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
 
-    private CheckInRepository checkinRepo;
-    private MemberProfileRepository memberRepo;
-    private SecurityService securityService;
-    private CurrentUserServices currentUserServices;
+    private final CheckInRepository checkinRepo;
+    private final MemberProfileRepository memberRepo;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
 
-    public CheckInServicesImpl(CheckInRepository checkinRepo, MemberProfileRepository memberRepo, SecurityService securityService, CurrentUserServices currentUserServices) {
+    public CheckInServicesImpl(CheckInRepository checkinRepo,
+                               MemberProfileRepository memberRepo,
+                               SecurityService securityService,
+                               CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.securityService = securityService;
@@ -110,7 +114,10 @@ public class CheckInServicesImpl implements CheckInServices {
 
         if(teamMemberId != null) {
             // Limit findByTeamMemberId to Subject of check-in, PDL of subject and Admin
-            validate((!isAdmin && !currentUser.getId().equals(teamMemberId) && !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())), "You are not authorized to perform this operation");
+            validate((!isAdmin &&
+                    !currentUser.getId().equals(teamMemberId) &&
+                    !currentUser.getId().equals(memberRepo.findById(teamMemberId).get().getPdlId())),
+                    "You are not authorized to perform this operation");
             checkIn.retainAll(checkinRepo.findByTeamMemberId(teamMemberId));
         } else if(pdlId != null) {
             // Limit findByPdlId to Subject of check-in, PDL of subject and Admin
@@ -134,7 +141,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if(isError) {
-            throw new CheckInBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }

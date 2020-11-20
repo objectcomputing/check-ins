@@ -1,23 +1,25 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-
-
+@Singleton
 public class PulseResponseServicesImpl implements PulseResponseService {
 
-    @Inject
-    private PulseResponseRepository pulseResponseRepo;
+    private final PulseResponseRepository pulseResponseRepo;
+    private final MemberProfileRepository memberRepo;
 
-    @Inject
-    private MemberProfileRepository memberRepo;
+    public PulseResponseServicesImpl(PulseResponseRepository pulseResponseRepo,
+                                     MemberProfileRepository memberRepo) {
+        this.pulseResponseRepo = pulseResponseRepo;
+        this.memberRepo = memberRepo;
+    }
     
     @Override
     public PulseResponse save(PulseResponse pulseResponse) {
