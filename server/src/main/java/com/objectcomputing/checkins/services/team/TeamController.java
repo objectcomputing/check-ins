@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
+
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -43,6 +44,9 @@ public class TeamController {
         this.ioExecutorService = ioExecutorService;
     }
 
+
+
+
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
         JsonError error = new JsonError(e.getMessage())
@@ -65,16 +69,17 @@ public class TeamController {
      * Create and save a new team
      *
      * @param team, {@link TeamCreateDTO}
-     * @return {@link HttpResponse< TeamResponseDTO >}
+     * @return {@link HttpResponse<Team>}
      */
 
     @Post(value = "/")
     public Single<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
+
         return Single.fromCallable(() -> teamService.save(team))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedTeam -> (HttpResponse<TeamResponseDTO>) HttpResponse
-                        .created(savedTeam)
-                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), savedTeam.getId())))))
+                .map(createdTeam -> (HttpResponse<TeamResponseDTO>) HttpResponse
+                        .created(createdTeam)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId())))))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
