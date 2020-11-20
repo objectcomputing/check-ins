@@ -46,6 +46,10 @@ public class MemberProfileCreateDTO {
     private String bioText;
 
     @Nullable
+    @Schema(description = "id of the supervisor this member is associated with", nullable = true)
+    private UUID supervisorid;
+
+    @Nullable
     public String getName() {
         return name;
     }
@@ -113,6 +117,15 @@ public class MemberProfileCreateDTO {
         this.bioText = bioText;
     }
 
+    @Nullable
+    public UUID getSupervisorid() {
+        return supervisorid;
+    }
+
+    public void setSupervisorid(@Nullable UUID supervisorid) {
+        this.supervisorid = supervisorid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,11 +138,12 @@ public class MemberProfileCreateDTO {
                 Objects.equals(workEmail, that.workEmail) &&
                 Objects.equals(insperityId, that.insperityId) &&
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(bioText, that.bioText);
+                Objects.equals(bioText, that.bioText) &&
+                Objects.equals(supervisorid, that.supervisorid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, title, pdlId, location, workEmail, insperityId, startDate, bioText);
+        return Objects.hash(name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
     }
 }

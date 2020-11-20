@@ -40,7 +40,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
         MemberProfile user = memberProfileServices.saveProfile(new MemberProfile(name, "", null,
-                "", workEmail, "", null, ""));
+                "", workEmail, "", null, "", null));
 
         roleServices.save(new Role(RoleType.MEMBER, user.getId()));
 
