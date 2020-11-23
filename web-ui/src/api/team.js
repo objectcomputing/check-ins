@@ -49,23 +49,10 @@ export const deleteTeam = async (id, cookie) => {
   return resolve(
       {
         method: "delete",
-        url: teamUrl,
+        url: `${teamUrl}/${id}`,
         responseType: "json",
-        params: {
-          memberid: id,
-        },
+
         headers: { "X-CSRF-Header": cookie },
       }
   );
 };
-//
-// export const deleteTeam = async (id) => {
-//   return resolve(
-//       {
-//         method: "delete",
-//         url: `${teamUrl}/${id}`,
-//         responseType: "json",
-//         withCredentials: true
-//       }
-//   );
-// };
