@@ -1,7 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { createSelector } from 'reselect';
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
-import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
 import axios from "axios";
@@ -138,7 +137,6 @@ const AppContextProvider = (props) => {
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
-  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
 
   const { csrf } = state;
 
@@ -211,30 +209,6 @@ const AppContextProvider = (props) => {
       getMemberProfiles();
     }
   }, [csrf]);
-
-  useEffect(() => {
-    async function getTeamMembers() {
-      let res = await getAllTeamMembers(csrf);
-      let teamMembers =
-        res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : undefined;
-
-      if (teamMembers) {
-        dispatch({ type: UPDATE_TEAM_MEMBERS, payload: teamMembers });
-      }
-    }
-
-    if (csrf) {
-      getTeamMembers();
-    }
-  }, [csrf]);
-
-  useEffect(() => {
-    if (id && state.checkins.length === 0 && csrf) {
-      getCheckins(id, pdlId, date, dispatch, csrf);
-    }
-  }, [csrf, state.checkins, id, pdlId]);
 
   useEffect(() => {
     if (selectedId && csrf) {

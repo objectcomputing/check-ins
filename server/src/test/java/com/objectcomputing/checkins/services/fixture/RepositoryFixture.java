@@ -14,7 +14,6 @@ import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
-import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 

@@ -4,13 +4,13 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface TeamServices {
-    Team read(UUID id);
+    TeamResponseDTO read(UUID id);
 
-    Team save(Team g);
+    TeamResponseDTO save(TeamCreateDTO g);
 
-    Team update(Team g);
+    TeamResponseDTO update(TeamUpdateDTO g);
 
-    Set<Team> findByFields(String name, UUID memberid);
+    Set<TeamResponseDTO> findByFields(String name, UUID memberid);
 
-    void delete(UUID id);
+    boolean delete(UUID id);
 }
