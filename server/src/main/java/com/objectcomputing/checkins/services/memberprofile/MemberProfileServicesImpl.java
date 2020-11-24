@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.memberprofile;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -48,5 +49,14 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
 
         return memberProfileRepository.update(memberProfile);
+    }
+
+    @Override
+    public MemberProfile findByName(@NotNull String name) {
+        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
+        if (searchResult.size() != 1) {
+            throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
+        }
+        return searchResult.get(0);
     }
 }
