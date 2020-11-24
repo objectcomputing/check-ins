@@ -25,10 +25,9 @@ const TeamSummaryCard = ({ team, index }) => {
     const { state, dispatch } = useContext(AppContext);
     const { teams } = state;
     const [open, setOpen] = useState(false);
-    const teamMembers = selectMemberProfilesByTeamId(team.id)(state);
 
-    let leads = teamMembers == null ? null : teamMembers.filter((teamMember) => teamMember.lead);
-    let nonLeads = teamMembers == null ? null : teamMembers.filter((teamMember) => !teamMember.lead);
+    let leads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => teamMember.lead);
+    let nonLeads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => !teamMember.lead);
 
     const handleOpen = () => setOpen(true);
 
