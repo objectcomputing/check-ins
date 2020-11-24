@@ -50,6 +50,12 @@ public class SkillTagController {
         return HttpResponse.<JsonError>status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    /**
+     * Get a single skill tag by its unique id.
+     *
+     * @param id
+     * @return a skill tag or 404
+     */
     @Get("/{id}")
     public Single<HttpResponse<SkillTagResponseDTO>> getById(@NotNull UUID id) {
         return Single.fromCallable(() -> skillTagService.findById(id))
@@ -59,6 +65,13 @@ public class SkillTagController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
+    /**
+     * Find any skill tags that match the given criteria
+     *
+     * @param name      find by skill tag name contains
+     * @param skillId   find by skill tag is applied to skill with this id
+     * @return          any applicable tags
+     */
     @Get("/{?name,skillId}")
     public Single<HttpResponse<List<SkillTagResponseDTO>>> findTags(@Nullable String name, @Nullable UUID skillId) {
         return Single.fromCallable(() -> skillTagService.search(name, skillId))
@@ -68,18 +81,30 @@ public class SkillTagController {
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
+    /**
+     * Save a new skill tag
+     *
+     * @param skillTag  Tag to save
+     * @return          The created tag
+     */
     @Post("/")
-    public Single<HttpResponse<SkillTagResponseDTO>> save(@Valid @NotNull SkillTagCreateDTO dto) {
-        return Single.fromCallable(() -> skillTagService.save(dto))
+    public Single<HttpResponse<SkillTagResponseDTO>> save(@Valid @NotNull SkillTagCreateDTO skillTag) {
+        return Single.fromCallable(() -> skillTagService.save(skillTag))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skillTagResponseDTO -> (HttpResponse<SkillTagResponseDTO>)HttpResponse
                         .ok(skillTagResponseDTO))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
+    /**
+     * Update an existing skill tag
+     *
+     * @param skillTag  Tag to update
+     * @return          The updated tag with changes
+     */
     @Put("/")
-    public Single<HttpResponse<SkillTagResponseDTO>> update(@Valid SkillTagUpdateDTO dto) {
-        return Single.fromCallable(() -> skillTagService.update(dto))
+    public Single<HttpResponse<SkillTagResponseDTO>> update(@Valid SkillTagUpdateDTO skillTag) {
+        return Single.fromCallable(() -> skillTagService.update(skillTag))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skillTagResponseDTO -> (HttpResponse<SkillTagResponseDTO>)HttpResponse
                         .ok(skillTagResponseDTO))
