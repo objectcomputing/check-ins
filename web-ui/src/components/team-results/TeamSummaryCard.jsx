@@ -34,7 +34,7 @@ const TeamSummaryCard = ({ team }) => {
       ? null
       : teamMembers.filter((teamMember) => teamMember.lead);
 
-    console.log("team lead " + leads);
+    console.log("at top team leads " + leads);
 
     let nonLeads =
     teamMembers == null
@@ -44,7 +44,7 @@ const TeamSummaryCard = ({ team }) => {
     const deleteATeam = (id) => {
         if (id && csrf) {
             // deleteTeam(id);
-            console.log("team lead " + leads);
+            console.log("team leads " + leads);
             const result = deleteTeam(id, csrf);
             console.log(result);
             if (result !== null) {
@@ -94,7 +94,7 @@ const TeamSummaryCard = ({ team }) => {
       </CardContent>
       <CardActions>
         <Button>Edit Team</Button>
-        {isAdmin && (    //fix for team leads to delete
+        {isAdmin && leads.workemail.includes(userProfile.workemail) (    //fix for team leads to delete
           <Button
               onClick={(e) => {
                   console.log("delete clicked " + team.id);
