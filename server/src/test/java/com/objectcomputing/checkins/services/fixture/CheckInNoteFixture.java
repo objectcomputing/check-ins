@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 public interface CheckInNoteFixture extends RepositoryFixture {
 
     default CheckinNote createADeafultCheckInNote(CheckIn checkIn, MemberProfile memberProfile) {
-        return getCheckInNoteRepository().save(new CheckinNote(checkIn.getId(),memberProfile.getId(),"tests"));
+        return getCheckInNoteRepository().save(new CheckinNote(checkIn.getId(), memberProfile.getId(),"tests"));
     }
 
 

@@ -45,14 +45,14 @@ public class TeamMemberController {
     /**
      * Create and save a new teamMember.
      *
-     * @param teamMember, {@link TeamMemberCreateDTO}
+     * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
     @Post(value = "/")
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
-                                                   HttpRequest<TeamMemberCreateDTO> request) {
+                                                  HttpRequest<TeamMemberResponseDTO> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
-                teamMember.getMemberid(), teamMember.isLead()));
+                teamMember.getMemberid(), teamMember.getLead()));
         return HttpResponse
                 .created(newTeamMember)
                 .headers(headers -> headers.location(
@@ -66,8 +66,8 @@ public class TeamMemberController {
      * @return {@link HttpResponse<TeamMember>}
      */
     @Put("/")
-    public HttpResponse<?> updateMembers(@Body @Valid TeamMember teamMember, HttpRequest<TeamMember> request) {
-        TeamMember updatedTeamMember = teamMemberServices.update(teamMember);
+    public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<TeamMember> request) {
+        TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), teamMember.getLead()));
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(
@@ -97,25 +97,25 @@ public class TeamMemberController {
      */
     @Get("/{?teamid,memberid,lead}")
     public Set<TeamMember> findTeamMembers(@Nullable UUID teamid,
-                                             @Nullable UUID memberid,
-                                             @Nullable Boolean lead) {
+                                           @Nullable UUID memberid,
+                                           @Nullable Boolean lead) {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
     /**
      * Load members
      *
-     * @param teamMembers, {@link List<TeamMemberCreateDTO> to load {@link TeamMember team members}}
+     * @param teamMembers, {@link List< TeamMemberResponseDTO > to load {@link TeamMember team members}}
      * @return {@link HttpResponse<List<TeamMember>}
      */
     @Post("/members")
     public HttpResponse<?> loadTeamMembers(@Body @Valid @NotNull List<TeamMemberCreateDTO> teamMembers,
-                                            HttpRequest<List<TeamMember>> request) {
+                                           HttpRequest<List<TeamMember>> request) {
         List<String> errors = new ArrayList<>();
         List<TeamMember> membersCreated = new ArrayList<>();
-        for (TeamMemberCreateDTO teamMemberDTO : teamMembers) {
-            TeamMember teamMember = new TeamMember(teamMemberDTO.getTeamid(),
-                    teamMemberDTO.getMemberid(), teamMemberDTO.isLead());
+        for (TeamMemberCreateDTO teamMemberResponseDTO : teamMembers) {
+            TeamMember teamMember = new TeamMember(teamMemberResponseDTO.getTeamid(),
+                    teamMemberResponseDTO.getMemberid(), teamMemberResponseDTO.getLead());
             try {
                 teamMemberServices.save(teamMember);
                 membersCreated.add(teamMember);

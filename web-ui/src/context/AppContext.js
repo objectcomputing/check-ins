@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
+import { createSelector } from 'reselect';
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
-import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
 import axios from "axios";
@@ -137,7 +137,6 @@ const AppContextProvider = (props) => {
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
-  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
 
   const { csrf } = state;
 
@@ -212,30 +211,6 @@ const AppContextProvider = (props) => {
   }, [csrf]);
 
   useEffect(() => {
-    async function getTeamMembers() {
-      let res = await getAllTeamMembers(csrf);
-      let teamMembers =
-        res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : undefined;
-
-      if (teamMembers) {
-        dispatch({ type: UPDATE_TEAM_MEMBERS, payload: teamMembers });
-      }
-    }
-
-    if (csrf) {
-      getTeamMembers();
-    }
-  }, [csrf]);
-
-  useEffect(() => {
-    if (id && state.checkins.length === 0 && csrf) {
-      getCheckins(id, pdlId, date, dispatch, csrf);
-    }
-  }, [csrf, state.checkins, id, pdlId]);
-
-  useEffect(() => {
     if (selectedId && csrf) {
       getCheckins(selectedId, id, date, dispatch, csrf);
     }
@@ -251,30 +226,39 @@ const AppContextProvider = (props) => {
   );
 };
 
-const selectProfileMap = ({ memberProfiles }) => {
-  if (memberProfiles && memberProfiles.length) {
-    memberProfiles = memberProfiles.reduce((mappedById, profile) => {
-      mappedById[profile.id] = profile;
-      return mappedById;
-    }, {});
+export const selectMemberProfiles = state => state.memberProfiles;
+export const selectTeamMembers = state => state.teamMembers;
+
+export const selectProfileMap = createSelector(
+  selectMemberProfiles,
+  (memberProfiles) => {
+    if (memberProfiles && memberProfiles.length) {
+      memberProfiles = memberProfiles.reduce((mappedById, profile) => {
+        mappedById[profile.id] = profile;
+        return mappedById;
+      }, {});
+    }
+    return memberProfiles;
   }
-  return memberProfiles;
-};
+);
 
-const selectMembersByTeamId = ({ teamMembers }) => (id) => {
-  let members = [];
-  if (teamMembers && teamMembers.length) {
-    members = teamMembers.filter((member) => member.teamid === id);
+export const selectMembersByTeamId = id => createSelector(
+  selectTeamMembers,
+  (teamMembers) => {
+    let members = [];
+    if (teamMembers && teamMembers.length) {
+      members = teamMembers.filter((member) => member.teamid === id);
+    }
+    return members;
   }
-  return members;
-};
+);
 
-const selectMemberProfilesByTeamId = (state) => (id) =>
-  selectMembersByTeamId(state)(id).map((member) => {
-    return { ...selectProfileMap(state)[member.memberid], ...member };
-  });
-
-AppContext.selectProfileById = selectProfileMap;
-AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
+export const selectMemberProfilesByTeamId = id => createSelector(
+  selectMembersByTeamId(id),
+  selectProfileMap,
+  (members, profileMap) => members.map((member) => {
+      return { ...profileMap[member.memberid], ...member };
+    })
+);
 
 export { AppContext, AppContextProvider };

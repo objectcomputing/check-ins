@@ -34,9 +34,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
                 throw new TeamBadArgException(String.format("Invalid teamMember %s", teamMember));
             } else if (teamMember.getId() != null) {
                 throw new TeamBadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
-            } else if (!teamRepo.findById(teamId).isPresent()) {
+            } else if (teamRepo.findById(teamId).isEmpty()) {
                 throw new TeamBadArgException(String.format("Team %s doesn't exist", teamId));
-            } else if (!memberRepo.findById(memberId).isPresent()) {
+            } else if (memberRepo.findById(memberId).isEmpty()) {
                 throw new TeamBadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(),
                     teamMember.getMemberid()).isPresent()) {
