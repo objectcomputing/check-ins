@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Skeleton } from '@material-ui/lab';
-import { AppContext, selectMemberProfilesByTeamId, UPDATE_TEAMS } from '../../context/AppContext';
+import { AppContext, UPDATE_TEAMS } from '../../context/AppContext';
 import EditTeamModal from "./EditTeamModal";
 import {
   Button,
