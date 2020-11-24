@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useMemo } from "react";
+import { createSelector } from 'reselect';
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getAllTeamMembers } from "../api/team";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
@@ -251,30 +252,49 @@ const AppContextProvider = (props) => {
   );
 };
 
-const selectProfileMap = ({ memberProfiles }) => {
-  if (memberProfiles && memberProfiles.length) {
-    memberProfiles = memberProfiles.reduce((mappedById, profile) => {
-      mappedById[profile.id] = profile;
-      return mappedById;
-    }, {});
+// const selectProfileMap = ({ memberProfiles }) => {
+//   if (memberProfiles && memberProfiles.length) {
+//     memberProfiles = memberProfiles.reduce((mappedById, profile) => {
+//       mappedById[profile.id] = profile;
+//       return mappedById;
+//     }, {});
+//   }
+//   return memberProfiles;
+// };
+
+export const selectMemberProfiles = state => state.memberProfiles;
+export const selectTeamMembers = state => state.teamMembers;
+
+export const selectProfileMap = createSelector(
+  selectMemberProfiles,
+  (memberProfiles) => {
+    if (memberProfiles && memberProfiles.length) {
+      memberProfiles = memberProfiles.reduce((mappedById, profile) => {
+        mappedById[profile.id] = profile;
+        return mappedById;
+      }, {});
+    }
+    return memberProfiles;
   }
-  return memberProfiles;
-};
+);
 
-const selectMembersByTeamId = ({ teamMembers }) => (id) => {
-  let members = [];
-  if (teamMembers && teamMembers.length) {
-    members = teamMembers.filter((member) => member.teamid === id);
+export const selectMembersByTeamId = id => createSelector(
+  selectTeamMembers,
+  (teamMembers) => {
+    let members = [];
+    if (teamMembers && teamMembers.length) {
+      members = teamMembers.filter((member) => member.teamid === id);
+    }
+    return members;
   }
-  return members;
-};
+);
 
-const selectMemberProfilesByTeamId = (state) => (id) =>
-  selectMembersByTeamId(state)(id).map((member) => {
-    return { ...selectProfileMap(state)[member.memberid], ...member };
-  });
-
-AppContext.selectProfileById = selectProfileMap;
-AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
+export const selectMemberProfilesByTeamId = id => createSelector(
+  selectMembersByTeamId(id),
+  selectProfileMap,
+  (members, profileMap) => members.map((member) => {
+      return { ...profileMap[member.memberid], ...member };
+    })
+);
 
 export { AppContext, AppContextProvider };

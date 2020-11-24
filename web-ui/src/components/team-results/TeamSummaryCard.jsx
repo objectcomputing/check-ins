@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { AppContext } from "../../context/AppContext";
+import { AppContext, selectMemberProfilesByTeamId } from "../../context/AppContext";
 
 import PropTypes from "prop-types";
 import { Skeleton } from "@material-ui/lab";
@@ -24,7 +24,7 @@ const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team }) => {
   const { state } = useContext(AppContext);
-  const teamMembers = AppContext.selectMemberProfilesByTeamId(state)(team.id);
+  const teamMembers = selectMemberProfilesByTeamId(team.id)(state);
 
   let leads =
     teamMembers == null

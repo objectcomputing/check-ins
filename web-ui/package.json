@@ -48,6 +48,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.0",
     "react-test-renderer": "^16.13.1",
+    "reselect": "^4.0.0",
     "universal-cookie": "^4.0.4"
   },
   "scripts": {
