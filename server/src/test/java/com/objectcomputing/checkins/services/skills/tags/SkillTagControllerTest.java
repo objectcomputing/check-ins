@@ -98,7 +98,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("dto.name: must not be blank", responseException.getMessage());
+        assertEquals("skillTag.name: must not be blank", responseException.getMessage());
 
     }
 
@@ -112,7 +112,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("Required argument [SkillTagCreateDTO dto] not specified", responseException.getMessage());
+        assertEquals("Required argument [SkillTagCreateDTO skillTag] not specified", responseException.getMessage());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
         final HttpResponse<SkillTagResponseDTO> response = client.toBlocking().exchange(request, SkillTagResponseDTO.class);
 
         assertEntityDtoEqual(tag, response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(HttpStatus.CREATED,response.getStatus());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
         final HttpResponse<SkillTagResponseDTO> response = client.toBlocking().exchange(request, SkillTagResponseDTO.class);
 
         assertEntityDtoEqual(tag, response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(HttpStatus.CREATED,response.getStatus());
     }
 
     @Test
@@ -177,7 +177,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("dto.name: must not be blank", responseException.getMessage());
+        assertEquals("skillTag.name: must not be blank", responseException.getMessage());
 
     }
 
@@ -194,7 +194,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("Required argument [SkillTagUpdateDTO dto] not specified", responseException.getMessage());
+        assertEquals("Required argument [SkillTagUpdateDTO skillTag] not specified", responseException.getMessage());
     }
 
     @Test
