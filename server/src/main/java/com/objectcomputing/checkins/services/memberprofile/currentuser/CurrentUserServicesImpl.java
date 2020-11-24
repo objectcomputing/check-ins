@@ -17,8 +17,8 @@ import java.util.Optional;
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
     private final MemberProfileRepository memberProfileRepo;
-    private final RoleServices roleServices;
     private final SecurityService securityService;
+    private final RoleServices roleServices;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
                                    RoleServices roleServices,
@@ -57,7 +57,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         }
 
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(name, "", null,
-                    "", workEmail, "", null, ""));
+                    "", workEmail, "", null, "", null));
 
         roleServices.save(new Role(RoleType.MEMBER, createdMember.getId()));
 

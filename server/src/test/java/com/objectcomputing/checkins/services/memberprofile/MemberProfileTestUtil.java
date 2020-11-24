@@ -7,9 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MemberProfileTestUtil {
 
-    public static UUID testPdlId = UUID.fromString("e134d349-abcd-4a58-b9d3-42cc48375628");
-    public static UUID testUuid = UUID.fromString("e134d349-cf02-4a58-b9d3-42cc48375628");
-
     public static MemberProfileCreateDTO mkCreateMemberProfileDTO() {
         MemberProfileCreateDTO dto = new MemberProfileCreateDTO();
         dto.setName("TestName");
@@ -43,7 +40,8 @@ public class MemberProfileTestUtil {
                 "TestEmail" + seed,
                 "TestInsperityId" + seed,
                 LocalDate.of(2019, 1, 1),
-                "TestBio" + seed);
+                "TestBio" + seed,
+                null);
     }
 
     public static MemberProfile mkMemberProfile() {
@@ -59,6 +57,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
@@ -71,6 +70,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 
     public static void assertProfilesEqual(MemberProfileCreateDTO entity, MemberProfileResponseDTO dto) {
@@ -82,5 +82,6 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getInsperityId(), dto.getInsperityId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
+        assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
     }
 }

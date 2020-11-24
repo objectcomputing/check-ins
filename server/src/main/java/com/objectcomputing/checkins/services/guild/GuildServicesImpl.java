@@ -1,21 +1,20 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
-
-import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
-
+@Singleton
 public class GuildServicesImpl implements GuildServices {
 
-    @Inject
-    private GuildRepository guildsRepo;
-    @Inject
-    private GuildMemberRepository guildMemberRepo;
+    private final GuildRepository guildsRepo;
+
+    public GuildServicesImpl(GuildRepository guildsRepo) {
+        this.guildsRepo = guildsRepo;
+    }
 
     public Guild save(Guild guild) {
         Guild newGuild = null;

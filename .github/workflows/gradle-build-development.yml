@@ -70,5 +70,6 @@ jobs:
             --set-env-vars "TOKEN_URI=${{ secrets.DEV_TOKEN_URI }}" \
             --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.DEV_AUTH_PROVIDER_X509_CERT_URL }}" \
             --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.DEV_CLIENT_X509_CERT_URL }}" \
+            --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
             --platform "managed" \
             --allow-unauthenticated

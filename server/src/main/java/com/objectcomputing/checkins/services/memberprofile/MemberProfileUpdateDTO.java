@@ -48,6 +48,10 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "employee's biography")
     private String bioText;
 
+    @Nullable
+    @Schema(description = "id of the supervisor this member is associated with", nullable = true)
+    private UUID supervisorid;
+
     public UUID getId() {
         return id;
     }
@@ -125,5 +129,14 @@ public class MemberProfileUpdateDTO {
 
     public void setBioText(@Nullable String bioText) {
         this.bioText = bioText;
+    }
+
+    @Nullable
+    public UUID getSupervisorid() {
+        return supervisorid;
+    }
+
+    public void setSupervisorid(@Nullable UUID supervisorid) {
+        this.supervisorid = supervisorid;
     }
 }

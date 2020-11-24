@@ -15,7 +15,7 @@ import "./DirectoryPage.css";
 
 const DirectoryPage = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, userProfile } = state;
+  const { csrf, memberProfiles, userProfile } = state;
 
   const [members, setMembers] = useState(
     memberProfiles.sort((a, b) => {
@@ -169,8 +169,15 @@ const DirectoryPage = () => {
                 </Button>
                 <Button
                   onClick={async () => {
-                    if (location && name && startDate && title && workEmail) {
-                      await createMember(member);
+                    if (
+                      location &&
+                      name &&
+                      startDate &&
+                      title &&
+                      workEmail &&
+                      csrf
+                    ) {
+                      await createMember(member, csrf);
                       dispatch({
                         type: UPDATE_MEMBER_PROFILES,
                         payload: [...memberProfiles, member],

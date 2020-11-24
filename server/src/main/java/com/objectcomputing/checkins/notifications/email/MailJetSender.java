@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.notifications.email;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
@@ -10,27 +7,27 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
+
 @Singleton
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
+    private final MailjetClient client;
 
-    private MailjetClient client;
-
-    @Inject
     public MailJetSender(MailjetClient client) {
         this.client = client;
     }
 
     /**
      * This call sends a message to the given recipient with attachment.
-     * @param emailAddressToBodiesMap
+     * @param subject, {@link String} Subject of email
+     * @param content {@link String} Contents of email
      */
     // emailAddressToBodiesMap is email, address, email body
     public void sendEmail(String subject, String content) {

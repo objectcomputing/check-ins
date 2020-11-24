@@ -31,37 +31,37 @@ import io.micronaut.scheduling.TaskExecutors;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "role")
-    public class RoleController {
+public class RoleController {
 
-        private final RoleServices roleServices;
-        private final EventLoopGroup eventLoopGroup;
-        private final ExecutorService ioExecutorService;
-    
-            public RoleController(RoleServices roleServices,
-                                        EventLoopGroup eventLoopGroup,
-                                        @Named(TaskExecutors.IO) ExecutorService ioExecutorService){
-            this.roleServices = roleServices;
-            this.eventLoopGroup = eventLoopGroup;
-            this.ioExecutorService = ioExecutorService;
-        }
-        
-        @Error(exception = RoleBadArgException.class)
-        public HttpResponse<?> handleBadArgs(HttpRequest<?> request, RoleBadArgException e) {
-            JsonError error = new JsonError(e.getMessage())
-                    .link(Link.SELF, Link.of(request.getUri()));
-    
-            return HttpResponse.<JsonError>badRequest()
-                    .body(error);
-        }
+    private final RoleServices roleServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-        @Error(exception = RoleNotFoundException.class)
-        public HttpResponse<?> handleNotFound(HttpRequest<?> request, RoleNotFoundException e) {
-            JsonError error = new JsonError(e.getMessage())
-                    .link(Link.SELF, Link.of(request.getUri()));
-    
-            return HttpResponse.<JsonError>notFound()
-                    .body(error);
-        }
+    public RoleController(RoleServices roleServices,
+                          EventLoopGroup eventLoopGroup,
+                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+        this.roleServices = roleServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
+    }
+
+    @Error(exception = RoleBadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, RoleBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = RoleNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, RoleNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
 
     /**
      * Create and save a new role.

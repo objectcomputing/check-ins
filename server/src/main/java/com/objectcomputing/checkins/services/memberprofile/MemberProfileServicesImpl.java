@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+
 import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
-import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 
@@ -30,32 +31,33 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new MemberProfileDoesNotExistException("No member profile for id");
+            throw new NotFoundException("No member profile for id");
         }
         return memberProfile.get();
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name, @Nullable String title, @Nullable UUID pdlId, @Nullable String workEmail) {
-        Set<MemberProfile> memberProfiles = new HashSet<>(
-                memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId), workEmail));
-
-        return memberProfiles;
+    public Set<MemberProfile> findByValues(@Nullable String name,
+                                           @Nullable String title,
+                                           @Nullable UUID pdlId,
+                                           @Nullable String workEmail,
+                                           @Nullable UUID supervisorId) {
+        return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
+                                                            workEmail, nullSafeUUIDToString(supervisorId)));
     }
 
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
         if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
+            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database",
                     memberProfile.getWorkEmail()));
         }
+
         if (memberProfile.getId() == null) {
             return memberProfileRepository.save(memberProfile);
         }
-        if (memberProfileRepository.findById(memberProfile.getId()) == null) {
-            throw new MemberProfileBadArgException("No member profile exists for the ID");
-        }
+
         return memberProfileRepository.update(memberProfile);
     }
 
@@ -64,7 +66,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (!currentUserServices.isAdmin()) {
             throw new InsufficientPrivelegesException("Requires admin privileges");
         }
-        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null);
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null);
         for (MemberProfile member : pdlFor) {
             member.setPdlId(null);
             memberProfileRepository.update(member);
