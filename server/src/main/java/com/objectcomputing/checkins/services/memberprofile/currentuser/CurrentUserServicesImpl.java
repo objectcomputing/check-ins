@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.security.utils.SecurityService;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -15,16 +16,16 @@ import java.util.Optional;
 @Singleton
 public class CurrentUserServicesImpl implements CurrentUserServices {
 
-    private final MemberProfileServices memberProfileServices;
     private final MemberProfileRepository memberProfileRepo;
+    private final SecurityService securityService;
     private final RoleServices roleServices;
 
-    public CurrentUserServicesImpl(MemberProfileServices memberProfileServices,
-                                   MemberProfileRepository memberProfileRepository,
-                                   RoleServices roleServices) {
-        this.memberProfileServices = memberProfileServices;
+    public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
+                                   RoleServices roleServices,
+                                   SecurityService securityService) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
+        this.securityService = securityService;
     }
 
     @Override
@@ -38,12 +39,28 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return saveNewUser(name, workEmail);
     }
 
+    @Override
+    public boolean hasRole(RoleType role) {
+        return securityService.hasRole(role.toString());
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return hasRole(RoleType.ADMIN);
+    }
+
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
-        MemberProfile user = memberProfileServices.saveProfile(new MemberProfile(name, "", null,
-                "", workEmail, "", null, "", null));
+        MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+        if(emailProfile != null && emailProfile.getId() != null) {
+            throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
+                    workEmail));
+        }
 
-        roleServices.save(new Role(RoleType.MEMBER, user.getId()));
+        MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(name, "", null,
+                    "", workEmail, "", null, "", null));
 
-        return user;
+        roleServices.save(new Role(RoleType.MEMBER, createdMember.getId()));
+
+        return createdMember;
     }
 }

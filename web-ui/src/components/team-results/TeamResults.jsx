@@ -23,7 +23,7 @@ const propTypes = {
 const displayName = "TeamResults";
 
 const TeamResults = () => {
-  const { state, dispatch } = useContext(AppContext);
+    const { state, dispatch } = useContext(AppContext);
   const { csrf, teams } = state;
   const [searchText, setSearchText] = useState("");
 
