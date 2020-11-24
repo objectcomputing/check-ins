@@ -18,11 +18,12 @@ const DirectoryPage = () => {
   const { csrf, memberProfiles, userProfile } = state;
 
   const [members, setMembers] = useState(
-    memberProfiles.sort((a, b) => {
-      const aPieces = a.name.split(" ").slice(-1);
-      const bPieces = b.name.split(" ").slice(-1);
-      return aPieces.toString().localeCompare(bPieces);
-    })
+    memberProfiles &&
+      memberProfiles.sort((a, b) => {
+        const aPieces = a.name.split(" ").slice(-1);
+        const bPieces = b.name.split(" ").slice(-1);
+        return aPieces.toString().localeCompare(bPieces);
+      })
   );
   const [member, setMember] = useState({});
   const [open, setOpen] = useState(false);
