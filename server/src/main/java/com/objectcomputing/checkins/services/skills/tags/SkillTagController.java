@@ -92,7 +92,7 @@ public class SkillTagController {
         return Single.fromCallable(() -> skillTagService.save(skillTag))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skillTagResponseDTO -> (HttpResponse<SkillTagResponseDTO>)HttpResponse
-                        .ok(skillTagResponseDTO))
+                        .created(skillTagResponseDTO))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
