@@ -252,16 +252,6 @@ const AppContextProvider = (props) => {
   );
 };
 
-// const selectProfileMap = ({ memberProfiles }) => {
-//   if (memberProfiles && memberProfiles.length) {
-//     memberProfiles = memberProfiles.reduce((mappedById, profile) => {
-//       mappedById[profile.id] = profile;
-//       return mappedById;
-//     }, {});
-//   }
-//   return memberProfiles;
-// };
-
 export const selectMemberProfiles = state => state.memberProfiles;
 export const selectTeamMembers = state => state.teamMembers;
 
