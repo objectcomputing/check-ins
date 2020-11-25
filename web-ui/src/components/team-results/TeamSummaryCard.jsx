@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 
-import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
+import { AppContext, UPDATE_TEAMS, UPDATE_TOAST } from "../../context/AppContext";
 import EditTeamModal from "./EditTeamModal";
 
 import {
@@ -42,13 +42,41 @@ const TeamSummaryCard = ({ team, index }) => {
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
-    console.log("at top team leads " + leads);
+
+  console.log("teams");
+    teams.forEach((team => {
+        console.log(team.teamMembers);
+        // console.log(lead.id);
+    }));
+
+    console.log("leads");
+    leads.forEach((lead => {
+        console.log(lead.name);
+        console.log(lead.id);
+    }));
+
+    console.log("memberProfiles");
+    memberProfiles.forEach((mp => {
+        console.log(mp);
+        console.log(mp.name);
+        console.log(mp.id);
+        console.log("work email " + mp.workEmail);
+    }));
+
+    console.log("userProfiles");
+    userProfiles.forEach((up => {
+        console.log(up);
+        console.log(up.name);
+        console.log(up.id);
+        console.log("work email " + up.workEmail);
+    }));
+
     const deleteATeam = (id) => {
         if (id && csrf) {
             // deleteTeam(id);
-            console.log("team leads " + leads);
+            console.log("team leads " + leads);  //
             const result = deleteTeam(id, csrf);
-            console.log(result);
+            console.log(result);  //
             if (result !== null) {
                 window.snackDispatch({
                     type: UPDATE_TOAST,
@@ -68,6 +96,7 @@ const TeamSummaryCard = ({ team, index }) => {
             // setAgendaItems(newItems);
         }
     };
+
   return (
     <Card className="summary-card">
       <CardHeader title={team.name} subheader={team.description} />
@@ -98,7 +127,7 @@ const TeamSummaryCard = ({ team, index }) => {
           {isAdmin || leads.workemail.includes(userProfile.workemail) (    //fix for team leads to delete
               <Button
                   onClick={(e) => {
-                      console.log("delete clicked " + team.id);
+                      console.log("delete clicked " + team.id);  //
                       deleteATeam(team.id, e)}} >Delete Team</Button>
           )}
       </CardActions>
