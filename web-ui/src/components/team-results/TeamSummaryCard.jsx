@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Skeleton } from '@material-ui/lab';
-import { AppContext, UPDATE_TEAMS } from '../../context/AppContext';
+import { AppContext, UPDATE_TEAMS, UPDATE_TOAST } from '../../context/AppContext';
 import EditTeamModal from "./EditTeamModal";
 import {
   Button,
@@ -24,11 +24,14 @@ const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team, index }) => {
     const { state, dispatch } = useContext(AppContext);
-    const { teams } = state;
+    const { teams,  memberProfiles, userProfile, csrf } = state;
     const [open, setOpen] = useState(false);
 
+    const isAdmin =
+        userProfile && userProfile.role && userProfile.role.includes("ADMIN");
     let leads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => teamMember.lead);
     let nonLeads = team.teamMembers == null ? null : team.teamMembers.filter((teamMember) => !teamMember.lead);
+
     console.log("at top team leads " + leads);
     const handleOpen = () => setOpen(true);
 
@@ -59,6 +62,7 @@ const TeamSummaryCard = ({ team, index }) => {
             // setAgendaItems(newItems);
         }
     };
+
     return (
         <Card>
             <CardHeader title={team.name} subheader={team.description} />
@@ -88,7 +92,7 @@ const TeamSummaryCard = ({ team, index }) => {
             </CardContent>
             <CardActions>
                 <Button onClick={handleOpen}>Edit Team</Button>
-                {isAdmin && leads.workemail.includes(userProfile.workemail) (    //fix for team leads to delete
+                {isAdmin || leads.workemail.includes(userProfile.workemail) (    //fix for team leads to delete
                     <Button
                         onClick={(e) => {
                             console.log("delete clicked " + team.id);
