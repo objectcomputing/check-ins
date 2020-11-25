@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import FileUploader from "./FileUploader";
 import {
   getFiles,
-  // getAllFiles,
   deleteFile,
   uploadFile,
 } from "../../api/upload";
