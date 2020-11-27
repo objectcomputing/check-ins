@@ -6,9 +6,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
-import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.micronaut.security.utils.SecurityService;
 
 import javax.inject.Singleton;
@@ -29,20 +28,17 @@ public class TeamServicesImpl implements TeamServices {
     private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private final TeamMemberServices teamMemberServices;
     
     public TeamServicesImpl(TeamRepository teamsRepo,
                             TeamMemberRepository teamMemberRepo,
                             SecurityService securityService,
                             CurrentUserServices currentUserServices,
-                            MemberProfileServices memberProfileServices,
-                            TeamMemberServices teamMemberServices) {
+                            MemberProfileServices memberProfileServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberRepo = teamMemberRepo;
         this.securityService = securityService;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
-        this.teamMemberServices = teamMemberServices;
     }
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
