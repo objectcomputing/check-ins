@@ -206,7 +206,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public void deleteFile(@NotNull String uploadDocId) {
+    public Boolean deleteFile(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -225,6 +225,7 @@ public class FileServicesImpl implements FileServices {
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
             checkinDocumentServices.deleteByUploadDocId(uploadDocId);
+            return true;
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());

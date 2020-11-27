@@ -502,8 +502,9 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
-        services.deleteFile(uploadDocId);
+        Boolean result = services.deleteFile(uploadDocId);
 
+        assertTrue(result);
         verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
@@ -522,8 +523,9 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
 
-        services.deleteFile(uploadDocId);
+        Boolean result = services.deleteFile(uploadDocId);
 
+        assertTrue(result);
         verify(googleAccessor, times(1)).accessGoogleDrive();
         verify(checkinDocumentServices, times(1)).getFindByUploadDocId(uploadDocId);
         verify(checkinDocumentServices, times(1)).deleteByUploadDocId(uploadDocId);
