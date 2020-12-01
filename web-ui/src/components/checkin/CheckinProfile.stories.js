@@ -12,10 +12,10 @@ export default {
 
 const noImageProfile =  {
     name: "Test User",
+    role: "MEMBER",
     memberProfile: {
         pdlID: 123,
         workEmail: "testuser@objectcomputing.com",
-        role: "MEMBER",
         name: "Bob Jones",
         title: "Software Engineer",
     }
