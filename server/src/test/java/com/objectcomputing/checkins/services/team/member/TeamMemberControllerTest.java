@@ -147,52 +147,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         assertEquals(String.format("Member %s already exists in team %s", teamMemberResponseDTO.getMemberid(), teamMemberResponseDTO.getTeamid()),error);
     }
 
-
-    @Test
-    void testLoadTeamMembers() {
-        Team team = createDeafultTeam();
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        TeamMemberCreateDTO requestDTO1 = new TeamMemberCreateDTO(team.getId(), memberProfile.getId(), true);
-
-        MemberProfile memberProfile1 = createADefaultMemberProfileForPdl(memberProfile);
-        Team team1 = createAnotherDeafultTeam();
-        TeamMemberCreateDTO requestDTO2 = new TeamMemberCreateDTO(team1.getId(), memberProfile1.getId(), true);
-
-        List<TeamMemberCreateDTO> dtoList = List.of(requestDTO1, requestDTO2);
-
-        final MutableHttpRequest<List<TeamMemberCreateDTO>> request = HttpRequest.POST("members", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        final HttpResponse<List<TeamMember>> response = client.toBlocking().exchange(request, Argument.listOf(TeamMember.class));
-        List<TeamMember> teamMember = response.body();
-
-        assertEquals(teamMember.get(0).getMemberid(), requestDTO1.getMemberid());
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(request.getPath(), response.getHeaders().get("location"));
-    }
-
-    @Test
-    void testLoadTeamMembersThrowException() {
-        Team team = createDeafultTeam();
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        TeamMemberCreateDTO requestDTO1 = new TeamMemberCreateDTO(team.getId(), memberProfile.getId(), true);
-
-        TeamMemberCreateDTO requestDTO2 = new TeamMemberCreateDTO(team.getId(), memberProfile.getId(), true);
-
-        List<TeamMemberCreateDTO> dtoList = List.of(requestDTO1, requestDTO2);
-
-        final String errorMessage = String.format("Member %s already exists in team %s", requestDTO2.getMemberid(), requestDTO2.getTeamid());
-
-        final MutableHttpRequest<List<TeamMemberCreateDTO>> request = HttpRequest.POST("members", dtoList).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, String.class));
-
-        assertEquals(String.format("[\"Member %s was not added to Team %s because: %s\"]",
-                requestDTO2.getMemberid(), requestDTO2.getTeamid(), errorMessage), responseException.getResponse().body());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals(request.getPath(), responseException.getResponse().getHeaders().get("location"));
-    }
-
     @Test
     void testReadTeamMember() {
         Team team = createDeafultTeam();
