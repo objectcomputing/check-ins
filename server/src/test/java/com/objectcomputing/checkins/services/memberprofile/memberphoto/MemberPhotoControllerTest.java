@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ public class MemberPhotoControllerTest {
 
     //Happy path
     @Test
-    public void testGetForValidInput() {
+    public void testGetForValidInput() throws IOException {
 
         String testEmail = "test@test.com";
         String testPhotoData = "test.photo.data";
@@ -48,22 +49,6 @@ public class MemberPhotoControllerTest {
         assertTrue(response.getBody().isPresent());
         byte[] result = response.getBody().get();
         assertEquals(new String(testData), new String(result));
-    }
-
-    @Test
-    public void testGetThrowsMemberProfileDoesNotExistException() {
-
-        String testEmail = "test@test.com";
-
-        when(memberPhotoService.getImageByEmailAddress(testEmail))
-                .thenThrow(new NotFoundException(String.format("No member profile exists for the email %s", testEmail)));
-
-        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
-            client.toBlocking().exchange(HttpRequest
-                    .GET(String.format("/%s", testEmail)));
-        });
-        assertEquals(String.format("No member profile exists for the email %s", testEmail), thrown.getMessage());
-        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
     @MockBean(MemberPhotoServiceImpl.class)
