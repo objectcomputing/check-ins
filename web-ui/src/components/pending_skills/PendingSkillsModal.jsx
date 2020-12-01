@@ -16,22 +16,19 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
   const { skills } = state;
 
   const [pendingSkills, setPendingSkills] = useState([]);
-  const [skillsToChange, setSkillsToChange] = useState([]);
+  // const [skillsoChange, setSkillsToChange] = useState([]);
   const [editedSkill, setEditedSkill] = useState({
     name: "",
     description: "",
     id: "",
   });
 
-  //to avoid eslint issues until modal story is complete
-  console.log({ skillsToChange });
-
   useEffect(() => {
     setPendingSkills(skills);
   }, [skills]);
 
   const handleSelections = (event, values) => {
-    setSkillsToChange(values);
+    // setSkillsToChange(values);
     setEditedSkill(values[0]);
   };
 

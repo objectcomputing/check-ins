@@ -3,6 +3,7 @@ import { createSelector } from "reselect";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
+import { getSkills } from "../api/skill";
 import axios from "axios";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
@@ -231,6 +232,26 @@ const AppContextProvider = (props) => {
     }
   }, [csrf, selectedId, id]);
 
+  useEffect(() => {
+    const getAllSkills = async () => {
+      const res = await getSkills();
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data.length > 0) {
+        dispatch({ type: UPDATE_SKILLS, payload: data });
+      }
+    };
+    if (csrf) {
+      getAllSkills();
+    }
+  }, [csrf]);
+
   const value = useMemo(() => {
     return { state, dispatch };
   }, [state]);
@@ -242,6 +263,7 @@ const AppContextProvider = (props) => {
 };
 
 export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectSkills = (state) => state.skills;
 export const selectTeamMembers = (state) => state.teamMembers;
 
 export const selectProfileMap = createSelector(
@@ -257,8 +279,9 @@ export const selectProfileMap = createSelector(
   }
 );
 
-const selectMemberProfileById = ({ memberProfiles }) => (id) =>
-  memberProfiles.find((member) => member.id === id);
+export const selectPendingSkills = createSelector(selectSkills, (skills) =>
+  skills.filter((skill) => skill.pending)
+);
 
 export const selectMembersByTeamId = (id) =>
   createSelector(selectTeamMembers, (teamMembers) => {
@@ -278,9 +301,5 @@ export const selectMemberProfilesByTeamId = (id) =>
         return { ...profileMap[member.memberid], ...member };
       })
   );
-
-AppContext.selectProfileById = selectProfileMap;
-AppContext.selectMemberProfilesByTeamId = selectMemberProfilesByTeamId;
-AppContext.selectMemberProfileById = selectMemberProfileById;
 
 export { AppContext, AppContextProvider };
