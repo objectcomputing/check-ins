@@ -497,7 +497,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn  = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn  = createADefaultCheckIn(memberProfile, memberProfileForPDL);
         checkIn.setTeamMemberId(null);
         checkIn.setPdlId(null);
 

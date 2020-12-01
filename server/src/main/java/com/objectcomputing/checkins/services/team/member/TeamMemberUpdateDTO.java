@@ -7,7 +7,10 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class TeamMemberCreateDTO {
+public class TeamMemberUpdateDTO {
+
+    @Schema(description = "ID of the entity to update")
+    private UUID id;
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
@@ -21,10 +24,12 @@ public class TeamMemberCreateDTO {
     @Schema(description = "Member who is on this team")
     private UUID memberid;
 
-    public TeamMemberCreateDTO(UUID teamid, UUID memberid, Boolean lead) {
-        this.teamid = teamid;
-        this.memberid = memberid;
-        this.lead = lead;
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public Boolean getLead() {
