@@ -238,7 +238,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    void deleteMemberSkillAsAdmin() {
+    void deleteSkillAsAdmin() {
 
         Skill skill = createADefaultSkill();
 
@@ -252,7 +252,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     }
 
     @Test
-    void deleteMemberSkillNotAsAdmin() {
+    void deleteSkillNotAsAdmin() {
 
         Skill skill = createADefaultSkill();
 

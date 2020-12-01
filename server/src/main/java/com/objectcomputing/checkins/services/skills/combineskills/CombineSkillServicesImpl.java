@@ -38,15 +38,15 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
             Stream<MemberSkill> stream = memberSkills.stream();
             UUID newSkillId = returnSkill.getId();
 
-                memberSkills.forEach(memskill->{
-                    LOG.error("memberSkills.forEach(mskill-> " + memskill.getId() + " ");
-                    LOG.error("memberSkills.forEach(mskill-> " + memskill.getMemberid() + " ");
-                    memberSkillServices.delete(memskill.getId());
+            memberSkills.forEach(memskill -> {
+                LOG.error("memberSkills.forEach(mskill-> " + memskill.getId() + " ");
+                LOG.error("memberSkills.forEach(mskill-> " + memskill.getMemberid() + " ");
+                memberSkillServices.delete(memskill.getId());
 
-                    memskill.setSkillid(newSkillId);
-                    memskill.setId(null);
-                    memberSkillServices.save(memskill);
-                });
+                memskill.setSkillid(newSkillId);
+                memskill.setId(null);
+                memberSkillServices.save(memskill);
+            });
 
 
 //            for (MemberSkill memberSkill : memberSkills) {
