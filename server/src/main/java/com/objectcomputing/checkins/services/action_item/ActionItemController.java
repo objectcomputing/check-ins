@@ -1,15 +1,10 @@
 package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,34 +28,6 @@ public class ActionItemController {
     public ActionItemController(ActionItemServices actionItemServices) {
         this.actionItemServices = actionItemServices;
     }
-
-    @Error(exception = NotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, NotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
-    @Error(exception = BadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = PermissionException.class)
-    public HttpResponse<?> handleBadPermissions(HttpRequest<?> request, PermissionException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>unauthorized()
-                .body(error);
-    }
-
     /**
      * Create and save a new actionItem.
      *
