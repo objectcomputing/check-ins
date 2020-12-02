@@ -105,44 +105,42 @@ const PendingSkillsCard = ({ pendingSkill }) => {
 
   return (
     <Card className="pending-skills-card">
-      <CardHeader subheader={members && submittedBy(members)} title={name} />
+      <CardHeader subheader={description} title={name} />
       <CardContent>
-        <div>
-          Description: {description}
-          <CardActions>
-            <Button onClick={acceptSkill}>Accept</Button>
-            <Button onClick={handleOpen}>Edit</Button>
-            <Modal open={open} onClose={handleClose}>
-              <div className="PendingSkillsModal">
-                <TextField
-                  className="halfWidth"
-                  label="Name"
-                  onChange={(e) =>
-                    setEditedSkill({ ...editedSkill, name: e.target.value })
-                  }
-                  value={editedSkill ? editedSkill.name : ""}
-                  variant="outlined"
-                />
-                <TextField
-                  className="halfWidth"
-                  label="Description"
-                  multiline
-                  onChange={(e) =>
-                    setEditedSkill({
-                      ...editedSkill,
-                      description: e.target.value,
-                    })
-                  }
-                  value={editedSkill ? editedSkill.description : ""}
-                  variant="outlined"
-                />
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={editSkill}>Save</Button>
-              </div>
-            </Modal>
-          </CardActions>
-        </div>
+        <div>{members && submittedBy(members)}</div>
       </CardContent>
+      <CardActions>
+        <Button onClick={acceptSkill}>Accept</Button>
+        <Button onClick={handleOpen}>Edit</Button>
+        <Modal open={open} onClose={handleClose}>
+          <div className="PendingSkillsModal">
+            <TextField
+              className="halfWidth"
+              label="Name"
+              onChange={(e) =>
+                setEditedSkill({ ...editedSkill, name: e.target.value })
+              }
+              value={editedSkill ? editedSkill.name : ""}
+              variant="outlined"
+            />
+            <TextField
+              className="halfWidth"
+              label="Description"
+              multiline
+              onChange={(e) =>
+                setEditedSkill({
+                  ...editedSkill,
+                  description: e.target.value,
+                })
+              }
+              value={editedSkill ? editedSkill.description : ""}
+              variant="outlined"
+            />
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={editSkill}>Save</Button>
+          </div>
+        </Modal>
+      </CardActions>
     </Card>
   );
 };

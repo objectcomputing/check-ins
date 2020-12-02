@@ -42,6 +42,7 @@ const reducer = (state, action) => {
       state.currentCheckin = state.checkins[state.checkins.length - 1];
       break;
     case UPDATE_SKILL:
+      state.skills = [...state.skills];
       const index = state.skills.findIndex(
         (skill) => skill.id === action.payload.id
       );

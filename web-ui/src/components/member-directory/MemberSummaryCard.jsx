@@ -49,32 +49,28 @@ const MemberSummaryCard = ({ member, index }) => {
         }
         title={name}
       />
-      <CardContent>
-        {isAdmin && (
-          <div className="member-card-actions">
-            <CardActions>
-              <Button onClick={handleOpen}>Edit</Button>
-              <Button>Terminate</Button>
-              <Button>Delete</Button>
-              <MemberModal
-                member={currentMember}
-                open={open}
-                onClose={handleClose}
-                onSave={(member) => {
-                  setCurrentMember(member);
-                  const copy = [...memberProfiles];
-                  copy[index] = member;
-                  dispatch({
-                    type: UPDATE_MEMBER_PROFILES,
-                    payload: copy,
-                  });
-                  handleClose();
-                }}
-              />
-            </CardActions>
-          </div>
-        )}
-      </CardContent>
+      {isAdmin && (
+        <CardActions>
+          <Button onClick={handleOpen}>Edit</Button>
+          <Button>Terminate</Button>
+          <Button>Delete</Button>
+          <MemberModal
+            member={currentMember}
+            open={open}
+            onClose={handleClose}
+            onSave={(member) => {
+              setCurrentMember(member);
+              const copy = [...memberProfiles];
+              copy[index] = member;
+              dispatch({
+                type: UPDATE_MEMBER_PROFILES,
+                payload: copy,
+              });
+              handleClose();
+            }}
+          />
+        </CardActions>
+      )}
     </Card>
   );
 };
