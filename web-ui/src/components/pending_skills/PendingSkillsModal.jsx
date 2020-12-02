@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+import { AppContext, selectPendingSkills } from "../../context/AppContext";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Checkbox, Modal, TextField } from "@material-ui/core";
@@ -11,7 +11,7 @@ import "./PendingSkillsModal.css";
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const EditPendingSkillsModal = ({ open, onClose }) => {
+const PendingSkillsModal = ({ open, onClose }) => {
   const { state } = useContext(AppContext);
   const { skills } = state;
 
@@ -24,8 +24,8 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
   });
 
   useEffect(() => {
-    setPendingSkills(skills);
-  }, [skills]);
+    setPendingSkills(selectPendingSkills(state));
+  }, [skills, state]);
 
   const handleSelections = (event, values) => {
     // setSkillsToChange(values);
@@ -35,7 +35,7 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
   return (
     <Modal open={open} onClose={onClose}>
       {pendingSkills && (
-        <div className="EditPendingSkillsModal">
+        <div className="PendingSkillsModal">
           <Autocomplete
             multiple
             options={pendingSkills}
@@ -87,4 +87,4 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
   );
 };
 
-export default EditPendingSkillsModal;
+export default PendingSkillsModal;

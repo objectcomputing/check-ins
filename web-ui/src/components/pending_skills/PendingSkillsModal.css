@@ -1,4 +1,4 @@
-.EditPendingSkillsModal {
+.PendingSkillsModal {
   position: absolute;
   min-width: 400px;
   max-width: 600px;
@@ -10,12 +10,12 @@
   border: 2px solid #fff;
 }
 
-.EditPendingSkillsModal h2 {
+.PendingSkillsModal h2 {
   margin-block-end: 0rem;
   margin-left: 0.5rem;
 }
 
-.EditPendingSkillsModal-actions {
+.PendingSkillsModal-actions {
   margin-top: 1rem;
   width: calc(100% - 1rem);
   display: flex;
@@ -23,15 +23,15 @@
   justify-content: flex-end;
 }
 
-.EditPendingSkillsModal .MuiTextField-root.fullWidth {
+.PendingSkillsModal .MuiTextField-root.fullWidth {
   width: calc(100% - 1rem);
 }
 
-.EditPendingSkillsModal .MuiTextField-root.halfWidth {
+.PendingSkillsModal .MuiTextField-root.halfWidth {
   width: calc(100% - 1rem);
 }
 
-.EditPendingSkillsModal .MuiTextField-root {
+.PendingSkillsModal .MuiTextField-root {
   margin: 0.5rem;
   width: calc(100% - 1rem);
 }
