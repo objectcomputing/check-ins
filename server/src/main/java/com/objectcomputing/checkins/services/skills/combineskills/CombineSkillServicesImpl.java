@@ -37,8 +37,6 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
     public Skill save(@NotNull CombineSkillsDTO skillDTO) {
 
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
         Skill returnSkill = null;
 
@@ -57,7 +55,6 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
             memberSkills.forEach(memberSkill -> {
                 memberSkillServices.delete(memberSkill.getId());
-
 
                 memberSkill.setSkillid(newSkillId);
                 memberSkill.setId(null);
