@@ -13,6 +13,7 @@ import {
   Button,
   Chip,
   Card,
+  CardActions,
   CardHeader,
   CardContent,
   Modal,
@@ -25,11 +26,11 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
 
-  const { description, id, name } = pendingSkill;
   const [members, setMembers] = useState([]);
 
   const [open, setOpen] = useState(false);
-  const [editedSkill, setEditedSkill] = useState(null);
+  const [editedSkill, setEditedSkill] = useState(pendingSkill);
+  const { description, id, name } = editedSkill;
 
   const handleOpen = () => {
     setOpen(true);
@@ -49,6 +50,19 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       }
       dispatch({ type: UPDATE_SKILL, payload: data });
       setEditedSkill(data);
+      handleClose();
+    }
+  };
+
+  const acceptSkill = async () => {
+    if (editedSkill.name && editedSkill.id) {
+      const res = await updateSkill({ ...editedSkill, pending: false });
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (!data) {
+        return;
+      }
+      dispatch({ type: UPDATE_SKILL, payload: data });
       handleClose();
     }
   };
@@ -94,36 +108,39 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       <CardHeader subheader={members && submittedBy(members)} title={name} />
       <CardContent>
         <div>
-          {description}
-          <Button onClick={handleOpen}>Edit</Button>
-          <Modal open={open} onClose={handleClose}>
-            <div className="PendingSkillsModal">
-              <TextField
-                className="halfWidth"
-                label="Name"
-                onChange={(e) =>
-                  setEditedSkill({ ...editedSkill, name: e.target.value })
-                }
-                value={editedSkill ? editedSkill.name : ""}
-                variant="outlined"
-              />
-              <TextField
-                className="halfWidth"
-                label="Description"
-                multiline
-                onChange={(e) =>
-                  setEditedSkill({
-                    ...editedSkill,
-                    description: e.target.value,
-                  })
-                }
-                value={editedSkill ? editedSkill.description : ""}
-                variant="outlined"
-              />
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={editSkill}>Save</Button>
-            </div>
-          </Modal>
+          Description: {description}
+          <CardActions>
+            <Button onClick={acceptSkill}>Accept</Button>
+            <Button onClick={handleOpen}>Edit</Button>
+            <Modal open={open} onClose={handleClose}>
+              <div className="PendingSkillsModal">
+                <TextField
+                  className="halfWidth"
+                  label="Name"
+                  onChange={(e) =>
+                    setEditedSkill({ ...editedSkill, name: e.target.value })
+                  }
+                  value={editedSkill ? editedSkill.name : ""}
+                  variant="outlined"
+                />
+                <TextField
+                  className="halfWidth"
+                  label="Description"
+                  multiline
+                  onChange={(e) =>
+                    setEditedSkill({
+                      ...editedSkill,
+                      description: e.target.value,
+                    })
+                  }
+                  value={editedSkill ? editedSkill.description : ""}
+                  variant="outlined"
+                />
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={editSkill}>Save</Button>
+              </div>
+            </Modal>
+          </CardActions>
         </div>
       </CardContent>
     </Card>
