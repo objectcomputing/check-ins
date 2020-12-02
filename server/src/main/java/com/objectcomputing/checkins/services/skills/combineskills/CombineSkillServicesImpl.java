@@ -2,8 +2,13 @@ package com.objectcomputing.checkins.services.skills.combineskills;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
+import com.objectcomputing.checkins.services.validate.PermissionsValidation;
+import io.micronaut.security.utils.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,18 +21,30 @@ import java.util.stream.Stream;
 @Singleton
 public class CombineSkillServicesImpl implements CombineSkillServices {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CombineSkillServicesImpl.class);
     private final SkillServices skillServices;
     private final MemberSkillServices memberSkillServices;
+    private final SecurityService securityService;
+    private final CurrentUserServices currentUserServices;
+    private final PermissionsValidation permissionsValidation;
 
-    public CombineSkillServicesImpl(SkillServices skillServices, MemberSkillServices memberSkillServices) {
+    public CombineSkillServicesImpl(SkillServices skillServices, MemberSkillServices memberSkillServices, SecurityService securityService, CurrentUserServices currentUserServices, PermissionsValidation permissionsValidation) {
         this.skillServices = skillServices;
         this.memberSkillServices = memberSkillServices;
+        this.securityService = securityService;
+        this.currentUserServices = currentUserServices;
+        this.permissionsValidation = permissionsValidation;
     }
 
     public Skill save(@NotNull CombineSkillsDTO skillDTO) {
+
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+        Skill returnSkill = null;
+
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+
         Skill newSkill = new Skill(skillDTO.getName(), skillDTO.getDescription());
-        Skill returnSkill = new Skill();
         UUID[] skillsArray = skillDTO.getSkillsToCombine();
 
         returnSkill = skillServices.save(newSkill);
@@ -38,14 +55,13 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
             Stream<MemberSkill> stream = memberSkills.stream();
             UUID newSkillId = returnSkill.getId();
 
-            memberSkills.forEach(memskill -> {
-                LOG.error("memberSkills.forEach(mskill-> " + memskill.getId() + " ");
-                LOG.error("memberSkills.forEach(mskill-> " + memskill.getMemberid() + " ");
-                memberSkillServices.delete(memskill.getId());
+            memberSkills.forEach(memberSkill -> {
+                memberSkillServices.delete(memberSkill.getId());
 
-                memskill.setSkillid(newSkillId);
-                memskill.setId(null);
-                memberSkillServices.save(memskill);
+
+                memberSkill.setSkillid(newSkillId);
+                memberSkill.setId(null);
+                memberSkillServices.save(memberSkill);
             });
 
 
@@ -60,14 +76,6 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
             skillServices.delete(skillToCombine);
 
         }
-
-
-//            if (skillDTO.getId() != null) {
-//                throw new SkillBadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
-//                        skillDTO.getId()));
-//            } else if (skillRepository.findByName(skillDTO.getName()).isPresent()&&!skillDTO.isPending()) {
-//                throw new SkillAlreadyExistsException(String.format("Skill %s already exists. ",  skillDTO.getName()));
-//            }
 
         return returnSkill;
 
