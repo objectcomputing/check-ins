@@ -181,7 +181,7 @@ public class FileControllerTest {
     public void testDeleteEndpoint() {
 
         String uploadDocId = "some.upload.id";
-        doNothing().when(fileServices).deleteFile(uploadDocId);
+        when(fileServices.deleteFile(uploadDocId)).thenReturn(true);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", uploadDocId))
                                         .basicAuth("some.email.id", MEMBER_ROLE);

@@ -139,37 +139,6 @@ public class RoleController {
     }
 
     /**
-     * Load roles
-     *
-     * @param roles, {@link List<RoleCreateDTO> to load {@link Role member roles}}
-     * @return {@link HttpResponse<List<Role>}
-     */
-    @Post("/roles")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
-    public HttpResponse<?> loadRoles(@Body @Valid @NotNull List<RoleCreateDTO> roles,
-                                     HttpRequest<List<Role>> request) {
-        List<String> errors = new ArrayList<>();
-        List<Role> rolesCreated = new ArrayList<>();
-        for (RoleCreateDTO roleDTO : roles) {
-            Role role = new Role(roleDTO.getRole(), roleDTO.getMemberid());
-            try {
-                roleServices.save(role);
-                rolesCreated.add(role);
-            } catch (RoleBadArgException e) {
-                errors.add(String.format("Member %s was not given role %s because: %s", role.getMemberid(),
-                        role.getRole(), e.getMessage()));
-            }
-        }
-        if (errors.isEmpty()) {
-            return HttpResponse.created(rolesCreated)
-                    .headers(headers -> headers.location(request.getUri()));
-        } else {
-            return HttpResponse.badRequest(errors)
-                    .headers(headers -> headers.location(request.getUri()));
-        }
-    }
-
-    /**
      * Delete role
      *
      * @param id, id of {@link Role} to delete

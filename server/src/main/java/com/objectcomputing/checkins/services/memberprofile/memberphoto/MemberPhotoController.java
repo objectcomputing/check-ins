@@ -46,13 +46,6 @@ public class MemberPhotoController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = NotFoundException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, NotFoundException e) {
-        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound().body(error);
-    }
-
     /**
      * Get user photo data from Google Directory API
      *

@@ -12,7 +12,9 @@ plugins {
     id "application"
     id "idea"
     id "groovy"
+    id "jacoco"
 }
+
 
 targetCompatibility = "11"
 sourceCompatibility = "11"
@@ -25,6 +27,7 @@ repositories {
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
 }
+
 
 
 configurations {
@@ -41,6 +44,8 @@ dependencies {
     annotationProcessor "io.micronaut.data:micronaut-data-processor:$micronautDataVersion"
     annotationProcessor("io.micronaut.configuration:micronaut-openapi:1.5.1")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+    compile "commons-io:commons-io:2.8.0"
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"

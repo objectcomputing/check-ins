@@ -182,35 +182,4 @@ public class AgendaItemController {
                 .ok();
     }
 
-    /**
-     * Load agenda items
-     *
-     * @param agendaItems, {@link List< AgendaItemCreateDTO > to load {@link AgendaItem agenda items}}
-     * @return {@link HttpResponse<List< AgendaItem >}
-     */
-    @Post("/items")
-    public Single<HttpResponse<?>> loadAgendaItems(@Body @Valid @NotNull List<AgendaItemCreateDTO> agendaItems,
-                                                   HttpRequest<List<AgendaItem>> request) {
-        return Single.fromCallable(() -> {
-            List<String> errors = new ArrayList<>();
-            List<AgendaItem> agendaItemsCreated = new ArrayList<>();
-            for (AgendaItemCreateDTO agendaItemDTO : agendaItems) {
-                AgendaItem agendaItem = new AgendaItem(agendaItemDTO.getCheckinid(),
-                        agendaItemDTO.getCreatedbyid(), agendaItemDTO.getDescription());
-                try {
-                    agendaItemServices.save(agendaItem);
-                    agendaItemsCreated.add(agendaItem);
-                } catch (CompositeException e) {
-                    errors.add(String.format("Member %s's agenda item was not added to CheckIn %s because: %s", agendaItem.getCreatedbyid(),
-                            agendaItem.getCheckinid(), e.getMessage()));
-                }
-            }
-            if (errors.isEmpty()) {
-                return agendaItemsCreated;
-            }
-            throw new AgendaItemsBulkLoadException(errors);
-        }).map(agendaItemsCreated -> HttpResponse.created(agendaItemsCreated)
-                  .headers(headers -> headers.location(request.getUri())));
-    }
-
 }
