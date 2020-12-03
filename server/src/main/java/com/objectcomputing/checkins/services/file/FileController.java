@@ -1,26 +1,29 @@
 package com.objectcomputing.checkins.services.file;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.*;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecuredAnnotationRule;
-
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Error;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.hateoas.JsonError;
+import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecuredAnnotationRule;
 import io.micronaut.validation.Validated;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
+import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Validated
 @Controller("/services/file")
@@ -29,9 +32,15 @@ import java.util.UUID;
 public class FileController {
 
     private final FileServices fileServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-    public FileController(FileServices fileServices) {
+    public FileController(FileServices fileServices,
+                          EventLoopGroup eventLoopGroup,
+                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.fileServices = fileServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
     }
 
     @Error(exception = FileRetrievalException.class)
@@ -50,11 +59,13 @@ public class FileController {
      * @return {@link HttpResponse<Set<FileInfoDTO>>} Returns a set of FileInfoDTO associated with CheckInId or all files
      */
     @Get("{?id}")
-    public HttpResponse<Set<FileInfoDTO>> findDocuments(@Nullable UUID id) {
-        Set<FileInfoDTO> filesFromDrive = fileServices.findFiles(id);
-        return HttpResponse
-                .status(HttpStatus.OK)
-                .body(filesFromDrive);
+    public Single<HttpResponse<Set<FileInfoDTO>>> findDocuments(@Nullable UUID id) {
+
+        return Single.fromCallable(() -> fileServices.findFiles(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(fileInfo -> {
+                    return (HttpResponse<Set<FileInfoDTO>>)HttpResponse.ok(fileInfo);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -64,11 +75,11 @@ public class FileController {
      * @return {@link HttpResponse<java.io.File>} Returns file
      */
     @Get("/{uploadDocId}/download")
-    public HttpResponse<File> downloadDocument(@NotNull String uploadDocId) {
-        File fileFromDrive = fileServices.downloadFiles(uploadDocId);
-        return HttpResponse
-                .status(HttpStatus.OK)
-                .body(fileFromDrive);
+    public Single<HttpResponse<File>> downloadDocument(@NotNull String uploadDocId) {
+        return Single.fromCallable(() -> fileServices.downloadFiles(uploadDocId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(file -> (HttpResponse<File>) HttpResponse.ok(file))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -78,11 +89,11 @@ public class FileController {
      * @return {@link HttpResponse<FileInfoDTO>} Returns metadata of document uploaded to Google Drive
      */
     @Post(uri = "/{checkInId}", consumes = MediaType.MULTIPART_FORM_DATA)
-    public HttpResponse<FileInfoDTO> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
-        FileInfoDTO uploadedFile = fileServices.uploadFile(checkInId, file);
-        return HttpResponse
-                .status(HttpStatus.CREATED)
-                .body(uploadedFile);
+    public Single<HttpResponse<FileInfoDTO>> upload(@NotNull UUID checkInId, @Body CompletedFileUpload file) {
+        return Single.fromCallable(() -> fileServices.uploadFile(checkInId, file))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(fileInfo -> (HttpResponse<FileInfoDTO>) HttpResponse.created(fileInfo))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -92,9 +103,10 @@ public class FileController {
      * @return HttpResponse
      */
     @Delete("/{uploadDocId}")
-    public HttpResponse delete(@NotNull String uploadDocId) {
-        fileServices.deleteFile(uploadDocId);
-        return HttpResponse
-                .status(HttpStatus.OK);
+    public Single<HttpResponse> delete(@NotNull String uploadDocId) {
+        return Single.fromCallable(() -> fileServices.deleteFile(uploadDocId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(successFlag -> (HttpResponse)HttpResponse.ok())
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

@@ -14,12 +14,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import io.micronaut.scheduling.TaskExecutors;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+
+import javax.inject.Named;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/guild/member")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -27,10 +33,16 @@ import java.util.UUID;
 @Tag(name = "guild-member")
 public class GuildMemberController {
 
-    private final GuildMemberServices guildMemberServices;
+    private GuildMemberServices guildMemberServices;
+    private EventLoopGroup eventLoopGroup;
+    private ExecutorService ioExecutorService;
 
-    public GuildMemberController(GuildMemberServices guildMemberServices) {
+    public GuildMemberController(GuildMemberServices guildMemberServices,
+                                 EventLoopGroup eventLoopGroup,
+                                 @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.guildMemberServices = guildMemberServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
     }
 
     @Error(exception = GuildBadArgException.class)
@@ -42,6 +54,15 @@ public class GuildMemberController {
                 .body(error);
     }
 
+    @Error(exception = GuildMemberNotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, GuildMemberNotFoundException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
+                .body(error);
+    }
+
     /**
      * Create and save a new guildMember.
      *
@@ -49,14 +70,18 @@ public class GuildMemberController {
      * @return {@link HttpResponse <GuildMember>}
      */
     @Post(value = "/")
-    public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
-                                                   HttpRequest<GuildMemberCreateDTO> request) {
-        GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildid(),
-                guildMember.getMemberid(), guildMember.isLead()));
-        return HttpResponse
-                .created(newGuildMember)
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), newGuildMember.getId()))));
+    public Single<HttpResponse<GuildMember>> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
+                                                           HttpRequest<GuildMemberCreateDTO> request) {
+        return Single.fromCallable(() -> guildMemberServices.save(new GuildMember(guildMember.getGuildid(),guildMember.getMemberid(), guildMember.isLead())))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(newGuildMember-> {
+                    //Using code block rather than lambda so we can log what thread we're in
+                    return (HttpResponse<GuildMember>) HttpResponse
+                            .created(newGuildMember)
+                            .headers(headers -> headers.location(
+                                    URI.create(String.format("%s/%s", request.getPath(), newGuildMember.getId()))));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
     /**
@@ -66,14 +91,19 @@ public class GuildMemberController {
      * @return {@link HttpResponse<GuildMember>}
      */
     @Put("/")
-    public HttpResponse<?> updateMembers(@Body @Valid GuildMember guildMember, HttpRequest<GuildMember> request) {
-        GuildMember updatedGuildMember = guildMemberServices.update(guildMember);
-        return HttpResponse
-                .ok()
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), updatedGuildMember.getId()))))
-                .body(updatedGuildMember);
-
+    public Single<HttpResponse<GuildMember>> update(@Body @Valid GuildMember guildMember, HttpRequest<GuildMember> request) {
+        if (guildMember == null) {
+            return Single.just(HttpResponse.ok());
+        }
+        return Single.fromCallable(() -> guildMemberServices.update(guildMember))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedGuildMember ->
+                        (HttpResponse<GuildMember>) HttpResponse
+                                .ok()
+                                .headers(headers -> headers.location(
+                                        URI.create(String.format("%s/%s", request.getPath(), updatedGuildMember.getId()))))
+                                .body(updatedGuildMember))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -83,8 +113,19 @@ public class GuildMemberController {
      * @return {@link GuildMember}
      */
     @Get("/{id}")
-    public GuildMember readGuildMember(UUID id) {
-        return guildMemberServices.read(id);
+    public Single<HttpResponse<GuildMember>> readAgendaItem(UUID id) {
+        return Single.fromCallable(() -> {
+            GuildMember result = guildMemberServices.read(id);
+            if (result == null) {
+                throw new GuildMemberNotFoundException("No guild member for UUID");
+            }
+            return result;
+        })
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(guildmembers -> {
+                    return (HttpResponse<GuildMember>)HttpResponse.ok(guildmembers);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
     /**
@@ -96,40 +137,11 @@ public class GuildMemberController {
      * @return {@link List < Guild > list of guilds}
      */
     @Get("/{?guildid,memberid,lead}")
-    public Set<GuildMember> findGuildMembers(@Nullable UUID guildid,
-                                             @Nullable UUID memberid,
-                                             @Nullable Boolean lead) {
-        return guildMemberServices.findByFields(guildid, memberid, lead);
-    }
-
-    /**
-     * Load members
-     *
-     * @param guildMembers, {@link List<GuildMemberCreateDTO> to load {@link GuildMember guild members}}
-     * @return {@link HttpResponse<List<GuildMember>}
-     */
-    @Post("/members")
-    public HttpResponse<?> loadGuildMembers(@Body @Valid @NotNull List<GuildMemberCreateDTO> guildMembers,
-                                            HttpRequest<List<GuildMember>> request) {
-        List<String> errors = new ArrayList<>();
-        List<GuildMember> membersCreated = new ArrayList<>();
-        for (GuildMemberCreateDTO guildMemberDTO : guildMembers) {
-            GuildMember guildMember = new GuildMember(guildMemberDTO.getGuildid(),
-                    guildMemberDTO.getMemberid(), guildMemberDTO.isLead());
-            try {
-                guildMemberServices.save(guildMember);
-                membersCreated.add(guildMember);
-            } catch (GuildBadArgException e) {
-                errors.add(String.format("Member %s was not added to Guild %s because: %s", guildMember.getMemberid(),
-                        guildMember.getGuildid(), e.getMessage()));
-            }
-        }
-        if (errors.isEmpty()) {
-            return HttpResponse.created(membersCreated)
-                    .headers(headers -> headers.location(request.getUri()));
-        } else {
-            return HttpResponse.badRequest(errors)
-                    .headers(headers -> headers.location(request.getUri()));
-        }
+    public Single<HttpResponse<Set<GuildMember>>> findGuildMembers(@Nullable UUID guildid, @Nullable UUID memberid, @Nullable Boolean lead) {
+        return Single.fromCallable(() ->  guildMemberServices.findByFields(guildid, memberid, lead))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(guildmembers -> {
+                    return (HttpResponse<Set<GuildMember>>) HttpResponse.ok(guildmembers);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

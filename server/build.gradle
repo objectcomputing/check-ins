@@ -12,7 +12,9 @@ plugins {
     id "application"
     id "idea"
     id "groovy"
+    id "jacoco"
 }
+
 
 targetCompatibility = "11"
 sourceCompatibility = "11"
@@ -27,6 +29,7 @@ repositories {
 }
 
 
+
 configurations {
     // for dependencies that are needed for development only
     developmentOnly
@@ -34,12 +37,15 @@ configurations {
 }
 
 dependencies {
-    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")    
+    implementation 'org.jetbrains:annotations:19.0.0'
+    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.data:micronaut-data-processor:$micronautDataVersion"
     annotationProcessor("io.micronaut.configuration:micronaut-openapi:1.5.1")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+    compile "commons-io:commons-io:2.8.0"
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"
@@ -59,7 +65,7 @@ dependencies {
     implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
         exclude group: 'io.micronaut', module: 'micronaut-jdbc'
     }
-    implementation 'org.postgresql:postgresql:42.2.12'
+    implementation  'org.postgresql:postgresql:42.2.12'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
     implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     implementation 'io.micronaut.flyway:micronaut-flyway'

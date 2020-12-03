@@ -1,8 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
 
 import TeamSummaryCard from "./TeamSummaryCard";
-import TeamsActions from "./TeamsActions";
 import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
+import TeamsActions from "./TeamsActions";
 import { getAllTeams } from "../../api/team";
 
 import PropTypes from "prop-types";
@@ -23,13 +23,13 @@ const propTypes = {
 const displayName = "TeamResults";
 
 const TeamResults = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { teams } = state;
+    const { state, dispatch } = useContext(AppContext);
+  const { csrf, teams } = state;
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     async function getTeams() {
-      let res = await getAllTeams();
+      let res = await getAllTeams(csrf);
       let data =
         res.payload &&
         res.payload.data &&
@@ -41,8 +41,10 @@ const TeamResults = () => {
         dispatch({ type: UPDATE_TEAMS, payload: data });
       }
     }
-    getTeams();
-  }, [dispatch]);
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, dispatch]);
 
   return (
     <div>
@@ -60,9 +62,13 @@ const TeamResults = () => {
         <TeamsActions />
       </div>
       <div className="teams">
-        {teams.map((team) =>
+        {teams.map((team, index) =>
           team.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-            <TeamSummaryCard key={`team-summary-${team.id}`} team={team} />
+            <TeamSummaryCard
+              key={`team-summary-${team.id}`}
+              index={index}
+              team={team}
+            />
           ) : null
         )}
       </div>

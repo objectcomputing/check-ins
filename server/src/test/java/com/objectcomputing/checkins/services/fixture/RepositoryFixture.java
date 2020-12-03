@@ -16,7 +16,6 @@ import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.skills.tags.SkillSkillTagLookupRepository;
 import com.objectcomputing.checkins.services.skills.tags.SkillTagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
-import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 

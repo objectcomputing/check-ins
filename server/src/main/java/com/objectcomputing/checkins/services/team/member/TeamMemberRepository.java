@@ -1,11 +1,12 @@
 package com.objectcomputing.checkins.services.team.member;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.validation.Valid;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +21,21 @@ public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
 
     List<TeamMember> findByLead(Boolean aBoolean);
 
-    Optional<TeamMember> findByTeamidAndMemberid(UUID teamMemberid, UUID memberId);
+    Optional<TeamMember> findByTeamidAndMemberid(@NotNull UUID teamMemberid, @NotNull UUID memberId);
 
-    @Override
-    <S extends TeamMember> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
+    TeamMember save(@NotNull TeamMember entity);
 
-    @Override
-    <S extends TeamMember> S save(@Valid @NotNull @NonNull S entity);
+    @Query("DELETE " +
+            "FROM team_member tm_ " +
+            "WHERE teamid = :id ")
+    void deleteByTeamId(@NotNull String id);
 
+    void deleteByMemberid(@NotNull @Nonnull UUID id);
+
+    @Query("SELECT * " +
+            "FROM team_member tm_ " +
+            "WHERE (:teamId IS NULL OR tm_.teamid = :teamId) " +
+            "AND (:memberid IS NULL OR tm_.memberid = :memberid) " +
+            "AND (:lead IS NULL OR tm_.lead = :lead) ")
+    List<TeamMember> search(@Nullable String teamId, @Nullable String memberid, @Nullable Boolean lead);
 }

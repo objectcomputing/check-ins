@@ -41,7 +41,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocumentCreateDTO checkinDocumentCreateDTO = new CheckinDocumentCreateDTO();
         checkinDocumentCreateDTO.setCheckinsId(checkIn.getId());
@@ -96,7 +96,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocumentCreateDTO checkinDocumentCreateDTO = new CheckinDocumentCreateDTO();
         checkinDocumentCreateDTO.setCheckinsId(checkIn.getId());
@@ -134,7 +134,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -159,7 +159,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -186,7 +186,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -206,7 +206,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -224,7 +224,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(null);
@@ -267,7 +267,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -284,7 +284,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setId(UUID.randomUUID());
@@ -308,7 +308,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(UUID.randomUUID());
@@ -376,7 +376,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
 
@@ -393,7 +393,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile,memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinDocument checkinDocument = createADefaultCheckInDocument(checkIn);
         checkinDocument.setCheckinsId(UUID.randomUUID());

@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,6 +60,30 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
     }
 
+    @Test
+    public void testDelete() {
+
+        final HttpRequest request = HttpRequest.DELETE("/01b7d769-9fa2-43ff-95c7-f3b950a27bf9")
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpResponse response = client.toBlocking().exchange(request, Map.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    public void testDeleteNotAuthorized() {
+
+        final HttpRequest request = HttpRequest.DELETE("/01b7d769-9fa2-43ff-95c7-f3b950a27bf9")
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
+
+    }
+
+    // Find By id - when no user data exists
     @Test
     public void testGETFindByNameReturnsEmptyBody() throws UnsupportedEncodingException {
 
