@@ -16,7 +16,6 @@ export const updateTeam = async (team, cookie) => {
 
 export const getTeamsByMember = async (id, cookie) => {
   return await resolve({
-    method: "get",
     url: teamUrl,
     responseType: "json",
     params: {

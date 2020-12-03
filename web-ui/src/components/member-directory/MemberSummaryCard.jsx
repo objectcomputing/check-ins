@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardActions,
-  CardContent,
   CardHeader,
 } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";

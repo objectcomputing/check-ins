@@ -22,6 +22,7 @@ const PendingSkillsModal = ({ open, onClose }) => {
     description: "",
     id: "",
   });
+  const [hasEdited, setHasEdited] = useState(false);
 
   useEffect(() => {
     setPendingSkills(selectPendingSkills(state));
@@ -29,11 +30,23 @@ const PendingSkillsModal = ({ open, onClose }) => {
 
   const handleSelections = (event, values) => {
     // setSkillsToChange(values);
-    setEditedSkill(values[0]);
+    if (!hasEdited) {
+      setEditedSkill(values[0]);
+    }
+  };
+
+  const close = () => {
+    onClose();
+    setHasEdited(false);
+    setEditedSkill({
+      name: "",
+      description: "",
+      id: "",
+    });
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={close}>
       {pendingSkills && (
         <div className="PendingSkillsModal">
           <Autocomplete
@@ -65,9 +78,10 @@ const PendingSkillsModal = ({ open, onClose }) => {
           <TextField
             className="halfWidth"
             label="Name"
-            onChange={(e) =>
-              setEditedSkill({ ...editedSkill, name: e.target.value })
-            }
+            onChange={(e) => {
+              setHasEdited(true);
+              setEditedSkill({ ...editedSkill, name: e.target.value });
+            }}
             value={editedSkill ? editedSkill.name : ""}
             variant="outlined"
           />
@@ -75,9 +89,10 @@ const PendingSkillsModal = ({ open, onClose }) => {
             className="halfWidth"
             label="Description"
             multiline
-            onChange={(e) =>
-              setEditedSkill({ ...editedSkill, description: e.target.value })
-            }
+            onChange={(e) => {
+              setHasEdited(true);
+              setEditedSkill({ ...editedSkill, description: e.target.value });
+            }}
             value={editedSkill ? editedSkill.description : ""}
             variant="outlined"
           />
