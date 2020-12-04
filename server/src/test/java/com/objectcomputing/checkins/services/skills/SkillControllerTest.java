@@ -46,7 +46,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testUntagSkillBadTagId() {
         UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
         Skill skill = createADefaultTaggedSkill();
-        getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        getSkillTagRepository().save(new SkillTag("bad"));
         final HttpRequest<String> request = HttpRequest.
                 DELETE(String.format("/" + skill.getId() + "/tag/" + badId, encodeValue("dnc")), "")
                 .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -63,7 +63,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testUntagSkillBadSkillId() {
         UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
         createADefaultTaggedSkill();
-        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad"));
         final HttpRequest<String> request = HttpRequest.
                 DELETE(String.format("/" + badId + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
                 .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -94,7 +94,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testTagSkillBadTagId() {
         UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
         Skill skill = createADefaultTaggedSkill();
-        getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        getSkillTagRepository().save(new SkillTag("bad"));
         final HttpRequest<String> request = HttpRequest.
                 PUT(String.format("/" + skill.getId() + "/tag/" + badId, encodeValue("dnc")), "")
                 .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -111,7 +111,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testTagSkillBadSkillId() {
         UUID badId = UUID.fromString("12345678-1234-1234-1234-123412341234");
         createADefaultTaggedSkill();
-        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad"));
         final HttpRequest<String> request = HttpRequest.
                 PUT(String.format("/" + badId + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
                 .basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -128,7 +128,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     public void testTagSkillHappyPath() {
 
         Skill skill = createADefaultTaggedSkill();
-        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad", "not good"));
+        SkillTag otherTag = getSkillTagRepository().save(new SkillTag("bad"));
         final HttpRequest<String> request = HttpRequest.
                 PUT(String.format("/" + skill.getId() + "/tag/" + otherTag.getId(), encodeValue("dnc")), "")
                 .basicAuth(MEMBER_ROLE,MEMBER_ROLE);

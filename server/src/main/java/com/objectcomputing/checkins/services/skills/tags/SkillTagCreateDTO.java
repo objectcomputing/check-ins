@@ -13,9 +13,6 @@ public class SkillTagCreateDTO {
     @NotBlank
     private String name;
 
-    @Schema(description = "description of the tag")
-    private String description;
-
     @Schema(description = "skills tagged by this")
     private List<UUID> skills;
 
@@ -25,14 +22,6 @@ public class SkillTagCreateDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<UUID> getSkills() {

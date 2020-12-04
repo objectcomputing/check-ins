@@ -17,9 +17,6 @@ public class SkillTagResponseDTO {
     @NotBlank
     private String name;
 
-    @Schema(description = "description of the tag")
-    private String description;
-
     @Schema(description = "skills tagged by this")
     private List<SkillResponseDTO> skills;
 
@@ -37,14 +34,6 @@ public class SkillTagResponseDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<SkillResponseDTO> getSkills() {

@@ -89,7 +89,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
 
     @Test
     public void testPOSTinvalidBody() {
-        SkillTag tag = new SkillTag("", "Just testing");
+        SkillTag tag = new SkillTag("");
 
         final HttpRequest<SkillTagCreateDTO> request = HttpRequest.
                 POST("/", createFromEntity(tag)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -117,7 +117,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
 
     @Test
     public void testPOSThappyPathWithSkill() {
-        SkillTag tag = new SkillTag("newName", "Just testing");
+        SkillTag tag = new SkillTag("newName");
         Skill tagMe = createADefaultSkill();
         tag.setSkills(new ArrayList<>());
         tag.getSkills().add(tagMe);
@@ -135,7 +135,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
     public void testPOSThappyPath() {
         SkillTag tag = createADefaultSkillTag();
         tag.setName("newName");
-        tag.setDescription("Just testing");
 
         final HttpRequest<SkillTagCreateDTO> request = HttpRequest.
                 POST("/", createFromEntity(tag)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -151,7 +150,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
         SkillTag tag = createADefaultSkillTag();
         tag.setId(UUID.fromString("11111111-1111-1111-1111-111111111111"));
         tag.setName("newName");
-        tag.setDescription("Just testing");
 
         final HttpRequest<SkillTagUpdateDTO> request = HttpRequest.
                 PUT("/", updateFromEntity(tag)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -168,7 +166,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
     public void testPUTinvalidBody() {
         SkillTag tag = createADefaultSkillTag();
         tag.setName("");
-        tag.setDescription("Just testing");
 
         final HttpRequest<SkillTagUpdateDTO> request = HttpRequest.
                 PUT("/", updateFromEntity(tag)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -185,7 +182,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
     public void testPUTemptyBody() {
         SkillTag tag = createADefaultSkillTag();
         tag.setName("newName");
-        tag.setDescription("Just testing");
 
         final HttpRequest<String> request = HttpRequest.
                 PUT("/", "").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -201,7 +197,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
     public void testPUThappyPath() {
         SkillTag tag = createADefaultSkillTag();
         tag.setName("newName");
-        tag.setDescription("Just testing");
 
         final HttpRequest<SkillTagUpdateDTO> request = HttpRequest.
                 PUT("/", updateFromEntity(tag)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
@@ -222,7 +217,7 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
                 GET(String.format("/%s", skill.getTags().get(0).getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<SkillTagResponseDTO> response = client.toBlocking().exchange(request, SkillTagResponseDTO.class);
-        SkillTag expected = new SkillTag(skill.getTags().get(0).getName(), skill.getTags().get(0).getDescription());
+        SkillTag expected = new SkillTag(skill.getTags().get(0).getName());
         expected.setId(skill.getTags().get(0).getId());
         skill.setTags(null);
         expected.setSkills(new ArrayList<>());
@@ -265,7 +260,6 @@ public class SkillTagControllerTest extends TestContainersSuite implements Skill
     public boolean assertEntityDtoEqual(SkillTag entity, SkillTagResponseDTO dto) {
         return Objects.equals(dto.getId(), entity.getId()) &&
                 Objects.equals(dto.getName(), entity.getName()) &&
-                Objects.equals(dto.getDescription(), entity.getDescription()) &&
                 assertSkillEntititiesDtosEqual(entity.getSkills(), dto.getSkills());
     }
 

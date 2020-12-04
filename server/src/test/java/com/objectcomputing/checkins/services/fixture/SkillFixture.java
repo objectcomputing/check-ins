@@ -18,7 +18,7 @@ public interface SkillFixture extends RepositoryFixture {
     }
 
     default SkillTag createADefaultSkillTag() {
-        return getSkillTagRepository().save(new SkillTag("mocking", "Creating mock objects for unit tests"));
+        return getSkillTagRepository().save(new SkillTag("mocking"));
     }
 
     default Skill createADefaultTaggedSkill() {
@@ -33,7 +33,6 @@ public interface SkillFixture extends RepositoryFixture {
     default SkillTagCreateDTO createFromEntity(SkillTag entity) {
         SkillTagCreateDTO dto = new SkillTagCreateDTO();
         dto.setName(entity.getName());
-        dto.setDescription(entity.getDescription());
         if (entity.getSkills() != null) {
             dto.setSkills(entity.getSkills().stream().map(Skill::getId)
                     .collect(Collectors.toList()));
@@ -45,13 +44,11 @@ public interface SkillFixture extends RepositoryFixture {
         SkillTagUpdateDTO dto = new SkillTagUpdateDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setDescription(entity.getDescription());
         if (entity.getSkills() != null) {
             dto.setSkills(entity.getSkills().stream().map(skill -> {
                 SkillResponseDTO skillDto = new SkillResponseDTO();
                 dto.setId(skill.getId());
-                dto.setName(skill.getName());
-                dto.setDescription(skill.getDescription());
+                dto.setName(skill.getName());rm 
                 return skillDto;
             }).collect(Collectors.toList()));
         }

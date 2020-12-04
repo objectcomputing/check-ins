@@ -82,7 +82,6 @@ public class SkillTagServiceImpl implements SkillTagService {
     SkillTag fromCreateDto(SkillTagCreateDTO dto) {
         SkillTag entity = new SkillTag();
         entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
         return entity;
     }
 
@@ -90,7 +89,6 @@ public class SkillTagServiceImpl implements SkillTagService {
         SkillTagResponseDTO dto = new SkillTagResponseDTO();
         dto.setId(savedEntity.getId());
         dto.setName(savedEntity.getName());
-        dto.setDescription(dto.getDescription());
         if (savedEntity.getSkills() != null) {
             dto.setSkills(savedEntity.getSkills().stream().map(skill -> {
                 SkillResponseDTO skillDTO = new SkillResponseDTO();
@@ -109,7 +107,6 @@ public class SkillTagServiceImpl implements SkillTagService {
         SkillTag entity = new SkillTag();
         entity.setId(dto.getId());
         entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
         return entity;
     }
 }

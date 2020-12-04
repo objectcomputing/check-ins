@@ -7,7 +7,6 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nonnull;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -30,11 +29,6 @@ public class SkillTag {
     @Schema(description = "the name of the skill tag", required = true)
     private String name;
 
-    @Column(name = "description")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "the description of the skill tag", required = false)
-    private String description;
-
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     @JoinTable(name = "skills_skill_tags",
@@ -44,9 +38,8 @@ public class SkillTag {
 
     public SkillTag() {}
 
-    public SkillTag(String name, String description) {
+    public SkillTag(String name) {
         this.name = name;
-        this.description = description;
     }
 
     @Override
@@ -54,7 +47,6 @@ public class SkillTag {
         return "SkillTag{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -64,13 +56,12 @@ public class SkillTag {
         if (o == null || getClass() != o.getClass()) return false;
         SkillTag skillTag = (SkillTag) o;
         return Objects.equals(id, skillTag.id) &&
-                Objects.equals(name, skillTag.name) &&
-                Objects.equals(description, skillTag.description);
+                Objects.equals(name, skillTag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description);
+        return Objects.hash(id, name);
     }
 
     public List<Skill> getSkills() {
@@ -95,13 +86,5 @@ public class SkillTag {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
