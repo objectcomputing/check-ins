@@ -19,7 +19,7 @@ import java.util.List;
 @Singleton
 public class GoogleAuthenticator {
 
-    private GoogleServiceConfiguration gServiceConfig;
+    private final GoogleServiceConfiguration gServiceConfig;
 
     /**
      * Creates a google drive utility for quick access
@@ -56,14 +56,9 @@ public class GoogleAuthenticator {
      * @throws IOException If the service account configurations cannot be found.
      */
     ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) throws IOException {
-        ServiceAccountCredentials sourceCredentials = null;
-        try(InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8))) {
-            sourceCredentials = ServiceAccountCredentials.fromStream(in);
-            sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sourceCredentials;
+        InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8));
+        ServiceAccountCredentials sourceCredentials = ServiceAccountCredentials.fromStream(in);
+        return (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
     }
 }
 

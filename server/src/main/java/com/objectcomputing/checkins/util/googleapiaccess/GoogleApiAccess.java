@@ -7,6 +7,8 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.runtime.server.event.ServerStartupEvent;
 import io.micronaut.scheduling.annotation.Async;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -17,6 +19,7 @@ import java.io.IOException;
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {
 
     private final GoogleAccessor googleAccessor;
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleApiAccess.class);
 
     public GoogleApiAccess(GoogleAccessor googleAccessor) {
         this.googleAccessor = googleAccessor;
@@ -43,7 +46,7 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
             this.drive = googleAccessor.accessGoogleDrive();
             this.directory = googleAccessor.accessGoogleDirectory();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error occurred while authorizing service account.", e);
         }
     }
 }
