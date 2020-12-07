@@ -35,13 +35,6 @@ const TeamSummaryCard = ({team, index}) => {
 
     const isTeamLead = leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
 
-    console.log("isAdmin " + isAdmin);
-    console.log("isTeamLead " + isTeamLead);
-    // console.log("isTeamLead "+ {isTeamLead});
-    console.log({teams});
-    console.log({leads});
-    console.log({userProfile});
-
     const handleOpen = () => setOpen(true);
 
     const handleClose = () => setOpen(false);
@@ -50,7 +43,6 @@ const TeamSummaryCard = ({team, index}) => {
         if (id && csrf) {
 
             const result = deleteTeam(id, csrf);
-            console.log(result);  //
             if (result !== null) {
                 window.snackDispatch({
                     type: UPDATE_TOAST,
@@ -102,7 +94,6 @@ const TeamSummaryCard = ({team, index}) => {
                 {(isAdmin || isTeamLead) && (
                     <Button
                         onClick={(e) => {
-                            console.log("delete clicked " + team.id);  //
                             deleteATeam(team.id, e)
                         }}>Delete Team</Button>
                 )}
