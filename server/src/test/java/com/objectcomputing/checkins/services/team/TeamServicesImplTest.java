@@ -56,7 +56,7 @@ class TeamServicesImplTest {
 
     @Test
     void testSave() {
-        Team teamEntity = new Team(UUID.randomUUID(), "It's the end of the", "World");
+        Team teamEntity = new Team(UUID.randomUUID(), "It's the end of the", "");
         TeamCreateDTO dto = new TeamCreateDTO(teamEntity.getName(), teamEntity.getDescription());
         when(teamRepository.findByName(eq(teamEntity.getName()))).thenReturn(Optional.empty());
         when(teamRepository.save(any(Team.class))).thenReturn(teamEntity);
@@ -84,7 +84,7 @@ class TeamServicesImplTest {
 
     @Test
     void testUpdate() {
-        Team teamEntity = new Team(UUID.randomUUID(), "Dog eat dog", "World");
+        Team teamEntity = new Team(UUID.randomUUID(), "Dog eat dog", "");
         when(teamRepository.findById(eq(teamEntity.getId()))).thenReturn(Optional.of(teamEntity));
         when(teamRepository.update(any(Team.class))).thenReturn(teamEntity);
         assertEntityDTOEqual(teamEntity, services.update(new TeamUpdateDTO(teamEntity.getId(), teamEntity.getName(), teamEntity.getDescription())));
@@ -134,7 +134,7 @@ class TeamServicesImplTest {
     @Test
     void testFindByFieldName() {
         List<Team> teamEntity = List.of(
-                new Team(UUID.randomUUID(), "What a Wonderful", "World"),
+                new Team(UUID.randomUUID(), "What a Wonderful", ""),
                 new Team(UUID.randomUUID(), "World", "History")
         );
 
@@ -161,7 +161,7 @@ class TeamServicesImplTest {
     void testFindByFieldNameAndMemberid() {
         List<Team> teamEntity = List.of(
                 new Team(UUID.randomUUID(), "World", "Series"),
-                new Team(UUID.randomUUID(), "Super Mario", "World")
+                new Team(UUID.randomUUID(), "Super Mario", "")
         );
 
         final UUID memberId = UUID.randomUUID();

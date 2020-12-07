@@ -102,34 +102,4 @@ public class TeamMemberController {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
-    /**
-     * Load members
-     *
-     * @param teamMembers, {@link List< TeamMemberResponseDTO > to load {@link TeamMember team members}}
-     * @return {@link HttpResponse<List<TeamMember>}
-     */
-    @Post("/members")
-    public HttpResponse<?> loadTeamMembers(@Body @Valid @NotNull List<TeamMemberCreateDTO> teamMembers,
-                                           HttpRequest<List<TeamMember>> request) {
-        List<String> errors = new ArrayList<>();
-        List<TeamMember> membersCreated = new ArrayList<>();
-        for (TeamMemberCreateDTO teamMemberResponseDTO : teamMembers) {
-            TeamMember teamMember = new TeamMember(teamMemberResponseDTO.getTeamid(),
-                    teamMemberResponseDTO.getMemberid(), teamMemberResponseDTO.getLead());
-            try {
-                teamMemberServices.save(teamMember);
-                membersCreated.add(teamMember);
-            } catch (TeamBadArgException e) {
-                errors.add(String.format("Member %s was not added to Team %s because: %s", teamMember.getMemberid(),
-                        teamMember.getTeamid(), e.getMessage()));
-            }
-        }
-        if (errors.isEmpty()) {
-            return HttpResponse.created(membersCreated)
-                    .headers(headers -> headers.location(request.getUri()));
-        } else {
-            return HttpResponse.badRequest(errors)
-                    .headers(headers -> headers.location(request.getUri()));
-        }
-    }
 }

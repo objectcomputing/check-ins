@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -21,14 +22,14 @@ public class TeamUpdateDTO {
     @Schema(required = true, description = "name of the team")
     private String name;
 
-    @NotBlank
-    @Schema(required = true, description = "description of the team")
+    @Nullable
+    @Schema(description = "description of the team")
     private String description;
 
-    @Schema(required = false, description = "members of this team")
+    @Schema(description = "members of this team")
     private List<TeamMemberResponseDTO> teamMembers;
 
-    public TeamUpdateDTO(UUID id, String name, String description) {
+    public TeamUpdateDTO(UUID id, String name, @Nullable String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -88,11 +89,12 @@ public class TeamUpdateDTO {
         this.name = name;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 }

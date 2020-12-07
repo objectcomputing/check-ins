@@ -5,6 +5,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class Team {
     @Schema(description = "name of the team")
     private String name;
 
-    @NotBlank
+    @Nullable
     @Column(name = "description")
     @Schema(description = "description of the team")
     private String description;
@@ -37,7 +38,7 @@ public class Team {
         this(null, name, description);
     }
 
-    public Team(UUID id, String name, String description) {
+    public Team(UUID id, String name, @Nullable String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -59,11 +60,12 @@ public class Team {
         this.name = name;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 

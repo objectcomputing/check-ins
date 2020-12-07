@@ -44,9 +44,6 @@ public class TeamController {
         this.ioExecutorService = ioExecutorService;
     }
 
-
-
-
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
         JsonError error = new JsonError(e.getMessage())

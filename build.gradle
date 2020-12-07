@@ -28,11 +28,17 @@ plugins {
 
 }
 
-apply plugin: "org.sonarqube"
-
 sonarqube {
     properties {
         property "sonar.sourceEncoding", "UTF-8"
+    }
+}
+
+project(":web-ui") {
+    sonarqube {
+        properties {
+            property "sonar.sources", "src/"
+        }
     }
 }
 

@@ -18,7 +18,6 @@ class TeamCreateDTOTest {
     @Inject
     private Validator validator;
 
-
     @Test
     void testDTOInstantiation() {
         TeamCreateDTO dto = new TeamCreateDTO();
@@ -33,7 +32,7 @@ class TeamCreateDTOTest {
         dto.setName("");
 
         Set<ConstraintViolation<TeamCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
+        assertEquals(1, violations.size());
         for (ConstraintViolation<TeamCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }
