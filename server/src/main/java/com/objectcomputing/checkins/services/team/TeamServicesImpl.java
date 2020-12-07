@@ -165,6 +165,6 @@ public class TeamServicesImpl implements TeamServices {
         if (teamMember == null || memberProfile == null) {
             return null;
         }
-        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), teamMember.isLead() );
+        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), memberProfile.getId(), teamMember.isLead() );
     }
 }
