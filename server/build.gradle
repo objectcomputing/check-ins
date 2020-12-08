@@ -98,9 +98,9 @@ dependencies {
     testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
     testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
-    testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
-    testCompile "org.testcontainers:testcontainers:1.14.3"
-    testCompile "org.testcontainers:junit-jupiter:1.14.3"
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.15.0"))
+    testCompile "org.testcontainers:testcontainers:1.15.0"
+    testCompile "org.testcontainers:junit-jupiter:1.15.0"
     testImplementation("org.testcontainers:postgresql")
 
     publicResources project(':web-ui')

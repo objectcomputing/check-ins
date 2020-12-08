@@ -10,15 +10,3 @@ exports[`renders correctly 1`] = `
   />
 </div>
 `;
-
-exports[`renders image_url 1`] = `
-<div
-  className="MuiAvatar-root MuiAvatar-circle avatar"
-  image_url="http://someurl.com/das.png"
->
-  <img
-    className="MuiAvatar-img"
-    src="/default_profile.jpg"
-  />
-</div>
-`;

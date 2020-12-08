@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiPaper-root MuiCard-root summary-card MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
     className="MuiCardHeader-root"
@@ -25,13 +25,24 @@ exports[`renders correctly 1`] = `
   <div
     className="MuiCardContent-root"
   >
-    <strong>
-      Team Leads: 
-    </strong>
-    <br />
-    <strong>
-      Team Members: 
-    </strong>
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": undefined,
+          "width": undefined,
+        }
+      }
+    />
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": undefined,
+          "width": undefined,
+        }
+      }
+    />
   </div>
   <div
     className="MuiCardActions-root MuiCardActions-spacing"
@@ -40,6 +51,7 @@ exports[`renders correctly 1`] = `
       className="MuiButtonBase-root MuiButton-root MuiButton-text"
       disabled={false}
       onBlur={[Function]}
+      onClick={[Function]}
       onDragLeave={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
