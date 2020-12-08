@@ -20,7 +20,8 @@
       }
     },
     "coverageReporters": [
-      "text"
+      "text",
+      "lcov"
     ]
   },
   "dependencies": {
