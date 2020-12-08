@@ -5,6 +5,11 @@ export const BASE_API_URL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
   : "http://localhost:8080";
 
+export const getAvatarURL = (email) =>
+  BASE_API_URL +
+  "/services/member-profile/member-photo/" +
+  encodeURIComponent(email);
+
 let myAxios = null;
 
 export const getMyAxios = async () => {

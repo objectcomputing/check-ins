@@ -1,13 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { AppContext, UPDATE_USER_BIO } from "../../context/AppContext";
-import Search from "./Search";
-import { getSkill, createSkill } from "../../api/skill.js";
 import {
-  getMemberSkills,
-  createMemberSkill,
-  deleteMemberSkill,
-} from "../../api/memberskill.js";
+  AppContext,
+  ADD_MEMBER_SKILL,
+  ADD_SKILL,
+  DELETE_MEMBER_SKILL,
+  selectMySkills,
+  selectCurrentUser,
+  UPDATE_USER_BIO,
+} from "../../context/AppContext";
+import Search from "./Search";
+import { getAvatarURL } from "../../api/api.js";
+import { getSkill, createSkill } from "../../api/skill.js";
+import { createMemberSkill, deleteMemberSkill } from "../../api/memberskill.js";
 import { getMember } from "../../api/member";
 
 import EditIcon from "@material-ui/icons/Edit";
@@ -19,17 +24,18 @@ import "./Profile.css";
 
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, skills, userProfile } = state;
-  const { imageUrl } = userProfile ? userProfile : {};
+  const { csrf, skills } = state;
+  const userProfile = selectCurrentUser(state);
 
   const [mySkills, setMySkills] = useState([]);
-  const { bioText, workEmail, name, title, id, pdlId } =
-    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
+  const { bioText, workEmail, name, title, id, pdlId } = userProfile;
 
   const [pdl, setPDL] = useState();
   const [bio, setBio] = useState();
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
+
+  const myMemberSkills = selectMySkills(state);
 
   useEffect(() => {
     async function updateBio() {
@@ -54,37 +60,19 @@ const Profile = () => {
   }, [csrf, pdlId]);
 
   useEffect(() => {
-    async function updateMySkills() {
-      let updatedMySkills = {};
-      if (id) {
-        let res = await getMemberSkills(id, csrf);
-        let data =
-          res.payload && res.payload.status === 200 ? res.payload.data : null;
-        updatedMySkills =
-          data && !res.error && data.length > 0
-            ? Object.assign(
-                ...(await Promise.all(
-                  data.map(async (memberSkill) => {
-                    let res = await getSkill(memberSkill.skillid);
-                    let data =
-                      res &&
-                      res.payload &&
-                      res.payload.status === 200 &&
-                      !res.error
-                        ? res.payload.data
-                        : null;
-                    return { [memberSkill.id]: data };
-                  })
-                ))
-              )
-            : {};
-      }
-      setMySkills(updatedMySkills);
+    const getSkills = async () => {
+      const skillsResults = await Promise.all(
+        myMemberSkills.map((mSkill) => getSkill(mSkill.skillid, csrf))
+      );
+      const currentUserSkills = skillsResults.map(
+        (result) => result.payload.data
+      );
+      setMySkills(currentUserSkills);
+    };
+    if (csrf && myMemberSkills) {
+      getSkills();
     }
-    if (csrf) {
-      updateMySkills();
-    }
-  }, [csrf, id]);
+  }, [csrf, myMemberSkills]);
 
   const addSkill = async (name) => {
     if (!csrf) {
@@ -93,38 +81,29 @@ const Profile = () => {
     const inSkillsList = skills.find(
       (skill) => skill.name.toUpperCase() === name.toUpperCase()
     );
-
     let curSkill = inSkillsList;
     if (!inSkillsList) {
-      let res = await createSkill({ name: name, pending: true }, csrf);
-      let data =
-        res && res.payload && res.payload.status === 201
-          ? res.payload.data
-          : null;
+      const res = await createSkill({ name: name, pending: true }, csrf);
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      data && dispatch({ type: ADD_SKILL, payload: data });
       curSkill = data;
     }
-
-    let mySkillsTemp = { ...mySkills };
     if (curSkill && curSkill.id && id) {
       if (
-        !Object.values(mySkills).find(
+        Object.values(mySkills).find(
           (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
         )
       ) {
-        let res = await createMemberSkill(
-          { skillid: curSkill.id, memberid: id },
-          csrf
-        );
-        let data =
-          res && res.payload && res.payload.status === 201
-            ? res.payload.data
-            : null;
-
-        if (data) {
-          mySkillsTemp[data.id] = curSkill;
-          setMySkills(mySkillsTemp);
-        }
+        return;
       }
+      const res = await createMemberSkill(
+        { skillid: curSkill.id, memberid: id },
+        csrf
+      );
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      data && dispatch({ type: ADD_MEMBER_SKILL, payload: data });
     }
   };
 
@@ -136,10 +115,9 @@ const Profile = () => {
   };
 
   const removeSkill = async (id, csrf) => {
-    await deleteMemberSkill(id, csrf);
-    let mySkillsTemp = { ...mySkills };
-    delete mySkillsTemp[id];
-    setMySkills(mySkillsTemp);
+    const mSkill = myMemberSkills.find((s) => s.skillid === id);
+    await deleteMemberSkill(mSkill.id, csrf);
+    dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
   };
 
   return (
@@ -148,8 +126,8 @@ const Profile = () => {
         <div className="profile-image">
           <Avatar
             alt="Profile"
-            src={imageUrl ? imageUrl : "/default_profile.jpg"}
-            style={{ width: "200px", height: "220px" }}
+            src={getAvatarURL(workEmail)}
+            style={{ width: "180px", height: "180px" }}
           />
         </div>
         <div className="flex-row">
@@ -212,31 +190,28 @@ const Profile = () => {
       <div>
         <div className="skills-section">
           <h2>Skills</h2>
-          {Object.entries(mySkills).map((memberSkill) => {
-            let [id, skill] = memberSkill;
-            return (
-              <div className="current-skills" key={skill.name}>
-                {skill.name}
-                <CancelIcon
-                  onClick={() => {
-                    if (csrf) {
-                      removeSkill(id, csrf);
-                    }
-                  }}
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                    marginLeft: "5px",
-                  }}
-                />
-              </div>
-            );
-          })}
-          <Search
-            skillsList={skills}
-            mySkills={Object.values(mySkills)}
-            addSkill={addSkill}
-          />
+          {mySkills &&
+            mySkills.map((memberSkill) => {
+              let { id, name } = memberSkill;
+              return (
+                <div className="current-skills" key={name}>
+                  {name}
+                  <CancelIcon
+                    onClick={() => {
+                      if (csrf) {
+                        removeSkill(id, csrf);
+                      }
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "1rem",
+                      marginLeft: "5px",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          <Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
         </div>
       </div>
     </div>

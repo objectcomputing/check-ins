@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { getSkillMembers } from "../../api/memberskill";
-import { updateSkill } from "../../api/skill";
+import { deleteMemberSkill, getSkillMembers } from "../../api/memberskill";
+import { removeSkill, updateSkill } from "../../api/skill";
 import {
   AppContext,
   selectProfileMap,
+  DELETE_SKILL,
   UPDATE_SKILL,
 } from "../../context/AppContext";
 
@@ -41,8 +42,8 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   };
 
   const editSkill = async () => {
-    if (editedSkill.name && editedSkill.id) {
-      const res = await updateSkill(editedSkill);
+    if (name && id && csrf) {
+      const res = await updateSkill(editedSkill, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
       if (!data) {
@@ -55,8 +56,8 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   };
 
   const acceptSkill = async () => {
-    if (editedSkill.name && editedSkill.id) {
-      const res = await updateSkill({ ...editedSkill, pending: false });
+    if (name && id && csrf) {
+      const res = await updateSkill({ ...editedSkill, pending: false }, csrf);
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
       if (!data) {
@@ -64,6 +65,38 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       }
       dispatch({ type: UPDATE_SKILL, payload: data });
       handleClose();
+    }
+  };
+
+  const setExtraneous = async () => {
+    if (name && id && csrf) {
+      const res = await updateSkill(
+        { ...editedSkill, pending: false, extraneous: true },
+        csrf
+      );
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (!data) {
+        return;
+      }
+      dispatch({ type: UPDATE_SKILL, payload: data });
+      handleClose();
+    }
+  };
+
+  const deleteSkill = async () => {
+    if (name && id && csrf) {
+      const memberSkillsToDelete = await getSkillMembers(id, csrf);
+      if (memberSkillsToDelete) {
+        //remove all memberSkills associated with this skill first
+        await Promise.all(
+          memberSkillsToDelete.payload.data.map(
+            async (member) => await deleteMemberSkill(member.id, csrf)
+          )
+        );
+      }
+      await removeSkill(id, csrf);
+      dispatch({ type: DELETE_SKILL, payload: id });
     }
   };
 
@@ -100,7 +133,12 @@ const PendingSkillsCard = ({ pendingSkill }) => {
           {rest && ` and ${rest.length} others`}.
         </div>
       );
-    } else return firstProfile && <div>Submitted by: {chip(firstProfile)}</div>;
+    } else
+      return firstProfile ? (
+        <div>Submitted by: {chip(firstProfile)}</div>
+      ) : (
+        <div>Submitted by: Unknown</div>
+      );
   };
 
   return (
@@ -112,6 +150,8 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       <CardActions>
         <Button onClick={acceptSkill}>Accept</Button>
         <Button onClick={handleOpen}>Edit</Button>
+        <Button onClick={deleteSkill}>Delete</Button>
+        <Button onClick={setExtraneous}>Mark Extraneous</Button>
         <Modal open={open} onClose={handleClose}>
           <div className="PendingSkillsModal">
             <TextField
