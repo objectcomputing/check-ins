@@ -54,6 +54,7 @@ const reducer = (state, action) => {
       state.skills = state.skills.filter(
         (skill) => skill.id !== action.payload
       );
+      break;
     case UPDATE_SKILL:
       state.skills = [...state.skills];
       const index = state.skills.findIndex(
