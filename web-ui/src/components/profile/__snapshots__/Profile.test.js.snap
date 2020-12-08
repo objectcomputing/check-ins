@@ -19,15 +19,15 @@ exports[`renders correctly 1`] = `
         className="MuiAvatar-root MuiAvatar-circle"
         style={
           Object {
-            "height": "220px",
-            "width": "200px",
+            "height": "180px",
+            "width": "180px",
           }
         }
       >
         <img
           alt="Profile"
           className="MuiAvatar-img"
-          src="/default_profile.jpg"
+          src="http://localhost:8080/services/member-profile/member-photo/undefined"
         />
       </div>
     </div>
@@ -147,15 +147,15 @@ exports[`renders image_url 1`] = `
         className="MuiAvatar-root MuiAvatar-circle"
         style={
           Object {
-            "height": "220px",
-            "width": "200px",
+            "height": "180px",
+            "width": "180px",
           }
         }
       >
         <img
           alt="Profile"
           className="MuiAvatar-img"
-          src="/default_profile.jpg"
+          src="http://localhost:8080/services/member-profile/member-photo/undefined"
         />
       </div>
     </div>
