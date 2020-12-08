@@ -20,7 +20,7 @@ const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({team, index}) => {
     const {state, dispatch} = useContext(AppContext);
-    const {teams, memberProfiles, userProfile, csrf} = state;
+    const {teams, userProfile, csrf} = state;
     const [open, setOpen] = useState(false);
     const isAdmin =
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
@@ -33,7 +33,10 @@ const TeamSummaryCard = ({team, index}) => {
             ? null
             : team.teamMembers.filter((teamMember) => !teamMember.lead);
 
-    const isTeamLead = leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
+    const isTeamLead =
+        leads === null
+        ? false
+        : leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
 
     const handleOpen = () => setOpen(true);
 
