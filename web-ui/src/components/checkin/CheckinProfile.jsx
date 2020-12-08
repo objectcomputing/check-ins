@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getMember } from "../../api/member";
 import { AppContext } from "../../context/AppContext";
+import { getAvatarURL } from "../../api/api.js";
 
 import Avatar from "@material-ui/core/Avatar";
 
@@ -14,11 +15,6 @@ const CheckinProfile = () => {
     ? selectedProfile
     : userProfile && userProfile.memberProfile
     ? userProfile.memberProfile
-    : {};
-  const { imageUrl } = selectedProfile
-    ? selectedProfile
-    : userProfile
-    ? userProfile
     : {};
   const [pdl, setPDL] = useState();
 
@@ -42,8 +38,8 @@ const CheckinProfile = () => {
   return (
     <div className="profile-section">
       <Avatar
-        src={imageUrl ? imageUrl : "/default_profile.jpg"}
-        style={{ height: "220px", width: "200px" }}
+        src={getAvatarURL(workEmail)}
+        style={{ height: "180px", width: "180px" }}
       />
       <div className="info">
         <p>{name}</p>
