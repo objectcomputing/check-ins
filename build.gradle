@@ -25,7 +25,6 @@ plugins {
     id "jacoco"
     id "java"
     id "org.sonarqube" version "3.0"
-
 }
 
 sonarqube {
@@ -43,6 +42,7 @@ project(":web-ui") {
     }
 }
 
+project.tasks["sonarqube"].dependsOn ":web-ui:coverage"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 

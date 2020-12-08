@@ -29,6 +29,13 @@ task test(type: YarnTask, dependsOn: 'yarn') {
     args = ['run', 'test']
 }
 
+task coverage(type: YarnTask, dependsOn: 'yarn') {
+    outputs.dir 'build'
+    group = 'verification'
+    description = 'Run the client tests with coverage'
+    args = ['run', 'coverage']
+}
+
 task eject(type: YarnTask, dependsOn: 'yarn') {
     group = 'other'
     description = 'Eject from the create-react-app scripts'
