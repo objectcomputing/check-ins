@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
-import AvatarComponent from "../avatar/Avatar";
-import { getAvatarURL } from "../../api/api.js";
+import { getAvatarURL } from "../../api/api";
 
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   AppBar,
+  Avatar,
   Button,
   ClickAwayListener,
   CssBaseline,
@@ -65,7 +65,8 @@ function Menu() {
   const { dispatch } = useContext(AppContext);
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail } = userProfile ? userProfile : {};
+  const { workEmail } =
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const classes = useStyles();
@@ -188,8 +189,8 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <AvatarComponent
-            imageUrl={getAvatarURL(workEmail)}
+          <Avatar
+            src={getAvatarURL(workEmail)}
             style={{
               position: "absolute",
               right: "5px",

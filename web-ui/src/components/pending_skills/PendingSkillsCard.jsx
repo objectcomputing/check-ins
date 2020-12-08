@@ -8,6 +8,7 @@ import {
   DELETE_SKILL,
   UPDATE_SKILL,
 } from "../../context/AppContext";
+import { getAvatarURL } from "../../api/api.js";
 
 import {
   Avatar,
@@ -116,7 +117,7 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   const chip = (position) => {
     return (
       <Chip
-        avatar={<Avatar src={position.imageURL}></Avatar>}
+        avatar={<Avatar src={getAvatarURL(position.workEmail)}></Avatar>}
         label={position.name}
       ></Chip>
     );
