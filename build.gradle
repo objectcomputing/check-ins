@@ -34,6 +34,9 @@ sonarqube {
 }
 
 project(":server") {
+    assemble {
+        dependsOn ":web-ui:assemble"
+    }
     sonarqube {
         properties {
             property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"

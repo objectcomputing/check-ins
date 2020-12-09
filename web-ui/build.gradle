@@ -9,5 +9,20 @@ node {
     download = true
 }
 
-yarn_run_coverage.outputs.dir 'coverage'
-yarn_run_build.outputs.dir 'build'
+yarn_run_coverage {
+    group 'verification'
+    outputs.dir 'coverage'
+}
+
+yarn_run_build {
+    group 'build'
+    outputs.dir 'build'
+}
+
+check {
+    dependsOn yarn_run_coverage
+}
+
+artifacts {
+    'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
+}
