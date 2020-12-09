@@ -175,7 +175,7 @@ const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
     }
   }
   //without this check you get infinite checkin calls
-  if (data.length > 0) {
+  if (data && data.length > 0) {
     dispatch({ type: UPDATE_CHECKINS, payload: data });
   }
 };

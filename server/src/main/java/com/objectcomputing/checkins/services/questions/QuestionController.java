@@ -17,7 +17,6 @@ import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
@@ -128,7 +127,7 @@ public class QuestionController {
      * * @return {@link List HttpResponse< QuestionResponseDTO >}
      */
     @Get("/{?text}")
-    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable Optional<String> text) {
+    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(Optional<String> text) {
         return Single.fromCallable(() -> {
                 if(text.isPresent()) {
                     return questionService.findByText(text.get());
