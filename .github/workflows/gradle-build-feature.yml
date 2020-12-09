@@ -23,8 +23,6 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Gradle runs tests
-        run: ./gradlew check
       - name: Do SonarQube checks
         run: |
           ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN

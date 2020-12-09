@@ -33,16 +33,25 @@ sonarqube {
     }
 }
 
-project(":web-ui") {
+project(":server") {
     sonarqube {
         properties {
-            property "sonar.sources", "src/"
-            property "sonar.coverageReportPaths", "coverage/"
+            property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
         }
     }
 }
 
-project.tasks["sonarqube"].dependsOn ":web-ui:coverage"
+project(":web-ui") {
+    sonarqube {
+        properties {
+            property "sonar.sources", "src/"
+            property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+            property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
+        }
+    }
+}
+
+project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 
