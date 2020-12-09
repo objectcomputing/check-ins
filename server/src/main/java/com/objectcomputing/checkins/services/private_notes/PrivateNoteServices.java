@@ -11,5 +11,5 @@ public interface PrivateNoteServices {
 
     PrivateNote update(PrivateNote privateNote);
 
-    Set<PrivateNote> findByFields(UUID privateid, UUID createdbyid);
+    Set<PrivateNote> findByFields(UUID checkinid, UUID createdbyid);
 }

@@ -19,8 +19,8 @@ public interface PrivateNoteRepository extends CrudRepository<PrivateNote, UUID>
 
     @Query(" SELECT * " +
             "FROM private_notes pn " +
-            "WHERE (:checkinid  IS NULL OR cn.checkinId= :checkinid) " +
-            "AND (:createdById  IS NULL OR cn.createdByid= :createdById) ")
+            "WHERE (:checkinid  IS NULL OR pn.checkinId= :checkinid) " +
+            "AND (:createdById  IS NULL OR pn.createdByid= :createdById) ")
     Set<PrivateNote> search(@Nullable String checkinid, @Nullable String createdById);
 
     @Override

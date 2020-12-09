@@ -94,8 +94,8 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("PrivateNote.checkinid: must not be null", errorList.get(0));
-        assertEquals("PrivateNote.createdbyid: must not be null", errorList.get(1));
+        assertEquals("privateNote.checkinid: must not be null", errorList.get(0));
+        assertEquals("privateNote.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -112,7 +112,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals("Required Body [PrivateNote] not specified", errors.asText());
+        assertEquals("Required Body [privateNote] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -492,8 +492,8 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("PrivateNote.checkinid: must not be null", errorList.get(0));
-        assertEquals("PrivateNote.createdbyid: must not be null", errorList.get(1));
+        assertEquals("privateNote.checkinid: must not be null", errorList.get(0));
+        assertEquals("privateNote.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -507,7 +507,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals("Required Body [PrivateNote] not specified", errors.asText());
+        assertEquals("Required Body [privateNote] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 

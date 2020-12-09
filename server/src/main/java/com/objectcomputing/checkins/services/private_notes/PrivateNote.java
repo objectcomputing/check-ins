@@ -22,7 +22,7 @@ public class PrivateNote {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of private notes", required = true)
+    @Schema(description = "UUID of checkin private notes", required = true)
     private UUID id;
 
     @NotNull

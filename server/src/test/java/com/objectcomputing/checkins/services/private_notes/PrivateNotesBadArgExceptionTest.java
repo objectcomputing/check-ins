@@ -1,5 +1,5 @@
-// package com.objectcomputing.checkins.services.private_notes;
+ package com.objectcomputing.checkins.services.private_notes;
 
-// public class PrivateNotesBadArgExceptionTest {
+ public class PrivateNotesBadArgExceptionTest {
     
-// }
+ }

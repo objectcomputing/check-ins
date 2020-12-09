@@ -41,7 +41,7 @@ public class PrivateNoteController {
     }
 
     /**
-     * Create and Save a new check in note
+     * Create and Save a new check in private note
      *
      * @param privateNote
      * @param request
@@ -58,7 +58,7 @@ public class PrivateNoteController {
     }
 
     /**
-     * Update a check in note
+     * Update a check in private note
      *
      * @param privateNote
      * @param request
