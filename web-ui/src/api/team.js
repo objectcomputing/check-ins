@@ -12,17 +12,6 @@ export const getAllTeamMembers = async (cookie) => {
   });
 };
 
-export const getTeamsByMember = async (id, cookie) => {
-  return await resolve({
-    url: teamUrl,
-    responseType: "json",
-    params: {
-      teamid: id,
-    },
-    withCredentials: true,
-    headers: { "X-CSRF-Header": cookie },
-  });
-};
 export const getMembersByTeam = async (id, cookie) => {
   return resolve({
     url: teamMemberUrl,
