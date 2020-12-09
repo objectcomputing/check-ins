@@ -2,17 +2,15 @@ package com.objectcomputing.checkins.services.skills.combineskills;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import io.micronaut.security.utils.SecurityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
@@ -35,7 +33,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         this.permissionsValidation = permissionsValidation;
     }
 
-    public Skill save(@NotNull CombineSkillsDTO skillDTO) {
+    public Skill save(@NotNull @Valid CombineSkillsDTO skillDTO) {
 
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
         Skill returnSkill = null;
@@ -50,7 +48,6 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         for (UUID skillToCombine : skillsArray) {
 
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, skillToCombine);
-            Stream<MemberSkill> stream = memberSkills.stream();
             UUID newSkillId = returnSkill.getId();
 
             memberSkills.forEach(memberSkill -> {

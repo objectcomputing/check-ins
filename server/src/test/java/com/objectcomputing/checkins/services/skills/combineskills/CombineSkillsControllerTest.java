@@ -5,10 +5,10 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
-import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillCreateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
+import com.objectcomputing.checkins.services.skills.SkillServices;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,6 +41,12 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     @Inject
     @Client("/services/skill/combine")
     private HttpClient client;
+
+    private final SkillServices skillServices;
+
+    public CombineSkillsControllerTest(SkillServices skillServices1) {
+        this.skillServices = skillServices1;
+    }
 
     private String encodeValue(String value) {
         try {
@@ -66,6 +73,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         memberSkillCreateDTO.setSkillid(skill.getId());
         memberSkillCreateDTO.setSkilllevel(skillLevel);
         memberSkillCreateDTO.setLastuseddate(lastUsedDate);
+
         skillLevel = "Guru Plus";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO1 = new MemberSkillCreateDTO();
@@ -73,6 +81,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         memberSkillCreateDTO1.setSkillid(skill2.getId());
         memberSkillCreateDTO1.setSkilllevel(skillLevel);
         memberSkillCreateDTO1.setLastuseddate(lastUsedDate);
+
         skillLevel = "Near Guru";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO2 = new MemberSkillCreateDTO();
@@ -116,6 +125,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         memberSkillCreateDTO.setSkillid(skill.getId());
         memberSkillCreateDTO.setSkilllevel(skillLevel);
         memberSkillCreateDTO.setLastuseddate(lastUsedDate);
+
         skillLevel = "Guru Plus";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO1 = new MemberSkillCreateDTO();
@@ -123,6 +133,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         memberSkillCreateDTO1.setSkillid(skill2.getId());
         memberSkillCreateDTO1.setSkilllevel(skillLevel);
         memberSkillCreateDTO1.setLastuseddate(lastUsedDate);
+
         skillLevel = "Near Guru";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO2 = new MemberSkillCreateDTO();
@@ -150,6 +161,70 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     }
 
     @Test
+    public void testPOSTCombineNonExistingSkillNameAdmin() {
+
+        UUID[] newSkillsArray = new UUID[2];
+        newSkillsArray[0] = UUID.randomUUID();
+        newSkillsArray[1] = UUID.randomUUID();
+        CombineSkillsDTO combineSkillsDTO =
+                new CombineSkillsDTO(null, "New Skill Desc", newSkillsArray);
+
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("skill.name: must not be blank", error);
+
+    }
+
+    @Test
+    public void testPOSTCombineBlankSkillNameAdmin() {
+
+        UUID[] newSkillsArray = new UUID[2];
+        newSkillsArray[0] = UUID.randomUUID();
+        newSkillsArray[1] = UUID.randomUUID();
+        CombineSkillsDTO combineSkillsDTO =
+                new CombineSkillsDTO("", "New Skill Desc", newSkillsArray);
+
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("skill.name: must not be blank", error);
+
+    }
+
+    @Test
+    public void testPOSTCombineNonExistingSkillsAdmin() {
+
+        CombineSkillsDTO combineSkillsDTO =
+             new CombineSkillsDTO("New Skill", "New Skill Desc", null);
+
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("skill.skillsToCombine: must not be null", error);
+
+    }
+// needs work
+//   create the skills and member skills
+//    perform the combine
+//    call the skills and member skills services afterward to ensure that you can no longer find (404) the skills and member skills that
+//    should have been deleted
+    @Test
     public void testPOSTCombine2SkillsIntoOneCheckMemberSkills() {
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
@@ -158,14 +233,15 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         String skillLevel = "Guru";
         LocalDate lastUsedDate = LocalDate.now();
 
-        Skill skill = createADefaultSkill();
+        Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
 
         MemberSkillCreateDTO memberSkillCreateDTO = new MemberSkillCreateDTO();
         memberSkillCreateDTO.setMemberid(memberProfile1.getId());
-        memberSkillCreateDTO.setSkillid(skill.getId());
+        memberSkillCreateDTO.setSkillid(skill1.getId());
         memberSkillCreateDTO.setSkilllevel(skillLevel);
         memberSkillCreateDTO.setLastuseddate(lastUsedDate);
+
         skillLevel = "Guru Plus";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO1 = new MemberSkillCreateDTO();
@@ -173,16 +249,17 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         memberSkillCreateDTO1.setSkillid(skill2.getId());
         memberSkillCreateDTO1.setSkilllevel(skillLevel);
         memberSkillCreateDTO1.setLastuseddate(lastUsedDate);
+
         skillLevel = "Near Guru";
         lastUsedDate = LocalDate.now();
         MemberSkillCreateDTO memberSkillCreateDTO2 = new MemberSkillCreateDTO();
         memberSkillCreateDTO2.setMemberid(memberProfile2.getId());
-        memberSkillCreateDTO2.setSkillid(skill.getId());
+        memberSkillCreateDTO2.setSkillid(skill1.getId());
         memberSkillCreateDTO2.setSkilllevel(skillLevel);
         memberSkillCreateDTO2.setLastuseddate(lastUsedDate);
 
         UUID[] newSkillsArray = new UUID[2];
-        newSkillsArray[0] = skill.getId();
+        newSkillsArray[0] = skill1.getId();
         newSkillsArray[1] = skill2.getId();
         CombineSkillsDTO combineSkillsDTO =
              new CombineSkillsDTO("New Skill", "New Skill Desc", newSkillsArray);
@@ -191,6 +268,15 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
         Skill returnedSkill = response.body();
+
+//    call the skills and member skills services afterward to ensure that you can no longer find (404) the skills and member skills that
+//    should have been deleted
+
+//        Skill removedSkill = skillServices.readSkill(skill1.getId());
+//        assertNull(removedSkill);
+
+        Skill removedSkill2 = skillServices.readSkill(skill2.getId());
+        assertNull(removedSkill2);
 
 //        MemberSkill memberSkillForMember1 =
 
