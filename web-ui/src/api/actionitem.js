@@ -31,7 +31,6 @@ export const deleteActionItem = async (id, cookie) => {
 
 export const findActionItem = async (checkinId, createdById, cookie) => {
   return resolve({
-    method: "get",
     url: "/services/action-item",
     responseType: "json",
     params: {
@@ -44,7 +43,6 @@ export const findActionItem = async (checkinId, createdById, cookie) => {
 
 export const getActionItem = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: `/services/action-item/?id=${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

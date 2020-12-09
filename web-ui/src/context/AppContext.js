@@ -15,6 +15,7 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+export const UPDATE_SKILLS = "@@check-ins/update_skills";
 export const ADD_TEAM = "@@check-ins/add_team";
 
 const SET_CSRF = "@@check-ins/update_csrf";
@@ -37,6 +38,9 @@ const reducer = (state, action) => {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       state.currentCheckin = state.checkins[state.checkins.length - 1];
+      break;
+    case UPDATE_SKILLS:
+      state.skills = action.payload;
       break;
     case SET_CSRF:
       state.csrf = action.payload;
@@ -84,10 +88,11 @@ const initialState = {
   checkins: [],
   csrf: undefined,
   currentCheckin: {},
-  teams: [],
-  memberProfiles: [],
   index: 0,
+  memberProfiles: [],
   selectedProfile: undefined,
+  skills: [],
+  teams: [],
   toast: {
     severity: "",
     toast: "",

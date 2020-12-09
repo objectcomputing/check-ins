@@ -3,13 +3,8 @@ import "./Avatar.css";
 
 import Avatar from "@material-ui/core/Avatar";
 
-const AvatarComponent = ({imageUrl, ...props}) => {
-  return (
-    <Avatar className="avatar"
-      src={imageUrl ? imageUrl : "/default_profile.jpg"}
-      {...props}
-    ></Avatar>
-  );
+const AvatarComponent = ({ imageUrl, ...props }) => {
+  return <Avatar className="avatar" src={imageUrl} {...props}></Avatar>;
 };
 
 export default AvatarComponent;

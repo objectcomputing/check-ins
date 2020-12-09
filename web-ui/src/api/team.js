@@ -3,8 +3,29 @@ import { resolve } from "./api.js";
 const teamUrl = `/services/team`;
 const teamMemberUrl = `/services/team/member`;
 
+export const getAllTeamMembers = async (cookie) => {
+  return resolve({
+    url: teamMemberUrl,
+    responseType: "json",
+    withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const getMembersByTeam = async (id, cookie) => {
+  return resolve({
+    url: teamMemberUrl,
+    responseType: "json",
+    params: {
+      teamid: id,
+    },
+    withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const updateTeam = async (team, cookie) => {
-  return await resolve({
+  return resolve({
     method: "put",
     url: teamUrl,
     responseType: "json",
@@ -15,9 +36,8 @@ export const updateTeam = async (team, cookie) => {
 };
 
 export const getTeamsByMember = async (id, cookie) => {
-  return await resolve({
-    method: "get",
-    url: teamUrl,
+  return resolve({
+    url: teamMemberUrl,
     responseType: "json",
     params: {
       memberid: id,
