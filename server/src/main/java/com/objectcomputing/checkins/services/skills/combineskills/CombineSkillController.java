@@ -1,14 +1,14 @@
 package com.objectcomputing.checkins.services.skills.combineskills;
 
-import com.objectcomputing.checkins.services.skills.*;
+import com.objectcomputing.checkins.services.skills.Skill;
+import com.objectcomputing.checkins.services.skills.SkillServices;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 @Controller("/services/skill/combine")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-//@Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "combineskill")
 public class CombineSkillController {
 

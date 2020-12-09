@@ -58,15 +58,6 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
                 memberSkillServices.save(memberSkill);
             });
 
-
-//            for (MemberSkill memberSkill : memberSkills) {
-//                memberSkillServices.delete(memberSkill.getId());
-//
-//                memberSkill.setSkillid(returnSkill.getId());
-//                memberSkill.setId(null);
-//                memberSkillServices.save(memberSkill);
-//            }
-
             skillServices.delete(skillToCombine);
 
         }
