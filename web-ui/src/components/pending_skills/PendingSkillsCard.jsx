@@ -20,7 +20,7 @@ import {
   TextField,
 } from "@material-ui/core";
 
-import "./PendingSkillsModal.css";
+import "./PendingSkills.css";
 
 const PendingSkillsCard = ({ pendingSkill }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -113,7 +113,7 @@ const PendingSkillsCard = ({ pendingSkill }) => {
         <Button onClick={acceptSkill}>Accept</Button>
         <Button onClick={handleOpen}>Edit</Button>
         <Modal open={open} onClose={handleClose}>
-          <div className="PendingSkillsModal">
+          <div className="pending-skills-modal">
             <TextField
               className="halfWidth"
               label="Name"

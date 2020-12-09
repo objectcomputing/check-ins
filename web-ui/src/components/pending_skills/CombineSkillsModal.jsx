@@ -6,12 +6,12 @@ import { Checkbox, Modal, TextField } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
-import "./PendingSkillsModal.css";
+import "./PendingSkills.css";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const PendingSkillsModal = ({ open, onClose }) => {
+const CombineSkillsModal = ({ open, onClose }) => {
   const { state } = useContext(AppContext);
   const { skills } = state;
 
@@ -48,7 +48,7 @@ const PendingSkillsModal = ({ open, onClose }) => {
   return (
     <Modal open={open} onClose={close}>
       {pendingSkills && (
-        <div className="PendingSkillsModal">
+        <div className="combine-skills-modal">
           <Autocomplete
             multiple
             options={pendingSkills}
@@ -102,4 +102,4 @@ const PendingSkillsModal = ({ open, onClose }) => {
   );
 };
 
-export default PendingSkillsModal;
+export default CombineSkillsModal;
