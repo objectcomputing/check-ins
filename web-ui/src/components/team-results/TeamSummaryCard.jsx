@@ -98,7 +98,7 @@ const TeamSummaryCard = ({team, index}) => {
                 {(isAdmin || isTeamLead) && (
                     <Button
                         onClick={(e) => {
-                            deleteATeam(team.id, e)
+                            deleteATeam(team.id)
                         }}>Delete Team</Button>
                 )}
             </CardActions>
