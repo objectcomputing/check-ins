@@ -24,7 +24,7 @@ public class OAuthCsrfFilter extends OncePerRequestHttpServerFilter {
         String cookieValue = request.getCookies().findCookie("_csrf").map(Cookie::getValue).orElse(null);
 
 
-        if (!cookieValue.equals(headerValue)) {
+        if (cookieValue == null || !cookieValue.equals(headerValue)) {
             return Publishers.just(HttpResponse.status(HttpStatus.FORBIDDEN));
         }
 

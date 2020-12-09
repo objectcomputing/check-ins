@@ -29,7 +29,6 @@ export const resolve = async (payload) => {
     resolved.payload = await promise;
   } catch (e) {
     resolved.error = e;
-    console.log(e);
     if (window.snackDispatch) {
       window.snackDispatch({
         type: UPDATE_TOAST,

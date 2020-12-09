@@ -39,7 +39,9 @@ public class TeamUpdateDTO {
         this(nullSafeUUIDFromString(id), name, description);
     }
 
-    public TeamUpdateDTO() {}
+    public TeamUpdateDTO() {
+        id = UUID.randomUUID();
+    }
 
     @Override
     public String toString() {
