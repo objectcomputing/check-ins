@@ -272,8 +272,8 @@ public class CombineSkillsControllerTest extends TestContainersSuite
 //    call the skills and member skills services afterward to ensure that you can no longer find (404) the skills and member skills that
 //    should have been deleted
 
-//        Skill removedSkill = skillServices.readSkill(skill1.getId());
-//        assertNull(removedSkill);
+        Skill removedSkill = skillServices.readSkill(skill1.getId());
+        assertNull(removedSkill);
 
         Skill removedSkill2 = skillServices.readSkill(skill2.getId());
         assertNull(removedSkill2);
