@@ -49,12 +49,3 @@ export const getActionItem = async (id, cookie) => {
   });
 };
 
-export const createMassActionItem = async (actionItems, cookie) => {
-  return resolve({
-    method: "post",
-    url: "/services/action-item/items",
-    responseType: "json",
-    data: actionItems,
-    headers: { "X-CSRF-Header": cookie },
-  });
-};

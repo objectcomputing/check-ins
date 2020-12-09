@@ -9,34 +9,20 @@ node {
     download = true
 }
 
-task start(type: YarnTask, dependsOn: 'yarn') {
-    group = 'application'
-    description = 'Run the client app'
-    args = ['run', 'start']
+yarn_run_coverage {
+    group 'verification'
+    outputs.dir 'coverage'
 }
 
-task build(overwrite: true, type: YarnTask, dependsOn: 'yarn') {
+yarn_run_build {
+    group 'build'
     outputs.dir 'build'
-    group = 'build'
-    description = 'Build the client bundle'
-    args = ['run', 'build']
 }
 
-task test(type: YarnTask, dependsOn: 'yarn') {
-    outputs.dir 'build'
-    group = 'verification'
-    description = 'Run the client tests'
-    args = ['run', 'test']
-}
-
-task eject(type: YarnTask, dependsOn: 'yarn') {
-    group = 'other'
-    description = 'Eject from the create-react-app scripts'
-    args = ['run', 'eject']
+check {
+    dependsOn yarn_run_coverage
 }
 
 artifacts {
     'default' file: buildDir, type: 'directory', builtBy: yarn_run_build
 }
-
-yarn_run_build.outputs.dir 'build'

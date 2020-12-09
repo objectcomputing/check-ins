@@ -13,7 +13,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.objectcomputing.checkins.util.googleapiaccess.GoogleAccessor;
+import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.utils.SecurityService;
@@ -38,20 +38,20 @@ public class FileServicesImpl implements FileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileServicesImpl.class);
 
-    private final GoogleAccessor googleAccessor;
+    private final GoogleApiAccess googleApiAccess;
     private final SecurityService securityService;
     private final CheckInServices checkInServices;
     private final CheckinDocumentServices checkinDocumentServices;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
 
-    public FileServicesImpl(GoogleAccessor googleAccessor,
+    public FileServicesImpl(GoogleApiAccess googleApiAccess,
                             SecurityService securityService,
                             CheckInServices checkInServices,
                             CheckinDocumentServices checkinDocumentServices,
                             MemberProfileServices memberProfileServices,
                             CurrentUserServices currentUserServices) {
-        this.googleAccessor = googleAccessor;
+        this.googleApiAccess = googleApiAccess;
         this.securityService = securityService;
         this.checkInServices = checkInServices;
         this.checkinDocumentServices = checkinDocumentServices;
@@ -69,7 +69,7 @@ public class FileServicesImpl implements FileServices {
 
         try {
             Set<FileInfoDTO> result = new HashSet<>();
-            Drive drive = googleAccessor.accessGoogleDrive();
+            Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             if (checkInID == null && isAdmin) {
@@ -116,23 +116,27 @@ public class FileServicesImpl implements FileServices {
         if(!isAdmin) {
             validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
         }
-
         try {
-            OutputStream outputStream = new ByteArrayOutputStream();
             java.io.File file = java.io.File.createTempFile("tmp", ".txt");
             file.deleteOnExit();
-            FileWriter myWriter = new FileWriter(file);
+            try(
+                OutputStream outputStream = new ByteArrayOutputStream();
+                FileWriter myWriter = new FileWriter(file)
+            ) {
+                Drive drive = googleApiAccess.getDrive();
+                validate(drive == null, "Unable to access Google Drive");
 
-            Drive drive = googleAccessor.accessGoogleDrive();
-            validate(drive == null, "Unable to access Google Drive");
+                drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
+                myWriter.write(String.valueOf(outputStream));
+                myWriter.close();
 
-            drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
-            myWriter.write(String.valueOf(outputStream));
-            myWriter.close();
-
-            return file;
-        } catch (IOException e) {
-            LOG.error("Error occurred while retrieving files from Google Drive.", e);
+                return file;
+            } catch (IOException e) {
+                LOG.error("Error occurred while retrieving files from Google Drive.", e);
+                throw new FileRetrievalException(e.getMessage());
+            }
+        } catch(IOException e) {
+            LOG.error("Error occurred while attempting to create a temporary file.", e);
             throw new FileRetrievalException(e.getMessage());
         }
     }
@@ -159,7 +163,7 @@ public class FileServicesImpl implements FileServices {
         final String directoryName = sb;
 
         try {
-            Drive drive = googleAccessor.accessGoogleDrive();
+            Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
 
             // Check if folder already exists on google drive. If exists, return folderId and name
@@ -206,7 +210,7 @@ public class FileServicesImpl implements FileServices {
     }
 
     @Override
-    public void deleteFile(@NotNull String uploadDocId) {
+    public Boolean deleteFile(@NotNull String uploadDocId) {
 
         String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
@@ -221,10 +225,11 @@ public class FileServicesImpl implements FileServices {
         }
 
         try {
-            Drive drive = googleAccessor.accessGoogleDrive();
+            Drive drive = googleApiAccess.getDrive();
             validate(drive == null, "Unable to access Google Drive");
             drive.files().delete(uploadDocId).execute();
             checkinDocumentServices.deleteByUploadDocId(uploadDocId);
+            return true;
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Drive.", e);
             throw new FileRetrievalException(e.getMessage());

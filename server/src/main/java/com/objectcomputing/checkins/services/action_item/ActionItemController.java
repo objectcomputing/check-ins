@@ -131,36 +131,4 @@ public class ActionItemController {
         return actionItemServices.findByFields(checkinid, createdbyid);
     }
 
-    /**
-     * Load action items
-     *
-     * @param actionItems, {@link List< ActionItemCreateDTO > to load {@link ActionItem action items}}
-     * @return {@link HttpResponse<List< ActionItem >}
-     */
-    @Post("/items")
-    public HttpResponse<?> loadActionItems(@Body @Valid @NotNull List<ActionItemCreateDTO> actionItems,
-                                           HttpRequest<List<ActionItem>> request) {
-        List<String> errors = new ArrayList<>();
-        List<ActionItem> actionItemsCreated = new ArrayList<>();
-        for (ActionItemCreateDTO actionItemDTO : actionItems) {
-            ActionItem actionItem = new ActionItem(actionItemDTO.getCheckinid(),
-                    actionItemDTO.getCreatedbyid(), actionItemDTO.getDescription());
-            try {
-                actionItemServices.save(actionItem);
-                actionItemsCreated.add(actionItem);
-            } catch (BadArgException e) {
-                errors.add(String.format("Member %s's action item was not added to CheckIn %s because: %s", actionItem.getCreatedbyid(),
-                        actionItem.getCheckinid(), e.getMessage()));
-            }
-        }
-        if (errors.isEmpty()) {
-            return HttpResponse.created(actionItemsCreated)
-                    .headers(headers -> headers.location(request.getUri()));
-        } else {
-            return HttpResponse.badRequest(errors)
-                    .headers(headers -> headers.location(request.getUri()));
-        }
-    }
-
-
 }

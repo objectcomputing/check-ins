@@ -8,17 +8,32 @@ import java.util.UUID;
 
 @Introspected
 public class TeamMemberCreateDTO {
-    @NotNull
-    @Schema(description = "id of the team this entry is associated with", required = true)
-    private UUID teamid;
-
-    @NotNull
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
     private Boolean lead;
+
+    @NotNull
+    @Schema(description = "Team to which the member belongs")
+    private UUID teamid;
+
+    @NotNull
+    @Schema(description = "Member who is on this team")
+    private UUID memberid;
+
+    public TeamMemberCreateDTO(UUID teamid, UUID memberid, Boolean lead) {
+        this.teamid = teamid;
+        this.memberid = memberid;
+        this.lead = lead;
+    }
+
+    public Boolean getLead() {
+        return lead;
+    }
+
+    public void setLead(Boolean lead) {
+        this.lead = lead;
+    }
 
     public UUID getTeamid() {
         return teamid;
@@ -34,13 +49,5 @@ public class TeamMemberCreateDTO {
 
     public void setMemberid(UUID memberid) {
         this.memberid = memberid;
-    }
-
-    public Boolean isLead() {
-        return lead;
-    }
-
-    public void setLead(Boolean lead) {
-        this.lead = lead;
     }
 }

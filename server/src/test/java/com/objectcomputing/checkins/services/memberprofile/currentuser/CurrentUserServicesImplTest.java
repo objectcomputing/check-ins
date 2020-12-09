@@ -26,9 +26,6 @@ import static org.mockito.Mockito.*;
 public class CurrentUserServicesImplTest {
 
     @Mock
-    MemberProfileServicesImpl memberProfileServicesImpl;
-
-    @Mock
     MemberProfileRepository memberProfileRepo;
 
     @Mock
@@ -62,7 +59,7 @@ public class CurrentUserServicesImplTest {
         Role mockRole = new Role(RoleType.MEMBER, expected.getId());
 
         when(memberProfileRepo.findByWorkEmail(expected.getWorkEmail())).thenReturn(java.util.Optional.empty());
-        when(memberProfileServicesImpl.saveProfile(any())).thenReturn(expected);
+        when(memberProfileRepo.save(any())).thenReturn(expected);
         when(roleServices.save(mockRole)).thenReturn(mockRole);
 
         MemberProfile actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
