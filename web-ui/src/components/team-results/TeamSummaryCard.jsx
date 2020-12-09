@@ -24,6 +24,7 @@ const TeamSummaryCard = ({team, index}) => {
     const [open, setOpen] = useState(false);
     const isAdmin =
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    console.log(JSON.stringify(state));
     let leads =
         team.teamMembers == null
             ? null
