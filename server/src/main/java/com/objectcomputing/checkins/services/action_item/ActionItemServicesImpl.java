@@ -57,7 +57,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
         argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
-        permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
+        if(actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
 
         return actionItemResult;
 

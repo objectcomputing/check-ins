@@ -116,23 +116,27 @@ public class FileServicesImpl implements FileServices {
         if(!isAdmin) {
             validate((!currentUser.getId().equals(associatedCheckin.getTeamMemberId()) && !currentUser.getId().equals(associatedCheckin.getPdlId())), "You are not authorized to perform this operation");
         }
-
         try {
-            OutputStream outputStream = new ByteArrayOutputStream();
             java.io.File file = java.io.File.createTempFile("tmp", ".txt");
             file.deleteOnExit();
-            FileWriter myWriter = new FileWriter(file);
+            try(
+                OutputStream outputStream = new ByteArrayOutputStream();
+                FileWriter myWriter = new FileWriter(file)
+            ) {
+                Drive drive = googleApiAccess.getDrive();
+                validate(drive == null, "Unable to access Google Drive");
 
-            Drive drive = googleApiAccess.getDrive();
-            validate(drive == null, "Unable to access Google Drive");
+                drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
+                myWriter.write(String.valueOf(outputStream));
+                myWriter.close();
 
-            drive.files().get(uploadDocId).executeMediaAndDownloadTo(outputStream);
-            myWriter.write(String.valueOf(outputStream));
-            myWriter.close();
-
-            return file;
-        } catch (IOException e) {
-            LOG.error("Error occurred while retrieving files from Google Drive.", e);
+                return file;
+            } catch (IOException e) {
+                LOG.error("Error occurred while retrieving files from Google Drive.", e);
+                throw new FileRetrievalException(e.getMessage());
+            }
+        } catch(IOException e) {
+            LOG.error("Error occurred while attempting to create a temporary file.", e);
             throw new FileRetrievalException(e.getMessage());
         }
     }

@@ -13,8 +13,15 @@ export const getSkills = async (cookie) => {
 
 export const getSkill = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: `${skillUrl}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const getPendingSkills = async (cookie) => {
+  return resolve({
+    url: skillUrl + "?pending=true",
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
@@ -26,6 +33,26 @@ export const createSkill = async (skill, cookie) => {
     url: skillUrl,
     responseType: "json",
     data: skill,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const updateSkill = async (skill, cookie) => {
+  return resolve({
+    method: "put",
+    url: skillUrl,
+    responseType: "json",
+    data: skill,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const removeSkill = async (id, cookie) => {
+  return resolve({
+    method: "delete",
+    url: skillUrl,
+    responseType: "json",
+    data: id,
     headers: { "X-CSRF-Header": cookie },
   });
 };

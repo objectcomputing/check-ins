@@ -35,7 +35,9 @@ public class TeamResponseDTO {
         this(UUID.fromString(id), name, description);
     }
 
-    public TeamResponseDTO() {}
+    public TeamResponseDTO() {
+        id = UUID.randomUUID();
+    }
 
     @Override
     public String toString() {

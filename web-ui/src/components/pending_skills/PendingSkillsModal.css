@@ -1,0 +1,37 @@
+.EditPendingSkillsModal {
+  position: absolute;
+  min-width: 400px;
+  max-width: 600px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  padding: 0.5rem;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+}
+
+.EditPendingSkillsModal h2 {
+  margin-block-end: 0rem;
+  margin-left: 0.5rem;
+}
+
+.EditPendingSkillsModal-actions {
+  margin-top: 1rem;
+  width: calc(100% - 1rem);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.EditPendingSkillsModal .MuiTextField-root.fullWidth {
+  width: calc(100% - 1rem);
+}
+
+.EditPendingSkillsModal .MuiTextField-root.halfWidth {
+  width: calc(100% - 1rem);
+}
+
+.EditPendingSkillsModal .MuiTextField-root {
+  margin: 0.5rem;
+  width: calc(100% - 1rem);
+}
