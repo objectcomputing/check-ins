@@ -45,6 +45,7 @@ project(":web-ui") {
     sonarqube {
         properties {
             property "sonar.sources", "src/"
+            property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
             property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
             property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
         }

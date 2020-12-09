@@ -31,14 +31,17 @@ public class RequestLoggingInterceptor implements HttpServerFilter {
         else if (!auth.get().getName().isBlank()){
             username = auth.get().getName();
         }
-        MethodBasedRoute routeBuilder = request.getAttribute("micronaut.http.route", MethodBasedRoute.class).get();
-        ExecutableMethod targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
-        String params = "";
-        request.getParameters().forEach((key, value) -> params.concat(key).concat(":").concat(value.toString()));
-        Optional<String> requestBody = request.getBody(String.class);
-        LOG.info(String.format("User %s %s request to %s with body %s and parameters %s being handled by %s.%s",
-                username, requestVerb, request.getUri().getPath(), requestBody.orElse("empty"), params.isEmpty() ? "empty" : params,
-                targetMethod.getDeclaringType().getSimpleName(), targetMethod.getName()));
+        Optional<MethodBasedRoute> route = request.getAttribute("micronaut.http.route", MethodBasedRoute.class);
+        if(route.isPresent()) {
+            MethodBasedRoute routeBuilder = route.get();
+            ExecutableMethod targetMethod = routeBuilder.getTargetMethod().getExecutableMethod();
+            String params = "";
+            request.getParameters().forEach((key, value) -> params.concat(key).concat(":").concat(value.toString()));
+            Optional<String> requestBody = request.getBody(String.class);
+            LOG.info(String.format("User %s %s request to %s with body %s and parameters %s being handled by %s.%s",
+                    username, requestVerb, request.getUri().getPath(), requestBody.orElse("empty"), params.isEmpty() ? "empty" : params,
+                    targetMethod.getDeclaringType().getSimpleName(), targetMethod.getName()));
+        }
         return true;
     }
 

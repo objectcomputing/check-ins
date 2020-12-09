@@ -116,8 +116,7 @@ public class TeamServicesImpl implements TeamServices {
         MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
         Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
 
-        List<TeamMember> CurrentTeam = teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true);
-        if(isAdmin || !CurrentTeam.isEmpty()) {
+        if(isAdmin || (currentUser != null && !teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
             teamMemberRepo.deleteByTeamId(id.toString());
             teamsRepo.deleteById(id);
         } else {

@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.utils.SecurityService;
+import io.micronaut.security.authentication.Authentication;
 
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -124,8 +125,8 @@ public class PermissionsValidation {
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
 
         ActionItem actionItem = actionItemRepo.findById(id).orElse(null);
-        final UUID checkinId = actionItem.getCheckinid();
-        final UUID createdById = actionItem.getCreatedbyid();
+        final UUID checkinId = actionItem != null ? actionItem.getCheckinid() : null;
+        final UUID createdById = actionItem != null ? actionItem.getCreatedbyid() : null;
 
         CheckIn checkinRecord = checkInServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
@@ -145,7 +146,8 @@ public class PermissionsValidation {
         Boolean isAdmin;
 
         public CurrentUserInfo() {
-            this.workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+            Authentication authentication = securityService != null ? securityService.getAuthentication().orElse(null) : null;
+            this.workEmail = authentication != null ? authentication.getAttributes().get("email").toString() : null;
             this.currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
             this.isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
         }
