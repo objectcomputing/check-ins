@@ -9,6 +9,9 @@ export default {
 const Template = (args) => <CheckinCycle {...args} />;
 
 export const NoDimensions = Template.bind({});
+NoDimensions.args = {
+    style: undefined
+}
 
 export const SetDimensions = Template.bind({});
 SetDimensions.args = {

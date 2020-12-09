@@ -96,7 +96,7 @@ const Notes = (props) => {
   }, [csrf, currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
 
   const handleNoteChange = (e) => {
-    if (Object.keys(note) === 0 || !csrf) {
+    if (Object.keys(note).length === 0 || !csrf) {
       return;
     }
     const { value } = e.target;
