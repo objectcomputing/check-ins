@@ -3,11 +3,10 @@ import React, {useContext, useState} from "react";
 import {AppContext, UPDATE_TEAMS, UPDATE_TOAST} from "../../context/AppContext";
 import EditTeamModal from "./EditTeamModal";
 
-import {Button, ButtonGroup, Card, CardActions, CardContent, CardHeader,} from "@material-ui/core";
+import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
 import {Skeleton} from "@material-ui/lab";
 import PropTypes from "prop-types";
 import {deleteTeam} from "../../api/team.js";
-import Popper from '@material-ui/core/Popper';
 import SplitButton from "../split-button/SplitButton";
 
 const propTypes = {
