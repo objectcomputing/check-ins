@@ -11,7 +11,7 @@ const initialState = {
         title: "Tester",
         workEmail: "test@tester.com",
       },
-      role: ["MEMBER"],
+      role: ["MEMBER", "ADMIN"],
       imageUrl:
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
