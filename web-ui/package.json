@@ -94,6 +94,8 @@
     "react-testing-library": "^8.0.1"
   },
   "resolutions": {
-    "@storybook/react/babel-loader": "8.1.0"
+    "@storybook/react/babel-loader": "8.1.0",
+    "@storybook/react/webpack": "4.42.0",
+    "@storybook/react/@storybook/core/webpack": "4.42.0"
   }
 }
