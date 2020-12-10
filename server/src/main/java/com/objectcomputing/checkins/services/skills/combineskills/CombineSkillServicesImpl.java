@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Singleton
 public class CombineSkillServicesImpl implements CombineSkillServices {
@@ -50,19 +49,42 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, skillToCombine);
             UUID newSkillId = returnSkill.getId();
 
-            memberSkills.forEach(memberSkill -> {
-                memberSkillServices.delete(memberSkill.getId());
+            changeMemberSkills(memberSkills, returnSkill);
 
-                memberSkill.setSkillid(newSkillId);
-                memberSkill.setId(null);
-                memberSkillServices.save(memberSkill);
-            });
+//            memberSkills.forEach(memberSkill -> {
+//                memberSkillServices.delete(memberSkill.getId());
+//
+//                memberSkill.setSkillid(newSkillId);
+//                memberSkill.setId(null);
+//                memberSkillServices.save(memberSkill);
+//            });
 
             skillServices.delete(skillToCombine);
 
         }
 
         return returnSkill;
+
+    }
+
+    private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill) {
+
+            for (MemberSkill memberSkill : memberSkills) {
+                memberSkillServices.delete(memberSkill.getId());
+
+                memberSkill.setSkillid(returnSkill.getId());
+                memberSkill.setId(null);
+                memberSkillServices.save(memberSkill);
+            }
+
+
+        //            memberSkills.forEach(memberSkill -> {
+//                memberSkillServices.delete(memberSkill.getId());
+//
+//                memberSkill.setSkillid(newSkillId);
+//                memberSkill.setId(null);
+//                memberSkillServices.save(memberSkill);
+//            });
 
     }
 
