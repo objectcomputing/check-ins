@@ -1,5 +1,6 @@
 import React from "react";
 import PendingSkillsCard from "./PendingSkillsCard";
+import PendingSkillsPage from "../../pages/PendingSkillsPage";
 import { AppContextProvider } from "../../context/AppContext";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
@@ -13,6 +14,10 @@ const initialState = {
       role: ["MEMBER"],
     },
     memberProfiles: ["912834091823"],
+    skills: [
+      { id: "918275", name: "skill1", description: "first" },
+      { id: "9183455", name: "skill2", description: "second" },
+    ],
   },
 };
 
@@ -22,6 +27,9 @@ const pendingSkill = {
   name: "Le test skill",
   pending: false,
 };
+
+let open = true;
+const handleClose = () => (open = false);
 
 const server = setupServer(
   rest.get("http://localhost:8080/services/skill", (req, res, ctx) => {
@@ -40,6 +48,17 @@ it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
       <PendingSkillsCard pendingSkill={pendingSkill} />
+    </AppContextProvider>
+  );
+});
+
+it("renders correctly", () => {
+  {
+    /* PendingSkillsPage contains CombineSkillsModal */
+  }
+  snapshot(
+    <AppContextProvider value={initialState}>
+      <PendingSkillsPage />
     </AppContextProvider>
   );
 });
