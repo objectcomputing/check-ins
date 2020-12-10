@@ -84,3 +84,4 @@ export default function SplitButton({toggleOnSelect=false, onClick, options}) {
     </div>
   );
 }
+SplitButton.propTypes = propTypes;
