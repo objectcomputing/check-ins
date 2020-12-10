@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -157,5 +158,27 @@ public class MemberSkillController {
                 .map(memberSkills -> (HttpResponse<Set<MemberSkill>>)HttpResponse
                         .ok(memberSkills)).subscribeOn(Schedulers.from(ioExecutorService));
     }
+
+
+    /**
+     * Update a MemberSkill
+     *
+     * @param memberSkill, {@link MemberSkill}
+     * @return {@link MemberSkill}
+     */
+    @Put("/")
+    public Single<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<Skill> request) {
+
+        return Single.fromCallable(() -> memberSkillsService.update(memberSkill))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedMemberSkill -> (HttpResponse<MemberSkill>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId()))))
+                        .body(updatedMemberSkill))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+
+
+    }
+
 
 }
