@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
+import com.objectcomputing.checkins.services.skills.SkillCreateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -315,6 +317,65 @@ public class MemberSkillControllerTest extends TestContainersSuite implements Me
 
     }
 
+    @Test
+    public void testPUTUpdateMemberSkill() {
 
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
+
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
+
+        final HttpRequest<?> request = HttpRequest.PUT("/", memberSkill).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<MemberSkill> response = client.toBlocking().exchange(request, MemberSkill.class);
+
+        assertEquals(memberSkill, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), memberSkill.getId()),
+                response.getHeaders().get("location"));
+    }
+
+    @Test
+    public void testPUTUpdateNullMemberSkill() {
+
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
+        assertEquals("Required Body [memberSkill] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+    }
+
+    @Test
+    public void testPUTUpdateNonexistentMemberSkill() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Skill skill = createADefaultSkill();
+        String skillLevel = null;
+        LocalDate skillDate = LocalDate.now();
+
+        MemberSkill memberSkill = createMemberSkill(memberProfile,skill, skillLevel, skillDate);
+        memberSkill.setId(UUID.randomUUID());
+
+        final HttpRequest<MemberSkill> request = HttpRequest.PUT("/", memberSkill).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
+        assertEquals(String.format("MemberSkill %s does not exist, cannot update",memberSkill.getId()), errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+    }
 
 }

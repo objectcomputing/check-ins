@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -44,6 +45,15 @@ public class MemberSkillController {
         this.memberSkillsService = memberSkillServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
+    }
+
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
     }
 
     @Error(exception = MemberSkillBadArgException.class)
