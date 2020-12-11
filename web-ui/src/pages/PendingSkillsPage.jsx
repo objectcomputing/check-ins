@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 
 import { AppContext, selectPendingSkills } from "../context/AppContext";
 import PendingSkillsCard from "../components/pending_skills/PendingSkillsCard";
-import PendingSkillsModal from "../components/pending_skills/PendingSkillsModal";
+import CombineSkillsModal from "../components/pending_skills/CombineSkillsModal";
 
 import { Button } from "@material-ui/core";
 
@@ -20,7 +20,7 @@ const PendingSkillsPage = () => {
   return (
     <div className="pending-skills-page">
       <Button onClick={handleOpen}>Combine Skills</Button>
-      <PendingSkillsModal open={open} onClose={handleClose} />
+      <CombineSkillsModal open={open} onClose={handleClose} />
       <div>
         {selectPendingSkills(state).map((skill) => (
           <PendingSkillsCard
