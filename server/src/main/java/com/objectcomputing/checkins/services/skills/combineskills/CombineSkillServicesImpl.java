@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.skills.combineskills;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
@@ -21,14 +20,12 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
     private final SkillServices skillServices;
     private final MemberSkillServices memberSkillServices;
     private final SecurityService securityService;
-    private final CurrentUserServices currentUserServices;
     private final PermissionsValidation permissionsValidation;
 
-    public CombineSkillServicesImpl(SkillServices skillServices, MemberSkillServices memberSkillServices, SecurityService securityService, CurrentUserServices currentUserServices, PermissionsValidation permissionsValidation) {
+    public CombineSkillServicesImpl(SkillServices skillServices, MemberSkillServices memberSkillServices, SecurityService securityService, PermissionsValidation permissionsValidation) {
         this.skillServices = skillServices;
         this.memberSkillServices = memberSkillServices;
         this.securityService = securityService;
-        this.currentUserServices = currentUserServices;
         this.permissionsValidation = permissionsValidation;
     }
 
@@ -47,17 +44,8 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         for (UUID skillToCombine : skillsArray) {
 
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, skillToCombine);
-            UUID newSkillId = returnSkill.getId();
 
             changeMemberSkills(memberSkills, returnSkill);
-
-//            memberSkills.forEach(memberSkill -> {
-//                memberSkillServices.delete(memberSkill.getId());
-//
-//                memberSkill.setSkillid(newSkillId);
-//                memberSkill.setId(null);
-//                memberSkillServices.save(memberSkill);
-//            });
 
             skillServices.delete(skillToCombine);
 
@@ -69,22 +57,11 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
     private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill) {
 
-            for (MemberSkill memberSkill : memberSkills) {
-                memberSkillServices.delete(memberSkill.getId());
+        for (MemberSkill memberSkill : memberSkills) {
 
-                memberSkill.setSkillid(returnSkill.getId());
-                memberSkill.setId(null);
-                memberSkillServices.save(memberSkill);
-            }
-
-
-        //            memberSkills.forEach(memberSkill -> {
-//                memberSkillServices.delete(memberSkill.getId());
-//
-//                memberSkill.setSkillid(newSkillId);
-//                memberSkill.setId(null);
-//                memberSkillServices.save(memberSkill);
-//            });
+            memberSkill.setSkillid(returnSkill.getId());
+            memberSkillServices.update(memberSkill);
+        }
 
     }
 
