@@ -4,7 +4,6 @@ const skillUrl = "/services/skill";
 
 export const getSkills = async (cookie) => {
   return resolve({
-    method: "get",
     url: skillUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -42,9 +41,8 @@ export const updateSkill = async (skill, cookie) => {
 export const removeSkill = async (id, cookie) => {
   return resolve({
     method: "delete",
-    url: skillUrl,
+    url: skillUrl + `/${id}`,
     responseType: "json",
-    data: id,
     headers: { "X-CSRF-Header": cookie },
   });
 };

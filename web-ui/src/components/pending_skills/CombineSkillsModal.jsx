@@ -16,7 +16,6 @@ const CombineSkillsModal = ({ open, onClose }) => {
   const { skills } = state;
 
   const [pendingSkills, setPendingSkills] = useState([]);
-  // const [skillsoChange, setSkillsToChange] = useState([]);
   const [editedSkill, setEditedSkill] = useState({
     name: "",
     description: "",
@@ -29,7 +28,6 @@ const CombineSkillsModal = ({ open, onClose }) => {
   }, [skills, state]);
 
   const handleSelections = (event, values) => {
-    // setSkillsToChange(values);
     if (!hasEdited) {
       setEditedSkill(values[0]);
     }
