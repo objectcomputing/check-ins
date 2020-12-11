@@ -16,7 +16,9 @@ const propTypes = {
     options: PropTypes.arrayOf(PropTypes.string)
 }
 
-export default function SplitButton({toggleOnSelect=false, onClick, options}) {
+
+
+const SplitButton = ({toggleOnSelect=false, onClick, options}) => {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -30,18 +32,19 @@ export default function SplitButton({toggleOnSelect=false, onClick, options}) {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
+  const handleClose = () => {
     setOpen(false);
   };
+
+  const handleButtonClick = (e, index) => {
+      handleClose(e);
+      onClick(e, index ? index : selectedIndex);
+  }
 
   return (
     <div>
         <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
-          <Button onClick={(e)=>onClick(e,selectedIndex)}>{options[selectedIndex]}</Button>
+          <Button onClick={handleButtonClick}>{options[selectedIndex]}</Button>
           <Button
             color="primary"
             size="small"
@@ -54,7 +57,7 @@ export default function SplitButton({toggleOnSelect=false, onClick, options}) {
             <ArrowDropDownIcon />
           </Button>
         </ButtonGroup>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+        <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement="bottom-end" transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}
@@ -70,7 +73,7 @@ export default function SplitButton({toggleOnSelect=false, onClick, options}) {
                       <MenuItem
                         key={option}
                         selected={index === selectedIndex}
-                        onClick={(event) => toggleOnSelect ? handleMenuItemClick(event, index) : onClick(event, index)}
+                        onClick={(event) => toggleOnSelect ? handleMenuItemClick(event, index) : handleButtonClick(event, index)}
                       >
                         {option}
                       </MenuItem>
@@ -84,4 +87,7 @@ export default function SplitButton({toggleOnSelect=false, onClick, options}) {
     </div>
   );
 }
+
 SplitButton.propTypes = propTypes;
+
+export default SplitButton;
