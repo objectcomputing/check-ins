@@ -37,7 +37,7 @@ const SplitButton = ({toggleOnSelect=false, onClick, options}) => {
   };
 
   const handleButtonClick = (e, index) => {
-      handleClose(e);
+      handleClose();
       onClick(e, index ? index : selectedIndex);
   }
 
