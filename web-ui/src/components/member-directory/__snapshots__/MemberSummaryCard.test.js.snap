@@ -46,8 +46,5 @@ exports[`renders correctly 1`] = `
       </span>
     </div>
   </div>
-  <div
-    className="MuiCardContent-root"
-  />
 </div>
 `;

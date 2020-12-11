@@ -1,8 +1,9 @@
 import React, { useEffect, useReducer, useMemo } from "react";
-import { createSelector } from 'reselect';
+import { createSelector } from "reselect";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
+import { getSkills } from "../api/skill";
 import axios from "axios";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
@@ -15,6 +16,7 @@ export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+export const UPDATE_SKILL = "@@check-ins/update_skill";
 export const UPDATE_SKILLS = "@@check-ins/update_skills";
 export const ADD_TEAM = "@@check-ins/add_team";
 
@@ -38,6 +40,13 @@ const reducer = (state, action) => {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       state.currentCheckin = state.checkins[state.checkins.length - 1];
+      break;
+    case UPDATE_SKILL:
+      state.skills = [...state.skills];
+      const index = state.skills.findIndex(
+        (skill) => skill.id === action.payload.id
+      );
+      state.skills[index] = action.payload;
       break;
     case UPDATE_SKILLS:
       state.skills = action.payload;
@@ -231,6 +240,26 @@ const AppContextProvider = (props) => {
     }
   }, [csrf, selectedId, id]);
 
+  useEffect(() => {
+    const getAllSkills = async () => {
+      const res = await getSkills();
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data.length > 0) {
+        dispatch({ type: UPDATE_SKILLS, payload: data });
+      }
+    };
+    if (csrf) {
+      getAllSkills();
+    }
+  }, [csrf]);
+
   const value = useMemo(() => {
     return { state, dispatch };
   }, [state]);
@@ -241,8 +270,9 @@ const AppContextProvider = (props) => {
   );
 };
 
-export const selectMemberProfiles = state => state.memberProfiles;
-export const selectTeamMembers = state => state.teamMembers;
+export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectSkills = (state) => state.skills;
+export const selectTeamMembers = (state) => state.teamMembers;
 
 export const selectProfileMap = createSelector(
   selectMemberProfiles,
@@ -257,23 +287,27 @@ export const selectProfileMap = createSelector(
   }
 );
 
-export const selectMembersByTeamId = id => createSelector(
-  selectTeamMembers,
-  (teamMembers) => {
+export const selectPendingSkills = createSelector(selectSkills, (skills) =>
+  skills.filter((skill) => skill.pending)
+);
+
+export const selectMembersByTeamId = (id) =>
+  createSelector(selectTeamMembers, (teamMembers) => {
     let members = [];
     if (teamMembers && teamMembers.length) {
       members = teamMembers.filter((member) => member.teamid === id);
     }
     return members;
-  }
-);
+  });
 
-export const selectMemberProfilesByTeamId = id => createSelector(
-  selectMembersByTeamId(id),
-  selectProfileMap,
-  (members, profileMap) => members.map((member) => {
-      return { ...profileMap[member.memberid], ...member };
-    })
-);
+export const selectMemberProfilesByTeamId = (id) =>
+  createSelector(
+    selectMembersByTeamId(id),
+    selectProfileMap,
+    (members, profileMap) =>
+      members.map((member) => {
+        return { ...profileMap[member.memberid], ...member };
+      })
+  );
 
 export { AppContext, AppContextProvider };

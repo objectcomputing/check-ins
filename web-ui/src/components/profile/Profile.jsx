@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext, UPDATE_USER_BIO } from "../../context/AppContext";
 import Search from "./Search";
-import { getSkills, getSkill, createSkill } from "../../api/skill.js";
+import { getSkill, createSkill } from "../../api/skill.js";
 import {
   getMemberSkills,
   createMemberSkill,
@@ -19,7 +19,7 @@ import "./Profile.css";
 
 const Profile = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, userProfile } = state;
+  const { csrf, skills, userProfile } = state;
   const { imageUrl } = userProfile ? userProfile : {};
 
   const [mySkills, setMySkills] = useState([]);
@@ -30,18 +30,6 @@ const Profile = () => {
   const [bio, setBio] = useState();
   const [updating, setUpdating] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [skillsList, setSkillsList] = useState([]);
-
-  // Get skills list
-  useEffect(() => {
-    async function updateSkillsList() {
-      let res = await getSkills(csrf);
-      setSkillsList(res.payload && res.payload.data ? res.payload.data : []);
-    }
-    if (csrf) {
-      updateSkillsList();
-    }
-  }, [csrf]);
 
   useEffect(() => {
     async function updateBio() {
@@ -102,7 +90,7 @@ const Profile = () => {
     if (!csrf) {
       return;
     }
-    const inSkillsList = skillsList.find(
+    const inSkillsList = skills.find(
       (skill) => skill.name.toUpperCase() === name.toUpperCase()
     );
 
@@ -245,7 +233,7 @@ const Profile = () => {
             );
           })}
           <Search
-            skillsList={skillsList}
+            skillsList={skills}
             mySkills={Object.values(mySkills)}
             addSkill={addSkill}
           />
