@@ -5,6 +5,8 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -18,6 +20,8 @@ import java.util.List;
 @Requires(notEnv = Environment.TEST)
 @Singleton
 public class GoogleAuthenticator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleAuthenticator.class);
 
     private GoogleServiceConfiguration gServiceConfig;
 
@@ -61,7 +65,7 @@ public class GoogleAuthenticator {
             sourceCredentials = ServiceAccountCredentials.fromStream(in);
             sourceCredentials = (ServiceAccountCredentials) sourceCredentials.createScoped(scopes).createDelegated(delegatedUser);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("An error occurred while reading the service account credentials.", e);
         }
         return sourceCredentials;
     }

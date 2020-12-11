@@ -1,8 +1,14 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+
+import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -11,9 +17,15 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
     private final MemberProfileRepository memberProfileRepository;
+    private final CurrentUserServices currentUserServices;
+    private final TeamMemberRepository teamMemberRepository;
 
-    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository) {
+    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
+                                     CurrentUserServices currentUserServices,
+                                     TeamMemberRepository teamMemberRepository) {
         this.memberProfileRepository = memberProfileRepository;
+        this.currentUserServices = currentUserServices;
+        this.teamMemberRepository = teamMemberRepository;
     }
 
     @Override
@@ -48,5 +60,28 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
 
         return memberProfileRepository.update(memberProfile);
+    }
+
+    @Override
+    public Boolean deleteProfile(UUID id) {
+        if (!currentUserServices.isAdmin()) {
+            throw new InsufficientPrivelegesException("Requires admin privileges");
+        }
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null);
+        for (MemberProfile member : pdlFor) {
+            member.setPdlId(null);
+            memberProfileRepository.update(member);
+        }
+        memberProfileRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public MemberProfile findByName(@NotNull String name) {
+        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
+        if (searchResult.size() != 1) {
+            throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
+        }
+        return searchResult.get(0);
     }
 }

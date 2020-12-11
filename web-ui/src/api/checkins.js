@@ -4,7 +4,6 @@ const checkinsUrl = "/services/check-in";
 const checkinsNoteUrl = "/services/checkin-note";
 export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
-    method: "get",
     url: checkinsUrl,
     responseType: "json",
     params: {
@@ -17,7 +16,6 @@ export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
 
 export const getCheckinByMemberId = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: checkinsUrl,
     responseType: "json",
     params: {
@@ -29,7 +27,6 @@ export const getCheckinByMemberId = async (id, cookie) => {
 
 export const getCheckinByPdlId = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: checkinsUrl,
     responseType: "json",
     params: {
@@ -57,7 +54,6 @@ export const createCheckin = async ({
 
 export const getNoteByCheckinId = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: checkinsNoteUrl,
     responseType: "json",
     params: {

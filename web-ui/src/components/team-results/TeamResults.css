@@ -9,6 +9,11 @@
   word-wrap: break-word;
 }
 
+.team-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .team-page {
   display: flex;
   flex-direction: column;

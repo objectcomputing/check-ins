@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
@@ -16,6 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -34,15 +36,13 @@ public class TeamController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-
-    public TeamController(TeamServices teamService, EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService) {
+    public TeamController(TeamServices teamService,
+                          EventLoopGroup eventLoopGroup,
+                          @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.teamService = teamService;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
-
-
-
 
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
@@ -62,8 +62,6 @@ public class TeamController {
                 .body(error);
     }
 
-
-
     /**
      * Create and save a new team
      *
@@ -72,38 +70,29 @@ public class TeamController {
      */
 
     @Post(value = "/")
-    public Single<HttpResponse<Team>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
+    public Single<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
 
-        return Single.fromCallable(() -> teamService.save(new Team(team.getName(),team.getDescription()))).observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdTeam -> {
-                    return (HttpResponse<Team>) HttpResponse
-                            .created(createdTeam)
-                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId()))));
-                }). subscribeOn(Schedulers.from(ioExecutorService));
+        return Single.fromCallable(() -> teamService.save(team))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(createdTeam -> (HttpResponse<TeamResponseDTO>) HttpResponse
+                        .created(createdTeam)
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), createdTeam.getId())))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
-
 
     /**
      * Get team based on id
      *
      * @param id of team
-     * @return {@link Team team matching id}
+     * @return {@link TeamResponseDTO team matching id}
      */
 
     @Get("/{id}")
-    public Single<HttpResponse<Team>> readTeam(UUID id) {
-        return Single.fromCallable(() -> {
-            Team result = teamService.read(id);
-            if (result == null) {
-                throw new TeamNotFoundException("No team for UUID");
-            }
-            return result;
-        })
+    public Single<HttpResponse<TeamResponseDTO>> readTeam(@NotNull UUID id) {
+        return Single.fromCallable(() ->teamService.read(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(team -> {
-                    return (HttpResponse<Team>)HttpResponse.ok(team);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
-
+                .map(team -> (HttpResponse<TeamResponseDTO>)HttpResponse.ok(team))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -111,39 +100,32 @@ public class TeamController {
      *
      * @param name,     name of the team
      * @param memberid, {@link UUID} of the member you wish to inquire in to which teams they are a part of
-     * @return {@link List<Team> list of teams}, return all teams when no parameters filled in else
+     * @return {@link List< TeamResponseDTO > list of teams}, return all teams when no parameters filled in else
      * return all teams that match all of the filled in params
      */
 
     @Get("/{?name,memberid}")
-    public Single<HttpResponse<Set<Team>>> findTeams(@Nullable String name, @Nullable UUID memberid) {
+    public Single<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberid) {
         return Single.fromCallable(() -> teamService.findByFields(name, memberid))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(teams -> {
-                    return (HttpResponse<Set<Team>>) HttpResponse.ok(teams);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
-
+                .map(teams -> (HttpResponse<Set<TeamResponseDTO>>)HttpResponse.ok(teams))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
      * Update team.
      *
-     * @param team, {@link Team}
-     * @return {@link HttpResponse<Team>}
+     * @param team, {@link TeamUpdateDTO}
+     * @return {@link HttpResponse< TeamResponseDTO >}
      */
     @Put("/")
-    public Single<HttpResponse<Team>> update(@Body @Valid Team team, HttpRequest<Team> request) {
-        if (team == null) {
-            return Single.just(HttpResponse.ok());
-        }
+    public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
         return Single.fromCallable(() -> teamService.update(team))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(updatedTeam ->
-                        (HttpResponse<Team>) HttpResponse
-                                .ok()
-                                .headers(headers -> headers.location(
-                                        URI.create(String.format("%s/%s", request.getPath(), updatedTeam.getId()))))
-                                .body(updatedTeam))
+                .map(updated -> (HttpResponse<TeamResponseDTO>)HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
+                        .body(updated))
                 .subscribeOn(Schedulers.from(ioExecutorService));
 
     }
@@ -151,12 +133,14 @@ public class TeamController {
     /**
      * Delete Team
      *
-     * @param id, id of {@link Team} to delete
+     * @param id, id of {@link TeamUpdateDTO} to delete
+     * @return
      */
     @Delete("/{id}")
-    public HttpResponse<?> deleteTeam(@NotNull UUID id) {
-        teamService.delete(id);
-        return HttpResponse
-                .ok();
+    public Single<HttpResponse> deleteTeam(@NotNull UUID id) {
+        return Single.fromCallable(() -> teamService.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse)HttpResponse.ok())
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

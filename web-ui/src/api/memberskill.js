@@ -5,11 +5,21 @@ const memberSkillUrl = "/services/member-skill";
 
 export const getMemberSkills = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: memberSkillUrl,
     responseType: "json",
     params: {
       memberid: id,
+    },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const getSkillMembers = async (id, cookie) => {
+  return resolve({
+    url: memberSkillUrl,
+    responseType: "json",
+    params: {
+      skillid: id,
     },
     headers: { "X-CSRF-Header": cookie },
   });

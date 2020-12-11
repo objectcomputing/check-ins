@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -131,6 +132,20 @@ public class MemberProfileController {
                             .headers(headers -> headers.location(location(updatedMemberProfile.getId())))
                             .body(updatedMemberProfile);
                 })
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    /**
+     * Delete a member profile
+     * @param id member unique id
+     * @return
+     */
+    @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public Single<HttpResponse> delete(UUID id) {
+        return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(successFlag -> (HttpResponse)HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 

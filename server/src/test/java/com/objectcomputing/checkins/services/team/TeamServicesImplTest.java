@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.team;
 
-import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +27,6 @@ class TeamServicesImplTest {
     @Mock
     private TeamMemberRepository teamMemberRepository;
 
-    @Mock
-    private MemberProfileRepository memberProfileRepository;
-
     @InjectMocks
     private TeamServicesImpl services;
 
@@ -47,43 +42,35 @@ class TeamServicesImplTest {
 
     @Test
     void testRead() {
-        Team team = new Team(UUID.randomUUID(), "Hello", "World");
-        when(teamRepository.findById(team.getId())).thenReturn(Optional.of(team));
-        assertEquals(team, services.read(team.getId()));
+        Team teamEntity = new Team(UUID.randomUUID(), "Hello", "World");
+        when(teamRepository.findById(teamEntity.getId())).thenReturn(Optional.of(teamEntity));
+        assertEntityDTOEqual(teamEntity, services.read(teamEntity.getId()));
         verify(teamRepository, times(1)).findById(any(UUID.class));
     }
 
     @Test
     void testReadNullId() {
-        assertNull(services.read(null));
+        assertThrows(TeamNotFoundException.class, () -> services.read(null));
         verify(teamRepository, never()).findById(any(UUID.class));
     }
 
     @Test
     void testSave() {
-        Team team = new Team("It's the end of the", "World");
-        when(teamRepository.findByName(eq(team.getName()))).thenReturn(Optional.empty());
-        when(teamRepository.save(eq(team))).thenReturn(team);
-        assertEquals(team, services.save(team));
+        Team teamEntity = new Team(UUID.randomUUID(), "It's the end of the", "");
+        TeamCreateDTO dto = new TeamCreateDTO(teamEntity.getName(), teamEntity.getDescription());
+        when(teamRepository.findByName(eq(teamEntity.getName()))).thenReturn(Optional.empty());
+        when(teamRepository.save(any(Team.class))).thenReturn(teamEntity);
+        assertEntityDTOEqual(teamEntity, services.save(dto));
         verify(teamRepository, times(1)).findByName(any(String.class));
         verify(teamRepository, times(1)).save(any(Team.class));
     }
 
     @Test
-    void testSaveWithId() {
-        Team team = new Team(UUID.randomUUID(), "Wayne's", "World");
-        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.save(team));
-        assertTrue(exception.getMessage().contains(String.format("unexpected id %s", team.getId())));
-        verify(teamRepository, never()).findByName(any(String.class));
-        verify(teamRepository, never()).save(any(Team.class));
-    }
-
-    @Test
     void testSaveTeamNameExists() {
-        Team team = new Team("Disney", "World");
-        when(teamRepository.findByName(eq(team.getName()))).thenReturn(Optional.of(team));
-        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.save(team));
-        assertTrue(exception.getMessage().contains(String.format("name %s already exists", team.getName())));
+        Team teamEntity = new Team(null, "Disney", "World");
+        when(teamRepository.findByName(eq(teamEntity.getName()))).thenReturn(Optional.of(teamEntity));
+        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.save(new TeamCreateDTO(teamEntity.getName(), teamEntity.getDescription())));
+        assertTrue(exception.getMessage().contains(String.format("name %s already exists", teamEntity.getName())));
         verify(teamRepository, times(1)).findByName(any(String.class));
         verify(teamRepository, never()).save(any(Team.class));
     }
@@ -97,29 +84,31 @@ class TeamServicesImplTest {
 
     @Test
     void testUpdate() {
-        Team team = new Team(UUID.randomUUID(), "Dog eat dog", "World");
-        when(teamRepository.findById(eq(team.getId()))).thenReturn(Optional.of(team));
-        when(teamRepository.update(eq(team))).thenReturn(team);
-        assertEquals(team, services.update(team));
+        Team teamEntity = new Team(UUID.randomUUID(), "Dog eat dog", "");
+        when(teamRepository.findById(eq(teamEntity.getId()))).thenReturn(Optional.of(teamEntity));
+        when(teamRepository.update(any(Team.class))).thenReturn(teamEntity);
+        assertEntityDTOEqual(teamEntity, services.update(new TeamUpdateDTO(teamEntity.getId(), teamEntity.getName(), teamEntity.getDescription())));
         verify(teamRepository, times(1)).findById(any(UUID.class));
         verify(teamRepository, times(1)).update(any(Team.class));
     }
 
     @Test
     void testUpdateWithoutId() {
-        Team team = new Team("Bobby's", "World");
-        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(team));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getId())));
+        Team teamEntity = new Team(null, "Bobby's", "World");
+        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(
+                new TeamUpdateDTO(teamEntity.getId(), teamEntity.getName(), teamEntity.getDescription())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", teamEntity.getId())));
         verify(teamRepository, never()).findById(any(UUID.class));
         verify(teamRepository, never()).update(any(Team.class));
     }
 
     @Test
     void testUpdateTeamDoesNotExist() {
-        Team team = new Team(UUID.randomUUID(), "Wayne's", "World 2");
-        when(teamRepository.findById(eq(team.getId()))).thenReturn(Optional.empty());
-        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(team));
-        assertTrue(exception.getMessage().contains(String.format("%s does not exist", team.getId())));
+        Team teamEntity = new Team(UUID.randomUUID(), "Wayne's", "World 2");
+        when(teamRepository.findById(eq(teamEntity.getId()))).thenReturn(Optional.empty());
+        TeamBadArgException exception = assertThrows(TeamBadArgException.class, () -> services.update(
+                new TeamUpdateDTO(teamEntity.getId(), teamEntity.getName(), teamEntity.getDescription())));
+        assertTrue(exception.getMessage().contains(String.format("%s does not exist", teamEntity.getId())));
         verify(teamRepository, times(1)).findById(any(UUID.class));
         verify(teamRepository, never()).update(any(Team.class));
     }
@@ -133,76 +122,77 @@ class TeamServicesImplTest {
 
     @Test
     void testFindByFieldsNullParams() {
-        Set<Team> teamSet = Set.of(
+        Set<Team> teamEntitySet = Set.of(
                 new Team(UUID.randomUUID(), "World", "Health Organization"),
                 new Team(UUID.randomUUID(), "World", "Wide Web")
         );
 
-        when(teamRepository.findAll()).thenReturn(teamSet);
-        assertEquals(teamSet, services.findByFields(null, null));
-        verify(teamRepository, times(1)).findAll();
-        verify(teamRepository, never()).findById(any(UUID.class));
-        verify(teamRepository, never()).findByNameIlike(any(String.class));
-        verify(teamMemberRepository, never()).findByMemberid(any(UUID.class));
+        when(teamRepository.search(null, null)).thenReturn(new ArrayList<>(teamEntitySet));
+        assertEntityDTOEqual(teamEntitySet, services.findByFields(null, null));
     }
 
     @Test
     void testFindByFieldName() {
-        List<Team> team = List.of(
-                new Team(UUID.randomUUID(), "What a Wonderful", "World"),
+        List<Team> teamEntity = List.of(
+                new Team(UUID.randomUUID(), "What a Wonderful", ""),
                 new Team(UUID.randomUUID(), "World", "History")
         );
 
-        List<Team> teamToFind = List.of(team.get(1));
+        List<Team> teamEntityToFind = List.of(teamEntity.get(1));
         final String nameSearch = "World";
-        when(teamRepository.findAll()).thenReturn(team);
-        when(teamRepository.findByNameIlike(eq(nameSearch))).thenReturn(teamToFind);
-        assertEquals(new HashSet<>(teamToFind), services.findByFields(nameSearch, null));
-        verify(teamRepository, times(1)).findAll();
-        verify(teamRepository, never()).findById(any(UUID.class));
-        verify(teamRepository, times(1)).findByNameIlike(any(String.class));
-        verify(teamMemberRepository, never()).findByMemberid(any(UUID.class));
+        when(teamRepository.search(eq(nameSearch), isNull())).thenReturn(teamEntityToFind);
+        assertEntityDTOEqual(new HashSet<>(teamEntityToFind), services.findByFields(nameSearch, null));
     }
 
     @Test
     void testFindByFieldMemberid() {
-        List<Team> team = List.of(
+        List<Team> teamEntity = List.of(
                 new Team(UUID.randomUUID(), "A Brave New", "World"),
                 new Team(UUID.randomUUID(), "World", "of Warcraft")
         );
 
         final UUID memberId = UUID.randomUUID();
-        List<Team> teamToFind = List.of(team.get(0));
-        when(teamRepository.findAll()).thenReturn(team);
-        when(teamRepository.findById(eq(teamToFind.get(0).getId()))).thenReturn(Optional.of(teamToFind.get(0)));
-        when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true)));
-        assertEquals(new HashSet<>(teamToFind), services.findByFields(null, memberId));
-        verify(teamRepository, times(1)).findAll();
-        verify(teamRepository, times(1)).findById(any(UUID.class));
-        verify(teamRepository, never()).findByNameIlike(any(String.class));
-        verify(teamMemberRepository, times(1)).findByMemberid(any(UUID.class));
+        List<Team> teamEntityToFind = List.of(teamEntity.get(0));
+        when(teamRepository.search(isNull(), eq(memberId.toString()))).thenReturn(teamEntityToFind);
+        assertEntityDTOEqual(new HashSet<>(teamEntityToFind), services.findByFields(null, memberId));
     }
 
     @Test
     void testFindByFieldNameAndMemberid() {
-        List<Team> team = List.of(
+        List<Team> teamEntity = List.of(
                 new Team(UUID.randomUUID(), "World", "Series"),
-                new Team(UUID.randomUUID(), "Super Mario", "World")
+                new Team(UUID.randomUUID(), "Super Mario", "")
         );
 
         final UUID memberId = UUID.randomUUID();
         final String nameSearch = "World";
-        List<Team> teamToFind = List.of(team.get(0));
-        when(teamRepository.findAll()).thenReturn(team);
-        when(teamRepository.findByNameIlike(eq(nameSearch))).thenReturn(teamToFind);
-        when(teamRepository.findById(eq(teamToFind.get(0).getId()))).thenReturn(Optional.of(teamToFind.get(0)));
-        when(teamMemberRepository.findByMemberid(eq(memberId))).thenReturn(Collections.singletonList(
-                new TeamMember(UUID.randomUUID(), teamToFind.get(0).getId(), memberId, true)));
-        assertEquals(new HashSet<>(teamToFind), services.findByFields(nameSearch, memberId));
-        verify(teamRepository, times(1)).findAll();
-        verify(teamRepository, times(1)).findById(any(UUID.class));
-        verify(teamRepository, times(1)).findByNameIlike(any(String.class));
-        verify(teamMemberRepository, times(1)).findByMemberid(any(UUID.class));
+        List<Team> teamEntityToFind = List.of(teamEntity.get(0));
+        when(teamRepository.search(eq(nameSearch), eq(memberId.toString()))).thenReturn(teamEntityToFind);
+        assertEntityDTOEqual(new HashSet<>(teamEntityToFind), services.findByFields(nameSearch, memberId));
+    }
+
+    private void assertEntityDTOEqual(Set<Team> entities, Set<TeamResponseDTO> dtos) {
+        assertEquals(entities.size(), dtos.size());
+        for (Team entity : entities) {
+            boolean found = false;
+            for (TeamResponseDTO dto : dtos) {
+                if (assertEntityDTOEqualBool(entity, dto)) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue(found);
+        }
+    }
+
+    private void assertEntityDTOEqual(Team entity, TeamResponseDTO dto) {
+        assertTrue(assertEntityDTOEqualBool(entity, dto));
+    }
+
+
+    private boolean assertEntityDTOEqualBool(Team entity, TeamResponseDTO dto) {
+        return entity.getId().equals(dto.getId()) &&
+            entity.getName().equals(dto.getName()) &&
+            entity.getDescription().equals(dto.getDescription());
     }
 }
