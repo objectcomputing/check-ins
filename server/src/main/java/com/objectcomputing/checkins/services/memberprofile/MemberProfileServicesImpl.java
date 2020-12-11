@@ -4,8 +4,6 @@ package com.objectcomputing.checkins.services.memberprofile;
 import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.file.FileServicesImpl;
-import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
@@ -16,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -91,9 +88,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         // try to delete user - default behavior
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
-        Set<Role> userRoles = roleServices.findByFields(RoleType.PDL, id);
+        Set<Role> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
 
-        if (memberProfile.equals(null)) {
+        if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if(!checkInServices.findByFields(id, null, null).isEmpty()) {
             LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getName());
