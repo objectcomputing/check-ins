@@ -29,7 +29,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         this.permissionsValidation = permissionsValidation;
     }
 
-    public Skill save(@NotNull @Valid CombineSkillsDTO skillDTO) {
+    public Skill combine(@NotNull @Valid CombineSkillsDTO skillDTO) {
 
         Boolean isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
         Skill returnSkill = null;

@@ -263,6 +263,10 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         lastUsedDate = LocalDate.now();
         MemberSkill memberSkill2 = createMemberSkill(memberProfile1,skill2, skillLevel, lastUsedDate);
 
+        skillLevel = "Plano Guru";
+        lastUsedDate = LocalDate.now();
+        MemberSkill memberSkill3 = createMemberSkill(memberProfile2,skill2, skillLevel, lastUsedDate);
+
         UUID[] newSkillsArray = new UUID[2];
         newSkillsArray[0] = skill1.getId();
         newSkillsArray[1] = skill2.getId();

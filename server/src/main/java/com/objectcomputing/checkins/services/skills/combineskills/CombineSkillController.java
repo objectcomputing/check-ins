@@ -50,7 +50,7 @@ public class CombineSkillController {
     @Post(value = "/")
     public Single<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
 
-        return Single.fromCallable(() -> combineSkillServices.save(skill))
+        return Single.fromCallable(() -> combineSkillServices.combine(skill))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(createdSkill -> {return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
                 .headers(headers -> headers.location(
