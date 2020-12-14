@@ -52,6 +52,11 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         return teamMemberRepo.findById(id).orElse(null);
     }
 
+    public void delete(@NotNull UUID id) {
+        teamMemberRepo.deleteById(id);
+    }
+
+
     public TeamMember update(TeamMember teamMember) {
         TeamMember teamMemberRet = null;
         if (teamMember != null) {

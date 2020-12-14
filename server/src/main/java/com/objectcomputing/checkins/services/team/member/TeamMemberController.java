@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -102,4 +104,16 @@ public class TeamMemberController {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
+    /**
+     * Delete A TeamMember
+     *
+     * @param id, id of {@link TeamMember} to delete
+     */
+    @Delete("/{id}")
+    @Secured(RoleType.Constants.ADMIN_ROLE)
+    public HttpResponse<?> deleteSkill(@NotNull UUID id) {
+        teamMemberServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 }

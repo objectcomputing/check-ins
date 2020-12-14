@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.Team;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -22,7 +23,9 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -367,5 +370,38 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
     }
+
+    @Test
+    void testDeleteTeamMemberAsAdmin() {
+        Team team = createDeafultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
+        teamMember.setId(UUID.randomUUID());
+        teamMember.setMemberid(teamMember.getMemberid());
+        teamMember.setTeamid(teamMember.getTeamid());
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+//    @Test
+//    void deleteMemberSkillNotAsAdmin() {
+//
+//        Skill skill = createADefaultSkill();
+//
+//        final HttpRequest<Object> request = HttpRequest.
+//                DELETE(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+//                () -> client.toBlocking().exchange(request, Map.class));
+//
+//        assertNotNull(responseException.getResponse());
+//        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
+//
+//    }
 
 }
