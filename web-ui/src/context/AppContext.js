@@ -187,6 +187,7 @@ const AppContextProvider = (props) => {
       ? state.userProfile.memberProfile
       : undefined;
   const id = memberProfile ? memberProfile.id : undefined;
+  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
@@ -275,6 +276,12 @@ const AppContextProvider = (props) => {
       getMemberProfiles();
     }
   }, [csrf]);
+
+  useEffect(() => {
+    if (id && csrf) {
+      getCheckins(id, pdlId, date, dispatch, csrf);
+    }
+  }, [csrf, pdlId, id]);
 
   useEffect(() => {
     if (selectedId && csrf) {
