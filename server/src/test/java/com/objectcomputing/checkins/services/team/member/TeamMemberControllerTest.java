@@ -377,9 +377,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
-        teamMember.setId(UUID.randomUUID());
-        teamMember.setMemberid(teamMember.getMemberid());
-        teamMember.setTeamid(teamMember.getTeamid());
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
@@ -389,19 +386,49 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
-//    @Test
-//    void deleteMemberSkillNotAsAdmin() {
-//
-//        Skill skill = createADefaultSkill();
-//
-//        final HttpRequest<Object> request = HttpRequest.
-//                DELETE(String.format("/%s", skill.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
-//
-//    }
+    @Test
+    void testDeleteTeamMemberWithoutAdminPrivelage() {
+        Team team = createDeafultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+    }
+
+    @Test
+    void testDeleteTeamMemberTwice() {
+        Team team = createDeafultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        final HttpRequest<Object> request2 = HttpRequest.
+        DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request2, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request2.getPath(), href);
+        assertEquals(String.format("TeamMember %s doesn't exist", teamMember.getId()),error);
+
+        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+    }
 
 }
