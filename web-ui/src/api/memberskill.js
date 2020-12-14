@@ -3,13 +3,10 @@ import { resolve } from "./api.js";
 
 const memberSkillUrl = "/services/member-skill";
 
-export const getMemberSkills = async (id, cookie) => {
+export const getMemberSkills = async (cookie) => {
   return resolve({
     url: memberSkillUrl,
     responseType: "json",
-    params: {
-      memberid: id,
-    },
     headers: { "X-CSRF-Header": cookie },
   });
 };

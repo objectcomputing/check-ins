@@ -1,22 +1,26 @@
-import { Link } from "react-router-dom";
 import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
-import AppBar from "@material-ui/core/AppBar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
+import { getAvatarURL } from "../../api/api";
+
 import MenuIcon from "@material-ui/icons/Menu";
-import Toolbar from "@material-ui/core/Toolbar";
-import Button from "@material-ui/core/Button";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import AvatarComponent from "../avatar/Avatar";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import Paper from "@material-ui/core/Paper";
-import Popper from "@material-ui/core/Popper";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Grow from "@material-ui/core/Grow";
+import {
+  AppBar,
+  Avatar,
+  Button,
+  ClickAwayListener,
+  CssBaseline,
+  Drawer,
+  Grow,
+  Hidden,
+  IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Toolbar,
+} from "@material-ui/core";
 
 import "./Menu.css";
 
@@ -61,7 +65,8 @@ function Menu() {
   const { dispatch } = useContext(AppContext);
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { imageUrl } = userProfile ? userProfile : {};
+  const { workEmail } =
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const classes = useStyles();
@@ -184,8 +189,8 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <AvatarComponent
-            imageUrl={imageUrl}
+          <Avatar
+            src={getAvatarURL(workEmail)}
             style={{
               position: "absolute",
               right: "5px",
@@ -217,8 +222,7 @@ function Menu() {
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={logout}>
-                      <li ><a href="/logout">Logout</a></li>
-                        Logout
+                      <a style={{textDecoration:"none"}} href="/logout">Logout</a>
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>

@@ -2,14 +2,9 @@ import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
+import { getAvatarURL } from "../../api/api.js";
 
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-} from "@material-ui/core";
+import { Button, Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./MemberSummaryCard.css";
@@ -19,7 +14,7 @@ const MemberSummaryCard = ({ member, index }) => {
   const { memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { imageURL, location, name, workEmail, title } = member;
+  const { location, name, workEmail, title } = member;
   const [currentMember, setCurrentMember] = useState(member);
   const [open, setOpen] = useState(false);
 
@@ -34,7 +29,7 @@ const MemberSummaryCard = ({ member, index }) => {
           <Avatar
             alt={name}
             className="member-summary-avatar"
-            src={imageURL}
+            src={getAvatarURL(workEmail)}
             style={{ margin: "0px" }}
           />
         }
@@ -49,32 +44,28 @@ const MemberSummaryCard = ({ member, index }) => {
         }
         title={name}
       />
-      <CardContent>
-        {isAdmin && (
-          <div className="member-card-actions">
-            <CardActions>
-              <Button onClick={handleOpen}>Edit</Button>
-              <Button>Terminate</Button>
-              <Button>Delete</Button>
-              <MemberModal
-                member={currentMember}
-                open={open}
-                onClose={handleClose}
-                onSave={(member) => {
-                  setCurrentMember(member);
-                  const copy = [...memberProfiles];
-                  copy[index] = member;
-                  dispatch({
-                    type: UPDATE_MEMBER_PROFILES,
-                    payload: copy,
-                  });
-                  handleClose();
-                }}
-              />
-            </CardActions>
-          </div>
-        )}
-      </CardContent>
+      {isAdmin && (
+        <CardActions>
+          <Button onClick={handleOpen}>Edit</Button>
+          <Button>Terminate</Button>
+          <Button>Delete</Button>
+          <MemberModal
+            member={currentMember}
+            open={open}
+            onClose={handleClose}
+            onSave={(member) => {
+              setCurrentMember(member);
+              const copy = [...memberProfiles];
+              copy[index] = member;
+              dispatch({
+                type: UPDATE_MEMBER_PROFILES,
+                payload: copy,
+              });
+              handleClose();
+            }}
+          />
+        </CardActions>
+      )}
     </Card>
   );
 };

@@ -1,44 +1,52 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+import { AppContext, selectPendingSkills } from "../../context/AppContext";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Checkbox, Modal, TextField } from "@material-ui/core";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
-import "./PendingSkillsModal.css";
+import "./PendingSkills.css";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-const EditPendingSkillsModal = ({ open, onClose }) => {
+const CombineSkillsModal = ({ open, onClose }) => {
   const { state } = useContext(AppContext);
   const { skills } = state;
 
   const [pendingSkills, setPendingSkills] = useState([]);
-  const [skillsToChange, setSkillsToChange] = useState([]);
   const [editedSkill, setEditedSkill] = useState({
     name: "",
     description: "",
     id: "",
   });
-
-  //to avoid eslint issues until modal story is complete
-  console.log({ skillsToChange });
+  const [hasEdited, setHasEdited] = useState(false);
 
   useEffect(() => {
-    setPendingSkills(skills);
-  }, [skills]);
+    setPendingSkills(selectPendingSkills(state));
+  }, [skills, state]);
 
   const handleSelections = (event, values) => {
-    setSkillsToChange(values);
-    setEditedSkill(values[0]);
+    if (!hasEdited) {
+      setEditedSkill(values[0]);
+    }
+  };
+
+  const close = () => {
+    onClose();
+    setHasEdited(false);
+    setEditedSkill({
+      name: "",
+      description: "",
+      id: "",
+    });
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={close}>
       {pendingSkills && (
-        <div className="EditPendingSkillsModal">
+        <div className="combine-skills-modal">
           <Autocomplete
             multiple
             options={pendingSkills}
@@ -68,9 +76,10 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
           <TextField
             className="halfWidth"
             label="Name"
-            onChange={(e) =>
-              setEditedSkill({ ...editedSkill, name: e.target.value })
-            }
+            onChange={(e) => {
+              setHasEdited(true);
+              setEditedSkill({ ...editedSkill, name: e.target.value });
+            }}
             value={editedSkill ? editedSkill.name : ""}
             variant="outlined"
           />
@@ -78,9 +87,10 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
             className="halfWidth"
             label="Description"
             multiline
-            onChange={(e) =>
-              setEditedSkill({ ...editedSkill, description: e.target.value })
-            }
+            onChange={(e) => {
+              setHasEdited(true);
+              setEditedSkill({ ...editedSkill, description: e.target.value });
+            }}
             value={editedSkill ? editedSkill.description : ""}
             variant="outlined"
           />
@@ -90,4 +100,4 @@ const EditPendingSkillsModal = ({ open, onClose }) => {
   );
 };
 
-export default EditPendingSkillsModal;
+export default CombineSkillsModal;

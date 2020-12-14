@@ -1,76 +1,187 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { getSkillMembers } from "../../api/memberskill";
-import { AppContext } from "../../context/AppContext";
+import { deleteMemberSkill, getSkillMembers } from "../../api/memberskill";
+import { removeSkill, updateSkill } from "../../api/skill";
+import {
+  AppContext,
+  selectProfileMap,
+  DELETE_SKILL,
+  UPDATE_SKILL,
+} from "../../context/AppContext";
+import { getAvatarURL } from "../../api/api.js";
 
-import { Avatar, Chip, Card, CardHeader, CardContent } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Chip,
+  Card,
+  CardActions,
+  CardHeader,
+  CardContent,
+  Modal,
+  TextField,
+} from "@material-ui/core";
+
+import "./PendingSkills.css";
 
 const PendingSkillsCard = ({ pendingSkill }) => {
-  const { state } = useContext(AppContext);
-  const { selectMemberProfileById } = AppContext;
-  const { csrf, memberProfiles } = state;
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf } = state;
 
-  const { description, id, name } = pendingSkill;
   const [members, setMembers] = useState([]);
+
+  const [open, setOpen] = useState(false);
+  const [editedSkill, setEditedSkill] = useState(pendingSkill);
+  const { description, id, name } = editedSkill;
+
+  const handleOpen = () => {
+    setOpen(true);
+    setEditedSkill(pendingSkill);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const editSkill = async () => {
+    if (name && id && csrf) {
+      const res = await updateSkill(editedSkill, csrf);
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (!data) {
+        return;
+      }
+      dispatch({ type: UPDATE_SKILL, payload: data });
+      setEditedSkill(data);
+      handleClose();
+    }
+  };
+
+  const acceptSkill = async () => {
+    if (name && id && csrf) {
+      const res = await updateSkill({ ...editedSkill, pending: false }, csrf);
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (!data) {
+        return;
+      }
+      dispatch({ type: UPDATE_SKILL, payload: data });
+      handleClose();
+    }
+  };
+
+  const setExtraneous = async () => {
+    if (name && id && csrf) {
+      const res = await updateSkill(
+        { ...editedSkill, pending: false, extraneous: true },
+        csrf
+      );
+      const data =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (!data) {
+        return;
+      }
+      dispatch({ type: UPDATE_SKILL, payload: data });
+      handleClose();
+    }
+  };
+
+  const deleteSkill = async () => {
+    if (name && id && csrf) {
+      const memberSkillsToDelete = await getSkillMembers(id, csrf);
+      if (memberSkillsToDelete) {
+        //remove all memberSkills associated with this skill first
+        await Promise.all(
+          memberSkillsToDelete.payload.data.map(
+            async (member) => await deleteMemberSkill(member.id, csrf)
+          )
+        );
+      }
+      await removeSkill(id, csrf);
+      dispatch({ type: DELETE_SKILL, payload: id });
+    }
+  };
 
   useEffect(() => {
     const getMembers = async () => {
       let res = await getSkillMembers(id, csrf);
-      const copy = [...members];
       if (res && res.payload && res.payload.data) {
-        res.payload.data.map((m) => {
-          const { memberid } = m;
-          const member = selectMemberProfileById(state)(memberid);
-          if (member) {
-            copy.push(member);
-          }
-          return copy;
-        });
-        setMembers(copy);
+        const memberIds = res.payload.data.map((m) => m.memberid);
+        setMembers(memberIds);
       }
     };
     if (csrf) {
       getMembers();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [csrf, id, memberProfiles]);
+  }, [csrf, id]);
 
   const chip = (position) => {
     return (
       <Chip
-        avatar={<Avatar src={position.imageURL}></Avatar>}
+        avatar={<Avatar src={getAvatarURL(position.workEmail)}></Avatar>}
         label={position.name}
       ></Chip>
     );
   };
 
-  const submittedBy = (array) => {
-    const [first, second, ...rest] = array;
-    const length = rest.length;
-    if (first && second && rest.length > 0) {
+  const submittedBy = (members) => {
+    const [first, second, ...rest] = members;
+    const firstProfile = selectProfileMap(state)[first];
+    if (second) {
+      const secondProfile = selectProfileMap(state)[second];
       return (
         <div>
-          Submitted By: {chip(first)} {chip(second)} and {length} others.
+          Submitted By: {chip(firstProfile)} {chip(secondProfile)}
+          {rest && ` and ${rest.length} others`}.
         </div>
       );
-    } else if (first && second) {
-      return (
-        <div>
-          Submitted By: {chip(first)} and {chip(second)}
-        </div>
+    } else
+      return firstProfile ? (
+        <div>Submitted by: {chip(firstProfile)}</div>
+      ) : (
+        <div>Submitted by: Unknown</div>
       );
-    } else return <div>Submitted by: {chip(first)}</div>;
   };
 
   return (
     <Card className="pending-skills-card">
-      <CardHeader
-        subheader={members && members[0] ? submittedBy(members) : ""}
-        title={name}
-      />
+      <CardHeader subheader={description} title={name} />
       <CardContent>
-        <div>{description}</div>
+        <div>{members && submittedBy(members)}</div>
       </CardContent>
+      <CardActions>
+        <Button onClick={acceptSkill}>Accept</Button>
+        <Button onClick={handleOpen}>Edit</Button>
+        <Button onClick={deleteSkill}>Delete</Button>
+        <Button onClick={setExtraneous}>Mark Extraneous</Button>
+        <Modal open={open} onClose={handleClose}>
+          <div className="pending-skills-modal">
+            <TextField
+              className="halfWidth"
+              label="Name"
+              onChange={(e) =>
+                setEditedSkill({ ...editedSkill, name: e.target.value })
+              }
+              value={editedSkill ? editedSkill.name : ""}
+              variant="outlined"
+            />
+            <TextField
+              className="halfWidth"
+              label="Description"
+              multiline
+              onChange={(e) =>
+                setEditedSkill({
+                  ...editedSkill,
+                  description: e.target.value,
+                })
+              }
+              value={editedSkill ? editedSkill.description : ""}
+              variant="outlined"
+            />
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={editSkill}>Save</Button>
+          </div>
+        </Modal>
+      </CardActions>
     </Card>
   );
 };
