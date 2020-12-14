@@ -222,8 +222,7 @@ function Menu() {
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={logout}>
-                      <li ><a href="/logout">Logout</a></li>
-                        Logout
+                      <a style={{textDecoration:"none"}} href="/logout">Logout</a>
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>

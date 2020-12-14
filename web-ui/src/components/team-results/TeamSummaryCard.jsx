@@ -3,10 +3,11 @@ import React, {useContext, useState} from "react";
 import {AppContext, UPDATE_TEAMS, UPDATE_TOAST} from "../../context/AppContext";
 import EditTeamModal from "./EditTeamModal";
 
-import {Button, Card, CardActions, CardContent, CardHeader,} from "@material-ui/core";
+import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
 import {Skeleton} from "@material-ui/lab";
 import PropTypes from "prop-types";
 import {deleteTeam} from "../../api/team.js";
+import SplitButton from "../split-button/SplitButton";
 
 const propTypes = {
     team: PropTypes.shape({
@@ -24,7 +25,7 @@ const TeamSummaryCard = ({team, index}) => {
     const [open, setOpen] = useState(false);
     const isAdmin =
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-    console.log(JSON.stringify(state));
+
     let leads =
         team.teamMembers == null
             ? null
@@ -68,6 +69,10 @@ const TeamSummaryCard = ({team, index}) => {
         }
     };
 
+    const options=(isAdmin || isTeamLead) ? ['Edit Team', 'Delete Team'] : ['Edit Team'];
+
+    const handleAction = (e,index)=>index === 0 ? handleOpen() : deleteATeam(team.id);
+
     return (
         <Card className="summary-card">
             <CardHeader title={team.name} subheader={team.description}/>
@@ -94,13 +99,7 @@ const TeamSummaryCard = ({team, index}) => {
                 )}
             </CardContent>
             <CardActions>
-                <Button onClick={handleOpen}>Edit Team</Button>
-                {(isAdmin || isTeamLead) && (
-                    <Button
-                        onClick={(e) => {
-                            deleteATeam(team.id)
-                        }}>Delete Team</Button>
-                )}
+                <SplitButton options = {options} onClick={handleAction} />
             </CardActions>
             <EditTeamModal
                 team={team}
