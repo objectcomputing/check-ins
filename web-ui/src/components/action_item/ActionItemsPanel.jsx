@@ -150,11 +150,13 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   const killActionItem = (id) => {
-    deleteItem(id, csrf);
-    let newItems = actionItems.filter((actionItem) => {
-      return actionItem.id !== id;
-    });
-    setActionItems(newItems);
+    if (csrf) {
+      deleteItem(id, csrf);
+      let newItems = actionItems.filter((actionItem) => {
+        return actionItem.id !== id;
+      });
+      setActionItems(newItems);
+    }
   };
 
   const createFakeEntry = (item) => {
@@ -209,7 +211,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                   <IconButton
                     aria-label="delete"
                     className="delete-icon"
-                    onClick={(e) => killActionItem(actionItem.id, e)}
+                    onClick={() => killActionItem(actionItem.id)}
                   >
                     <RemoveIcon />
                   </IconButton>

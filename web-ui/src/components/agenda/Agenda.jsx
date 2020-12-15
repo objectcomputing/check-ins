@@ -209,7 +209,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                   <IconButton
                     aria-label="delete"
                     className="delete-icon"
-                    onClick={(e) => killAgendaItem(agendaItem.id, e)}
+                    onClick={() => killAgendaItem(agendaItem.id)}
                   >
                     <RemoveIcon />
                   </IconButton>
