@@ -44,9 +44,10 @@ const AgendaItems = ({ checkinId, memberName }) => {
       if (res && res.payload) {
         let agendaItemList =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        agendaItemList.sort((a, b) => {
-          return a.priority - b.priority;
-        });
+        agendaItemList &&
+          agendaItemList.sort((a, b) => {
+            return a.priority - b.priority;
+          });
         setAgendaItems(agendaItemList);
         setIsLoading(false);
       }
