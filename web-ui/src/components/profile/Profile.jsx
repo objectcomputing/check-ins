@@ -15,10 +15,8 @@ import { getSkill, createSkill } from "../../api/skill.js";
 import { createMemberSkill, deleteMemberSkill } from "../../api/memberskill.js";
 import { getMember } from "../../api/member";
 
-import EditIcon from "@material-ui/icons/Edit";
-import Button from "@material-ui/core/Button";
-import CancelIcon from "@material-ui/icons/Cancel";
-import Avatar from "@material-ui/core/Avatar";
+import { Edit } from "@material-ui/icons";
+import { Avatar, Button, Chip } from "@material-ui/core";
 
 import "./Profile.css";
 
@@ -120,6 +118,12 @@ const Profile = () => {
     dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
   };
 
+  const handleDelete = (id) => {
+    if (csrf && id) {
+      removeSkill(id, csrf);
+    }
+  };
+
   return (
     <div className="Profile">
       <div className="flex-row" style={{ marginTop: "20px" }}>
@@ -151,7 +155,7 @@ const Profile = () => {
                 </Button>
               )}
               {!updating && (
-                <EditIcon
+                <Edit
                   onClick={() => {
                     setDisabled(!disabled);
                     setUpdating(!updating);
@@ -194,21 +198,12 @@ const Profile = () => {
             mySkills.map((memberSkill) => {
               let { id, name } = memberSkill;
               return (
-                <div className="current-skills" key={name}>
-                  {name}
-                  <CancelIcon
-                    onClick={() => {
-                      if (csrf) {
-                        removeSkill(id, csrf);
-                      }
-                    }}
-                    style={{
-                      cursor: "pointer",
-                      fontSize: "1rem",
-                      marginLeft: "5px",
-                    }}
-                  />
-                </div>
+                <Chip
+                  color="primary"
+                  key={id}
+                  label={name}
+                  onDelete={() => handleDelete(id)}
+                />
               );
             })}
           <Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
