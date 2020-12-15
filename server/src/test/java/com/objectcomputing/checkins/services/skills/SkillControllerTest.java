@@ -151,13 +151,11 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
                 POST("/", skillCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        final HttpResponse<Skill> response = client.toBlocking().exchange(request,Skill.class);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED,response.getStatus());
-        assertEquals(skillCreateDTO.getName(), response.body().getName());
-        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
-
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.CONFLICT,responseException.getStatus());
 
     }
 
