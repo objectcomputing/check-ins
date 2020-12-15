@@ -300,7 +300,7 @@ const AppContextProvider = (props) => {
         !res.error
           ? res.payload.data
           : null;
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         dispatch({ type: UPDATE_SKILLS, payload: data });
       }
     };
