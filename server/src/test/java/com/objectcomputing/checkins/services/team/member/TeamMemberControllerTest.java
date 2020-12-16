@@ -387,7 +387,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     }
 
     @Test
-    void testDeleteTeamMemberWithoutAdminPrivelage() {
+    void testDeleteTeamMemberWithoutAdminPrivilege() {
         Team team = createDeafultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -396,9 +396,12 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.FORBIDDEN,responseException.getStatus());
+
     }
 
     @Test
@@ -408,18 +411,24 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         TeamMember teamMember = createDeafultTeamMember(team,memberProfile);
 
+        UUID teamMemberId = teamMember.getId();
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                DELETE(String.format("/%s", teamMemberId)).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+//        final HttpRequest<Object> request = HttpRequest.
+//                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
 
         final HttpRequest<Object> request2 = HttpRequest.
-        DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                  DELETE(String.format("/%s", teamMemberId)).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request2, Map.class));
+//
+//        final HttpRequest<Object> request2 = HttpRequest.
+//        DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();

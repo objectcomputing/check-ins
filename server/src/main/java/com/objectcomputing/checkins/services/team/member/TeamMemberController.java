@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
@@ -37,6 +38,15 @@ public class TeamMemberController {
 
     @Error(exception = TeamBadArgException.class)
     public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
