@@ -187,6 +187,7 @@ const AppContextProvider = (props) => {
       ? state.userProfile.memberProfile
       : undefined;
   const id = memberProfile ? memberProfile.id : undefined;
+  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
@@ -277,6 +278,12 @@ const AppContextProvider = (props) => {
   }, [csrf]);
 
   useEffect(() => {
+    if (id && csrf) {
+      getCheckins(id, pdlId, date, dispatch, csrf);
+    }
+  }, [csrf, pdlId, id]);
+
+  useEffect(() => {
     if (selectedId && csrf) {
       getCheckins(selectedId, id, date, dispatch, csrf);
     }
@@ -293,7 +300,7 @@ const AppContextProvider = (props) => {
         !res.error
           ? res.payload.data
           : null;
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         dispatch({ type: UPDATE_SKILLS, payload: data });
       }
     };

@@ -40,6 +40,7 @@ project(":server") {
     sonarqube {
         properties {
             property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+            property "sonar.cpd.exclusions", "**/*DTO.java"
         }
     }
 }
