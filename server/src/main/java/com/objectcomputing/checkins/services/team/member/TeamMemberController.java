@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.team.member;
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -20,7 +19,6 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -52,15 +50,6 @@ public class TeamMemberController {
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = NotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
                 .body(error);
     }
 
