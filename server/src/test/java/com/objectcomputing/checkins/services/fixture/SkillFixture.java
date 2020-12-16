@@ -8,4 +8,9 @@ public interface SkillFixture extends RepositoryFixture {
         return getSkillRepository().save(new Skill("Limb regeneration", true,
                 "Regenerate a lost limb", false));
     }
+
+    default Skill createASecondarySkill() {
+        return getSkillRepository().save(new Skill("Limb restoration", true,
+                "Restore a lost limb", false));
+    }
 }
