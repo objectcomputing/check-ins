@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+
 import Fuse from "fuse.js";
 
 import "./Search.css";
 
-const Search = ({ skillsList, mySkills, addSkill }) => {
-  skillsList = skillsList.filter(({ pending }) => !pending);
+const Search = ({ mySkills, addSkill }) => {
+  const { state } = useContext(AppContext);
+  const { skills } = state;
+  const skillsList = skills.filter(({ pending }) => !pending);
   const [pattern, setPattern] = useState("");
 
   const options = {
