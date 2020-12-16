@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.team.member;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
@@ -51,6 +52,15 @@ public class TeamMemberController {
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>badRequest()
+                .body(error);
+    }
+
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, BadArgException e) {
+        JsonError error = new JsonError(e.getMessage())
+                .link(Link.SELF, Link.of(request.getUri()));
+
+        return HttpResponse.<JsonError>notFound()
                 .body(error);
     }
 

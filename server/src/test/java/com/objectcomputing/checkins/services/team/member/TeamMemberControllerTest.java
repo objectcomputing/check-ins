@@ -414,8 +414,6 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         UUID teamMemberId = teamMember.getId();
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMemberId)).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-//        final HttpRequest<Object> request = HttpRequest.
-//                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
@@ -426,16 +424,13 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request2, Map.class));
-//
-//        final HttpRequest<Object> request2 = HttpRequest.
-//        DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request2.getPath(), href);
-        assertEquals(String.format("TeamMember %s doesn't exist", teamMember.getId()),error);
+        assertEquals(String.format("Unable to locate teamMember to delete with id %s", teamMember.getId()),error);
 
         assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
     }

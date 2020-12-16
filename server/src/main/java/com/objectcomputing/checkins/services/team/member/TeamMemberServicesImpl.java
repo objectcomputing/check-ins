@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import com.objectcomputing.checkins.services.team.TeamRepository;
@@ -53,7 +54,11 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     }
 
     public void delete(@NotNull UUID id) {
-        teamMemberRepo.deleteById(id);
+        if (id == null || !teamMemberRepo.findById(id).isPresent()) {
+            throw new NotFoundException(String.format("Unable to locate teamMember to delete with id %s", id));
+        } else {
+            teamMemberRepo.deleteById(id);
+        }
     }
 
 
