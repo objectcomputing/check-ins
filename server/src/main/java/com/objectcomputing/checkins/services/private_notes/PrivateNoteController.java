@@ -48,7 +48,7 @@ public class PrivateNoteController {
      * @return
      */
     @Post("/")
-    @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
+    @Secured({RoleType.Constants.MEMBER_ROLE,RoleType.Constants.PDL_ROLE })
     public HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         PrivateNote newPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid()
                 , privateNote.getDescription()));
@@ -65,25 +65,12 @@ public class PrivateNoteController {
      * @return
      */
     @Put("/")
-    @Secured({RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE})
+    @Secured({RoleType.Constants.MEMBER_ROLE,RoleType.Constants.PDL_ROLE })
     public HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         PrivateNote updatePrivateNote = privateNoteServices.update(privateNote);
         return HttpResponse.ok().headers(headers -> headers.location(
                 URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
                 .body(updatePrivateNote);
-    }
-
-    /**
-     * Get notes by checkind or createbyid
-     *
-     * @param checkinid
-     * @param createdbyid
-     * @return
-     */
-    @Get("/{?checkinid,createdbyid}")
-    public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
-                                            @Nullable UUID createdbyid) {
-        return privateNoteServices.findByFields(checkinid, createdbyid);
     }
 
     /**

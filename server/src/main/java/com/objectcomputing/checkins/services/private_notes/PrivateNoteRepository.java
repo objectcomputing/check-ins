@@ -17,15 +17,4 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface PrivateNoteRepository extends CrudRepository<PrivateNote, UUID> {
 
-    @Query(" SELECT * " +
-            "FROM private_notes pn " +
-            "WHERE (:checkinid  IS NULL OR pn.checkinId= :checkinid) " +
-            "AND (:createdById  IS NULL OR pn.createdByid= :createdById) ")
-    Set<PrivateNote> search(@Nullable String checkinid, @Nullable String createdById);
-
-    @Override
-    <S extends PrivateNote> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
-
-    @Override
-    <S extends PrivateNote> S save(@Valid @NotNull @Nonnull S entity);
 }
