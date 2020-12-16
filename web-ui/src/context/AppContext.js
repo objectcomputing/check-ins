@@ -153,7 +153,7 @@ const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
           pdlId: pdlId,
           checkInDate: date(3, prevCheckinDate),
           completed: false,
-        });
+        }, csrf);
         const checkin =
           res.payload && res.payload.data && !res.error
             ? res.payload.data
@@ -168,7 +168,7 @@ const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
         pdlId: pdlId,
         checkInDate: date(1),
         completed: false,
-      });
+      }, csrf);
       const checkin =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       data = [checkin];
@@ -291,7 +291,7 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     const getAllSkills = async () => {
-      const res = await getSkills();
+      const res = await getSkills(csrf);
       const data =
         res &&
         res.payload &&

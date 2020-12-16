@@ -41,8 +41,7 @@ export const createCheckin = async ({
   pdlId,
   checkInDate,
   completed,
-  cookie,
-}) => {
+}, cookie) => {
   return resolve({
     method: "post",
     url: checkinsUrl,
@@ -69,8 +68,7 @@ export const updateCheckin = async ({
   teamMemberId,
   pdlId,
   checkInDate,
-  cookie,
-}) => {
+}, cookie) => {
   return resolve({
     method: "put",
     url: checkinsUrl,
@@ -84,8 +82,7 @@ export const createCheckinNote = async ({
   checkinid,
   createdbyid,
   description,
-  cookie,
-}) => {
+}, cookie) => {
   return resolve({
     method: "post",
     url: checkinsNoteUrl,
@@ -100,8 +97,7 @@ export const updateCheckinNote = async ({
   checkinid,
   createdbyid,
   description,
-  cookie,
-}) => {
+}, cookie) => {
   return resolve({
     method: "put",
     url: checkinsNoteUrl,

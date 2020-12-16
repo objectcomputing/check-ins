@@ -76,8 +76,7 @@ const CheckinsHistory = ({ history }) => {
       const updatedCheckin = await updateCheckin({
         ...checkin,
         checkInDate: dateArray,
-        csrf,
-      });
+      }, csrf);
       const newCheckin = updatedCheckin.payload.data;
       const filtered = checkins.filter((e) => {
         return e.id !== checkin.id;
