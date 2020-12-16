@@ -50,6 +50,10 @@ public class MemberProfileCreateDTO {
     private UUID supervisorid;
 
     @Nullable
+    @Schema(description = "employee's date of termination", nullable = true)
+    private LocalDate terminationDate;
+
+    @Nullable
     public String getName() {
         return name;
     }
@@ -126,6 +130,15 @@ public class MemberProfileCreateDTO {
         this.supervisorid = supervisorid;
     }
 
+    @Nullable
+    public LocalDate getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(@Nullable LocalDate terminationDate) {
+        this.terminationDate = terminationDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,11 +152,12 @@ public class MemberProfileCreateDTO {
                 Objects.equals(insperityId, that.insperityId) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
-                Objects.equals(supervisorid, that.supervisorid);
+                Objects.equals(supervisorid, that.supervisorid) &&
+                Objects.equals(terminationDate, that.terminationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
+        return Objects.hash(name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 }

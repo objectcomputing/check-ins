@@ -52,6 +52,10 @@ public class MemberProfileResponseDTO {
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 
+    @Nullable
+    @Schema(description = "employee's date of termination", nullable = true)
+    private LocalDate terminationDate;
+
     public UUID getId() {
         return id;
     }
@@ -135,5 +139,14 @@ public class MemberProfileResponseDTO {
 
     public void setSupervisorid(@Nullable UUID supervisorid) {
         this.supervisorid = supervisorid;
+    }
+
+    @Nullable
+    public LocalDate getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(LocalDate terminationDate) {
+        this.terminationDate = terminationDate;
     }
 }
