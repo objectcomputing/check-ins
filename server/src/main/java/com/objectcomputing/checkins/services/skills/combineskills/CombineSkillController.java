@@ -29,13 +29,11 @@ import java.util.concurrent.ExecutorService;
 public class CombineSkillController {
 
     private final CombineSkillServices combineSkillServices;
-    private final SkillServices skillServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public CombineSkillController(CombineSkillServices combineSkillServices, SkillServices skillServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public CombineSkillController(CombineSkillServices combineSkillServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.combineSkillServices = combineSkillServices;
-        this.skillServices = skillServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
@@ -52,9 +50,9 @@ public class CombineSkillController {
 
         return Single.fromCallable(() -> combineSkillServices.combine(skill))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdSkill -> {return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
+                .map(createdSkill -> (HttpResponse<Skill>) HttpResponse.created(createdSkill)
                 .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));}).subscribeOn(Schedulers.from(ioExecutorService));
+                        URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))))).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
