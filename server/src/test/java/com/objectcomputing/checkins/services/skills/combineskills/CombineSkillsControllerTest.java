@@ -282,20 +282,6 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         assertEquals(combineSkillsDTO.getName(), response.body().getName());
         assertEquals(returnedSkill.getName(), response.body().getName());
         assertEquals(String.format("%s/%s", request.getPath(), returnedSkill.getId()), response.getHeaders().get("location"));
-//
-//        final MutableHttpRequest<Object> skillRequest = HttpRequest.GET(String.format("/%s", skill1.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> skillClient.toBlocking().exchange(skillRequest, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
-//
-//        final MutableHttpRequest<Object>  skillRequest2 = HttpRequest.GET(String.format("/%s", skill2.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-//        responseException = assertThrows(HttpClientResponseException.class,
-//                () -> skillClient.toBlocking().exchange(skillRequest2, Map.class));
-//
-//        assertNotNull(responseException.getResponse());
-//        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
 
         final MutableHttpRequest<Object> memberSkillRequest = HttpRequest.GET(String.format("/%s", memberSkill1.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
