@@ -1,23 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
-import CheckinsHistory from "../components/checkin/CheckinHistory";
-import CheckinDocs from "../components/checkin/CheckinDocs";
-import Personnel from "../components/personnel/Personnel";
-import Modal from "../components/modal/Modal";
-import GuidesPanel from "../components/guides/GuidesPanel";
-import CheckinProfile from "../components/checkin/CheckinProfile";
+
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
-import Note from "../components/notes/Note";
 import { AppContext } from "../context/AppContext";
+import CheckinDocs from "../components/checkin/CheckinDocs";
+import CheckinsHistory from "../components/checkin/CheckinHistory";
+import CheckinProfile from "../components/checkin/CheckinProfile";
+import GuidesPanel from "../components/guides/GuidesPanel";
+import Note from "../components/notes/Note";
+import Personnel from "../components/personnel/Personnel";
 
-import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import { Button, Container, Grid, Modal } from "@material-ui/core";
 
 import "./CheckinsPage.css";
 
 const CheckinsPage = ({ history }) => {
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
   const { currentCheckin, userProfile, selectedProfile } = state;
   const memberProfile = userProfile ? userProfile.memberProfile : undefined;
@@ -27,15 +25,16 @@ const CheckinsPage = ({ history }) => {
   const canViewPrivateNote =
     memberProfile && currentCheckin && id !== currentCheckin.teamMemberId;
 
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {
       history.push(`/checkins/${currentCheckin.id}`);
     }
   }, [currentCheckin, history]);
 
-  const showModal = () => {
-    setShow(!show);
-  };
   return (
     <div>
       <Container maxWidth="xl">
@@ -76,17 +75,22 @@ const CheckinsPage = ({ history }) => {
               </div>
               {canViewPrivateNote && (
                 <div className="modal-container">
-                  <Modal close={showModal} show={show}>
-                    The checkin will no longer be able to be edited. Are you
-                    sure that you are ready to close this check-in?
+                  <Modal open={open} close={handleClose}>
+                    <div className="submit-checkin-modal">
+                      The Check-In will no longer be able to be edited. Are you
+                      sure that you are ready to close this Check-In?
+                      <div className="submit-modal-actions">
+                        <Button onClick={handleClose} color="secondary">
+                          Cancel
+                        </Button>
+                        <Button color="primary">Submit</Button>
+                      </div>
+                    </div>
                   </Modal>
                   <Button
-                    style={{
-                      backgroundColor: "#3f51b5",
-                      color: "white",
-                      display: show ? "none" : "",
-                    }}
-                    onClick={() => showModal()}
+                    color="primary"
+                    onClick={handleOpen}
+                    variant="contained"
                   >
                     Submit
                   </Button>

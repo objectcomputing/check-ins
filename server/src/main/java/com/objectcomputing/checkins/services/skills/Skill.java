@@ -50,6 +50,10 @@ public class Skill {
         this(name, true, null, false);
     }
 
+    public Skill(String name, String description) {
+        this(name, true, description, false);
+    }
+
     public Skill(String name, boolean pending, String description, boolean extraneous) {
         this.name = name;
         this.pending = pending;

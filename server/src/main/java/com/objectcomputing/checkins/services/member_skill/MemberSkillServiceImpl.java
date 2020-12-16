@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.member_skill;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.skills.Skill;
-import com.objectcomputing.checkins.services.skills.SkillBadArgException;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
@@ -73,12 +71,10 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
 
         MemberSkill newSkill = null;
 
-        if (memberSkill != null) {
-            if (memberSkill.getId() != null && memberSkillRepository.findById(memberSkill.getId()).isPresent()) {
-                newSkill = memberSkillRepository.update(memberSkill);
-            } else {
-                throw new BadArgException(String.format("MemberSkill %s does not exist, cannot update", memberSkill.getId()));
-            }
+        if (memberSkill.getId() != null && memberSkillRepository.findById(memberSkill.getId()).isPresent()) {
+            newSkill = memberSkillRepository.update(memberSkill);
+        } else {
+            throw new BadArgException(String.format("MemberSkill %s does not exist, cannot update", memberSkill.getId()));
         }
 
         return newSkill;
