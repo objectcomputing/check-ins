@@ -76,13 +76,10 @@ export const addTeamMember = async (member, isLead, teamid, cookie) => {
 };
 
 export const deleteTeam = async (id, cookie) => {
-  return resolve(
-      {
-        method: "delete",
-        url: `${teamUrl}/${id}`,
-        responseType: "json",
-
-        headers: { "X-CSRF-Header": cookie },
-      }
-  );
+  return resolve({
+    method: "delete",
+    url: `${teamUrl}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
 };
