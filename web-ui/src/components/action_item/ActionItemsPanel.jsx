@@ -38,16 +38,17 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getActionItems = async (checkinId, csrf) => {
-    if (csrf) {
-      setIsLoading(true);
-      let res = await findActionItem(checkinId, null, csrf);
-      if (res && res.payload) {
-        let actionItemList =
-          res.payload.data && !res.error ? res.payload.data : undefined;
+    setIsLoading(true);
+    let res = await findActionItem(checkinId, null, csrf);
+    let actionItemList;
+    if (res && res.payload) {
+      actionItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+      if (actionItemList) {
         setActionItems(actionItemList);
-        setIsLoading(false);
       }
     }
+    setIsLoading(false);
   };
 
   const deleteItem = async (id, csrf) => {
@@ -159,19 +160,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     }
   };
 
-  const createFakeEntry = (item) => {
-    return (
-      <div key={item.id} className="skeleton-div">
-        <div className="drag-icon">
-          <DragIndicator />
-        </div>
-        <div className="skeleton">
-          <Skeleton variant="text" height={"2rem"} />
-        </div>
-      </div>
-    );
-  };
-
   const createActionItemEntries = () => {
     if (actionItems && actionItems.length > 0) {
       return actionItems.map((actionItem, index) => (
@@ -221,12 +209,6 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
           )}
         </Draggable>
       ));
-    } else {
-      let fake = Array(3);
-      for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({ id: `${i + 1}Action` });
-      }
-      return fake;
     }
   };
 

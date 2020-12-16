@@ -38,20 +38,20 @@ const AgendaItems = ({ checkinId, memberName }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getAgendaItems = async (checkinId, csrf) => {
-    if (csrf) {
-      setIsLoading(true);
-      let res = await getAgendaItem(checkinId, null, csrf);
-      if (res && res.payload) {
-        let agendaItemList =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        agendaItemList &&
-          agendaItemList.sort((a, b) => {
-            return a.priority - b.priority;
-          });
+    setIsLoading(true);
+    let res = await getAgendaItem(checkinId, null, csrf);
+    let agendaItemList;
+    if (res && res.payload) {
+      agendaItemList =
+        res.payload.data && !res.error ? res.payload.data : undefined;
+      if (agendaItemList) {
+        agendaItemList.sort((a, b) => {
+          return a.priority - b.priority;
+        });
         setAgendaItems(agendaItemList);
-        setIsLoading(false);
       }
     }
+    setIsLoading(false);
   };
 
   const deleteItem = async (id, csrf) => {
@@ -158,19 +158,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
     });
   };
 
-  const createFakeEntry = (item) => {
-    return (
-      <div key={item.id} className="skeleton-div">
-        <div className="drag-icon">
-          <DragIndicator />
-        </div>
-        <div className="skeleton">
-          <Skeleton variant="text" height={"2rem"} />
-        </div>
-      </div>
-    );
-  };
-
   const createAgendaItemEntries = () => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
@@ -220,12 +207,6 @@ const AgendaItems = ({ checkinId, memberName }) => {
           )}
         </Draggable>
       ));
-    } else {
-      let fake = Array(3);
-      for (let i = 0; i < fake.length; i++) {
-        fake[i] = createFakeEntry({ id: `${i + 1}Agenda` });
-      }
-      return fake;
     }
   };
 
