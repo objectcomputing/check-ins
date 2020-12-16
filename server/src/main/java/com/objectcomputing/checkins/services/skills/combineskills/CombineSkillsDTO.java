@@ -26,9 +26,6 @@ public class CombineSkillsDTO {
     @Schema(description = "A list of skills that are similar and need to be combined", required = true)
     private UUID[] skillsToCombine;
 
-    public CombineSkillsDTO() {
-    }
-
     public CombineSkillsDTO(@NotBlank String name, String description, @NotNull UUID[] skillsToCombine) {
         this.name = name;
         this.description = description;
