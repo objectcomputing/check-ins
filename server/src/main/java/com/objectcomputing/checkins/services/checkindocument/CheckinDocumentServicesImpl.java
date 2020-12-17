@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -14,11 +16,14 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     private final CheckinDocumentRepository checkinDocumentRepo;
     private final CheckInRepository checkinRepo;
+    private final CurrentUserServices currentUserServices;
 
     public CheckinDocumentServicesImpl(CheckinDocumentRepository checkinDocumentRepo,
-                                       CheckInRepository checkinRepo) {
+                                       CheckInRepository checkinRepo,
+                                       CurrentUserServices currentUserServices) {
         this.checkinDocumentRepo = checkinDocumentRepo;
         this.checkinRepo = checkinRepo;
+        this.currentUserServices = currentUserServices;
     }
 
     public Set<CheckinDocument> read(UUID checkinsId) {
@@ -82,7 +87,9 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     public void deleteByCheckinId(@NotNull UUID checkinsId) {
 
-        if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        } else if(!checkinDocumentRepo.existsByCheckinsId(checkinsId)) {
             throw new CheckinDocumentBadArgException(String.format("CheckinDocument with CheckinsId %s does not exist", checkinsId));
         } else {
             checkinDocumentRepo.deleteByCheckinsId(checkinsId);
@@ -91,7 +98,9 @@ public class CheckinDocumentServicesImpl implements CheckinDocumentServices {
 
     public void deleteByUploadDocId(@NotNull String uploadDocId) {
 
-        if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        } else if(!checkinDocumentRepo.existsByUploadDocId(uploadDocId)) {
             throw new CheckinDocumentBadArgException(String.format("CheckinDocument with uploadDocId %s does not exist", uploadDocId));
         } else {
             checkinDocumentRepo.deleteByUploadDocId(uploadDocId);
