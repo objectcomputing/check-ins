@@ -1,7 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
-import com.objectcomputing.checkins.services.member_skill.MemberSkillAlreadyExistsException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileAlreadyExistsException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -49,11 +50,19 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         return hasRole(RoleType.ADMIN);
     }
 
+    public MemberProfile getCurrentUser() {
+        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
+        if(workEmail == null) {
+            throw new MemberProfileDoesNotExistException("No active members in the system");
+        }
+
+        return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+    }
+
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
         MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
         if(emailProfile != null && emailProfile.getId() != null) {
-            throw new MemberSkillAlreadyExistsException(String.format("Email %s already exists in database",
-                    workEmail));
+            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database", workEmail));
         }
 
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(name, "", null,
