@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
+import com.objectcomputing.checkins.services.validate.crud.ActionItemCRUDValidator;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
@@ -30,7 +31,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
+//            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
+        validateCreate(actionItem);
             permissionsValidation.validateActionItemPermissions(actionItem);
 
             double lastDisplayOrder = 0;
