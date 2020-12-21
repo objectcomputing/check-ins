@@ -50,7 +50,7 @@ convenient. You can install hub via Homebrew:
 brew install hub
 ```
 ### Create a git alias (optional)
-If your default shell is zsh (OSX Default) then add the following line to your `~/zshrc` file. For bash, add the line to
+If your default shell is zsh (OSX Default) then add the following line to your `~/.zshrc` file. For bash, add the line to
 your `.bash_profile` or `.bashrc` file.
 ```shell
 alias git=hub
@@ -62,7 +62,7 @@ If you haven't already, you will want to [configure git to use ssh for connectin
 # Install OpenJDK
 Install OpenJDK 14 with Homebrew:
 ```shell
-brew cask install AdoptOpenJDK/openjdk/adoptopenjdk14
+brew install --cask AdoptOpenJDK/openjdk/adoptopenjdk14
 ```
 
 # Install jEnv
@@ -71,7 +71,7 @@ jEnv is a version manager for the JDK. It can be installed with Homebrew by runn
 brew install jenv
 ```
 As instructed in the `==> Caveats` section of the Homebrew installation output, if your default shell is zsh
-(OSX Default) then add the following lines to your `~/zshrc` file. For bash, add the lines to your `.bash_profile` or
+(OSX Default) then add the following lines to your `~/.zshrc` file. For bash, add the lines to your `.bash_profile` or
 `.bashrc` file.
 
 ```shell
@@ -80,7 +80,7 @@ eval "$(jenv init -)"
 ```
 
 ## Plugins
-If your default shell is zsh (OSX Default) then add the following lines to your `~/zshrc` file. For bash, add the lines
+If your default shell is zsh (OSX Default) then add the following lines to your `~/.zshrc` file. For bash, add the lines
 to your `.bash_profile` or `.bashrc` file.
 
 ```shell
@@ -98,6 +98,11 @@ This will produce output similar to:
 ```shell
 Matching Java Virtual Machines (1):
     14.0.2, x86_64:     "AdoptOpenJDK 14"       /Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home
+```
+Create your `.jenv` directories with:
+```shell
+mkdir ~/.jenv
+mkdir ~/.jenv/versions
 ```
 You can register each JDK with `jenv add <your_jdk_path>`. For example:
 ```shell
@@ -125,7 +130,13 @@ In order to install or update NVM, you need to run the following from the comman
 ```shell
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
 ```
-
+## Enable NVM Shell Completion
+Add the following to the appropriate shell config (.zshrc, etc.)
+```shell
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+```
 # Install Yarn
 ```shell
 brew install yarn
