@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,9 @@ public class CheckinDocumentServiceImplTest {
     @Mock
     private CheckinDocumentRepository checkinDocumentRepository;
 
+    @Mock
+    private CurrentUserServices currentUserServices;
+
     @InjectMocks
     private CheckinDocumentServicesImpl services;
 
@@ -40,7 +44,7 @@ public class CheckinDocumentServiceImplTest {
 
     @BeforeEach
     void resetMocks() {
-        Mockito.reset(checkinRepository, checkinDocumentRepository);
+        Mockito.reset(checkinRepository, checkinDocumentRepository, currentUserServices);
     }
 
     @Test
@@ -260,11 +264,12 @@ public class CheckinDocumentServiceImplTest {
 
     @Test
     void testDeleteByCheckinId() {
-
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
 
         services.deleteByCheckinId(UUID.randomUUID());
 
+        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(1)).deleteByCheckinsId(any(UUID.class));
     }
 
@@ -273,10 +278,12 @@ public class CheckinDocumentServiceImplTest {
         UUID uuid = UUID.randomUUID();
 
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(false);
+        when(currentUserServices.isAdmin()).thenReturn(true);
 
         CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByCheckinId(uuid));
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
+        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(0)).deleteByCheckinsId(any(UUID.class));
     }
 
@@ -284,9 +291,11 @@ public class CheckinDocumentServiceImplTest {
     void testDeleteByUploadDocId() {
 
         when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
 
         services.deleteByUploadDocId("Test.Upload.Doc.Id");
 
+        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(1)).deleteByUploadDocId(any(String.class));
         verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
@@ -295,10 +304,12 @@ public class CheckinDocumentServiceImplTest {
     void testDeleteNonExistingUploadDocId() {
         String id = "Test.Id";
         when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(false);
+        when(currentUserServices.isAdmin()).thenReturn(true);
 
         CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByUploadDocId(id));
 
         assertEquals(String.format("CheckinDocument with uploadDocId %s does not exist", id), exception.getMessage());
+        verify(currentUserServices, times(1)).isAdmin();
         verify(checkinDocumentRepository, times(0)).deleteByUploadDocId(any(String.class));
         verify(checkinDocumentRepository, times(1)).existsByUploadDocId(any(String.class));
     }
