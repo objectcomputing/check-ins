@@ -99,7 +99,7 @@ public class PulseResponseController {
      * @return {@link HttpResponse<PulseResponse>}
      */
 
-    @Post("/")
+    @Post()
     public Single<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<PulseResponseCreateDTO> request) {
         return Single.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
@@ -116,7 +116,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponse}
      * @return {@link HttpResponse<PulseResponse>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                                       HttpRequest<PulseResponse> request) {
         return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))

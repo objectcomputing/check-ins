@@ -4,12 +4,9 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
-import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-import io.micronaut.security.utils.SecurityService;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -26,23 +23,17 @@ public class TeamServicesImpl implements TeamServices {
 
     private final TeamRepository teamsRepo;
     private final TeamMemberRepository teamMemberRepo;
-    private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private final TeamMemberServices teamMemberServices;
 
     public TeamServicesImpl(TeamRepository teamsRepo,
                             TeamMemberRepository teamMemberRepo,
-                            SecurityService securityService,
                             CurrentUserServices currentUserServices,
-                            MemberProfileServices memberProfileServices,
-                            TeamMemberServices teamMemberServices) {
+                            MemberProfileServices memberProfileServices) {
         this.teamsRepo = teamsRepo;
         this.teamMemberRepo = teamMemberRepo;
-        this.securityService = securityService;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
-        this.teamMemberServices = teamMemberServices;
     }
 
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
@@ -116,9 +107,8 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public boolean delete(@NotNull UUID id) {
-        String workEmail = securityService!=null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail!=null? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService!=null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
 
         if(isAdmin || (currentUser != null && !teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
             teamMemberRepo.deleteByTeamId(id.toString());

@@ -69,7 +69,7 @@ public class TeamController {
      * @return {@link HttpResponse<Team>}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
 
         return Single.fromCallable(() -> teamService.save(team))
@@ -118,7 +118,7 @@ public class TeamController {
      * @param team, {@link TeamUpdateDTO}
      * @return {@link HttpResponse< TeamResponseDTO >}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
         return Single.fromCallable(() -> teamService.update(team))
                 .observeOn(Schedulers.from(eventLoopGroup))

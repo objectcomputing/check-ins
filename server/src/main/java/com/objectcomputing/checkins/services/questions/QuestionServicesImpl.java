@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.questions;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,20 +25,11 @@ public class QuestionServicesImpl implements QuestionServices {
     }
 
     public Set<Question> readAllQuestions() {
-        Set<Question> questionList = questionRepository.findAll();
-
-        return questionList;
-
+        return questionRepository.findAll();
     }
 
-    public Question findById(UUID id) {
-
-        Question returned = null;
-        returned = questionRepository.findById(id)
-                .orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
-
-        return returned;
-
+    public Question findById(@NotNull UUID id) {
+        return questionRepository.findById(id).orElseThrow(() -> new QuestionNotFoundException(String.format("No question for id %s", id)));
     }
 
     protected Set<Question> findByValue(String text) {

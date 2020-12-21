@@ -45,7 +45,6 @@ public class PulseResponseServicesImpl implements PulseResponseService {
 
     @Override
     public PulseResponse read(@NotNull UUID id) {
-
         return pulseResponseRepo.findById(id).orElse(null);
     }
 

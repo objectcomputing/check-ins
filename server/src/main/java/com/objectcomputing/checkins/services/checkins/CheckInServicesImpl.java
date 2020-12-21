@@ -1,20 +1,19 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
-
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
-import io.micronaut.security.utils.SecurityService;
+
+import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
