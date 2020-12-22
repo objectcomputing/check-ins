@@ -78,6 +78,8 @@ dependencies {
     implementation "io.micronaut.cache:micronaut-cache-core"
     implementation "io.micronaut.cache:micronaut-cache-ehcache:$micronautEhcacheVersion"
 
+    implementation 'org.keycloak:keycloak-admin-client:11.0.3'
+
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
 

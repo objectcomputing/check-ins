@@ -28,14 +28,16 @@ micronaut:
   security:
     enabled: true
     authentication: idtoken
-    oauth2:
-      clients:
-        google:
-          client-id: ${ OAUTH_CLIENT_ID }
-          client-secret: ${ OAUTH_CLIENT_SECRET }
-          openid:
-            issuer: 'https://accounts.google.com'
+#    oauth2:
+#      clients:
+#        google:
+#          client-id: ${ OAUTH_CLIENT_ID }
+#          client-secret: ${ OAUTH_CLIENT_SECRET }
+#          openid:
+#            issuer: 'https://accounts.google.com'
     endpoints:
+      login:
+        enabled: true
       logout:
         get-allowed: true
     intercept-url-map:
@@ -47,9 +49,11 @@ micronaut:
     reject-not-found: false
     redirect:
       login-success: /
-      on-rejection: /oauth/login/google
+#      on-rejection: /oauth/login/google
+      on-rejection: /oauth/login/keycloak
       unauthorized:
-        url: /oauth/login/google
+#        url: /oauth/login/google
+        url: /oauth/login/keycloak
       forbidden:
         url: /forbidden
     session:

@@ -6,22 +6,49 @@ micronaut:
         web:
           allowedOrigins:
             - ^http(|s):\/\/localhost:.*$
+#  security:
+#    authentication: cookie
+#    oauth2:
+#      enabled: false
+#    token:
+#      jwt:
+#        enabled: true
+#        generator:
+#          access-token:
+#            expiration: 60000
+#          secret: ihaveChangedThisSecretForANewOne
+#    intercept-url-map:
+#      - pattern: /swagger-ui/**
+#        http-method: GET
+#        access:
+#          - isAnonymous()
   security:
-    authentication: cookie
-    oauth2:
-      enabled: false
+    authentication: idtoken
+    endpoints:
+      login:
+        enabled: true
+    redirect:
+      login-success: /
+      on-rejection: /oauth/login/keycloak
+      unauthorized:
+        url: /oauth/login/keycloak
     token:
       jwt:
         enabled: true
-        generator:
-          access-token:
-            expiration: 60000
-          secret: ihaveChangedThisSecretForANewOne
-    intercept-url-map:
-      - pattern: /swagger-ui/**
-        http-method: GET
-        access:
-          - isAnonymous()
+        signatures:
+          jwks:
+            keycloak:
+#              url: http://localhost:8180/auth/realms/master/protocol/openid-connect/certs
+              url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/certs
+    oauth2.clients.keycloak:
+      grant-type: password
+      client-id: check-ins-spike-client
+      client-secret: 0070b8df-76b7-41ab-8a48-defc5c22b5e7
+      authorization:
+        url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/auth
+      token:
+        url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/token
+        auth-method: client-secret-post
 ---
 datasources:
   default:
