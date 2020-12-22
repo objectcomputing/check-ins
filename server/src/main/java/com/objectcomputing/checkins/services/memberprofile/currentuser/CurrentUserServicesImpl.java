@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 
 import javax.annotation.Nullable;
@@ -51,12 +52,15 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     public MemberProfile getCurrentUser() {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        if(workEmail == null) {
-            throw new MemberProfileDoesNotExistException("No active members in the system");
+        if(securityService != null) {
+            Optional<Authentication> auth = securityService.getAuthentication();
+            if(auth.isPresent()) {
+                String workEmail = auth.get().getAttributes().get("email").toString();
+                return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+            }
         }
 
-        return memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
+        throw new MemberProfileDoesNotExistException("No active members in the system");
     }
 
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
