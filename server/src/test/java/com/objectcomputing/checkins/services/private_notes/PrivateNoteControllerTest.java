@@ -25,61 +25,120 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+//        1. MemberAbleToReadHisPrivateNotes
+//        2. PdlAbleToReadHisPrivateNotes
+//        3. AdminAbleToReadPdlsPrivateNotes
+//        4. AdminUnableToReadMembersPrivateNotes
+//        ---------------------------------------
+//        5. MemberAbleToCreatePrivateNotes
+//        6. PdlAbleToCreatePrivateNotes
+//        7. AdminUnableToCreatePrivateNotes
+//        8. MemberUnableToCreatePrivateNotesForPDL
+//        9. PdlUnableToCreatePrivateNotesIfCheckinIsCompleted
+//        10. MemberUnableToCreatePrivateNotesIfCheckinIsCompleted
+//        ----------------------------------------
+//        11. MemberAbleToUpdatePrivateNotes
+//        12. PdlAbleToUpdatePrivateNotes
+//        13. AdminUnableToUpdatePrivateNotes
+//        14  MemberUnableToUpdatePrivateNotesIfCheckinIsCompleted
+//        15. PdlUnableToUpdatePrivateNotesIfCheckinIsCompleted
 
 public class PrivateNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, PrivateNoteFixture {
 
     @Inject
     @Client("/services/private-note")
     HttpClient client;
+///////////////////////////////// READ /////////////////////////////////////////////////////////
+    @Test
+    void testReadPrivateNoteNotFound() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+
+        UUID randomCheckinID = UUID.randomUUID();
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Invalid private note id %s", randomCheckinID), error);
+
+    }
 
     @Test
-    void testCreatePrivateNoteByAdmin() {
+    void testMemberAbleToReadHisPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
 
-        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
-        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
-        PrivateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
-        PrivateNoteCreateDTO.setDescription("test");
-
-        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
 
-        PrivateNote PrivateNote = response.body();
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(privateNote, response.body());
+    }
+
+    @Test
+    void testPdlAbleToReadHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(PrivateNoteCreateDTO.getCheckinid(), PrivateNote.getCheckinid());
-        assertEquals(PrivateNoteCreateDTO.getCreatedbyid(), PrivateNote.getCreatedbyid());
-        assertEquals(String.format("%s/%s", request.getPath(), PrivateNote.getId()), response.getHeaders().get("location"));
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(privateNote, response.body());
+    }
+
+    @Test
+    void testAdminAbleToReadPdlsPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfADMIN = createAnUnrelatedUser();
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfADMIN.getWorkEmail(), ADMIN_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK,response.getStatus());
+        assertEquals(privateNote, response.body());
     }
 
 
     @Test
-    void testCreatePrivateNoteByPdl() {
+    void testAdminUnableToReadMembersPrivateNotes() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
 
-        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
-        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
-        PrivateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
-        PrivateNoteCreateDTO.setDescription("test");
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
-        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
-        PrivateNote PrivateNote = response.body();
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(PrivateNoteCreateDTO.getCheckinid(), PrivateNote.getCheckinid());
-        assertEquals(PrivateNoteCreateDTO.getCreatedbyid(), PrivateNote.getCreatedbyid());
-        assertEquals(String.format("%s/%s", request.getPath(), PrivateNote.getId()), response.getHeaders().get("location"));
+        assertEquals(request.getPath(), href);
+        assertEquals("Private note is created by Member and Admin is not authorized to read", error);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
+
+    ////////////////////////////////////////////// CREATE //////////////////////////////////////
 
     @Test
     void testCreateInvalidPrivateNote() {
@@ -119,42 +178,116 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    void testCreateAPrivateNoteForNonExistingCheckInId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    void  testMemberAbleToCreateHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
-        PrivateNoteCreateDTO.setCheckinid(UUID.randomUUID());
-        PrivateNoteCreateDTO.setCreatedbyid(memberProfile.getId());
-        PrivateNoteCreateDTO.setDescription("test");
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfUser.getId());
+        privateNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
 
-        assertEquals(request.getPath(), href);
-        assertEquals(String.format("CheckIn %s doesn't exist", PrivateNoteCreateDTO.getCheckinid()), error);
-
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(privateNoteCreateDTO.getCheckinid(), response.body().getCheckinid());
+        assertEquals(privateNoteCreateDTO.getCreatedbyid(), response.body().getCreatedbyid());
+        assertEquals(privateNoteCreateDTO.getDescription(), response.body().getDescription());
     }
 
     @Test
-    void testCreateAPrivateNoteForNonExistingMemberId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    void  testPdlAbleToCreateHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        privateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(privateNoteCreateDTO.getCheckinid(), response.body().getCheckinid());
+        assertEquals(privateNoteCreateDTO.getCreatedbyid(), response.body().getCreatedbyid());
+        assertEquals(privateNoteCreateDTO.getDescription(), response.body().getDescription());
+    }
+
+    @Test
+    void testAdminUnableToCreateMembersPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+//        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
+
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        privateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User1 is unauthorized to do this operation", error);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testMemberUnableToCreatePDLsPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+//        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
+
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        privateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User2 is unauthorized to do this operation", error);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testCreateAPrivateNoteByMemberIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
         PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
         PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
-        PrivateNoteCreateDTO.setCreatedbyid(UUID.randomUUID());
+        PrivateNoteCreateDTO.setCreatedbyid(checkIn.getTeamMemberId());
         PrivateNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -162,7 +295,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Member %s doesn't exist", PrivateNoteCreateDTO.getCreatedbyid()), error);
+        assertEquals("User1 is unauthorized to do this operation", error);
 
     }
 
@@ -186,290 +319,59 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals("User1 is unauthorized to do this operation", error);
 
     }
 
-
-    @Test
-    void testReadPrivateNoteByPDL() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", PrivateNote.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testReadPrivateNoteByAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", PrivateNote.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testReadPrivateNoteNotFound() {
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-
-        UUID randomCheckinID = UUID.randomUUID();
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin note id %s", randomCheckinID), error);
-
-    }
-
-    @Test
-    void testReadPrivateNoteNotFoundByUnrelatedUser() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", PrivateNote.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
-
-    }
-
-    @Test
-    void testFindAllPrivateNoteByAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testFindAllPrivateNoteByNonAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
-
-    }
-
-    @Test
-    void testFindPrivateNoteByBothCheckinIdAndCreateByid() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", PrivateNote.getCheckinid(), PrivateNote.getCreatedbyid()))
-                .basicAuth(memberProfile.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-
-    @Test
-    void testFindPrivateNoteByMemberIdForAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", PrivateNote.getCreatedbyid()))
-                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testFindPrivateNoteByCheckinIdForAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", PrivateNote.getCheckinid()))
-                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testFindPrivateNoteByCheckinIdForPDL() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", PrivateNote.getCheckinid()))
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testFindPrivateNoteByCheckinIdForUnrelatedUser() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfile1 = createAnUnrelatedUser();
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", PrivateNote.getCheckinid()))
-                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-
-        assertEquals("User is unauthorized to do this operation", error);
-
-    }
-
-    @Test
-    void testFindPrivateNoteByCreatedByIdByMember() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfileForPDL);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", PrivateNote.getCreatedbyid()))
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<Set<PrivateNote>> response = client.toBlocking().exchange(request, Argument.setOf(PrivateNote.class));
-
-        assertEquals(Set.of(PrivateNote), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-
-    }
-
-    @Test
-    void testFindPrivateNoteByCreatedByIdByUnrelatedUser() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfile1 = createAnUnrelatedUser();
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfileForPDL);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", PrivateNote.getCreatedbyid()))
-                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-
-        assertEquals("User is unauthorized to do this operation", error);
-
-    }
-
-
-    @Test
-    void testUpdatePrivateNoteByAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
-        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
-
-        assertEquals(PrivateNote, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testUpdatePrivateNoteByPDL() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
-
-        assertEquals(PrivateNote, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
+//    @Test
+//    void testCreateAPrivateNoteForNonExistingMemberId() {
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+//
+//        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+//
+//        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
+//        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
+//        PrivateNoteCreateDTO.setCreatedbyid(UUID.randomUUID());
+//        PrivateNoteCreateDTO.setDescription("test");
+//
+//        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+//                () -> client.toBlocking().exchange(request, Map.class));
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        String error = Objects.requireNonNull(body).get("message").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//
+//        assertEquals(request.getPath(), href);
+//        assertEquals(String.format("Member %s doesn't exist", PrivateNoteCreateDTO.getCreatedbyid()), error);
+//    }
+
+    //    @Test
+//    void testCreateAPrivateNoteForNonExistingCheckInId() {
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+//
+//        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+//
+//        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
+//        PrivateNoteCreateDTO.setCheckinid(UUID.randomUUID());
+//        PrivateNoteCreateDTO.setCreatedbyid(memberProfile.getId());
+//        PrivateNoteCreateDTO.setDescription("test");
+//
+//        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+//                () -> client.toBlocking().exchange(request, Map.class));
+//
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        JsonNode error = Objects.requireNonNull(body).get("_embedded").get("errors");
+//        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+//
+//        assertEquals(request.getPath(), href);
+//        assertEquals("Private note is created by Member and Admin is not authorized to read", error);
+//        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+//    }
+
+//    //////////////////////////////// UPDATE ///////////////////////////////
 
     @Test
     void testUpdateInvalidPrivateNote() {
@@ -525,118 +427,137 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         assertEquals("Unauthorized", responseException.getMessage());
     }
 
-    @Test
-    void testUpdateNonExistingPrivateNote() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-        PrivateNote.setId(UUID.randomUUID());
-
-        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("Unable to locate checkin note to update with id %s", PrivateNote.getId()), error);
-        assertEquals(request.getPath(), href);
-
-    }
 
     @Test
-    void testUpdateNonExistingPrivateNoteForCheckInId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+    void  testMemberAbleToUpdateHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-        PrivateNote.setCheckinid(UUID.randomUUID());
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfUser.getId());
+        privateNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("CheckIn %s doesn't exist", PrivateNote.getCheckinid()), error);
-        assertEquals(request.getPath(), href);
-
-    }
-
-    @Test
-    void testUpdateNonExistingPrivateNoteForMemberId() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-        PrivateNote.setCreatedbyid(UUID.randomUUID());
-
-        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("Member %s doesn't exist", PrivateNote.getCreatedbyid()), error);
-        assertEquals(request.getPath(), href);
-
-    }
-
-    @Test
-    void testUpdatePrivateNoteForUnrelatedUserByPdlWhenCompleted() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-
-        CheckIn checkIn = createACompletedCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote)
-                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals("User is unauthorized to do this operation", error);
-        assertEquals(request.getPath(), href);
-
-    }
-
-    @Test
-    void testUpdatePrivateNoteForUnrelatedUserByAdmin() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
-
-        final HttpRequest<PrivateNote> request = HttpRequest.PUT("", PrivateNote)
-                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", privateNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
 
-        assertEquals(PrivateNote, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED,response.getStatus());
+        assertEquals(privateNoteCreateDTO.getCheckinid(), response.body().getCheckinid());
+        assertEquals(privateNoteCreateDTO.getCreatedbyid(), response.body().getCreatedbyid());
+        assertEquals(privateNoteCreateDTO.getDescription(), response.body().getDescription());
+    }
+
+    @Test
+    void  testPdlAbleToUpdateHisPrivateNotes() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
+
+        PrivateNoteCreateDTO privateNoteCreateDTO = new PrivateNoteCreateDTO();
+        privateNoteCreateDTO.setCheckinid(checkIn.getId());
+        privateNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
+        privateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", privateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+//    @Test
+//    void testUpdatePrivateNoteByPDL() {
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+//
+//        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+//
+//        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
+//
+//        final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+//        final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
+//
+//        assertEquals(PrivateNote, response.body());
+//        assertEquals(HttpStatus.OK, response.getStatus());
+//    }
+
+    @Test
+    void testAdminUnableToUpdatePrivateNotes() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+//        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.POST("", PrivateNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+
+    @Test
+    void testUpdatePrivateNoteByMemberIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
+        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
+        PrivateNoteCreateDTO.setCreatedbyid(checkIn.getTeamMemberId());
+        PrivateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
 
     }
+
+    @Test
+    void testUpdateAPrivateNoteByPLDIdWhenCompleted() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        PrivateNoteCreateDTO PrivateNoteCreateDTO = new PrivateNoteCreateDTO();
+        PrivateNoteCreateDTO.setCheckinid(checkIn.getId());
+        PrivateNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        PrivateNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<PrivateNoteCreateDTO> request = HttpRequest.PUT("", PrivateNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
 }

@@ -12,11 +12,9 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Set;
 import java.util.UUID;
 
 @Controller("/services/private-note")
@@ -48,7 +46,7 @@ public class PrivateNoteController {
      * @return
      */
     @Post("/")
-    @Secured({RoleType.Constants.MEMBER_ROLE,RoleType.Constants.PDL_ROLE })
+    @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
     public HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         PrivateNote newPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid()
                 , privateNote.getDescription()));
@@ -65,7 +63,7 @@ public class PrivateNoteController {
      * @return
      */
     @Put("/")
-    @Secured({RoleType.Constants.MEMBER_ROLE,RoleType.Constants.PDL_ROLE })
+    @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
     public HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         PrivateNote updatePrivateNote = privateNoteServices.update(privateNote);
         return HttpResponse.ok().headers(headers -> headers.location(
