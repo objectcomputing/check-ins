@@ -140,10 +140,11 @@ public class PermissionsValidation {
 
     }
 
-    class CurrentUserInfo {
-        String workEmail;
-        MemberProfile currentUser;
-        Boolean isAdmin;
+    @Singleton
+    public class CurrentUserInfo {
+        public String workEmail;
+        public MemberProfile currentUser;
+        public Boolean isAdmin;
 
         public CurrentUserInfo() {
             Authentication authentication = securityService != null ? securityService.getAuthentication().orElse(null) : null;

@@ -2,9 +2,11 @@ package com.objectcomputing.checkins.services.validate.crud;
 
 import com.objectcomputing.checkins.services.action_item.ActionItem;
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
+import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
+import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -16,18 +18,21 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     private final CheckInServices checkInServices;
     private final MemberProfileServices memberServices;
     private final ArgumentsValidation argumentsValidation;
+    private final PermissionsValidation permissionsValidation;
+    private final PermissionsValidation.CurrentUserInfo currentUserInfo;
     private final ActionItemRepository actionItemRepo;
 
     @Inject
-    public ActionItemCRUDValidator(CheckInServices checkInServices, MemberProfileServices memberServices, ArgumentsValidation argumentsValidation, ActionItemRepository actionItemRepo) {
+    public ActionItemCRUDValidator(CheckInServices checkInServices, MemberProfileServices memberServices, ArgumentsValidation argumentsValidation, PermissionsValidation permissionsValidation, PermissionsValidation.CurrentUserInfo currentUserInfo, ActionItemRepository actionItemRepo) {
         this.checkInServices = checkInServices;
         this.memberServices = memberServices;
         this.argumentsValidation = argumentsValidation;
+        this.permissionsValidation = permissionsValidation;
+        this.currentUserInfo = currentUserInfo;
         this.actionItemRepo = actionItemRepo;
     }
 
-    @Override
-    public void validateCreate(@Valid @NotNull ActionItem actionItem) {
+    public void validateArgumentsCreate(@Valid @NotNull ActionItem actionItem) {
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -39,7 +44,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     }
 
     @Override
-    public void validateRead(@Valid @NotNull ActionItem actionItem) {
+    public void validateArgumentsRead(@Valid @NotNull ActionItem actionItem) {
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -50,7 +55,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     }
 
     @Override
-    public void validateUpdate(@Valid @NotNull ActionItem actionItem) {
+    public void validateArgumentsUpdate(@Valid @NotNull ActionItem actionItem) {
 
         if (actionItem != null) {
             final UUID id = actionItem.getId();
@@ -66,7 +71,7 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
     }
 
     @Override
-    public void validateDelete(@Valid @NotNull ActionItem actionItem) {
+    public void validateArgumentsDelete(@Valid @NotNull ActionItem actionItem) {
 
         final UUID checkinId = actionItem.getCheckinid();
         final UUID createdById = actionItem.getCreatedbyid();
@@ -75,6 +80,25 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
         argumentsValidation.validateArguments(actionItem.getId() == null || actionItemRepo.findById(actionItem.getId()).isEmpty(), "Unable to locate action item to delete with id %s", actionItem.getId());
         argumentsValidation.validateArguments(checkInServices.read(checkinId) == null, "CheckIn %s doesn't exist", checkinId);
         argumentsValidation.validateArguments(memberServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
+
+    }
+
+    public void validatePermissionsCreate(@Valid @NotNull ActionItem actionItem) {
+
+//        permissionsValidation.CurrentUserInfo currentUserInfo = new permissionsValidation.CurrentUserInfo();
+
+        final UUID checkinId = actionItem.getCheckinid();
+        final UUID createdById = actionItem.getCreatedbyid();
+        CheckIn checkinRecord = checkInServices.read(checkinId);
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+
+        if (!currentUserInfo.isAdmin && isCompleted) {
+            permissionsValidation.validatePermissions(true, "User is unauthorized to do this operation");
+        } else if (!currentUserInfo.isAdmin && !isCompleted) {
+            permissionsValidation.validatePermissions(!currentUserInfo.currentUser.getId().equals(pdlId) && !currentUserInfo.currentUser.getId().equals(teamMemberId), "User is unauthorized to do this operation");
+        }
 
     }
 
