@@ -43,14 +43,13 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         CheckIn checkinRecord = checkinServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        validate(privateNote.getId() != null, "Found unexpected id %s for check in note", privateNote.getId());
+        validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
         validate(checkinId == null || createdById == null, "Invalid checkin note %s", privateNote);
         validate(checkinRecord.equals(null), "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById).equals(null), "Member %s doesn't exist", createdById);
         validate((isAdmin && !isPdl) || isCompleted , "User1 is unauthorized to do this operation");
-        validate(!currentUser.getId().equals(createdById), "User2 is unauthorized to do this operation"); //make sure the person in the private note is same as the person login
+        validate(!currentUser.getId().equals(createdById), "User2 is unauthorized to do this operation");
         validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User3 is unauthorized to do this operation");
-        // if logged in user is related to the checkin as member or PDL
         return privateNoteRepository.save(privateNote);
     }
 
@@ -61,16 +60,11 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         Boolean isAdmin = currentUserServices.isAdmin();
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
         validate(privateNoteResult == null, "Invalid private note id %s", id);
-
         CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
-
         validate(isAdmin && !privateNoteResult.getCreatedbyid().equals(checkinRecord.getPdlId()),"Private note is created by Member and Admin is not authorized to read");
-//        validate(!isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()), "User is unauthorized to do this operation"); //make sure the person in the private note is same as the person login
-        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), "User is unauthorized to do this operation"); //make sure the person in the private note is same as the person login
-
+        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), "User is unauthorized to do this operation");
         return privateNoteResult;
     }
-
 
     @Override
     public PrivateNote update(@NotNull PrivateNote privateNote) {
@@ -86,18 +80,16 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         CheckIn checkinRecord = checkinServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        validate(checkinId == null || createdById == null, "Invalid checkin note %s", privateNote);
+        validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate((isAdmin && !isPdl) || isCompleted , "User is unauthorized to do this operation");
-        validate(privateNote.getId() != null, "Found unexpected id %s for check in note", privateNote.getId());
+        validate(privateNote.getId().equals(null), "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord.equals(null), "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById).equals(null), "Member %s doesn't exist", createdById);
-        validate(!currentUser.getId().equals(createdById), "User is unauthorized to do this operation"); //make sure the person in the private note is same as the person login
+        validate(!currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
         validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User is unauthorized to do this operation");
-        // if logged in user is realted to the checkin as member or PDL
         return privateNoteRepository.update(privateNote);
 
     }
-
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
