@@ -4,7 +4,6 @@ const fileUrl = "/services/file";
 
 export const getFiles = async (checkinId, cookie) => {
   return resolve({
-    method: "get",
     url: fileUrl + `?id=${checkinId}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -13,7 +12,6 @@ export const getFiles = async (checkinId, cookie) => {
 
 export const getAllFiles = async (cookie) => {
   return resolve({
-    method: "get",
     url: fileUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

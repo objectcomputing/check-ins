@@ -1,8 +1,10 @@
 import React, { useEffect, useReducer, useMemo } from "react";
-import { createSelector } from 'reselect';
+import { createSelector } from "reselect";
 import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
+import { getMemberSkills } from "../api/memberskill";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
+import { getSkills } from "../api/skill";
 import axios from "axios";
 
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
@@ -11,10 +13,17 @@ export const UPDATE_CHECKINS = "@@check-ins/update_checkins";
 export const UPDATE_INDEX = "@@check-ins/update_index";
 export const UPDATE_TOAST = "@@check-ins/update_toast";
 export const UPDATE_CURRENT_CHECKIN = "@@check-ins/update_current_checkin";
+export const UPDATE_MEMBER_SKILLS = "@@check-ins/update_member_skills";
+export const DELETE_MEMBER_SKILL = "@@check-ins/delete_member_skill";
+export const ADD_MEMBER_SKILL = "@@check-ins/add_member_skill";
 export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
 export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
+export const ADD_SKILL = "@@check-ins/add-skill";
+export const DELETE_SKILL = "@@check-ins/delete-skill";
+export const UPDATE_SKILL = "@@check-ins/update_skill";
+export const UPDATE_SKILLS = "@@check-ins/update_skills";
 export const ADD_TEAM = "@@check-ins/add_team";
 
 const SET_CSRF = "@@check-ins/update_csrf";
@@ -37,6 +46,24 @@ const reducer = (state, action) => {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
       state.currentCheckin = state.checkins[state.checkins.length - 1];
+      break;
+    case ADD_SKILL:
+      state.skills = [...state.skills, action.payload];
+      break;
+    case DELETE_SKILL:
+      state.skills = state.skills.filter(
+        (skill) => skill.id !== action.payload
+      );
+      break;
+    case UPDATE_SKILL:
+      state.skills = [...state.skills];
+      const index = state.skills.findIndex(
+        (skill) => skill.id === action.payload.id
+      );
+      state.skills[index] = action.payload;
+      break;
+    case UPDATE_SKILLS:
+      state.skills = action.payload;
       break;
     case SET_CSRF:
       state.csrf = action.payload;
@@ -65,6 +92,19 @@ const reducer = (state, action) => {
     case UPDATE_CURRENT_CHECKIN:
       state.currentCheckin = action.payload;
       break;
+    case UPDATE_MEMBER_SKILLS:
+      state.memberSkills = action.payload;
+      break;
+    case DELETE_MEMBER_SKILL:
+      state.memberSkills = [
+        ...state.memberSkills.filter(
+          (mSkill) => mSkill.skillid !== action.payload
+        ),
+      ];
+      break;
+    case ADD_MEMBER_SKILL:
+      state.memberSkills = [...state.memberSkills, action.payload];
+      break;
     case UPDATE_SELECTED_PROFILE:
       const { payload } = action;
       if (state.selectedProfile !== payload) {
@@ -84,10 +124,12 @@ const initialState = {
   checkins: [],
   csrf: undefined,
   currentCheckin: {},
-  teams: [],
-  memberProfiles: [],
+  memberSkills: [],
   index: 0,
+  memberProfiles: [],
   selectedProfile: undefined,
+  skills: [],
+  teams: [],
   toast: {
     severity: "",
     toast: "",
@@ -111,7 +153,7 @@ const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
           pdlId: pdlId,
           checkInDate: date(3, prevCheckinDate),
           completed: false,
-        });
+        }, csrf);
         const checkin =
           res.payload && res.payload.data && !res.error
             ? res.payload.data
@@ -126,14 +168,14 @@ const getCheckins = async (id, pdlId, date, dispatch, csrf) => {
         pdlId: pdlId,
         checkInDate: date(1),
         completed: false,
-      });
+      }, csrf);
       const checkin =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       data = [checkin];
     }
   }
   //without this check you get infinite checkin calls
-  if (data.length > 0) {
+  if (data && data.length > 0) {
     dispatch({ type: UPDATE_CHECKINS, payload: data });
   }
 };
@@ -145,6 +187,7 @@ const AppContextProvider = (props) => {
       ? state.userProfile.memberProfile
       : undefined;
   const id = memberProfile ? memberProfile.id : undefined;
+  const pdlId = memberProfile ? memberProfile.pdlId : undefined;
   const selectedProfile = state && state.selectedProfile;
   const selectedId = selectedProfile ? selectedProfile.id : undefined;
 
@@ -180,6 +223,20 @@ const AppContextProvider = (props) => {
     };
     if (csrf) {
       updateUserProfile();
+    }
+  }, [csrf]);
+
+  useEffect(() => {
+    const getAllMemberSkills = async () => {
+      const res = await getMemberSkills(csrf);
+      const memberSkills =
+        res && res.payload && res.payload.data ? res.payload.data : null;
+      if (memberSkills) {
+        dispatch({ type: UPDATE_MEMBER_SKILLS, payload: memberSkills });
+      }
+    };
+    if (csrf) {
+      getAllMemberSkills();
     }
   }, [csrf]);
 
@@ -221,10 +278,36 @@ const AppContextProvider = (props) => {
   }, [csrf]);
 
   useEffect(() => {
+    if (id && csrf) {
+      getCheckins(id, pdlId, date, dispatch, csrf);
+    }
+  }, [csrf, pdlId, id]);
+
+  useEffect(() => {
     if (selectedId && csrf) {
       getCheckins(selectedId, id, date, dispatch, csrf);
     }
   }, [csrf, selectedId, id]);
+
+  useEffect(() => {
+    const getAllSkills = async () => {
+      const res = await getSkills(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data && data.length > 0) {
+        dispatch({ type: UPDATE_SKILLS, payload: data });
+      }
+    };
+    if (csrf) {
+      getAllSkills();
+    }
+  }, [csrf]);
 
   const value = useMemo(() => {
     return { state, dispatch };
@@ -236,8 +319,22 @@ const AppContextProvider = (props) => {
   );
 };
 
-export const selectMemberProfiles = state => state.memberProfiles;
-export const selectTeamMembers = state => state.teamMembers;
+export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectMemberSkills = (state) => state.memberSkills;
+export const selectSkills = (state) => state.skills;
+export const selectTeamMembers = (state) => state.teamMembers;
+export const selectUserProfile = (state) => state.userProfile;
+
+export const selectCurrentUser = createSelector(
+  selectUserProfile,
+  (userProfile) =>
+    userProfile && userProfile.memberProfile ? userProfile.memberProfile : {}
+);
+
+export const selectCurrentUserId = createSelector(
+  selectCurrentUser,
+  (profile) => profile.id
+);
 
 export const selectProfileMap = createSelector(
   selectMemberProfiles,
@@ -252,23 +349,14 @@ export const selectProfileMap = createSelector(
   }
 );
 
-export const selectMembersByTeamId = id => createSelector(
-  selectTeamMembers,
-  (teamMembers) => {
-    let members = [];
-    if (teamMembers && teamMembers.length) {
-      members = teamMembers.filter((member) => member.teamid === id);
-    }
-    return members;
-  }
+export const selectMySkills = createSelector(
+  selectCurrentUserId,
+  selectMemberSkills,
+  (id, skills) => skills.filter((skill) => skill.memberid === id)
 );
 
-export const selectMemberProfilesByTeamId = id => createSelector(
-  selectMembersByTeamId(id),
-  selectProfileMap,
-  (members, profileMap) => members.map((member) => {
-      return { ...profileMap[member.memberid], ...member };
-    })
+export const selectPendingSkills = createSelector(selectSkills, (skills) =>
+  skills.filter((skill) => skill.pending)
 );
 
 export { AppContext, AppContextProvider };

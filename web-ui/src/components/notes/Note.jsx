@@ -63,8 +63,7 @@ const Notes = (props) => {
               checkinid: currentCheckinId,
               createdbyid: id,
               description: "",
-              csrf,
-            });
+            }, csrf);
             noteRef.current = noteRef.current.filter(
               (id) => id !== currentCheckinId
             );
@@ -78,8 +77,7 @@ const Notes = (props) => {
             checkinid: currentCheckinId,
             createdbyid: pdlId,
             description: "",
-            csrf,
-          });
+          }, csrf);
           if (res.error) throw new Error(res.error);
           if (res && res.payload && res.payload.data) {
             setNote(res.payload.data);
@@ -96,7 +94,7 @@ const Notes = (props) => {
   }, [csrf, currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
 
   const handleNoteChange = (e) => {
-    if (Object.keys(note) === 0 || !csrf) {
+    if (Object.keys(note).length === 0 || !csrf) {
       return;
     }
     const { value } = e.target;

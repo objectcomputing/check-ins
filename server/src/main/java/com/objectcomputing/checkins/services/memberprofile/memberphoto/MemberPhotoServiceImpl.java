@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Base64;
+import java.util.Optional;
 
 @Singleton
 @CacheConfig("photo-cache")
@@ -43,9 +44,12 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
             photoData = Base64.getUrlDecoder().decode(userPhoto.getPhotoData());
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving files from Google Directory API.", e);
-            URL defaultImageUrl = environment.getResource("public/default_profile.jpg").get();
-            InputStream in = defaultImageUrl.openStream();
-            photoData = IOUtils.toByteArray(in);
+            Optional<URL> resource = environment.getResource("public/default_profile.jpg");
+            if(resource.isPresent()) {
+                URL defaultImageUrl = resource.get();
+                InputStream in = defaultImageUrl.openStream();
+                photoData = IOUtils.toByteArray(in);
+            } else photoData = new byte[0];
         }
 
         return photoData;

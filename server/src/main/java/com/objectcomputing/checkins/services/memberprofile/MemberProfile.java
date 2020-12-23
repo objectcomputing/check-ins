@@ -74,6 +74,11 @@ public class MemberProfile {
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 
+    @Column(name="terminationDate")
+    @Schema(description = "employee's date of termination")
+    @Nullable
+    private LocalDate terminationDate;
+
     public MemberProfile(@Nullable String name,
                          @Nullable String title,
                          @Nullable UUID pdlId,
@@ -82,8 +87,9 @@ public class MemberProfile {
                          @Nullable String insperityId,
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
-                         @Nullable UUID supervisorid) {
-       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
+                         @Nullable UUID supervisorid,
+                         @Nullable LocalDate terminationDate) {
+       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 
     public MemberProfile(UUID id,
@@ -95,7 +101,8 @@ public class MemberProfile {
                          @Nullable String insperityId,
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
-                         @Nullable UUID supervisorid) {
+                         @Nullable UUID supervisorid,
+                         @Nullable LocalDate terminationDate) {
         this.id = id;
         this.name=name;
         this.title=title;
@@ -106,6 +113,7 @@ public class MemberProfile {
         this.startDate=startDate;
         this.bioText=bioText;
         this.supervisorid=supervisorid;
+        this.terminationDate=terminationDate;
     }
 
     public MemberProfile() {
@@ -192,6 +200,15 @@ public class MemberProfile {
         this.supervisorid = supervisorid;
     }
 
+    @Nullable
+    public LocalDate getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(LocalDate terminationDate) {
+        this.terminationDate = terminationDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -206,12 +223,13 @@ public class MemberProfile {
                 Objects.equals(insperityId, that.insperityId) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
-                Objects.equals(supervisorid, that.supervisorid);
+                Objects.equals(supervisorid, that.supervisorid) &&
+                Objects.equals(terminationDate, that.terminationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid);
+        return Objects.hash(id, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 
     @Override
@@ -227,6 +245,7 @@ public class MemberProfile {
                 ", startDate=" + startDate +
                 ", bioText='" + bioText + '\'' +
                 ", supervisorid=" + supervisorid +
+                ", terminationDate=" + terminationDate +
                 '}';
     }
 }

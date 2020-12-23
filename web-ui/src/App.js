@@ -9,6 +9,7 @@ import Profile from "./components/profile/Profile";
 import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import DirectoryPage from './pages/DirectoryPage'
+import PendingSkillsPage from './pages/PendingSkillsPage'
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -55,6 +56,10 @@ function App() {
               <Route path="/checkins">
                 <Header title="Check-ins" />
                 <CheckinsPage history={customHistory} />
+              </Route>
+              <Route path="/pending-skills">
+                <Header title="Pending Skills" />
+                <PendingSkillsPage />
               </Route>
               <Route path="/">
                 <Header title="My Profile" />

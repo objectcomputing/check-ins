@@ -33,7 +33,6 @@ export const deleteAgendaItem = async (id, cookie) => {
 
 export const getAgendaItem = async (checkinId, createdById, cookie) => {
   return resolve({
-    method: "get",
     url: agendaURL,
     responseType: "json",
     params: {
@@ -46,7 +45,6 @@ export const getAgendaItem = async (checkinId, createdById, cookie) => {
 
 export const getAgendaItemById = async (id, cookie) => {
   return resolve({
-    method: "get",
     url: `${agendaURL}/?id=${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },

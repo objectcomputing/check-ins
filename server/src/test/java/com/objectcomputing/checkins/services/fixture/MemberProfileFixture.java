@@ -10,14 +10,14 @@ public interface MemberProfileFixture extends RepositoryFixture {
         return getMemberProfileRepository().save(new MemberProfile("Mr. Bill", "Comedic Relief",
                 null, "New York, New York", "billm@objectcomputing.com", "mr-bill-insperity",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
-                null));
+                null, null));
     }
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Mr. Bill PDL", "Comedic Relief PDL",
                 memberProfile.getId(), "New York, New York", "billmpdl@objectcomputing.com", "mr-bill-insperity-pdl",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
-                memberProfile.getId()));
+                memberProfile.getId(), null));
     }
 
     // this user is not connected to other users in the system
@@ -25,6 +25,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
         return getMemberProfileRepository().save(new MemberProfile("Mr. Nobody", "Comedic Relief",
                 null, "New York, New York", "nobody@objectcomputing.com", "mr-bill-insperity",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
-                null));
+                null, null));
     }
 }

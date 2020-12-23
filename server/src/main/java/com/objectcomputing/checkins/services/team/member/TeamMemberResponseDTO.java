@@ -22,9 +22,10 @@ public class TeamMemberResponseDTO {
     private UUID teamid;
     private UUID memberid;
 
-    public TeamMemberResponseDTO(UUID id, String name, Boolean lead) {
+    public TeamMemberResponseDTO(UUID id, String name, UUID memberid, Boolean lead) {
         this.id = id;
         this.name = name;
+        this.memberid = memberid;
         this.lead = lead;
     }
 

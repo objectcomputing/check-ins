@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -142,7 +143,7 @@ public class MemberProfileController {
      */
     @Delete("/{id}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse> delete(UUID id) {
+    public Single<HttpResponse> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(successFlag -> (HttpResponse)HttpResponse.ok())
@@ -165,16 +166,17 @@ public class MemberProfileController {
         dto.setStartDate(entity.getStartDate());
         dto.setBioText(entity.getBioText());
         dto.setSupervisorid(entity.getSupervisorid());
+        dto.setTerminationDate(entity.getTerminationDate());
         return dto;
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
         return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }

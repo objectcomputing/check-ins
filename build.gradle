@@ -25,7 +25,6 @@ plugins {
     id "jacoco"
     id "java"
     id "org.sonarqube" version "3.0"
-
 }
 
 sonarqube {
@@ -34,14 +33,30 @@ sonarqube {
     }
 }
 
-project(":web-ui") {
+project(":server") {
+    assemble {
+        dependsOn ":web-ui:assemble"
+    }
     sonarqube {
         properties {
-            property "sonar.sources", "src/"
+            property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+            property "sonar.cpd.exclusions", "**/*DTO.java"
         }
     }
 }
 
+project(":web-ui") {
+    sonarqube {
+        properties {
+            property "sonar.sources", "src/"
+            property "sonar.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+            property "sonar.coverage.exclusions", "**/*.stories.js,**/*.test.js,**/*.spec.js,**/*.stories.jsx,**/*.test.jsx,**/*.spec.jsx"
+            property "sonar.javascript.lcov.reportPaths", "coverage/lcov.info"
+        }
+    }
+}
+
+project.tasks["sonarqube"].dependsOn ":web-ui:yarn_run_coverage", ":server:jacocoTestReport"
 ////// ################### SONARCLOUD PLUGIN END#########################
 
 
