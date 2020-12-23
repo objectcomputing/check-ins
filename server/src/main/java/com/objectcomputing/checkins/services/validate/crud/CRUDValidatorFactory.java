@@ -16,9 +16,5 @@ public class CRUDValidatorFactory {
         return validator;
     }
 
-//    @Singleton
-//    CRUDValidator<SomeOtherEntity> createSomeOtherEntityCRUDValidator() {
-//        return new SomeOtherEntityCRUDValidator();
-//    }
 
 }

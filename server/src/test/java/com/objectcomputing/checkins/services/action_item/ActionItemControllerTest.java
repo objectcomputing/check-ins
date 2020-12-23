@@ -434,7 +434,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("ActionItem %s doesn't exist", randomCheckinID), error);
+        assertEquals("actionItem: must not be null", error);
 
     }
 

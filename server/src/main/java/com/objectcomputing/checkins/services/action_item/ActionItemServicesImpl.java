@@ -57,7 +57,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
+//        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
+        crudValidator.validateRead(actionItemResult);
         if (actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
 
         return actionItemResult;
@@ -67,7 +68,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
+//        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
+        crudValidator.validateUpdate(actionItem);
         permissionsValidation.validateActionItemPermissionsForUpdate(actionItem);
 
         actionItemRet = actionItemRepo.update(actionItem);
@@ -88,8 +90,10 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public void delete(@NotNull UUID id) {
+        ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateActionItemArgumentsForDelete(id);
+//        argumentsValidation.validateActionItemArgumentsForDelete(id);
+        crudValidator.validateDelete(actionItemResult);
         permissionsValidation.validateActionItemPermissionsForDelete(id);
 
         actionItemRepo.deleteById(id);
