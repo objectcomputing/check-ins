@@ -11,13 +11,9 @@ import javax.inject.Singleton;
 @Factory
 public class CRUDValidatorFactory {
 
-    private ArgumentsValidation argumentsValidation;
-    private CheckInServices checkInServices;
-    private MemberProfileServices memberServices;
-
     @Singleton
-    CRUDValidator<ActionItem> createActionItemCRUDValidator() {
-        return new ActionItemCRUDValidator(checkInServices, memberServices, argumentsValidation);
+    public CRUDValidator<ActionItem> createActionItemCRUDValidator(ActionItemCRUDValidator validator) {
+        return validator;
     }
 
 //    @Singleton

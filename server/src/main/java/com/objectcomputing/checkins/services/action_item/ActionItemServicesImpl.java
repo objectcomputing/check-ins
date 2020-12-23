@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.validate.crud.ActionItemCRUDValidator;
 import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
+import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
+import com.objectcomputing.checkins.services.validate.crud.CRUDValidatorFactory;
 
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -17,13 +18,15 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class ActionItemServicesImpl implements ActionItemServices {
 
     private final ActionItemRepository actionItemRepo;
+    private final CRUDValidator<ActionItem> crudValidator;
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;
 
-    public ActionItemServicesImpl( ActionItemRepository actionItemRepo,
-                                  ArgumentsValidation argumentsValidation,
+    public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
+                                  CRUDValidator<ActionItem> crudValidator, ArgumentsValidation argumentsValidation,
                                   PermissionsValidation permissionsValidation) {
         this.actionItemRepo = actionItemRepo;
+        this.crudValidator = crudValidator;
         this.argumentsValidation = argumentsValidation;
         this.permissionsValidation = permissionsValidation;
     }
@@ -31,20 +34,20 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-//            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
-        validateCreate(actionItem);
-            permissionsValidation.validateActionItemPermissions(actionItem);
+//        argumentsValidation.validateActionItemArgumentsForSave(actionItem);
+        crudValidator.validateCreate(actionItem);
+        permissionsValidation.validateActionItemPermissions(actionItem);
 
-            double lastDisplayOrder = 0;
-            try {
-                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
-            } catch (NullPointerException npe) {
-                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
-                //nothing needs to happen here.
-            }
-            actionItem.setPriority(lastDisplayOrder + 1);
+        double lastDisplayOrder = 0;
+        try {
+            lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+        } catch (NullPointerException npe) {
+            //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+            //nothing needs to happen here.
+        }
+        actionItem.setPriority(lastDisplayOrder + 1);
 
-            actionItemRet = actionItemRepo.save(actionItem);
+        actionItemRet = actionItemRepo.save(actionItem);
 
         return actionItemRet;
 
@@ -55,7 +58,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
         argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
-        if(actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
+        if (actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
 
         return actionItemResult;
 
