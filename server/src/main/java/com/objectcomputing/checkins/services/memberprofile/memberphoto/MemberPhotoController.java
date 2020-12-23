@@ -1,16 +1,11 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;

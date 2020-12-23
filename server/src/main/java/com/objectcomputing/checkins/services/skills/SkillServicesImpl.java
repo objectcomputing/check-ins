@@ -1,5 +1,8 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -11,9 +14,12 @@ import java.util.UUID;
 public class SkillServicesImpl implements SkillServices {
 
     private final SkillRepository skillRepository;
+    private final CurrentUserServices currentUserServices;
 
-    public SkillServicesImpl(SkillRepository skillRepository) {
+    public SkillServicesImpl(SkillRepository skillRepository,
+                             CurrentUserServices currentUserServices) {
         this.skillRepository = skillRepository;
+        this.currentUserServices = currentUserServices;
     }
 
     public Skill save(Skill skill) {
@@ -34,11 +40,7 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     public Skill readSkill(@NotNull UUID id) {
-
-        Skill returned = skillRepository.findById(id).orElse(null);
-
-        return returned;
-
+        return skillRepository.findById(id).orElse(null);
     }
 
     public Set<Skill> findByValue(String name, Boolean pending) {
@@ -56,6 +58,9 @@ public class SkillServicesImpl implements SkillServices {
     }
 
     public void delete(@NotNull UUID id) {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        }
         skillRepository.deleteById(id);
     }
 

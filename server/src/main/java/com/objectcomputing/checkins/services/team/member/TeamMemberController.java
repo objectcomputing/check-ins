@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -48,7 +46,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
-    @Post(value = "/")
+    @Post()
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<TeamMemberResponseDTO> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
@@ -65,7 +63,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMember}
      * @return {@link HttpResponse<TeamMember>}
      */
-    @Put("/")
+    @Put()
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<TeamMember> request) {
         TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), teamMember.getLead()));
         return HttpResponse

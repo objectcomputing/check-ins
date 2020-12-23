@@ -7,25 +7,23 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Named;
-import java.util.concurrent.ExecutorService;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import io.micronaut.scheduling.TaskExecutors;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.inject.Named;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/role")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -70,7 +68,7 @@ public class RoleController {
      * @return {@link HttpResponse <Role>}
      */
 
-    @Post("/")
+    @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>>  create(@Body @Valid RoleCreateDTO role,
     HttpRequest<RoleCreateDTO> request){
@@ -88,7 +86,7 @@ public class RoleController {
      * @param role, {@link Role}
      * @return {@link HttpResponse<Role>}
      */
-    @Put("/")
+    @Put()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
         return Single.fromCallable(() -> roleServices.update(role))
@@ -130,8 +128,7 @@ public class RoleController {
      * @return {@link List < Role > list of roles}
      */
     @Get("/{?role,memberid}")
-    public Single<HttpResponse<Set<Role>>> findRole(@Nullable RoleType role,
-    @Nullable UUID memberid) {
+    public Single<HttpResponse<Set<Role>>> findRole(@Nullable RoleType role, @Nullable UUID memberid) {
         return Single.fromCallable(() -> roleServices.findByFields(role, memberid))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> (HttpResponse<Set<Role>>) HttpResponse.ok(userRole))

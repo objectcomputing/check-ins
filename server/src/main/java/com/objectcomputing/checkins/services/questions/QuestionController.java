@@ -17,7 +17,6 @@ import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.Valid;
 import java.net.URI;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 @Tag(name="questions")
 public class QuestionController {
 
-    @Inject
     private final QuestionServices questionService;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
@@ -86,7 +84,7 @@ public class QuestionController {
      * @return {@link HttpResponse<QuestionResponseDTO>}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<QuestionResponseDTO>> createAQuestion(@Body @Valid QuestionCreateDTO question, HttpRequest<QuestionCreateDTO> request) {
 
         return Single.fromCallable(() -> questionService.saveQuestion(toModel(question)))
@@ -150,7 +148,7 @@ public class QuestionController {
      * @param question, {@link QuestionUpdateDTO}
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<QuestionResponseDTO>> update(@Body @Valid QuestionUpdateDTO question, HttpRequest<QuestionCreateDTO> request) {
         if (question == null) {
             return Single.just(HttpResponse.ok());

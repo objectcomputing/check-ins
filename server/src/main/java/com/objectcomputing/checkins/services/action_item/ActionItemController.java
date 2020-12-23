@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -11,9 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
