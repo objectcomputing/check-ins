@@ -16,3 +16,4 @@ out/
 node_modules
 .run
 run.bat
+*.sh
