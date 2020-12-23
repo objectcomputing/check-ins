@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class CheckInControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture {
 
     @Inject
@@ -434,7 +433,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Unable to find checkin record with id %s", checkIn.getId()), error);
+        assertEquals(String.format("Checkin %s doesn't exist", checkIn.getId()), error);
         assertEquals(request.getPath(), href);
 
     }
