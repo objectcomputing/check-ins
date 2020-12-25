@@ -216,14 +216,14 @@ function Menu() {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow">
-                    <MenuItem onClick={handleToggle}>
+<!--                     <MenuItem onClick={handleToggle}>
                       <Link style={{ textDecoration: "none" }} to="/profile">
                         Profile
                       </Link>
                     </MenuItem>
                     <MenuItem onClick={logout}>
                       <a style={{textDecoration:"none"}} href="/logout">Logout</a>
-                    </MenuItem>
+                    </MenuItem> -->
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
