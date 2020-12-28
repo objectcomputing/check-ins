@@ -1,9 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
-import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
-import com.objectcomputing.checkins.services.validate.crud.CRUDValidatorFactory;
 
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -19,24 +16,17 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     private final ActionItemRepository actionItemRepo;
     private final CRUDValidator<ActionItem> crudValidator;
-    private final ArgumentsValidation argumentsValidation;
-    private final PermissionsValidation permissionsValidation;
 
     public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
-                                  CRUDValidator<ActionItem> crudValidator, ArgumentsValidation argumentsValidation,
-                                  PermissionsValidation permissionsValidation) {
+                                  CRUDValidator<ActionItem> crudValidator) {
         this.actionItemRepo = actionItemRepo;
         this.crudValidator = crudValidator;
-        this.argumentsValidation = argumentsValidation;
-        this.permissionsValidation = permissionsValidation;
     }
 
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-//        argumentsValidation.validateActionItemArgumentsForSave(actionItem);
         crudValidator.validateArgumentsCreate(actionItem);
-//        permissionsValidation.validateActionItemPermissions(actionItem);
         crudValidator.validatePermissionsCreate(actionItem);
 
         double lastDisplayOrder = 0;
@@ -58,9 +48,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-//        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
         crudValidator.validateArgumentsRead(actionItemResult);
-        if (actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
+        if (actionItemResult != null) crudValidator.validatePermissionsRead(actionItemResult);
 
         return actionItemResult;
 
@@ -69,9 +58,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-//        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
         crudValidator.validateArgumentsUpdate(actionItem);
-        permissionsValidation.validateActionItemPermissionsForUpdate(actionItem);
+        crudValidator.validatePermissionsUpdate(actionItem);
 
         actionItemRet = actionItemRepo.update(actionItem);
 
@@ -81,7 +69,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
 
-        permissionsValidation.validateActionItemPermissionsForFindByFields(checkinid, createdbyid);
+        crudValidator.validatePermissionsFindByFields(checkinid, createdbyid);
 
         Set<ActionItem> actionItems = new LinkedHashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
@@ -93,9 +81,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public void delete(@NotNull UUID id) {
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-//        argumentsValidation.validateActionItemArgumentsForDelete(id);
         crudValidator.validateArgumentsDelete(actionItemResult);
-        permissionsValidation.validateActionItemPermissionsForDelete(id);
+        crudValidator.validatePermissionsDelete(actionItemResult);
 
         actionItemRepo.deleteById(id);
 
