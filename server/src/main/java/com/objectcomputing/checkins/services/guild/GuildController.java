@@ -67,7 +67,7 @@ public class GuildController {
      * @param guild, {@link GuildCreateDTO}
      * @return {@link HttpResponse<Guild>}
      */
-    @Post("/")
+    @Post()
     public Single<HttpResponse<Guild>> createAGuild(@Body @Valid GuildCreateDTO guild,
                                                              HttpRequest<GuildCreateDTO> request) {
         return Single.fromCallable(() -> guildService.save(new Guild(guild.getName(), guild.getDescription())))
@@ -127,7 +127,7 @@ public class GuildController {
      * @param guild, {@link Guild}
      * @return {@link HttpResponse<Guild>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<Guild>> update(@Body @Valid Guild guild, HttpRequest<Guild> request) {
         if (guild == null) {
             return Single.just(HttpResponse.ok());

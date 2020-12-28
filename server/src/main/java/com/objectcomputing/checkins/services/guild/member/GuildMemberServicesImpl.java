@@ -75,10 +75,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     }
 
     public Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead) {
-        Set<GuildMember> guildMembers = new HashSet<>(
-                guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead));
-
-        return guildMembers;
+        return guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead);
     }
 
 }

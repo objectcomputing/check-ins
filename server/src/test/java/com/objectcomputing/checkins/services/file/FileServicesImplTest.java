@@ -15,11 +15,9 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.security.authentication.Authentication;
-import io.micronaut.security.utils.SecurityService;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
@@ -94,9 +92,6 @@ public class FileServicesImplTest {
     private GoogleApiAccess mockGoogleApiAccess;
 
     @Mock
-    private SecurityService securityService;
-
-    @Mock
     private CurrentUserServices currentUserServices;
 
     @Mock
@@ -141,12 +136,10 @@ public class FileServicesImplTest {
         Mockito.reset(checkInServices);
         Mockito.reset(checkinDocumentServices);
         Mockito.reset(mockGoogleApiAccess);
-        Mockito.reset(securityService);
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
         Mockito.reset(completedFileUpload);
 
-        when(securityService.getAuthentication()).thenReturn(Optional.of(authentication));
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
@@ -163,7 +156,7 @@ public class FileServicesImplTest {
         mockFiles.add(file1);
         fileList.setFiles(mockFiles);
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
@@ -203,6 +196,7 @@ public class FileServicesImplTest {
         when(get.execute()).thenReturn(file);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
@@ -217,9 +211,9 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() throws IOException {
+    void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() {
         UUID testCheckinId = UUID.randomUUID();
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(null);
 
@@ -233,13 +227,14 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testFindByCheckinIdWhenNoDocsAreUploadedForCheckinId() throws IOException {
+    void testFindByCheckinIdWhenNoDocsAreUploadedForCheckinId() {
 
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(Collections.emptySet());
 
@@ -253,11 +248,12 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testFindByCheckinIdForUnauthorizedUser() throws IOException {
+    void testFindByCheckinIdForUnauthorizedUser() {
         UUID testCheckinId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -270,8 +266,8 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testFindFilesDriveCantConnect() throws IOException {
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+    void testFindFilesDriveCantConnect() {
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -284,7 +280,7 @@ public class FileServicesImplTest {
     void testFindAllFilesThrowsGoogleJsonResponseException() throws IOException {
 
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
@@ -305,7 +301,7 @@ public class FileServicesImplTest {
         testCheckinDocument.add(testCd);
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
@@ -333,6 +329,7 @@ public class FileServicesImplTest {
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -361,7 +358,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
 
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -400,13 +397,14 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testDownloadFilesUnauthorizedUser() throws IOException {
+    void testDownloadFilesUnauthorizedUser() {
         String testUploadDocId = "some.test.id";
         UUID testCheckinId = UUID.randomUUID();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -419,12 +417,13 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testDownloadFilesDriveCantConnect() throws IOException {
+    void testDownloadFilesDriveCantConnect() {
         String testUploadDocId = "some.test.id";
         UUID testMemberProfileId = UUID.randomUUID();
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
@@ -442,7 +441,7 @@ public class FileServicesImplTest {
         UUID testMemberProfileId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(testUploadDocId)).thenReturn(testCd);
         when(checkInServices.read(any())).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
@@ -470,6 +469,7 @@ public class FileServicesImplTest {
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -490,7 +490,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -506,7 +506,7 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testDeleteFileWhenCheckinDocDoesntExist() throws IOException {
+    void testDeleteFileWhenCheckinDocDoesntExist() {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(null);
@@ -529,6 +529,7 @@ public class FileServicesImplTest {
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -545,7 +546,7 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testDeleteFileDriveCantConnect() throws IOException {
+    void testDeleteFileDriveCantConnect() {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
@@ -553,6 +554,7 @@ public class FileServicesImplTest {
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
@@ -572,7 +574,7 @@ public class FileServicesImplTest {
         String uploadDocId = "Some.Upload.Doc.Id";
         UUID testCheckinId = UUID.randomUUID();
         GoogleJsonResponseException testException = GoogleJsonResponseExceptionFactoryTesting.newMock(jsonFactory, 404, null);
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkinDocumentServices.getFindByUploadDocId(uploadDocId)).thenReturn(testCd);
         when(testCd.getCheckinsId()).thenReturn(testCheckinId);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -624,6 +626,7 @@ public class FileServicesImplTest {
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
@@ -678,6 +681,7 @@ public class FileServicesImplTest {
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(false);
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getName()).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
@@ -722,7 +726,7 @@ public class FileServicesImplTest {
         com.google.api.services.drive.model.File fileFromDrive = new com.google.api.services.drive.model.File();
         fileFromDrive.setName("testFile");
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -786,6 +790,7 @@ public class FileServicesImplTest {
 
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -806,6 +811,7 @@ public class FileServicesImplTest {
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(testCheckIn.isCompleted()).thenReturn(true);
@@ -825,7 +831,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
@@ -849,7 +855,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberId = UUID.randomUUID();
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 
@@ -877,7 +883,7 @@ public class FileServicesImplTest {
         String memberName = "testName";
         UUID testCheckinId = UUID.randomUUID();
 
-        when(securityService.hasRole(RoleType.Constants.ADMIN_ROLE)).thenReturn(true);
+        when(currentUserServices.isAdmin()).thenReturn(true);
         when(fileToUpload.getFilename()).thenReturn("testFile");
         when(fileToUpload.getInputStream()).thenReturn(mockInputStream);
 

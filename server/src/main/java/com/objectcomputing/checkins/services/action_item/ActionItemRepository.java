@@ -17,11 +17,11 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface ActionItemRepository extends CrudRepository<ActionItem, UUID> {
 
-    @Query("SELECT * " +
+    @Query(value = "SELECT * " +
             "FROM action_items item " +
             "WHERE (:checkinId IS NULL OR item.checkinid = :checkinId) " +
             "AND (:createdById IS NULL OR item.createdbyid = :createdById) " +
-            "ORDER BY priority")
+            "ORDER BY priority", nativeQuery = true)
     List<ActionItem> search(@Nullable String checkinId, @Nullable String createdById);
 
     @Override

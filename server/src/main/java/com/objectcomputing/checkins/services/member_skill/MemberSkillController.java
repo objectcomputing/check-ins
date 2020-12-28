@@ -107,7 +107,7 @@ public class MemberSkillController {
      * @return {@link HttpResponse< MemberSkill >}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
         return Single.fromCallable(() -> memberSkillsService.save(new MemberSkill(memberSkill.getMemberid(),
@@ -176,7 +176,7 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkill}
      * @return {@link MemberSkill}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<MemberSkill>> update(@Body @Valid MemberSkill memberSkill, HttpRequest<Skill> request) {
 
         return Single.fromCallable(() -> memberSkillsService.update(memberSkill))
@@ -186,9 +186,5 @@ public class MemberSkillController {
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedMemberSkill.getId()))))
                         .body(updatedMemberSkill))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
-
     }
-
-
 }

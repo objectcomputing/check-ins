@@ -47,7 +47,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public MemberProfile getById(UUID id) {
+    public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
             throw new NotFoundException("No member profile for id");

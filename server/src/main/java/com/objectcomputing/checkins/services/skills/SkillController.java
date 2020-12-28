@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -77,7 +76,7 @@ public class SkillController {
      * @return {@link HttpResponse< Skill >}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
 
         return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(),skill.isPending(),skill.getDescription(),skill.isExtraneous())))
@@ -106,7 +105,6 @@ public class SkillController {
         }).observeOn(Schedulers.from(eventLoopGroup)).map(skills -> {
             return(HttpResponse<Skill>) HttpResponse.ok(skills);
         }).subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
     /**
@@ -125,16 +123,15 @@ public class SkillController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skills -> (HttpResponse<Set<Skill>>) HttpResponse.ok(skills))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
     /**
      * Update the pending status of a skill.
      *
      * @param skill, {@link Skill}
-     * @return {@link HttpResponse< Skill >}
+     * @return {@link HttpResponse<Skill>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<Skill> request) {
 
         return Single.fromCallable(() -> skillServices.update(skill))
@@ -144,8 +141,6 @@ public class SkillController {
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId()))))
                         .body(updatedSkill))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
-
     }
 
     /**
@@ -154,7 +149,6 @@ public class SkillController {
      * @param id, id of {@link Skill} to delete
      */
     @Delete("/{id}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteSkill(@NotNull UUID id) {
         skillServices.delete(id);
         return HttpResponse

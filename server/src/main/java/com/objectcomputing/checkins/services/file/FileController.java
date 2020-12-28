@@ -10,7 +10,7 @@ import io.micronaut.http.hateoas.Link;
 import io.micronaut.http.multipart.CompletedFileUpload;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecuredAnnotationRule;
+import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.validation.Validated;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutorService;
 @Validated
 @Controller("/services/file")
 @Tag(name = "file")
-@Secured(SecuredAnnotationRule.IS_AUTHENTICATED)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class FileController {
 
     private final FileServices fileServices;

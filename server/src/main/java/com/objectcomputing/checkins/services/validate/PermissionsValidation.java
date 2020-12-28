@@ -8,9 +8,6 @@ import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.security.utils.SecurityService;
-import io.micronaut.security.authentication.Authentication;
 
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -23,16 +20,13 @@ public class PermissionsValidation {
     private final ActionItemRepository actionItemRepo;
     private final CheckInServices checkInServices;
     private final MemberProfileServices memberServices;
-    private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
 
     public PermissionsValidation(ActionItemRepository actionItemRepo, CheckInServices checkInServices,
-                                 MemberProfileServices memberServices, SecurityService securityService,
-                                 CurrentUserServices currentUserServices) {
+                                 MemberProfileServices memberServices, CurrentUserServices currentUserServices) {
         this.actionItemRepo = actionItemRepo;
         this.checkInServices = checkInServices;
         this.memberServices = memberServices;
-        this.securityService = securityService;
         this.currentUserServices = currentUserServices;
     }
 
@@ -48,7 +42,6 @@ public class PermissionsValidation {
         CurrentUserInfo currentUserInfo = new CurrentUserInfo();
 
         final UUID checkinId = actionItem.getCheckinid();
-        final UUID createdById = actionItem.getCreatedbyid();
         CheckIn checkinRecord = checkInServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
@@ -140,17 +133,13 @@ public class PermissionsValidation {
 
     }
 
-    @Singleton
-    public class CurrentUserInfo {
-        public String workEmail;
-        public MemberProfile currentUser;
-        public Boolean isAdmin;
+    class CurrentUserInfo {
+        MemberProfile currentUser;
+        Boolean isAdmin;
 
         public CurrentUserInfo() {
-            Authentication authentication = securityService != null ? securityService.getAuthentication().orElse(null) : null;
-            this.workEmail = authentication != null ? authentication.getAttributes().get("email").toString() : null;
-            this.currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-            this.isAdmin = securityService != null && securityService.hasRole(RoleType.Constants.ADMIN_ROLE);
+            this.currentUser = currentUserServices.getCurrentUser();
+            this.isAdmin = currentUserServices.isAdmin();
         }
 
     }
