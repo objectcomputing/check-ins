@@ -183,8 +183,8 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        final UUID checkinId = actionItem != null ? actionItem.getCheckinid() : null;
-        final UUID createdById = actionItem != null ? actionItem.getCreatedbyid() : null;
+        final UUID checkinId = actionItem.getCheckinid();
+        final UUID createdById = actionItem.getCreatedbyid();
 
         CheckIn checkinRecord = checkInServices.read(checkinId);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
