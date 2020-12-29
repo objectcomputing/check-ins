@@ -6,9 +6,9 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -110,9 +110,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         return agendaItemRet;
     }
 
-
     @Override
-    public Set<AgendaItem> findByFields(UUID checkinid, UUID createbyid) {
+    public Set<AgendaItem> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
@@ -122,15 +121,13 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElse(null);
+            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
         } else {
             validate(!isAdmin, "User is unauthorized to do this operation");
         }
 
-        Set<AgendaItem> agendaItem = new HashSet<>(agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid)));
-
-        return agendaItem;
+        return agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
     @Override
