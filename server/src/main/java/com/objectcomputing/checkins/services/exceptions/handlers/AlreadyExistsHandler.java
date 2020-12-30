@@ -21,7 +21,7 @@ public class AlreadyExistsHandler implements ExceptionHandler<AlreadyExistsExcep
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
-        return HttpResponse.<JsonError>unauthorized().body(error);
+        return HttpResponse.<JsonError>badRequest().body(error);
     }
 
 }
