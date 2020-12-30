@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.exceptions.AlreadyExistsException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
@@ -21,7 +22,8 @@ public class AlreadyExistsHandler implements ExceptionHandler<AlreadyExistsExcep
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
-        return HttpResponse.<JsonError>badRequest().body(error);
+        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
+
     }
 
 }
