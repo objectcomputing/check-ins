@@ -43,22 +43,22 @@ public class SkillController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = SkillBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
+//    @Error(exception = SkillBadArgException.class)
+//    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
+//        JsonError error = new JsonError(e.getMessage())
+//                .link(Link.SELF, Link.of(request.getUri()));
+//
+//        return HttpResponse.<JsonError>badRequest()
+//                .body(error);
+//    }
 
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = SkillAlreadyExistsException.class)
-    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, SkillAlreadyExistsException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
-    }
+//    @Error(exception = SkillAlreadyExistsException.class)
+//    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, SkillAlreadyExistsException e) {
+//        JsonError error = new JsonError(e.getMessage())
+//                .link(Link.SELF, Link.of(request.getUri()));
+//
+//        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
+//    }
 
     @Error(exception = SkillNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, SkillNotFoundException e) {
