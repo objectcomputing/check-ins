@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.questions;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -71,7 +72,7 @@ public class QuestionController {
         return Single.fromCallable(() -> {
             Question found = questionService.findById(id);
             if (found == null) {
-                throw new QuestionNotFoundException("No question for UUID");
+                throw new NotFoundException("No question for UUID");
             }
             return found;
         })
