@@ -43,12 +43,14 @@ micronaut:
     oauth2.clients.keycloak:
       grant-type: password
       client-id: check-ins-spike-client
-      client-secret: 0070b8df-76b7-41ab-8a48-defc5c22b5e7
+      client-secret: 3e13ef3f-457f-45f5-9bc4-7bdbb706e45c
       authorization:
         url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/auth
       token:
         url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/token
         auth-method: client-secret-post
+#      openid:
+#        issuer: http://localhost:8180/auth/realms/check-ins-spike
 ---
 datasources:
   default:
