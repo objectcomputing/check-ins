@@ -22,7 +22,6 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     public Role save(@NotNull Role role) {
-        Role roleRet = null;
         final UUID memberId = role.getMemberid();
         final RoleType roleType = role.getRole();
 
@@ -36,8 +35,7 @@ public class RoleServicesImpl implements RoleServices {
             throw new BadArgException(String.format("Member %s already has role %s", memberId, roleType));
         }
 
-        roleRet = roleRepo.save(role);
-        return roleRet;
+        return roleRepo.save(role);
     }
 
     public Role read(@NotNull UUID id) {
@@ -45,7 +43,6 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     public Role update(@NotNull Role role) {
-        Role roleRet = null;
         final UUID id = role.getId();
         final UUID memberId = role.getMemberid();
         final RoleType roleType = role.getRole();
@@ -58,8 +55,7 @@ public class RoleServicesImpl implements RoleServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         }
 
-        roleRet = roleRepo.update(role);
-        return roleRet;
+        return roleRepo.update(role);
     }
 
     public Set<Role> findByFields(RoleType role, UUID memberid) {
