@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -16,14 +19,14 @@ public class GuildServicesImpl implements GuildServices {
         this.guildsRepo = guildsRepo;
     }
 
-    public Guild save(Guild guild) {
+    public Guild save(@NotNull Guild guild) {
         Guild newGuild = null;
         if (guild != null) {
             if (guild.getId() != null) {
-                throw new GuildBadArgException(String.format("Found unexpected id %s, please try updating instead",
+                throw new BadArgException(String.format("Found unexpected id %s, please try updating instead",
                         guild.getId()));
             } else if (guildsRepo.findByName(guild.getName()).isPresent()) {
-                throw new GuildBadArgException(String.format("Guild with name %s already exists", guild.getName()));
+                throw new BadArgException(String.format("Guild with name %s already exists", guild.getName()));
             } else {
                 newGuild = guildsRepo.save(guild);
             }
@@ -32,17 +35,17 @@ public class GuildServicesImpl implements GuildServices {
         return newGuild;
     }
 
-    public Guild read(UUID guildId) {
+    public Guild read(@NotNull UUID guildId) {
         return guildId != null ? guildsRepo.findById(guildId).orElse(null) : null;
     }
 
-    public Guild update(Guild guild) {
+    public Guild update(@NotNull Guild guild) {
         Guild newGuild = null;
         if (guild != null) {
             if (guild.getId() != null && guildsRepo.findById(guild.getId()).isPresent()) {
                 newGuild = guildsRepo.update(guild);
             } else {
-                throw new GuildBadArgException(String.format("Guild %s does not exist, can't update.", guild.getId()));
+                throw new BadArgException(String.format("Guild %s does not exist, can't update.", guild.getId()));
             }
         }
 
