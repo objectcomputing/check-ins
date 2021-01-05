@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -31,7 +32,7 @@ public class SkillServicesImpl implements SkillServices {
                 throw new BadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
                         skill.getId()));
             } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new SkillAlreadyExistsException(String.format("Skill %s already exists. ", skill.getName()));
+                throw new AlreadyExistsException(String.format("Skill %s already exists. ", skill.getName()));
             }
 
             newSkill = skillRepository.save(skill);
