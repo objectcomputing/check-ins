@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.skills;
 
+import com.objectcomputing.checkins.services.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
@@ -27,10 +29,10 @@ public class SkillServicesImpl implements SkillServices {
         if (skill != null) {
 
             if (skill.getId() != null) {
-                throw new SkillBadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
+                throw new BadArgException(String.format("Found unexpected id %s for skill, please try updating instead.",
                         skill.getId()));
             } else if (skillRepository.findByName(skill.getName()).isPresent()) {
-                throw new SkillAlreadyExistsException(String.format("Skill %s already exists. ",  skill.getName()));
+                throw new AlreadyExistsException(String.format("Skill %s already exists. ", skill.getName()));
             }
 
             newSkill = skillRepository.save(skill);
@@ -72,16 +74,17 @@ public class SkillServicesImpl implements SkillServices {
 
     }
 
-    public Skill update(Skill skill) {
+    public Skill update(@NotNull Skill skill) {
 
         Skill newSkill = null;
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        }
 
-        if (skill != null) {
-            if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
-                newSkill = skillRepository.update(skill);
-            } else {
-                throw new SkillBadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
-            }
+        if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
+            newSkill = skillRepository.update(skill);
+        } else {
+            throw new BadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
         }
 
         return newSkill;
