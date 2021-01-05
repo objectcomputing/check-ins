@@ -9,16 +9,10 @@ import {
   AppBar,
   Avatar,
   Button,
-  ClickAwayListener,
   CssBaseline,
   Drawer,
-  Grow,
   Hidden,
   IconButton,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
   Toolbar,
 } from "@material-ui/core";
 
@@ -77,14 +71,6 @@ function Menu() {
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
   };
 
   // return focus to the button when we transitioned from !open -> open
@@ -163,11 +149,6 @@ function Menu() {
     </div>
   );
 
-  const logout = () => {
-    window.location.reload();
-    sessionStorage.removeItem("csrf");
-  };
-
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />
@@ -189,6 +170,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
+        <Link style={{ textDecoration: "none" }} to="/profile">
           <Avatar
             src={getAvatarURL(workEmail)}
             style={{
@@ -196,40 +178,9 @@ function Menu() {
               right: "5px",
               top: "10px",
             }}
-          />
+           />
+         </Link>
         </div>
-        <Popper
-          open={open}
-          anchorEl={anchorRef.current}
-          transition
-          disablePortal
-          style={{ left: "unset", margin: "0 auto", right: 0, width: "100px" }}
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList autoFocusItem={open} id="menu-list-grow">
-                    <MenuItem onClick={handleToggle}>
-                      <Link style={{ textDecoration: "none" }} to="/profile">
-                        Profile
-                      </Link>
-                    </MenuItem>
-                    <MenuItem onClick={logout}>
-                      <a style={{textDecoration:"none"}} href="/logout">Logout</a>
-                    </MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">
