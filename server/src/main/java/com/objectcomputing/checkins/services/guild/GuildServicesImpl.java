@@ -21,7 +21,7 @@ public class GuildServicesImpl implements GuildServices {
 
     public Guild save(@NotNull Guild guild) {
         Guild newGuild = null;
-        if (guild != null) {
+
             if (guild.getId() != null) {
                 throw new BadArgException(String.format("Found unexpected id %s, please try updating instead",
                         guild.getId()));
@@ -30,7 +30,6 @@ public class GuildServicesImpl implements GuildServices {
             } else {
                 newGuild = guildsRepo.save(guild);
             }
-        }
 
         return newGuild;
     }
