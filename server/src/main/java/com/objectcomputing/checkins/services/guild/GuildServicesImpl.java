@@ -36,18 +36,16 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public Guild read(@NotNull UUID guildId) {
-        return guildId != null ? guildsRepo.findById(guildId).orElse(null) : null;
+        return guildsRepo.findById(guildId).orElse(null);
     }
 
     public Guild update(@NotNull Guild guild) {
         Guild newGuild = null;
-        if (guild != null) {
             if (guild.getId() != null && guildsRepo.findById(guild.getId()).isPresent()) {
                 newGuild = guildsRepo.update(guild);
             } else {
                 throw new BadArgException(String.format("Guild %s does not exist, can't update.", guild.getId()));
             }
-        }
 
         return newGuild;
     }
