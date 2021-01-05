@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.skills.combineskills;
 
 import com.objectcomputing.checkins.services.skills.Skill;
-import com.objectcomputing.checkins.services.skills.SkillServices;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -42,10 +41,10 @@ public class CombineSkillController {
      * Create and save a new skill from similar skills found.
      *
      * @param skill, {@link CombineSkillsDTO}
-     * @return {@link HttpResponse< Skill >}
+     * @return {@link HttpResponse<Skill>}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<Skill>> createNewSkillFromList(@Body @Valid CombineSkillsDTO skill, HttpRequest<CombineSkillsDTO> request) {
 
         return Single.fromCallable(() -> combineSkillServices.combine(skill))

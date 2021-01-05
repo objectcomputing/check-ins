@@ -69,7 +69,7 @@ public class GuildMemberController {
      * @param guildMember, {@link GuildMemberCreateDTO}
      * @return {@link HttpResponse <GuildMember>}
      */
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<GuildMember>> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
                                                            HttpRequest<GuildMemberCreateDTO> request) {
         return Single.fromCallable(() -> guildMemberServices.save(new GuildMember(guildMember.getGuildid(),guildMember.getMemberid(), guildMember.isLead())))
@@ -90,7 +90,7 @@ public class GuildMemberController {
      * @param guildMember, {@link GuildMember}
      * @return {@link HttpResponse<GuildMember>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<GuildMember>> update(@Body @Valid GuildMember guildMember, HttpRequest<GuildMember> request) {
         if (guildMember == null) {
             return Single.just(HttpResponse.ok());
