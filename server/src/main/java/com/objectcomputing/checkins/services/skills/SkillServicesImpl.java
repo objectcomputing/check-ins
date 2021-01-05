@@ -74,16 +74,17 @@ public class SkillServicesImpl implements SkillServices {
 
     }
 
-    public Skill update(Skill skill) {
+    public Skill update(@NotNull Skill skill) {
 
         Skill newSkill = null;
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        }
 
-        if (skill != null) {
-            if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
-                newSkill = skillRepository.update(skill);
-            } else {
-                throw new BadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
-            }
+        if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
+            newSkill = skillRepository.update(skill);
+        } else {
+            throw new BadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
         }
 
         return newSkill;

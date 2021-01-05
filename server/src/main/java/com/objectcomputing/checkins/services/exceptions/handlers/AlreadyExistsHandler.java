@@ -23,7 +23,6 @@ public class AlreadyExistsHandler implements ExceptionHandler<AlreadyExistsExcep
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
-
     }
 
 }
