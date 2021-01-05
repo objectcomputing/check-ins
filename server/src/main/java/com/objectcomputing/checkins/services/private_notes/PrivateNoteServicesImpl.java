@@ -34,7 +34,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote save(@NotNull PrivateNote privateNote) {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 
@@ -44,11 +44,11 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
-        validate(checkinId == null || createdById == null, "Invalid checkin note %s", privateNote);
+        validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate(checkinRecord.equals(null), "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById).equals(null), "Member %s doesn't exist", createdById);
-        validate((isAdmin && !isPdl) || isCompleted , "User1 is unauthorized to do this operation");
-        validate(!currentUser.getId().equals(createdById), "User2 is unauthorized to do this operation");
+        validate((isAdmin && !isPdl) || isCompleted , "User is unauthorized to do this operation");
+        validate(!currentUser.getId().equals(createdById), "User is unauthorized to do this operation");
         validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User3 is unauthorized to do this operation");
         return privateNoteRepository.save(privateNote);
     }
@@ -56,7 +56,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote read(@NotNull UUID id) {
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
         validate(privateNoteResult == null, "Invalid private note id %s", id);
@@ -70,7 +70,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         PrivateNote privateNoteRet = null;
         String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 

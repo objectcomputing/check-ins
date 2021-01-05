@@ -225,7 +225,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User1 is unauthorized to do this operation", error);
+        assertEquals("User is unauthorized to do this operation", error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
@@ -250,7 +250,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User2 is unauthorized to do this operation", error);
+        assertEquals("User is unauthorized to do this operation", error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
@@ -274,7 +274,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User1 is unauthorized to do this operation", error);
+        assertEquals("User is unauthorized to do this operation", error);
 
     }
 
@@ -298,7 +298,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("User1 is unauthorized to do this operation", error);
+        assertEquals("User is unauthorized to do this operation", error);
 
     }
 
