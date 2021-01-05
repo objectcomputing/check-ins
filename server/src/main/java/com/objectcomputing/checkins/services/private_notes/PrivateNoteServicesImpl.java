@@ -33,7 +33,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     @Override
     public PrivateNote save(@NotNull PrivateNote privateNote) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
@@ -55,7 +54,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     @Override
     public PrivateNote read(@NotNull UUID id) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
@@ -69,7 +67,6 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     @Override
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         PrivateNote privateNoteRet = null;
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
