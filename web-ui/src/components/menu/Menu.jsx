@@ -189,6 +189,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
+        <Link style={{ textDecoration: "none" }} to="/profile">
           <Avatar
             src={getAvatarURL(workEmail)}
             style={{
@@ -196,40 +197,41 @@ function Menu() {
               right: "5px",
               top: "10px",
             }}
-          />
+           />
+         </Link>
         </div>
-        <Popper
-          open={open}
-          anchorEl={anchorRef.current}
-          transition
-          disablePortal
-          style={{ left: "unset", margin: "0 auto", right: 0, width: "100px" }}
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin:
-                  placement === "bottom" ? "center top" : "center bottom",
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList autoFocusItem={open} id="menu-list-grow">
-<!--                     <MenuItem onClick={handleToggle}>
-                      <Link style={{ textDecoration: "none" }} to="/profile">
-                        Profile
-                      </Link>
-                    </MenuItem>
-                    <MenuItem onClick={logout}>
-                      <a style={{textDecoration:"none"}} href="/logout">Logout</a>
-                    </MenuItem> -->
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
+{/*         <Popper */}
+{/*           open={open} */}
+{/*           anchorEl={anchorRef.current} */}
+{/*           transition */}
+{/*           disablePortal */}
+{/*           style={{ left: "unset", margin: "0 auto", right: 0, width: "100px" }} */}
+{/*         > */}
+{/*           {({ TransitionProps, placement }) => ( */}
+{/*             <Grow */}
+{/*               {...TransitionProps} */}
+{/*               style={{ */}
+{/*                 transformOrigin: */}
+{/*                   placement === "bottom" ? "center top" : "center bottom", */}
+{/*               }} */}
+{/*             > */}
+{/*               <Paper> */}
+{/*                 <ClickAwayListener onClickAway={handleClose}> */}
+{/*                   <MenuList autoFocusItem={open} id="menu-list-grow"> */}
+{/*                      <MenuItem onClick={handleToggle}> */}
+{/*                       <Link style={{ textDecoration: "none" }} to="/profile"> */}
+{/*                         Profile */}
+{/*                       </Link> */}
+{/*                     </MenuItem> */}
+{/*                     <MenuItem onClick={logout}> */}
+{/*                       <a style={{textDecoration:"none"}} href="/logout">Logout</a> */}
+{/*                     </MenuItem> */}
+{/*                   </MenuList> */}
+{/*                 </ClickAwayListener> */}
+{/*               </Paper> */}
+{/*             </Grow> */}
+{/*           )} */}
+{/*         </Popper> */}
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         <Hidden smUp implementation="css">
