@@ -44,15 +44,6 @@ public class TeamController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = TeamBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
     @Error(exception = TeamNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, TeamNotFoundException e) {
         JsonError error = new JsonError(e.getMessage())
@@ -66,10 +57,9 @@ public class TeamController {
      * Create and save a new team
      *
      * @param team, {@link TeamCreateDTO}
-     * @return {@link HttpResponse<Team>}
+     * @return {@link HttpResponse<TeamResponseDTO>}
      */
-
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
 
         return Single.fromCallable(() -> teamService.save(team))
@@ -118,7 +108,7 @@ public class TeamController {
      * @param team, {@link TeamUpdateDTO}
      * @return {@link HttpResponse< TeamResponseDTO >}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
         return Single.fromCallable(() -> teamService.update(team))
                 .observeOn(Schedulers.from(eventLoopGroup))

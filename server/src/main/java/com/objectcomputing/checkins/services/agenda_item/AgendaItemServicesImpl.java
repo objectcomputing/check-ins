@@ -5,12 +5,10 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.security.utils.SecurityService;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,25 +20,21 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     private final CheckInRepository checkinRepo;
     private final AgendaItemRepository agendaItemRepository;
     private final MemberProfileRepository memberRepo;
-    private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
 
     public AgendaItemServicesImpl(CheckInRepository checkinRepo, AgendaItemRepository agendaItemRepository,
-                                   MemberProfileRepository memberRepo, SecurityService securityService,
-                                   CurrentUserServices currentUserServices) {
+                                   MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
         this.agendaItemRepository = agendaItemRepository;
         this.memberRepo = memberRepo;
-        this.securityService = securityService;
         this.currentUserServices = currentUserServices;
     }
 
     @Override
     public AgendaItem save(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
 
         if (agendaItem != null) {
             final UUID checkinId = agendaItem.getCheckinid();
@@ -73,9 +67,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     @Override
     public AgendaItem read(@NotNull UUID id) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
         AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
         validate(agendaItemResult == null, "Invalid agenda item id %s", id);
         if (!isAdmin) {
@@ -92,9 +85,8 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     @Override
     public AgendaItem update(AgendaItem agendaItem) {
         AgendaItem agendaItemRet = null;
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
 
         if (agendaItem != null) {
             final UUID id = agendaItem.getId();
@@ -118,12 +110,10 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         return agendaItemRet;
     }
 
-
     @Override
-    public Set<AgendaItem> findByFields(UUID checkinid, UUID createbyid) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+    public Set<AgendaItem> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
             CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
@@ -131,22 +121,19 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
             validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
         } else if (createbyid != null) {
-            MemberProfile memberRecord = memberRepo.findById(createbyid).orElse(null);
+            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
         } else {
             validate(!isAdmin, "User is unauthorized to do this operation");
         }
 
-        Set<AgendaItem> agendaItem = new HashSet<>(agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid)));
-
-        return agendaItem;
+        return agendaItemRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
     @Override
     public void delete(@NotNull UUID id) {
-        String workEmail = securityService != null ? securityService.getAuthentication().get().getAttributes().get("email").toString() : null;
-        MemberProfile currentUser = workEmail != null ? currentUserServices.findOrSaveUser(null, workEmail) : null;
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
         AgendaItem agendaItemResult = agendaItemRepository.findById(id).orElse(null);
         validate(agendaItemResult == null, "Invalid agenda item id %s", id);
 
