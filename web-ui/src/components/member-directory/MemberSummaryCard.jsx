@@ -18,13 +18,13 @@ const MemberSummaryCard = ({ member, index }) => {
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
+  const [supervisorName, setSupervisorName] = useState();
+
   const [open, setOpen] = useState(false);
-
-  const [supervisor, setSupervisor] = useState();
-
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
+
   // Get Supervisor's name
   useEffect(() => {
     async function getSupervisorName() {
@@ -32,26 +32,13 @@ const MemberSummaryCard = ({ member, index }) => {
         let res = await getMember(supervisorid, csrf);
         let supervisorProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setSupervisor(supervisorProfile ? supervisorProfile.name : "");
+        setSupervisorName(supervisorProfile ? supervisorProfile.name : "");
       }
     }
     if (csrf) {
       getSupervisorName();
     }
   }, [csrf, supervisorid]);
-
-  {/*
-  useEffect (() => {
-    async function getSupervisorName() {
-      if (currentMember.supervisorid) {
-        setSupervisor(memberProfiles.find((memberProfile) => memberProfile.id === currentMember.supervisorid) || "");
-      }
-    }
-    if (csrf) {
-      getSupervisorName();
-     }
-  }, [csrf, currentMember]);
-  */}
 
   return (
     <Card className="member-card">
@@ -72,7 +59,7 @@ const MemberSummaryCard = ({ member, index }) => {
             <br />
             {location}
              <br />
-            {supervisor}
+            {supervisorName}
           </div>
         }
         title={name}

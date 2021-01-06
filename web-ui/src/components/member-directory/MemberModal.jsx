@@ -19,7 +19,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { csrf, memberProfiles } = state;
   const [editedMember, setMember] = useState(member);
   const [pdls, setPdls] = useState([]);
-  //const [supervisor, setSupervisor] = useState();
 
   const getPdls = async () => {
     let res = await getAllPDLs(csrf);
@@ -29,20 +28,12 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     setPdls(pdlArray);
   };
 
-  // Get Supervisor's name
-  {/* useEffect(() => {
-    if (member.supervisorid) {
-      setSupervisor(memberProfiles.find((memberProfile) => memberProfile.id === member.supervisorid));
-    }
-   }, [csrf, member.supervisorid]);  */}
-
-   const onSupervisorChange = (event, newValue) => {
-       //supervisor = {memberProfiles.find((memberProfile) => memberProfile.id === newValue.id) || ""}
-       setMember({
-         ...member,
-         supervisorid: newValue ? newValue.id : "",
-       });
-     };
+  const onSupervisorChange = (event, newValue) => {
+    setMember({
+      ...member,
+        supervisorid: newValue ? newValue.id : "",
+      });
+   };
 
   useEffect(() => {
     if (open && csrf) {
@@ -135,35 +126,35 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
               />
            )}
          />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            margin="normal"
-            id="member-datepicker-dialog"
-            required
-            label="Start Date"
-            format="MM/dd/yyyy"
-            value={date}
-            onChange={(e) => {
-              setMember({ ...editedMember, startDate: e });
-            }}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
-          />
-        </MuiPickersUtilsProvider>
-        <div className="member-modal-actions fullWidth">
-          <Button onClick={onClose} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={async () => {
-              onSave(editedMember);
-              await updateMember(editedMember);
-            }}
-            color="primary"
-          >
-            Save Member
-          </Button>
+         <MuiPickersUtilsProvider utils={DateFnsUtils}>
+           <KeyboardDatePicker
+             margin="normal"
+             id="member-datepicker-dialog"
+             required
+             label="Start Date"
+             format="MM/dd/yyyy"
+             value={date}
+             onChange={(e) => {
+               setMember({ ...editedMember, startDate: e });
+             }}
+             KeyboardButtonProps={{
+               "aria-label": "change date",
+             }}
+           />
+         </MuiPickersUtilsProvider>
+         <div className="member-modal-actions fullWidth">
+         <Button onClick={onClose} color="secondary">
+           Cancel
+         </Button>
+         <Button
+           onClick={async () => {
+             onSave(editedMember);
+             await updateMember(editedMember);
+           }}
+           color="primary"
+         >
+           Save Member
+         </Button>
         </div>
       </div>
     </Modal>

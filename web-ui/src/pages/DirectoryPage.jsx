@@ -31,7 +31,7 @@ const DirectoryPage = () => {
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const { location, name, startDate, title, workEmail, supervisorid } = member;
+  const { location, name, startDate, title, workEmail } = member;
 
   const date = member.startDate ? new Date(member.startDate) : new Date();
 
@@ -41,6 +41,12 @@ const DirectoryPage = () => {
   useEffect(() => {
     setMembers(memberProfiles);
   }, [memberProfiles]);
+
+  useEffect(() => {
+      if (!member.startDate) {
+        member.startDate = date;
+      }
+    }, [member]);
 
   const handleOpen = () => setOpen(true);
 
@@ -59,7 +65,6 @@ const DirectoryPage = () => {
   });
 
   const onSupervisorChange = (event, newValue) => {
-    //supervisor = {memberProfiles.find((memberProfile) => memberProfile.id === newValue.id) || ""}
     setMember({
       ...member,
       supervisorid: newValue ? newValue.id : "",
@@ -143,9 +148,9 @@ const DirectoryPage = () => {
                 label="Member Insperity Id"
                 className="halfWidth"
                 placeholder="Insperity Id"
-                value={member.insperityid ? member.insperityid : ""}
+                value={member.insperityId ? member.insperityId : ""}
                 onChange={(e) =>
-                  setMember({ ...member, insperityid: e.target.value })
+                  setMember({ ...member, insperityId: e.target.value })
                 }
               />
               <TextField
@@ -200,7 +205,6 @@ const DirectoryPage = () => {
                       startDate &&
                       title &&
                       workEmail &&
-                      supervisorid &&
                       csrf
                     ) {
                       await createMember(member, csrf);
