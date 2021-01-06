@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -86,7 +87,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
-            throw new PrivateNotesBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }

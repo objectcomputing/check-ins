@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.private_notes;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -10,12 +12,16 @@ import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.UUID;
+
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/private-note")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -24,13 +30,17 @@ import java.util.UUID;
 public class PrivateNoteController {
 
     private final PrivateNoteServices privateNoteServices;
+    private final EventLoopGroup eventLoopGroup;
+    private final ExecutorService ioExecutorService;
 
-    public PrivateNoteController(PrivateNoteServices privateNoteServices) {
+    public PrivateNoteController(PrivateNoteServices privateNoteServices, EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService) {
         this.privateNoteServices = privateNoteServices;
+        this.eventLoopGroup = eventLoopGroup;
+        this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = PrivateNotesBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PrivateNotesBadArgException e) {
+    @Error(exception = BadArgException.class)
+    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
@@ -47,11 +57,17 @@ public class PrivateNoteController {
      */
     @Post("/")
     @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
-    public HttpResponse<PrivateNote> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
-        PrivateNote newPrivateNote = privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(), privateNote.getCreatedbyid()
-                , privateNote.getDescription()));
-        return HttpResponse.created(newPrivateNote)
-                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), newPrivateNote.getId()))));
+    public Single<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
+        return Single.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
+                privateNote.getCreatedbyid(), privateNote.getDescription())))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(createPrivateNote -> {
+                    //Using code block rather than lambda so we can log what thread we're in
+                    return (HttpResponse<PrivateNote>) HttpResponse
+                            .created(createPrivateNote)
+                            .headers(headers -> headers.location(
+                                    URI.create(String.format("%s/%s", request.getPath(), createPrivateNote.getId()))));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -64,11 +80,19 @@ public class PrivateNoteController {
      */
     @Put("/")
     @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
-    public HttpResponse<PrivateNote> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
-        PrivateNote updatePrivateNote = privateNoteServices.update(privateNote);
-        return HttpResponse.ok().headers(headers -> headers.location(
-                URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
-                .body(updatePrivateNote);
+    public Single<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
+        if (privateNote == null) {
+            return Single.just(HttpResponse.ok());
+        }
+        return Single.fromCallable(() -> privateNoteServices.update(privateNote))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatePrivateNote ->
+                        (HttpResponse<PrivateNote>) HttpResponse
+                                .ok()
+                                .headers(headers -> headers.location(
+                                        URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
+                                .body(updatePrivateNote))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -78,8 +102,19 @@ public class PrivateNoteController {
      * @return
      */
     @Get("/{id}")
-    public PrivateNote readPrivateNote(@NotNull UUID id) {
-        return privateNoteServices.read(id);
+    public Single<HttpResponse<PrivateNote>> readPrivateNote(UUID id) {
+        return Single.fromCallable(() -> {
+            PrivateNote result = privateNoteServices.read(id);
+            if (result == null) {
+                throw new NotFoundException("No private note for UUID");
+            }
+            return result;
+        })
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(privateNote -> {
+                    return (HttpResponse<PrivateNote>)HttpResponse.ok(privateNote);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
+
     }
 
 }
