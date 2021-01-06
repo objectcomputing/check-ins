@@ -351,9 +351,8 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-        assertEquals("Forbidden", responseException.getMessage());
-
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals("You do not have permission to access this resource", responseException.getMessage());
     }
 
     @Test

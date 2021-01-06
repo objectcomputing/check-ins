@@ -1,31 +1,27 @@
 package com.objectcomputing.checkins.services.role;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Named;
-import java.util.concurrent.ExecutorService;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import io.micronaut.scheduling.TaskExecutors;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.inject.Named;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/role")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -45,24 +41,6 @@ public class RoleController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = RoleBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, RoleBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = RoleNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, RoleNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
     /**
      * Create and save a new role.
      *
@@ -70,15 +48,16 @@ public class RoleController {
      * @return {@link HttpResponse <Role>}
      */
 
-    @Post("/")
+    @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<Role>>  create(@Body @Valid RoleCreateDTO role,
-    HttpRequest<RoleCreateDTO> request){
+    public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
+                                             HttpRequest<RoleCreateDTO> request) {
         return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getMemberid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(userRole -> {return (HttpResponse<Role>) HttpResponse
-                    .created(userRole)
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
+                .map(userRole -> {
+                    return (HttpResponse<Role>) HttpResponse
+                            .created(userRole)
+                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), userRole.getId()))));
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -88,16 +67,16 @@ public class RoleController {
      * @param role, {@link Role}
      * @return {@link HttpResponse<Role>}
      */
-    @Put("/")
+    @Put()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> update(@Body @Valid @NotNull Role role, HttpRequest<Role> request) {
         return Single.fromCallable(() -> roleServices.update(role))
-            .observeOn(Schedulers.from(eventLoopGroup))
-            .map(updatedRole -> (HttpResponse<Role>) HttpResponse
-                    .ok()
-                    .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))))
-                    .body(updatedRole))
-            .subscribeOn(Schedulers.from(ioExecutorService));
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(updatedRole -> (HttpResponse<Role>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedRole.getId()))))
+                        .body(updatedRole))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -111,14 +90,12 @@ public class RoleController {
         return Single.fromCallable(() -> {
             Role result = roleServices.read(id);
             if (result == null) {
-                throw new RoleNotFoundException("No role item for UUID");
+                throw new NotFoundException("No role item for UUID");
             }
             return result;
-        })
-        .observeOn(Schedulers.from(eventLoopGroup))
-        .map(userRole -> {
-            return (HttpResponse<Role>)HttpResponse.ok(userRole);
-        }).subscribeOn(Schedulers.from(ioExecutorService));
+        }).observeOn(Schedulers.from(eventLoopGroup)).map(userRole -> {
+                    return (HttpResponse<Role>) HttpResponse.ok(userRole);
+                }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -130,8 +107,7 @@ public class RoleController {
      * @return {@link List < Role > list of roles}
      */
     @Get("/{?role,memberid}")
-    public Single<HttpResponse<Set<Role>>> findRole(@Nullable RoleType role,
-    @Nullable UUID memberid) {
+    public Single<HttpResponse<Set<Role>>> findRole(@Nullable RoleType role, @Nullable UUID memberid) {
         return Single.fromCallable(() -> roleServices.findByFields(role, memberid))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> (HttpResponse<Set<Role>>) HttpResponse.ok(userRole))
@@ -147,8 +123,7 @@ public class RoleController {
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteRole(UUID id) {
         roleServices.delete(id);
-        return HttpResponse
-                .ok();
+        return HttpResponse.ok();
     }
 
 }

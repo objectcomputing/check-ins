@@ -49,7 +49,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
         CheckinNote checkinNote = response.body();
 
-        assertNotNull(response);
+        assertNotNull(checkinNote);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
         assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
@@ -74,7 +74,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
         CheckinNote checkinNote = response.body();
 
-        assertNotNull(response);
+        assertNotNull(checkinNote);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
         assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
@@ -190,6 +190,28 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
     }
 
+    @Test
+    void testCreateThrowsPermissionException() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("You do not have permission to access this resource", error);
+    }
 
     @Test
     void testReadCheckinNoteByPDL() {
@@ -638,5 +660,26 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         assertEquals(checkinNote, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
+    }
+
+    @Test
+    void testUpdateThrowsPermissionException() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileForUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+
+        CheckIn checkIn = createACompletedCheckIn(memberProfileForUser, memberProfileOfPDL);
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileForUser);
+
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(memberProfileForUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("You do not have permission to access this resource", error);
     }
 }

@@ -1,14 +1,10 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -38,36 +34,10 @@ public class SkillController {
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
 
-    public SkillController(SkillServices skillServices, EventLoopGroup eventLoopGroup,  @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
+    public SkillController(SkillServices skillServices, EventLoopGroup eventLoopGroup, @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
         this.skillServices = skillServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-
-    @Error(exception = SkillBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, SkillBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = SkillAlreadyExistsException.class)
-    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, SkillAlreadyExistsException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @Error(exception = SkillNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, SkillNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
     }
 
     /**
@@ -77,14 +47,16 @@ public class SkillController {
      * @return {@link HttpResponse< Skill >}
      */
 
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<Skill>> createASkill(@Body @Valid SkillCreateDTO skill, HttpRequest<SkillCreateDTO> request) {
 
-        return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(),skill.isPending(),skill.getDescription(),skill.isExtraneous())))
+        return Single.fromCallable(() -> skillServices.save(new Skill(skill.getName(), skill.isPending(), skill.getDescription(), skill.isExtraneous())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(createdSkill -> {return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
-                .headers(headers -> headers.location(
-                        URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));}).subscribeOn(Schedulers.from(ioExecutorService));
+                .map(createdSkill -> {
+                    return (HttpResponse<Skill>) HttpResponse.created(createdSkill)
+                            .headers(headers -> headers.location(
+                                    URI.create(String.format("%s/%s", request.getPath(), createdSkill.getId()))));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
 
@@ -100,13 +72,13 @@ public class SkillController {
 
         return Single.fromCallable(() -> {
             Skill result = skillServices.readSkill(id);
-            if(result == null) {
-                throw new SkillNotFoundException("No skill for UUID");
-            } return result;
+            if (result == null) {
+                throw new NotFoundException("No skill for UUID");
+            }
+            return result;
         }).observeOn(Schedulers.from(eventLoopGroup)).map(skills -> {
-            return(HttpResponse<Skill>) HttpResponse.ok(skills);
+            return (HttpResponse<Skill>) HttpResponse.ok(skills);
         }).subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
     /**
@@ -119,22 +91,21 @@ public class SkillController {
 
     @Get("/{?name,pending}")
     public Single<HttpResponse<Set<Skill>>> findByValue(@Nullable String name,
-                                  @Nullable Boolean pending) {
+                                                        @Nullable Boolean pending) {
 
-        return Single.fromCallable(() -> skillServices.findByValue(name,pending))
+        return Single.fromCallable(() -> skillServices.findByValue(name, pending))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(skills -> (HttpResponse<Set<Skill>>) HttpResponse.ok(skills))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
     /**
      * Update the pending status of a skill.
      *
      * @param skill, {@link Skill}
-     * @return {@link HttpResponse< Skill >}
+     * @return {@link HttpResponse<Skill>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<Skill>> update(@Body @Valid Skill skill, HttpRequest<Skill> request) {
 
         return Single.fromCallable(() -> skillServices.update(skill))
@@ -144,8 +115,6 @@ public class SkillController {
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedSkill.getId()))))
                         .body(updatedSkill))
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
-
     }
 
     /**
@@ -154,7 +123,6 @@ public class SkillController {
      * @param id, id of {@link Skill} to delete
      */
     @Delete("/{id}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteSkill(@NotNull UUID id) {
         skillServices.delete(id);
         return HttpResponse
