@@ -4,7 +4,7 @@ import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 
-import { getMember, getAllMembers } from "../../api/member";
+import { getMember } from "../../api/member";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";

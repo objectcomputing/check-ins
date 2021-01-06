@@ -46,7 +46,8 @@ const DirectoryPage = () => {
       if (!member.startDate) {
         member.startDate = date;
       }
-    }, [member]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
   const handleOpen = () => setOpen(true);
 
