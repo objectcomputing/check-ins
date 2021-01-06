@@ -41,7 +41,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         final UUID checkinId = privateNote.getCheckinid();
         final UUID createdById = privateNote.getCreatedbyid();
         CheckIn checkinRecord = checkinServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
 
         validate(privateNote.getId() != null, "Found unexpected id %s for private note", privateNote.getId());
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
@@ -74,7 +74,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         final UUID checkinId = privateNote.getCheckinid();
         final UUID createdById = privateNote.getCreatedbyid();
         CheckIn checkinRecord = checkinServices.read(checkinId);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
 
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate((isAdmin && !isPdl) || isCompleted , unauthorized);
