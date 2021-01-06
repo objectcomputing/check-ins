@@ -34,7 +34,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
     "@testing-library/user-event": "^12.1.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.16.1",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
