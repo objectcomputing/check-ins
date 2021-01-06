@@ -6,10 +6,11 @@ import { getAvatarURL } from "../../api/api.js";
 
 import { getMember, getAllMembers } from "../../api/member";
 
-import { Button, Card, CardActions, CardHeader } from "@material-ui/core";
+import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./MemberSummaryCard.css";
+import SplitButton from "../split-button/SplitButton";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -40,6 +41,12 @@ const MemberSummaryCard = ({ member, index }) => {
     }
   }, [csrf, supervisorid]);
 
+  const options =
+      isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
+
+  const handleAction = (e, index) =>
+      index === 0 ? handleOpen() : handleClose();
+
   return (
     <Card className="member-card">
       <CardHeader
@@ -66,9 +73,7 @@ const MemberSummaryCard = ({ member, index }) => {
       />
       {isAdmin && (
         <CardActions>
-          <Button onClick={handleOpen}>Edit</Button>
-          <Button>Terminate</Button>
-          <Button>Delete</Button>
+          <SplitButton options={options} onClick={handleAction} />
           <MemberModal
             member={currentMember}
             open={open}
