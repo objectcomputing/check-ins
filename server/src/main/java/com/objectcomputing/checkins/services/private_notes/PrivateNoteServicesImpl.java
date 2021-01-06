@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import io.micronaut.security.utils.SecurityService;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -18,17 +17,15 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
     private final CheckInServices checkinServices;
     private final PrivateNoteRepository privateNoteRepository;
     private final MemberProfileServices memberProfileServices;
-    private final SecurityService securityService;
     private final CurrentUserServices currentUserServices;
-    String unauthorized ="User is unauthorized to do this operation";
+    final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
 
     public PrivateNoteServicesImpl(CheckInServices checkinServices, PrivateNoteRepository privateNoteRepository,
-                                   MemberProfileServices memberProfileServices, SecurityService securityService,
+                                   MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
         this.privateNoteRepository = privateNoteRepository;
         this.memberProfileServices = memberProfileServices;
-        this.securityService = securityService;
         this.currentUserServices = currentUserServices;
     }
 
@@ -47,8 +44,8 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate((isAdmin && !isPdl) || isCompleted , unauthorized);
-        validate(!currentUser.getId().equals(createdById), unauthorized);
+        validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
+        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
         validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User3 is unauthorized to do this operation");
         return privateNoteRepository.save(privateNote);
     }
@@ -61,14 +58,14 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(privateNoteResult == null, "Invalid private note id %s", id);
         CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
         validate(isAdmin && !privateNoteResult.getCreatedbyid().equals(checkinRecord.getPdlId()),"Private note is created by Member and Admin is not authorized to read");
-        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), unauthorized);
+        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), unauthorizedErrorMessage);
         return privateNoteResult;
     }
 
     @Override
     public PrivateNote update(@NotNull PrivateNote privateNote) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        Boolean isAdmin = securityService != null ? securityService.hasRole(RoleType.Constants.ADMIN_ROLE) : false;
+        Boolean isAdmin = currentUserServices.isAdmin();
         Boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 
         final UUID checkinId = privateNote.getCheckinid();
@@ -77,12 +74,12 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : false;
 
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
-        validate((isAdmin && !isPdl) || isCompleted , unauthorized);
+        validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate(!currentUser.getId().equals(createdById), unauthorized);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), unauthorized);
+        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
+        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), unauthorizedErrorMessage);
         return privateNoteRepository.update(privateNote);
 
     }
