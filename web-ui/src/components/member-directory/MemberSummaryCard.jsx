@@ -1,8 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState  } from "react";
 
 import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
+
+import { getMember, getAllMembers } from "../../api/member";
 
 import { Button, Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
@@ -11,16 +13,45 @@ import "./MemberSummaryCard.css";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, userProfile } = state;
+  const { csrf, memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { location, name, workEmail, title } = member;
+  const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
   const [open, setOpen] = useState(false);
+
+  const [supervisor, setSupervisor] = useState();
 
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
+  // Get Supervisor's name
+  useEffect(() => {
+    async function getSupervisorName() {
+      if (supervisorid) {
+        let res = await getMember(supervisorid, csrf);
+        let supervisorProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setSupervisor(supervisorProfile ? supervisorProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getSupervisorName();
+    }
+  }, [csrf, supervisorid]);
+
+  {/*
+  useEffect (() => {
+    async function getSupervisorName() {
+      if (currentMember.supervisorid) {
+        setSupervisor(memberProfiles.find((memberProfile) => memberProfile.id === currentMember.supervisorid) || "");
+      }
+    }
+    if (csrf) {
+      getSupervisorName();
+     }
+  }, [csrf, currentMember]);
+  */}
 
   return (
     <Card className="member-card">
@@ -40,6 +71,8 @@ const MemberSummaryCard = ({ member, index }) => {
             {workEmail}
             <br />
             {location}
+             <br />
+            {supervisor}
           </div>
         }
         title={name}

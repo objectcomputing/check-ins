@@ -11,6 +11,8 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
+import Autocomplete from "@material-ui/lab/Autocomplete";
+
 import "./DirectoryPage.css";
 
 const DirectoryPage = () => {
@@ -29,7 +31,7 @@ const DirectoryPage = () => {
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const { location, name, startDate, title, workEmail } = member;
+  const { location, name, startDate, title, workEmail, supervisorid } = member;
 
   const date = member.startDate ? new Date(member.startDate) : new Date();
 
@@ -55,6 +57,14 @@ const DirectoryPage = () => {
       );
     } else return null;
   });
+
+  const onSupervisorChange = (event, newValue) => {
+    //supervisor = {memberProfiles.find((memberProfile) => memberProfile.id === newValue.id) || ""}
+    setMember({
+      ...member,
+      supervisorid: newValue ? newValue.id : "",
+    });
+  };
 
   return (
     <div className="directory-page">
@@ -148,6 +158,20 @@ const DirectoryPage = () => {
                   setMember({ ...member, bioText: e.target.value })
                 }
               />
+              <Autocomplete
+                 options={["", ...memberProfiles]}
+                 value={memberProfiles.find((memberProfile) => memberProfile.id === member.supervisorid) || ""}
+                 onChange={onSupervisorChange}
+                 getOptionLabel={(option) => option.name || ""}
+                 renderInput={(params) => (
+                   <TextField
+                     {...params}
+                     className="fullWidth"
+                     label="Supervisors"
+                     placeholder="Select Supervisor"
+                   />
+                 )}
+              />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   margin="normal"
@@ -176,6 +200,7 @@ const DirectoryPage = () => {
                       startDate &&
                       title &&
                       workEmail &&
+                      supervisorid &&
                       csrf
                     ) {
                       await createMember(member, csrf);
