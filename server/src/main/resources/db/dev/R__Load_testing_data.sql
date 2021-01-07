@@ -302,7 +302,7 @@ VALUES
 INSERT INTO private_notes
     (id, checkinid, createdbyid, description)
 VALUES
-    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b32', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf2', 'Jesses private note');
+    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses private note');
 
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)
