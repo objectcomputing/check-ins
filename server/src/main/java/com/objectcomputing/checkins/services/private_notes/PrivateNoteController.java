@@ -1,15 +1,10 @@
 package com.objectcomputing.checkins.services.private_notes;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
@@ -39,15 +34,6 @@ public class PrivateNoteController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = BadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
     /**
      * Create and Save a new check in private note
      *
@@ -56,7 +42,6 @@ public class PrivateNoteController {
      * @return
      */
     @Post("/")
-    @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
     public Single<HttpResponse<PrivateNote>> createPrivateNote(@Body @Valid PrivateNoteCreateDTO privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         return Single.fromCallable(() -> privateNoteServices.save(new PrivateNote(privateNote.getCheckinid(),
                 privateNote.getCreatedbyid(), privateNote.getDescription())))
@@ -79,7 +64,6 @@ public class PrivateNoteController {
      * @return
      */
     @Put("/")
-    @Secured({RoleType.Constants.MEMBER_ROLE, RoleType.Constants.PDL_ROLE})
     public Single<HttpResponse<PrivateNote>> updatePrivateNote(@Body @Valid PrivateNote privateNote, HttpRequest<PrivateNoteCreateDTO> request) {
         if (privateNote == null) {
             return Single.just(HttpResponse.ok());
