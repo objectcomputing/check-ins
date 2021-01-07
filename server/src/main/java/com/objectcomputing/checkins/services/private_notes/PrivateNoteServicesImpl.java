@@ -47,7 +47,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
         validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
         validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User3 is unauthorized to do this operation");
+        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User is unauthorized to do this operation");
         return privateNoteRepository.save(privateNote);
     }
 
