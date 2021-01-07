@@ -494,7 +494,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     }
 
     @Test
-    void testDeleteNullTeamMemberAsAdmin() {
+    void testDeleteInvalidTeamMemberAsAdmin() {
         Team team = createDeafultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
