@@ -1,8 +1,9 @@
 package com.objectcomputing.checkins.services.team.member;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
@@ -42,19 +43,19 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         final UUID teamId = teamMember.getTeamid();
         final UUID memberId = teamMember.getMemberid();
         Optional<Team> team = teamRepo.findById(teamId);
-        if(team.isEmpty()) {
+        if (team.isEmpty()) {
             throw new BadArgException(String.format("Team %s doesn't exist", teamId));
         }
 
         Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
 
-        if(teamMember.getId() != null) {
+        if (teamMember.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
-        } else if(memberRepo.findById(memberId).isEmpty()) {
+        } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
+        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        } else if(!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -74,7 +75,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         final UUID memberId = teamMember.getMemberid();
         Optional<Team> team = teamRepo.findById(teamId);
 
-        if(team.isEmpty()) {
+        if (team.isEmpty()) {
             throw new BadArgException(String.format("Team %s doesn't exist", teamId));
         }
 
@@ -84,9 +85,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if(teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isEmpty()) {
+        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
-        } else if(!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -111,8 +112,17 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     }
 
     public void delete(@NotNull UUID id) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+
+        TeamMember teamMember = teamMemberRepo.findById(id).orElse(null);
+
+        Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamid(), null, true);
+
         if (id == null || !teamMemberRepo.findById(id).isPresent()) {
             throw new NotFoundException(String.format("Unable to locate teamMember to delete with id %s", id));
+        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            throw new PermissionException("You are not authorized to perform this operation");
         } else {
             teamMemberRepo.deleteById(id);
         }
