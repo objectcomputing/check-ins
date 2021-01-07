@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
+import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
@@ -41,6 +42,10 @@ public interface RepositoryFixture {
 
     default CheckinNoteRepository getCheckInNoteRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(CheckinNoteRepository.class);
+    }
+
+    default PrivateNoteRepository getPrivateNoteRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(PrivateNoteRepository.class);
     }
 
     default CheckinDocumentRepository getCheckInDocumentRepository() {
