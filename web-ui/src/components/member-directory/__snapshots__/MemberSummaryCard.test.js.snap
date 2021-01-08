@@ -42,6 +42,7 @@ exports[`renders correctly 1`] = `
           testerson@oci.com
           <br />
           STL
+          <br />
         </div>
       </span>
     </div>
