@@ -20,26 +20,13 @@ const MemberSummaryCard = ({ member, index }) => {
   const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
   const [supervisorName, setSupervisorName] = useState();
+  const supervisorProfile = memberProfiles.find((memberProfile) =>
+                                      memberProfile.id === supervisorid);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
-
-  // Get Supervisor's name
-  useEffect(() => {
-    async function getSupervisorName() {
-      if (supervisorid) {
-        let res = await getMember(supervisorid, csrf);
-        let supervisorProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setSupervisorName(supervisorProfile ? supervisorProfile.name : "");
-      }
-    }
-    if (csrf) {
-      getSupervisorName();
-    }
-  }, [csrf, supervisorid]);
 
   const options =
       isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
@@ -66,7 +53,7 @@ const MemberSummaryCard = ({ member, index }) => {
             <br />
             {location}
              <br />
-            {supervisorName}
+            {supervisorProfile ? supervisorProfile.name : ""}
           </div>
         }
         title={name}

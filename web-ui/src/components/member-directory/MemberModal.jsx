@@ -30,7 +30,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
 
   const onSupervisorChange = (event, newValue) => {
     setMember({
-      ...member,
+      ...editedMember,
         supervisorid: newValue ? newValue.id : "",
       });
    };
