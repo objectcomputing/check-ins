@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -54,24 +55,6 @@ public class PulseResponseController {
         this.pulseResponseServices = pulseResponseServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-
-    @Error(exception = PulseResponseBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = PulseResponseNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
     }
 
     /**
@@ -139,7 +122,7 @@ public class PulseResponseController {
         return Single.fromCallable(() -> {
             PulseResponse result = pulseResponseServices.read(id);
             if (result == null) {
-                throw new PulseResponseNotFoundException("No role item for UUID");
+                throw new NotFoundException("No role item for UUID");
             }
             return result;
         })

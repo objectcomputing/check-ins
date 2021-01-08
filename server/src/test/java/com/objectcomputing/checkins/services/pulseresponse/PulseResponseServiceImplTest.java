@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.pulseresponse;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import io.micronaut.test.annotation.MicronautTest;
@@ -82,7 +83,7 @@ public class PulseResponseServiceImplTest {
     void testSaveWithId() {
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Found unexpected id for pulseresponse %s", cd.getId()), exception.getMessage());
 
         verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
@@ -93,7 +94,7 @@ public class PulseResponseServiceImplTest {
     void testSavePulseResponseNullTeamMemberId() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), null, "PRId", "PRId2");
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals("Member null doesn't exists", exception.getMessage());
 
         verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
@@ -104,7 +105,7 @@ public class PulseResponseServiceImplTest {
     void testSavePulseResponseNullPRId() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
 
         verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
@@ -124,7 +125,7 @@ public class PulseResponseServiceImplTest {
 
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Member %s doesn't exists", cd.getTeamMemberId()), exception.getMessage());
 
         verify(pulseResponseRepository, never()).save(any(PulseResponse.class));
@@ -151,7 +152,7 @@ public class PulseResponseServiceImplTest {
     void testUpdateWithoutId() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Unable to find pulseresponse record with id %s", cd.getId()), exception.getMessage());
 
         verify(memberprofileRepository, never()).findById(any(UUID.class));
@@ -163,7 +164,7 @@ public class PulseResponseServiceImplTest {
     void testUpdatePulseResponseNullTeamMemberId() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), null, "PRId", "PRId2");
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals("Unable to find pulseresponse record with id null", exception.getMessage());
 
         verify(memberprofileRepository, never()).findById(any(UUID.class));
@@ -175,7 +176,7 @@ public class PulseResponseServiceImplTest {
     void testUpdatePulseResponseNullPRId() {
         PulseResponse cd = new PulseResponse(LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), null, null);
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals("Unable to find pulseresponse record with id null", exception.getMessage());
 
         verify(memberprofileRepository, never()).findById(any(UUID.class));
@@ -188,7 +189,7 @@ public class PulseResponseServiceImplTest {
         PulseResponse cd = new PulseResponse(UUID.randomUUID(),LocalDate.of(2019, 1, 01),LocalDate.of(2019, 1, 01), UUID.randomUUID(), "PRId", "PRId2");
         when(pulseResponseRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Unable to find pulseresponse record with id %s", cd.getId()), exception.getMessage());
 
         verify(memberprofileRepository, never()).findById(any(UUID.class));
@@ -202,7 +203,7 @@ public class PulseResponseServiceImplTest {
         when(pulseResponseRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
         when(memberprofileRepository.findById(eq(cd.getTeamMemberId()))).thenReturn(Optional.empty());
 
-        PulseResponseBadArgException exception = assertThrows(PulseResponseBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Member %s doesn't exist", cd.getTeamMemberId()), exception.getMessage());
 
         verify(memberprofileRepository, times(1)).findById(any(UUID.class));
