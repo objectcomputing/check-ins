@@ -17,8 +17,8 @@ const MemberSummaryCard = ({ member, index }) => {
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
-  const supervisorProfile = memberProfiles.find((memberProfile) =>
-                                      memberProfile.id === supervisorid);
+  const supervisorProfile = memberProfiles ? memberProfiles.find((memberProfile) =>
+                                      memberProfile.id === supervisorid) : null;
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
