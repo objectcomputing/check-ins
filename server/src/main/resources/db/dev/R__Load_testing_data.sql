@@ -2,6 +2,7 @@ delete from action_items;
 delete from agenda_items;
 delete from checkin_document;
 delete from checkin_notes;
+delete from private_notes;
 delete from checkins;
 delete from guildmembers;
 delete from guilds;
@@ -307,6 +308,11 @@ INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
 VALUES
     ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note');
+
+INSERT INTO private_notes
+    (id, checkinid, createdbyid, description)
+VALUES
+    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses private note');
 
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)
