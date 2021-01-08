@@ -494,6 +494,24 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     }
 
     @Test
+    void testDeleteTeamMemberWithTeamLead() {
+        Team team = createDeafultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile leadMemberProfile = createAnUnrelatedUser();
+
+        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamLead = createLeadTeamMember(team, leadMemberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(leadMemberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
     void testDeleteInvalidTeamMemberAsAdmin() {
         Team team = createDeafultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
