@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class TeamMemberController {
     /**
      * Find team members that match all filled in parameters, return all results when given no params
      *
-     * @param teamid  {@link UUID} of team
+     * @param teamid   {@link UUID} of team
      * @param memberid {@link UUID} of member
      * @param lead,    is lead of the team
      * @return {@link List < Team > list of teams}
@@ -87,4 +88,15 @@ public class TeamMemberController {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
+    /**
+     * Delete A TeamMember
+     *
+     * @param id, id of {@link UUID} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteTeamMember(@NotNull UUID id) {
+        teamMemberServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 }
