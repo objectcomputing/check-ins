@@ -116,12 +116,10 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         TeamMember teamMember = teamMemberRepo.findById(id).orElse(null);
-        if(teamMember != null) {
+        if (teamMember != null) {
             Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamid(), null, true);
 
-            if (teamMemberRepo.findById(id).isEmpty()) {
-                throw new NotFoundException(String.format("Unable to locate teamMember to delete with id %s", id));
-            } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
             } else {
                 teamMemberRepo.deleteById(id);
