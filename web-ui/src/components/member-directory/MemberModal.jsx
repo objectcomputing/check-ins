@@ -112,49 +112,49 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             />
           )}
         />
-         <Autocomplete
-           options={["", ...memberProfiles]}
-           value={memberProfiles.find((memberProfile) => memberProfile.id === editedMember.supervisorid) || ""}
-           onChange={onSupervisorChange}
-           getOptionLabel={(option) => option.name || ""}
-           renderInput={(params) => (
-             <TextField
-               {...params}
-               className="fullWidth"
-               label="Supervisors"
-               placeholder="Change Supervisor"
-              />
-           )}
-         />
-         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-           <KeyboardDatePicker
-             margin="normal"
-             id="member-datepicker-dialog"
-             required
-             label="Start Date"
-             format="MM/dd/yyyy"
-             value={date}
-             onChange={(e) => {
-               setMember({ ...editedMember, startDate: e });
-             }}
-             KeyboardButtonProps={{
-               "aria-label": "change date",
-             }}
-           />
-         </MuiPickersUtilsProvider>
-         <div className="member-modal-actions fullWidth">
-         <Button onClick={onClose} color="secondary">
-           Cancel
-         </Button>
-         <Button
-           onClick={async () => {
-             onSave(editedMember);
-             await updateMember(editedMember);
-           }}
-           color="primary"
-         >
-           Save Member
-         </Button>
+        <Autocomplete
+          options={["", ...memberProfiles]}
+          value={memberProfiles.find((memberProfile) => memberProfile.id === editedMember.supervisorid) || ""}
+          onChange={onSupervisorChange}
+          getOptionLabel={(option) => option.name || ""}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="fullWidth"
+              label="Supervisors"
+              placeholder="Change Supervisor"
+            />
+          )}
+        />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            margin="normal"
+            id="member-datepicker-dialog"
+            required
+            label="Start Date"
+            format="MM/dd/yyyy"
+            value={date}
+            onChange={(e) => {
+              setMember({ ...editedMember, startDate: e });
+            }}
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+          />
+        </MuiPickersUtilsProvider>
+        <div className="member-modal-actions fullWidth">
+          <Button onClick={onClose} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              onSave(editedMember);
+              await updateMember(editedMember);
+            }}
+            color="primary"
+          >
+            Save Member
+          </Button>
         </div>
       </div>
     </Modal>
