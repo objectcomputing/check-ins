@@ -82,8 +82,9 @@ const TeamSummaryCard = ({ team, index }) => {
       <CardContent>
         {team.teamMembers == null ? (
           <React.Fragment>
-            <Skeleton />
-            <Skeleton />
+              <strong>Team Leads: </strong>
+              <br />
+              <strong>Team Members: </strong>
           </React.Fragment>
         ) : (
           <React.Fragment>

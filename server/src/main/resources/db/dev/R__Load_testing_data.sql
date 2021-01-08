@@ -97,6 +97,11 @@ VALUES
 INSERT INTO role
     (id, role, memberid)
 VALUES
+    ('9219ca40-6c74-419e-ab8a-22cc2f4e90dd', 'ADMIN', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
     ('1cf0b520-925e-43b1-8cd3-c06559b402b7', 'PDL', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO role
@@ -302,7 +307,7 @@ VALUES
 INSERT INTO private_notes
     (id, checkinid, createdbyid, description)
 VALUES
-    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b32', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf2', 'Jesses private note');
+    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses private note');
 
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)
