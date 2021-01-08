@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState  } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
