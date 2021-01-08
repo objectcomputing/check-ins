@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
-
-import { getMember } from "../../api/member";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
@@ -14,12 +12,11 @@ import SplitButton from "../split-button/SplitButton";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, memberProfiles, userProfile } = state;
+  const { memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
-  const [supervisorName, setSupervisorName] = useState();
   const supervisorProfile = memberProfiles.find((memberProfile) =>
                                       memberProfile.id === supervisorid);
 
