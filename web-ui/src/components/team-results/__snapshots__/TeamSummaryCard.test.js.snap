@@ -25,24 +25,13 @@ exports[`renders correctly 1`] = `
   <div
     className="MuiCardContent-root"
   >
-    <span
-      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-      style={
-        Object {
-          "height": undefined,
-          "width": undefined,
-        }
-      }
-    />
-    <span
-      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-      style={
-        Object {
-          "height": undefined,
-          "width": undefined,
-        }
-      }
-    />
+    <strong>
+      Team Leads: 
+    </strong>
+    <br />
+    <strong>
+      Team Members: 
+    </strong>
   </div>
   <div
     className="MuiCardActions-root MuiCardActions-spacing"
@@ -143,24 +132,13 @@ exports[`renders correctly for ADMIN 1`] = `
   <div
     className="MuiCardContent-root"
   >
-    <span
-      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-      style={
-        Object {
-          "height": undefined,
-          "width": undefined,
-        }
-      }
-    />
-    <span
-      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-      style={
-        Object {
-          "height": undefined,
-          "width": undefined,
-        }
-      }
-    />
+    <strong>
+      Team Leads: 
+    </strong>
+    <br />
+    <strong>
+      Team Members: 
+    </strong>
   </div>
   <div
     className="MuiCardActions-root MuiCardActions-spacing"
