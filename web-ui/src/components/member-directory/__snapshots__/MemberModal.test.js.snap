@@ -43,7 +43,6 @@ exports[`renders correctly 1`] = `
           <br />
           STL
           <br />
-
         </div>
       </span>
     </div>
