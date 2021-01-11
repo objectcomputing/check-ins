@@ -145,7 +145,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     const { value } = e.target;
     actionItems[index].description = value;
     setActionItems(() => {
-      updateItem(actionItems[index]);
+      updateItem(actionItems[index], csrf);
       return [...actionItems];
     });
   };
