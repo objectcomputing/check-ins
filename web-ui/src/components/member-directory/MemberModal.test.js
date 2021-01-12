@@ -33,7 +33,6 @@ const member = {
   imageURL: "url.com",
   title: "engineer",
   workEmail: "testerson@oci.com",
-  supervisorid: "43j2i43o2",
 };
 
 it("renders correctly", () => {
