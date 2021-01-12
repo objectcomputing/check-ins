@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import com.objectcomputing.checkins.services.guild.GuildBadArgException;
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,16 +31,16 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             final UUID memberId = guildMember.getMemberid();
 
             if (guildId == null || memberId == null) {
-                throw new GuildBadArgException(String.format("Invalid guildMember %s", guildMember));
+                throw new BadArgException(String.format("Invalid guildMember %s", guildMember));
             } else if (guildMember.getId() != null) {
-                throw new GuildBadArgException(String.format("Found unexpected id %s for guild member", guildMember.getId()));
+                throw new BadArgException(String.format("Found unexpected id %s for guild member", guildMember.getId()));
             } else if (guildRepo.findById(guildId).isEmpty()) {
-                throw new GuildBadArgException(String.format("Guild %s doesn't exist", guildId));
+                throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
             } else if (memberRepo.findById(memberId).isEmpty()) {
-                throw new GuildBadArgException(String.format("Member %s doesn't exist", memberId));
+                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
             } else if (!guildMemberRepo.search(guildMember.getGuildid().toString(),
                     guildMember.getMemberid().toString(), guildMember.isLead()).isEmpty()) {
-                throw new GuildBadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
+                throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
             }
 
             guildMemberRet = guildMemberRepo.save(guildMember);
@@ -59,14 +58,15 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             final UUID id = guildMember.getId();
             final UUID guildId = guildMember.getGuildid();
             final UUID memberId = guildMember.getMemberid();
+
             if (guildId == null || memberId == null) {
-                throw new GuildBadArgException(String.format("Invalid guildMember %s", guildMember));
+                throw new BadArgException(String.format("Invalid guildMember %s", guildMember));
             } else if (id == null || !guildMemberRepo.findById(id).isPresent()) {
-                throw new GuildBadArgException(String.format("Unable to locate guildMember to update with id %s", id));
+                throw new BadArgException(String.format("Unable to locate guildMember to update with id %s", id));
             } else if (!guildRepo.findById(guildId).isPresent()) {
-                throw new GuildBadArgException(String.format("Guild %s doesn't exist", guildId));
+                throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
             } else if (!memberRepo.findById(memberId).isPresent()) {
-                throw new GuildBadArgException(String.format("Member %s doesn't exist", memberId));
+                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
             }
 
             guildMemberRet = guildMemberRepo.update(guildMember);
@@ -75,10 +75,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     }
 
     public Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead) {
-        Set<GuildMember> guildMembers = new HashSet<>(
-                guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead));
-
-        return guildMembers;
+        return guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead);
     }
 
 }

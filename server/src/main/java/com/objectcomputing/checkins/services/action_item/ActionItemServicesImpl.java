@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.action_item;
 
-import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
-import com.objectcomputing.checkins.services.validate.PermissionsValidation;
+import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
 
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -16,33 +15,30 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class ActionItemServicesImpl implements ActionItemServices {
 
     private final ActionItemRepository actionItemRepo;
-    private final ArgumentsValidation argumentsValidation;
-    private final PermissionsValidation permissionsValidation;
+    private final CRUDValidator<ActionItem> crudValidator;
 
-    public ActionItemServicesImpl( ActionItemRepository actionItemRepo,
-                                  ArgumentsValidation argumentsValidation,
-                                  PermissionsValidation permissionsValidation) {
+    public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
+                                  CRUDValidator<ActionItem> crudValidator) {
         this.actionItemRepo = actionItemRepo;
-        this.argumentsValidation = argumentsValidation;
-        this.permissionsValidation = permissionsValidation;
+        this.crudValidator = crudValidator;
     }
 
     public ActionItem save(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-            argumentsValidation.validateActionItemArgumentsForSave(actionItem);
-            permissionsValidation.validateActionItemPermissions(actionItem);
+        crudValidator.validateArgumentsCreate(actionItem);
+        crudValidator.validatePermissionsCreate(actionItem);
 
-            double lastDisplayOrder = 0;
-            try {
-                lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
-            } catch (NullPointerException npe) {
-                //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
-                //nothing needs to happen here.
-            }
-            actionItem.setPriority(lastDisplayOrder + 1);
+        double lastDisplayOrder = 0;
+        try {
+            lastDisplayOrder = actionItemRepo.findMaxPriorityByCheckinid(actionItem.getCheckinid()).orElse(Double.valueOf(0));
+        } catch (NullPointerException npe) {
+            //This case occurs when there is no existing record for this checkin id. We already have the display order set to 0 so
+            //nothing needs to happen here.
+        }
+        actionItem.setPriority(lastDisplayOrder + 1);
 
-            actionItemRet = actionItemRepo.save(actionItem);
+        actionItemRet = actionItemRepo.save(actionItem);
 
         return actionItemRet;
 
@@ -52,8 +48,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
         ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateActionItemArgumentsForRead(actionItemResult, id);
-        if(actionItemResult != null) permissionsValidation.validateActionItemPermissionsForRead(actionItemResult);
+        crudValidator.validateArgumentsRead(actionItemResult);
+        if (actionItemResult != null) crudValidator.validatePermissionsRead(actionItemResult);
 
         return actionItemResult;
 
@@ -62,8 +58,8 @@ public class ActionItemServicesImpl implements ActionItemServices {
     public ActionItem update(@Valid @NotNull ActionItem actionItem) {
         ActionItem actionItemRet = null;
 
-        argumentsValidation.validateActionItemArgumentsForUpdate(actionItem);
-        permissionsValidation.validateActionItemPermissionsForUpdate(actionItem);
+        crudValidator.validateArgumentsUpdate(actionItem);
+        crudValidator.validatePermissionsUpdate(actionItem);
 
         actionItemRet = actionItemRepo.update(actionItem);
 
@@ -73,7 +69,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
 
     public Set<ActionItem> findByFields(UUID checkinid, UUID createdbyid) {
 
-        permissionsValidation.validateActionItemPermissionsForFindByFields(checkinid, createdbyid);
+        crudValidator.validatePermissionsFindByFields(checkinid, createdbyid);
 
         Set<ActionItem> actionItems = new LinkedHashSet<>(
                 actionItemRepo.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createdbyid)));
@@ -83,9 +79,10 @@ public class ActionItemServicesImpl implements ActionItemServices {
     }
 
     public void delete(@NotNull UUID id) {
+        ActionItem actionItemResult = actionItemRepo.findById(id).orElse(null);
 
-        argumentsValidation.validateActionItemArgumentsForDelete(id);
-        permissionsValidation.validateActionItemPermissionsForDelete(id);
+        crudValidator.validateArgumentsDelete(actionItemResult);
+        crudValidator.validatePermissionsDelete(actionItemResult);
 
         actionItemRepo.deleteById(id);
 

@@ -57,7 +57,7 @@ const SplitButton = ({toggleOnSelect=false, onClick, options}) => {
             <ArrowDropDownIcon />
           </Button>
         </ButtonGroup>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement="bottom-end" transition disablePortal>
+        <Popper open={open} anchorEl={anchorRef.current} role={undefined} placement="bottom-end" transition >
           {({ TransitionProps, placement }) => (
             <Grow
               {...TransitionProps}

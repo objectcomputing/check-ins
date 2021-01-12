@@ -4,10 +4,7 @@ package com.objectcomputing.checkins.services.team;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -44,32 +41,13 @@ public class TeamController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = TeamBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = TeamNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, TeamNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
     /**
      * Create and save a new team
      *
      * @param team, {@link TeamCreateDTO}
-     * @return {@link HttpResponse<Team>}
+     * @return {@link HttpResponse<TeamResponseDTO>}
      */
-
-    @Post(value = "/")
+    @Post()
     public Single<HttpResponse<TeamResponseDTO>> createATeam(@Body @Valid TeamCreateDTO team, HttpRequest<TeamCreateDTO> request) {
 
         return Single.fromCallable(() -> teamService.save(team))
@@ -89,9 +67,9 @@ public class TeamController {
 
     @Get("/{id}")
     public Single<HttpResponse<TeamResponseDTO>> readTeam(@NotNull UUID id) {
-        return Single.fromCallable(() ->teamService.read(id))
+        return Single.fromCallable(() -> teamService.read(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(team -> (HttpResponse<TeamResponseDTO>)HttpResponse.ok(team))
+                .map(team -> (HttpResponse<TeamResponseDTO>) HttpResponse.ok(team))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -108,7 +86,7 @@ public class TeamController {
     public Single<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberid) {
         return Single.fromCallable(() -> teamService.findByFields(name, memberid))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(teams -> (HttpResponse<Set<TeamResponseDTO>>)HttpResponse.ok(teams))
+                .map(teams -> (HttpResponse<Set<TeamResponseDTO>>) HttpResponse.ok(teams))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -118,11 +96,11 @@ public class TeamController {
      * @param team, {@link TeamUpdateDTO}
      * @return {@link HttpResponse< TeamResponseDTO >}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
         return Single.fromCallable(() -> teamService.update(team))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(updated -> (HttpResponse<TeamResponseDTO>)HttpResponse
+                .map(updated -> (HttpResponse<TeamResponseDTO>) HttpResponse
                         .ok()
                         .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getUri(), team.getId()))))
                         .body(updated))
@@ -140,7 +118,7 @@ public class TeamController {
     public Single<HttpResponse> deleteTeam(@NotNull UUID id) {
         return Single.fromCallable(() -> teamService.delete(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(success -> (HttpResponse)HttpResponse.ok())
+                .map(success -> (HttpResponse) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

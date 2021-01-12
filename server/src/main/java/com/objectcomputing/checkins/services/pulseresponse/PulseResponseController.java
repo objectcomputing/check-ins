@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -56,24 +57,6 @@ public class PulseResponseController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = PulseResponseBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, PulseResponseBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = PulseResponseNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, PulseResponseNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
     /**
      * Find Pulse Response by Team Member or Date Range.
      * 
@@ -99,7 +82,7 @@ public class PulseResponseController {
      * @return {@link HttpResponse<PulseResponse>}
      */
 
-    @Post("/")
+    @Post()
     public Single<HttpResponse<PulseResponse>> createPulseResponse(@Body @Valid PulseResponseCreateDTO pulseResponse,
                                                                     HttpRequest<PulseResponseCreateDTO> request) {
         return Single.fromCallable(() -> pulseResponseServices.save(new PulseResponse(pulseResponse.getSubmissionDate(),pulseResponse.getUpdatedDate(), pulseResponse.getTeamMemberId(), pulseResponse.getInternalFeelings(), pulseResponse.getExternalFeelings())))
@@ -116,7 +99,7 @@ public class PulseResponseController {
      * @param pulseResponse, {@link PulseResponse}
      * @return {@link HttpResponse<PulseResponse>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<PulseResponse>> update(@Body @Valid @NotNull PulseResponse pulseResponse,
                                                       HttpRequest<PulseResponse> request) {
         return Single.fromCallable(() -> pulseResponseServices.update(pulseResponse))
@@ -139,7 +122,7 @@ public class PulseResponseController {
         return Single.fromCallable(() -> {
             PulseResponse result = pulseResponseServices.read(id);
             if (result == null) {
-                throw new PulseResponseNotFoundException("No role item for UUID");
+                throw new NotFoundException("No role item for UUID");
             }
             return result;
         })

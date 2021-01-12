@@ -16,13 +16,13 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
 
     Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail);
 
-    @Query("SELECT * " +
+    @Query(value = "SELECT * " +
             "FROM member_profile mp " +
             "WHERE (:name IS NULL OR mp.name = :name) " +
             "AND (:title IS NULL OR mp.title = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) " +
-            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) " )
+            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) ", nativeQuery = true )
     List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail, @Nullable String supervisorId);
     List<MemberProfile> findAll();
 }

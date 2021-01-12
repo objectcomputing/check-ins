@@ -10,4 +10,6 @@ public interface CurrentUserServices {
     boolean hasRole(RoleType role);
 
     boolean isAdmin();
+
+    MemberProfile getCurrentUser();
 }

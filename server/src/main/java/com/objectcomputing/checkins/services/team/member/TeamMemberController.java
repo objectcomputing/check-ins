@@ -1,13 +1,9 @@
 package com.objectcomputing.checkins.services.team.member;
 
-import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,7 +12,6 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,22 +28,13 @@ public class TeamMemberController {
         this.teamMemberServices = teamMemberServices;
     }
 
-    @Error(exception = TeamBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
     /**
      * Create and save a new teamMember.
      *
      * @param teamMember, {@link TeamMemberResponseDTO}
      * @return {@link HttpResponse <TeamMember>}
      */
-    @Post(value = "/")
+    @Post()
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<TeamMemberResponseDTO> request) {
         TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
@@ -65,7 +51,7 @@ public class TeamMemberController {
      * @param teamMember, {@link TeamMember}
      * @return {@link HttpResponse<TeamMember>}
      */
-    @Put("/")
+    @Put()
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<TeamMember> request) {
         TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), teamMember.getLead()));
         return HttpResponse
@@ -90,7 +76,7 @@ public class TeamMemberController {
     /**
      * Find team members that match all filled in parameters, return all results when given no params
      *
-     * @param teamid  {@link UUID} of team
+     * @param teamid   {@link UUID} of team
      * @param memberid {@link UUID} of member
      * @param lead,    is lead of the team
      * @return {@link List < Team > list of teams}
@@ -102,4 +88,15 @@ public class TeamMemberController {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
+    /**
+     * Delete A TeamMember
+     *
+     * @param id, id of {@link UUID} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteTeamMember(@NotNull UUID id) {
+        teamMemberServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 }

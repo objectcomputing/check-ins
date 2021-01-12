@@ -63,7 +63,7 @@ public class CheckinDocumentController {
      * Find CheckinDocument(s) based on checkinsId
      *
      * @param checkinsId
-     * @return {@link List<CheckinDocument> list of CheckinDocument(s) associated with the checkinsId}
+     * @return {@link Set<CheckinDocument> Set of CheckinDocument(s) associated with the checkinsId}
      */
 
     @Get("/{?checkinsId}")
@@ -81,7 +81,7 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<CheckinDocument>}
      */
 
-    @Post("/")
+    @Post()
     public Single<HttpResponse<CheckinDocument>> createCheckinDocument(@Body @Valid CheckinDocumentCreateDTO checkinDocument,
                                                                     HttpRequest<CheckinDocumentCreateDTO> request) {
         return Single.fromCallable(() -> checkinDocumentService.save(new CheckinDocument(checkinDocument.getCheckinsId(),checkinDocument.getUploadDocId())))
@@ -98,7 +98,7 @@ public class CheckinDocumentController {
      * @param checkinDocument, {@link CheckinDocument}
      * @return {@link HttpResponse<CheckinDocument>}
      */
-    @Put("/")
+    @Put()
     public Single<HttpResponse<CheckinDocument>> update(@Body @Valid CheckinDocument checkinDocument,
                                             HttpRequest<CheckinDocument> request) {
         if (checkinDocument == null) {
@@ -121,7 +121,6 @@ public class CheckinDocumentController {
      * @return {@link HttpResponse<?>}
      */
     @Delete("/{checkinsId}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
     public HttpResponse<?> delete(UUID checkinsId) {
         checkinDocumentService.deleteByCheckinId(checkinsId);
         return HttpResponse

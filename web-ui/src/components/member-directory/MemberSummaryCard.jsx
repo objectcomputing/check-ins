@@ -4,10 +4,11 @@ import MemberModal from "./MemberModal";
 import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Button, Card, CardActions, CardHeader } from "@material-ui/core";
+import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 
 import "./MemberSummaryCard.css";
+import SplitButton from "../split-button/SplitButton";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -21,6 +22,12 @@ const MemberSummaryCard = ({ member, index }) => {
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
+
+  const options =
+      isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
+
+  const handleAction = (e, index) =>
+      index === 0 ? handleOpen() : handleClose();
 
   return (
     <Card className="member-card">
@@ -46,9 +53,7 @@ const MemberSummaryCard = ({ member, index }) => {
       />
       {isAdmin && (
         <CardActions>
-          <Button onClick={handleOpen}>Edit</Button>
-          <Button>Terminate</Button>
-          <Button>Delete</Button>
+          <SplitButton options={options} onClick={handleAction} />
           <MemberModal
             member={currentMember}
             open={open}

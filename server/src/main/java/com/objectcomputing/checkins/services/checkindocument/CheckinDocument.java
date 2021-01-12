@@ -88,4 +88,9 @@ public class CheckinDocument {
                 ", uploadDocId=" + uploadDocId +
                 '}';
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, checkinsId, uploadDocId);
+    }
 }
