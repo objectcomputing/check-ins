@@ -152,7 +152,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     agendaItems[index].description = value;
     setAgendaItems(() => {
       if (csrf) {
-        updateItem(agendaItems[index]);
+        updateItem(agendaItems[index], csrf);
         return [...agendaItems];
       }
     });
