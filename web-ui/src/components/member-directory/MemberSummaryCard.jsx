@@ -15,10 +15,12 @@ const MemberSummaryCard = ({ member, index }) => {
   const { memberProfiles, userProfile } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { location, name, workEmail, title } = member;
+  const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
-  const [open, setOpen] = useState(false);
+  const supervisorProfile = memberProfiles ? memberProfiles.find((memberProfile) =>
+                                      memberProfile.id === supervisorid) : null;
 
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
@@ -47,6 +49,8 @@ const MemberSummaryCard = ({ member, index }) => {
             {workEmail}
             <br />
             {location}
+             <br />
+            {supervisorProfile ? supervisorProfile.name : ""}
           </div>
         }
         title={name}
