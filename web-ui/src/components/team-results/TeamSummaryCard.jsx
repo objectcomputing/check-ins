@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import {AppContext, UPDATE_TEAMS, UPDATE_TOAST,} from "../../context/AppContext";
 import EditTeamModal from "./EditTeamModal";
@@ -19,7 +19,7 @@ const propTypes = {
 };
 
 const displayName = "TeamSummaryCard";
-const [isLoading, setIsLoading] = useState(false);
+// const [isLoading, setIsLoading] = useState(false);
 
 const TeamSummaryCard = ({team, index}) => {
     const {state, dispatch} = useContext(AppContext);
@@ -48,22 +48,22 @@ const TeamSummaryCard = ({team, index}) => {
 
     //fix this mess
     // i added this
-    const getTeams = async (checkinId, csrf) => {
-        setIsLoading(true);
-        let res = await getAgendaItem(checkinId, null, csrf);
-        let agendaItemList;
-        if (res && res.payload) {
-            agendaItemList =
-                res.payload.data && !res.error ? res.payload.data : undefined;
-            if (agendaItemList) {
-                agendaItemList.sort((a, b) => {
-                    return a.priority - b.priority;
-                });
-                setAgendaItems(agendaItemList);
-            }
-        }
-        setIsLoading(false);
-    };
+    // const getTeams = async (checkinId, csrf) => {
+    //     setIsLoading(true);
+    //     let res = await getAgendaItem(checkinId, null, csrf);
+    //     let agendaItemList;
+    //     if (res && res.payload) {
+    //         agendaItemList =
+    //             res.payload.data && !res.error ? res.payload.data : undefined;
+    //         if (agendaItemList) {
+    //             agendaItemList.sort((a, b) => {
+    //                 return a.priority - b.priority;
+    //             });
+    //             setAgendaItems(agendaItemList);
+    //         }
+    //     }
+    //     setIsLoading(false);
+    // };
 
     const deleteATeam = async (id) => {
         if (id && csrf) {
@@ -103,29 +103,34 @@ const TeamSummaryCard = ({team, index}) => {
                 {/*        <Skeleton variant="text" height={"2rem"}/>*/}
                 {/*    </div>*/}
                 {/*) : (*/}
-                    {team.teamMembers == null ? (
-                            <React.Fragment>
-                                <strong>Team Leads: </strong>
-                                <br/>
-                                <strong>Team Members: </strong>
-                            </React.Fragment>
-                        ) : (
-                            <React.Fragment>
-                                <strong>Team Leads: </strong>
-                                {leads.map((lead, index) => {
-                                    return index !== leads.length - 1 ? `${lead.name}, ` : lead.name;
-                                })}
-                                <br/>
-                                <strong>Team Members: </strong>
-                                {nonLeads.map((member, index) => {
-                                    return index !== nonLeads.length - 1
-                                        ? `${member.name}, `
-                                        : member.name;
-                                })}
-                            </React.Fragment>
-                    //     )
-                    // }
+
+                {useEffect(() =>
+
+                {team.teamMembers == null ? (
+                    <React.Fragment>
+                    <strong>Team Leads: </strong>
+                    <br/>
+                    <strong>Team Members: </strong>
+                    </React.Fragment>
+                    ) : (
+                    <React.Fragment>
+                    <strong>Team Leads: </strong>
+                {leads.map((lead, index) => {
+                    return index !== leads.length - 1 ? `${lead.name}, ` : lead.name;
+                })}
+                    <br/>
+                    <strong>Team Members: </strong>
+                {nonLeads.map((member, index) => {
+                    return index !== nonLeads.length - 1
+                    ? `${member.name}, `
+                    : member.name;
+                })}
+                    </React.Fragment>
+
                 )}
+
+                )
+                }
 
             </CardContent>
             <CardActions>
