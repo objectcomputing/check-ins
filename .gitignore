@@ -15,5 +15,6 @@ out/
 .classpath
 node_modules
 .run
-run.bat
+**/run.bat
 *.sh
+/server/src/main/resources/secrets/*
