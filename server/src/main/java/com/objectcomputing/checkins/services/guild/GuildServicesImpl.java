@@ -61,4 +61,8 @@ public class GuildServicesImpl implements GuildServices {
 
     }
 
+    public Guild delete(@NotNull UUID guildId) {
+        Guild guildToDelete = read(guildId);
+        return guildsRepo.delete(guildToDelete).orElse(null);
+    }
 }

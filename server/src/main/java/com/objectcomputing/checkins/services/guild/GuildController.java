@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.team.TeamUpdateDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
@@ -118,6 +120,21 @@ public class GuildController {
                                 .headers(headers -> headers.location(
                                         URI.create(String.format("%s/%s", request.getUri(), guild.getId()))))
                                 .body(updatedGuild))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+
+    /**
+     * Delete Guild
+     *
+     * @param id guild unique id
+     * @return
+     */
+    @Delete("/{id}")
+    public Single<HttpResponse> deleteGuild(@NotNull UUID id) {
+        return Single.fromCallable(() -> guildService.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
