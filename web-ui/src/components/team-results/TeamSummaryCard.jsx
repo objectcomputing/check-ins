@@ -19,7 +19,6 @@ const propTypes = {
 };
 
 const displayName = "TeamSummaryCard";
-// const [isLoading, setIsLoading] = useState(false);
 
 const TeamSummaryCard = ({team, index}) => {
     const {state, dispatch} = useContext(AppContext);
@@ -45,25 +44,6 @@ const TeamSummaryCard = ({team, index}) => {
     const handleOpen = () => setOpen(true);
 
     const handleClose = () => setOpen(false);
-
-    //fix this mess
-    // i added this
-    // const getTeams = async (checkinId, csrf) => {
-    //     setIsLoading(true);
-    //     let res = await getAgendaItem(checkinId, null, csrf);
-    //     let agendaItemList;
-    //     if (res && res.payload) {
-    //         agendaItemList =
-    //             res.payload.data && !res.error ? res.payload.data : undefined;
-    //         if (agendaItemList) {
-    //             agendaItemList.sort((a, b) => {
-    //                 return a.priority - b.priority;
-    //             });
-    //             setAgendaItems(agendaItemList);
-    //         }
-    //     }
-    //     setIsLoading(false);
-    // };
 
     const deleteATeam = async (id) => {
         if (id && csrf) {
@@ -97,14 +77,6 @@ const TeamSummaryCard = ({team, index}) => {
         <Card className="summary-card">
             <CardHeader title={team.name} subheader={team.description}/>
             <CardContent>
-                {/*{isLoading ? (*/}
-                {/*    <div className="skeleton">*/}
-                {/*        <Skeleton variant="text" height={"2rem"}/>*/}
-                {/*        <Skeleton variant="text" height={"2rem"}/>*/}
-                {/*    </div>*/}
-                {/*) : (*/}
-
-                {useEffect(() =>
 
                 {team.teamMembers == null ? (
                     <React.Fragment>
@@ -128,9 +100,6 @@ const TeamSummaryCard = ({team, index}) => {
                     </React.Fragment>
 
                 )}
-
-                )
-                }
 
             </CardContent>
             <CardActions>
