@@ -12,60 +12,58 @@ const useStyles = makeStyles({
 
 const marks = [
   {
-    value: 0,
+    value: 1,
     label: 'Beginner',
   },
   {
-    value: 25,
+    value: 2,
     label: 'Easy',
   },
   {
-    value: 50,
+    value: 3,
     label: 'Medium',
   },
   {
-    value: 75,
+    value: 4,
     label: 'Hard',
   },
   {
-    value: 100,
+    value: 5,
     label: 'Expert'
   }
 ];
 
 function valuetext(value) {
-  return `${value}°C`;
-}
-
-function valueLabelFormat(value) {
-  const index = marks.findIndex((mark) => mark.value === value);
-  const mark = marks[index];
-  return mark && mark.label;
+  return `${marks.find((mark) => mark.value===value).label}`;
 }
 
 const ValueLabelComponent = (props) => (
-  <Tooltip open={props.open} enterTouchDelay={0} placement="top" title={props.value}>
+  <Tooltip arrow open={props.valueLabelDisplay !== "off" && props.open} enterTouchDelay={0} placement="bottom" title={props.value}>
     {props.children}
   </Tooltip>
 );
 
-export default function DiscreteSlider() {
+export default function DiscreteSlider({title, lastUsed, onChange, onChangeCommitted}) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Typography id="discrete-slider-restrict" gutterBottom>
-        How good are you?
+        {title}
       </Typography>
       <Slider
-        defaultValue={50}
-        valueLabelFormat={valueLabelFormat}
+        min={1}
+        max={5}
+        defaultValue={3}
+        valueLabelFormat={() => lastUsed}
         ValueLabelComponent={ValueLabelComponent}
         getAriaValueText={valuetext}
         aria-labelledby="discrete-slider-restrict"
         step={null}
-        valueLabelDisplay="off"
+        valueLabelDisplay={lastUsed ? 'on' : 'off'}
         marks={marks}
+        onChange={onChange}
+        onChangeCommitted={onChangeCommitted}
       />
     </div>
   );
