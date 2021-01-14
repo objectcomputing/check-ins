@@ -64,7 +64,7 @@ export default function DiscreteSlider() {
         getAriaValueText={valuetext}
         aria-labelledby="discrete-slider-restrict"
         step={null}
-        valueLabelDisplay="on"
+        valueLabelDisplay="off"
         marks={marks}
       />
     </div>
