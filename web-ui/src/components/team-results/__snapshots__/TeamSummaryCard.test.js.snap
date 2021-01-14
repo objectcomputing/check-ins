@@ -28,10 +28,12 @@ exports[`renders correctly 1`] = `
     <strong>
       Team Leads: 
     </strong>
+    None Assigned
     <br />
     <strong>
       Team Members: 
     </strong>
+    None Assigned
   </div>
   <div
     className="MuiCardActions-root MuiCardActions-spacing"
@@ -135,10 +137,12 @@ exports[`renders correctly for ADMIN 1`] = `
     <strong>
       Team Leads: 
     </strong>
+    None Assigned
     <br />
     <strong>
       Team Members: 
     </strong>
+    None Assigned
   </div>
   <div
     className="MuiCardActions-root MuiCardActions-spacing"
