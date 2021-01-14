@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import com.objectcomputing.checkins.services.guild.GuildBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -8,23 +7,21 @@ import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.hateoas.JsonError;
 import io.micronaut.http.hateoas.Link;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
+import javax.inject.Named;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import io.micronaut.scheduling.TaskExecutors;
-import io.netty.channel.EventLoopGroup;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-
-import javax.inject.Named;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/guild/member")
@@ -45,15 +42,6 @@ public class GuildMemberController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = GuildBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, GuildBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
     @Error(exception = GuildMemberNotFoundException.class)
     public HttpResponse<?> handleNotFound(HttpRequest<?> request, GuildMemberNotFoundException e) {
         JsonError error = new JsonError(e.getMessage())
@@ -72,9 +60,9 @@ public class GuildMemberController {
     @Post()
     public Single<HttpResponse<GuildMember>> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
                                                            HttpRequest<GuildMemberCreateDTO> request) {
-        return Single.fromCallable(() -> guildMemberServices.save(new GuildMember(guildMember.getGuildid(),guildMember.getMemberid(), guildMember.isLead())))
+        return Single.fromCallable(() -> guildMemberServices.save(new GuildMember(guildMember.getGuildid(), guildMember.getMemberid(), guildMember.isLead())))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(newGuildMember-> {
+                .map(newGuildMember -> {
                     //Using code block rather than lambda so we can log what thread we're in
                     return (HttpResponse<GuildMember>) HttpResponse
                             .created(newGuildMember)
@@ -123,7 +111,7 @@ public class GuildMemberController {
         })
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(guildmembers -> {
-                    return (HttpResponse<GuildMember>)HttpResponse.ok(guildmembers);
+                    return (HttpResponse<GuildMember>) HttpResponse.ok(guildmembers);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
 
     }
@@ -138,7 +126,7 @@ public class GuildMemberController {
      */
     @Get("/{?guildid,memberid,lead}")
     public Single<HttpResponse<Set<GuildMember>>> findGuildMembers(@Nullable UUID guildid, @Nullable UUID memberid, @Nullable Boolean lead) {
-        return Single.fromCallable(() ->  guildMemberServices.findByFields(guildid, memberid, lead))
+        return Single.fromCallable(() -> guildMemberServices.findByFields(guildid, memberid, lead))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(guildmembers -> {
                     return (HttpResponse<Set<GuildMember>>) HttpResponse.ok(guildmembers);

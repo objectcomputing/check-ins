@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.team;
 
+import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -41,7 +43,7 @@ public class TeamServicesImpl implements TeamServices {
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
             if (teamsRepo.findByName(teamDTO.getName()).isPresent()) {
-                throw new TeamBadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
+                throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 if (teamDTO.getTeamMembers() != null) {
@@ -50,7 +52,7 @@ public class TeamServicesImpl implements TeamServices {
                             MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
                             newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
                         } catch (MemberProfileDoesNotExistException mpdnee) {
-                            throw new TeamBadArgException("No member profile found for name: " + memberDTO.getName());
+                            throw new BadArgException("No member profile found for name: " + memberDTO.getName());
                         }
                     }
                 }
@@ -66,7 +68,8 @@ public class TeamServicesImpl implements TeamServices {
                 .stream()
                 .map(teamMember ->
                         fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberid()))).collect(Collectors.toList());
-        return fromEntity(teamsRepo.findById(teamId).orElseThrow(TeamNotFoundException::new), teamMembers);
+        return fromEntity(teamsRepo.findById(teamId)
+                .orElseThrow(() -> new NotFoundException("No such team found")));
     }
 
     public TeamResponseDTO update(TeamUpdateDTO teamEntity) {
@@ -82,12 +85,12 @@ public class TeamServicesImpl implements TeamServices {
                             MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
                             newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamEntity.getId(), existingMember)), existingMember));
                         } catch (MemberProfileDoesNotExistException mpdnee) {
-                            throw new TeamBadArgException("No member profile found for name: " + memberDTO.getName());
+                            throw new BadArgException("No member profile found for name: " + memberDTO.getName());
                         }
                     }
                 }
             } else {
-                throw new TeamBadArgException(String.format("Team %s does not exist, can't update.", teamEntity.getId()));
+                throw new BadArgException(String.format("Team %s does not exist, can't update.", teamEntity.getId()));
             }
         }
 
@@ -110,11 +113,11 @@ public class TeamServicesImpl implements TeamServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        if(isAdmin || (currentUser != null && !teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+        if (isAdmin || (currentUser != null && !teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
             teamMemberRepo.deleteByTeamId(id.toString());
             teamsRepo.deleteById(id);
         } else {
-            throw new TeamBadArgException("You are not authorized to perform this operation");
+            throw new BadArgException("You are not authorized to perform this operation");
         }
         return true;
     }
@@ -154,6 +157,6 @@ public class TeamServicesImpl implements TeamServices {
         if (teamMember == null || memberProfile == null) {
             return null;
         }
-        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), memberProfile.getId(), teamMember.isLead() );
+        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), memberProfile.getId(), teamMember.isLead());
     }
 }

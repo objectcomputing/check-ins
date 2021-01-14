@@ -1,19 +1,16 @@
 package com.objectcomputing.checkins.services.team.member;
 
-import com.objectcomputing.checkins.services.team.TeamBadArgException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -29,15 +26,6 @@ public class TeamMemberController {
 
     public TeamMemberController(TeamMemberServices teamMemberServices) {
         this.teamMemberServices = teamMemberServices;
-    }
-
-    @Error(exception = TeamBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, TeamBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
     }
 
     /**
@@ -88,7 +76,7 @@ public class TeamMemberController {
     /**
      * Find team members that match all filled in parameters, return all results when given no params
      *
-     * @param teamid  {@link UUID} of team
+     * @param teamid   {@link UUID} of team
      * @param memberid {@link UUID} of member
      * @param lead,    is lead of the team
      * @return {@link List < Team > list of teams}
@@ -100,4 +88,15 @@ public class TeamMemberController {
         return teamMemberServices.findByFields(teamid, memberid, lead);
     }
 
+    /**
+     * Delete A TeamMember
+     *
+     * @param id, id of {@link UUID} to delete
+     */
+    @Delete("/{id}")
+    public HttpResponse<?> deleteTeamMember(@NotNull UUID id) {
+        teamMemberServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
 }

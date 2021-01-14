@@ -2,6 +2,7 @@ delete from action_items;
 delete from agenda_items;
 delete from checkin_document;
 delete from checkin_notes;
+delete from private_notes;
 delete from checkins;
 delete from guildmembers;
 delete from guilds;
@@ -72,6 +73,11 @@ INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
     ('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+
+INSERT INTO member_profile
+(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+VALUES
+('066b186f-1425-45de-89f2-4ddcc6ebe237', 'Joe Warner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'warnerj@objectcomputing.com', '1234569', '2019-03-25', 'Engineer of Some Note', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
 INSERT INTO role
     (id, role, memberid)
@@ -182,6 +188,11 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('58199639-e670-4702-bba0-8fc63457cd02', 'MEMBER', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+
+INSERT INTO role(
+    id, role, memberid)
+VALUES
+    ('a0ac5d7a-4b8e-11eb-b393-b35b67f02aa6', 'ADMIN', '066b186f-1425-45de-89f2-4ddcc6ebe237');
 
 INSERT INTO team
     (id, name, description)
@@ -297,6 +308,11 @@ INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
 VALUES
     ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note');
+
+INSERT INTO private_notes
+    (id, checkinid, createdbyid, description)
+VALUES
+    ('e5449026-cd9a-4bed-a648-fe3ad9382832', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses private note');
 
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)

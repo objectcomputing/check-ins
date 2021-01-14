@@ -11,6 +11,8 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
+import Autocomplete from "@material-ui/lab/Autocomplete";
+
 import "./DirectoryPage.css";
 
 const DirectoryPage = () => {
@@ -40,6 +42,13 @@ const DirectoryPage = () => {
     setMembers(memberProfiles);
   }, [memberProfiles]);
 
+  useEffect(() => {
+      if (!member.startDate) {
+        member.startDate = date;
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
@@ -55,6 +64,13 @@ const DirectoryPage = () => {
       );
     } else return null;
   });
+
+  const onSupervisorChange = (event, newValue) => {
+    setMember({
+      ...member,
+      supervisorid: newValue ? newValue.id : "",
+    });
+  };
 
   return (
     <div className="directory-page">
@@ -133,9 +149,9 @@ const DirectoryPage = () => {
                 label="Member Insperity Id"
                 className="halfWidth"
                 placeholder="Insperity Id"
-                value={member.insperityid ? member.insperityid : ""}
+                value={member.insperityId ? member.insperityId : ""}
                 onChange={(e) =>
-                  setMember({ ...member, insperityid: e.target.value })
+                  setMember({ ...member, insperityId: e.target.value })
                 }
               />
               <TextField
@@ -147,6 +163,20 @@ const DirectoryPage = () => {
                 onChange={(e) =>
                   setMember({ ...member, bioText: e.target.value })
                 }
+              />
+              <Autocomplete
+                 options={["", ...memberProfiles]}
+                 value={memberProfiles.find((memberProfile) => memberProfile.id === member.supervisorid) || ""}
+                 onChange={onSupervisorChange}
+                 getOptionLabel={(option) => option.name || ""}
+                 renderInput={(params) => (
+                   <TextField
+                     {...params}
+                     className="fullWidth"
+                     label="Supervisors"
+                     placeholder="Select Supervisor"
+                   />
+                 )}
               />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
