@@ -1,14 +1,12 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext,  useState} from "react";
 
 import {AppContext, UPDATE_TEAMS, UPDATE_TOAST,} from "../../context/AppContext";
 import EditTeamModal from "./EditTeamModal";
 
 import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
-import {Skeleton} from "@material-ui/lab";
 import PropTypes from "prop-types";
 import {deleteTeam} from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
-import {getAgendaItem} from "../../api/agenda";
 
 const propTypes = {
     team: PropTypes.shape({
