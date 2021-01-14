@@ -10,7 +10,7 @@ public interface GuildServices {
 
     Guild update(Guild g);
 
-    Guild delete(UUID uuid);
+    Boolean delete(UUID uuid);
 
     Set<Guild> findByFields(String name, UUID memberid);
 }
