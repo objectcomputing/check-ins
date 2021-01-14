@@ -1,14 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
-
-const useStyles = makeStyles({
-  root: {
-    width: 300,
-  },
-});
+import './Slider.css';
 
 const marks = [
   {
@@ -34,20 +28,19 @@ const marks = [
 ];
 
 function valuetext(value) {
-  return `${marks.find((mark) => mark.value===value).label}`;
+  return `${marks.find((mark) => mark.value===value)?.label}`;
 }
 
 const ValueLabelComponent = (props) => (
-  <Tooltip arrow open={props.valueLabelDisplay !== "off" && props.open} enterTouchDelay={0} placement="bottom" title={props.value}>
+  <Tooltip arrow open={props.valueLabelDisplay !== "off" && props.open} enterTouchDelay={0} placement="bottom" title={props.value ? props.value:""}>
     {props.children}
   </Tooltip>
 );
 
 export default function DiscreteSlider({title, lastUsed, onChange, onChangeCommitted}) {
-  const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className="skill-slider">
       <Typography id="discrete-slider-restrict" gutterBottom>
         {title}
       </Typography>
