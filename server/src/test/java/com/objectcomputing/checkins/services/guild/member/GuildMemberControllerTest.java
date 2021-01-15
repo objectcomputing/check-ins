@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -346,5 +347,49 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
     }
+
+    @Test
+    void testDeleteGuildMemberAsAdmin() {
+
+        Guild guild = createDeafultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testDeleteGuildMemberAsNonAdminNonLeadNonCurrentMember() {
+
+        Guild guild = createDeafultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile secondMemberProfile = createAnUnrelatedUser();
+        GuildMember guildMemberNonLead = createDeafultGuildMember(guild, memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMemberNonLead.getId()))
+                .basicAuth(secondMemberProfile.getWorkEmail(), MEMBER_ROLE);
+//        final HttpRequest<Object> request = HttpRequest.
+//                DELETE(String.format("/%s", guildMember.getId()))
+//                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        String error = Objects.requireNonNull(body).get("message").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//
+//        assertEquals("You are not authorized to perform this operation",error);
+//        assertEquals(request.getPath(), href);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+
+    }
+
 
 }

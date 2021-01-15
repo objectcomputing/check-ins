@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -101,7 +102,7 @@ public class GuildMemberController {
      * @return {@link GuildMember}
      */
     @Get("/{id}")
-    public Single<HttpResponse<GuildMember>> readAgendaItem(UUID id) {
+    public Single<HttpResponse<GuildMember>> readGuildMember(UUID id) {
         return Single.fromCallable(() -> {
             GuildMember result = guildMemberServices.read(id);
             if (result == null) {
@@ -132,4 +133,24 @@ public class GuildMemberController {
                     return (HttpResponse<Set<GuildMember>>) HttpResponse.ok(guildmembers);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
     }
+
+    /**
+     * Delete Guild Member
+     *
+     * @param id guild member unique id
+     * @return
+     */
+//    @Delete("/{id}")
+    @Delete("/{id}")
+    public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
+        guildMemberServices.delete(id);
+        return HttpResponse
+                .ok();
+    }
+//    public Single<HttpResponse> deleteGuildMember(@NotNull UUID id) {
+//        return Single.fromCallable(() -> guildMemberServices.delete(id))
+//                .observeOn(Schedulers.from(eventLoopGroup))
+//                .map(success -> (HttpResponse) HttpResponse.ok())
+//                .subscribeOn(Schedulers.from(ioExecutorService));
+//    }
 }
