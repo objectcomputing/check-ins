@@ -17,4 +17,3 @@ node_modules
 .run
 **/run.bat
 *.sh
-/server/src/main/resources/secrets/*
