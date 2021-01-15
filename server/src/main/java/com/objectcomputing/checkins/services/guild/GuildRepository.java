@@ -23,8 +23,8 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
             "FROM guilds guild " +
             "WHERE (:name IS NULL OR guild.name LIKE :name) " +
             "AND (:memberid IS NULL OR guild.id IN " +
-                "(SELECT guildid FROM guildmembers gm " +
-                "WHERE(:memberid IS NULL OR  gm.memberid = :memberid)))")
+            "(SELECT guildid FROM guildmembers gm " +
+            "WHERE(:memberid IS NULL OR  gm.memberid = :memberid)))")
     Set<Guild> search(@Nullable String name, @Nullable String memberid);
 
     @Override
@@ -32,4 +32,7 @@ public interface GuildRepository extends CrudRepository<Guild, UUID> {
 
     @Override
     <S extends Guild> S save(@Valid @NotNull @NonNull S entity);
+
+    @Override
+    void deleteById(@NotNull UUID id);
 }
