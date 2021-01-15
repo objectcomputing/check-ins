@@ -102,6 +102,11 @@ VALUES
 INSERT INTO role
     (id, role, memberid)
 VALUES
+    ('9219ca40-6c74-419e-ab8a-22cc2f4e90dd', 'ADMIN', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
     ('1cf0b520-925e-43b1-8cd3-c06559b402b7', 'PDL', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO role
