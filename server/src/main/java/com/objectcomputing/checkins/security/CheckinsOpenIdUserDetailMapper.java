@@ -10,6 +10,8 @@ import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.*;
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @Replaces(DefaultOpenIdUserDetailsMapper.class)
 public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
 
@@ -67,12 +70,16 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     protected List<String> getRoles(OpenIdClaims openIdClaims) {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
-                .ifPresent((memberProfile) ->
+                .ifPresent((memberProfile) -> {
+                        LOG.info("MemberProfile of the user:", memberProfile);
                         roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
-                                .collect(Collectors.toList())));
+                                .collect(Collectors.toList()));
+                });
 
+        LOG.info("Email address of the user:", openIdClaims.getEmail());
+        LOG.info("List of roles from roleRepository:", roles);
         return roles;
     }
 }
