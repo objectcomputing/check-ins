@@ -75,7 +75,7 @@ const UploadDocs = () => {
       let res = await uploadFile(formData, checkinId, csrf);
       if (res.error) throw new Error(res.error);
       const { data, status } = res.payload;
-      if (status !== 200) {
+      if (status !== 200 && status !== 201) {
         throw new Error("status equals " + status);
       }
       dispatch({
