@@ -8,6 +8,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.drive.Drive;
 import com.google.auth.http.HttpCredentialsAdapter;
+import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -45,7 +46,7 @@ public class GoogleAccessor {
      */
     public Drive accessGoogleDrive() throws IOException {
 
-        String apiScope = environment.getProperty("check-ins.application.scopes.scopeForDriveApi", String.class).orElse("");
+        String apiScope = environment.getProperty("check-ins.application.google-api.scopes.scopeForDriveApi", String.class).orElse("");
         List<String> scope = Collections.singletonList(apiScope);
 
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(authenticator.setupCredentials(scope));

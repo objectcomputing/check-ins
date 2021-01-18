@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.team;
 
 import com.objectcomputing.checkins.services.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -117,7 +118,7 @@ public class TeamServicesImpl implements TeamServices {
             teamMemberRepo.deleteByTeamId(id.toString());
             teamsRepo.deleteById(id);
         } else {
-            throw new BadArgException("You are not authorized to perform this operation");
+            throw new PermissionException("You are not authorized to perform this operation");
         }
         return true;
     }

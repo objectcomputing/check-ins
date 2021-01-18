@@ -21,9 +21,9 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, GuildMemberFixture {
@@ -44,7 +44,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(guildCreateDTO.getDescription(), response.body().getDescription());
-        assertEquals(guildCreateDTO.getName(),response.body().getName());
+        assertEquals(guildCreateDTO.getName(), response.body().getName());
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
 
     }
@@ -223,9 +223,60 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
 
-        assertEquals(String.format("Guild %s does not exist, can't update.",g.getId()), errors.asText());
+        assertEquals(String.format("Guild %s does not exist, can't update.", g.getId()), errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+    }
+
+    @Test
+    void testUpdateGuildAsAdmin() {
+
+        Guild g = createDeafultGuild();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", g.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<Guild> response = client.toBlocking().exchange(request, Guild.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testDeleteTeamMemberNonAdmin() {
+        Guild g = createDeafultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", g.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+
+    }
+
+    @Test
+    void testUpdateGuildAsAdminNonExistent() {
+
+        Guild g = createDeafultGuild();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", g.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<Guild> response = client.toBlocking().exchange(request, Guild.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+        final HttpRequest<Object> request2 = HttpRequest.
+                DELETE(String.format("/%s", g.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request2, Map.class));
+
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
 
     }
 

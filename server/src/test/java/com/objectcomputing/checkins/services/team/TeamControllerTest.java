@@ -271,7 +271,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         assertEquals("You are not authorized to perform this operation", errors.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
     }
 
     @Test
@@ -321,7 +321,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         assertEquals("You are not authorized to perform this operation", errors.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
     }
 
     private void assertEntityDTOEqual(Collection<Team> entities, Collection<TeamResponseDTO> dtos) {

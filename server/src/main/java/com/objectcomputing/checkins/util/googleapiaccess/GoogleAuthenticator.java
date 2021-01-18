@@ -40,7 +40,6 @@ public class GoogleAuthenticator {
      * @throws IOException If the service account configurations cannot be found.
      */
     GoogleCredentials setupCredentials(@NotNull final List<String> scopes) throws IOException {
-
         InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8));
         GoogleCredentials credentials = GoogleCredentials.fromStream(in);
 
@@ -60,6 +59,7 @@ public class GoogleAuthenticator {
      * @throws IOException If the service account configurations cannot be found.
      */
     ServiceAccountCredentials setupServiceAccountCredentials(@NotNull final List<String> scopes, @NotNull final String delegatedUser) throws IOException {
+
         ServiceAccountCredentials sourceCredentials = null;
         try(InputStream in = new ByteArrayInputStream(gServiceConfig.toString().getBytes(StandardCharsets.UTF_8))) {
             sourceCredentials = ServiceAccountCredentials.fromStream(in);
