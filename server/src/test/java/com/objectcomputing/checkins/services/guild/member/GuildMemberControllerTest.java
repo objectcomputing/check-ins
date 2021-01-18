@@ -374,20 +374,36 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMemberNonLead.getId()))
                 .basicAuth(secondMemberProfile.getWorkEmail(), MEMBER_ROLE);
-//        final HttpRequest<Object> request = HttpRequest.
-//                DELETE(String.format("/%s", guildMember.getId()))
-//                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertEquals("You are not authorized to perform this operation",error);
-//        assertEquals(request.getPath(), href);
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals("You are not authorized to perform this operation",error);
+        assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+
+    }
+
+    @Test
+    void testDeleteGuildMemberAsLead() {
+
+        Guild guild = createDeafultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile secondMemberProfile = createAnUnrelatedUser();
+        GuildMember guildMemberNonLead = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMemberLead = createDeafultGuildMemberLead(guild, secondMemberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMemberNonLead.getId()))
+                .basicAuth(secondMemberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
