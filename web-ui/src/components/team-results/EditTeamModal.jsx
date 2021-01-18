@@ -7,6 +7,7 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
+import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
@@ -20,6 +21,9 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
         ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
         : [];
     newValue.forEach((lead) => (lead.lead = true));
+    newValue.forEach((newLead) => {
+        extantMembers = extantMembers.filter(member => member.memberid != newLead.id)
+    });
     setTeam({
       ...editedTeam,
       teamMembers: [...extantMembers, ...newValue],
@@ -32,6 +36,9 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
     newValue.forEach((lead) => (lead.lead = false));
+    newValue.forEach((newMember) => {
+      extantLeads = extantLeads.filter(lead => lead.memberid != newMember.id)
+    });
     setTeam({
       ...editedTeam,
       teamMembers: [...extantLeads, ...newValue],
@@ -113,6 +120,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
           <Button
             onClick={async () => {
               onSave(editedTeam);
+              await updateTeam(editedTeam);
             }}
             color="primary"
           >
