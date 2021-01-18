@@ -87,30 +87,23 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     public Boolean delete(@NotNull UUID id) {
 
         GuildMember guildMemberResult = guildMemberRepo.findById(id).orElse(null);
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-// take current user id and find out if they are a lead for this guild and hence guild member
-        // guildmembers (id, guildid, memberid, lead)
-        // guilds (id, name, description)
-        // findbyfields using guild for this guildmember and memberid for current user
-        Set<GuildMember> guildLeads =
-                findByFields(guildMemberResult.getGuildid(), currentUser.getId(), true);
-        Boolean currentUserIsGuildLead = guildLeads != null;
 
         if (guildMemberResult == null) {
             throw new NotFoundException(String.format("No guild member for id %s", id));
         }
 
-        if (! (currentUserServices.isAdmin() ||
-                currentUserIsGuildLead ||
-                currentUser.getId().equals(guildMemberResult.getMemberid()))) {
-            throw new PermissionException("You are not authorized to perform this operation");
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+
+        if (!currentUserServices.isAdmin()) {
+            Set<GuildMember> guildLeads =
+                    findByFields(guildMemberResult.getGuildid(), currentUser.getId(), true);
+            Boolean currentUserIsGuildLead = !guildLeads.isEmpty();
+
+            if (!(currentUserIsGuildLead ||
+                    currentUser.getId().equals(guildMemberResult.getMemberid()))) {
+                throw new PermissionException("You are not authorized to perform this operation");
+            }
         }
-//
-//        if (! (currentUserServices.isAdmin() ||
-//                guildMemberResult.isLead() ||
-//                currentUser.getId().equals(guildMemberResult.getMemberid()))) {
-//            throw new PermissionException("You are not authorized to perform this operation");
-//        }
 
         guildMemberRepo.deleteById(id);
         return true;

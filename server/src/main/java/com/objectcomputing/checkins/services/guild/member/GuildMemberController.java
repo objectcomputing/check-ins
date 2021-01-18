@@ -140,17 +140,11 @@ public class GuildMemberController {
      * @param id guild member unique id
      * @return
      */
-//    @Delete("/{id}")
     @Delete("/{id}")
-    public HttpResponse<?> deleteMemberSkill(@NotNull UUID id) {
-        guildMemberServices.delete(id);
-        return HttpResponse
-                .ok();
+    public Single<HttpResponse> deleteGuildMember(@NotNull UUID id) {
+        return Single.fromCallable(() -> guildMemberServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
-//    public Single<HttpResponse> deleteGuildMember(@NotNull UUID id) {
-//        return Single.fromCallable(() -> guildMemberServices.delete(id))
-//                .observeOn(Schedulers.from(eventLoopGroup))
-//                .map(success -> (HttpResponse) HttpResponse.ok())
-//                .subscribeOn(Schedulers.from(ioExecutorService));
-//    }
 }
