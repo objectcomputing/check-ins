@@ -43,7 +43,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         List<String> roles = getRoles(openIdClaims);
         String username = openIdClaims.getSubject();
         UserDetails userDetails = new UserDetails(username, roles, claims);
-        LOG.info("Creating new userdetails with username: ", userDetails.getUsername());
+        LOG.info("Creating new userdetails for user: {}", userDetails.getUsername());
         return userDetails;
     }
 
@@ -75,15 +75,15 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) -> {
-                        LOG.info("MemberProfile of the user:", memberProfile);
+                        LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
                                 .collect(Collectors.toList()));
                 });
 
-        LOG.info("Email address of the user:", openIdClaims.getEmail());
-        LOG.info("List of roles from roleRepository:", roles);
+        LOG.info("Email address of the user: {}", openIdClaims.getEmail());
+        LOG.info("List of roles from roleRepository: {}", roles);
         return roles;
     }
 }
