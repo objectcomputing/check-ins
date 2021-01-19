@@ -9,7 +9,10 @@ import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.*;
+import io.micronaut.security.token.DefaultRolesFinder;
+import io.micronaut.security.token.config.TokenConfiguration;
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
+import ognl.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +31,15 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
+    private final TokenConfiguration tokenConfiguration;
 
     public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
-                                          RoleRepository roleRepository) {
+                                          RoleRepository roleRepository,
+                                          TokenConfiguration tokenConfiguration) {
         LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
+        this.tokenConfiguration = tokenConfiguration;
     }
 
     @NonNull
@@ -64,6 +70,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         JwtClaims.ALL_CLAIMS.forEach(claims::remove);
         claims.put(OauthUserDetailsMapper.PROVIDER_KEY, providerName);
         claims.put(OpenIdUserDetailsMapper.OPENID_TOKEN_KEY, tokenResponse.getIdToken());
+        claims.put(tokenConfiguration.getRolesName(), getRoles(openIdClaims));
         return claims;
     }
 
