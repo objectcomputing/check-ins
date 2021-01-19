@@ -39,7 +39,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
         : [];
     newValue.forEach((teamMember) => (teamMember.lead = false));
     newValue.forEach((newMember) => {
-      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id && lead.memberid !== newMember.id)
+      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id && lead.id !== newMember.id)
     });
     extantLeads = [...new Set(extantLeads)];
     newValue = [...new Set(newValue)];
