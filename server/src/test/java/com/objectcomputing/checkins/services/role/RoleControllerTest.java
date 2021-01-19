@@ -33,13 +33,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateARole() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
         roleCreateDTO.setMemberid(memberProfile.getId());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         Role role = response.body();
@@ -53,13 +55,16 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateARoleAlreadyExists() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
         Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfile);
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(alreadyExistingRole.getRole());
         roleCreateDTO.setMemberid(alreadyExistingRole.getMemberid());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -74,12 +79,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateForbidden() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
         roleCreateDTO.setMemberid(UUID.randomUUID());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -89,10 +97,13 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateAnInvalidRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -109,13 +120,16 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateNonExistingMember() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         RoleCreateDTO role = new RoleCreateDTO();
         role.setMemberid(UUID.randomUUID());
         role.setRole(RoleType.MEMBER);
 
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -129,8 +143,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testCreateANullRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
         final HttpRequest<String> request = HttpRequest.POST("", "")
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -144,10 +161,13 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testReadRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
-        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(role, response.body());
@@ -156,8 +176,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testReadRoleNotFound() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
         final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID()))
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Role.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
@@ -165,12 +188,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testFindRoles() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
                 createDefaultRole(RoleType.PDL, memberProfile));
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getId()))
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
         assertEquals(roles, response.body());
@@ -179,11 +205,14 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testFindRolesAllParams() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getRole(),
-                role.getMemberid())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                role.getMemberid())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
         assertEquals(Set.of(role), response.body());
@@ -192,8 +221,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testFindRolesDoesNotExist() {
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.ADMIN))
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createDefaultRole(unrelatedProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.PDL))
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -202,11 +234,14 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(role, response.body());
@@ -216,13 +251,16 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingMember() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
         role.setMemberid(UUID.randomUUID());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -236,6 +274,9 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingRoleType() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role roleToUpdate = createDefaultRole(memberProfile);
 
@@ -245,7 +286,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         role.put("memberid", roleToUpdate.getMemberid().toString());
 
         final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -259,11 +300,14 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateNonExistingRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getId());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -277,12 +321,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateWithoutId() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
         role.setId(null);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -296,10 +343,13 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateForbidden() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+
         Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", r)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -309,13 +359,16 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateAnInvalidRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
         role.setMemberid(null);
         role.setRole(null);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -332,8 +385,11 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void testUpdateANullRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         final HttpRequest<String> request = HttpRequest.PUT("", "")
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -347,13 +403,16 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void deleteRole() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(memberProfile);
 
         assertNotNull(findRole(role));
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(role.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -362,12 +421,15 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void deleteRoleNonExisting() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         UUID uuid = UUID.randomUUID();
 
         assertNull(findRoleById(uuid));
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -376,10 +438,13 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
     void deleteRoleBadId() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createDefaultRole(unrelatedProfile);
+
         String uuid = "Bill-Nye-The-Science-Guy";
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 

@@ -32,7 +32,7 @@ public class CheckinsRolesFinder implements RolesFinder {
     @Override
     public List<String> findInClaims(@NotNull Claims openIdClaims) {
         List<String> roles = new ArrayList<>();
-        memberProfileRepository.findByWorkEmail(openIdClaims.get(JWTOpenIdClaims.SUBJECT).toString())
+        memberProfileRepository.findByWorkEmail(openIdClaims.get(JWTOpenIdClaims.CLAIMS_EMAIL).toString())
                 .ifPresent((memberProfile) -> {
                     roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                             .stream()
