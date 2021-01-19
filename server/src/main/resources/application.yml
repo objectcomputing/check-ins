@@ -27,7 +27,7 @@ micronaut:
 
   security:
     enabled: true
-    authentication: idtoken
+    authentication: cookie
     oauth2:
       clients:
         google:
