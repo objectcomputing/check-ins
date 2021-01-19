@@ -22,11 +22,13 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
         : [];
     newValue.forEach((lead) => (lead.lead = true));
     newValue.forEach((newLead) => {
-        extantMembers = extantMembers.filter(member => member.memberid !== newLead.id)
+        extantMembers = extantMembers.filter(member => member.memberid !== newLead.id && member.id !== newLead.id)
     });
+    extantMembers = [...new Set(extantMembers)];
+    newValue = [...new Set(newValue)];
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantMembers, ...newValue],
+        teamMembers: [...extantMembers, ...newValue],
     });
   };
 
@@ -35,13 +37,15 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
-    newValue.forEach((lead) => (lead.lead = false));
+    newValue.forEach((teamMember) => (teamMember.lead = false));
     newValue.forEach((newMember) => {
-      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id)
+      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id && lead.memberid !== newMember.id)
     });
+    extantLeads = [...new Set(extantLeads)];
+    newValue = [...new Set(newValue)];
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantLeads, ...newValue],
+         teamMembers: [...extantLeads, ...newValue],
     });
   };
 
