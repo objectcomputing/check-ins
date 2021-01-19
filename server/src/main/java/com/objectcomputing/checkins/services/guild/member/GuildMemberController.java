@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild.member;
 
+import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -40,15 +41,6 @@ public class GuildMemberController {
         this.guildMemberServices = guildMemberServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-
-    @Error(exception = GuildMemberNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, GuildMemberNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
     }
 
     /**
@@ -105,7 +97,7 @@ public class GuildMemberController {
         return Single.fromCallable(() -> {
             GuildMember result = guildMemberServices.read(id);
             if (result == null) {
-                throw new GuildMemberNotFoundException("No guild member for UUID");
+                throw new NotFoundException("No guild member for UUID");
             }
             return result;
         })
