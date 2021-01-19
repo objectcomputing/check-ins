@@ -13,6 +13,7 @@ import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Named("google")
 @Singleton
-@Replaces(DefaultOpenIdUserDetailsMapper.class)
 public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
@@ -30,6 +31,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
     public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
                                           RoleRepository roleRepository) {
+        LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
     }
@@ -40,7 +42,9 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         Map<String, Object> claims = buildAttributes(providerName, tokenResponse, openIdClaims);
         List<String> roles = getRoles(openIdClaims);
         String username = openIdClaims.getSubject();
-        return new UserDetails(username, roles, claims);
+        UserDetails userDetails = new UserDetails(username, roles, claims);
+        LOG.info("Creating new userdetails for user: {}", userDetails.getUsername());
+        return userDetails;
     }
 
     @NonNull
@@ -71,15 +75,15 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) -> {
-                        LOG.info("MemberProfile of the user:", memberProfile);
+                        LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
                                 .collect(Collectors.toList()));
                 });
 
-        LOG.info("Email address of the user:", openIdClaims.getEmail());
-        LOG.info("List of roles from roleRepository:", roles);
+        LOG.info("Email address of the user: {}", openIdClaims.getEmail());
+        LOG.info("List of roles from roleRepository: {}", roles);
         return roles;
     }
 }
