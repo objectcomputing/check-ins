@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

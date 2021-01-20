@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.team;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
