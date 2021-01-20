@@ -42,7 +42,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         final UUID createById = checkinNote.getCreatedbyid();
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-        final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
         if (checkinRecord!=null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
             throw new PermissionException("You do not have permission to access this resource");
@@ -80,8 +79,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public CheckinNote update(@NotNull CheckinNote checkinNote) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
-        System.out.println("isAdmin"+isAdmin+"isPDL"+isPdl);
 
         final UUID id = checkinNote.getId();
         final UUID checkinId = checkinNote.getCheckinid();
