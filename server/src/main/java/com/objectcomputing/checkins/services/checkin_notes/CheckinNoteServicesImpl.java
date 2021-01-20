@@ -36,7 +36,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
     public CheckinNote save(@NotNull CheckinNote checkinNote) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 
         final UUID checkinId = checkinNote.getCheckinid();
         final UUID createById = checkinNote.getCreatedbyid();
