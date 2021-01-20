@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 
 import javax.inject.Singleton;

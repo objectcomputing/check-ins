@@ -1,13 +1,10 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;

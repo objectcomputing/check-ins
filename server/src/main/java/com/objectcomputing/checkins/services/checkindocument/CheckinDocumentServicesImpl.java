@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;

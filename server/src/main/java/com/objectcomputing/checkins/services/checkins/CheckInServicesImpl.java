@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.checkins;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
