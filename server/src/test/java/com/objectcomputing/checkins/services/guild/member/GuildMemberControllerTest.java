@@ -406,7 +406,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         assertEquals("You are not authorized to perform this operation", error);
         assertEquals(request.getPath(), href);
-        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
     }
 
