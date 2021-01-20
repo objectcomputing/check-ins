@@ -22,7 +22,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
 
   const getPdls = async () => {
     let res = await getAllPDLs(csrf);
-    let promises = res.payload.data.map((member) => getMember(member.memberid));
+    let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
     const results = await Promise.all(promises);
     const pdlArray = results.map((res) => res.payload.data);
     setPdls(pdlArray);
@@ -149,7 +149,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           <Button
             onClick={async () => {
               onSave(editedMember);
-              await updateMember(editedMember);
+              await updateMember(editedMember, csrf);
             }}
             color="primary"
           >
