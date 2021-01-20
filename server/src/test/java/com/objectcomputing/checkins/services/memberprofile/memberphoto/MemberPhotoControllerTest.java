@@ -1,12 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.test.annotation.MockBean;
 import org.junit.jupiter.api.Test;

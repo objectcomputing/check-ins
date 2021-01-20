@@ -597,7 +597,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         assertEquals("User is unauthorized to do this operation", errors.asText());
         assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
     }
 

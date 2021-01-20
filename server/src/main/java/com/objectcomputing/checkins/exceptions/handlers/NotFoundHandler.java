@@ -1,6 +1,6 @@
-package com.objectcomputing.checkins.services.exceptions.handlers;
+package com.objectcomputing.checkins.exceptions.handlers;
 
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -13,15 +13,15 @@ import javax.inject.Singleton;
 
 @Produces
 @Singleton
-@Requires(classes = {PermissionException.class, ExceptionHandler.class})
-public class PermissionsHandler implements ExceptionHandler<PermissionException, HttpResponse> {
+@Requires(classes = {NotFoundException.class, ExceptionHandler.class})
+public class NotFoundHandler implements ExceptionHandler<NotFoundException, HttpResponse> {
 
     @Override
-    public HttpResponse<?> handle(HttpRequest request, PermissionException e) {
+    public HttpResponse<?> handle(HttpRequest request, NotFoundException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
-        return HttpResponse.<JsonError>unauthorized().body(error);
+        return HttpResponse.<JsonError>notFound().body(error);
     }
 
 }

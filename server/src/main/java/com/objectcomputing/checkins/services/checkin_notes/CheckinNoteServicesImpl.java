@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;

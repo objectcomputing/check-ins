@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.team.TeamUpdateDTO;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;

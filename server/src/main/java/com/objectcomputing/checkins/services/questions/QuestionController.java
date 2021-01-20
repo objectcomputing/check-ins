@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.questions;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;

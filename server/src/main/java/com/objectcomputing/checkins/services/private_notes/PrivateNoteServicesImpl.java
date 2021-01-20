@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;

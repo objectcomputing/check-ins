@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -19,14 +19,11 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Put;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 
-import io.micronaut.http.annotation.Error;
 import java.time.LocalDate;
 import io.micronaut.core.convert.format.Format;
 
