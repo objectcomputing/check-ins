@@ -254,7 +254,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
     }
 

@@ -1,13 +1,10 @@
 package com.objectcomputing.checkins.services.guild.member;
 
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -19,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -93,7 +91,7 @@ public class GuildMemberController {
      * @return {@link GuildMember}
      */
     @Get("/{id}")
-    public Single<HttpResponse<GuildMember>> readAgendaItem(UUID id) {
+    public Single<HttpResponse<GuildMember>> readGuildMember(UUID id) {
         return Single.fromCallable(() -> {
             GuildMember result = guildMemberServices.read(id);
             if (result == null) {
@@ -123,5 +121,19 @@ public class GuildMemberController {
                 .map(guildmembers -> {
                     return (HttpResponse<Set<GuildMember>>) HttpResponse.ok(guildmembers);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    /**
+     * Delete Guild Member
+     *
+     * @param id guild member unique id
+     * @return
+     */
+    @Delete("/{id}")
+    public Single<HttpResponse> deleteGuildMember(@NotNull UUID id) {
+        return Single.fromCallable(() -> guildMemberServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 }

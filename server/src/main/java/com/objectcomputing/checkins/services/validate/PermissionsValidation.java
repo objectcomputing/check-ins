@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.validate;
 
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;

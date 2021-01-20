@@ -82,6 +82,30 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testCreateCheckinNoteByMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(memberProfileForPDL.getId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        CheckinNote checkinNote = response.body();
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
     void testCreateInvalidCheckinNote() {
         CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
 
@@ -210,7 +234,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals("User is unauthorized to do this operation", error);
     }
 
     @Test
@@ -223,6 +247,22 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
+
+        assertEquals(Set.of(checkinNote), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReadCheckinNoteByMEMBER() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -494,6 +534,22 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testUpdateCheckinNoteByMEMBER() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        assertEquals(checkinNote, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
     void testUpdateInvalidCheckinNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
@@ -638,7 +694,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals("You do not have permission to access this resource", error);
         assertEquals(request.getPath(), href);
 
     }
@@ -680,6 +736,6 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals("User is unauthorized to do this operation", error);
     }
 }
