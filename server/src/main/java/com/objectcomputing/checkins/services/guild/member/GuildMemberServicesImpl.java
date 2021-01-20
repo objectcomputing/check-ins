@@ -1,8 +1,12 @@
 package com.objectcomputing.checkins.services.guild.member;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -17,11 +21,13 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
     private final MemberProfileRepository memberRepo;
+    private final CurrentUserServices currentUserServices;
 
-    public GuildMemberServicesImpl(GuildRepository guildRepo, GuildMemberRepository guildMemberRepo, MemberProfileRepository memberRepo) {
+    public GuildMemberServicesImpl(GuildRepository guildRepo, GuildMemberRepository guildMemberRepo, MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.memberRepo = memberRepo;
+        this.currentUserServices = currentUserServices;
     }
 
     public GuildMember save(GuildMember guildMember) {
@@ -76,6 +82,31 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     public Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead) {
         return guildMemberRepo.search(nullSafeUUIDToString(guildid), nullSafeUUIDToString(memberid), lead);
+    }
+
+    public Boolean delete(@NotNull UUID id) {
+
+        GuildMember guildMemberResult = guildMemberRepo.findById(id).orElse(null);
+
+        if (guildMemberResult == null) {
+            throw new NotFoundException(String.format("No guild member for id %s", id));
+        }
+
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+
+        if (!currentUserServices.isAdmin()) {
+            Set<GuildMember> guildLeads =
+                    findByFields(guildMemberResult.getGuildid(), currentUser.getId(), true);
+            Boolean currentUserIsGuildLead = !guildLeads.isEmpty();
+
+            if (!(currentUserIsGuildLead ||
+                    currentUser.getId().equals(guildMemberResult.getMemberid()))) {
+                throw new PermissionException("You are not authorized to perform this operation");
+            }
+        }
+
+        guildMemberRepo.deleteById(id);
+        return true;
     }
 
 }

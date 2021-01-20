@@ -12,4 +12,7 @@ public interface GuildMemberServices {
     GuildMember update(GuildMember guildMember);
 
     Set<GuildMember> findByFields(UUID guildid, UUID memberid, Boolean lead);
+
+    Boolean delete(UUID id);
+
 }
