@@ -36,6 +36,8 @@ const Notes = (props) => {
   const pdlorAdmin =
     (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
     userProfile.role.includes("ADMIN");
+  const Admin =
+     (memberProfile && userProfile.role && userProfile.role.includes("ADMIN"));
 
   const canViewPrivateNote =
     pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
@@ -43,9 +45,6 @@ const Notes = (props) => {
 
   useEffect(() => {
     async function getNotes() {
-      if (!pdlId) {
-        return;
-      }
       setIsLoading(true);
       try {
         let res = await getNoteByCheckinId(currentCheckinId, csrf);
@@ -128,7 +127,7 @@ const Notes = (props) => {
             ) : (
               <textarea
                 disabled={
-                  !pdlorAdmin ||
+                  !Admin &
                   currentCheckin.completed === true ||
                   Object.keys(note) === 0
                 }
