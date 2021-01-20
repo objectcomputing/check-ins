@@ -38,23 +38,24 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
         boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
 
-        if (!isAdmin && !isPdl) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
-
         final UUID checkinId = checkinNote.getCheckinid();
         final UUID createById = checkinNote.getCreatedbyid();
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
-        validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
-        validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
-        validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-        if (!isAdmin && isCompleted) {
-            validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
+
+        if (checkinRecord!=null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
+            throw new PermissionException("You do not have permission to access this resource");
         }
 
+        validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
+        validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
+        validate(checkinRecord==null, "CheckIn %s doesn't exist", checkinId);
+        validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+        validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
+            if (!isAdmin && isCompleted) {
+            validate(true, "User is unauthorized to do this operation");
+        }
         return checkinNoteRepository.save(checkinNote);
     }
 
@@ -80,10 +81,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         boolean isPdl = currentUserServices.hasRole(RoleType.PDL);
-
-        if (!isAdmin && !isPdl) {
-            throw new PermissionException("You do not have permission to access this resource");
-        }
+        System.out.println("isAdmin"+isAdmin+"isPDL"+isPdl);
 
         final UUID id = checkinNote.getId();
         final UUID checkinId = checkinNote.getCheckinid();
@@ -91,10 +89,16 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+
+        if (checkinRecord!=null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
+            throw new PermissionException("You do not have permission to access this resource");
+        }
+
         validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(checkinRepo.findById(checkinId).isEmpty(), "CheckIn %s doesn't exist", checkinId);
+        validate(checkinRecord==null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
+        validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
         if (!isAdmin && isCompleted) {
             validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
         }

@@ -210,7 +210,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals("User is unauthorized to do this operation", error);
     }
 
     @Test
@@ -638,7 +638,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals("You do not have permission to access this resource", error);
         assertEquals(request.getPath(), href);
 
     }
@@ -680,6 +680,6 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals("User is unauthorized to do this operation", error);
     }
 }
