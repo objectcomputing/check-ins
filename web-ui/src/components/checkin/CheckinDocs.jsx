@@ -100,9 +100,10 @@ const UploadDocs = () => {
       if (!file.name) {
         return null;
       } else {
+        let downloadUrl = "/services/file/"+file.fileId+"/download";
         return (
           <div key={file.fileId} style={{ color: fileColors[file.name] }}>
-            {file.name}
+            <a href={downloadUrl} download={file.name}>{file.name}</a>
             <Button
               className="remove-file"
               onClick={async () => {
