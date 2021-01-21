@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
