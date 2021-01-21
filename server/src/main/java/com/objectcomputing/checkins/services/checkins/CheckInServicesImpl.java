@@ -1,9 +1,16 @@
 package com.objectcomputing.checkins.services.checkins;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleServices;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+
+import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
@@ -21,13 +28,52 @@ public class CheckInServicesImpl implements CheckInServices {
     private final CheckInRepository checkinRepo;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
+    private final RoleServices roleServices;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
                                MemberProfileRepository memberRepo,
-                               CurrentUserServices currentUserServices) {
+                               CurrentUserServices currentUserServices, RoleServices roleServices) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
+        this.roleServices = roleServices;
+    }
+
+    @Override
+    public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
+        Boolean grantAccess = false;
+
+//        MemberProfile currentUser = currentUserServices.getCurrentUser();
+//        boolean isAdmin = currentUserServices.isAdmin();
+//        final UUID checkinId = checkinNote.getCheckinid();
+
+        MemberProfile member = memberRepo.findById(memberId).orElse(null);
+        if(member == null) {
+            throw new NotFoundException(String.format("Member %s not found", memberId));
+        }
+        CheckIn checkin = checkinRepo.findById(checkinId).orElse(null);
+        if(checkin == null) {
+            throw new NotFoundException(String.format("Checkin %s not found", checkinId));
+        }
+
+        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, member.getId());
+        boolean isAdmin = !memberRoles.isEmpty();
+        final UUID createById = checkin.getPdlId();
+        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
+
+// make sure member id and checkin aren't null
+//  Checkin should be visible to member it refers to, pdl who created it, current pdl, or admin only
+
+        if (isAdmin
+                || member.getId().equals(checkinRecord.getTeamMemberId())
+                || member.getId().equals(checkinRecord.getPdlId())
+                || member.getPdlId().equals(checkinRecord.getPdlId())) {
+            grantAccess = true;
+        }
+        // This is missing a check. Access should also be allowed
+        // if the currentUser is the pdl for the team member whose checkin this is.
+      return grantAccess;
     }
 
     @Override

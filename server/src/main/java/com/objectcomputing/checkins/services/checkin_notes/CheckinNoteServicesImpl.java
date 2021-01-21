@@ -42,7 +42,10 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        if (checkinRecord!=null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
+        if (checkinRecord!=null
+                && !isAdmin
+                && !currentUser.getId().equals(checkinRecord.getTeamMemberId())
+                && !currentUser.getId().equals(checkinRecord.getPdlId())) {
             throw new PermissionException("You do not have permission to access this resource");
         }
 
