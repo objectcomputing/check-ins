@@ -8,6 +8,7 @@ import com.google.api.client.testing.json.MockJsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.google.common.io.ByteStreams;
+import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -68,6 +69,9 @@ public class FileServicesImplTest {
     private Drive.Files.Create create;
 
     @Mock
+    private Drive.Files.Update update;
+
+    @Mock
     private CompletedFileUpload fileToUpload;
 
     @Mock
@@ -100,6 +104,9 @@ public class FileServicesImplTest {
     @Mock
     private CompletedFileUpload completedFileUpload;
 
+    @Mock
+    private GoogleServiceConfiguration googleServiceConfiguration;
+
     @InjectMocks
     private FileServicesImpl services;
 
@@ -128,6 +135,7 @@ public class FileServicesImplTest {
         Mockito.reset(get);
         Mockito.reset(delete);
         Mockito.reset(create);
+        Mockito.reset(update);
         Mockito.reset(fileToUpload);
         Mockito.reset(testMemberProfile);
         Mockito.reset(testCheckIn);
@@ -139,11 +147,13 @@ public class FileServicesImplTest {
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
         Mockito.reset(completedFileUpload);
+        Mockito.reset(googleServiceConfiguration);
 
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
         when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        when(googleServiceConfiguration.getDirectory_id()).thenReturn("testDirectoryId");
     }
 
     @Test
@@ -160,6 +170,11 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
+        when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
 
         final Set<FileInfoDTO> result = services.findFiles(null);
@@ -193,6 +208,7 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
+        when(get.setSupportsAllDrives(any())).thenReturn(get);
         when(get.execute()).thenReturn(file);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
@@ -284,6 +300,11 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
+        when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenThrow(testException);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
@@ -308,6 +329,7 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(any(String.class))).thenReturn(get);
+        when(get.setSupportsAllDrives(any())).thenReturn(get);
         when(get.execute()).thenThrow(testException);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
@@ -334,6 +356,7 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenReturn(get);
+        when(get.setSupportsAllDrives(any())).thenReturn(get);
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 OutputStream outputStream = invocation.getArgument(0);
@@ -364,6 +387,7 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.get(testUploadDocId)).thenReturn(get);
+        when(get.setSupportsAllDrives(any())).thenReturn(get);
         doAnswer(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws IOException {
                 OutputStream outputStream = invocation.getArgument(0);
@@ -473,7 +497,8 @@ public class FileServicesImplTest {
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
-        when(files.delete(uploadDocId)).thenReturn(delete);
+        when(files.update(uploadDocId, any())).thenReturn(update);
+        when(update.setSupportsAllDrives(any())).thenReturn(update);
 
         Boolean result = services.deleteFile(uploadDocId);
 
@@ -495,6 +520,7 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.delete(uploadDocId)).thenReturn(delete);
+        when(delete.setSupportsAllDrives(any())).thenReturn(delete);
 
         Boolean result = services.deleteFile(uploadDocId);
 
@@ -580,8 +606,8 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
-        when(files.delete(uploadDocId)).thenReturn(delete);
-        when(delete.execute()).thenThrow(testException);
+        when(files.update(uploadDocId, any())).thenReturn(update);
+        when(update.setSupportsAllDrives(any())).thenReturn(update);
 
         //act
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
@@ -634,6 +660,10 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
 
         when(files.create(any(com.google.api.services.drive.model.File.class))).thenReturn(create);
@@ -691,6 +721,10 @@ public class FileServicesImplTest {
         when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
         when(files.create(any(com.google.api.services.drive.model.File.class))).thenReturn(create);
         when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
         when(create.setSupportsAllDrives(true)).thenReturn(create);
         when(create.setFields(any(String.class))).thenReturn(create);
@@ -741,6 +775,10 @@ public class FileServicesImplTest {
         when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(create);
         when(files.create(any(com.google.api.services.drive.model.File.class))).thenReturn(create);
         when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenReturn(fileList);
         when(create.setSupportsAllDrives(true)).thenReturn(create);
         when(create.setFields(any(String.class))).thenReturn(create);
@@ -866,7 +904,11 @@ public class FileServicesImplTest {
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
-        when(list.setFields(anyString())).thenReturn(list);
+        when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenThrow(IOException.class);
 
         assertThrows(FileRetrievalException.class, () -> services.uploadFile(testCheckinId, fileToUpload));
@@ -896,6 +938,10 @@ public class FileServicesImplTest {
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
         when(list.setFields(any(String.class))).thenReturn(list);
+        when(list.setSupportsAllDrives(any())).thenReturn(list);
+        when(list.setIncludeItemsFromAllDrives(any())).thenReturn(list);
+        when(list.setQ(any())).thenReturn(list);
+        when(list.setSpaces(any())).thenReturn(list);
         when(list.execute()).thenThrow(testException);
 
         //act
