@@ -497,7 +497,7 @@ public class FileServicesImplTest {
         when(testMemberProfile.getId()).thenReturn(testMemberId);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
-        when(files.update(uploadDocId, any())).thenReturn(update);
+        when(files.update(eq(uploadDocId), any())).thenReturn(update);
         when(update.setSupportsAllDrives(any())).thenReturn(update);
 
         Boolean result = services.deleteFile(uploadDocId);
@@ -519,8 +519,8 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
-        when(files.delete(uploadDocId)).thenReturn(delete);
-        when(delete.setSupportsAllDrives(any())).thenReturn(delete);
+        when(files.update(eq(uploadDocId), any())).thenReturn(update);
+        when(update.setSupportsAllDrives(any())).thenReturn(update);
 
         Boolean result = services.deleteFile(uploadDocId);
 
@@ -606,8 +606,9 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
-        when(files.update(uploadDocId, any())).thenReturn(update);
+        when(files.update(eq(uploadDocId), any())).thenReturn(update);
         when(update.setSupportsAllDrives(any())).thenReturn(update);
+        when(update.execute()).thenThrow(testException);
 
         //act
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class,
@@ -667,6 +668,7 @@ public class FileServicesImplTest {
         when(list.execute()).thenReturn(fileList);
 
         when(files.create(any(com.google.api.services.drive.model.File.class))).thenReturn(create);
+        when(create.setSupportsAllDrives(any())).thenReturn(create);
         when(create.execute()).thenReturn(newFolderCreatedOnDrive);
 
         when(files.create(any(com.google.api.services.drive.model.File.class), any(AbstractInputStreamContent.class))).thenReturn(createForFileUpload);

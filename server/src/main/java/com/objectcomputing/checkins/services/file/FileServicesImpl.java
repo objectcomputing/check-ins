@@ -73,7 +73,6 @@ public class FileServicesImpl implements FileServices {
             if (checkInID == null && isAdmin) {
                 FileList driveIndex = getFoldersInRoot(drive, rootDirId);
                 driveIndex.getFiles().stream().forEach(folder -> {
-                    LOG.info("Listing files in: {}", folder.getName());
                     try {
                         //find all
                         FileList fileList = drive.files().list().setSupportsAllDrives(true)
@@ -173,14 +172,10 @@ public class FileServicesImpl implements FileServices {
             String rootDirId = googleServiceConfiguration.getDirectory_id();
             validate(rootDirId == null, "No destination folder has been configured. Contact your administrator for assistance.");
 
-            LOG.info("query = {}", String.format("'%s' in parents", rootDirId));
             // Check if folder already exists on google drive. If exists, return folderId and name
             FileList driveIndex = getFoldersInRoot(drive, rootDirId);
             File folderOnDrive = driveIndex.getFiles().stream()
-                    .filter(s -> {
-                        LOG.info("Testing directory name: {} against current file: {}", directoryName, s.getName());
-                        return directoryName.equalsIgnoreCase(s.getName());
-                    })
+                    .filter(s -> directoryName.equalsIgnoreCase(s.getName()))
                     .findFirst()
                     .orElse(null);
 
@@ -188,8 +183,6 @@ public class FileServicesImpl implements FileServices {
             if(folderOnDrive == null) {
                 folderOnDrive = createNewDirectoryOnDrive(drive, directoryName, rootDirId);
             }
-            LOG.info("Target directory ID: {}", folderOnDrive.getId());
-            LOG.info("Target directory parent IDs: {}", folderOnDrive.getParents());
 
             // set file metadata
             File fileMetadata = new File();
