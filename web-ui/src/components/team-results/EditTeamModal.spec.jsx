@@ -31,8 +31,13 @@ const testTeam = {
     teamMembers: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
 };
 
+const emptyTeam = {
+    name: "Test Team",
+    description: "A team used for testing.",
+}
+
 const initialState = {
-  state: {   
+  state: {
     checkins: [
       {
         id: "3a1906df-d45c-4ff5-a6f8-7dacba97ff1a",
@@ -63,12 +68,45 @@ const initialState = {
 it("renders open with team", async () => {
   const mockOnSave = jest.fn();
 
+  const {getById} = render(
+    <AppContextProvider value={initialState}>
+      <EditTeamModal team={emptyTeam} open={true} onSave={mockOnSave} onClose={jest.fn()} />
+    </AppContextProvider>
+  );
+
+  await waitFor(() => screen.getByText(/Edit your team/i));
+
+  const teamNameInput = screen.getByLabelText(/Team Name/i);
+  const teamDescriptionInput = screen.getByLabelText(/Description/i);
+  const teamLeadInput = document.getElementById('teamLeadSelect');
+
+  expect(teamNameInput).toHaveValue(emptyTeam.name);
+  expect(teamDescriptionInput).toHaveValue(emptyTeam.description);
+
+  teamLeadInput.focus();
+  fireEvent.change(document.activeElement, {target: {value: "Team Leader"}});
+  await waitFor(() => screen.getByText(/Team Leader/i));
+  fireEvent.keyDown(teamLeadInput, {key: 'ArrowDown'});
+  fireEvent.keyDown(teamLeadInput, {key: 'Enter'});
+
+  await act(() => user.click(screen.getByText(/Save Team/i)));
+
+  let dupeTeam = emptyTeam;
+  dupeTeam.teamMembers = [{id:123, name:"Team Leader", "lead":true}]
+
+  expect(mockOnSave).toHaveBeenCalledWith({...dupeTeam});
+});
+
+
+it("Cannot save without lead", async () => {
+  const mockOnSave = jest.fn();
+
   render(
     <AppContextProvider value={initialState}>
       <EditTeamModal team={testTeam} open={true} onSave={mockOnSave} onClose={jest.fn()} />
     </AppContextProvider>
   );
-  
+
   await waitFor(() => screen.getByText(/Edit your team/i));
 
   const teamNameInput = screen.getByLabelText(/Team Name/i);
@@ -79,5 +117,6 @@ it("renders open with team", async () => {
 
   await act(() => user.click(screen.getByText(/Save Team/i)));
 
-  expect(mockOnSave).toHaveBeenCalledWith({...testTeam});
+  expect(mockOnSave).not.toHaveBeenCalledWith({...testTeam});
 });
+
