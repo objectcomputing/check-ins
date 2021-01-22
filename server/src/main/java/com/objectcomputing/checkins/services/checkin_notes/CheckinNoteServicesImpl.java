@@ -1,12 +1,13 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleType;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -20,13 +21,15 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
     private final CheckInRepository checkinRepo;
+    private final CheckInServices checkinServices;
     private final CheckinNoteRepository checkinNoteRepository;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
 
-    public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckinNoteRepository checkinNoteRepository,
+    public CheckinNoteServicesImpl(CheckInRepository checkinRepo, CheckInServices checkinServices, CheckinNoteRepository checkinNoteRepository,
                                    MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
         this.checkinRepo = checkinRepo;
+        this.checkinServices = checkinServices;
         this.checkinNoteRepository = checkinNoteRepository;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
@@ -42,19 +45,26 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
 
-        if (checkinRecord!=null
-                && !isAdmin
-                && !currentUser.getId().equals(checkinRecord.getTeamMemberId())
-                && !currentUser.getId().equals(checkinRecord.getPdlId())) {
+        if (checkinRecord == null) {
+            throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkinId));
+        }
+
+        if (!checkinServices.accessGranted(checkinId, currentUser.getId())) {
             throw new PermissionException("You do not have permission to access this resource");
         }
+//        if (checkinRecord!=null
+//                && !isAdmin
+//                && !currentUser.getId().equals(checkinRecord.getTeamMemberId())
+//                && !currentUser.getId().equals(checkinRecord.getPdlId())) {
+//            throw new PermissionException("You do not have permission to access this resource");
+//        }
 
         validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
         validate(checkinRecord==null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
         validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
-            if (!isAdmin && isCompleted) {
+        if (!isAdmin && isCompleted) {
             validate(true, "User is unauthorized to do this operation");
         }
         return checkinNoteRepository.save(checkinNote);
@@ -67,12 +77,24 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckinNote checkInNoteResult = checkinNoteRepository.findById(id).orElse(null);
 
         validate(checkInNoteResult == null, "Invalid checkin note id %s", id);
+
         if (!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+//            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
+//
+//        if (!isAdmin) {
+//            CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
+//            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+//            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+//            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
+//        }
 
         return checkInNoteResult;
     }

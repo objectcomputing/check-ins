@@ -68,7 +68,7 @@ public class CheckInServicesImpl implements CheckInServices {
         if (isAdmin
                 || member.getId().equals(checkinRecord.getTeamMemberId())
                 || member.getId().equals(checkinRecord.getPdlId())
-                || member.getPdlId().equals(checkinRecord.getPdlId())) {
+                || member.getPdlId().equals(checkinRecord.getPdlId())) {   // npe if unrelated user
             grantAccess = true;
         }
         // This is missing a check. Access should also be allowed
