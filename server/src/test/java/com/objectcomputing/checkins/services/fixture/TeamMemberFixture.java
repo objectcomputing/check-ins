@@ -19,6 +19,10 @@ public interface TeamMemberFixture extends RepositoryFixture{
         return dtoFromEntity(createDeafultTeamMember(teamEntity, memberProfile), memberProfile);
     }
 
+    default TeamMemberResponseDTO createDefaultTeamMemberDto(MemberProfile memberProfile, Boolean lead) {
+        return new TeamMemberResponseDTO(null, memberProfile.getName(), memberProfile.getId(), lead);
+    }
+
     default TeamMemberResponseDTO dtoFromEntity(TeamMember memberEntity, MemberProfile memberProfile) {
         return new TeamMemberResponseDTO(memberEntity.getId(), memberProfile.getName(), memberProfile.getId(), memberEntity.isLead());
     }
