@@ -43,36 +43,32 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         Boolean grantAccess = false;
 
-//        MemberProfile currentUser = currentUserServices.getCurrentUser();
-//        boolean isAdmin = currentUserServices.isAdmin();
-//        final UUID checkinId = checkinNote.getCheckinid();
-
-        MemberProfile member = memberRepo.findById(memberId).orElse(null);
-        if(member == null) {
+        MemberProfile memberTryingToGainAccess = memberRepo.findById(memberId).orElse(null);
+        if(memberTryingToGainAccess == null) {
             throw new NotFoundException(String.format("Member %s not found", memberId));
         }
-        CheckIn checkin = checkinRepo.findById(checkinId).orElse(null);
-        if(checkin == null) {
+        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
+        if(checkinRecord == null) {
             throw new NotFoundException(String.format("Checkin %s not found", checkinId));
         }
 
-        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, member.getId());
+        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
-        final UUID createById = checkin.getPdlId();
-        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-        Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
-
-// make sure member id and checkin aren't null
-//  Checkin should be visible to member it refers to, pdl who created it, current pdl, or admin only
-
-        if (isAdmin
-                || member.getId().equals(checkinRecord.getTeamMemberId())
-                || member.getId().equals(checkinRecord.getPdlId())
-                || member.getPdlId().equals(checkinRecord.getPdlId())) {   // npe if unrelated user
-            grantAccess = true;
-        }
+        
+        if (!isAdmin) {
+          MemberProfile teamMemberOnCheckin =  memberRepo.findById(checkinRecord.getTeamMemberId()).orElse(null);
+          UUID currentPdlId = teamMemberOnCheckin.getPdlId();
         // This is missing a check. Access should also be allowed
         // if the currentUser is the pdl for the team member whose checkin this is.
+//  Checkin should be visible to (a)member it refers to, (b)pdl who created it (pdl on it),
+//  (c)current pdl of team member on checkin, or admin only
+
+           if(memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
+                || memberTryingToGainAccess.getId().equals(checkinRecord.getPdlId())
+                || memberTryingToGainAccess.getId().equals(currentPdlId)){
+                grantAccess = true;
+            }
+        }
       return grantAccess;
     }
 

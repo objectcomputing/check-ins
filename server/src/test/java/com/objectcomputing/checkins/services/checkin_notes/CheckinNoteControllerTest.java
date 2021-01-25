@@ -303,14 +303,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    void testReadCheckinNoteNotFoundByUnrelatedUser() {
+    void testReadCheckinNoteNotFoundByUnrelatedPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
-
+//created by member
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
