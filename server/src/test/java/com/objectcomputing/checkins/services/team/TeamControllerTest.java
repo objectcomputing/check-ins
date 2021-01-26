@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -206,7 +207,9 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
-        requestBody.setTeamMembers(Collections.singletonList(createDefaultTeamMemberDto(teamEntity, memberProfile)));
+        TeamMemberResponseDTO newMember = createDefaultTeamMemberDto(teamEntity, memberProfile);
+        newMember.setLead(true);
+        requestBody.setTeamMembers(Collections.singletonList(newMember));
 
         final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
