@@ -3,10 +3,14 @@ package com.objectcomputing.checkins.services.checkin_notes;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.checkins.CheckInCreateDTO;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInNoteFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -26,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture {
+public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture, RoleFixture {
 
     @Inject
     @Client("/services/checkin-note")
@@ -36,6 +40,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -44,7 +49,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         CheckinNote checkinNote = response.body();
@@ -61,6 +67,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByPdl() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -69,7 +76,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         CheckinNote checkinNote = response.body();
@@ -85,6 +93,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -93,7 +102,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(memberProfileForPDL.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         CheckinNote checkinNote = response.body();

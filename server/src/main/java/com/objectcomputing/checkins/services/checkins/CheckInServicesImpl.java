@@ -54,8 +54,11 @@ public class CheckInServicesImpl implements CheckInServices {
 
         Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
-        
-        if (!isAdmin) {
+
+        if (isAdmin) {
+            grantAccess = true;
+        }
+        else {
           MemberProfile teamMemberOnCheckin =  memberRepo.findById(checkinRecord.getTeamMemberId()).orElse(null);
           UUID currentPdlId = teamMemberOnCheckin.getPdlId();
         // This is missing a check. Access should also be allowed
@@ -63,7 +66,7 @@ public class CheckInServicesImpl implements CheckInServices {
 //  Checkin should be visible to (a)member it refers to, (b)pdl who created it (pdl on it),
 //  (c)current pdl of team member on checkin, or admin only
 
-           if(memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
+           if (memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
                 || memberTryingToGainAccess.getId().equals(checkinRecord.getPdlId())
                 || memberTryingToGainAccess.getId().equals(currentPdlId)){
                 grantAccess = true;

@@ -12,7 +12,6 @@ import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
@@ -38,7 +37,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     public void testCreateACheckInByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createDefaultRole(memberProfileOfUser);
+        Role role = createDefaultAdminRole(memberProfileOfUser);
 
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
         checkInCreateDTO.setTeamMemberId(memberProfileOfUser.getId());
@@ -135,7 +134,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     void testCreateACheckInForSamePDLAndMember() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createDefaultRole(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileOfPDL);
 
         CheckIn existingCheckIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
@@ -144,7 +143,8 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         checkInCreateDTO.setCheckInDate(existingCheckIn.getCheckInDate());
         checkInCreateDTO.setCompleted(existingCheckIn.isCompleted());
 
-        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
+        final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -160,7 +160,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         CheckInCreateDTO checkInCreateDTO = new CheckInCreateDTO();
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         final HttpRequest<CheckInCreateDTO> request = HttpRequest.POST("",checkInCreateDTO).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -627,7 +627,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
     void testCannotUpdateCheckIfCompletedIsTrueUnlessMadeByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        Role role = createDefaultRole(memberProfileOfPDL);
+        Role role = createDefaultAdminRole(memberProfileOfPDL);
 
         CheckIn checkIn  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -675,7 +675,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        Role role = createDefaultRole(memberProfileOfAdmin);
+        Role role = createDefaultAdminRole(memberProfileOfAdmin);
 
         CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -745,7 +745,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        Role role = createDefaultRole(memberProfileOfAdmin);
+        Role role = createDefaultAdminRole(memberProfileOfAdmin);
 
         CheckIn checkIn  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -781,7 +781,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
-        Role role = createDefaultRole(memberProfileOfUnrelatedUser);
+        Role role = createDefaultAdminRole(memberProfileOfUnrelatedUser);
 
         CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
@@ -849,7 +849,7 @@ public class CheckInControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfUnrelatedUser = createAnUnrelatedUser();
-        Role role = createDefaultRole(memberProfileOfUnrelatedUser);
+        Role role = createDefaultAdminRole(memberProfileOfUnrelatedUser);
 
         CheckIn checkIn1  = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         CheckIn checkIn2  = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);

@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -403,7 +402,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void deleteCheckinDocumentIfAdmin() {
         MemberProfile unrelatedMember = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedMember);
+        Role authRole = createDefaultAdminRole(unrelatedMember);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
@@ -422,7 +421,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
     @Test
     void deleteCheckinDocumentNotExistCheckIn() {
         MemberProfile unrelatedUser = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedUser);
+        Role authRole = createDefaultAdminRole(unrelatedUser);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
