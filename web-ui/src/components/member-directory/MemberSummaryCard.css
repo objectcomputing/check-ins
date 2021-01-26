@@ -1,7 +1,12 @@
 .member-card {
-  max-height: 11rem;
-  max-width: 32%;
-  min-width: 32%;
+  max-height: 20rem;
+  max-width: 32vw;
+  min-width: 25vw;
+  /* max-width: 345; */
+  margin: 5;
+  display: "flex";
+  flex-direction: "column";
+  justify-content: "space-between";
 }
 
 .member-card .member-summary-avatar {
@@ -13,4 +18,22 @@
 .member-summary-parent {
   display: flex;
   align-items: center;
+}
+
+.member-card .header {
+  padding-bottom: 0;
+}
+
+.member-card .media {
+  height: 140;
+}
+
+.member-card .large {
+  width: theme-spacing(10);
+  height: theme-spacing(10);
+}
+
+.member-card .info-container {
+  padding: 0;
+  width: 280;
 }
