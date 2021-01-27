@@ -13,9 +13,6 @@ import SplitButton from "../split-button/SplitButton";
 import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import Container from "@material-ui/core/Container";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import Button from "@material-ui/core/Button";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Box from "@material-ui/core/Box";
 
 const MemberSummaryCard = ({ member, index }) => {
@@ -44,7 +41,6 @@ const MemberSummaryCard = ({ member, index }) => {
       <Card className={"member-card"}>
         <Container fixed className={"info-container"}>
           <CardHeader
-            className={"header"}
             title={
               <Typography variant="h5" component="h2">
                 {name}
@@ -76,7 +72,7 @@ const MemberSummaryCard = ({ member, index }) => {
           </CardContent>
             {isAdmin && (
             <CardActions>
-              <SplitButton options={options} onClick={handleAction} />
+              <SplitButton className = "split-button" options={options} onClick={handleAction} />
               <MemberModal
                 member={currentMember}
                 open={open}
@@ -96,51 +92,6 @@ const MemberSummaryCard = ({ member, index }) => {
           )}
         </Card>
       </Box>
-
-    // <Card className="member-card">
-    //   <CardHeader className="header"
-    //     avatar={
-    //       <Avatar
-    //         alt={name}
-    //         className="member-summary-avatar"
-    //         src={getAvatarURL(workEmail)}
-    //         style={{ margin: "0px" }}
-    //       />
-    //     }
-    //     subheader={
-    //       <div>
-    //         {title}
-    //         <br />
-    //         {workEmail}
-    //         <br />
-    //         {location}
-    //          <br />
-    //         {supervisorProfile ? supervisorProfile.name : ""}
-    //       </div>
-    //     }
-    //     title={name}
-    //   />
-    //   {isAdmin && (
-    //     <CardActions>
-    //       <SplitButton options={options} onClick={handleAction} />
-    //       <MemberModal
-    //         member={currentMember}
-    //         open={open}
-    //         onClose={handleClose}
-    //         onSave={(member) => {
-    //           setCurrentMember(member);
-    //           const copy = [...memberProfiles];
-    //           copy[index] = member;
-    //           dispatch({
-    //             type: UPDATE_MEMBER_PROFILES,
-    //             payload: copy,
-    //           });
-    //           handleClose();
-    //         }}
-    //       />
-    //     </CardActions>
-    //   )}
-    // </Card>
   );
 };
 

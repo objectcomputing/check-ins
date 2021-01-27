@@ -1,12 +1,10 @@
 .member-card {
   max-height: 20rem;
-  max-width: 32vw;
-  min-width: 25vw;
-  /* max-width: 345; */
-  margin: 5;
-  display: "flex";
-  flex-direction: "column";
-  justify-content: "space-between";
+  width: 360px;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .member-card .member-summary-avatar {
@@ -18,10 +16,6 @@
 .member-summary-parent {
   display: flex;
   align-items: center;
-}
-
-.member-card .header {
-  padding-bottom: 0;
 }
 
 .member-card .media {
@@ -36,4 +30,22 @@
 .member-card .info-container {
   padding: 0;
   width: 280;
+}
+
+.member-card .split-button {
+  padding: 1rem;
+}
+
+.member-card .MuiCardHeader-content h2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 275px;
+}
+
+.member-card .MuiCardHeader-content h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 275px;
 }
