@@ -53,9 +53,8 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             throw new PermissionException("You do not have permission to access this resource");
         }
 
-        validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
+        validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
-        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
         validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
         if (!isAdmin && isCompleted) {
@@ -77,8 +76,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             if (checkinRecord == null) {
                 throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid()));
             }
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
                 throw new PermissionException("User is unauthorized to do this operation");
@@ -104,7 +101,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             throw new PermissionException("You do not have permission to access this resource");
         }
 
-        validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
+        validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
         validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
