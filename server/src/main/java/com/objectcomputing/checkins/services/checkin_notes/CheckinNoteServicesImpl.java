@@ -52,12 +52,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         if (!checkinServices.accessGranted(checkinId, currentUser.getId())) {
             throw new PermissionException("You do not have permission to access this resource");
         }
-//        if (checkinRecord!=null
-//                && !isAdmin
-//                && !currentUser.getId().equals(checkinRecord.getTeamMemberId())
-//                && !currentUser.getId().equals(checkinRecord.getPdlId())) {
-//            throw new PermissionException("You do not have permission to access this resource");
-//        }
 
         validate(checkinId == null || createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
@@ -86,15 +80,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
                 throw new PermissionException("User is unauthorized to do this operation");
             }
-//            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
         }
-//
-//        if (!isAdmin) {
-//            CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
-//            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-//            final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-//            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(createById), "User is unauthorized to do this operation");
-//        }
 
         return checkInNoteResult;
     }

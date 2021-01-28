@@ -61,14 +61,10 @@ public class CheckInServicesImpl implements CheckInServices {
         else {
           MemberProfile teamMemberOnCheckin =  memberRepo.findById(checkinRecord.getTeamMemberId()).orElse(null);
           UUID currentPdlId = teamMemberOnCheckin.getPdlId();
-        // This is missing a check. Access should also be allowed
-        // if the currentUser is the pdl for the team member whose checkin this is.
-//  Checkin should be visible to (a)member it refers to, (b)pdl who created it (pdl on it),
-//  (c)current pdl of team member on checkin, or admin only
 
            if (memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
                 || memberTryingToGainAccess.getId().equals(checkinRecord.getPdlId())
-                || memberTryingToGainAccess.getId().equals(currentPdlId)){
+                || memberTryingToGainAccess.getId().equals(currentPdlId)) {
                 grantAccess = true;
             }
         }

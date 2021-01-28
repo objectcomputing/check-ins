@@ -258,6 +258,62 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testCreateCheckinNoteByUnrelatedPDL() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfMrNobody);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<?> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), pdlRole.getRole().name());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("You do not have permission to access this resource", error);
+
+    }
+
+    @Test
+    void testCreateCheckinNoteByPDLWhoCreatedIt() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfFormerPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<?> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfFormerPDL.getWorkEmail(), pdlRole.getRole().name());
+
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        CheckinNote checkinNote = response.body();
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+
+    }
+
+    @Test
     void testReadCheckinNoteByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
@@ -376,6 +432,25 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
         assertEquals(request.getPath(), href);
         assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testReadCheckinNoteByFormerPDLWhoCreatedIt() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfFormerPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileOfFormerPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileOfFormerPDL.getWorkEmail(), pdlRole.getRole().name());
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
