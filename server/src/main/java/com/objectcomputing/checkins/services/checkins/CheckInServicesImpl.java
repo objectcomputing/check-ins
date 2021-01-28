@@ -56,6 +56,9 @@ public class CheckInServicesImpl implements CheckInServices {
             grantAccess = true;
         } else {
             MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElse(null);
+            if (teamMemberOnCheckin == null) {
+                throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
+            }
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
             if (memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())

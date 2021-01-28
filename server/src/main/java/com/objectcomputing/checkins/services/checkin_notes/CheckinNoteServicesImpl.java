@@ -74,6 +74,9 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         if (!isAdmin) {
             CheckIn checkinRecord = checkinRepo.findById(checkInNoteResult.getCheckinid()).orElse(null);
+            if (checkinRecord == null) {
+                throw new NotFoundException(String.format("CheckIn %s doesn't exist", checkInNoteResult.getCheckinid()));
+            }
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID createById = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
