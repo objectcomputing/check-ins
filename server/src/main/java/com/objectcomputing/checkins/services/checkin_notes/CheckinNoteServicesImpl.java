@@ -56,7 +56,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(checkinNote.getId() != null, "Found unexpected id %s for check in note", checkinNote.getId());
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-        validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
         if (!isAdmin && isCompleted) {
             validate(true, "User is unauthorized to do this operation");
         }
