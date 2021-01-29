@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.role.RoleRepository;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.context.annotation.Replaces;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -11,9 +13,8 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
-import io.micronaut.security.oauth2.endpoint.token.response.DefaultOpenIdUserDetailsMapper;
-import io.micronaut.security.oauth2.endpoint.token.response.OauthUserDetailsMapper;
-import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
+import io.micronaut.security.oauth2.endpoint.token.response.*;
+import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
 import io.reactivex.Flowable;
 //import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
@@ -22,8 +23,8 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Named("keycloak")
 @Singleton
@@ -39,6 +40,17 @@ public class KeycloakUserDetailsMapper implements OauthUserDetailsMapper {
 	@Inject
 	private RxHttpClient client;
 
+	private final MemberProfileRepository memberProfileRepository;
+	private final RoleRepository roleRepository;
+
+	public KeycloakUserDetailsMapper(MemberProfileRepository memberProfileRepository,
+										  RoleRepository roleRepository) {
+		this.memberProfileRepository = memberProfileRepository;
+		this.roleRepository = roleRepository;
+	}
+
+
+
 	@Override
 	public Publisher<UserDetails> createUserDetails(TokenResponse tokenResponse) {
 		return Publishers.just(new UnsupportedOperationException());
@@ -47,19 +59,17 @@ public class KeycloakUserDetailsMapper implements OauthUserDetailsMapper {
 	@Override
 	public Publisher<AuthenticationResponse> createAuthenticationResponse(
             TokenResponse tokenResponse, @Nullable State state) {
-		System.out.print("********KC access token**********************" + tokenResponse.getAccessToken() + "***********************************\n");
 		Flowable<HttpResponse<KeycloakUser>> res = client
 				.exchange(HttpRequest.POST("/auth/realms/check-ins-spike/protocol/openid-connect/token/introspect",
 				"token=" + tokenResponse.getAccessToken())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.basicAuth(clientId, clientSecret), KeycloakUser.class);
 		return res.map(user -> {
-//			log.info("User: {}", user.body());
+			String email = Objects.requireNonNull(user.body()).getEmail();
 			Map<String, Object> attrs = new HashMap<>();
 			attrs.put("openIdToken", tokenResponse.getAccessToken());
-			System.out.print("********KC attrs**********************" + attrs + "***********************************\n");
+			attrs.put("email", email);
 			return new UserDetails(user.body().getUsername(), user.body().getRoles(), attrs);
 		});
 	}
-
 }

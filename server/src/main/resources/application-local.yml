@@ -23,6 +23,7 @@ micronaut:
 #        access:
 #          - isAnonymous()
   security:
+    enabled: true
     authentication: idtoken
     endpoints:
       login:
@@ -33,6 +34,7 @@ micronaut:
       unauthorized:
         url: /oauth/login/keycloak
     token:
+      roles-name: 'roles'
       jwt:
         enabled: true
         signatures:
@@ -43,7 +45,7 @@ micronaut:
     oauth2.clients.keycloak:
       grant-type: password
       client-id: check-ins-spike-client
-      client-secret: 3e13ef3f-457f-45f5-9bc4-7bdbb706e45c
+      client-secret: 30d0686c-cab5-4553-9c6c-1273b787716f
       authorization:
         url: http://localhost:8180/auth/realms/check-ins-spike/protocol/openid-connect/auth
       token:

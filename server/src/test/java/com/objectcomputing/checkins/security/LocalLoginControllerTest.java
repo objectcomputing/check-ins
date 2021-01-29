@@ -22,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @MicronautTest(environments = {"local", "localtest"}, transactional = false)
 public class LocalLoginControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
-    @Client("/oauth/login/google")
+//    @Client("/oauth/login/google")
+    @Client("/oauth/login/keycloak")
     @Inject
     HttpClient client;
 
@@ -49,7 +50,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testPostLogin() {
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", "ADMIN", "role", "SUPER"))
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("userName", "ADMIN", "password", "SUPER"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
@@ -60,7 +61,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
 
     @Test
     void testPostLoginUnauthorized() {
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", "ADMIN", "role", "DOES_NOT_EXIST"))
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("userName", "ADMIN", "password", "DOES_NOT_EXIST"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpClientResponseException response = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().retrieve(request));
@@ -73,7 +74,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     void testPostLoginAlreadyExistingUserNoOverrides() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.ADMIN, memberProfile);
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("userName", memberProfile.getWorkEmail(), "password", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
@@ -87,7 +88,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.ADMIN, memberProfile);
         createDefaultRole(RoleType.PDL, memberProfile);
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", RoleType.Constants.MEMBER_ROLE))
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("userName", memberProfile.getWorkEmail(), "password", RoleType.Constants.MEMBER_ROLE))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
@@ -101,7 +102,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         memberProfile.setName(null);
         createDefaultRole(RoleType.ADMIN, memberProfile);
-        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
+        HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("userName", memberProfile.getWorkEmail(), "password", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);

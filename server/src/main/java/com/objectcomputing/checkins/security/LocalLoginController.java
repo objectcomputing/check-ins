@@ -72,29 +72,21 @@ public class LocalLoginController {
 
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
     @Post
-    public Single<MutableHttpResponse<?>> auth(HttpRequest<?> request, String email, String role) {
-//        UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(email, role);
-        UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials("warnerj", "password");
-        System.out.print("*********I was here first****************************************\n");
+    public Single<MutableHttpResponse<?>> auth(HttpRequest<?> request, String userName, String password) {
+        UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(userName, password);
         Flowable<AuthenticationResponse> authenticationResponseFlowable =
                 Flowable.fromPublisher(authenticator.authenticate(request, usernamePasswordCredentials));
         return authenticationResponseFlowable.map(authenticationResponse -> {
-            System.out.print("*********authResponse*************" + authenticationResponse.getUserDetails().get() + "***************************\n");
-            System.out.print("*********authenticated*************" + authenticationResponse.isAuthenticated() + "***************************\n");
-            System.out.print("*********isPresent*************" + authenticationResponse.getUserDetails().isPresent() + "***************************\n");
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
-                System.out.print("*********userDeets*************" + userDetails.getUsername() + "***************************\n");
-                System.out.print("*********userDeetsMessage************" + userDetails.getMessage() + "***************************\n");
-                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
+                Map<String, Object> attrs = userDetails.getAttributes("openIdToken", "email");
+                String userEmail = (String) attrs.get("email");
+                Object token = attrs.get("openIdToken");
+                MemberProfile memberProfile = currentUserServices.findOrSaveUser(userEmail, userEmail);
                 String name = memberProfile.getName() != null ? memberProfile.getName() : "";
                 userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "name", name,
-                        "picture", ""));
-                LoginSuccessfulEvent lse = new LoginSuccessfulEvent(userDetails);
-                System.out.print("*********login event*************" + lse.getSource().toString() + "***************************\n");
+                        "picture", "", "openIdToken", token));
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
-                MutableHttpResponse throwAway = loginHandler.loginSuccess(userDetails, request);
-                System.out.print("*********response status*************" + throwAway.getStatus() + "***************************\n");
                 return loginHandler.loginSuccess(userDetails, request);
             } else {
                 System.out.print("*********This is a failed event***************************\n");
