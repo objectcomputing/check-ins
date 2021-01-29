@@ -49,6 +49,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     });
   };
 
+  const readyToEdit = (team) => {
+    let numLeads = 0;
+    if (team && team.teamMembers) {
+      numLeads = team.teamMembers.filter((teamMember) => teamMember.lead).length;
+    }
+    return team.name && numLeads > 0;
+  };
+
   return (
     <Modal
       open={open}
@@ -77,6 +85,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
+          id="teamLeadSelect"
           multiple
           options={teamMemberOptions}
           value={
@@ -90,7 +99,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             <TextField
               {...params}
               className="fullWidth"
-              label="Team Leads"
+              label="Team Leads *"
               placeholder="Add a team lead..."
             />
           )}
@@ -122,6 +131,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             Cancel
           </Button>
           <Button
+            disabled={!readyToEdit(editedTeam)}
             onClick={async () => {
               onSave(editedTeam);
               await updateTeam(editedTeam);
