@@ -37,7 +37,7 @@ VALUES
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
+    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '8fa673c0-ca19-4271-b759-41cb9db2e83a', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
 
 INSERT INTO member_profile
     (id, name, title, location, workEmail, insperityid, startdate, biotext, supervisorid)
