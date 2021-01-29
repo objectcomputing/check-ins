@@ -47,7 +47,7 @@ VALUES
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '6884ab96-2275-4af9-89d8-ad84254d8759', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -133,6 +133,11 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('58f21738-43a9-4e3d-ac6d-8d9acb9b1fb9', 'PDL', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('d92479a6-51ee-44d4-b9de-d467ee235b79', 'PDL', '6884ab96-2275-4af9-89d8-ad84254d8759');
 
 INSERT INTO role
     (id, role, memberid)
@@ -287,7 +292,7 @@ VALUES
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
 VALUES
-    ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-09-29 13:42:29.04' , false);
+    ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-09-29 13:42:29.04' , false);
 
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
@@ -307,7 +312,7 @@ VALUES
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
 VALUES
-    ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-03-20 11:32:29.04' , true);
+    ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-03-20 11:32:29.04' , true);
 
 INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
