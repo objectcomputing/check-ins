@@ -35,9 +35,14 @@ VALUES
     ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'Geetika Sharma', 'PMO Administrator', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'sharmag@objectcomputing.com', '4444444', '2019-09-09', 'Engineer Wrangler extrodinaire', null);
 
 INSERT INTO member_profile
+(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+VALUES
+('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+
+INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
+    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '8fa673c0-ca19-4271-b759-41cb9db2e83a', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
 
 INSERT INTO member_profile
     (id, name, title, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -68,11 +73,6 @@ INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
     ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Intern', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
-
-INSERT INTO member_profile
-    (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
-VALUES
-    ('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
 (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -138,6 +138,11 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('d92479a6-51ee-44d4-b9de-d467ee235b79', 'PDL', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role
+(id, role, memberid)
+VALUES
+('388cb81a-488d-4c66-b22c-368deb20f112', 'PDL', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
 INSERT INTO role
     (id, role, memberid)
