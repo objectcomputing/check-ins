@@ -83,7 +83,7 @@ const CheckinsPage = ({ history }) => {
                         <Button onClick={handleClose} color="secondary">
                           Cancel
                         </Button>
-                        <Button color="primary">Submit</Button>
+                        <Button color="primary">Complete</Button>
                       </div>
                     </div>
                   </Modal>
@@ -92,7 +92,7 @@ const CheckinsPage = ({ history }) => {
                     onClick={handleOpen}
                     variant="contained"
                   >
-                    Submit
+                    Complete Checkin
                   </Button>
                 </div>
               )}
