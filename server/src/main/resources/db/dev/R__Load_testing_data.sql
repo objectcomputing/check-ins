@@ -47,12 +47,12 @@ VALUES
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '6884ab96-2275-4af9-89d8-ad84254d8759', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('6884ab96-2275-4af9-89d8-ad84254d8759', 'Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6884ab96-2275-4af9-89d8-ad84254d8759', 'Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '6884ab96-2275-4af9-89d8-ad84254d8759', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
