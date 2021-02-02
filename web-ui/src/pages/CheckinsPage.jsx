@@ -30,33 +30,11 @@ const CheckinsPage = ({ history }) => {
 
   const handleClose = () => setOpen(false);
 
-  const getCheckinDate = () => {
-    console.log("currentCheckin.checkInDate: "+currentCheckin.checkInDate);
-    if (currentCheckin && currentCheckin.checkInDate) {
-      const [year, month, day, hour, minute] = currentCheckin.checkInDate;
-      console.log("year: "+year+" month: "+month+" day: "+day)
-      return new Date(year, month - 1, day, hour, minute, 0);
-    }
-    // return new date unless you are running a Jest test
-    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
-  };
-
   const completeCheckin = async () => {
     if (csrf) {
-      currentCheckin.completed = true;
-      currentCheckin.checkInDate = getCheckinDate();
-      let checkinDate = getCheckinDate();
-      const updatedCheckin = await updateCheckin({
-        ...currentCheckin,
-        checkinDate
-      }, csrf);
-      // const newCheckin = updatedCheckin.payload.data;
-
-      // dispatch({
-      //   type: UPDATE_CURRENT_CHECKIN,
-      //   payload: newCheckin,
-      // });
+      updateCheckin({...currentCheckin, completed: true})
     }
+    handleClose();
   };
 
   useEffect(() => {
@@ -113,17 +91,18 @@ const CheckinsPage = ({ history }) => {
                         <Button onClick={handleClose} color="secondary">
                           Cancel
                         </Button>
-                        <Button color="primary">Complete and Close</Button>
+                        <Button
+                            color="primary"
+                            onClick={completeCheckin}
+                        >
+                          Complete and Close
+                        </Button>
                       </div>
                     </div>
                   </Modal>
                   <Button
                     color="primary"
-                    onClick={() => {
-                      // handleOpen();
-                      completeCheckin();
-                      handleClose();
-                    }}
+                    onClick={handleOpen}
                     variant="contained"
                   >
                     Complete and Close Checkin
