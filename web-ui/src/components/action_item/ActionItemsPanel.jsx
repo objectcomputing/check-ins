@@ -16,6 +16,9 @@ import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import RemoveIcon from "@material-ui/icons/Remove";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
 import "./ActionItemsPanel.css";
 
@@ -77,8 +80,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
 
   const getItemStyle = (isDragging, draggableStyle) => ({
     display: "flex",
-    padding: "12px 8px",
-    background: isDragging ? "lightgreen" : "#fafafa",
+    background: isDragging ? "lightgreen" : undefined,
     ...draggableStyle,
   });
 
@@ -213,12 +215,9 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   return (
-    <div className="action-items">
-      <h1>
-        <ArrowForwardIcon style={{ fontSize: "larger", marginRight: "10px" }} />
-        Action Items for {memberName}
-      </h1>
-      <div className="action-items-container">
+    <Card className="action-items">
+      <CardHeader avatar={<ArrowForwardIcon  />} title="Action Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
+      <CardContent className="action-items-container">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
@@ -249,8 +248,8 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
             <SaveIcon />
           </IconButton>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -30,7 +30,7 @@ const SetProfile = ({profile}) => {
     const { dispatch } = useContext(AppContext);
     useEffect(() => {
         dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
-    }, [profile]);
+    }, [profile, dispatch]);
     return "";
 }
 
