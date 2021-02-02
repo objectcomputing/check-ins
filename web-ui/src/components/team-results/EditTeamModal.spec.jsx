@@ -71,7 +71,7 @@ it("Cannot save without lead", async () => {
 
   render(
     <AppContextProvider value={initialState}>
-      <EditTeamModal team={testTeam} open={true} onSave={mockOnSave} onClose={jest.fn()} />
+      <EditTeamModal team={testTeam} open={true} onSave={mockOnSave} onClose={jest.fn()} headerText="Edit your team"/>
     </AppContextProvider>
   );
 
