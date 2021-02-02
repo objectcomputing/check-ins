@@ -1,6 +1,7 @@
 .add-member {
   align-items: center;
   display: flex;
+  justify-content: flex-end;
 }
 
 .add-member-modal {
