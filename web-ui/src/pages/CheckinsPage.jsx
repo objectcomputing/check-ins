@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
-import { AppContext } from "../context/AppContext";
+import {AppContext, UPDATE_CHECKINS, UPDATE_CURRENT_CHECKIN} from "../context/AppContext";
 import CheckinDocs from "../components/checkin/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinProfile from "../components/checkin/CheckinProfile";
@@ -13,11 +13,12 @@ import Personnel from "../components/personnel/Personnel";
 import { Button, Container, Grid, Modal } from "@material-ui/core";
 
 import "./CheckinsPage.css";
+import {updateCheckin} from "../api/checkins";
 
 const CheckinsPage = ({ history }) => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile, selectedProfile } = state;
+  const { currentCheckin, userProfile, selectedProfile, csrf } = state;
   const memberProfile = userProfile ? userProfile.memberProfile : undefined;
   const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
@@ -28,6 +29,23 @@ const CheckinsPage = ({ history }) => {
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
+
+  const completeCheckin = async () => {
+    if (csrf) {
+      currentCheckin.completed = true;
+
+      const updatedCheckin = await updateCheckin({
+        ...currentCheckin,
+        currentCheckin.checkInDate,
+      }, csrf);
+      const newCheckin = updatedCheckin.payload.data;
+
+      // dispatch({
+      //   type: UPDATE_CURRENT_CHECKIN,
+      //   payload: newCheckin,
+      // });
+    }
+  };
 
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {
@@ -89,7 +107,10 @@ const CheckinsPage = ({ history }) => {
                   </Modal>
                   <Button
                     color="primary"
-                    onClick={handleOpen}
+                    onClick={() => {
+                      handleOpen;
+                      completeCheckin;
+                    }}
                     variant="contained"
                   >
                     Complete and Close Checkin
