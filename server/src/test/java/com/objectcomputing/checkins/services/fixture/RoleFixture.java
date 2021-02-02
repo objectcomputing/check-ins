@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import java.util.UUID;
 
 public interface RoleFixture extends RepositoryFixture {
-    default Role createDefaultRole(MemberProfile memberProfile) {
+    default Role createDefaultAdminRole(MemberProfile memberProfile) {
         return createDefaultRole(RoleType.ADMIN, memberProfile);
     }
 

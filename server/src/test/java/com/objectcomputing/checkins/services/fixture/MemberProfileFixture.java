@@ -27,4 +27,12 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null));
     }
+
+    default MemberProfile createASecondDefaultMemberProfileForPdl(MemberProfile memberProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Sluggo PDL", "Bully Relief PDL",
+                memberProfile.getId(), "New York, New York", "sluggopdl@objectcomputing.com", "sluggo-insperity-pdl",
+                LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
+                memberProfile.getId(), null));
+    }
+
 }
