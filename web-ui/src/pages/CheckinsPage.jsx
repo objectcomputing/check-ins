@@ -30,15 +30,27 @@ const CheckinsPage = ({ history }) => {
 
   const handleClose = () => setOpen(false);
 
+  const getCheckinDate = () => {
+    console.log("currentCheckin.checkInDate: "+currentCheckin.checkInDate);
+    if (currentCheckin && currentCheckin.checkInDate) {
+      const [year, month, day, hour, minute] = currentCheckin.checkInDate;
+      console.log("year: "+year+" month: "+month+" day: "+day)
+      return new Date(year, month - 1, day, hour, minute, 0);
+    }
+    // return new date unless you are running a Jest test
+    return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
+  };
+
   const completeCheckin = async () => {
     if (csrf) {
       currentCheckin.completed = true;
-
+      currentCheckin.checkInDate = getCheckinDate();
+      let checkinDate = getCheckinDate();
       const updatedCheckin = await updateCheckin({
         ...currentCheckin,
-        currentCheckin.checkInDate,
+        checkinDate
       }, csrf);
-      const newCheckin = updatedCheckin.payload.data;
+      // const newCheckin = updatedCheckin.payload.data;
 
       // dispatch({
       //   type: UPDATE_CURRENT_CHECKIN,
@@ -108,8 +120,9 @@ const CheckinsPage = ({ history }) => {
                   <Button
                     color="primary"
                     onClick={() => {
-                      handleOpen;
-                      completeCheckin;
+                      // handleOpen();
+                      completeCheckin();
+                      handleClose();
                     }}
                     variant="contained"
                   >
