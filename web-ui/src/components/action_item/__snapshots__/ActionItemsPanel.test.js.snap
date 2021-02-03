@@ -2,30 +2,37 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="action-items"
+  className="MuiPaper-root MuiCard-root action-items MuiPaper-elevation1 MuiPaper-rounded"
 >
-  <h1>
-    <svg
-      aria-hidden={true}
-      className="MuiSvgIcon-root"
-      focusable="false"
-      style={
-        Object {
-          "fontSize": "larger",
-          "marginRight": "10px",
-        }
-      }
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
-      />
-    </svg>
-    Action Items for 
-    mr. test
-  </h1>
   <div
-    className="action-items-container"
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-avatar"
+    >
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+        />
+      </svg>
+    </div>
+    <div
+      className="MuiCardHeader-content"
+    >
+      <h2
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        Action Items
+      </h2>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root action-items-container"
   >
     <div
       data-rbd-droppable-context-id="0"

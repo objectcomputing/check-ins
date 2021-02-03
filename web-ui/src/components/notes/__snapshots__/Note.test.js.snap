@@ -4,27 +4,39 @@ exports[`renders correctly 1`] = `
 <div
   className="notes"
 >
-  <div>
-    <div>
-      <h1>
+  <div
+    className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+  >
+    <div
+      className="MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar"
+      >
         <svg
           aria-hidden={true}
           className="MuiSvgIcon-root"
           focusable="false"
-          style={
-            Object {
-              "marginRight": "10px",
-            }
-          }
           viewBox="0 0 24 24"
         >
           <path
             d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
           />
         </svg>
-        Notes for 
-        holmes
-      </h1>
+      </div>
+      <div
+        className="MuiCardHeader-content"
+      >
+        <h2
+          className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+        >
+          Notes for holmes
+        </h2>
+      </div>
+    </div>
+    <div
+      className="MuiCardContent-root"
+    >
       <div
         className="container"
       >

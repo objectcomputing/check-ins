@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
-import {AppContext} from "../context/AppContext";
-import CheckinDocs from "../components/checkin/CheckinDocs";
+import { AppContext } from "../context/AppContext";
+import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import CheckinProfile from "../components/checkin/CheckinProfile";
 import GuidesPanel from "../components/guides/GuidesPanel";

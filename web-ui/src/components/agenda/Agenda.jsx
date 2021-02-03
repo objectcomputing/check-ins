@@ -16,6 +16,9 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import IconButton from "@material-ui/core/IconButton";
 import SaveIcon from "@material-ui/icons/Done";
 import RemoveIcon from "@material-ui/icons/Remove";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
 import "./Agenda.css";
 
@@ -73,8 +76,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
 
   const getItemStyle = (isDragging, draggableStyle) => ({
     display: "flex",
-    padding: "12px 8px",
-    background: isDragging ? "lightgreen" : "#fafafa",
+    background: isDragging ? "lightgreen" : undefined,
     ...draggableStyle,
   });
 
@@ -211,45 +213,41 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   return (
-    <div className="agenda-items">
-      <h1>
-        <AdjustIcon style={{ fontSize: "larger", marginRight: "10px" }} />
-        Agenda Items for {memberName}
-      </h1>
-      <div className="agenda-items-container">
+    <Card className="agenda-items">
+      <CardHeader avatar={<AdjustIcon />} title="Agenda Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
+      <CardContent className="agenda-items-container">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createAgendaItemEntries()}
                 {provided.placeholder}
-                <div className="add-agenda-item-div">
-                  <input
-                    className="text-input"
-                    placeholder="Add an agenda item"
-                    onChange={(e) => setDescription(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter" && description !== "") {
-                        makeAgendaItem();
-                      }
-                    }}
-                    value={description ? description : ""}
-                  />
-                  <IconButton
-                    aria-label="create"
-                    className="edit-icon"
-                    onClick={() => makeAgendaItem()}
-                  >
-                    <SaveIcon />
-                  </IconButton>
-                </div>
-                {provided.placeholder}
               </div>
             )}
           </Droppable>
         </DragDropContext>
-      </div>
-    </div>
+        <div className="add-agenda-item-div">
+          <input
+            className="text-input"
+            placeholder="Add an agenda item"
+            onChange={(e) => setDescription(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && description !== "") {
+                makeAgendaItem();
+              }
+            }}
+            value={description ? description : ""}
+          />
+          <IconButton
+            aria-label="create"
+            className="edit-icon"
+            onClick={() => makeAgendaItem()}
+          >
+            <SaveIcon />
+          </IconButton>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

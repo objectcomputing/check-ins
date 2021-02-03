@@ -9,7 +9,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
 import { updateTeam } from "../../api/team.js";
 
-const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
+const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
   const { memberProfiles } = state;
   const [editedTeam, setTeam] = useState(team);
@@ -64,7 +64,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
       aria-labelledby="edit-team-modal-title"
     >
       <div className="EditTeamModal">
-        <h2>Edit your team</h2>
+        <h2>{headerText}</h2>
         <TextField
           id="team-name-input"
           label="Team Name"

@@ -20,8 +20,6 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
@@ -34,7 +32,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     void testCreateARole() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
         roleCreateDTO.setRole(RoleType.MEMBER);
@@ -56,7 +54,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     void testCreateARoleAlreadyExists() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfile);
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
@@ -98,7 +96,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateAnInvalidRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
 
@@ -121,7 +119,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateNonExistingMember() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         RoleCreateDTO role = new RoleCreateDTO();
         role.setMemberid(UUID.randomUUID());
@@ -144,7 +142,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateANullRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         final HttpRequest<String> request = HttpRequest.POST("", "")
                 .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
@@ -165,7 +163,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
@@ -177,7 +175,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testReadRoleNotFound() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID()))
                 .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
@@ -189,7 +187,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testFindRoles() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
@@ -206,10 +204,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testFindRolesAllParams() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getRole(),
                 role.getMemberid())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -222,7 +220,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testFindRolesDoesNotExist() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(unrelatedProfile);
+        Role role = createDefaultAdminRole(unrelatedProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.PDL))
                 .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
@@ -235,10 +233,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -252,10 +250,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateNonExistingMember() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         role.setMemberid(UUID.randomUUID());
 
@@ -275,10 +273,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateNonExistingRoleType() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role roleToUpdate = createDefaultRole(memberProfile);
+        Role roleToUpdate = createDefaultAdminRole(memberProfile);
 
         Map<String, String> role = new HashMap<>();
         role.put("id", roleToUpdate.getId().toString());
@@ -301,7 +299,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateNonExistingRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getId());
@@ -322,7 +320,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateWithoutId() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
@@ -360,10 +358,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateAnInvalidRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
         role.setMemberid(null);
         role.setRole(null);
 
@@ -386,7 +384,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateANullRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         final HttpRequest<String> request = HttpRequest.PUT("", "")
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -404,10 +402,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void deleteRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(memberProfile);
+        Role role = createDefaultAdminRole(memberProfile);
 
         assertNotNull(findRole(role));
 
@@ -422,7 +420,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void deleteRoleNonExisting() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         UUID uuid = UUID.randomUUID();
 
@@ -439,7 +437,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void deleteRoleBadId() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(unrelatedProfile);
+        Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         String uuid = "Bill-Nye-The-Science-Guy";
 

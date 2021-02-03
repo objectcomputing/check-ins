@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from 'react';
-import {AppContext, AppContextProvider, MY_PROFILE_UPDATE, UPDATE_CHECKINS} from '../../context/AppContext';
+import {AppContext, AppContextProvider, UPDATE_CHECKINS} from '../../context/AppContext';
 import CheckinHistory from './CheckinHistory';
 import { createMemoryHistory } from "history";
 import { Router } from "react-router-dom";
@@ -66,7 +66,7 @@ const SetCheckins = ({checkins}) => {
     const { dispatch } = useContext(AppContext);
     useEffect(() => {
         dispatch({ type: UPDATE_CHECKINS, payload: checkins });
-    }, [checkins]);
+    }, [checkins, dispatch]);
     return "";
 }
 
