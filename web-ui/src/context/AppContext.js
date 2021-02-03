@@ -37,7 +37,7 @@ const reducer = (state, action) => {
       break;
     case UPDATE_USER_BIO:
       state.userProfile.memberProfile.bioText = action.payload;
-      updateMember(state.userProfile.memberProfile);
+      updateMember(state.userProfile.memberProfile, state.csrf);
       break;
     case UPDATE_CHECKINS:
       state.checkins = action.payload;

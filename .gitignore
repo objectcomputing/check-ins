@@ -15,5 +15,5 @@ out/
 .classpath
 node_modules
 .run
-run.bat
+**/run.bat
 *.sh

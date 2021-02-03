@@ -1,18 +1,15 @@
 package com.objectcomputing.checkins.services.agenda_item;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
-import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -41,48 +38,6 @@ public class AgendaItemController {
         this.agendaItemServices = agendaItemServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-  
-    @Error(exception = AgendaItemBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, AgendaItemBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = AgendaItemNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, AgendaItemNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
-    @Error(exception = AgendaItemsBulkLoadException.class)
-    public HttpResponse<?> handleBulkLoadException(HttpRequest<?> request, AgendaItemsBulkLoadException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = CompositeException.class)
-    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-
-        for (Throwable t : e.getExceptions()) {
-            if (t instanceof AgendaItemBadArgException) {
-                return handleBadArgs(request, (AgendaItemBadArgException) t);
-            }
-            else if (t instanceof AgendaItemNotFoundException) {
-                return handleNotFound(request, (AgendaItemNotFoundException) t);
-            }
-        }
-
-        return HttpResponse.<JsonError>serverError();
     }
 
     /**
@@ -157,7 +112,7 @@ public class AgendaItemController {
         return Single.fromCallable(() -> {
             AgendaItem result = agendaItemServices.read(id);
             if (result == null) {
-                throw new AgendaItemNotFoundException("No agenda item for UUID");
+                throw new NotFoundException("No agenda item for UUID");
             }
             return result;
         })

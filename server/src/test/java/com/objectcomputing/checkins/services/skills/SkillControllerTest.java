@@ -218,7 +218,7 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -275,6 +275,6 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 }

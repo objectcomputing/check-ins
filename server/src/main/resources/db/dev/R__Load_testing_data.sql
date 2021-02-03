@@ -35,9 +35,14 @@ VALUES
     ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'Geetika Sharma', 'PMO Administrator', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'sharmag@objectcomputing.com', '4444444', '2019-09-09', 'Engineer Wrangler extrodinaire', null);
 
 INSERT INTO member_profile
+(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+VALUES
+('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+
+INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
+    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '8fa673c0-ca19-4271-b759-41cb9db2e83a', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
 
 INSERT INTO member_profile
     (id, name, title, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -47,12 +52,12 @@ VALUES
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('6884ab96-2275-4af9-89d8-ad84254d8759', 'Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6884ab96-2275-4af9-89d8-ad84254d8759', 'Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '6884ab96-2275-4af9-89d8-ad84254d8759', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -70,9 +75,9 @@ VALUES
     ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Intern', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
-    (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+('066b186f-1425-45de-89f2-4ddcc6ebe237', 'Joe Warner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'warnerj@objectcomputing.com', '1234569', '2019-03-25', 'Engineer of Some Note', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
@@ -98,6 +103,11 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('b72789ec-18a0-11eb-adc1-0242ac120002', 'ADMIN', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('9219ca40-6c74-419e-ab8a-22cc2f4e90dd', 'ADMIN', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
 INSERT INTO role
     (id, role, memberid)
@@ -128,6 +138,16 @@ INSERT INTO role
     (id, role, memberid)
 VALUES
     ('58f21738-43a9-4e3d-ac6d-8d9acb9b1fb9', 'PDL', '802cb1f5-a255-4236-8719-773fa53d79d9');
+
+INSERT INTO role
+    (id, role, memberid)
+VALUES
+    ('d92479a6-51ee-44d4-b9de-d467ee235b79', 'PDL', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role
+(id, role, memberid)
+VALUES
+('388cb81a-488d-4c66-b22c-368deb20f112', 'PDL', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
 INSERT INTO role
     (id, role, memberid)
@@ -282,7 +302,7 @@ VALUES
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
 VALUES
-    ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-09-29 13:42:29.04' , false);
+    ('cf806bb5-7269-48ee-8b72-0b2762c7669f', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-09-29 13:42:29.04' , false);
 
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
@@ -302,7 +322,7 @@ VALUES
 INSERT INTO checkins
     (id, teammemberid, pdlid, checkindate, completed)
 VALUES
-    ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '802cb1f5-a255-4236-8719-773fa53d79d9', '2020-03-20 11:32:29.04' , true);
+    ('ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '6884ab96-2275-4af9-89d8-ad84254d8759', '2020-03-20 11:32:29.04' , true);
 
 INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
@@ -329,3 +349,29 @@ Values('a6e2c822-feab-4c8b-b164-78158b2d4993', 'cf806bb5-7269-48ee-8b72-0b2762c7
 INSERT INTO action_items
     (id, checkinid, createdbyid, description)
 Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', 'Action Item for Pramukh Bagur');
+
+insert into guilds (id, name, description)
+values('ba42d181-3c5b-4ee3-938d-be122c314bee', 'Software Engineering', 'Resource for Software Engineering Topics');
+
+insert into guilds (id, name, description)
+values('06cd3202-a209-4ae1-a49a-10395fbe3548', 'Micronaut', 'For Micronaut Lovers and Learners');
+
+insert into guilds (id, name, description)
+values('d1d4af0e-b1a5-47eb-be49-f3581271f1e3', 'Fullstack Development', 'Full Stack Development Interests');
+insert into guildmembers (id, guildid, memberid, lead)
+values('fd976615-6a8b-4cd1-8aea-cb7751c8ee1a','ba42d181-3c5b-4ee3-938d-be122c314bee', 'b2d35288-7f1e-4549-aa2b-68396b162490', true);
+
+insert into guildmembers (id, guildid, memberid, lead)
+values('86dc52b9-5b2a-4241-9c54-0fde07600c58','ba42d181-3c5b-4ee3-938d-be122c314bee', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false);
+
+insert into guildmembers (id, guildid, memberid, lead)
+values('7cd12bb9-6aa4-4edc-831f-f4ebe8f22f62','ba42d181-3c5b-4ee3-938d-be122c314bee', '6884ab96-2275-4af9-89d8-ad84254d8759', false);
+
+insert into guildmembers (id, guildid, memberid, lead)
+values('8a20e99f-c326-4529-8024-26724a8586b1','ba42d181-3c5b-4ee3-938d-be122c314bee', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
+
+insert into guildmembers (id, guildid, memberid, lead)
+values('7ffe3937-bdce-4ebb-a03d-8a8b7d4703ef','06cd3202-a209-4ae1-a49a-10395fbe3548', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
+
+insert into guildmembers (id, guildid, memberid, lead)
+values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3548', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);

@@ -1,9 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-
-import com.objectcomputing.checkins.security.InsufficientPrivelegesException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
@@ -83,7 +82,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     public Boolean deleteProfile(@NotNull UUID id) {
         if (!currentUserServices.isAdmin()) {
-            throw new InsufficientPrivelegesException("Requires admin privileges");
+            throw new PermissionException("Requires admin privileges");
         }
 
         // try to delete user - default behavior

@@ -9,8 +9,14 @@ import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.*;
+import io.micronaut.security.token.DefaultRolesFinder;
+import io.micronaut.security.token.config.TokenConfiguration;
 import io.micronaut.security.token.jwt.generator.claims.JwtClaims;
+import ognl.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,17 +24,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Named("google")
 @Singleton
-@Replaces(DefaultOpenIdUserDetailsMapper.class)
 public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
+    private final TokenConfiguration tokenConfiguration;
 
     public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
-                                          RoleRepository roleRepository) {
+                                          RoleRepository roleRepository,
+                                          TokenConfiguration tokenConfiguration) {
+        LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
+        this.tokenConfiguration = tokenConfiguration;
     }
 
     @NonNull
@@ -37,7 +48,9 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         Map<String, Object> claims = buildAttributes(providerName, tokenResponse, openIdClaims);
         List<String> roles = getRoles(openIdClaims);
         String username = openIdClaims.getSubject();
-        return new UserDetails(username, roles, claims);
+        UserDetails userDetails = new UserDetails(username, roles, claims);
+        LOG.info("Creating new userdetails for user: {}", userDetails.getUsername());
+        return userDetails;
     }
 
     @NonNull
@@ -57,6 +70,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         JwtClaims.ALL_CLAIMS.forEach(claims::remove);
         claims.put(OauthUserDetailsMapper.PROVIDER_KEY, providerName);
         claims.put(OpenIdUserDetailsMapper.OPENID_TOKEN_KEY, tokenResponse.getIdToken());
+        claims.put(tokenConfiguration.getRolesName(), getRoles(openIdClaims));
         return claims;
     }
 
@@ -67,12 +81,16 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     protected List<String> getRoles(OpenIdClaims openIdClaims) {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
-                .ifPresent((memberProfile) ->
+                .ifPresent((memberProfile) -> {
+                        LOG.info("MemberProfile of the user: {}", memberProfile);
                         roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
-                                .collect(Collectors.toList())));
+                                .collect(Collectors.toList()));
+                });
 
+        LOG.info("Email address of the user: {}", openIdClaims.getEmail());
+        LOG.info("List of roles from roleRepository: {}", roles);
         return roles;
     }
 }

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.agenda_item;
 
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -152,7 +153,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
-            throw new AgendaItemBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }

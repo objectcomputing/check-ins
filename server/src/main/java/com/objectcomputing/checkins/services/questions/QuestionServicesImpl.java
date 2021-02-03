@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.questions;
 
-import com.objectcomputing.checkins.services.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;

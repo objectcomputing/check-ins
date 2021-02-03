@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
 
 @Controller("/services/check-in")
 @Secured(SecurityRule.IS_AUTHENTICATED)

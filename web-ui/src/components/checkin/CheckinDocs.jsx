@@ -75,7 +75,7 @@ const UploadDocs = () => {
       let res = await uploadFile(formData, checkinId, csrf);
       if (res.error) throw new Error(res.error);
       const { data, status } = res.payload;
-      if (status !== 200) {
+      if (status !== 200 && status !== 201) {
         throw new Error("status equals " + status);
       }
       dispatch({
@@ -100,9 +100,10 @@ const UploadDocs = () => {
       if (!file.name) {
         return null;
       } else {
+        let downloadUrl = "/services/file/"+file.fileId+"/download";
         return (
           <div key={file.fileId} style={{ color: fileColors[file.name] }}>
-            {file.name}
+            <a href={downloadUrl} download={file.name}>{file.name}</a>
             <Button
               className="remove-file"
               onClick={async () => {

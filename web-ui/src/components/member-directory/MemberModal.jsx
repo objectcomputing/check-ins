@@ -16,17 +16,24 @@ import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
-  const { csrf } = state;
+  const { csrf, memberProfiles } = state;
   const [editedMember, setMember] = useState(member);
   const [pdls, setPdls] = useState([]);
 
   const getPdls = async () => {
     let res = await getAllPDLs(csrf);
-    let promises = res.payload.data.map((member) => getMember(member.memberid));
+    let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
     const results = await Promise.all(promises);
     const pdlArray = results.map((res) => res.payload.data);
     setPdls(pdlArray);
   };
+
+  const onSupervisorChange = (event, newValue) => {
+    setMember({
+      ...editedMember,
+        supervisorid: newValue ? newValue.id : "",
+      });
+   };
 
   useEffect(() => {
     if (open && csrf) {
@@ -105,6 +112,20 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             />
           )}
         />
+        <Autocomplete
+          options={["", ...memberProfiles]}
+          value={memberProfiles.find((memberProfile) => memberProfile.id === editedMember.supervisorid) || ""}
+          onChange={onSupervisorChange}
+          getOptionLabel={(option) => option.name || ""}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="fullWidth"
+              label="Supervisors"
+              placeholder="Change Supervisor"
+            />
+          )}
+        />
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             margin="normal"
@@ -121,18 +142,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             }}
           />
         </MuiPickersUtilsProvider>
-        {/* need supervisor property on member */}
-        {/* <TextField
-          id="member-supervisor-input"
-          label="supervisor"
-          required
-          className="halfWidth"
-          placeholder="Somewhere by the beach"
-          value={editedMember.supervisor ? editedMember.supervisor : ""}
-          onChange={(e) =>
-            setMember({ ...editedMember, supervisor: e.target.value })
-          }
-        /> */}
         <div className="member-modal-actions fullWidth">
           <Button onClick={onClose} color="secondary">
             Cancel
@@ -140,7 +149,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           <Button
             onClick={async () => {
               onSave(editedMember);
-              await updateMember(editedMember);
+              await updateMember(editedMember, csrf);
             }}
             color="primary"
           >

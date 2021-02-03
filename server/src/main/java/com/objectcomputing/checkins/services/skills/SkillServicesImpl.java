@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.skills;
 
-import com.objectcomputing.checkins.services.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.services.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.exceptions.PermissionException;
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;

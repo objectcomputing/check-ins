@@ -7,6 +7,7 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
+import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
@@ -20,9 +21,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
         ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
         : [];
     newValue.forEach((lead) => (lead.lead = true));
+    newValue.forEach((newLead) => {
+        extantMembers = extantMembers.filter(member => member.memberid !== newLead.id && member.id !== newLead.id)
+    });
+    extantMembers = [...new Set(extantMembers)];
+    newValue = [...new Set(newValue)];
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantMembers, ...newValue],
+        teamMembers: [...extantMembers, ...newValue],
     });
   };
 
@@ -31,11 +37,24 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
-    newValue.forEach((lead) => (lead.lead = false));
+    newValue.forEach((teamMember) => (teamMember.lead = false));
+    newValue.forEach((newMember) => {
+      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id && lead.id !== newMember.id)
+    });
+    extantLeads = [...new Set(extantLeads)];
+    newValue = [...new Set(newValue)];
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantLeads, ...newValue],
+         teamMembers: [...extantLeads, ...newValue],
     });
+  };
+
+  const readyToEdit = (team) => {
+    let numLeads = 0;
+    if (team && team.teamMembers) {
+      numLeads = team.teamMembers.filter((teamMember) => teamMember.lead).length;
+    }
+    return team.name && numLeads > 0;
   };
 
   return (
@@ -66,6 +85,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
+          id="teamLeadSelect"
           multiple
           options={teamMemberOptions}
           value={
@@ -79,7 +99,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             <TextField
               {...params}
               className="fullWidth"
-              label="Team Leads"
+              label="Team Leads *"
               placeholder="Add a team lead..."
             />
           )}
@@ -111,8 +131,10 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             Cancel
           </Button>
           <Button
+            disabled={!readyToEdit(editedTeam)}
             onClick={async () => {
               onSave(editedTeam);
+              await updateTeam(editedTeam);
             }}
             color="primary"
           >

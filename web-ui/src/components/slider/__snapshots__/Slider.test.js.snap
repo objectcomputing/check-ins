@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders slider with title 1`] = `
+<div
+  className="skill-slider"
+>
+  <p
+    className="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom"
+    id="discrete-slider-restrict"
+  >
+    Some skill
+  </p>
+  <span
+    className="MuiSlider-root MuiSlider-colorPrimary MuiSlider-marked"
+    onMouseDown={[Function]}
+  >
+    <span
+      className="MuiSlider-rail"
+    />
+    <span
+      className="MuiSlider-track"
+      style={
+        Object {
+          "left": "0%",
+          "width": "NaN%",
+        }
+      }
+    />
+    <input
+      type="hidden"
+      value="NaN"
+    />
+    <span
+      className="MuiSlider-mark"
+      data-index={0}
+      style={
+        Object {
+          "left": "0%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={0}
+      style={
+        Object {
+          "left": "0%",
+        }
+      }
+    >
+      Beginner
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={1}
+      style={
+        Object {
+          "left": "25%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={1}
+      style={
+        Object {
+          "left": "25%",
+        }
+      }
+    >
+      Easy
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={2}
+      style={
+        Object {
+          "left": "50%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={2}
+      style={
+        Object {
+          "left": "50%",
+        }
+      }
+    >
+      Medium
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={3}
+      style={
+        Object {
+          "left": "75%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={3}
+      style={
+        Object {
+          "left": "75%",
+        }
+      }
+    >
+      Hard
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={4}
+      style={
+        Object {
+          "left": "100%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={4}
+      style={
+        Object {
+          "left": "100%",
+        }
+      }
+    >
+      Expert
+    </span>
+    <span
+      aria-describedby={null}
+      aria-labelledby="discrete-slider-restrict"
+      aria-orientation="horizontal"
+      aria-valuemax={5}
+      aria-valuemin={1}
+      aria-valuenow={NaN}
+      aria-valuetext="undefined"
+      className="MuiSlider-thumb MuiSlider-thumbColorPrimary"
+      data-index={0}
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      role="slider"
+      style={
+        Object {
+          "left": "NaN%",
+        }
+      }
+      tabIndex={0}
+      title=""
+    />
+  </span>
+</div>
+`;

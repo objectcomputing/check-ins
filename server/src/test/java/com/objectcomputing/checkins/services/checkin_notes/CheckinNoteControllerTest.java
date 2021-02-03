@@ -6,7 +6,10 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInNoteFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -20,13 +23,14 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.PDL_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture {
+public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture, RoleFixture {
 
     @Inject
     @Client("/services/checkin-note")
@@ -36,6 +40,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByAdmin() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -44,7 +49,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         CheckinNote checkinNote = response.body();
@@ -61,6 +67,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateCheckinNoteByPdl() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileOfUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -69,7 +76,34 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(memberProfileOfPDL.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        CheckinNote checkinNote = response.body();
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+        assertEquals(String.format("%s/%s", request.getPath(), checkinNote.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testCreateCheckinNoteByMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(memberProfileForPDL.getId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         CheckinNote checkinNote = response.body();
@@ -85,7 +119,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateInvalidCheckinNote() {
         CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth("test@test.com", ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -104,7 +139,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     @Test
     void testCreateNullCheckinNote() {
 
-        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(PDL_ROLE, PDL_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth("test@test.com", PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -122,17 +157,18 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteForNonExistingCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        Role role = createDefaultRole(RoleType.PDL, memberProfile);
 
         CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
         checkinNoteCreateDTO.setCheckinid(UUID.randomUUID());
         checkinNoteCreateDTO.setCreatedbyid(memberProfile.getId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
+
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
@@ -146,6 +182,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteForNonExistingMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -154,9 +191,11 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(UUID.randomUUID());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
+
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
@@ -170,6 +209,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateACheckInNoteByPLDIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileOfPDL);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -178,7 +218,8 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -194,6 +235,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testCreateThrowsPermissionException() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -202,27 +244,105 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
         checkinNoteCreateDTO.setDescription("test");
 
-        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<CheckinNoteCreateDTO> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfUser.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+    @Test
+    void testCreateCheckinNoteByUnrelatedPDL() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfMrNobody);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<?> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), pdlRole.getRole().name());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
         assertEquals("You do not have permission to access this resource", error);
+
+    }
+
+    @Test
+    void testCreateCheckinNoteByPDLWhoCreatedIt() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfFormerPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
+
+        CheckinNoteCreateDTO checkinNoteCreateDTO = new CheckinNoteCreateDTO();
+        checkinNoteCreateDTO.setCheckinid(checkIn.getId());
+        checkinNoteCreateDTO.setCreatedbyid(checkIn.getPdlId());
+        checkinNoteCreateDTO.setDescription("test");
+
+        final HttpRequest<?> request = HttpRequest.POST("", checkinNoteCreateDTO)
+                .basicAuth(memberProfileOfFormerPDL.getWorkEmail(), pdlRole.getRole().name());
+
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        CheckinNote checkinNote = response.body();
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(checkinNoteCreateDTO.getCheckinid(), checkinNote.getCheckinid());
+        assertEquals(checkinNoteCreateDTO.getCreatedbyid(), checkinNote.getCreatedbyid());
+
     }
 
     @Test
     void testReadCheckinNoteByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
+        final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
+
+        assertEquals(Set.of(checkinNote), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReadCheckinNoteByMEMBER() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfileForPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -233,12 +353,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testReadCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.ADMIN, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -246,34 +368,18 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
-    void testReadCheckinNoteNotFound() {
-        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-
-        UUID randomCheckinID = UUID.randomUUID();
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID)).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid checkin note id %s", randomCheckinID), error);
-
-    }
-
-    @Test
-    void testReadCheckinNoteNotFoundByUnrelatedUser() {
+    void testReadCheckinNoteByPDLNotOnCheckin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        MemberProfile memberProfileForFormerPDL = createASecondDefaultMemberProfileForPdl(memberProfile);
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
-
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForFormerPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileForPDL.getWorkEmail(), pdlRole.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -286,16 +392,80 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     }
 
     @Test
+    void testReadCheckinNoteNotFound() {
+        MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfPDL);
+
+        UUID randomCheckinID = UUID.randomUUID();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", randomCheckinID))
+                .basicAuth(memberProfileOfPDL.getWorkEmail(), pdlRole.getRole().name());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Invalid checkin note id %s", randomCheckinID), error);
+
+    }
+
+    @Test
+    void testReadCheckinNoteNotFoundByUnrelatedPDL() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfMrNobody);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), pdlRole.getRole().name());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testReadCheckinNoteByFormerPDLWhoCreatedIt() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileOfFormerPDL = createAnUnrelatedUser();
+        Role pdlRole = createDefaultRole(RoleType.PDL, memberProfileOfFormerPDL);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfFormerPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileOfFormerPDL);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", checkinNote.getId()))
+                .basicAuth(memberProfileOfFormerPDL.getWorkEmail(), pdlRole.getRole().name());
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        assertNotNull(checkinNote);
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
     void testFindAllCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role pdlRole = createDefaultRole(RoleType.ADMIN, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), pdlRole.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -307,13 +477,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindAllCheckinNoteByNonAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -329,13 +500,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByBothCheckinIdAndCreateByid() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfile);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", checkinNote.getCheckinid(), checkinNote.getCreatedbyid()))
-                .basicAuth(memberProfile.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -349,13 +521,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", checkinNote.getCreatedbyid()))
-                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -368,13 +541,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", checkinNote.getCheckinid()))
-                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForUnrelatedUser.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -386,13 +560,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCheckinIdForPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", checkinNote.getCheckinid()))
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -404,14 +579,15 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCheckinIdForUnrelatedUser() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfile1 = createAnUnrelatedUser();
+        MemberProfile unrelatedUser = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.PDL, unrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s", checkinNote.getCheckinid()))
-                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
+                .basicAuth(unrelatedUser.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -425,13 +601,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCreatedByIdByMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileForPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", checkinNote.getCreatedbyid()))
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<Set<CheckinNote>> response = client.toBlocking().exchange(request, Argument.setOf(CheckinNote.class));
 
         assertEquals(Set.of(checkinNote), response.body());
@@ -443,14 +620,15 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testFindCheckinNoteByCreatedByIdByUnrelatedUser() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        MemberProfile memberProfile1 = createAnUnrelatedUser();
+        MemberProfile anUnrelatedUser = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.PDL, anUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileForPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s", checkinNote.getCreatedbyid()))
-                .basicAuth(memberProfile1.getWorkEmail(), PDL_ROLE);
+                .basicAuth(anUnrelatedUser.getWorkEmail(), role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -460,17 +638,19 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
     }
 
-
     @Test
     void testUpdateCheckinNoteByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.ADMIN, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
+        checkinNote.setDescription("new description");
 
-        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         assertEquals(checkinNote, response.body());
@@ -481,12 +661,32 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateCheckinNoteByPDL() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
+        final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
+
+        assertEquals(checkinNote, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testUpdateCheckinNoteByMEMBER() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
+
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+
+        CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileForPDL);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth(memberProfile.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         assertEquals(checkinNote, response.body());
@@ -497,6 +697,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateInvalidCheckinNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -504,16 +705,18 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNote.setCreatedbyid(null);
         checkinNote.setCheckinid(null);
 
-        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote).basicAuth("test@test.com", PDL_ROLE);
+        final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
+                .basicAuth("test@test.com", role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
+
         assertEquals("checkinNote.checkinid: must not be null", errorList.get(0));
         assertEquals("checkinNote.createdbyid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -522,13 +725,18 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
 
     @Test
     void testUpdateNullCheckinNote() {
-        final HttpRequest<?> request = HttpRequest.PUT("", "").basicAuth(PDL_ROLE, PDL_ROLE);
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        Role role = createDefaultRole(RoleType.PDL, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", "")
+                .basicAuth("test@test.com", role.getRole().name());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+
         assertEquals("Required Body [checkinNote] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
@@ -551,6 +759,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNote() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -558,7 +767,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNote.setId(UUID.randomUUID());
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -575,6 +784,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNoteForCheckInId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -582,7 +792,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNote.setCheckinid(UUID.randomUUID());
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -599,6 +809,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateNonExistingCheckInNoteForMemberId() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role role = createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -606,7 +817,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         checkinNote.setCreatedbyid(UUID.randomUUID());
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileForPDL.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -624,13 +835,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.PDL, memberProfileOfMrNobody);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -638,7 +850,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals("You do not have permission to access this resource", error);
         assertEquals(request.getPath(), href);
 
     }
@@ -648,13 +860,14 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        Role role = createDefaultRole(RoleType.ADMIN, memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfile);
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileOfMrNobody.getWorkEmail(), role.getRole().name());
         final HttpResponse<CheckinNote> response = client.toBlocking().exchange(request, CheckinNote.class);
 
         assertEquals(checkinNote, response.body());
@@ -666,12 +879,13 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
     void testUpdateThrowsPermissionException() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileForUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        Role role = createDefaultRole(RoleType.MEMBER, memberProfileForUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileForUser, memberProfileOfPDL);
         CheckinNote checkinNote = createADeafultCheckInNote(checkIn, memberProfileForUser);
 
         final HttpRequest<CheckinNote> request = HttpRequest.PUT("", checkinNote)
-                .basicAuth(memberProfileForUser.getWorkEmail(), MEMBER_ROLE);
+                .basicAuth(memberProfileForUser.getWorkEmail(), role.getRole().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -680,6 +894,6 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("You do not have permission to access this resource", error);
+        assertEquals("User is unauthorized to do this operation", error);
     }
 }
