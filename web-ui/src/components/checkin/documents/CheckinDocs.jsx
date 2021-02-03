@@ -4,14 +4,18 @@ import {
   getFiles,
   deleteFile,
   uploadFile,
-} from "../../api/upload";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
+} from "../../../api/upload";
+import { AppContext, UPDATE_TOAST } from "../../../context/AppContext";
 
 import DescriptionIcon from "@material-ui/icons/Description";
 import Button from "@material-ui/core/Button";
 import { CircularProgress } from "@material-ui/core";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
 
-import "./Checkin.css";
+import "./CheckinDocs.css";
 
 const UploadDocs = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -123,31 +127,26 @@ const UploadDocs = () => {
         );
       }
     });
-    return divs;
+    return files.length > 0 ? divs : "No files attached.";
   };
 
   const hiddenFileInput = React.useRef(null);
 
-  return (
-    <div className="documents">
-      {canView && (
-        <div>
-          <h1 className="title">
-            <DescriptionIcon />
-            Documents
-          </h1>
-          <div className="file-upload">
+  return canView ? (
+        <Card>
+          <CardHeader avatar={<DescriptionIcon />} title="Documents"  titleTypographyProps={{variant: "h5", component: "h2"}} />
+          <CardContent>
             <div className="file-name-container">{fileMapper()}</div>
+          </CardContent>
+          <CardActions>
             {loading ? (
               <CircularProgress />
             ) : (
               <FileUploader handleFile={handleFile} fileRef={hiddenFileInput} />
             )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+          </CardActions>
+        </Card>
+      ) : "";
 };
 
 export default UploadDocs;

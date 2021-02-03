@@ -11,6 +11,9 @@ import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
 import Skeleton from "@material-ui/lab/Skeleton";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
 import "./Note.css";
 
@@ -27,10 +30,10 @@ const Notes = (props) => {
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
   const { memberName } = props;
-  const [note, setNote] = useState({});
+  const [note, setNote] = useState();
   const [isLoading, setIsLoading] = useState(true);
   // TODO: get private note
-  const [privateNote, setPrivateNote] = useState("Private note");
+  const [privateNote, setPrivateNote] = useState();
   const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
   const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
@@ -110,12 +113,9 @@ const Notes = (props) => {
 
   return (
     <div className="notes">
-      <div>
-        <div>
-          <h1>
-            <NotesIcon style={{ marginRight: "10px" }} />
-            Notes for {memberName}
-          </h1>
+      <Card>
+        <CardHeader avatar={<NotesIcon />} title={`Notes for ${memberName}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
+        <CardContent>
           <div className="container">
             {isLoading ? (
               <div className="skeleton">
@@ -133,23 +133,20 @@ const Notes = (props) => {
                 }
                 onChange={handleNoteChange}
                 value={note && note.description ? note.description : ""}
-              ></textarea>
+              />
             )}
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       {canViewPrivateNote && (
-        <div>
-          <h1>
-            <LockIcon style={{ marginRight: "10px" }} />
-            Private Notes
-          </h1>
+      <Card>
+        <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
+        <CardContent>
           <div className="container">
-            <textarea onChange={handlePrivateNoteChange} value={privateNote}>
-              <p></p>
-            </textarea>
+          <textarea onChange={handlePrivateNoteChange} value={privateNote}/>
           </div>
-        </div>
+        </CardContent>
+      </Card>
       )}
     </div>
   );
