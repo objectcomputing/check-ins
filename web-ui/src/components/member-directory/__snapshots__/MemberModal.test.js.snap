@@ -51,7 +51,7 @@ exports[`renders correctly 1`] = `
           className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
         >
           <a
-            href="mailto:williamsh@objectcomputing.com"
+            href="mailto:testerson@oci.com"
           >
             testerson@oci.com
           </a>
