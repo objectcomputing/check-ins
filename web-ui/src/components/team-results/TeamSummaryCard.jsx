@@ -116,6 +116,7 @@ const TeamSummaryCard = ({team, index}) => {
                     });
                     handleClose();
                 }}
+                headerText='Edit Your Team'
             />
         </Card>
     );
