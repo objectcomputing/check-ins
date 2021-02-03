@@ -13,11 +13,12 @@ import Personnel from "../components/personnel/Personnel";
 import { Button, Container, Grid, Modal } from "@material-ui/core";
 
 import "./CheckinsPage.css";
+import {updateCheckin} from "../api/checkins";
 
 const CheckinsPage = ({ history }) => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile, selectedProfile } = state;
+  const { currentCheckin, userProfile, selectedProfile, csrf } = state;
   const memberProfile = userProfile ? userProfile.memberProfile : undefined;
   const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
@@ -28,6 +29,13 @@ const CheckinsPage = ({ history }) => {
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
+
+  const completeCheckin = async () => {
+    if (csrf) {
+      updateCheckin({...currentCheckin, completed: true})
+    }
+    handleClose();
+  };
 
   useEffect(() => {
     if (currentCheckin && currentCheckin.id) {
@@ -83,7 +91,12 @@ const CheckinsPage = ({ history }) => {
                         <Button onClick={handleClose} color="secondary">
                           Cancel
                         </Button>
-                        <Button color="primary">Submit</Button>
+                        <Button
+                            color="primary"
+                            onClick={completeCheckin}
+                        >
+                          Complete and Close
+                        </Button>
                       </div>
                     </div>
                   </Modal>
@@ -92,7 +105,7 @@ const CheckinsPage = ({ history }) => {
                     onClick={handleOpen}
                     variant="contained"
                   >
-                    Submit
+                    Complete and Close Checkin
                   </Button>
                 </div>
               )}
