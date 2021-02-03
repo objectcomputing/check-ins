@@ -27,8 +27,7 @@ micronaut:
 
   security:
     enabled: true
-<<<<<<< HEAD
-    authentication: idtoken
+#    authentication: idtoken
 #    oauth2:
 #      clients:
 #        google:
@@ -36,7 +35,6 @@ micronaut:
 #          client-secret: ${ OAUTH_CLIENT_SECRET }
 #          openid:
 #            issuer: 'https://accounts.google.com'
-=======
     authentication: cookie
     oauth2:
       clients:
@@ -45,7 +43,6 @@ micronaut:
           client-secret: ${ OAUTH_CLIENT_SECRET }
           openid:
             issuer: 'https://accounts.google.com'
->>>>>>> 1858735e8ea8038e43e75a1a7c0699aa17e8871e
     endpoints:
       login:
         enabled: true
