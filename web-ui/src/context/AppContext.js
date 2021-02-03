@@ -244,7 +244,7 @@ const AppContextProvider = (props) => {
     let currentMonth = new Date().getMonth() + 1;
     let newDate = prevCheckinDate ? new Date(...prevCheckinDate) : new Date();
     if (prevCheckinDate) {
-      let prevCheckinMonth = prevCheckinDate.getMonth() + 1;
+      let prevCheckinMonth = new Date (prevCheckinDate).getMonth() + 1;
       newDate.setMonth(
         newDate.getMonth() + currentMonth - prevCheckinMonth >= 3 ? 1 : months
       );

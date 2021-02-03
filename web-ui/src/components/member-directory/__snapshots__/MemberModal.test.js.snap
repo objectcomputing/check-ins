@@ -2,50 +2,67 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root member-card MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiBox-root MuiBox-root-1"
 >
   <div
-    className="MuiCardHeader-root"
+    className="MuiPaper-root MuiCard-root member-card MuiPaper-elevation1 MuiPaper-rounded"
   >
     <div
-      className="MuiCardHeader-avatar"
+      className="MuiContainer-root info-container MuiContainer-fixed MuiContainer-maxWidthLg"
     >
       <div
-        className="MuiAvatar-root MuiAvatar-circle member-summary-avatar"
-        style={
-          Object {
-            "margin": "0px",
-          }
-        }
+        className="MuiCardHeader-root"
       >
-        <img
-          alt="testerson"
-          className="MuiAvatar-img"
-          src="http://localhost:8080/services/member-profile/member-photo/testerson%40oci.com"
-        />
+        <div
+          className="MuiCardHeader-avatar"
+        >
+          <div
+            className="MuiAvatar-root MuiAvatar-circle large"
+          >
+            <img
+              className="MuiAvatar-img"
+              src="http://localhost:8080/services/member-profile/member-photo/testerson%40oci.com"
+            />
+          </div>
+        </div>
+        <div
+          className="MuiCardHeader-content"
+        >
+          <h2
+            className="MuiTypography-root MuiTypography-h5"
+          >
+            testerson
+          </h2>
+          <h3
+            className="MuiTypography-root MuiTypography-body1"
+          >
+            engineer
+          </h3>
+        </div>
       </div>
     </div>
     <div
-      className="MuiCardHeader-content"
+      className="MuiCardContent-root"
     >
-      <span
-        className="MuiTypography-root MuiCardHeader-title MuiTypography-body2 MuiTypography-displayBlock"
+      <div
+        className="MuiContainer-root info-container MuiContainer-fixed MuiContainer-maxWidthLg"
       >
-        testerson
-      </span>
-      <span
-        className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
-      >
-        <div>
-          engineer
+        <p
+          className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+        >
+          <a
+            href="mailto:testerson@oci.com"
+          >
+            testerson@oci.com
+          </a>
           <br />
-          testerson@oci.com
-          <br />
+          Location: 
           STL
           <br />
           
-        </div>
-      </span>
+          <br />
+        </p>
+      </div>
     </div>
   </div>
 </div>
