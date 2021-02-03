@@ -93,10 +93,6 @@ public class FileServicesImpl implements FileServices {
                 CheckIn checkIn = checkInServices.read(checkInID);
                 validate(checkIn == null, String.format("Unable to find checkin record with id %s", checkInID));
 
-                if(!isAdmin) {
-                    validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
-                }
-
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
                 for (CheckinDocument cd : checkinDocuments) {
                     File file = drive.files().get(cd.getUploadDocId()).setSupportsAllDrives(true).execute();

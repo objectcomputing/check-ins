@@ -36,4 +36,17 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
             "WHERE (:name IS NULL OR t_.name = :name) " +
             "AND (:memberid IS NULL OR tm_.memberid = :memberid) ")
     List<Team> search(@Nullable String name, @Nullable String memberid);
+
+    @Query(
+            "SELECT * " +
+            "FROM team t_ " +
+            "INNER JOIN team_member tm_1 " +
+            "   ON t_.id = tm_1.teamid " +
+            "   AND tm_1.memberid = :memberId " +
+            "INNER JOIN team_member tm_2 " +
+            "   ON t_.id = tm_2.teamid " +
+            "   AND tm_2.memberid = :leadId " +
+            "   AND tm_2.lead = true"
+    )
+    List<Team> matchMemberAndlead(@NotNull String memberId, @NotNull String leadId);
 }

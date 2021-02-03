@@ -162,9 +162,6 @@ public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
             CheckIn checkinRecord = checkInServices.read(checkinid);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            permissionsValidation.validatePermissions(!currentUser.getId().equals(pdlId) &&
-                    !currentUser.getId().equals(teamMemberId) &&
-                    !isAdmin, "User is unauthorized to do this operation");
         } else if (createdbyid != null) {
             MemberProfile memberRecord = memberServices.getById(createdbyid);
             permissionsValidation.validatePermissions(!currentUser.getId().equals(memberRecord.getId()) &&

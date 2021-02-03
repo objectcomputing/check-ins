@@ -40,14 +40,12 @@ public class CheckInServicesImpl implements CheckInServices {
     public Boolean accessGranted(@NotNull UUID checkinId, @NotNull UUID memberId) {
         Boolean grantAccess = false;
 
-        MemberProfile memberTryingToGainAccess = memberRepo.findById(memberId).orElse(null);
-        if (memberTryingToGainAccess == null) {
+        MemberProfile memberTryingToGainAccess = memberRepo.findById(memberId).orElseThrow(() -> {
             throw new NotFoundException(String.format("Member %s not found", memberId));
-        }
-        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
-        if (checkinRecord == null) {
+        });
+        CheckIn checkinRecord = checkinRepo.findById(checkinId).orElseThrow(() -> {
             throw new NotFoundException(String.format("Checkin %s not found", checkinId));
-        }
+        });
 
         Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
@@ -55,10 +53,9 @@ public class CheckInServicesImpl implements CheckInServices {
         if (isAdmin) {
             grantAccess = true;
         } else {
-            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElse(null);
-            if (teamMemberOnCheckin == null) {
+            MemberProfile teamMemberOnCheckin = memberRepo.findById(checkinRecord.getTeamMemberId()).orElseThrow(() -> {
                 throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
-            }
+            });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
 
             if (memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
@@ -103,7 +100,7 @@ public class CheckInServicesImpl implements CheckInServices {
 
         if (!isAdmin) {
             // Limit read to Subject of check-in, PDL of subject and Admin
-            validate((!currentUser.getId().equals(result.getTeamMemberId()) && !currentUser.getId().equals(result.getPdlId())), "You are not authorized to perform this operation");
+            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
         }
 
         return result;
@@ -130,7 +127,7 @@ public class CheckInServicesImpl implements CheckInServices {
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!isAdmin) {
             // Limit update to subject of check-in, PDL of subject and Admin
-            validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
+            validate(accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
             // Update is only allowed if the check in is not completed unless made by admin
             validate(associatedCheckin.get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
