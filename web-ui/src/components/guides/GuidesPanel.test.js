@@ -1,7 +1,7 @@
 import React from "react";
-import GuideLink from "./GuideLink";
 import { MemoryRouter } from 'react-router-dom';
+import GuidesPanel from "./GuidesPanel";
 
 it("renders correctly", () => {
-  snapshot(<MemoryRouter><GuideLink name="myFileName" /></MemoryRouter>);
+  snapshot(<MemoryRouter><GuidesPanel /></MemoryRouter>);
 });

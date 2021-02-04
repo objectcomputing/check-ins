@@ -1,86 +1,177 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly with null 1`] = `
-<fieldset
-  className="personnel-container"
+<div
+  className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
 >
-  <legend>
-    My Personnel
-  </legend>
   <div
-    className="image-div"
-    onClick={[Function]}
+    className="MuiCardHeader-root"
   >
-    <img
-      alt="personnel pic"
-      className="member-image"
-      src="/default_profile.jpg"
-    />
     <div
-      className="info-div"
+      className="MuiCardHeader-avatar"
     >
-      <p
-        className="personnel-info-hidden"
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root"
+        focusable="false"
+        viewBox="0 0 24 24"
       >
-        Team Member
-      </p>
-      <p
-        className="personnel-info-hidden"
+        <path
+          d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
+        />
+      </svg>
+    </div>
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-body2 MuiTypography-displayBlock"
       >
-        Last Check-in: 
-        Unknown
-      </p>
+        Development Partners
+      </span>
     </div>
   </div>
-  <div
-    className="image-div"
-    onClick={[Function]}
+  <ul
+    className="MuiList-root MuiList-dense MuiList-padding"
   >
-    <img
-      alt="personnel pic"
-      className="member-image"
-      src="/default_profile.jpg"
-    />
     <div
-      className="info-div"
+      aria-disabled={false}
+      className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      role="button"
+      tabIndex={0}
     >
-      <p
-        className="personnel-info-hidden"
+      <div
+        className="MuiListItemAvatar-root"
       >
-        Team Member
-      </p>
-      <p
-        className="personnel-info-hidden"
+        <div
+          className="MuiAvatar-root MuiAvatar-circle avatar"
+        >
+          <img
+            alt="Team Member"
+            className="MuiAvatar-img"
+            src="http://localhost:8080/services/member-profile/member-photo/"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline"
       >
-        Last Check-in: 
-        Unknown
-      </p>
+        <span
+          className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+        >
+          Team Member
+        </span>
+        <p
+          className="MuiTypography-root MuiListItemText-secondary MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+        >
+          Unknown
+        </p>
+      </div>
     </div>
-  </div>
-  <div
-    className="image-div"
-    onClick={[Function]}
-  >
-    <img
-      alt="personnel pic"
-      className="member-image"
-      src="/default_profile.jpg"
-    />
     <div
-      className="info-div"
+      aria-disabled={false}
+      className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      role="button"
+      tabIndex={0}
     >
-      <p
-        className="personnel-info-hidden"
+      <div
+        className="MuiListItemAvatar-root"
       >
-        Team Member
-      </p>
-      <p
-        className="personnel-info-hidden"
+        <div
+          className="MuiAvatar-root MuiAvatar-circle avatar"
+        >
+          <img
+            alt="Team Member"
+            className="MuiAvatar-img"
+            src="http://localhost:8080/services/member-profile/member-photo/"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline"
       >
-        Last Check-in: 
-        Unknown
-      </p>
+        <span
+          className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+        >
+          Team Member
+        </span>
+        <p
+          className="MuiTypography-root MuiListItemText-secondary MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+        >
+          Unknown
+        </p>
+      </div>
     </div>
-  </div>
-</fieldset>
+    <div
+      aria-disabled={false}
+      className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      role="button"
+      tabIndex={0}
+    >
+      <div
+        className="MuiListItemAvatar-root"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circle avatar"
+        >
+          <img
+            alt="Team Member"
+            className="MuiAvatar-img"
+            src="http://localhost:8080/services/member-profile/member-photo/"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiListItemText-root MuiListItemText-dense MuiListItemText-multiline"
+      >
+        <span
+          className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+        >
+          Team Member
+        </span>
+        <p
+          className="MuiTypography-root MuiListItemText-secondary MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+        >
+          Unknown
+        </p>
+      </div>
+    </div>
+  </ul>
+</div>
 `;
