@@ -1,5 +1,7 @@
-import PdfIcon from "@material-ui/icons/PictureAsPdf";
 import React from "react";
+import { Link } from 'react-router-dom';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import "./GuideLink.css";
 
 const GuideLink = (props) => {
@@ -7,16 +9,11 @@ const GuideLink = (props) => {
   const fileName = props.name;
   let fullPath = path + fileName.split(" ").join("_") + ".pdf";
   return (
-    <div className="guide-info">
-      <div className="guide-icon">
-        <PdfIcon fontSize="large" />
-      </div>
-      <div className="guide-link">
-        <a href={fullPath} target="_blank" rel="noopener noreferrer">
-          {fileName}
-        </a>
-      </div>
-    </div>
+    <ListItem key={`guides-{fileName.split(" ").join("_")}`} button component={Link} to={fullPath} target="_blank" >
+        <ListItem>
+          <ListItemText primary={fileName}/>
+        </ListItem>
+    </ListItem>
   );
 };
 

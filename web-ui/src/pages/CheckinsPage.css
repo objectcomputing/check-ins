@@ -1,16 +1,3 @@
-.right-sidebar {
-  margin-right: 5px;
-}
-
-.container {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-}
-
-.contents {
-  width: 100%;
-}
 
 .modal-container {
   display: flex;
@@ -40,11 +27,11 @@
 }
 
 .submit-checkin-modal .MuiTextField-root.fullWidth {
-  width: calc(100% - 1rem);
+  width: calc(100% - 10rem);
 }
 
 .submit-checkin-modal .MuiTextField-root.halfWidth {
-  width: calc(50% - 0.5rem);
+  width: calc(50% - 5rem);
 }
 
 .submit-checkin-modal .MuiTextField-root {

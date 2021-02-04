@@ -39,7 +39,7 @@ const CheckinProfile = () => {
     <div className="profile-section">
       <Avatar
         src={getAvatarURL(workEmail)}
-        style={{ height: "180px", width: "180px" }}
+        style={{ height: "120px", width: "120px" }}
       />
       <div className="info">
         <p>{name}</p>
