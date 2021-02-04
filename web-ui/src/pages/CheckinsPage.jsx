@@ -11,7 +11,7 @@ import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
 import Personnel from "../components/personnel/Personnel";
 
-import { Button, Container, Grid, Modal } from "@material-ui/core";
+import { Button, Grid, Modal } from "@material-ui/core";
 
 import "./CheckinsPage.css";
 import {updateCheckin} from "../api/checkins";

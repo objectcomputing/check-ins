@@ -4,7 +4,6 @@ import { getCheckinByMemberId } from "../../api/checkins";
 import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -81,7 +80,6 @@ const Personnel = () => {
     let name = "Team Member";
     let workEmail = "";
     let lastCheckInDate = "Unknown";
-    let infoClassName = "personnel-info-hidden";
     if (checkins && checkins.length) {
       const lastCheckin = checkins[checkins.length - 1];
       const [year, month, day, hour, minute] = lastCheckin.checkInDate;
@@ -93,7 +91,6 @@ const Personnel = () => {
       name = person.name ? person.name : id ? id : name;
       workEmail = person.workEmail;
       key = id && !key ? `${id}Personnel` : key;
-      infoClassName = "personnel-info";
     }
 
     return (
