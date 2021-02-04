@@ -56,6 +56,8 @@ const DirectoryPage = () => {
 
   const createMemberCards = members.map((member, index) => {
     if (member.name.toLowerCase().includes(searchText.toLowerCase())) {
+        // console.log("member.name: " + member.name)
+        // console.log("createMemberCards member.supervisorid " + member.supervisorid);
       return (
         <MemberSummaryCard
           key={`${member.name}-${member.id}`}
@@ -172,7 +174,7 @@ const DirectoryPage = () => {
                      <TextField
                        {...params}
                        className="fullWidth"
-                       label="Supervisors"
+                       label="Supervisor"
                        placeholder="Select Supervisor"
                      />
                    )}
