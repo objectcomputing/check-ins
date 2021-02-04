@@ -2,6 +2,16 @@ import React, { useContext, useEffect, useState } from "react";
 import { getMembersByPDL } from "../../api/member";
 import { getCheckinByMemberId } from "../../api/checkins";
 import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import GroupIcon from "@material-ui/icons/Group";
+import Avatar from "../avatar/Avatar"
+import { getAvatarURL } from "../../api/api.js";
 
 import "./Personnel.css";
 
@@ -69,40 +79,37 @@ const Personnel = () => {
   function createEntry(person, checkins, keyInput) {
     let key = keyInput ? keyInput : undefined;
     let name = "Team Member";
+    let workEmail = "";
     let lastCheckInDate = "Unknown";
     let infoClassName = "personnel-info-hidden";
     if (checkins && checkins.length) {
       const lastCheckin = checkins[checkins.length - 1];
-      lastCheckInDate = new Date(
-        ...lastCheckin.checkInDate
-      ).toLocaleDateString();
+      const [year, month, day, hour, minute] = lastCheckin.checkInDate;
+      lastCheckInDate = new Date(year, month - 1, day, hour, minute, 0).toLocaleDateString();
     }
 
     if (person) {
       let id = person.id ? person.id : null;
       name = person.name ? person.name : id ? id : name;
+      workEmail = person.workEmail;
       key = id && !key ? `${id}Personnel` : key;
       infoClassName = "personnel-info";
     }
 
     return (
-      <div
-        onClick={() => {
-          dispatch({ type: UPDATE_SELECTED_PROFILE, payload: person });
-        }}
-        key={key}
-        className="image-div"
+      <ListItem key={key} button
+          onClick={() => {
+            dispatch({ type: UPDATE_SELECTED_PROFILE, payload: person });
+          }}
       >
-        <img
-          className="member-image"
-          alt="personnel pic"
-          src={"/default_profile.jpg"}
-        />
-        <div className="info-div">
-          <p className={infoClassName}>{name}</p>
-          <p className={infoClassName}>Last Check-in: {lastCheckInDate}</p>
-        </div>
-      </div>
+        <ListItemAvatar>
+          <Avatar
+            alt={name}
+            src={getAvatarURL(workEmail)}
+          />
+        </ListItemAvatar>
+        <ListItemText primary={name} secondary={lastCheckInDate}/>
+      </ListItem>
     );
   }
 
@@ -124,10 +131,12 @@ const Personnel = () => {
   };
 
   return (
-    <fieldset className="personnel-container">
-      <legend>My Personnel</legend>
-      {createPersonnelEntries()}
-    </fieldset>
+    <Card>
+      <CardHeader avatar={<GroupIcon />} title="Development Partners" />
+        <List dense>
+          {createPersonnelEntries()}
+        </List>
+    </Card>
   );
 };
 
