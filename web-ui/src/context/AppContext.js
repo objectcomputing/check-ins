@@ -24,6 +24,7 @@ export const ADD_SKILL = "@@check-ins/add-skill";
 export const DELETE_SKILL = "@@check-ins/delete-skill";
 export const UPDATE_SKILL = "@@check-ins/update_skill";
 export const UPDATE_SKILLS = "@@check-ins/update_skills";
+export const COMBINE_SKILLS = "@@check-ins/combine_skills";
 export const ADD_TEAM = "@@check-ins/add_team";
 
 const SET_CSRF = "@@check-ins/update_csrf";
@@ -48,6 +49,9 @@ const reducer = (state, action) => {
       state.currentCheckin = state.checkins[state.checkins.length - 1];
       break;
     case ADD_SKILL:
+      state.skills = [...state.skills, action.payload];
+      break;
+    case COMBINE_SKILLS:
       state.skills = [...state.skills, action.payload];
       break;
     case DELETE_SKILL:
