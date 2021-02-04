@@ -45,7 +45,7 @@ public class CurrentUserController {
 
         String workEmail = authentication.getAttributes().get("email").toString();
         String name = authentication.getAttributes().get("name").toString();
-        String imageUrl = authentication.getAttributes().get("picture").toString();
+        String imageUrl = authentication.getAttributes().get("picture") != null ? authentication.getAttributes().get("picture").toString(): "";
 
         MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
         List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());

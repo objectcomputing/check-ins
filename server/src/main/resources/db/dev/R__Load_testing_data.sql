@@ -75,11 +75,6 @@ VALUES
     ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Intern', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
-(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
-VALUES
-('066b186f-1425-45de-89f2-4ddcc6ebe237', 'Joe Warner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'warnerj@objectcomputing.com', '1234569', '2019-03-25', 'Engineer of Some Note', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
-
-INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
     ('066b186f-1425-45de-89f2-4ddcc6ebe237', 'Joe Warner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'warnerj@objectcomputing.com', '1234569', '2019-03-25', 'Engineer of Some Note', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
