@@ -69,6 +69,8 @@ const DirectoryPage = () => {
   });
 
   const onSupervisorChange = (event, newValue) => {
+      // console.log("onSupervisorChange supervisorid: " + supervisorid)
+      // console.log("onSupervisorChange newValue: " + newValue)
     setMember({
       ...member,
       supervisorid: newValue ? newValue.id : "",

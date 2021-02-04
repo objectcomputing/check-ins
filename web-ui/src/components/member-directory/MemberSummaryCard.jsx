@@ -25,7 +25,8 @@ const MemberSummaryCard = ({ member, index }) => {
   const supervisorProfile = memberProfiles ? memberProfiles.find((memberProfile) =>
                                       memberProfile.id === supervisorid) : null;
   //
-// console.log("memberProfiles: " + member.name + "  supervisorid: " + member.supervisorid);
+// console.log("MemberSummaryCard memberProfiles: " + member.name + "  supervisorid: " + member.supervisorid);
+// console.log("MemberSummaryCard memberProfiles: " + member.name + "  supervisorid: " + member.supervisorid);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -67,10 +68,7 @@ const MemberSummaryCard = ({ member, index }) => {
                 <br />
                 Location: {location}
                 <br />
-                {/*supervisorProfile*/}
-                {/* supervisorProfile.name*/}
                 {supervisorProfile ? "Supervisor: " + supervisorProfile.name : " "}
-                {/*{supervisorProfile ? "Supervisor: " + supervisorProfile.name : " "}*/}
                 <br />
               </Typography>
             </Container>
