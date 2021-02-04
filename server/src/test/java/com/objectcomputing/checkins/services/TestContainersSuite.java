@@ -8,6 +8,7 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.inject.Inject;
@@ -17,7 +18,13 @@ import javax.inject.Inject;
 public abstract class TestContainersSuite implements RepositoryFixture {
 
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:11.6");
+    private static final PostgreSQLContainer<?> postgres;
+
+    static {
+        postgres = new PostgreSQLContainer<>("postgres:11.6");
+        postgres.waitingFor(Wait.forLogMessage(".*database system is ready to accept connections\\n", 1));
+        postgres.start();
+    }
 
     @Inject
     private EmbeddedServer embeddedServer;
