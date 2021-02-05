@@ -14,19 +14,17 @@ import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
+import {updateMember} from "../../api/member";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, userProfile } = state;
+  const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid } = member;
   const [currentMember, setCurrentMember] = useState(member);
   const supervisorProfile = memberProfiles ? memberProfiles.find((memberProfile) =>
                                       memberProfile.id === supervisorid) : null;
-  //
-// console.log("MemberSummaryCard memberProfiles: " + member.name + "  supervisorid: " + member.supervisorid);
-// console.log("MemberSummaryCard memberProfiles: " + member.name + "  supervisorid: " + member.supervisorid);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -80,19 +78,26 @@ const MemberSummaryCard = ({ member, index }) => {
                 member={currentMember}
                 open={open}
                 onClose={handleClose}
-                onSave={(member) => {
+                onSave={async (member) => {
                   setCurrentMember(member);
-                  const copy = [...memberProfiles];
-                  copy[index] = member;
-                  dispatch({
-                    type: UPDATE_MEMBER_PROFILES,
-                    payload: copy,
-                  });
-                  handleClose();
+                  let res = await updateMember(member, csrf);
+                  let data =
+                      res.payload && res.payload.data && !res.error
+                          ? res.payload.data
+                          : null;
+                  if (data) {
+                    const copy = [...memberProfiles];
+                    copy[index] = member;
+                    dispatch({
+                      type: UPDATE_MEMBER_PROFILES,
+                      payload: copy,
+                    });
+                    handleClose();
+                  }
                 }}
               />
             </CardActions>
-          )}
+          )}u
         </Card>
       </Box>
   );

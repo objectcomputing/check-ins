@@ -55,6 +55,16 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     <Modal open={open} onClose={onClose}>
       <div className="member-modal">
         <TextField
+            id="member-name-input"
+            label="Name"
+            required
+            className="halfWidth"
+            placeholder="Awesome Person"
+            value={editedMember.name ? editedMember.name : ""}
+            onChange={(e) =>
+                setMember({ ...editedMember, name: e.target.value })}
+        />
+        <TextField
           id="member-email-input"
           label="Member Email"
           required
@@ -92,7 +102,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="InsperityId"
           required
           className="halfWidth"
-          placeholder="Somewhere by the beach"
+          placeholder="Number to get Benes and Pay"
           value={editedMember.insperityId ? editedMember.insperityId : ""}
           onChange={(e) =>
             setMember({ ...editedMember, insperityId: e.target.value })
@@ -149,7 +159,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           <Button
             onClick={async () => {
               onSave(editedMember);
-              await updateMember(editedMember, csrf);
             }}
             color="primary"
           >
