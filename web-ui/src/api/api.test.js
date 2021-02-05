@@ -26,7 +26,7 @@ test("Happy Path Resolve", done => {
     let res = await resolve();
     expect(res.payload.data).toStrictEqual("Hello World");
     done();
-  }, 1000);
+  }, 4000);
 });
 
 test("Error Resolve", async () => {
