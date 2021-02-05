@@ -1,15 +1,6 @@
-.action-items > h1 {
-  display: flex;
-  align-items: center;
-  margin: 10px auto;
-  width: 75%;
-}
-
 .action-items-container {
-  border: solid 2px black;
   height: fit-content;
   margin: 0 auto;
-  width: 75%;
 }
 
 .add-action-item-div {
@@ -25,18 +16,11 @@
   flex-direction: row;
 }
 
-.action-items-info,
-.action-items-info-hidden {
+.action-items-info {
   text-align: left;
   display: inline-block;
   margin-bottom: 1px;
   margin-top: 1px;
-}
-
-.action-items-info-hidden {
-  background-color: lightgrey;
-  color: lightgrey;
-  width: 90%;
 }
 
 .action-items .drag-icon {
@@ -53,20 +37,12 @@
   display: flex;
 }
 
-.action-items-container .image-div {
-  display: flex;
-  cursor: auto;
-  text-align: left;
-  margin-bottom: 25px;
-  margin-top: 25px;
-}
-
-.text-input {
-  padding: 5px;
-  width: 100%;
-}
-
 .action-item-button-div {
   display: flex;
   flex-direction: row;
+}
+
+.action-items .text-input {
+  padding: 5px;
+  width: 100%;
 }

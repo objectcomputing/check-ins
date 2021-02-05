@@ -10,6 +10,11 @@ import Avatar from "@material-ui/core/Avatar";
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
 
+import Typography from "@material-ui/core/Typography";
+import CardContent from "@material-ui/core/CardContent";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
+
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { memberProfiles, userProfile } = state;
@@ -32,50 +37,61 @@ const MemberSummaryCard = ({ member, index }) => {
       index === 0 ? handleOpen() : handleClose();
 
   return (
-    <Card className="member-card">
-      <CardHeader
-        avatar={
-          <Avatar
-            alt={name}
-            className="member-summary-avatar"
-            src={getAvatarURL(workEmail)}
-            style={{ margin: "0px" }}
-          />
-        }
-        subheader={
-          <div>
-            {title}
-            <br />
-            {workEmail}
-            <br />
-            {location}
-             <br />
-            {supervisorProfile ? supervisorProfile.name : ""}
-          </div>
-        }
-        title={name}
-      />
-      {isAdmin && (
-        <CardActions>
-          <SplitButton options={options} onClick={handleAction} />
-          <MemberModal
-            member={currentMember}
-            open={open}
-            onClose={handleClose}
-            onSave={(member) => {
-              setCurrentMember(member);
-              const copy = [...memberProfiles];
-              copy[index] = member;
-              dispatch({
-                type: UPDATE_MEMBER_PROFILES,
-                payload: copy,
-              });
-              handleClose();
-            }}
-          />
-        </CardActions>
-      )}
-    </Card>
+    <Box display="flex" flexWrap="wrap">
+      <Card className={"member-card"}>
+        <Container fixed className={"info-container"}>
+          <CardHeader
+            title={
+              <Typography variant="h5" component="h2">
+                {name}
+              </Typography>
+            }
+            subheader={<Typography component="h3">{title}</Typography>}
+            disableTypography
+            avatar={
+              <Avatar
+                className={"large"}
+                src={getAvatarURL(workEmail)}
+              />
+            }
+          ></CardHeader>
+        </Container>
+          <CardContent>
+            <Container fixed className={"info-container"}>
+              <Typography variant="body2" color="textSecondary" component="p">
+                <a href={`mailto:${workEmail}`}>
+                  {workEmail}
+                </a>
+                <br />
+                Location: {location}
+                <br />
+                {supervisorProfile ? "Supervisor: " + supervisorProfile.name : ""}
+                <br />
+              </Typography>
+            </Container>
+          </CardContent>
+            {isAdmin && (
+            <CardActions>
+              <SplitButton className = "split-button" options={options} onClick={handleAction} />
+              <MemberModal
+                member={currentMember}
+                open={open}
+                onClose={handleClose}
+                onSave={(member) => {
+                  setCurrentMember(member);
+                  const copy = [...memberProfiles];
+                  copy[index] = member;
+                  dispatch({
+                    type: UPDATE_MEMBER_PROFILES,
+                    payload: copy,
+                  });
+                  handleClose();
+                }}
+              />
+            </CardActions>
+          )}
+        </Card>
+      </Box>
   );
 };
 

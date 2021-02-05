@@ -1,6 +1,6 @@
 import React from "react";
 import CheckinDocs from "./CheckinDocs";
-import { AppContextProvider } from "../../context/AppContext";
+import { AppContextProvider } from "../../../context/AppContext";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 

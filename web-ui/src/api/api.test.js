@@ -3,12 +3,6 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 
 const server = setupServer(
-    rest.get(
-        "http://localhost:8080/",
-        (req, res, ctx) => {
-          return res(ctx.json("Hello World"));
-        }
-    ),
     rest.get("http://localhost:8080/fail", (req, res, ctx) => {
       return res(
           ctx.status(500),
@@ -20,11 +14,6 @@ const server = setupServer(
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-test("Happy Path Resolve", async () => {
-  let res = await resolve();
-  expect(res.payload.data).toStrictEqual("Hello World");
-});
 
 test("Error Resolve", async () => {
   window.snackDispatch = () => {};

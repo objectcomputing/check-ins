@@ -92,7 +92,7 @@ flyway:
   enabled: enabled
   datasources:
     default:
-      locations: classpath:db
+      locations: "classpath:db/common"
 ---
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
