@@ -127,7 +127,7 @@ public class CheckInServicesImpl implements CheckInServices {
         validate((chkInDate.isBefore(Util.MIN) || chkInDate.isAfter(Util.MAX)), "Invalid date for checkin %s", memberId);
         if (!isAdmin) {
             // Limit update to subject of check-in, PDL of subject and Admin
-            validate(accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
+            validate(!accessGranted(id, currentUser.getId()), "You are not authorized to perform this operation");
             // Update is only allowed if the check in is not completed unless made by admin
             validate(associatedCheckin.get().isCompleted(), "Checkin with id %s is complete and cannot be updated", checkIn.getId());
         }
