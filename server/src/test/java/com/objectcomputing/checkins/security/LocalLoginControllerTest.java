@@ -39,9 +39,9 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
                 "</head>\n" +
                 "<body>\n" +
                 "<h1>Local Login</h1>\n" +
-                "<form action=\"/oauth/login/google\" method=\"post\">\n" +
-                "    <p>Email: <input type=\"text\" name=\"email\"/></p>\n" +
-                "    <p>Role Override: <input type=\"text\" name=\"role\"/></p>\n" +
+                "<form action=\"/oauth/login/keycloak\" method=\"post\">\n" +
+                "    <p>User Name: <input type=\"text\" name=\"userName\"/></p>\n" +
+                "    <p>Password: <input type=\"password\" name=\"password\"/></p>\n" +
                 "    <p><input type=\"submit\" value=\"Submit\" /> </p>\n" +
                 "</form>\n" +
                 "</body>\n" +

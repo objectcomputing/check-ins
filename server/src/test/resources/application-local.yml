@@ -3,18 +3,20 @@ micronaut:
     enabled: true
     oauth2:
       default-provider: oauth
-      login-uri: "/{provider}/login/google"
-      callback-uri: "/{provider}/callback/google"
+      login-uri: "/{provider}/login/keycloak"
+      callback-uri: "/{provider}/callback/keycloak"
       clients:
         google:
           enabled: false
-        oauth:
+        keycloak:
+          grant-type: password
           client-id: TEST
           client-secret: TEST
           authorization:
-            url: "http://localhost:${PORT}/oauth/auth"
+            url: http://localhost:${PORT}/auth/realms/check-ins-spike/protocol/openid-connect/auth
           token:
-            url: "http://localhost:${PORT}/oauth/token"
+            url: http://localhost:${PORT}/auth/realms/check-ins-spike/protocol/openid-connect/token
+            auth-method: client-secret-post
     token:
       jwt:
         signatures:
