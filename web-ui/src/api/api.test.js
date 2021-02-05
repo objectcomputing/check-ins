@@ -21,13 +21,12 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test("Happy Path Resolve", () => {
+test("Happy Path Resolve", done => {
   setTimeout(async () => {
-    console.log("ok, go...");
     let res = await resolve();
     expect(res.payload.data).toStrictEqual("Hello World");
+    done();
   }, 1000);
-  console.log("wait a second...");
 });
 
 test("Error Resolve", async () => {
