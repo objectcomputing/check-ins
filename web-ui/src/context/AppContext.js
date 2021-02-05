@@ -51,9 +51,6 @@ const reducer = (state, action) => {
     case ADD_SKILL:
       state.skills = [...state.skills, action.payload];
       break;
-    case COMBINE_SKILLS:
-      state.skills = [...state.skills, action.payload];
-      break;
     case DELETE_SKILL:
       state.skills = state.skills.filter(
         (skill) => skill.id !== action.payload
