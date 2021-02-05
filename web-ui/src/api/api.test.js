@@ -23,7 +23,9 @@ afterAll(() => server.close());
 
 test("Happy Path Resolve", done => {
   setTimeout(async () => {
-    let res = await resolve();
+    let res = await resolve({
+      url: "/"
+    });
     expect(res.payload.data).toStrictEqual("Hello World");
     done();
   }, 4000);
