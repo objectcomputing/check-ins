@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { getAllPDLs, getMember, updateMember } from "../../api/member";
+import { getAllPDLs, getMember } from "../../api/member";
 import { AppContext } from "../../context/AppContext";
 
 import { Modal, TextField } from "@material-ui/core";

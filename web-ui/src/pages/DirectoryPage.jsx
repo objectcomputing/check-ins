@@ -22,11 +22,9 @@ const DirectoryPage = () => {
             return aPieces.toString().localeCompare(bPieces);
         })
     );
-    const [member, setMember] = useState({});
+
     const [open, setOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
-
-    const {location, name, startDate, title, workEmail} = member;
 
     const date = member.startDate ? new Date(member.startDate) : new Date();
 
