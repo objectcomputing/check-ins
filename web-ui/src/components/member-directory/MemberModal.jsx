@@ -59,7 +59,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             label="Name"
             required
             className="halfWidth"
-            placeholder="Awesome Person"
+            placeholder="Full Name"
             value={editedMember.name ? editedMember.name : ""}
             onChange={(e) =>
                 setMember({ ...editedMember, name: e.target.value })}
@@ -69,7 +69,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="Member Email"
           required
           className="halfWidth"
-          placeholder="Creative Email"
+          placeholder="Company Email"
           value={editedMember.workEmail ? editedMember.workEmail : ""}
           onChange={(e) =>
             setMember({ ...editedMember, workEmail: e.target.value })
@@ -80,7 +80,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="Member title"
           required
           className="halfWidth"
-          placeholder="Glorious title"
+          placeholder="Official Title"
           value={editedMember.title ? editedMember.title : ""}
           onChange={(e) =>
             setMember({ ...editedMember, title: e.target.value })
@@ -91,7 +91,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="Member location"
           required
           className="halfWidth"
-          placeholder="Somewhere by the beach"
+          placeholder="Physical Location"
           value={editedMember.location ? editedMember.location : ""}
           onChange={(e) =>
             setMember({ ...editedMember, location: e.target.value })
@@ -102,7 +102,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="InsperityId"
           required
           className="halfWidth"
-          placeholder="Number to get Benes and Pay"
+          placeholder="Insperity Identifier"
           value={editedMember.insperityId ? editedMember.insperityId : ""}
           onChange={(e) =>
             setMember({ ...editedMember, insperityId: e.target.value })
@@ -148,7 +148,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
               setMember({ ...editedMember, startDate: e });
             }}
             KeyboardButtonProps={{
-              "aria-label": "change date",
+              "aria-label": "Change Date",
             }}
           />
         </MuiPickersUtilsProvider>
