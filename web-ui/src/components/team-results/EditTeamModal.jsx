@@ -15,16 +15,15 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
   const teamMemberOptions = memberProfiles;
-  const teamMembers = team.teamMembers;
 
   useEffect(() => {
-    if(teamMembers === undefined || teamMembers.length === 0) {
+    if(team.teamMembers === undefined || team.teamMembers.length === 0) {
       setTeam({
         ...team,
         teamMembers:[{memberid: currentUser.id, name: currentUser.name, lead: true}]
       });
     }
-  }, [teamMembers, currentUser]);
+  }, [team, currentUser]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =
