@@ -24,7 +24,6 @@ import "./PendingSkills.css";
       skillsToCombine: [],
     });
   const { skillsToCombine, name } = combinedSkill;
-  const [hasEdited, setHasEdited] = useState(false);
 
   useEffect(() => {
   setPendingSkills(selectPendingSkills(state));
@@ -40,7 +39,6 @@ import "./PendingSkills.css";
 
   const close = () => {
     onClose();
-    setHasEdited(false);
     setCombinedSkill({
       name: "",
       description: "",
@@ -103,7 +101,6 @@ import "./PendingSkills.css";
               className="halfWidth"
               label="Name"
               onChange={(e) => {
-                setHasEdited(true);
                 setCombinedSkill({ ...combinedSkill, name: e.target.value });
               }}
               value={combinedSkill ? combinedSkill.name : ""}
@@ -114,7 +111,6 @@ import "./PendingSkills.css";
               label="Description"
               multiline
               onChange={(e) => {
-                setHasEdited(true);
                 setCombinedSkill({ ...combinedSkill, description: e.target.value });
               }}
               value={combinedSkill ? combinedSkill.description : ""}
