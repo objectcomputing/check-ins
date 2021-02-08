@@ -93,7 +93,7 @@ const reducer = (state, action) => {
       state.currentCheckin = action.payload;
       break;
     case UPDATE_MEMBER_SKILLS:
-      state.memberSkills = action.payload;
+      state.memberSkills = action.payload
       break;
     case DELETE_MEMBER_SKILL:
       state.memberSkills = [

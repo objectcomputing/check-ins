@@ -10,8 +10,8 @@
 }
 
 .Profile .skills-section {
-  max-width: 50%;
-  margin: auto;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .Profile .skills-section h2 {

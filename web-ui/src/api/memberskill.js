@@ -40,3 +40,13 @@ export const createMemberSkill = async (memberskill, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const updateMemberSkill = async (memberskill, cookie) => {
+  return resolve({
+    method: "put",
+    url: memberSkillUrl,
+    responseType: "json",
+    data: memberskill,
+    headers: { "X-CSRF-Header": cookie },
+  })
+}
