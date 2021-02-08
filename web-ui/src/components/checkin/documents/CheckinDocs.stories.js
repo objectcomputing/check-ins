@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import {AppContext, AppContextProvider, MY_PROFILE_UPDATE, UPDATE_CHECKINS} from '../../context/AppContext';
+import React, { useContext, useEffect } from "react";
+import {AppContext, AppContextProvider, MY_PROFILE_UPDATE, UPDATE_CHECKINS} from '../../../context/AppContext';
 import CheckinDocs from "./CheckinDocs";
 
 export default {
@@ -31,7 +31,7 @@ const SetProfile = ({profile}) => {
     const { dispatch } = useContext(AppContext);
     useEffect(() => {
         dispatch({ type: MY_PROFILE_UPDATE, payload: profile });
-    }, [profile]);
+    }, [profile, dispatch]);
     return "";
 }
 
@@ -56,7 +56,7 @@ const SetCheckins = ({checkins}) => {
     const { dispatch } = useContext(AppContext);
     useEffect(() => {
         dispatch({ type: UPDATE_CHECKINS, payload: checkins });
-    }, [checkins]);
+    }, [checkins, dispatch]);
     return "";
 }
 

@@ -9,7 +9,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
 import { updateTeam } from "../../api/team.js";
 
-const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
+const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
   const { memberProfiles } = state;
   const [editedTeam, setTeam] = useState(team);
@@ -49,6 +49,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
     });
   };
 
+  const readyToEdit = (team) => {
+    let numLeads = 0;
+    if (team && team.teamMembers) {
+      numLeads = team.teamMembers.filter((teamMember) => teamMember.lead).length;
+    }
+    return team.name && numLeads > 0;
+  };
+
   return (
     <Modal
       open={open}
@@ -56,7 +64,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
       aria-labelledby="edit-team-modal-title"
     >
       <div className="EditTeamModal">
-        <h2>Edit your team</h2>
+        <h2>{headerText}</h2>
         <TextField
           id="team-name-input"
           label="Team Name"
@@ -77,6 +85,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
+          id="teamLeadSelect"
           multiple
           options={teamMemberOptions}
           value={
@@ -90,7 +99,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             <TextField
               {...params}
               className="fullWidth"
-              label="Team Leads"
+              label="Team Leads *"
               placeholder="Add a team lead..."
             />
           )}
@@ -122,6 +131,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose }) => {
             Cancel
           </Button>
           <Button
+            disabled={!readyToEdit(editedTeam)}
             onClick={async () => {
               onSave(editedTeam);
               await updateTeam(editedTeam);

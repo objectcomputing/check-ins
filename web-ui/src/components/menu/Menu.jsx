@@ -182,7 +182,7 @@ function Menu() {
          </Link>
         </div>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav className={classes.drawer} >
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"

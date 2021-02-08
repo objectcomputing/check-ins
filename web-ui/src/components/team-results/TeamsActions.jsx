@@ -42,6 +42,7 @@ const TeamsActions = () => {
             handleClose();
           }
         }}
+        headerText='Add A New Team'
       />
     </div>
   );

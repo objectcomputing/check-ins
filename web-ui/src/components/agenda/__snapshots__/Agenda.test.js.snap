@@ -2,80 +2,86 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="agenda-items"
+  className="MuiPaper-root MuiCard-root agenda-items MuiPaper-elevation1 MuiPaper-rounded"
 >
-  <h1>
-    <svg
-      aria-hidden={true}
-      className="MuiSvgIcon-root"
-      focusable="false"
-      style={
-        Object {
-          "fontSize": "larger",
-          "marginRight": "10px",
-        }
-      }
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"
-      />
-    </svg>
-    Agenda Items for 
-    mr. test
-  </h1>
   <div
-    className="agenda-items-container"
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-avatar"
+    >
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root"
+        focusable="false"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"
+        />
+      </svg>
+    </div>
+    <div
+      className="MuiCardHeader-content"
+    >
+      <h2
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        Agenda Items
+      </h2>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root agenda-items-container"
   >
     <div
       data-rbd-droppable-context-id="0"
       data-rbd-droppable-id="droppable"
+    />
+    <div
+      className="add-agenda-item-div"
     >
-      <div
-        className="add-agenda-item-div"
+      <input
+        className="text-input"
+        onChange={[Function]}
+        onKeyPress={[Function]}
+        placeholder="Add an agenda item"
+        value=""
+      />
+      <button
+        aria-label="create"
+        className="MuiButtonBase-root MuiIconButton-root edit-icon"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={0}
+        type="button"
       >
-        <input
-          className="text-input"
-          onChange={[Function]}
-          onKeyPress={[Function]}
-          placeholder="Add an agenda item"
-          value=""
-        />
-        <button
-          aria-label="create"
-          className="MuiButtonBase-root MuiIconButton-root edit-icon"
-          disabled={false}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onDragLeave={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          tabIndex={0}
-          type="button"
+        <span
+          className="MuiIconButton-label"
         >
-          <span
-            className="MuiIconButton-label"
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
           >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-              />
-            </svg>
-          </span>
-        </button>
-      </div>
+            <path
+              d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
+            />
+          </svg>
+        </span>
+      </button>
     </div>
   </div>
 </div>

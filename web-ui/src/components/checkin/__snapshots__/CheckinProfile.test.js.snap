@@ -8,8 +8,8 @@ exports[`renders correctly 1`] = `
     className="MuiAvatar-root MuiAvatar-circle"
     style={
       Object {
-        "height": "180px",
-        "width": "180px",
+        "height": "120px",
+        "width": "120px",
       }
     }
   >

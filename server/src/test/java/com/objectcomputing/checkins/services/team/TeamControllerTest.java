@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -36,7 +37,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setName("name");
         teamCreateDTO.setDescription("description");
-        teamCreateDTO.setTeamMembers(new ArrayList<>());
+        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createADefaultMemberProfile(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
@@ -48,6 +49,26 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), teamEntity.getId()), response.getHeaders().get("location"));
 
+    }
+
+    @Test
+    void testCreateTeamNoLeads() {
+        TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
+        teamCreateDTO.setName("name");
+        teamCreateDTO.setDescription("description");
+        teamCreateDTO.setTeamMembers(new ArrayList<>());
+
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Team must include at least one team lead", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(request.getPath(), href.asText());
     }
 
     @Test
@@ -186,7 +207,9 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
-        requestBody.setTeamMembers(Collections.singletonList(createDefaultTeamMemberDto(teamEntity, memberProfile)));
+        TeamMemberResponseDTO newMember = createDefaultTeamMemberDto(teamEntity, memberProfile);
+        newMember.setLead(true);
+        requestBody.setTeamMembers(Collections.singletonList(newMember));
 
         final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
