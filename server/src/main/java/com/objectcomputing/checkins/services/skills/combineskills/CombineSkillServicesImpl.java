@@ -10,6 +10,8 @@ import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,6 +42,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
         Skill newSkill = new Skill(skillDTO.getName(), skillDTO.getDescription());
         UUID[] skillsArray = skillDTO.getSkillsToCombine();
+        List<UUID> memberIds = new ArrayList<>();
 
         returnSkill = skillServices.save(newSkill);
 
@@ -47,24 +50,28 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
 
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, skillToCombine);
 
-            changeMemberSkills(memberSkills, returnSkill);
+            changeMemberSkills(memberSkills, returnSkill, memberIds);
 
             skillServices.delete(skillToCombine);
 
         }
 
         return returnSkill;
-
     }
 
-    private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill) {
+        private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill, List<UUID> memberIds) {
+
 
         for (MemberSkill memberSkill : memberSkills) {
-
-            memberSkill.setSkillid(returnSkill.getId());
-            memberSkillServices.update(memberSkill);
+            if (!memberIds.contains(memberSkill.getMemberid())) {
+                memberSkill.setSkillid(returnSkill.getId());
+                memberSkillServices.update(memberSkill);
+                memberIds.add(memberSkill.getMemberid());
+            }
+            else{
+                memberSkillServices.delete(memberSkill.getId());
+            }
         }
-
     }
 
 }
