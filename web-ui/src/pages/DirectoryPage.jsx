@@ -26,21 +26,12 @@ const DirectoryPage = () => {
     const [open, setOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
 
-    const date = member.startDate ? new Date(member.startDate) : new Date();
-
     const isAdmin =
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
     useEffect(() => {
         setMembers(memberProfiles);
     }, [memberProfiles]);
-
-    useEffect(() => {
-        if (!member.startDate) {
-            member.startDate = date;
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const handleOpen = () => setOpen(true);
 
@@ -75,7 +66,6 @@ const DirectoryPage = () => {
                         <Button startIcon={<PersonIcon/>} onClick={handleOpen}>Add Member</Button>
 
                         <MemberModal
-                            member={member}
                             open={open}
                             onClose={handleClose}
 
