@@ -22,7 +22,7 @@
 
 .info {
   margin-bottom: auto;
-  margin-left: 25px;
+  margin-left: 12px;
   margin-top: auto;
   text-align: left;
 }
@@ -42,13 +42,11 @@
   justify-content: center;
   align-items: center;
   min-width: 50px;
-  margin-top: 50px;
-  margin-left: 50px;
 }
 
 .react-datepicker-wrapper {
-  margin-left: 25px;
-  margin-right: 25px;
+  margin-left: 12px;
+  margin-right: 12px;
 }
 
 .title {
