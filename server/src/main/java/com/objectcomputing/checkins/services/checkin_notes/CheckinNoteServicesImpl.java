@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -134,7 +135,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
-            throw new CheckinNotesBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }
