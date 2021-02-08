@@ -1,12 +1,10 @@
 package com.objectcomputing.checkins.services.checkins;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -23,8 +21,6 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-
-import com.objectcomputing.checkins.exceptions.BadArgException;
 
 @Controller("/services/check-in")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -43,24 +39,6 @@ public class CheckInController {
         this.checkInServices = checkInServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-
-    @Error(exception = BadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = CheckInNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, CheckInNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
     }
 
     /**
@@ -124,7 +102,7 @@ public class CheckInController {
         return Single.fromCallable(() -> {
             CheckIn result = checkInServices.read(id);
             if (result == null) {
-                throw new CheckInNotFoundException("No checkin for UUID");
+                throw new NotFoundException("No checkin for UUID");
             }
             return result;
         })
