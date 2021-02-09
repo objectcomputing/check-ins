@@ -1,35 +1,24 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
-import java.net.URI;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.validation.Valid;
-
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Error;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
-import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.Delete;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
+import io.micronaut.http.annotation.*;
+import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.concurrent.ExecutorService;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import io.micronaut.scheduling.TaskExecutors;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.annotation.Nullable;
+import javax.inject.Named;
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 @Controller("/services/checkin-document")
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
@@ -49,15 +38,7 @@ public class CheckinDocumentController {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
     }
-    
-    @Error(exception = CheckinDocumentBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, CheckinDocumentBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
 
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
 
     /**
      * Find CheckinDocument(s) based on checkinsId
