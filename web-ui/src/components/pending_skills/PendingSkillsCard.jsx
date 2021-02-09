@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { deleteMemberSkill, getSkillMembers } from "../../api/memberskill";
+import { deleteMemberSkill, getSkillMembers, getMemberSkills } from "../../api/memberskill";
 import { removeSkill, updateSkill } from "../../api/skill";
 import {
   AppContext,
   selectProfileMap,
   DELETE_SKILL,
   UPDATE_SKILL,
+  UPDATE_MEMBER_SKILLS,
 } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 
@@ -98,6 +99,12 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       }
       await removeSkill(id, csrf);
       dispatch({ type: DELETE_SKILL, payload: id });
+    const result = await getMemberSkills(csrf);
+    const memberSkills =
+      result && result.payload && result.payload.data ? result.payload.data : null;
+      if (memberSkills) {
+        dispatch({ type: UPDATE_MEMBER_SKILLS, payload: memberSkills });
+      }
     }
   };
 
@@ -124,8 +131,8 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   };
 
   const submittedBy = (members) => {
-    const [first, second, ...rest] = members;
-    const firstProfile = selectProfileMap(state)[first];
+  const [first, second, ...rest] = members;
+  const firstProfile = selectProfileMap(state)[first];
     if (second) {
       const secondProfile = selectProfileMap(state)[second];
       return (
