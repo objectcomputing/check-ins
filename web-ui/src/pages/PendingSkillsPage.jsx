@@ -8,8 +8,18 @@ import { Button } from "@material-ui/core";
 
 import "./PendingSkillsPage.css";
 
-const PendingSkillsPage = () => {
+const PendingSkillsPage = (props) => {
   const { state } = useContext(AppContext);
+  const { pendingSkill } = props;
+  const [filteredSkills, setFilteredSkills] = useState(pendingSkill);
+
+  const filterSkills = (e) => {
+    let searchInput = e.target.value.toLowerCase();
+    let filtered = pendingSkill.name.filter((skill) => {
+      return pendingSkill.name.toLowerCase().includes(searchInput);
+    });
+    setFilteredSkills(filtered);
+  };
 
   const [open, setOpen] = useState(false);
 
@@ -20,6 +30,10 @@ const PendingSkillsPage = () => {
   return (
     <div className="pending-skills-page">
       <Button onClick={handleOpen}>Combine Skills</Button>
+      <input
+        placeholder="Search skills"
+        onChange={(e) => filterSkills(e)}
+      ></input>
       <CombineSkillsModal open={open} onClose={handleClose} />
       <div>
         {selectPendingSkills(state).map((skill) => (
