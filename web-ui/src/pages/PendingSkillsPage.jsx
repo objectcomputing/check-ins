@@ -10,7 +10,7 @@ import "./PendingSkillsPage.css";
 
 const PendingSkillsPage = (props) => {
   const { state } = useContext(AppContext);
-  const { pendingSkill } = state;
+  
   const [searchText, setSearchText] = useState("");
 
   const [open, setOpen] = useState(false);
