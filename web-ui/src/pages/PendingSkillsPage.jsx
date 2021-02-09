@@ -34,12 +34,14 @@ const PendingSkillsPage = (props) => {
       />
       <CombineSkillsModal open={open} onClose={handleClose} />
       <div>
-        {selectPendingSkills(state).map((skill) => (
-          <PendingSkillsCard
-            key={"pending-skill-" + skill.id}
-            pendingSkill={skill}
-          />
-        ))}
+        {selectPendingSkills(state).map((skill) => 
+          skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+            <PendingSkillsCard
+              key={"pending-skill-" + skill.id}
+              pendingSkill={skill}
+            />
+          ) : null
+        )}
       </div>
     </div>
   );
