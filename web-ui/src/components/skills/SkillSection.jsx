@@ -9,16 +9,12 @@ import {
   DELETE_MEMBER_SKILL,
   UPDATE_MEMBER_SKILLS,
   selectMySkills,
-  selectCurrentUser,
-  selectCurrentUserId
 } from "../../context/AppContext";
 import { createMemberSkill, deleteMemberSkill, updateMemberSkill } from "../../api/memberskill.js";
 import { getSkill, createSkill } from "../../api/skill.js";
-import Search from "../profile/Search";
 import SkillSlider from "./SkillSlider"
 
-import { Card, CardActions, CardHeader, TextField } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
+import { Card, TextField } from "@material-ui/core";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 
 const SkillSection = ({userId}) => {
@@ -105,7 +101,7 @@ const SkillSection = ({userId}) => {
         let copy = [...myMemberSkills];
         copy[index].lastuseddate = lastUsedDate;
         copy[index].skilllevel = skillLevel;
-        let postUpdate = await updateMemberSkill(copy[index], csrf);
+        await updateMemberSkill(copy[index], csrf);
         dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
     }
   };

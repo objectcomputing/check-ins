@@ -35,7 +35,7 @@ exports[`renders slider with title 1`] = `
       data-index={0}
       style={
         Object {
-          "left": "0%",
+          "left": "10%",
         }
       }
     />
@@ -45,18 +45,18 @@ exports[`renders slider with title 1`] = `
       data-index={0}
       style={
         Object {
-          "left": "0%",
+          "left": "10%",
         }
       }
     >
-      Beginner
+      Interested
     </span>
     <span
       className="MuiSlider-mark"
       data-index={1}
       style={
         Object {
-          "left": "25%",
+          "left": "30%",
         }
       }
     />
@@ -66,11 +66,11 @@ exports[`renders slider with title 1`] = `
       data-index={1}
       style={
         Object {
-          "left": "25%",
+          "left": "30%",
         }
       }
     >
-      Easy
+      Novice
     </span>
     <span
       className="MuiSlider-mark"
@@ -91,14 +91,14 @@ exports[`renders slider with title 1`] = `
         }
       }
     >
-      Medium
+      Intermediate
     </span>
     <span
       className="MuiSlider-mark"
       data-index={3}
       style={
         Object {
-          "left": "75%",
+          "left": "70%",
         }
       }
     />
@@ -108,18 +108,18 @@ exports[`renders slider with title 1`] = `
       data-index={3}
       style={
         Object {
-          "left": "75%",
+          "left": "70%",
         }
       }
     >
-      Hard
+      Advanced
     </span>
     <span
       className="MuiSlider-mark"
       data-index={4}
       style={
         Object {
-          "left": "100%",
+          "left": "90%",
         }
       }
     />
@@ -129,38 +129,13 @@ exports[`renders slider with title 1`] = `
       data-index={4}
       style={
         Object {
-          "left": "100%",
+          "left": "90%",
         }
       }
     >
       Expert
     </span>
-    <span
-      aria-describedby={null}
-      aria-labelledby="discrete-slider-restrict"
-      aria-orientation="horizontal"
-      aria-valuemax={5}
-      aria-valuemin={1}
-      aria-valuenow={NaN}
-      aria-valuetext="undefined"
-      className="MuiSlider-thumb MuiSlider-thumbColorPrimary"
-      data-index={0}
-      onBlur={[Function]}
-      onFocus={[Function]}
-      onKeyDown={[Function]}
-      onMouseLeave={[Function]}
-      onMouseOver={[Function]}
-      onTouchEnd={[Function]}
-      onTouchStart={[Function]}
-      role="slider"
-      style={
-        Object {
-          "left": "NaN%",
-        }
-      }
-      tabIndex={0}
-      title=""
-    />
+    
   </span>
 </div>
 `;

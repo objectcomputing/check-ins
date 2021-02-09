@@ -4,11 +4,8 @@ import "./SkillSlider.css"
 
 import {
     Checkbox,
-    FormLabel,
     FormControl,
-    FormGroup,
     FormControlLabel,
-    FormHelperText,
     IconButton } from '@material-ui/core';
 import SaveIcon from "@material-ui/icons/Done";
 import RemoveIcon from "@material-ui/icons/Remove";
