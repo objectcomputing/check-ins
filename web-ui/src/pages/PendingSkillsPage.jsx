@@ -21,19 +21,22 @@ const PendingSkillsPage = (props) => {
 
   return (
     <div className="pending-skills-page">
-      <Button onClick={handleOpen}>Combine Skills</Button>
-      <TextField
-        className="fullWidth"
-        label="Search Skills"
-        placeholder="Skill Name"
-        style={{ marginBottom: "1rem" }}
-        value={searchText}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-        }}
-      />
+        <div className="search">
+          <TextField
+            label="Search Skills"
+            placeholder="Skill Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+          <div className="combine-skills">
+            <Button onClick={handleOpen}>Combine Skills</Button>
+          </div>
+        </div>
+
       <CombineSkillsModal open={open} onClose={handleClose} />
-      <div>
+      <div className="pending-skills-list">
         {selectPendingSkills(state).map((skill) => 
           skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
             <PendingSkillsCard
