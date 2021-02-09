@@ -17,8 +17,9 @@ import { getSkill, createSkill } from "../../api/skill.js";
 import Search from "../profile/Search";
 import SkillSlider from "./SkillSlider"
 
-import { Card, CardActions, CardHeader } from "@material-ui/core";
+import { Card, CardActions, CardHeader, TextField } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 
 const SkillSection = ({userId}) => {
   const { state, dispatch } = useContext(AppContext);
@@ -38,7 +39,6 @@ const SkillSection = ({userId}) => {
       const skillsResults = await Promise.all(
         myMemberSkills.map((mSkill) => mapMemberSkill(mSkill, csrf))
       );
-      console.log(skillsResults);
       const currentUserSkills = skillsResults.map(
         (result) => {
           let skill = result.payload.data;
@@ -55,6 +55,7 @@ const SkillSection = ({userId}) => {
   }, [csrf, myMemberSkills]);
 
   const addSkill = async (name) => {
+    console.log(name);
     if (!csrf) {
       return;
     }
@@ -100,9 +101,6 @@ const SkillSection = ({userId}) => {
   };
 
   const handleUpdate = async (lastUsedDate, skillLevel, index) => {
-    console.log(csrf);
-    console.log(lastUsedDate);
-    console.log(skillLevel);
     if (csrf && skillLevel) {
         let copy = [...myMemberSkills];
         copy[index].lastuseddate = lastUsedDate;
@@ -111,11 +109,66 @@ const SkillSection = ({userId}) => {
         dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
     }
   };
+  const filter = createFilterOptions();
+        //<Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
+        /*
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              className="fullWidth"
+              label="Supervisors"
+              placeholder="Change Supervisor"
+            />
+          )}
+          */
 
   return (
       <Card width="100%">
         <h2>Skills</h2>
-        <Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
+        <div className="search-div">
+          <Autocomplete
+            selectOnFocus
+            clearOnBlur={true}
+            handleHomeEndKeys
+            blurOnSelect
+            options={
+              skills
+                .filter((skill) =>
+                    !mySkills.map((mSkill) => mSkill.id).includes(skill.id))
+                .map((skill) => {
+                  return {
+                    displayLabel: skill.name,
+                    name: skill.name
+                  }
+                })
+            }
+            renderOption={(option) => option.displayLabel}
+
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+
+              if (params.inputValue !== '') {
+                filtered.push({
+                  name: params.inputValue,
+                  displayLabel: `Add "${params.inputValue}"`,
+                });
+              };
+              return filtered;
+            }}
+
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className="halfWidth"
+                label="Skills"
+                placeholder="Change Supervisor"
+              />
+            )}
+
+            onChange={(event, value) => addSkill(value.name)}
+            getOptionLabel={(option) => option.displayLabel || ""}
+          />
+        </div>
         {mySkills &&
           mySkills.map((memberSkill, index) => {
             return (

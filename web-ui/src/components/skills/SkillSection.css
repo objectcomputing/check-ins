@@ -32,3 +32,22 @@
 .skeleton {
   width: 100%;
 }
+
+
+.MuiTextField-root.fullWidth {
+    width: calc(100% - 1rem);
+}
+
+.MuiTextField-root.halfWidth {
+    width: calc(50% - .5rem);
+    text-align: center;
+}
+
+.skill-section .MuiTextField-root {
+    margin: .5rem;
+    width: 25ch;
+  }
+
+.search-div {
+    text-align:center;
+}

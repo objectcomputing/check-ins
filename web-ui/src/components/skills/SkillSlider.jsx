@@ -30,9 +30,7 @@ const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, in
     };
 
     const updateDate = (event) => {
-        console.log(lastUsed);
         setLastUsed(event.target.value);
-        console.log(lastUsed);
     }
 
     const formatDate = (date) => {
@@ -42,7 +40,6 @@ const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, in
         let dateString = date[0] + "-";
         dateString = dateString + (date[1] < 10 ? "0" + date[1] : date[1]) + "-";
         dateString = dateString + (date[2] < 10 ? "0" + date[2] : date[2]);
-        console.log(dateString);
         return dateString;
     }
 
