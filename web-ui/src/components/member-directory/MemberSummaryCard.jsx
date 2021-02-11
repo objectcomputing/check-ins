@@ -14,10 +14,11 @@ import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
+import {updateMember} from "../../api/member";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, userProfile } = state;
+  const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid } = member;
@@ -54,7 +55,7 @@ const MemberSummaryCard = ({ member, index }) => {
                 src={getAvatarURL(workEmail)}
               />
             }
-          ></CardHeader>
+          />
         </Container>
           <CardContent>
             <Container fixed className={"info-container"}>
@@ -65,7 +66,7 @@ const MemberSummaryCard = ({ member, index }) => {
                 <br />
                 Location: {location}
                 <br />
-                {supervisorProfile ? "Supervisor: " + supervisorProfile.name : ""}
+                {supervisorProfile ? "Supervisor: " + supervisorProfile.name : " "}
                 <br />
               </Typography>
             </Container>
@@ -77,15 +78,22 @@ const MemberSummaryCard = ({ member, index }) => {
                 member={currentMember}
                 open={open}
                 onClose={handleClose}
-                onSave={(member) => {
+                onSave={async (member) => {
                   setCurrentMember(member);
-                  const copy = [...memberProfiles];
-                  copy[index] = member;
-                  dispatch({
-                    type: UPDATE_MEMBER_PROFILES,
-                    payload: copy,
-                  });
-                  handleClose();
+                  let res = await updateMember(member, csrf);
+                  let data =
+                      res.payload && res.payload.data && !res.error
+                          ? res.payload.data
+                          : null;
+                  if (data) {
+                    const copy = [...memberProfiles];
+                    copy[index] = member;
+                    dispatch({
+                      type: UPDATE_MEMBER_PROFILES,
+                      payload: copy,
+                    });
+                    handleClose();
+                  }
                 }}
               />
             </CardActions>

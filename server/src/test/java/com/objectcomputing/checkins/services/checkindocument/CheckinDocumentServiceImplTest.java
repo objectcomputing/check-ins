@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.checkindocument;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -85,7 +86,7 @@ public class CheckinDocumentServiceImplTest {
 
         String id = "some.id";
         when(checkinDocumentRepository.findByUploadDocId(any(String.class))).thenReturn(Optional.empty());
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.getFindByUploadDocId(id));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.getFindByUploadDocId(id));
         assertEquals(String.format("CheckinDocument with document id %s does not exist", id), exception.getMessage());
         verify(checkinDocumentRepository, times(1)).findByUploadDocId(any(String.class));
     }
@@ -108,7 +109,7 @@ public class CheckinDocumentServiceImplTest {
     void testSaveWithId() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Found unexpected CheckinDocument id %s, please try updating instead", cd.getId()), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));
@@ -119,7 +120,7 @@ public class CheckinDocumentServiceImplTest {
     void testSaveCheckinDocumentNullCheckinsId() {
         CheckinDocument cd = new CheckinDocument(null, "docId");
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Invalid CheckinDocument %s", cd), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));
@@ -130,7 +131,7 @@ public class CheckinDocumentServiceImplTest {
     void testSaveCheckinDocumentNullUploadDocId() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), null);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("Invalid CheckinDocument %s", cd), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));
@@ -151,7 +152,7 @@ public class CheckinDocumentServiceImplTest {
 
         when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));
@@ -167,7 +168,7 @@ public class CheckinDocumentServiceImplTest {
         when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.of(checkin));
         when(checkinDocumentRepository.findByUploadDocId(eq(cd.getUploadDocId()))).thenReturn(Optional.of(cd));
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.save(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.save(cd));
         assertEquals(String.format("CheckinDocument with document ID %s already exists", cd.getUploadDocId()), exception.getMessage());
 
         verify(checkinDocumentRepository, never()).save(any(CheckinDocument.class));
@@ -194,7 +195,7 @@ public class CheckinDocumentServiceImplTest {
     void testUpdateWithoutId() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), "docId");
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckinDocument id %s not found, please try inserting instead", cd.getId()), exception.getMessage());
 
         verify(checkinRepository, never()).findById(any(UUID.class));
@@ -206,7 +207,7 @@ public class CheckinDocumentServiceImplTest {
     void testUpdateCheckinDocumentNullCheckinsId() {
         CheckinDocument cd = new CheckinDocument(null, "docId");
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Invalid CheckinDocument %s", cd), exception.getMessage());
 
         verify(checkinRepository, never()).findById(any(UUID.class));
@@ -218,7 +219,7 @@ public class CheckinDocumentServiceImplTest {
     void testUpdateCheckinDocumentNullUploadDocId() {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), null);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("Invalid CheckinDocument %s", cd), exception.getMessage());
 
         verify(checkinRepository, never()).findById(any(UUID.class));
@@ -231,7 +232,7 @@ public class CheckinDocumentServiceImplTest {
         CheckinDocument cd = new CheckinDocument(UUID.randomUUID(), UUID.randomUUID(), "docId");
         when(checkinDocumentRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckinDocument id %s not found, please try inserting instead", cd.getId()), exception.getMessage());
 
         verify(checkinRepository, never()).findById(any(UUID.class));
@@ -245,7 +246,7 @@ public class CheckinDocumentServiceImplTest {
         when(checkinDocumentRepository.findById(eq(cd.getId()))).thenReturn(Optional.of(cd));
         when(checkinRepository.findById(eq(cd.getCheckinsId()))).thenReturn(Optional.empty());
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.update(cd));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.update(cd));
         assertEquals(String.format("CheckIn %s doesn't exist", cd.getCheckinsId()), exception.getMessage());
 
         verify(checkinRepository, times(1)).findById(any(UUID.class));
@@ -280,7 +281,7 @@ public class CheckinDocumentServiceImplTest {
         when(checkinDocumentRepository.existsByCheckinsId(any(UUID.class))).thenReturn(false);
         when(currentUserServices.isAdmin()).thenReturn(true);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByCheckinId(uuid));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.deleteByCheckinId(uuid));
         assertEquals(String.format("CheckinDocument with CheckinsId %s does not exist", uuid), exception.getMessage());
 
         verify(currentUserServices, times(1)).isAdmin();
@@ -306,7 +307,7 @@ public class CheckinDocumentServiceImplTest {
         when(checkinDocumentRepository.existsByUploadDocId(any(String.class))).thenReturn(false);
         when(currentUserServices.isAdmin()).thenReturn(true);
 
-        CheckinDocumentBadArgException exception = assertThrows(CheckinDocumentBadArgException.class, () -> services.deleteByUploadDocId(id));
+        BadArgException exception = assertThrows(BadArgException.class, () -> services.deleteByUploadDocId(id));
 
         assertEquals(String.format("CheckinDocument with uploadDocId %s does not exist", id), exception.getMessage());
         verify(currentUserServices, times(1)).isAdmin();

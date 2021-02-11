@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
-import { AppContext } from "../../context/AppContext";
+import { AppContext, selectMemberProfiles, selectCurrentUser } from "../../context/AppContext";
 
 import { Button } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
@@ -11,9 +11,20 @@ import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const { csrf, memberProfiles } = state;
+  const { csrf } = state;
+  const memberProfiles = selectMemberProfiles(state);
+  const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
   const teamMemberOptions = memberProfiles;
+
+  useEffect(() => {
+    if(team.teamMembers === undefined || team.teamMembers.length === 0) {
+      setTeam({
+        ...team,
+        teamMembers:[{memberid: currentUser.id, name: currentUser.name, lead: true}]
+      });
+    }
+  }, [team, currentUser]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =
