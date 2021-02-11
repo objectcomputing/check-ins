@@ -123,6 +123,7 @@ const SkillSection = ({userId}) => {
         <h2>Skills</h2>
         <div className="search-div">
           <Autocomplete
+            id="skillSearchAutocomplete"
             selectOnFocus
             clearOnBlur={true}
             handleHomeEndKeys

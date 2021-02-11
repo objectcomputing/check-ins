@@ -122,7 +122,8 @@ exports[`renders correctly 1`] = `
             <label
               className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
               data-shrink={false}
-              id="undefined-label"
+              htmlFor="skillSearchAutocomplete"
+              id="skillSearchAutocomplete-label"
             >
               Skills
             </label>
@@ -140,6 +141,7 @@ exports[`renders correctly 1`] = `
                 autoFocus={false}
                 className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
                 disabled={false}
+                id="skillSearchAutocomplete"
                 onAnimationStart={[Function]}
                 onBlur={[Function]}
                 onChange={[Function]}
@@ -356,8 +358,8 @@ exports[`renders image_url 1`] = `
             <label
               className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
               data-shrink={false}
-              htmlFor="mui-40025"
-              id="mui-40025-label"
+              htmlFor="skillSearchAutocomplete"
+              id="skillSearchAutocomplete-label"
             >
               Skills
             </label>
@@ -375,7 +377,7 @@ exports[`renders image_url 1`] = `
                 autoFocus={false}
                 className="MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
                 disabled={false}
-                id="mui-40025"
+                id="skillSearchAutocomplete"
                 onAnimationStart={[Function]}
                 onBlur={[Function]}
                 onChange={[Function]}
