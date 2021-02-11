@@ -64,7 +64,6 @@ exports[`renders correctly 1`] = `
         </p>
       </div>
     </div>
-    u
   </div>
 </div>
 `;

@@ -97,7 +97,7 @@ const MemberSummaryCard = ({ member, index }) => {
                 }}
               />
             </CardActions>
-          )}u
+          )}
         </Card>
       </Box>
   );
