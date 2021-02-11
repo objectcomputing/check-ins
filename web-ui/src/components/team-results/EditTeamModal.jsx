@@ -11,7 +11,7 @@ import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const { memberProfiles } = state;
+  const { csrf, memberProfiles } = state;
   const [editedTeam, setTeam] = useState(team);
   const teamMemberOptions = memberProfiles;
 
@@ -134,7 +134,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
             disabled={!readyToEdit(editedTeam)}
             onClick={async () => {
               onSave(editedTeam);
-              await updateTeam(editedTeam);
+              await updateTeam(editedTeam, csrf);
             }}
             color="primary"
           >
