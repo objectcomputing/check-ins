@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.checkin_notes;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
@@ -95,14 +96,14 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
+        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
             throw new PermissionException("User is unauthorized to do this operation");
         }
-
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
         validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
         if (!isAdmin && isCompleted) {
@@ -134,7 +135,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
         if (isError) {
-            throw new CheckinNotesBadArgException(String.format(message, args));
+            throw new BadArgException(String.format(message, args));
         }
     }
 }

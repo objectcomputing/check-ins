@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { getAllPDLs, getMember, updateMember } from "../../api/member";
+import { getAllPDLs, getMember } from "../../api/member";
 import { AppContext } from "../../context/AppContext";
 
 import { Modal, TextField } from "@material-ui/core";
@@ -42,7 +42,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, csrf]);
 
-  let date = new Date(editedMember.startDate);
+  const date = editedMember.startDate ? new Date(editedMember.startDate) : new Date();
 
   const onPdlChange = (event, newValue) => {
     setMember({
@@ -55,11 +55,21 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     <Modal open={open} onClose={onClose}>
       <div className="member-modal">
         <TextField
+            id="member-name-input"
+            label="Name"
+            required
+            className="halfWidth"
+            placeholder="Full Name"
+            value={editedMember.name ? editedMember.name : ""}
+            onChange={(e) =>
+                setMember({ ...editedMember, name: e.target.value })}
+        />
+        <TextField
           id="member-email-input"
           label="Member Email"
           required
           className="halfWidth"
-          placeholder="Creative Email"
+          placeholder="Company Email"
           value={editedMember.workEmail ? editedMember.workEmail : ""}
           onChange={(e) =>
             setMember({ ...editedMember, workEmail: e.target.value })
@@ -70,7 +80,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="Member title"
           required
           className="halfWidth"
-          placeholder="Glorious title"
+          placeholder="Official Title"
           value={editedMember.title ? editedMember.title : ""}
           onChange={(e) =>
             setMember({ ...editedMember, title: e.target.value })
@@ -81,7 +91,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="Member location"
           required
           className="halfWidth"
-          placeholder="Somewhere by the beach"
+          placeholder="Physical Location"
           value={editedMember.location ? editedMember.location : ""}
           onChange={(e) =>
             setMember({ ...editedMember, location: e.target.value })
@@ -92,7 +102,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           label="InsperityId"
           required
           className="halfWidth"
-          placeholder="Somewhere by the beach"
+          placeholder="Insperity Identifier"
           value={editedMember.insperityId ? editedMember.insperityId : ""}
           onChange={(e) =>
             setMember({ ...editedMember, insperityId: e.target.value })
@@ -138,7 +148,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
               setMember({ ...editedMember, startDate: e });
             }}
             KeyboardButtonProps={{
-              "aria-label": "change date",
+              "aria-label": "Change Date",
             }}
           />
         </MuiPickersUtilsProvider>
@@ -149,7 +159,6 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           <Button
             onClick={async () => {
               onSave(editedMember);
-              await updateMember(editedMember, csrf);
             }}
             color="primary"
           >
