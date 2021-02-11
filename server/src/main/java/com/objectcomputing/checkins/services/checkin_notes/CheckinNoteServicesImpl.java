@@ -96,8 +96,8 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
 
-        if (checkinRecord != null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
-            throw new PermissionException("You do not have permission to access this resource");
+        if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+            throw new PermissionException("User is unauthorized to do this operation");
         }
 
         validate(createById == null, "Invalid checkin note %s", checkinNote);
