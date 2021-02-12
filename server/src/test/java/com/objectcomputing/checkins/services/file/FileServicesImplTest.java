@@ -264,24 +264,6 @@ public class FileServicesImplTest {
     }
 
     @Test
-    void testFindByCheckinIdForUnauthorizedUser() {
-        UUID testCheckinId = UUID.randomUUID();
-        when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
-        when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
-        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
-        when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
-
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
-                services.findFiles(testCheckinId));
-
-        assertEquals("You are not authorized to perform this operation", responseException.getMessage());
-        verify(mockGoogleApiAccess, times(1)).getDrive();
-        verify(checkInServices, times(1)).read(testCheckinId);
-        verify(checkinDocumentServices, times(0)).read(any(UUID.class));
-    }
-
-    @Test
     void testFindFilesDriveCantConnect() {
         when(currentUserServices.isAdmin()).thenReturn(true);
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
