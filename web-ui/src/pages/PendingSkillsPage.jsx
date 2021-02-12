@@ -4,12 +4,14 @@ import { AppContext, selectPendingSkills } from "../context/AppContext";
 import PendingSkillsCard from "../components/pending_skills/PendingSkillsCard";
 import CombineSkillsModal from "../components/pending_skills/CombineSkillsModal";
 
-import { Button } from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 
 import "./PendingSkillsPage.css";
 
-const PendingSkillsPage = () => {
+const PendingSkillsPage = (props) => {
   const { state } = useContext(AppContext);
+  
+  const [searchText, setSearchText] = useState("");
 
   const [open, setOpen] = useState(false);
 
@@ -19,15 +21,30 @@ const PendingSkillsPage = () => {
 
   return (
     <div className="pending-skills-page">
-      <Button onClick={handleOpen}>Combine Skills</Button>
-      <CombineSkillsModal open={open} onClose={handleClose} />
-      <div>
-        {selectPendingSkills(state).map((skill) => (
-          <PendingSkillsCard
-            key={"pending-skill-" + skill.id}
-            pendingSkill={skill}
+        <div className="search">
+          <TextField
+            label="Search Skills"
+            placeholder="Skill Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
           />
-        ))}
+          <div className="combine-skills">
+            <Button onClick={handleOpen}>Combine Skills</Button>
+          </div>
+        </div>
+
+      <CombineSkillsModal open={open} onClose={handleClose} />
+      <div className="pending-skills-list">
+        {selectPendingSkills(state).map((skill) => 
+          skill.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+            <PendingSkillsCard
+              key={"pending-skill-" + skill.id}
+              pendingSkill={skill}
+            />
+          ) : null
+        )}
       </div>
     </div>
   );
