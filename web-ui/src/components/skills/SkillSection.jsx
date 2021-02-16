@@ -14,14 +14,16 @@ import { createMemberSkill, deleteMemberSkill, updateMemberSkill } from "../../a
 import { getSkill, createSkill } from "../../api/skill.js";
 import SkillSlider from "./SkillSlider"
 
-import { Card, TextField } from "@material-ui/core";
+import { Card, CardHeader, TextField } from "@material-ui/core";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
+import BuildIcon from '@material-ui/icons/Build';
 
 const SkillSection = ({userId}) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, skills } = state;
   const myMemberSkills = selectMySkills(state);
   const [mySkills, setMySkills] = useState([]);
+  const [skillToAdd, setSkillToAdd] = useState();
 
   const mapMemberSkill = async (memberSkill, csrf) => {
     let thisSkill = await getSkill(memberSkill.skillid, csrf);
@@ -106,66 +108,66 @@ const SkillSection = ({userId}) => {
     }
   };
   const filter = createFilterOptions();
-        //<Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
-        /*
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              className="fullWidth"
-              label="Supervisors"
-              placeholder="Change Supervisor"
-            />
-          )}
-          */
+
+  const SkillSelector = (props) => (
+    <Autocomplete
+        value={skillToAdd}
+        style={{width:"18em"}}
+        id="skillSearchAutocomplete"
+        selectOnFocus
+        clearOnBlur={true}
+        handleHomeEndKeys
+        blurOnSelect
+        options={
+          skills
+            .filter((skill) =>
+                !mySkills.map((mSkill) => mSkill.id).includes(skill.id))
+            .map((skill) => {
+              return {
+                displayLabel: skill.name,
+                name: skill.name
+              }
+            })
+        }
+        renderOption={(option) => option.displayLabel}
+
+        filterOptions={(options, params) => {
+          const filtered = filter(options, params);
+
+          if (params.inputValue !== '') {
+            filtered.push({
+              name: params.inputValue,
+              displayLabel: `Add "${params.inputValue}"`,
+            });
+          };
+          return filtered;
+        }}
+
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            className="fullWidth"
+            label="Add a skill..."
+            placeholder="Enter a skill name"
+          />
+        )}
+
+        onChange={(event, value) => {
+          addSkill(value.name);
+          setSkillToAdd(undefined);
+        }}
+
+        getOptionLabel={(option) => option.displayLabel || ""}
+      />
+  );
 
   return (
-      <Card width="100%">
-        <h2>Skills</h2>
-        <div className="search-div">
-          <Autocomplete
-            id="skillSearchAutocomplete"
-            selectOnFocus
-            clearOnBlur={true}
-            handleHomeEndKeys
-            blurOnSelect
-            options={
-              skills
-                .filter((skill) =>
-                    !mySkills.map((mSkill) => mSkill.id).includes(skill.id))
-                .map((skill) => {
-                  return {
-                    displayLabel: skill.name,
-                    name: skill.name
-                  }
-                })
-            }
-            renderOption={(option) => option.displayLabel}
-
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
-
-              if (params.inputValue !== '') {
-                filtered.push({
-                  name: params.inputValue,
-                  displayLabel: `Add "${params.inputValue}"`,
-                });
-              };
-              return filtered;
-            }}
-
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className="halfWidth"
-                label="Skills"
-                placeholder="Change Supervisor"
-              />
-            )}
-
-            onChange={(event, value) => addSkill(value.name)}
-            getOptionLabel={(option) => option.displayLabel || ""}
-          />
-        </div>
+      <Card>
+        <CardHeader
+            avatar={<BuildIcon />}
+            title="Skills"
+            titleTypographyProps={{variant: "h5", component: "h2"}}
+            action={<SkillSelector />}/>
         {mySkills &&
           mySkills.map((memberSkill, index) => {
             return (

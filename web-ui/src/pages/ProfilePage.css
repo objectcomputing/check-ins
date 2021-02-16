@@ -1,0 +1,9 @@
+.Profile {
+  padding: 12px;
+}
+
+.Profile .flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

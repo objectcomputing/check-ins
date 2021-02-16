@@ -1,12 +1,3 @@
-.slider-row {
-  display: flex;
-  margin-bottom: 30px;
-}
-
-.date-box {
-    visibility:visible;
-}
-
 .date-box-hidden {
-    visibility:hidden;
+    display: none;
 }

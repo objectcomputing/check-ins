@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { createSelector } from "reselect";
-import { getCurrentUser, updateMember, getAllMembers } from "../api/member";
+import { getCurrentUser, getAllMembers } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { getCheckinByMemberId, createCheckin } from "../api/checkins";
 import { BASE_API_URL } from "../api/api";
@@ -37,7 +37,6 @@ const reducer = (state, action) => {
       break;
     case UPDATE_USER_BIO:
       state.userProfile.memberProfile.bioText = action.payload;
-      updateMember(state.userProfile.memberProfile, state.csrf);
       break;
     case UPDATE_CHECKINS:
       state.checkins = action.payload;
