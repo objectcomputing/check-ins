@@ -7,11 +7,9 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
-import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const { csrf } = state;
   const memberProfiles = selectMemberProfiles(state);
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
