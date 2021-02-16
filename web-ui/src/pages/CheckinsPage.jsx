@@ -49,7 +49,7 @@ const CheckinsPage = ({ history }) => {
     <Grid container spacing={3} >
       <Grid item sm={9} justify="center">
         <div className="contents">
-          <Profile memberId={id} />
+          <Profile memberId={selectedProfile?.id || id} />
           <CheckinsHistory history={history} />
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>
