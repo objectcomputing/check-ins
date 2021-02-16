@@ -119,11 +119,7 @@ const Personnel = () => {
     } else if (personnel && personnel.length > 0) {
       return personnel.map((person) => createEntry(person, null, null));
     } else {
-      let fake = Array(3);
-      for (let i = 0; i < fake.length; i++) {
-        fake[i] = createEntry(null, null, `${i + 1}Personnel`);
-      }
-      return fake;
+      return [];
     }
   };
 

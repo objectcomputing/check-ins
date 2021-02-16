@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
-import { AppContext, UPDATE_MEMBER_PROFILES } from "../../context/AppContext";
+import { AppContext, UPDATE_MEMBER_PROFILES, selectProfileMap } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
@@ -21,10 +21,10 @@ const MemberSummaryCard = ({ member, index }) => {
   const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { location, name, workEmail, title, supervisorid } = member;
+  const { location, name, workEmail, title, supervisorid, pdlId } = member;
   const [currentMember, setCurrentMember] = useState(member);
-  const supervisorProfile = memberProfiles ? memberProfiles.find((memberProfile) =>
-                                      memberProfile.id === supervisorid) : null;
+  const supervisorProfile = selectProfileMap(state)[supervisorid];
+  const pdlProfile = selectProfileMap(state)[pdlId];
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -40,14 +40,13 @@ const MemberSummaryCard = ({ member, index }) => {
   return (
     <Box display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
-        <Container fixed className={"info-container"}>
           <CardHeader
             title={
               <Typography variant="h5" component="h2">
                 {name}
               </Typography>
             }
-            subheader={<Typography component="h3">{title}</Typography>}
+            subheader={<Typography color="textSecondary" component="h3">{title}</Typography>}
             disableTypography
             avatar={
               <Avatar
@@ -56,7 +55,6 @@ const MemberSummaryCard = ({ member, index }) => {
               />
             }
           />
-        </Container>
           <CardContent>
             <Container fixed className={"info-container"}>
               <Typography variant="body2" color="textSecondary" component="p">
@@ -64,10 +62,9 @@ const MemberSummaryCard = ({ member, index }) => {
                   {workEmail}
                 </a>
                 <br />
-                Location: {location}
-                <br />
-                {supervisorProfile ? "Supervisor: " + supervisorProfile.name : " "}
-                <br />
+                Location: {location}<br />
+                Supervisor: {supervisorProfile?.name}<br />
+                PDL: {pdlProfile?.name}<br />
               </Typography>
             </Container>
           </CardContent>

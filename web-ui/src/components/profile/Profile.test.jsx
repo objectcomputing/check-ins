@@ -1,5 +1,5 @@
 import React from "react";
-import MemberSummaryCard from "./MemberSummaryCard";
+import Profile from "./Profile";
 import { AppContextProvider } from "../../context/AppContext";
 
 const initialState = {
@@ -7,9 +7,8 @@ const initialState = {
     userProfile: {
       memberProfile: {
         id: "912834091823",
-        name: "Current",
         pdlId: "0987654321",
-        supervisorId: "9876543210"
+        supervisorid: "9876543210"
       },
       role: ["MEMBER"],
     },
@@ -23,6 +22,17 @@ const initialState = {
           name: "TestName2"
         },
     ],
+    memberSkills: [
+      {
+        memberid: "912834091823",
+        skillId: "99999"
+      }
+    ],
+    skills: [
+      {
+        id: "99999",
+      }
+    ]
   },
 };
 
@@ -39,7 +49,7 @@ const member = {
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <MemberSummaryCard member={member} index={0} />
+      <Profile memberId="912834091823" />
     </AppContextProvider>
   );
 });

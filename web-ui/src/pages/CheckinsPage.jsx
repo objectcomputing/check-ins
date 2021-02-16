@@ -5,7 +5,7 @@ import AgendaItems from "../components/agenda/Agenda";
 import { AppContext } from "../context/AppContext";
 import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
-import CheckinProfile from "../components/checkin/CheckinProfile";
+import Profile from "../components/profile/Profile";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
@@ -49,11 +49,12 @@ const CheckinsPage = ({ history }) => {
     <Grid container spacing={3} >
       <Grid item sm={9} justify="center">
         <div className="contents">
-          <CheckinProfile />
+          <Profile memberId={id} />
           <CheckinsHistory history={history} />
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>
-              <Note
+              <AgendaItems
+                checkinId={currentCheckin.id}
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
@@ -68,8 +69,7 @@ const CheckinsPage = ({ history }) => {
                     : userProfile.name
                 }
               />
-              <AgendaItems
-                checkinId={currentCheckin.id}
+              <Note
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
