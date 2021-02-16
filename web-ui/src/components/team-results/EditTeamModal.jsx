@@ -143,14 +143,8 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           </Button>
           <Button
             disabled={!readyToEdit(editedTeam)}
-            onClick={async () => {
-              let res = await updateTeam(editedTeam, csrf);
-              let data = res.payload && res.payload.data && !res.error
-                               ? res.payload.data
-                               : null;
-              if(data) {
-                onSave(editedTeam);
-              }
+            onClick={() => {
+              onSave(editedTeam);
             }}
             color="primary"
           >
