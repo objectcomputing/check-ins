@@ -33,7 +33,7 @@ const CheckinsPage = ({ history }) => {
 
   const completeCheckin = async () => {
     if (csrf) {
-      updateCheckin({...currentCheckin, completed: true})
+      await updateCheckin({...currentCheckin, completed: true}, csrf);
     }
     handleClose();
   };
