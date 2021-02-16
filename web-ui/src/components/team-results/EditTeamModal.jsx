@@ -18,7 +18,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const teamMemberOptions = memberProfiles;
 
   useEffect(() => {
-    if(editedTeam.teamMembers === undefined || editedTeam.teamMembers.length === 0) {
+    if(currentUser?.id && (editedTeam.teamMembers === undefined || editedTeam.teamMembers.length === 0)) {
       setTeam({
         ...editedTeam,
         teamMembers:[{memberid: currentUser.id, name: currentUser.name, lead: true}]
