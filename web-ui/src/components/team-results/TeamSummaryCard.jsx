@@ -5,7 +5,7 @@ import EditTeamModal from "./EditTeamModal";
 
 import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
 import PropTypes from "prop-types";
-import {deleteTeam} from "../../api/team.js";
+import {deleteTeam, updateTeam} from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -130,14 +130,20 @@ const TeamSummaryCard = ({team, index}) => {
                 team={team}
                 open={open}
                 onClose={handleClose}
-                onSave={(team) => {
+                onSave={async (editedTeam) => {
+                  let res = await updateTeam(editedTeam, csrf);
+                  let data = res.payload && res.payload.data && !res.error
+                               ? res.payload.data
+                               : null;
+                  if(data) {
                     const copy = [...teams];
-                    copy[index] = team;
+                    copy[index] = editedTeam;
                     dispatch({
                         type: UPDATE_TEAMS,
                         payload: copy,
                     });
                     handleClose();
+                  }
                 }}
                 headerText='Edit Your Team'
             />

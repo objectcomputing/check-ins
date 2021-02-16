@@ -7,11 +7,9 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
-import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const { csrf } = state;
   const memberProfiles = selectMemberProfiles(state);
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
@@ -143,14 +141,8 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           </Button>
           <Button
             disabled={!readyToEdit(editedTeam)}
-            onClick={async () => {
-              let res = await updateTeam(editedTeam, csrf);
-              let data = res.payload && res.payload.data && !res.error
-                               ? res.payload.data
-                               : null;
-              if(data) {
-                onSave(editedTeam);
-              }
+            onClick={() => {
+              onSave(editedTeam);
             }}
             color="primary"
           >
