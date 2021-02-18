@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -43,13 +44,6 @@ public class MemberProfileController {
         this.memberProfileServices = memberProfileServices;
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-    }
-
-    @Error(exception = NotFoundException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, NotFoundException e) {
-        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound().body(error);
     }
 
     @Error(exception = MemberProfileAlreadyExistsException.class)

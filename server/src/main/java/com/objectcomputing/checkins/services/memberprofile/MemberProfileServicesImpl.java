@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -125,7 +126,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile findByName(@NotNull String name) {
         List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
         if (searchResult.size() != 1) {
-            throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
+            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
         return searchResult.get(0);
     }
