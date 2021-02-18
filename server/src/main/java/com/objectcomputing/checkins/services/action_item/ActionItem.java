@@ -40,8 +40,8 @@ public class ActionItem {
 
     @Nullable
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(description::bytea,'AES_KEY')",
-            write = "pgp_sym_encrypt(?,'AES_KEY') "
+            read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Column(name="description")
     @Schema(description = "description of the action item")
