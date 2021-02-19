@@ -9,6 +9,7 @@ import Profile from "../components/profile/Profile";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
+import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
 
 import { Button, Grid, Modal } from "@material-ui/core";
@@ -20,12 +21,14 @@ const CheckinsPage = ({ history }) => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
   const { currentCheckin, userProfile, selectedProfile, csrf } = state;
+  const isAdmin =
+      userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const memberProfile = userProfile ? userProfile.memberProfile : undefined;
   const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const canViewPrivateNote =
-    memberProfile && currentCheckin && id !== currentCheckin.teamMemberId;
+    isAdmin || (memberProfile && currentCheckin && id !== currentCheckin.teamMemberId);
 
   const handleOpen = () => setOpen(true);
 
@@ -76,6 +79,15 @@ const CheckinsPage = ({ history }) => {
                     : userProfile.name
                 }
               />
+              {canViewPrivateNote && (
+              <PrivateNote
+                memberName={
+                  selectedProfile
+                    ? selectedProfile.name
+                    : userProfile.name
+                }
+              />
+              )}
               <CheckinDocs />
             </React.Fragment>
           )}
