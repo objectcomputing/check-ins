@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -60,7 +60,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
             }
         }
 
-        throw new MemberProfileDoesNotExistException("No active members in the system");
+        throw new NotFoundException("No active members in the system");
     }
 
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
