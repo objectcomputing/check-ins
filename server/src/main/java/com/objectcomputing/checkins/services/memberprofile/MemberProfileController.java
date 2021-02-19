@@ -1,14 +1,8 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -31,7 +25,7 @@ import java.util.stream.Collectors;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name="member profile")
+@Tag(name = "member profile")
 public class MemberProfileController {
 
     private final MemberProfileServices memberProfileServices;
@@ -48,6 +42,7 @@ public class MemberProfileController {
 
     /**
      * Find Team Member profile by id.
+     *
      * @param id
      * @return
      */
@@ -55,15 +50,16 @@ public class MemberProfileController {
     public Single<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
 
         return Single.fromCallable(() -> memberProfileServices.getById(id))
-        .observeOn(Schedulers.from(eventLoopGroup))
-        .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
-                .ok(fromEntity(memberProfile))
-                .headers(headers -> headers.location(location(memberProfile.getId()))))
-        .subscribeOn(Schedulers.from(ioExecutorService));
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(memberProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
+                        .ok(fromEntity(memberProfile))
+                        .headers(headers -> headers.location(location(memberProfile.getId()))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
      * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId or find all.
+     *
      * @param name
      * @param title
      * @param pdlId
@@ -78,18 +74,19 @@ public class MemberProfileController {
                                                                             @Nullable String workEmail,
                                                                             @Nullable UUID supervisorId) {
         return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId))
-        .observeOn(Schedulers.from(eventLoopGroup))
-        .map(memberProfiles -> {
-            List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
-                    .map(this::fromEntity).collect(Collectors.toList());
-            return (HttpResponse<List<MemberProfileResponseDTO>>)HttpResponse
-                    .ok(dtoList);
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(memberProfiles -> {
+                    List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
+                            .ok(dtoList);
 
-        }).subscribeOn(Schedulers.from(ioExecutorService));
+                }).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
      * Save a new team member profile.
+     *
      * @param memberProfile
      * @return
      */
@@ -97,13 +94,14 @@ public class MemberProfileController {
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
         return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .observeOn(Schedulers.from(eventLoopGroup)).map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>)HttpResponse
+                .observeOn(Schedulers.from(eventLoopGroup)).map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
                         .headers(headers -> headers.location(location(savedProfile.getId())))).subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
      * Update a Team member profile.
+     *
      * @param memberProfile
      * @return
      */
@@ -114,7 +112,7 @@ public class MemberProfileController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedProfile -> {
                     MemberProfileResponseDTO updatedMemberProfile = fromEntity(savedProfile);
-                    return (HttpResponse<MemberProfileResponseDTO>)HttpResponse
+                    return (HttpResponse<MemberProfileResponseDTO>) HttpResponse
                             .ok()
                             .headers(headers -> headers.location(location(updatedMemberProfile.getId())))
                             .body(updatedMemberProfile);
@@ -124,6 +122,7 @@ public class MemberProfileController {
 
     /**
      * Delete a member profile
+     *
      * @param id member unique id
      * @return
      */
@@ -131,7 +130,7 @@ public class MemberProfileController {
     public Single<HttpResponse> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(successFlag -> (HttpResponse)HttpResponse.ok())
+                .map(successFlag -> (HttpResponse) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
@@ -157,11 +156,11 @@ public class MemberProfileController {
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
         return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(),dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }
