@@ -8,7 +8,6 @@ import {
 import { AppContext } from "../../context/AppContext";
 
 import { debounce } from "lodash/function";
-import NotesIcon from "@material-ui/icons/Notes";
 import LockIcon from "@material-ui/icons/Lock";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Card from '@material-ui/core/Card';
@@ -29,11 +28,8 @@ const PrivateNote = (props) => {
   const { csrf, userProfile, currentCheckin, selectedProfile } = state;
   const { memberProfile } = userProfile;
   const { id } = memberProfile;
-  const { memberName } = props;
   const [note, setNote] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  // TODO: get private note
-  const [privateNote, setPrivateNote] = useState();
   const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
   const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
@@ -103,19 +99,14 @@ const PrivateNote = (props) => {
     setNote((note) => {
       const newNote = { ...note, description: value };
       //
-      updateNote(newNote, csrf);
+      updatePrivateNote(newNote, csrf);
       return newNote;
     });
   };
 
-  const handlePrivateNoteChange = (e) => {
-    setPrivateNote(e.target.value);
-  };
-
-  return (
-    <div className="notes">
+  return canViewPrivateNote && (
       <Card>
-        <CardHeader avatar={<NotesIcon />} title={`Private Notes for ${memberName}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
+        <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
         <CardContent>
           <div className="container">
             {isLoading ? (
@@ -130,7 +121,7 @@ const PrivateNote = (props) => {
                 disabled={
                   !Admin &
                   currentCheckin.completed === true ||
-                  Object.keys(note) === 0
+                  note === undefined || Object.keys(note) === 0
                 }
                 onChange={handleNoteChange}
                 value={note && note.description ? note.description : ""}
@@ -139,18 +130,7 @@ const PrivateNote = (props) => {
           </div>
         </CardContent>
       </Card>
-      {canViewPrivateNote && (
-      <Card>
-        <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
-        <CardContent>
-          <div className="container">
-          <textarea onChange={handlePrivateNoteChange} value={privateNote}/>
-          </div>
-        </CardContent>
-      </Card>
-      )}
-    </div>
-  );
+      );
 };
 
 export default PrivateNote;

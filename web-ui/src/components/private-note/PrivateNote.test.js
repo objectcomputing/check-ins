@@ -1,5 +1,5 @@
 import React from "react";
-import Notes from "./Note";
+import PrivateNote from "./PrivateNote";
 import { AppContextProvider } from "../../context/AppContext";
 
 const checkin = {
@@ -28,7 +28,7 @@ const initialState = {
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <Notes
+      <PrivateNote
         checkin={checkin}
         memberName={initialState.state.userProfile.name}
       />

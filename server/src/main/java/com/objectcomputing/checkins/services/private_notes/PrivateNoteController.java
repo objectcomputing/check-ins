@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.private_notes;
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -12,8 +13,10 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 
 import java.util.concurrent.ExecutorService;
@@ -77,6 +80,19 @@ public class PrivateNoteController {
                                         URI.create(String.format("%s/%s", request.getPath(), updatePrivateNote.getId()))))
                                 .body(updatePrivateNote))
                 .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    /**
+     * Get notes by checkind or createbyid
+     *
+     * @param checkinid
+     * @param createdbyid
+     * @return
+     */
+    @Get("/{?checkinid,createdbyid}")
+    public Set<PrivateNote> findPrivateNote(@Nullable UUID checkinid,
+                                            @Nullable UUID createdbyid) {
+        return privateNoteServices.findByFields(checkinid, createdbyid);
     }
 
     /**

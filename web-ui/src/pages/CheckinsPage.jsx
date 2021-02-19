@@ -21,12 +21,14 @@ const CheckinsPage = ({ history }) => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
   const { currentCheckin, userProfile, selectedProfile, csrf } = state;
+  const isAdmin =
+      userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const memberProfile = userProfile ? userProfile.memberProfile : undefined;
   const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
   const canSeePersonnel =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
   const canViewPrivateNote =
-    memberProfile && currentCheckin && id !== currentCheckin.teamMemberId;
+    isAdmin || (memberProfile && currentCheckin && id !== currentCheckin.teamMemberId);
 
   const handleOpen = () => setOpen(true);
 
@@ -77,6 +79,7 @@ const CheckinsPage = ({ history }) => {
                     : userProfile.name
                 }
               />
+              {canViewPrivateNote && (
               <PrivateNote
                 memberName={
                   selectedProfile
@@ -84,6 +87,7 @@ const CheckinsPage = ({ history }) => {
                     : userProfile.name
                 }
               />
+              )}
               <CheckinDocs />
             </React.Fragment>
           )}

@@ -32,8 +32,6 @@ const Notes = (props) => {
   const { memberName } = props;
   const [note, setNote] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  // TODO: get private note
-  const [privateNote, setPrivateNote] = useState();
   const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
   const pdlId = memberProfile && memberProfile.pdlId;
   const pdlorAdmin =
@@ -42,8 +40,6 @@ const Notes = (props) => {
   const Admin =
      (memberProfile && userProfile.role && userProfile.role.includes("ADMIN"));
 
-  const canViewPrivateNote =
-    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
   const currentCheckinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {
@@ -107,12 +103,7 @@ const Notes = (props) => {
     });
   };
 
-  const handlePrivateNoteChange = (e) => {
-    setPrivateNote(e.target.value);
-  };
-
   return (
-    <div className="notes">
       <Card>
         <CardHeader avatar={<NotesIcon />} title={`Notes for ${memberName}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
         <CardContent>
@@ -129,7 +120,7 @@ const Notes = (props) => {
                 disabled={
                   !Admin &
                   currentCheckin.completed === true ||
-                  Object.keys(note) === 0
+                  note === undefined || Object.keys(note) === 0
                 }
                 onChange={handleNoteChange}
                 value={note && note.description ? note.description : ""}
@@ -138,17 +129,6 @@ const Notes = (props) => {
           </div>
         </CardContent>
       </Card>
-      {canViewPrivateNote && (
-      <Card>
-        <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
-        <CardContent>
-          <div className="container">
-          <textarea onChange={handlePrivateNoteChange} value={privateNote}/>
-          </div>
-        </CardContent>
-      </Card>
-      )}
-    </div>
   );
 };
 
