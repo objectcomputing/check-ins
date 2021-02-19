@@ -9,7 +9,6 @@ import { AppContext } from "../../context/AppContext";
 
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
-import LockIcon from "@material-ui/icons/Lock";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
