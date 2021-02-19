@@ -99,7 +99,7 @@ const PrivateNote = (props) => {
     setNote((note) => {
       const newNote = { ...note, description: value };
       //
-      updatePrivateNote(newNote, csrf);
+      updateNote(newNote, csrf);
       return newNote;
     });
   };
