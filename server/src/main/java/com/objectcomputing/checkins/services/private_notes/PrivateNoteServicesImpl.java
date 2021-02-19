@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.private_notes;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -45,9 +47,19 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
-        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User is unauthorized to do this operation");
+
+        if (!isAdmin) {
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+        }
+
         return privateNoteRepository.save(privateNote);
     }
 
@@ -56,10 +68,26 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
-        validate(privateNoteResult == null, "Invalid private note id %s", id);
-        CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
-        validate(isAdmin && !privateNoteResult.getCreatedbyid().equals(checkinRecord.getPdlId()),"Private note is created by Member and Admin is not authorized to read");
-        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), unauthorizedErrorMessage);
+
+        if (privateNoteResult == null) {
+            throw new NotFoundException(String.format("Invalid private note id %s", id));
+        }
+
+        if (!isAdmin) {
+            CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
+            if (checkinRecord == null) {
+                throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
+            }
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+        }
+
         return privateNoteResult;
     }
 
@@ -79,8 +107,18 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), unauthorizedErrorMessage);
+
+        if (!isAdmin) {
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+        }
+
         return privateNoteRepository.update(privateNote);
 
     }

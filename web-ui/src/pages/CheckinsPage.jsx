@@ -9,6 +9,7 @@ import Profile from "../components/profile/Profile";
 import GuidesPanel from "../components/guides/GuidesPanel";
 import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
+import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
 
 import { Button, Grid, Modal } from "@material-ui/core";
@@ -70,6 +71,13 @@ const CheckinsPage = ({ history }) => {
                 }
               />
               <Note
+                memberName={
+                  selectedProfile
+                    ? selectedProfile.name
+                    : userProfile.name
+                }
+              />
+              <PrivateNote
                 memberName={
                   selectedProfile
                     ? selectedProfile.name

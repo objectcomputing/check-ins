@@ -72,7 +72,7 @@ VALUES
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Intern', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Intern Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Software Engineer Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO member_profile
 (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
