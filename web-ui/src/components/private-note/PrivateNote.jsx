@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import {
-  getNoteByCheckinId,
-  createCheckinNote,
-  updateCheckinNote,
+  getPrivateNoteByCheckinId,
+  createPrivateNote,
+  updatePrivateNote,
 } from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
 
@@ -18,7 +18,7 @@ import CardContent from '@material-ui/core/CardContent';
 import "./PrivateNote.css";
 
 async function realUpdate(note, csrf) {
-  await updateCheckinNote(note, csrf);
+  await updatePrivateNote(note, csrf);
 }
 
 const updateNote = debounce(realUpdate, 1000);
