@@ -5,7 +5,7 @@ import { createBrowserHistory } from "history";
 //import EditPDLPage from "./pages/EditPDLPage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
-import Profile from "./components/profile/Profile";
+import ProfilePage from "./pages/ProfilePage";
 import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import DirectoryPage from './pages/DirectoryPage'
@@ -46,8 +46,8 @@ function App() {
                 <TeamsPage />
               </Route>
               <Route path="/profile">
-                <Header title="My Profile" />
-                <Profile />
+                <Header/>
+                <ProfilePage />
               </Route>
               <Route path="/directory">
                 <Header title="Member Directory" />
@@ -62,8 +62,8 @@ function App() {
                 <PendingSkillsPage />
               </Route>
               <Route path="/">
-                <Header title="My Profile" />
-                <Profile />
+                <Header />
+                <ProfilePage />
               </Route>
             </Switch>
           </div>

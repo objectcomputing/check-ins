@@ -42,7 +42,10 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, csrf]);
 
-  const date = editedMember.startDate ? new Date(editedMember.startDate) : new Date();
+  if(!editedMember.startDate) {
+    setMember({ ...editedMember, startDate: new Date() });
+  }
+  const date = new Date(editedMember.startDate);
 
   const onPdlChange = (event, newValue) => {
     setMember({

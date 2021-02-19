@@ -42,16 +42,7 @@
   width: 25ch;
 }
 
-.directory-page .members {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+.directory-page {
+  padding: 12px;
 }
 
-.directory-page .search {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}

@@ -1,3 +1,6 @@
 .skill-slider {
-  width: 300px
+  justify-content: center;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 40rem;
 }

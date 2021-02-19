@@ -6,12 +6,7 @@ exports[`renders correctly 1`] = `
     className="team-search"
   >
     <div
-      className="MuiFormControl-root MuiTextField-root fullWidth"
-      style={
-        Object {
-          "marginBottom": "1rem",
-        }
-      }
+      className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-1"
     >
       <label
         className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
@@ -86,21 +81,21 @@ exports[`renders correctly 1`] = `
     className="teams"
   >
     <div
-      className="MuiPaper-root MuiCard-root summary-card MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
         className="MuiCardHeader-root"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content makeStyles-header-3"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiCardHeader-title makeStyles-title-4 MuiTypography-h5 MuiTypography-displayBlock"
           >
             string
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
           >
             string
           </span>
@@ -192,21 +187,21 @@ exports[`renders correctly 1`] = `
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiCard-root summary-card MuiPaper-elevation1 MuiPaper-rounded"
+      className="MuiPaper-root MuiCard-root makeStyles-card-2 MuiPaper-elevation1 MuiPaper-rounded"
     >
       <div
         className="MuiCardHeader-root"
       >
         <div
-          className="MuiCardHeader-content"
+          className="MuiCardHeader-content makeStyles-header-3"
         >
           <span
-            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+            className="MuiTypography-root MuiCardHeader-title makeStyles-title-4 MuiTypography-h5 MuiTypography-displayBlock"
           >
             stuff
           </span>
           <span
-            className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+            className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
           >
             
           </span>

@@ -5,8 +5,26 @@ import EditTeamModal from "./EditTeamModal";
 
 import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
 import PropTypes from "prop-types";
-import {deleteTeam} from "../../api/team.js";
+import {deleteTeam, updateTeam} from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
+
+import {makeStyles} from "@material-ui/core/styles";
+const useStyles = makeStyles((theme) => ({
+  card: {
+    width: "340px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  header: {
+    width: "100%",
+  },
+  title: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  }
+}));
 
 const propTypes = {
     team: PropTypes.shape({
@@ -19,6 +37,7 @@ const propTypes = {
 const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({team, index}) => {
+    const classes = useStyles();
     const {state, dispatch} = useContext(AppContext);
     const {teams, userProfile, csrf} = state;
     const [open, setOpen] = useState(false);
@@ -72,8 +91,12 @@ const TeamSummaryCard = ({team, index}) => {
         index === 0 ? handleOpen() : deleteATeam(team.id);
 
     return (
-        <Card className="summary-card">
-            <CardHeader title={team.name} subheader={team.description}/>
+        <Card className={classes.card}>
+            <CardHeader classes={{
+              content: classes.header,
+              title: classes.title,
+              subheader: classes.title,
+            }} title={team.name} subheader={team.description}/>
             <CardContent>
 
                 {team.teamMembers == null ? (
@@ -107,14 +130,20 @@ const TeamSummaryCard = ({team, index}) => {
                 team={team}
                 open={open}
                 onClose={handleClose}
-                onSave={(team) => {
+                onSave={async (editedTeam) => {
+                  let res = await updateTeam(editedTeam, csrf);
+                  let data = res.payload && res.payload.data && !res.error
+                               ? res.payload.data
+                               : null;
+                  if(data) {
                     const copy = [...teams];
-                    copy[index] = team;
+                    copy[index] = editedTeam;
                     dispatch({
                         type: UPDATE_TEAMS,
                         payload: copy,
                     });
                     handleClose();
+                  }
                 }}
                 headerText='Edit Your Team'
             />

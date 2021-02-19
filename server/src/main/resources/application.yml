@@ -81,6 +81,9 @@ flyway:
   datasources:
     default:
       locations: "classpath:db/common"
+      placeholder-replacement: true
+      placeholders:
+        aeskey: ${ AES_KEY }
 ---
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }

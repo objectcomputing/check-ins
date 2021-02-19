@@ -4,11 +4,16 @@ import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
 import TeamsActions from "./TeamsActions";
 import { getAllTeams } from "../../api/team";
-
 import PropTypes from "prop-types";
 import { TextField } from "@material-ui/core";
-
+import { makeStyles } from "@material-ui/core/styles";
 import "./TeamResults.css";
+
+const useStyles = makeStyles((theme) => ({
+  searchInput: {
+    width: "20em",
+  }
+}));
 
 const propTypes = {
   teams: PropTypes.arrayOf(
@@ -23,9 +28,11 @@ const propTypes = {
 const displayName = "TeamResults";
 
 const TeamResults = () => {
-    const { state, dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const { csrf, teams } = state;
   const [searchText, setSearchText] = useState("");
+
+  const classes = useStyles();
 
   useEffect(() => {
     async function getTeams() {
@@ -50,10 +57,9 @@ const TeamResults = () => {
     <div>
       <div className="team-search">
         <TextField
-          className="fullWidth"
+          className={classes.searchInput}
           label="Search Teams"
           placeholder="Team Name"
-          style={{ marginBottom: "1rem" }}
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);
