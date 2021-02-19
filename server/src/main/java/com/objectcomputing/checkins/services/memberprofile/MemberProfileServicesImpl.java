@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
@@ -70,7 +71,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
         if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database",
+            throw new AlreadyExistsException(String.format("Email %s already exists in database",
                     memberProfile.getWorkEmail()));
         }
 

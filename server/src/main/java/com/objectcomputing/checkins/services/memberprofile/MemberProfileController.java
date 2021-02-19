@@ -46,13 +46,6 @@ public class MemberProfileController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = MemberProfileAlreadyExistsException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberProfileAlreadyExistsException e) {
-        JsonError error = new JsonError(e.getMessage()).link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest().body(error);
-    }
-
     /**
      * Find Team Member profile by id.
      * @param id

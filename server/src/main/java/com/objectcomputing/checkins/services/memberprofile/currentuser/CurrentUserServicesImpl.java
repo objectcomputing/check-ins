@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileAlreadyExistsException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
@@ -66,7 +66,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
         MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
         if(emailProfile != null && emailProfile.getId() != null) {
-            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database", workEmail));
+            throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
         }
 
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(name, "", null,

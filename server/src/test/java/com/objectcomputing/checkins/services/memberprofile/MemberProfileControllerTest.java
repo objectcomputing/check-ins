@@ -419,7 +419,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(requestSecondUser.getPath(), href);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.CONFLICT, responseException.getStatus());
         assertEquals(String.format("Email %s already exists in database", firstUser.getWorkEmail()), error);
     }
 
