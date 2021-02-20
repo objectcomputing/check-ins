@@ -1,8 +1,10 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
+import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
@@ -61,15 +63,15 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable String workEmail,
                                            @Nullable UUID supervisorId) {
         return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
-                                                            workEmail, nullSafeUUIDToString(supervisorId)));
+                workEmail, nullSafeUUIDToString(supervisorId)));
     }
 
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
         MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
-        if(emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
-            throw new MemberProfileAlreadyExistsException(String.format("Email %s already exists in database",
+        if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
+            throw new AlreadyExistsException(String.format("Email %s already exists in database",
                     memberProfile.getWorkEmail()));
         }
 
@@ -92,13 +94,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
-        } else if(!checkInServices.findByFields(id, null, null).isEmpty()) {
+        } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
             LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getName());
-        } else if(!memberSkillServices.findByFields(id, null).isEmpty()) {
+        } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
             LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", memberProfile.getName());
-        } else if(!teamMemberServices.findByFields(null, id, null).isEmpty()) {
+        } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
             LOG.info("User %s cannot be deleted since TeamMember record(s) exist", memberProfile.getName());
-        } else if(!userRoles.isEmpty()) {
+        } else if (!userRoles.isEmpty()) {
             LOG.info("User %s cannot be deleted since user has PDL role", memberProfile.getName());
         } else {
             // delete the user
@@ -125,7 +127,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile findByName(@NotNull String name) {
         List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
         if (searchResult.size() != 1) {
-            throw new MemberProfileDoesNotExistException("Expected exactly 1 result. Found " + searchResult.size());
+            throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
         return searchResult.get(0);
     }
