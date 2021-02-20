@@ -20,7 +20,7 @@ public class SkillsReportRequestDTO {
 
     @Nullable
     @Schema(description = "Each returned member must have all requested skills (or not)")
-    private boolean inclusive =  false;
+    private Boolean inclusive = false;
 
     public List<SkillLevelDTO> getSkills() {
         return skills;
@@ -40,11 +40,11 @@ public class SkillsReportRequestDTO {
     }
 
     @Nullable
-    public boolean isInclusive() {
+    public Boolean isInclusive() {
         return inclusive;
     }
 
-    public void setInclusive(boolean inclusive) {
+    public void setInclusive(Boolean inclusive) {
         this.inclusive = inclusive;
     }
 }

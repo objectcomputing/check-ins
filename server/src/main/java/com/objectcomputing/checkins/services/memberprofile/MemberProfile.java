@@ -50,7 +50,7 @@ public class MemberProfile {
 
     @NotNull
     @Column(name="workEmail")
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Column(name="insperityId")
@@ -89,7 +89,7 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate) {
-       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 
     public MemberProfile(UUID id,

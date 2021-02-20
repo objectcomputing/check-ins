@@ -106,7 +106,6 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkillCreateDTO}
      * @return {@link HttpResponse< MemberSkill >}
      */
-
     @Post()
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
@@ -137,7 +136,6 @@ public class MemberSkillController {
      * @param id {@link UUID} of the member skill entry
      * @return {@link MemberSkill}
      */
-
     @Get("/{id}")
     public Single<HttpResponse<MemberSkill>> readMemberSkill(@NotNull UUID id) {
 

@@ -24,5 +24,8 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) " +
             "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) ", nativeQuery = true )
     List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail, @Nullable String supervisorId);
+
     List<MemberProfile> findAll();
+
+    String findNameById(@NotNull UUID id);
 }

@@ -15,4 +15,8 @@ public class SkillsReportResponseDTO {
     public List<TeamMemberSkillDTO> getTeamMembers() {
         return teamMembers;
     }
+
+    public void setTeamMembers(List<TeamMemberSkillDTO> teamMembers) {
+        this.teamMembers = teamMembers;
+    }
 }
