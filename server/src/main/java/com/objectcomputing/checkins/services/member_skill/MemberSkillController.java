@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -56,25 +58,16 @@ public class MemberSkillController {
                 .body(error);
     }
 
-    @Error(exception = MemberSkillBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = MemberSkillAlreadyExistsException.class)
-    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, MemberSkillAlreadyExistsException e) {
+    @Error(exception = AlreadyExistsException.class)
+    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, AlreadyExistsException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
         return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
     }
 
-    @Error(exception = MemberSkillNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, MemberSkillNotFoundException e) {
+    @Error(exception = NotFoundException.class)
+    public HttpResponse<?> handleNotFound(HttpRequest<?> request, NotFoundException e) {
         JsonError error = new JsonError(e.getMessage())
                 .link(Link.SELF, Link.of(request.getUri()));
 
@@ -86,14 +79,14 @@ public class MemberSkillController {
     public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
 
         for (Throwable t : e.getExceptions()) {
-            if (t instanceof MemberSkillBadArgException) {
-                return handleBadArgs(request, (MemberSkillBadArgException) t);
+            if (t instanceof BadArgException) {
+                return handleBadArgs(request, (BadArgException) t);
             }
-            else if (t instanceof MemberSkillNotFoundException) {
-                return handleNotFound(request, (MemberSkillNotFoundException) t);
+            else if (t instanceof NotFoundException) {
+                return handleNotFound(request, (NotFoundException) t);
             }
-            else if (t instanceof MemberSkillAlreadyExistsException) {
-                return handleAlreadyExists(request, (MemberSkillAlreadyExistsException) t);
+            else if (t instanceof AlreadyExistsException) {
+                return handleAlreadyExists(request, (AlreadyExistsException) t);
             }
         }
 
@@ -144,7 +137,7 @@ public class MemberSkillController {
         return Single.fromCallable(() -> {
             MemberSkill result = memberSkillsService.read(id);
             if (result == null) {
-                throw new MemberSkillNotFoundException("No member skill for UUID");
+                throw new NotFoundException("No member skill for UUID");
             }
             return result;
         })

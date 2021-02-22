@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.member_skill;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -31,16 +32,16 @@ public class MemberSkillServiceImpl implements MemberSkillServices {
             final UUID memberId = memberSkill.getMemberid();
             final UUID skillId = memberSkill.getSkillid();
             if (skillId == null || memberId == null) {
-                throw new MemberSkillBadArgException(String.format("Invalid member skill %s", memberSkill));
+                throw new BadArgException(String.format("Invalid member skill %s", memberSkill));
             } else if (memberSkill.getId() != null) {
-                throw new MemberSkillBadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
+                throw new BadArgException(String.format("Found unexpected id %s for member skill", memberSkill.getId()));
             } else if (memberProfileRepository.findById(memberId).isEmpty()) {
-                throw new MemberSkillBadArgException(String.format("Member Profile %s doesn't exist", memberId));
+                throw new BadArgException(String.format("Member Profile %s doesn't exist", memberId));
             } else if (skillRepository.findById(skillId).isEmpty()) {
-                throw new MemberSkillBadArgException(String.format("Skill %s doesn't exist", skillId));
+                throw new BadArgException(String.format("Skill %s doesn't exist", skillId));
             } else if (memberSkillRepository.findByMemberidAndSkillid(memberSkill.getMemberid(),
                     memberSkill.getSkillid()).isPresent()) {
-                throw new MemberSkillAlreadyExistsException(String.format("Member %s already has this skill %s", memberId, skillId));
+                throw new AlreadyExistsException(String.format("Member %s already has this skill %s", memberId, skillId));
             }
 
             memberSkillRet = memberSkillRepository.save(memberSkill);
