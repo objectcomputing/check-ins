@@ -29,11 +29,11 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
     @Override
     <S extends Team> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query("SELECT * " +
+    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') as name, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description  " +
             "FROM team t_ " +
             "LEFT JOIN team_member tm_ " +
             "   ON t_.id = tm_.teamid " +
-            "WHERE (:name IS NULL OR t_.name = :name) " +
+            "WHERE (:name IS NULL OR PGP_SYM_DECRYPT(cast(t_.name as bytea),'${aes.key}') = :name) " +
             "AND (:memberid IS NULL OR tm_.memberid = :memberid) ")
     List<Team> search(@Nullable String name, @Nullable String memberid);
 }

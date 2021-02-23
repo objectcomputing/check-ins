@@ -42,6 +42,7 @@ public class TeamServicesImpl implements TeamServices {
         Team newTeamEntity = null;
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
         if (teamDTO != null) {
+//            if (!findByFields(teamDTO.getName(), null).isEmpty()) {
             if (teamsRepo.findByName(teamDTO.getName()).isPresent()) {
                 throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {

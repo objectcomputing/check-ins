@@ -111,6 +111,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         teamCreateDTO.setDescription("test");
         teamCreateDTO.setName(teamEntity.getName());
         teamCreateDTO.setTeamMembers(new ArrayList<>());
+        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createADefaultMemberProfile(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
