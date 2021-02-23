@@ -28,7 +28,7 @@ public class Team {
     @NotBlank
     @Column(name = "name", unique = true)
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+            read = "pgp_sym_decrypt(name::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "name of the team")
@@ -37,7 +37,7 @@ public class Team {
     @Nullable
     @Column(name = "description")
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @Schema(description = "description of the team")
