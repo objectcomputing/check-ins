@@ -4,8 +4,6 @@ on:
     branches:
       - 'master'
       - 'release/*'
-  pull_request:
-    branches: [master]
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
@@ -62,5 +60,17 @@ jobs:
               --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.PROD_DB_USERNAME }}" \
               --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
               --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
+              --set-env-vars "DIRECTORY_ID=${{ secrets.PROD_DIRECTORY_ID }}" \
+              --set-env-vars "TYPE=${{ secrets.PROD_TYPE }}" \
+              --set-env-vars "PROJECT_ID=${{ secrets.PROD_PROJECT_ID }}" \
+              --set-env-vars "PRIVATE_KEY_ID=${{ secrets.PROD_PRIVATE_KEY_ID }}" \
+              --set-env-vars "PRIVATE_KEY=${{ secrets.PROD_PRIVATE_KEY }}" \
+              --set-env-vars "CLIENT_EMAIL=${{ secrets.PROD_CLIENT_EMAIL }}" \
+              --set-env-vars "CLIENT_ID=${{ secrets.PROD_CLIENT_ID }}" \
+              --set-env-vars "AUTH_URI=${{ secrets.PROD_AUTH_URI }}" \
+              --set-env-vars "TOKEN_URI=${{ secrets.PROD_TOKEN_URI }}" \
+              --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.PROD_AUTH_PROVIDER_X509_CERT_URL }}" \
+              --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.PROD_CLIENT_X509_CERT_URL }}" \
+              --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
               --platform "managed" \
               --allow-unauthenticated
