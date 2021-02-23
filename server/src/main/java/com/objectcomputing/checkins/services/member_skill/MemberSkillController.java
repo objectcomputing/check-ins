@@ -1,23 +1,16 @@
 package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
-import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
-import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -49,49 +42,6 @@ public class MemberSkillController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = BadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = AlreadyExistsException.class)
-    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, AlreadyExistsException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @Error(exception = NotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, NotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
-    @Error(exception = CompositeException.class)
-    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-
-        for (Throwable t : e.getExceptions()) {
-            if (t instanceof BadArgException) {
-                return handleBadArgs(request, (BadArgException) t);
-            }
-            else if (t instanceof NotFoundException) {
-                return handleNotFound(request, (NotFoundException) t);
-            }
-            else if (t instanceof AlreadyExistsException) {
-                return handleAlreadyExists(request, (AlreadyExistsException) t);
-            }
-        }
-
-        return HttpResponse.<JsonError>serverError();
-    }
 
     /**
      * Create and save a new member skill.
