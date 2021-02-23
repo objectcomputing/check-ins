@@ -16,7 +16,15 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
 
     Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail);
 
-    @Query(value = "SELECT * " +
+    @Query(value = "SELECT id, " +
+            "PGP_SYM_DECRYPT(cast(name as bytea),'${aes.key}') as name, " +
+            "PGP_SYM_DECRYPT(cast(title as bytea),'${aes.key}') as title, " +
+            "pdlid, " +
+            "PGP_SYM_DECRYPT(cast(location as bytea),'${aes.key}') as location, " +
+            "PGP_SYM_DECRYPT(cast(workEmail as bytea),'${aes.key}') as workEmail, " +
+            "insperityId, startDate, " +
+            "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
+            "supervisorid, terminationDate " +
             "FROM member_profile mp " +
             "WHERE (:name IS NULL OR mp.name = :name) " +
             "AND (:title IS NULL OR mp.title = :title) " +
@@ -24,5 +32,6 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "AND (:workEmail IS NULL OR mp.workEmail = :workEmail) " +
             "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) ", nativeQuery = true )
     List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail, @Nullable String supervisorId);
+
     List<MemberProfile> findAll();
 }
