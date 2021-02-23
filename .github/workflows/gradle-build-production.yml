@@ -58,6 +58,7 @@ jobs:
               --set-env-vars "DB_NAME=${{ secrets.PROD_DB_NAME }}" \
               --set-env-vars "DATASOURCES_DEFAULT_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" \
               --set-env-vars "DATASOURCES_DEFAULT_USERNAME=${{ secrets.PROD_DB_USERNAME }}" \
+              --set-env-vars "AES_KEY=${{ secrets.PROD_AES_KEY }}" \
               --set-env-vars "OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}" \
               --set-env-vars "OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}" \
               --set-env-vars "DIRECTORY_ID=${{ secrets.PROD_DIRECTORY_ID }}" \
