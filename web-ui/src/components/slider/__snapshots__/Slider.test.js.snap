@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders slider with title 1`] = `
+<div
+  className="skill-slider"
+>
+  <p
+    className="MuiTypography-root MuiTypography-body1 MuiTypography-gutterBottom"
+    id="discrete-slider-restrict"
+  >
+    Some skill
+  </p>
+  <span
+    className="MuiSlider-root MuiSlider-colorPrimary MuiSlider-marked"
+    onMouseDown={[Function]}
+  >
+    <span
+      className="MuiSlider-rail"
+    />
+    <span
+      className="MuiSlider-track"
+      style={
+        Object {
+          "left": "0%",
+          "width": "NaN%",
+        }
+      }
+    />
+    <input
+      type="hidden"
+      value="NaN"
+    />
+    <span
+      className="MuiSlider-mark"
+      data-index={0}
+      style={
+        Object {
+          "left": "10%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={0}
+      style={
+        Object {
+          "left": "10%",
+        }
+      }
+    >
+      Interested
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={1}
+      style={
+        Object {
+          "left": "30%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={1}
+      style={
+        Object {
+          "left": "30%",
+        }
+      }
+    >
+      Novice
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={2}
+      style={
+        Object {
+          "left": "50%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={2}
+      style={
+        Object {
+          "left": "50%",
+        }
+      }
+    >
+      Intermediate
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={3}
+      style={
+        Object {
+          "left": "70%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={3}
+      style={
+        Object {
+          "left": "70%",
+        }
+      }
+    >
+      Advanced
+    </span>
+    <span
+      className="MuiSlider-mark"
+      data-index={4}
+      style={
+        Object {
+          "left": "90%",
+        }
+      }
+    />
+    <span
+      aria-hidden={true}
+      className="MuiSlider-markLabel"
+      data-index={4}
+      style={
+        Object {
+          "left": "90%",
+        }
+      }
+    >
+      Expert
+    </span>
+    
+  </span>
+</div>
+`;

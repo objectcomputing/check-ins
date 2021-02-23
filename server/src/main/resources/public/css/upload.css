@@ -1,0 +1,59 @@
+.error {
+	color: red;
+}
+
+button {
+	width: -webkit-fit-content;
+	width: -moz-fit-content;
+	width: fit-content;
+	padding: 10px 25px;
+	font-size: 14px;
+	line-height: 1;
+	text-transform: uppercase;
+	background-color: #2559a7;
+	color: #dbdbdb;
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
+	display: block;
+
+}
+
+button:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.box {
+	color: #b60808;
+	margin: 75px;
+
+}
+
+.uploader {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+	border: hidden;
+}
+
+label:hover {
+	text-decoration: underline;
+	cursor: pointer;
+
+}
+
+.fieldset {
+    border: none;
+    margin: 20px 0px;
+	padding: 0;
+}
+
+.fieldset>label {
+	font-weight: bold;
+}
+
+.success {
+	font-size: 14px;
+}

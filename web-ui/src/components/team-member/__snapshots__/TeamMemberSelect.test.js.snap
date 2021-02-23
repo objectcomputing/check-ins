@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="team-member-select"
+>
+  <input
+    onChange={[Function]}
+    placeholder="Search team members"
+  />
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      jesse
+    </div>
+  </div>
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      mark
+    </div>
+  </div>
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      michael
+    </div>
+  </div>
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      mj
+    </div>
+  </div>
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      kobe
+    </div>
+  </div>
+  <div
+    className="team-member"
+    onClick={[Function]}
+  >
+    <div
+      className="MuiAvatar-root MuiAvatar-circle"
+      style={
+        Object {
+          "marginLeft": "10px",
+        }
+      }
+    >
+      <img
+        alt="Team Member"
+        className="MuiAvatar-img"
+        src="../../images/default_profile.jpg"
+      />
+    </div>
+    <div
+      className="name"
+    >
+      lebron
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiBox-root MuiBox-root-1"
+>
+  <div
+    className="MuiPaper-root MuiCard-root member-card MuiPaper-elevation1 MuiPaper-rounded"
+  >
+    <div
+      className="MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circle large"
+        >
+          <img
+            className="MuiAvatar-img"
+            src="http://localhost:8080/services/member-profile/member-photo/testerson%40oci.com"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiCardHeader-content"
+      >
+        <h2
+          className="MuiTypography-root MuiTypography-h5"
+        >
+          testerson
+        </h2>
+        <h3
+          className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+        >
+          engineer
+        </h3>
+      </div>
+    </div>
+    <div
+      className="MuiCardContent-root"
+    >
+      <div
+        className="MuiContainer-root info-container MuiContainer-fixed MuiContainer-maxWidthLg"
+      >
+        <p
+          className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+        >
+          <a
+            href="mailto:testerson@oci.com"
+          >
+            testerson@oci.com
+          </a>
+          <br />
+          Location: 
+          STL
+          <br />
+          Supervisor: 
+          <br />
+          PDL: 
+          <br />
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

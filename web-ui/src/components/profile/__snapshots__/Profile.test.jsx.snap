@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="makeStyles-flexRow-3"
+>
+  <div
+    className="makeStyles-profileInfo-1"
+  >
+    <div>
+      <div
+        className="makeStyles-header-4"
+      >
+        <div
+          className="makeStyles-title-5"
+        >
+          <h2
+            className="MuiTypography-root MuiTypography-h5"
+          />
+          <h3
+            className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+          />
+        </div>
+      </div>
+      <p
+        className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+      >
+        <a
+          href="mailto:undefined"
+        />
+        <br />
+        Location: 
+        <br />
+        Supervisor: 
+        <br />
+        PDL: 
+      </p>
+    </div>
+  </div>
+</div>
+`;

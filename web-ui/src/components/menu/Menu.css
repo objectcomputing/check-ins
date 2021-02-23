@@ -1,0 +1,15 @@
+.checkin {
+  font-family: "Shadows Into Light", cursive;
+  font-size: calc(1rem + 1vw);
+  margin-top: 0px;
+  padding-top: 10px;
+  margin-left: 10px;
+}
+
+.close-div {
+  cursor: pointer;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0;
+}

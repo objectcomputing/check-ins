@@ -1,0 +1,333 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content makeStyles-header-2"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title makeStyles-title-3 MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        string
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        string
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <strong>
+      Team Leads: 
+    </strong>
+    None Assigned
+    <br />
+    <strong>
+      Team Members: 
+    </strong>
+    None Assigned
+  </div>
+  <div
+    className="MuiCardActions-root MuiCardActions-spacing"
+  >
+    <div>
+      <div
+        aria-label="split button"
+        className="MuiButtonGroup-root MuiButtonGroup-contained"
+        role="group"
+      >
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Edit Team
+          </span>
+        </button>
+        <button
+          aria-haspopup="menu"
+          aria-label="select merge strategy"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly for ADMIN 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content makeStyles-header-2"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title makeStyles-title-3 MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        string
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        string
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <strong>
+      Team Leads: 
+    </strong>
+    None Assigned
+    <br />
+    <strong>
+      Team Members: 
+    </strong>
+    None Assigned
+  </div>
+  <div
+    className="MuiCardActions-root MuiCardActions-spacing"
+  >
+    <div>
+      <div
+        aria-label="split button"
+        className="MuiButtonGroup-root MuiButtonGroup-contained"
+        role="group"
+      >
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Edit Team
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          aria-haspopup="menu"
+          aria-label="select merge strategy"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly for team lead 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content makeStyles-header-2"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title makeStyles-title-3 MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        stuff
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-3 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <strong>
+      Team Leads: 
+    </strong>
+    testname
+    <br />
+    <strong>
+      Team Members: 
+    </strong>
+  </div>
+  <div
+    className="MuiCardActions-root MuiCardActions-spacing"
+  >
+    <div>
+      <div
+        aria-label="split button"
+        className="MuiButtonGroup-root MuiButtonGroup-contained"
+        role="group"
+      >
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Edit Team
+          </span>
+        </button>
+        <button
+          aria-haspopup="menu"
+          aria-label="select merge strategy"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedContained MuiButtonGroup-groupedContainedHorizontal MuiButtonGroup-groupedContainedPrimary MuiButton-containedPrimary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

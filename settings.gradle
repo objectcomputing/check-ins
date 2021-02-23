@@ -1,1 +1,3 @@
-rootProject.name="google-drive-upload"
+rootProject.name="check-ins"
+include "web-ui"
+include "server"
