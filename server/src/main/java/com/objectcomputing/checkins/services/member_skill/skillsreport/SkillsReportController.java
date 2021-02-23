@@ -2,14 +2,20 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.scheduling.TaskExecutors;
 import io.netty.channel.EventLoopGroup;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.inject.Named;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/reports/skills")
@@ -33,8 +39,8 @@ public class SkillsReportController {
     /**
      * Create and save a new member skill.
      *
-     * @param skillsReport, {@link SkillsReportRequestDTO}
-     * @return {@link HttpResponse< SkillsReportResponseDTO >}
+     * @param requestBody, {@link SkillsReportRequestDTO}
+     * @return {@link HttpResponse<SkillsReportResponseDTO>}
      */
     @Post()
     public Single<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,

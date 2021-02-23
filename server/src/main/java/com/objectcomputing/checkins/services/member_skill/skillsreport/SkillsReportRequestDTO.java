@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Introspected
 public class SkillsReportRequestDTO {
@@ -15,7 +16,7 @@ public class SkillsReportRequestDTO {
     private List<SkillLevelDTO> skills;
 
     @Nullable
-    @Schema(description = "A set of members")
+    @Schema(description = "A set of requested members")
     private Set<UUID> members;
 
     @Nullable
@@ -35,7 +36,7 @@ public class SkillsReportRequestDTO {
         return members;
     }
 
-    public void setMembers(Set<UUID> members) {
+    public void setMembers(@Nullable Set<UUID> members) {
         this.members = members;
     }
 
@@ -44,7 +45,7 @@ public class SkillsReportRequestDTO {
         return inclusive;
     }
 
-    public void setInclusive(Boolean inclusive) {
+    public void setInclusive(@Nullable Boolean inclusive) {
         this.inclusive = inclusive;
     }
 }

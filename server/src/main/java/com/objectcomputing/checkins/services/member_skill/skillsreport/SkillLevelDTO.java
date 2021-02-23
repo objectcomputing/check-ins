@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotNull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class SkillLevelDTO {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(@Nullable String level) {
         this.level = level;
     }
 }

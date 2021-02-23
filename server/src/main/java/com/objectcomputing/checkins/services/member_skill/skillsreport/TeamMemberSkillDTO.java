@@ -11,7 +11,7 @@ import java.util.UUID;
 @Introspected
 public class TeamMemberSkillDTO {
     @NotNull
-    @Schema(required = true, description = "UUID of the team member")
+    @Schema(required = true, description = "UUID of the team member profile")
     private UUID id;
 
     @Nullable
@@ -35,7 +35,7 @@ public class TeamMemberSkillDTO {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@Nullable String name) {
         this.name = name;
     }
 
