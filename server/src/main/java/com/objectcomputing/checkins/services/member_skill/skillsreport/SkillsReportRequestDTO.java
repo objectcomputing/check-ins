@@ -21,13 +21,14 @@ public class SkillsReportRequestDTO {
 
     @Nullable
     @Schema(description = "Each returned member must have all requested skills (or not)")
-    private Boolean inclusive = false;
+    private Boolean inclusive;
 
+    @NotNull
     public List<SkillLevelDTO> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<SkillLevelDTO> skills) {
+    public void setSkills(@NotNull List<SkillLevelDTO> skills) {
         this.skills = skills;
     }
 

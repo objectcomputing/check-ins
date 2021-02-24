@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -15,14 +16,18 @@ import java.util.UUID;
 
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
+
     private final MemberSkillRepository memberSkillRepo;
     private final MemberProfileRepository memberProfileRepo;
+    private final SkillRepository skillRepo;
     private final HashMap<String, Integer> skillLevels;
 
     public SkillsReportServicesImpl(MemberSkillRepository memberSkillRepo,
-                                    MemberProfileRepository memberProfileRepo) {
+                                    MemberProfileRepository memberProfileRepo,
+                                    SkillRepository skillRepo) {
         this.memberSkillRepo = memberSkillRepo;
         this.memberProfileRepo = memberProfileRepo;
+        this.skillRepo = skillRepo;
 
         skillLevels = new HashMap<>();
         skillLevels.put("interested", 0);
@@ -32,14 +37,26 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         skillLevels.put("expert", 4);
     }
 
+    @NotNull
     public SkillsReportResponseDTO report(@NotNull SkillsReportRequestDTO request) {
         final List<SkillLevelDTO> skills = request.getSkills();
-        if (skills == null) {
-            throw new BadArgException("Invalid list of requested skills");
-        }
-
         final Set<UUID> members = request.getMembers();
         final Boolean inclusive = request.isInclusive();
+
+        for (SkillLevelDTO skill : skills) {
+            if (!skillRepo.existsById(skill.getId())) {
+                throw new BadArgException(String.format("Invalid skill ID %s", skill.getId()));
+            }
+        }
+
+        if (members != null) {
+            for (UUID member : members) {
+                if (!memberProfileRepo.existsById(member)) {
+                    throw new BadArgException(String.format("Invalid member profile ID %s", member));
+                }
+            }
+        }
+
         SkillsReportResponseDTO response = new SkillsReportResponseDTO();
 
         List<TeamMemberSkillDTO> potentialMembers = getPotentialQualifyingMembers(skills);
