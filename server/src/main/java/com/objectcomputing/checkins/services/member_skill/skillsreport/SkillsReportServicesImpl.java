@@ -8,11 +8,7 @@ import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class SkillsReportServicesImpl implements SkillsReportServices {
@@ -20,7 +16,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
     private final MemberSkillRepository memberSkillRepo;
     private final MemberProfileRepository memberProfileRepo;
     private final SkillRepository skillRepo;
-    private final HashMap<String, Integer> skillLevels;
 
     public SkillsReportServicesImpl(MemberSkillRepository memberSkillRepo,
                                     MemberProfileRepository memberProfileRepo,
@@ -28,13 +23,6 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         this.memberSkillRepo = memberSkillRepo;
         this.memberProfileRepo = memberProfileRepo;
         this.skillRepo = skillRepo;
-
-        skillLevels = new HashMap<>();
-        skillLevels.put("interested", 0);
-        skillLevels.put("novice", 1);
-        skillLevels.put("intermediate", 2);
-        skillLevels.put("advanced", 3);
-        skillLevels.put("expert", 4);
     }
 
     @NotNull
@@ -70,11 +58,10 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                     response.setTeamMembers(qualifiedMembers);
                 }
             } else {
+                final List<TeamMemberSkillDTO> membersInList = removeMembersNotRequested(potentialMembers, members);
                 if (inclusive == null || !inclusive) {
-                    final List<TeamMemberSkillDTO> qualifiedMembers = removeMembersNotRequested(potentialMembers, members);
-                    response.setTeamMembers(qualifiedMembers);
+                    response.setTeamMembers(membersInList);
                 } else {
-                    final List<TeamMemberSkillDTO> membersInList = removeMembersNotRequested(potentialMembers, members);
                     final List<TeamMemberSkillDTO> qualifiedMembers = getMembersSatisfyingAllSkills(membersInList, skills);
                     response.setTeamMembers(qualifiedMembers);
                 }
@@ -113,7 +100,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             final UUID memberId = ms.getMemberid();
             final SkillLevelDTO skill = new SkillLevelDTO();
             skill.setId(ms.getSkillid());
-            skill.setLevel(ms.getSkilllevel());
+            skill.setLevel(SkillLevelDTO.SkillLevel.convertFromSkillLevel(ms.getSkilllevel()));
 
             if (map.containsKey(memberId)) {
                 final TeamMemberSkillDTO dto = map.get(memberId);
@@ -179,13 +166,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         return ret;
     }
 
-    private boolean isSkillLevelSatisfied(String first, String second) {
-        final String firstLc = first.toLowerCase();
-        final String secondLc = second.toLowerCase();
-        if (!skillLevels.containsKey(firstLc) || !skillLevels.containsKey(secondLc)) {
-            throw new BadArgException(String.format("Compare invalid skill level: %s and %s", first, second));
-        }
-
-        return skillLevels.get(firstLc) >= skillLevels.get(secondLc);
+    private boolean isSkillLevelSatisfied(@NotNull String first, @NotNull SkillLevelDTO.SkillLevel second) {
+        final SkillLevelDTO.SkillLevel firstLevel = SkillLevelDTO.SkillLevel.convertFromSkillLevel(first);
+        return firstLevel.greaterThanOrEqual(second);
     }
 }

@@ -14,7 +14,6 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -40,7 +39,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         skillLevelDTO.setId(skill.getId());
-        skillLevelDTO.setLevel("intermediate");
+        skillLevelDTO.setLevel(SkillLevelDTO.SkillLevel.INTERMEDIATE);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -56,7 +55,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         assertEquals(1, skillsReportResponseDTO.getTeamMembers().size());
         assertEquals(1, skillsReportResponseDTO.getTeamMembers().get(0).getSkills().size());
         assertEquals(skill.getId(), skillsReportResponseDTO.getTeamMembers().get(0).getSkills().get(0).getId());
-        assertEquals(memberSkill.getSkilllevel(),
+        assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel(memberSkill.getSkilllevel()),
                 skillsReportResponseDTO.getTeamMembers().get(0).getSkills().get(0).getLevel());
         assertEquals(memberProfile.getId(), skillsReportResponseDTO.getTeamMembers().get(0).getId());
     }
@@ -71,7 +70,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         skillLevelDTO.setId(skill.getId());
-        skillLevelDTO.setLevel("expert");
+        skillLevelDTO.setLevel(SkillLevelDTO.SkillLevel.EXPERT);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -82,11 +81,9 @@ public class SkillsReportControllerTest extends TestContainersSuite
 
         final SkillsReportResponseDTO skillsReportResponseDTO = response.body();
         assertNotNull(skillsReportResponseDTO);
-        assertNotNull(skillsReportResponseDTO.getTeamMembers());
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s", request.getPath()), response.getHeaders().get("Location"));
-        assertEquals(0, skillsReportResponseDTO.getTeamMembers().size());
     }
 
     @Test
@@ -96,7 +93,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         final UUID skillId = UUID.randomUUID();
         skillLevelDTO.setId(skillId);
-        skillLevelDTO.setLevel("advanced");
+        skillLevelDTO.setLevel(SkillLevelDTO.SkillLevel.ADVANCED);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -105,13 +102,6 @@ public class SkillsReportControllerTest extends TestContainersSuite
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        final JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        assertNotNull(body);
-        final String error = Objects.requireNonNull(body).get("message").asText();
-        final String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid skill ID %s", skillId), error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
@@ -135,13 +125,6 @@ public class SkillsReportControllerTest extends TestContainersSuite
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
-        final JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        assertNotNull(body);
-        final String error = Objects.requireNonNull(body).get("message").asText();
-        final String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals(String.format("Invalid member profile ID %s", memberId), error);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 }
