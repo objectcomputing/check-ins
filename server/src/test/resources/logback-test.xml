@@ -14,5 +14,4 @@
 
     <logger name="org.flywaydb" level="ERROR"/>
 <!--    <logger name="io.micronaut.data" level="DEBUG"/>-->
-
 </configuration>
