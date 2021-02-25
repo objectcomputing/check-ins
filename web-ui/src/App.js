@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
 //import EditPDLPage from "./pages/EditPDLPage";
@@ -20,7 +20,6 @@ import "./App.css";
 const customHistory = createBrowserHistory();
 
 function App() {
-
   return (
     <Router history={customHistory}>
       <AppContextProvider>
@@ -35,10 +34,6 @@ function App() {
             className="App"
           >
             <Switch>
-              {/* <Route path="/admin">
-                <Header title="Edit Team" />
-                <EditPDLPage />
-              </Route> */}
               <Route path="/teams">
                 <Header title="Teams">
                   <GroupIcon fontSize="large"/>
@@ -53,9 +48,9 @@ function App() {
                 <Header title="Member Directory" />
                 <DirectoryPage />
               </Route>
-              <Route path="/checkins">
+              <Route path="/checkins/:memberId?/:checkinId?" >
                 <Header title="Check-ins" />
-                <CheckinsPage history={customHistory} />
+                <CheckinsPage history={customHistory} memberId={useParams().memberId} checkinId={useParams().checkinId} />
               </Route>
               <Route path="/pending-skills">
                 <Header title="Pending Skills" />

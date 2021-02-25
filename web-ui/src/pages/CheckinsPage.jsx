@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
-import { AppContext } from "../context/AppContext";
+import { AppContext, selectCheckinMap, selectMostRecentCheckin, selectProfileMap, selectCurrentUser } from "../context/AppContext";
 import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import Profile from "../components/profile/Profile";
@@ -17,18 +17,28 @@ import { Button, Grid, Modal } from "@material-ui/core";
 import "./CheckinsPage.css";
 import {updateCheckin} from "../api/checkins";
 
-const CheckinsPage = ({ history }) => {
+const CheckinsPage = ({ history, memberId, checkinId }) => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(AppContext);
-  const { currentCheckin, userProfile, selectedProfile, csrf } = state;
-  const isAdmin =
-      userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const memberProfile = userProfile ? userProfile.memberProfile : undefined;
-  const id = memberProfile && memberProfile.id ? memberProfile.id : undefined;
-  const canSeePersonnel =
-    userProfile && userProfile.role && userProfile.role.includes("PDL");
-  const canViewPrivateNote =
-    isAdmin || (memberProfile && currentCheckin && id !== currentCheckin.teamMemberId);
+  const { userProfile, csrf } = state;
+
+  const currentCheckin = selectCheckinMap(state)[checkinId];
+  const selectedProfile = selectProfileMap(state)[memberId];
+  const memberProfile = selectCurrentUser(state);
+  const id = memberProfile?.id;
+
+  useEffect(() => {
+    if (memberId === undefined) {
+      history.push(`/checkins/${id}`);
+    } else if (checkinId === undefined) {
+      const mostRecent = selectMostRecentCheckin(state, memberId);
+      history.push(`/checkins/${memberId}/${mostRecent}`);
+    }
+  }, [memberId, checkinId, history]);
+
+  const isAdmin = userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+  const canSeePersonnel = userProfile && userProfile.role && userProfile.role.includes("PDL");
+  const canViewPrivateNote = isAdmin || (memberProfile && currentCheckin && id !== currentCheckin.teamMemberId);
 
   const handleOpen = () => setOpen(true);
 
@@ -41,19 +51,13 @@ const CheckinsPage = ({ history }) => {
     handleClose();
   };
 
-  useEffect(() => {
-    if (currentCheckin && currentCheckin.id) {
-      history.push(`/checkins/${currentCheckin.id}`);
-    }
-  }, [currentCheckin, history]);
-
   return (
     <div style={{padding:12}}>
     <Grid container spacing={3} >
       <Grid item sm={9} justify="center">
         <div className="contents">
           <Profile memberId={selectedProfile?.id || id} />
-          <CheckinsHistory history={history} />
+          <CheckinsHistory history={history} memberId={memberId} checkinId={checkinId} />
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>
               <AgendaItems

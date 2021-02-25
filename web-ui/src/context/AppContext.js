@@ -12,14 +12,12 @@ export const UPDATE_USER_BIO = "@@check-ins/update_bio";
 export const UPDATE_CHECKINS = "@@check-ins/update_checkins";
 export const UPDATE_INDEX = "@@check-ins/update_index";
 export const UPDATE_TOAST = "@@check-ins/update_toast";
-export const UPDATE_CURRENT_CHECKIN = "@@check-ins/update_current_checkin";
 export const UPDATE_MEMBER_SKILLS = "@@check-ins/update_member_skills";
 export const DELETE_MEMBER_SKILL = "@@check-ins/delete_member_skill";
 export const ADD_MEMBER_SKILL = "@@check-ins/add_member_skill";
 export const UPDATE_TEAMS = "@@check-ins/update_teams";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
 export const UPDATE_TEAM_MEMBERS = "@@check-ins/update_team_members";
-export const UPDATE_SELECTED_PROFILE = "@@check-ins/update_selected_profile";
 export const ADD_SKILL = "@@check-ins/add-skill";
 export const DELETE_SKILL = "@@check-ins/delete-skill";
 export const UPDATE_SKILL = "@@check-ins/update_skill";
@@ -44,7 +42,6 @@ const reducer = (state, action) => {
       state.checkins.sort(function (a, b) {
         return new Date(...a.checkInDate) - new Date(...b.checkInDate);
       });
-      state.currentCheckin = state.checkins[state.checkins.length - 1];
       break;
     case ADD_SKILL:
       state.skills = [...state.skills, action.payload];
@@ -88,9 +85,6 @@ const reducer = (state, action) => {
         ? (state.teamMembers = [...state.teamMembers, action.payload])
         : (state.teamMembers = action.payload);
       break;
-    case UPDATE_CURRENT_CHECKIN:
-      state.currentCheckin = action.payload;
-      break;
     case UPDATE_MEMBER_SKILLS:
       state.memberSkills = action.payload
       break;
@@ -104,16 +98,6 @@ const reducer = (state, action) => {
     case ADD_MEMBER_SKILL:
       state.memberSkills = [...state.memberSkills, action.payload];
       break;
-    case UPDATE_SELECTED_PROFILE:
-      const { payload } = action;
-      if (state.selectedProfile !== payload) {
-        state.selectedProfile = payload;
-        state.currentCheckin = payload ? payload.checkIn : {};
-      }
-      if (payload === undefined) {
-        state.checkins = [];
-      }
-      break;
     default:
   }
   return { ...state };
@@ -122,11 +106,9 @@ const reducer = (state, action) => {
 const initialState = {
   checkins: [],
   csrf: undefined,
-  currentCheckin: {},
   memberSkills: [],
   index: 0,
   memberProfiles: [],
-  selectedProfile: undefined,
   skills: [],
   teams: [],
   toast: {
@@ -187,9 +169,6 @@ const AppContextProvider = (props) => {
       : undefined;
   const id = memberProfile ? memberProfile.id : undefined;
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
-  const selectedProfile = state && state.selectedProfile;
-  const selectedId = selectedProfile ? selectedProfile.id : undefined;
-
   const { csrf } = state;
 
   useEffect(() => {
@@ -283,12 +262,6 @@ const AppContextProvider = (props) => {
   }, [csrf, pdlId, id]);
 
   useEffect(() => {
-    if (selectedId && csrf) {
-      getCheckins(selectedId, id, date, dispatch, csrf);
-    }
-  }, [csrf, selectedId, id]);
-
-  useEffect(() => {
     const getAllSkills = async () => {
       const res = await getSkills(csrf);
       const data =
@@ -323,6 +296,7 @@ export const selectMemberSkills = (state) => state.memberSkills;
 export const selectSkills = (state) => state.skills;
 export const selectTeamMembers = (state) => state.teamMembers;
 export const selectUserProfile = (state) => state.userProfile;
+export const selectCheckins = (state) => state.checkins;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -356,6 +330,32 @@ export const selectMySkills = createSelector(
 
 export const selectPendingSkills = createSelector(selectSkills, (skills) =>
   skills.filter((skill) => skill.pending)
+);
+
+export const selectCheckinMap = createSelector(
+  selectCheckins,
+  (checkins) => {
+    if (checkins && checkins.length) {
+      checkins = checkins.reduce((mappedById, checkin) => {
+        mappedById[checkin.id] = checkin;
+        return mappedById;
+      }, {});
+    }
+    return checkins;
+  }
+);
+
+export const selectMostRecentCheckin = createSelector(
+  selectCheckins,
+  (state, memberid) => memberid,
+  (checkins, memberid) => {
+    if (checkins && checkins.length) {
+      return checkins.filter(currentCheckin => currentCheckin.teamMemberId === memberid).reduce((mostRecent, checkin) => {
+        return new Date(checkin.checkInDate) > new Date(mostRecent.checkInDate)? checkin : mostRecent;
+      }, undefined);
+    }
+    return undefined;
+  }
 );
 
 export { AppContext, AppContextProvider };

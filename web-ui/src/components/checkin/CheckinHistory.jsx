@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import {
-  UPDATE_CURRENT_CHECKIN,
   UPDATE_CHECKINS,
 } from "../../context/AppContext";
 import { AppContext } from "../../context/AppContext";
@@ -16,7 +15,7 @@ import { Link } from "react-router-dom";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ history }) => {
+const CheckinsHistory = ({ history, memberId, checkinId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { checkins, currentCheckin, csrf } = state;
   const [index, setIndex] = useState(0);
@@ -25,14 +24,6 @@ const CheckinsHistory = ({ history }) => {
     const length = checkins ? checkins.length : 0;
     setIndex(length - 1);
   }, [checkins]);
-
-  useEffect(() => {
-    const checkin = checkins[index];
-    if (checkin) {
-      dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
-      history.push(`/checkins/${checkin.id}`);
-    }
-  }, [index, dispatch, history, checkins]);
 
   const getCheckinDate = () => {
     if (currentCheckin && currentCheckin.checkInDate) {
@@ -85,10 +76,6 @@ const CheckinsHistory = ({ history }) => {
       dispatch({
         type: UPDATE_CHECKINS,
         payload: filtered,
-      });
-      dispatch({
-        type: UPDATE_CURRENT_CHECKIN,
-        payload: newCheckin,
       });
     }
   };

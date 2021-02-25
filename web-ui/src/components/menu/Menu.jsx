@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
 import MenuIcon from "@material-ui/icons/Menu";
@@ -107,12 +107,6 @@ function Menu() {
       </Button>
       <br />
       <Button
-        onClick={() =>
-          dispatch({
-            type: UPDATE_SELECTED_PROFILE,
-            payload: undefined,
-          })
-        }
         size="large"
         style={{ width: "100%" }}
       >

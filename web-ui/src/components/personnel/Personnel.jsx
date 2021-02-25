@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { getMembersByPDL } from "../../api/member";
 import { getCheckinByMemberId } from "../../api/checkins";
-import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import List from '@material-ui/core/List';
@@ -96,7 +96,7 @@ const Personnel = () => {
     return (
       <ListItem key={key} button
           onClick={() => {
-            dispatch({ type: UPDATE_SELECTED_PROFILE, payload: person });
+            history.push(`/checkins/${person?.id}`);
           }}
       >
         <ListItemAvatar>
