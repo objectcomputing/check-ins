@@ -4,6 +4,45 @@ import Slider from '@material-ui/core/Slider';
 import Tooltip from '@material-ui/core/Tooltip';
 import './Slider.css';
 
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+
+const customBreakpointValues = {
+  values: {
+    xs: 0,
+    sm: 360,
+    md: 768,
+    lg: 992,
+    xl: 1200,
+  },
+}
+
+const breakpoints = createBreakpoints({ ...customBreakpointValues })
+
+const muiTheme = createMuiTheme({
+  breakpoints: {
+    ...customBreakpointValues,
+  },
+  overrides: {
+    MuiSlider: {
+      markLabel:{
+      [breakpoints.down('sm')]: {
+        fontSize: "0.25rem",
+        },
+      [breakpoints.between('sm', 'md')]: {
+        fontSize: "0.525rem",
+        },
+      [breakpoints.between('md', 'lg')]: {
+        fontSize: "0.775rem",
+        },
+      [breakpoints.up('lg')]: {
+        fontSize: "0.875rem",
+        },
+      }
+    }
+  }
+});
 
 const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos}) => {
 
@@ -112,6 +151,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
       <Typography id="discrete-slider-restrict" gutterBottom>
         {title}
       </Typography>
+      <ThemeProvider theme={muiTheme}>
       <Slider
         min={0.5}
         max={marks.length+.5}
@@ -124,6 +164,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
         onChange={onChange}
         onChangeCommitted={onChangeCommitted}
       />
+      </ThemeProvider>
     </div>
   );
 };
