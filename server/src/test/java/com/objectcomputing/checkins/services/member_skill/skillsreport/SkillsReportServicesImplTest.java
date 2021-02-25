@@ -59,7 +59,7 @@ public class SkillsReportServicesImplTest {
     void testReportSkillNotExist() {
         final SkillLevelDTO dto = new SkillLevelDTO();
         dto.setId(UUID.randomUUID());
-        dto.setLevel(SkillLevelDTO.SkillLevel.INTERMEDIATE);
+        dto.setLevel(SkillsReportServicesImpl.SkillLevel.INTERMEDIATE);
 
         final List<SkillLevelDTO> skills = new ArrayList<>();
         skills.add(dto);
@@ -155,10 +155,10 @@ public class SkillsReportServicesImplTest {
         final SkillLevelDTO dto2 = new SkillLevelDTO();
         final SkillLevelDTO dto3 = new SkillLevelDTO();
         dto1.setId(skillId1);
-        dto1.setLevel(SkillLevelDTO.SkillLevel.INTERMEDIATE);
+        dto1.setLevel(SkillsReportServicesImpl.SkillLevel.INTERMEDIATE);
         dto2.setId(skillId2);
         dto3.setId(skillId3);
-        dto3.setLevel(SkillLevelDTO.SkillLevel.ADVANCED);
+        dto3.setLevel(SkillsReportServicesImpl.SkillLevel.ADVANCED);
 
         final List<SkillLevelDTO> requestedSkills1 = new ArrayList<>();
         requestedSkills1.add(dto1);
@@ -222,9 +222,9 @@ public class SkillsReportServicesImplTest {
         final SkillLevelDTO dto4 = new SkillLevelDTO();
         final SkillLevelDTO dto5 = new SkillLevelDTO();
         dto4.setId(skillId2);
-        dto4.setLevel(SkillLevelDTO.SkillLevel.INTERMEDIATE);
+        dto4.setLevel(SkillsReportServicesImpl.SkillLevel.INTERMEDIATE);
         dto5.setId(skillId4);
-        dto5.setLevel(SkillLevelDTO.SkillLevel.ADVANCED);
+        dto5.setLevel(SkillsReportServicesImpl.SkillLevel.ADVANCED);
 
         final List<SkillLevelDTO> requestedSkills2 = new ArrayList<>();
         requestedSkills2.add(dto4);
@@ -242,9 +242,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("intermediate"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("intermediate"), skill.getLevel());
             } else {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("expert"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("expert"), skill.getLevel());
             }
         }
         verify(memberSkillRepository, times(11)).findBySkillid(any(UUID.class));
@@ -259,9 +259,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("intermediate"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("intermediate"), skill.getLevel());
             } else {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("advanced"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("advanced"), skill.getLevel());
             }
         }
     }
@@ -272,9 +272,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId3));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("interested"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("interested"), skill.getLevel());
             } else {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("advanced"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("advanced"), skill.getLevel());
             }
         }
     }
@@ -285,9 +285,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("advanced"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("advanced"), skill.getLevel());
             } else {
-                assertEquals(SkillLevelDTO.SkillLevel.convertFromSkillLevel("intermediate"), skill.getLevel());
+                assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString("intermediate"), skill.getLevel());
             }
         }
     }
