@@ -39,7 +39,7 @@ public class SkillsReportController {
     /**
      * Create a skills report from requested skills
      *
-     * @param requestBody {@link SkillsReportRequestDTO} of the request
+     * @param requestBody {@link SkillsReportRequestDTO} Body of the request
      * @return {@link SkillsReportResponseDTO} Returned skills report
      */
     @Post()
