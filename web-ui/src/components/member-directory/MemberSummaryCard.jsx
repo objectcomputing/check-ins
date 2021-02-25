@@ -58,7 +58,7 @@ const MemberSummaryCard = ({ member, index }) => {
           <CardContent>
             <Container fixed className={"info-container"}>
               <Typography variant="body2" color="textSecondary" component="p">
-                <a href={`mailto:${workEmail}`}>
+                <a target="_blank" href={`mailto:${workEmail}`}>
                   {workEmail}
                 </a>
                 <br />
