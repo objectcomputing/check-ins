@@ -6,10 +6,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 public interface ActionItemFixture extends RepositoryFixture {
 
-    default ActionItem createADeafultActionItem(CheckIn checkIn, MemberProfile memberProfile) {
+    default ActionItem createADefaultActionItem(CheckIn checkIn, MemberProfile memberProfile) {
         return getActionItemRepository().save(new ActionItem(checkIn.getId(), memberProfile.getId(), "tests"));
     }
-
-
 }
 

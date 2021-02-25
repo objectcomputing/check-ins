@@ -34,7 +34,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testCreateATeamMemberByAdmin() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO(team.getId(), memberProfile.getId(), false);
@@ -50,7 +50,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testCreateATeamMemberByTeamLead() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
 
         // Create a team lead and add him to the team
         MemberProfile memberProfileOfTeamLead = createADefaultMemberProfile();
@@ -71,11 +71,11 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testCreateATeamMemberThrowsExceptionForNotAdminAndNotTeamLead() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
 
         // Create a user (not team lead) and add him to the team
         MemberProfile memberProfileOfTeammate = createADefaultMemberProfile();
-        createDeafultTeamMember(team, memberProfileOfTeammate);
+        createDefaultTeamMember(team, memberProfileOfTeammate);
 
         // Create a member and add him to team
         MemberProfile memberProfileOfUser = createAnUnrelatedUser();
@@ -131,7 +131,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithNonExistingTeam() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO teamMemberResponseDTO = new TeamMemberCreateDTO(UUID.randomUUID(), memberProfile.getId(), false);
@@ -151,7 +151,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithNonExistingMember() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMemberCreateDTO requestDTO = new TeamMemberCreateDTO(team.getId(), UUID.randomUUID(), false);
@@ -171,10 +171,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testCreateATeamMemberWithExistingMemberAndTeam() {
 
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         TeamMemberCreateDTO teamMemberResponseDTO = new TeamMemberCreateDTO(teamMember.getTeamid(), memberProfile.getId(), false);
 
@@ -192,10 +192,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testReadTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", teamMember.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
@@ -214,10 +214,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindAllTeamMembers() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
@@ -229,10 +229,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindByTeamId() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s", teamMember.getTeamid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
@@ -244,10 +244,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindByMemberId() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", teamMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamMember>> response = client.toBlocking().exchange(request, Argument.setOf(TeamMember.class));
@@ -258,10 +258,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindTeamMembers() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s", teamMember.getTeamid(),
                 teamMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -273,10 +273,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testFindTeamMembersAllParams() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?teamid=%s&memberid=%s&lead=%s", teamMember.getTeamid(),
                 teamMember.getMemberid(), teamMember.isLead())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -289,10 +289,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberByAdmin() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), true);
         final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth("test@test.com", ADMIN_ROLE);
@@ -308,7 +308,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberByTeamLead() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
 
         // Create a team lead and add him to the team
         MemberProfile memberProfileOfTeamLead = createADefaultMemberProfile();
@@ -316,7 +316,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         // Create a member and add him to team
         MemberProfile memberProfileOfUser = createAnUnrelatedUser();
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfileOfUser);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfileOfUser);
 
         // Update member
         TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), true);
@@ -333,10 +333,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowsExceptionForNotAdminAndNotTeamLead() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<TeamMember> request = HttpRequest.PUT("", teamMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -353,10 +353,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateAnInvalidTeamMember() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         teamMember.setMemberid(null);
         teamMember.setTeamid(null);
 
@@ -392,10 +392,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowException() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         teamMember.setMemberid(UUID.randomUUID());
         teamMember.setTeamid(teamMember.getTeamid());
 
@@ -415,10 +415,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowExceptionWithNoTeam() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         teamMember.setMemberid(teamMember.getMemberid());
         teamMember.setTeamid(UUID.randomUUID());
 
@@ -438,10 +438,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberThrowExceptionWithInvalidId() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         teamMember.setId(UUID.randomUUID());
         teamMember.setMemberid(teamMember.getMemberid());
         teamMember.setTeamid(teamMember.getTeamid());
@@ -462,10 +462,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testDeleteTeamMemberAsAdmin() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -477,10 +477,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testDeleteTeamMemberWithoutAdminPrivilege() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", teamMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -494,11 +494,11 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testDeleteTeamMemberWithTeamLead() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile leadMemberProfile = createAnUnrelatedUser();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         TeamMember teamLead = createLeadTeamMember(team, leadMemberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
@@ -512,10 +512,10 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testDeleteInvalidTeamMemberAsAdmin() {
-        Team team = createDeafultTeam();
+        Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        TeamMember teamMember = createDeafultTeamMember(team, memberProfile);
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
         teamMember.setId(UUID.randomUUID());
 
         final HttpRequest<Object> request = HttpRequest.

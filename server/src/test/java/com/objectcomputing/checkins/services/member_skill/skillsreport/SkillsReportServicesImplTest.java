@@ -57,31 +57,31 @@ public class SkillsReportServicesImplTest {
 
     @Test
     void testReportSkillNotExist() {
-        SkillLevelDTO dto = new SkillLevelDTO();
+        final SkillLevelDTO dto = new SkillLevelDTO();
         dto.setId(UUID.randomUUID());
         dto.setLevel("intermediate");
 
-        List<SkillLevelDTO> skills = new ArrayList<>();
+        final List<SkillLevelDTO> skills = new ArrayList<>();
         skills.add(dto);
 
-        SkillsReportRequestDTO request = new SkillsReportRequestDTO();
+        final SkillsReportRequestDTO request = new SkillsReportRequestDTO();
         request.setSkills(skills);
         assertThrows(BadArgException.class, () -> skillsReportServices.report(request));
     }
 
     @Test
     void testReportMemberProfileNotExist() {
-        SkillLevelDTO dto = new SkillLevelDTO();
-        UUID skillId = UUID.randomUUID();
+        final SkillLevelDTO dto = new SkillLevelDTO();
+        final UUID skillId = UUID.randomUUID();
         dto.setId(skillId);
         when(skillRepository.existsById(skillId)).thenReturn(true);
 
-        List<SkillLevelDTO> skills = new ArrayList<>();
+        final List<SkillLevelDTO> skills = new ArrayList<>();
         skills.add(dto);
 
-        SkillsReportRequestDTO request = new SkillsReportRequestDTO();
+        final SkillsReportRequestDTO request = new SkillsReportRequestDTO();
         request.setSkills(skills);
-        Set<UUID> members =  new HashSet<>();
+        final Set<UUID> members = new HashSet<>();
         members.add(UUID.randomUUID());
         request.setMembers(members);
         assertThrows(BadArgException.class, () -> skillsReportServices.report(request));
@@ -89,9 +89,9 @@ public class SkillsReportServicesImplTest {
 
     @Test
     void testReportEmptyRequestedSkillsList() {
-        SkillsReportRequestDTO request =  new SkillsReportRequestDTO();
+        final SkillsReportRequestDTO request =  new SkillsReportRequestDTO();
         request.setSkills(new ArrayList<>());
-        SkillsReportResponseDTO response = skillsReportServices.report(request);
+        final SkillsReportResponseDTO response = skillsReportServices.report(request);
         assertNotNull(response);
 
         verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
@@ -119,17 +119,17 @@ public class SkillsReportServicesImplTest {
         final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, "intermediate", LocalDate.now());
         final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, "expert", LocalDate.now());
 
-        List<MemberSkill> skillList1 = new ArrayList<>();
+        final List<MemberSkill> skillList1 = new ArrayList<>();
         skillList1.add(ms1);
         skillList1.add(ms7);
-        List<MemberSkill> skillList2 = new ArrayList<>();
+        final List<MemberSkill> skillList2 = new ArrayList<>();
         skillList2.add(ms2);
         skillList2.add(ms5);
         skillList2.add(ms8);
-        List<MemberSkill> skillList3 = new ArrayList<>();
+        final List<MemberSkill> skillList3 = new ArrayList<>();
         skillList3.add(ms3);
         skillList3.add(ms6);
-        List<MemberSkill> skillList4 = new ArrayList<>();
+        final List<MemberSkill> skillList4 = new ArrayList<>();
         skillList4.add(ms4);
         skillList4.add(ms9);
 
@@ -151,24 +151,24 @@ public class SkillsReportServicesImplTest {
         when(memberProfileRepository.existsById(memberId4)).thenReturn(true);
 
         // List of skills required in first request
-        SkillLevelDTO dto1 = new SkillLevelDTO();
-        SkillLevelDTO dto2 = new SkillLevelDTO();
-        SkillLevelDTO dto3 = new SkillLevelDTO();
+        final SkillLevelDTO dto1 = new SkillLevelDTO();
+        final SkillLevelDTO dto2 = new SkillLevelDTO();
+        final SkillLevelDTO dto3 = new SkillLevelDTO();
         dto1.setId(skillId1);
         dto1.setLevel("intermediate");
         dto2.setId(skillId2);
         dto3.setId(skillId3);
         dto3.setLevel("advanced");
 
-        List<SkillLevelDTO> requestedSkills1 = new ArrayList<>();
+        final List<SkillLevelDTO> requestedSkills1 = new ArrayList<>();
         requestedSkills1.add(dto1);
         requestedSkills1.add(dto2);
         requestedSkills1.add(dto3);
 
         // Any member with at least 1 satisfying skill is returned
-        SkillsReportRequestDTO request1 = new SkillsReportRequestDTO();
+        final SkillsReportRequestDTO request1 = new SkillsReportRequestDTO();
         request1.setSkills(requestedSkills1);
-        SkillsReportResponseDTO response1 = skillsReportServices.report(request1);
+        final SkillsReportResponseDTO response1 = skillsReportServices.report(request1);
 
         assertEquals(3, response1.getTeamMembers().size());
         for (TeamMemberSkillDTO elem : response1.getTeamMembers()) {
@@ -188,12 +188,12 @@ public class SkillsReportServicesImplTest {
         verify(memberProfileRepository, never()).existsById(any(UUID.class));
 
         // Specify a list of members
-        Set<UUID> members =  new HashSet<>();
+        final Set<UUID> members =  new HashSet<>();
         members.add(memberId2);
         members.add(memberId3);
         members.add(memberId4);
         request1.setMembers(members);
-        SkillsReportResponseDTO response2 = skillsReportServices.report(request1);
+        final SkillsReportResponseDTO response2 = skillsReportServices.report(request1);
 
         assertEquals(2, response2.getTeamMembers().size());
         for (TeamMemberSkillDTO elem : response2.getTeamMembers()) {
@@ -211,7 +211,7 @@ public class SkillsReportServicesImplTest {
 
         // Each returned member must satisfy all requested skills
         request1.setInclusive(true);
-        SkillsReportResponseDTO response3 = skillsReportServices.report(request1);
+        final SkillsReportResponseDTO response3 = skillsReportServices.report(request1);
         assertTrue(response3.getTeamMembers().isEmpty());
         verify(memberSkillRepository, times(9)).findBySkillid(any(UUID.class));
         verify(memberProfileRepository, times(9)).findNameById(any(UUID.class));
@@ -219,21 +219,21 @@ public class SkillsReportServicesImplTest {
         verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
 
         // Another request
-        SkillLevelDTO dto4 = new SkillLevelDTO();
-        SkillLevelDTO dto5 = new SkillLevelDTO();
+        final SkillLevelDTO dto4 = new SkillLevelDTO();
+        final SkillLevelDTO dto5 = new SkillLevelDTO();
         dto4.setId(skillId2);
         dto4.setLevel("intermediate");
         dto5.setId(skillId4);
         dto5.setLevel("advanced");
 
-        List<SkillLevelDTO> requestedSkills2 = new ArrayList<>();
+        final List<SkillLevelDTO> requestedSkills2 = new ArrayList<>();
         requestedSkills2.add(dto4);
         requestedSkills2.add(dto5);
 
-        SkillsReportRequestDTO request2 = new SkillsReportRequestDTO();
+        final SkillsReportRequestDTO request2 = new SkillsReportRequestDTO();
         request2.setSkills(requestedSkills2);
         request2.setInclusive(true);
-        SkillsReportResponseDTO response4 = skillsReportServices.report(request2);
+        final SkillsReportResponseDTO response4 = skillsReportServices.report(request2);
 
         assertEquals(1, response4.getTeamMembers().size());
         assertEquals(memberId4, response4.getTeamMembers().get(0).getId());

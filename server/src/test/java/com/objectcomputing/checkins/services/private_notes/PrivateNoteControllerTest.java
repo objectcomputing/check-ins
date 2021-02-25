@@ -55,7 +55,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
@@ -71,7 +71,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfPDL);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
@@ -88,7 +88,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfADMIN = createAnUnrelatedUser();
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfPDL);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfADMIN.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
@@ -106,7 +106,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        PrivateNote privateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
+        PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", privateNote.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
@@ -311,7 +311,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
+        PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfile);
         PrivateNote.setCreatedbyid(null);
         PrivateNote.setCheckinid(null);
 
@@ -365,7 +365,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfileOfUser);
+        PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
@@ -382,7 +382,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfileOfPDL);
+        PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<PrivateNote> response = client.toBlocking().exchange(request, PrivateNote.class);
@@ -399,7 +399,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        PrivateNote PrivateNote = createADeafultPrivateNote(checkIn, memberProfile);
+        PrivateNote PrivateNote = createADefaultPrivateNote(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.PUT("", PrivateNote).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,

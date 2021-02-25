@@ -9,12 +9,12 @@ import java.util.UUID;
 
 public interface TeamFixture extends MemberProfileFixture, RepositoryFixture{
 
-    default Team createDeafultTeam() {
-        return getTeamRepository().save(new Team(UUID.randomUUID(),"Ninja","Warriors"));
+    default Team createDefaultTeam() {
+        return getTeamRepository().save(new Team(UUID.randomUUID(), "Ninja", "Warriors"));
     }
 
-    default Team createAnotherDeafultTeam() {
-        return getTeamRepository().save(new Team(UUID.randomUUID(),"Coding","Warriors"));
+    default Team createAnotherDefaultTeam() {
+        return getTeamRepository().save(new Team(UUID.randomUUID(), "Coding", "Warriors"));
     }
 
     default TeamCreateDTO createFromEntity(Team entity) {

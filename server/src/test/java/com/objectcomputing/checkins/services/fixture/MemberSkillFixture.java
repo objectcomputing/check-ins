@@ -9,6 +9,6 @@ import java.time.LocalDate;
 public interface MemberSkillFixture extends RepositoryFixture{
 
     default MemberSkill createMemberSkill(MemberProfile memberProfile, Skill skill, String skillLevel, LocalDate lastUsedDate) {
-        return getMemberSkillRepository().save(new MemberSkill(memberProfile.getId(),skill.getId(), skillLevel, lastUsedDate));
+        return getMemberSkillRepository().save(new MemberSkill(memberProfile.getId(), skill.getId(), skillLevel, lastUsedDate));
     }
 }

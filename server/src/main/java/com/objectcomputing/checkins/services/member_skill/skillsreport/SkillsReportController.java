@@ -37,10 +37,10 @@ public class SkillsReportController {
     }
 
     /**
-     * Create and save a new member skill.
+     * Create a skills report from requested skills
      *
-     * @param requestBody, {@link SkillsReportRequestDTO}
-     * @return {@link HttpResponse<SkillsReportResponseDTO>}
+     * @param requestBody {@link SkillsReportRequestDTO} of the request
+     * @return {@link SkillsReportResponseDTO} Returned skills report
      */
     @Post()
     public Single<HttpResponse<SkillsReportResponseDTO>> reportSkills(@Body @Valid @NotNull SkillsReportRequestDTO requestBody,
