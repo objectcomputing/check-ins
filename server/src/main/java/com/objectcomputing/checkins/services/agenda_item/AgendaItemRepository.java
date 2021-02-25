@@ -17,7 +17,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface AgendaItemRepository extends CrudRepository<AgendaItem, UUID> {
 
-    @Query("SELECT * " +
+    @Query(value = "SELECT id, checkinid, createdbyid, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description, priority  " +
             "FROM agenda_items item " +
             "WHERE (:checkinid  IS NULL OR item.checkinId= :checkinid) " +
             "AND (:createdById  IS NULL OR item.createdByid= :createdById) ")

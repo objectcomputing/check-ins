@@ -1,31 +1,44 @@
 package com.objectcomputing.checkins.services.private_notes;
 
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNote;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
+import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 import java.util.UUID;
+
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class PrivateNoteServicesImpl implements PrivateNoteServices {
 
     private final CheckInServices checkinServices;
+    private final CheckInRepository checkinRepo;
     private final PrivateNoteRepository privateNoteRepository;
+    private final MemberProfileRepository memberRepo;
     private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
     final String unauthorizedErrorMessage ="User is unauthorized to do this operation";
 
-    public PrivateNoteServicesImpl(CheckInServices checkinServices, PrivateNoteRepository privateNoteRepository,
-                                   MemberProfileServices memberProfileServices,
+    public PrivateNoteServicesImpl(CheckInServices checkinServices, CheckInRepository checkinRepo, PrivateNoteRepository privateNoteRepository,
+                                   MemberProfileRepository memberRepo, MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices) {
         this.checkinServices = checkinServices;
+        this.checkinRepo = checkinRepo;
         this.privateNoteRepository = privateNoteRepository;
+        this.memberRepo = memberRepo;
         this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
     }
@@ -45,9 +58,19 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(checkinId == null || createdById == null, "Invalid private note %s", privateNote);
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate((isAdmin && !isPdl) || isCompleted , unauthorizedErrorMessage);
-        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), "User is unauthorized to do this operation");
+
+        if (!isAdmin) {
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+        }
+
         return privateNoteRepository.save(privateNote);
     }
 
@@ -56,10 +79,26 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         Boolean isAdmin = currentUserServices.isAdmin();
         PrivateNote privateNoteResult = privateNoteRepository.findById(id).orElse(null);
-        validate(privateNoteResult == null, "Invalid private note id %s", id);
-        CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
-        validate(isAdmin && !privateNoteResult.getCreatedbyid().equals(checkinRecord.getPdlId()),"Private note is created by Member and Admin is not authorized to read");
-        validate(!isAdmin && !currentUser.getId().equals(privateNoteResult.getCreatedbyid()), unauthorizedErrorMessage);
+
+        if (privateNoteResult == null) {
+            throw new NotFoundException(String.format("Invalid private note id %s", id));
+        }
+
+        if (!isAdmin) {
+            CheckIn checkinRecord = checkinServices.read(privateNoteResult.getCheckinid());
+            if (checkinRecord == null) {
+                throw new NotFoundException(String.format("CheckIn %s doesn't exist", privateNoteResult.getCheckinid()));
+            }
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+        }
+
         return privateNoteResult;
     }
 
@@ -79,10 +118,40 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         validate(privateNote.getId() == null, "No private note id %s found for updating", privateNote.getId());
         validate(checkinRecord == null, "Checkin doesn't exits for given checkin Id");
         validate(memberProfileServices.getById(createdById) == null, "Member %s doesn't exist", createdById);
-        validate(!currentUser.getId().equals(createdById), unauthorizedErrorMessage);
-        validate((!currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())), unauthorizedErrorMessage);
+
+        if (!isAdmin) {
+
+            if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()) || isCompleted ) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+
+            if(currentUser.getId().equals(checkinRecord.getTeamMemberId())) {
+                throw new PermissionException("User is unauthorized to do this operation");
+            }
+        }
+
         return privateNoteRepository.update(privateNote);
 
+    }
+
+    @Override
+    public Set<PrivateNote> findByFields(@Nullable UUID checkinid, @Nullable UUID createbyid) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+
+        if (checkinid != null) {
+            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
+            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
+            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
+        } else if (createbyid != null) {
+            MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
+            validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
+        } else {
+            validate(!isAdmin, "User is unauthorized to do this operation");
+        }
+
+        return privateNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
     private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
