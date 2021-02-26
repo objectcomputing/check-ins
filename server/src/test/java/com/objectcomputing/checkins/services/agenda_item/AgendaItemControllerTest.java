@@ -6,7 +6,9 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.AgendaItemFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture {
+public class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture, RoleFixture {
 
     @Inject
     @Client("/services/agenda-item")
@@ -285,7 +287,6 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
 
-
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
         AgendaItem agendaItem = createADeafultAgendaItem(checkIn, memberProfile);
@@ -367,6 +368,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
+        createDefaultRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -386,6 +388,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileForUnrelatedUser = createAnUnrelatedUser();
+        createDefaultRole(RoleType.ADMIN, memberProfileForUnrelatedUser);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
