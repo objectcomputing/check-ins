@@ -18,6 +18,46 @@ import { Card, CardHeader, TextField } from "@material-ui/core";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import BuildIcon from '@material-ui/icons/Build';
 
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+
+const customBreakpointValues = {
+  values: {
+    xs: 0,
+    sm: 360,
+    md: 768,
+    lg: 992,
+    xl: 1200,
+  },
+}
+
+const breakpoints = createBreakpoints({ ...customBreakpointValues })
+
+const muiTheme = createMuiTheme({
+  breakpoints: {
+    ...customBreakpointValues,
+  },
+  overrides: {
+    MuiCardHeader: {
+      title:{
+      [breakpoints.down('sm')]: {
+        fontSize: "1.1rem",
+        },
+      [breakpoints.between('sm', 'md')]: {
+        fontSize: "1.2rem",
+        },
+      [breakpoints.between('md', 'lg')]: {
+        fontSize: "1.3rem",
+        },
+      [breakpoints.up('lg')]: {
+        fontSize: "1.5rem",
+        },
+      }
+    }
+  }
+});
+
 const SkillSection = ({userId}) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, skills } = state;
@@ -162,6 +202,7 @@ const SkillSection = ({userId}) => {
   );
 
   return (
+  <ThemeProvider theme={muiTheme}>
       <Card>
         <CardHeader
             avatar={<BuildIcon />}
@@ -184,6 +225,7 @@ const SkillSection = ({userId}) => {
             );
           })}
       </Card>
+      </ThemeProvider>
   );
 
 };

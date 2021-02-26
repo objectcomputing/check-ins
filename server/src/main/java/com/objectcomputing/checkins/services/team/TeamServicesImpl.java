@@ -4,7 +4,6 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileDoesNotExistException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
@@ -52,12 +51,8 @@ public class TeamServicesImpl implements TeamServices {
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    try {
-                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
-                        newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
-                    } catch (MemberProfileDoesNotExistException mpdnee) {
-                        throw new BadArgException("No member profile found for name: " + memberDTO.getName());
-                    }
+                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
+                    newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
                 }
             }
         }
@@ -87,12 +82,8 @@ public class TeamServicesImpl implements TeamServices {
                 }
                 newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
                 for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    try {
-                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
-                        newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
-                    } catch (MemberProfileDoesNotExistException mpdnee) {
-                        throw new BadArgException("No member profile found for name: " + memberDTO.getName());
-                    }
+                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
+                    newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
                 }
             } else {
                 throw new BadArgException(String.format("Team %s does not exist, can't update.", teamDTO.getId()));
