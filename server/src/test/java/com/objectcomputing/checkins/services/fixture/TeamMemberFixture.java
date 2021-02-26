@@ -7,16 +7,16 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 
 
 public interface TeamMemberFixture extends RepositoryFixture{
-    default TeamMember createDeafultTeamMember(Team teamEntity, MemberProfile memberProfile) {
-        return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(),false));
+    default TeamMember createDefaultTeamMember(Team teamEntity, MemberProfile memberProfile) {
+        return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(), false));
     }
 
     default TeamMember createLeadTeamMember(Team teamEntity, MemberProfile memberProfile) {
-        return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(),true));
+        return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(), true));
     }
 
     default TeamMemberResponseDTO createDefaultTeamMemberDto(Team teamEntity, MemberProfile memberProfile) {
-        return dtoFromEntity(createDeafultTeamMember(teamEntity, memberProfile), memberProfile);
+        return dtoFromEntity(createDefaultTeamMember(teamEntity, memberProfile), memberProfile);
     }
 
     default TeamMemberResponseDTO createDefaultTeamMemberDto(MemberProfile memberProfile, Boolean lead) {

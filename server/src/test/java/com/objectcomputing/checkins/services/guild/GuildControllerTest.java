@@ -89,7 +89,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testReadGuild() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", g.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Guild> response = client.toBlocking().exchange(request, Guild.class);
@@ -112,9 +112,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testFindGuildS() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         MemberProfile mp = createADefaultMemberProfile();
-        GuildMember gm = createDeafultGuildMember(g, mp);
+        GuildMember gm = createDefaultGuildMember(g, mp);
         Set<Guild> guilds = Collections.singleton(g);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", g.getName(),
@@ -129,9 +129,9 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testFindGuildSByMemeberid() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         MemberProfile mp = createADefaultMemberProfile();
-        GuildMember gm = createDeafultGuildMember(g, mp);
+        GuildMember gm = createDefaultGuildMember(g, mp);
         Set<Guild> guilds = Collections.singleton(g);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", mp.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -145,7 +145,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testFindAllGuilds() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         MemberProfile mp = createADefaultMemberProfile();
 
         final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -158,7 +158,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testUpdateGuild() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
 
         final HttpRequest<Guild> request = HttpRequest.PUT("", g).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Guild> response = client.toBlocking().exchange(request, Guild.class);
@@ -172,7 +172,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testUpdateAnInvalidGuild() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         Guild g2 = new Guild(g.getId(), null, "");
 
         final HttpRequest<Guild> request = HttpRequest.PUT("", g2).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -211,7 +211,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testUpdateGuildThrowException() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         g.setId(UUID.randomUUID());
         final String errorMessage = "Guild %s does not exist, can't update.";
 
@@ -232,7 +232,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testUpdateGuildAsAdmin() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", g.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
@@ -244,7 +244,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
     @Test
     void testDeleteTeamMemberNonAdmin() {
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         final HttpRequest<Object> request = HttpRequest.
@@ -261,7 +261,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testUpdateGuildAsAdminNonExistent() {
 
-        Guild g = createDeafultGuild();
+        Guild g = createDefaultGuild();
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", g.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);

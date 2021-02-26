@@ -269,7 +269,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
         final HttpRequest<?> request = HttpRequest.DELETE(actionItem.getId().toString()).basicAuth(memberProfileOfPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
@@ -284,7 +284,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -299,7 +299,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -314,7 +314,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
@@ -330,7 +330,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfPDL.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -352,7 +352,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -373,7 +373,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId().toString())).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
@@ -390,7 +390,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId())).basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
@@ -407,7 +407,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", actionItem.getId())).basicAuth(memberProfileOfMrNobody.getWorkEmail(), PDL_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
@@ -445,7 +445,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
                 actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -462,7 +462,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?checkinid=%s&createdbyid=%s", actionItem.getCheckinid(),
                 actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
@@ -479,7 +479,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
@@ -497,7 +497,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
                 .basicAuth(memberProfileForPDL.getWorkEmail(), MEMBER_ROLE);
@@ -519,7 +519,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s",
                 actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -536,7 +536,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdbyid=%s",
                 actionItem.getCreatedbyid())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
@@ -552,7 +552,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfPDL.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -569,7 +569,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -585,7 +585,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -608,7 +608,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfUser);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfUser);
 
         final HttpRequest<?> request = HttpRequest.PUT("", actionItem).basicAuth(memberProfileOfUser.getWorkEmail(), PDL_ROLE);
         final HttpResponse<ActionItem> response = client.toBlocking().exchange(request, ActionItem.class);
@@ -625,7 +625,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfile);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
         actionItem.setCreatedbyid(null);
         actionItem.setCheckinid(null);
 
@@ -678,7 +678,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setId(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -702,7 +702,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setCheckinid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
@@ -726,7 +726,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
-        ActionItem actionItem = createADeafultActionItem(checkIn, memberProfileOfPDL);
+        ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
         actionItem.setCreatedbyid(UUID.randomUUID());
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
