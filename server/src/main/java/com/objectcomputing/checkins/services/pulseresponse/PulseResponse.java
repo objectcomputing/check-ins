@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -44,11 +45,19 @@ public class PulseResponse {
     private UUID teamMemberId;
 
     @Column(name="internalFeelings")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(internalFeelings::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @NotNull
     @Schema(description = "description of internalfeelings", required = true)
     private String internalFeelings;
 
     @Column(name="externalFeelings")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(externalFeelings::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @NotNull
     @Schema(description = "description of externalfeelings", required = true)
     private String externalFeelings;
