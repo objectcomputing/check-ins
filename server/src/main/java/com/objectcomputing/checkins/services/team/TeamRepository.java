@@ -21,8 +21,6 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
 
     Optional<Team> findById(UUID id);
 
-    List<Team> findByNameIlike(String name);
-
     @Override
     <S extends Team> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
@@ -36,4 +34,5 @@ public interface TeamRepository extends CrudRepository<Team, UUID> {
             "WHERE (:name IS NULL OR t_.name = :name) " +
             "AND (:memberid IS NULL OR tm_.memberid = :memberid) ")
     List<Team> search(@Nullable String name, @Nullable String memberid);
+
 }
