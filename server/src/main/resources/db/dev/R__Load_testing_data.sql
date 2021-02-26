@@ -17,67 +17,67 @@ delete from member_profile;
 INSERT INTO member_profile
     (id, name, title, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Gina Bremehr', 'COO', 'St. Louis', 'bremehrg@objectcomputing.com', '1231234', '2012-09-29', 'Epitome of Strong Woman', null);
+    ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('Gina Bremehr','${aeskey}'), PGP_SYM_ENCRYPT('COO','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bremehrg@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Epitome of Strong Woman','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('2559a257-ae84-4076-9ed4-3820c427beeb', 'Ron Steinkamp', 'Senior Project Manager', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'steinkampr@objectcomputing.com', '3333333', '2019-09-19', 'Managing projets well', null);
+    ('2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('Ron Steinkamp','${aeskey}'), PGP_SYM_ENCRYPT('Senior Project Manager','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9',  PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('steinkampr@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Managing projects well','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('802cb1f5-a255-4236-8719-773fa53d79d9', 'John Meyerin', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'meyerinj@objectcomputing.com', '1111111', '2018-09-03', 'Outstanding Engineer', null);
+    ('802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('John Meyerin','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('meyerinj@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Outstanding Engineer','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'Geetika Sharma', 'PMO Administrator', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'St. Louis', 'sharmag@objectcomputing.com', '4444444', '2019-09-09', 'Engineer Wrangler extrodinaire', null);
-
-INSERT INTO member_profile
-(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
-VALUES
-('8fa673c0-ca19-4271-b759-41cb9db2e83a', 'Holly Williams', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'williamsh@objectcomputing.com', '8888888', '2018-11-13', 'Software Engineer Remarkable', null);
+    ('7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('Geetika Sharma','${aeskey}'), PGP_SYM_ENCRYPT('PMO Administrator','${aeskey}'), '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('sharmag@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Wrangler Extrodinaire','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Michael Kimberlin', 'Director of Organizational Development', '8fa673c0-ca19-4271-b759-41cb9db2e83a', 'St. Louis', 'kimberlinm@objectcomputing.com', '2222222', '2007-01-11', 'Developer of developers', null);
+    ('8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('Holly Williams','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('williamsh@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Software Engineer Remarkable','${aeskey}'), null);
+
+INSERT INTO member_profile
+    (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+VALUES
+    ('6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('Michael Kimberlin','${aeskey}'), PGP_SYM_ENCRYPT('Director of Organizational Development','${aeskey}'), '8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('kimberlinm@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Developer of developers and others','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'Mark Volkmann', 'Partner and Principal Software Engineer', 'St. Louis', 'volkmannm@objectcomputing.com', '9999999', '1996-06-13', 'Software Engineer Spectacular', null);
+    ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('Mark Volkmann','${aeskey}'), PGP_SYM_ENCRYPT('Partner and Distinguished Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('volkmannm@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Software Engineer Spectacular','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('6884ab96-2275-4af9-89d8-ad84254d8759', 'Pramukh Bagur', 'Software Engineer', '802cb1f5-a255-4236-8719-773fa53d79d9', 'St. Louis', 'bagurp@objectcomputing.com', '9876543', '2018-09-09', 'Top notch Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('Pramukh Bagur','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bagurp@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Top notch Engineer','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesse Hanner', 'Software Engineer', '6884ab96-2275-4af9-89d8-ad84254d8759', 'St. Louis', 'hannerj@objectcomputing.com', '1234567', '2018-01-10', 'Amazing Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Jesse Hanner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('hannerj@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Amazing Engineer','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('1b4f99da-ef70-4a76-9b37-8bb783b749ad', 'Suman Maroju', 'Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'St. Louis', 'marojus@objectcomputing.com', '2345678', '2018-06-06', 'Superior Engineer', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+   ('1b4f99da-ef70-4a76-9b37-8bb783b749ad', PGP_SYM_ENCRYPT('Suman Maroju','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('marojus@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Superior Engineer','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('b2d35288-7f1e-4549-aa2b-68396b162490', 'Mohit Bhatia', 'Senior Software Engineer', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'St. Louis', 'bhatiam@objectcomputing.com', '5555555', '2013-11-13', 'Engineer Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('b2d35288-7f1e-4549-aa2b-68396b162490', PGP_SYM_ENCRYPT('Mohit Bhatia','${aeskey}'), PGP_SYM_ENCRYPT('Principal Software Engineer','${aeskey}'), '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bhatiam@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Extraordinaire','${aeskey}'), null);
 
 INSERT INTO member_profile
     (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-    ('43ee8e79-b33d-44cd-b23c-e183894ebfef', 'Zack Brown', 'Software Engineer', '2559a257-ae84-4076-9ed4-3820c427beeb', 'St. Louis', 'brownz@objectcomputing.com', '5555555', '2020-06-06', 'Software Engineer Extrodinaire', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('43ee8e79-b33d-44cd-b23c-e183894ebfef', PGP_SYM_ENCRYPT('Zack Brown','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('brownz@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Engineer Phenomenal','${aeskey}'), null);
 
 INSERT INTO member_profile
-(id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
+    (id, name, title, pdlid, location, workEmail, insperityid, startdate, biotext, supervisorid)
 VALUES
-('066b186f-1425-45de-89f2-4ddcc6ebe237', 'Joe Warner', 'Software Engineer', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', 'St. Louis', 'warnerj@objectcomputing.com', '1234569', '2019-03-25', 'Engineer of Some Note', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+    ('066b186f-1425-45de-89f2-4ddcc6ebe237', PGP_SYM_ENCRYPT('Joe Warner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('warnerj@objectcomputing.com','${aeskey}'), '1231234', '2012-09-29', PGP_SYM_ENCRYPT('Engineer of Supreme Ability','${aeskey}'), null);
 
 INSERT INTO role
     (id, role, memberid)
