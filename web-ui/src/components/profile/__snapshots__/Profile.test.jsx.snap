@@ -27,6 +27,8 @@ exports[`renders correctly 1`] = `
       >
         <a
           href="mailto:undefined"
+          rel="noopener noreferrer"
+          target="_blank"
         />
         <br />
         Location: 
