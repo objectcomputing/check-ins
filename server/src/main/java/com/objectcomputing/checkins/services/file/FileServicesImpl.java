@@ -58,7 +58,6 @@ public class FileServicesImpl implements FileServices {
     @Override
     public Set<FileInfoDTO> findFiles(@Nullable UUID checkInID) {
 
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         validate(checkInID == null && !isAdmin, "You are not authorized to perform this operation");
 
@@ -89,13 +88,8 @@ public class FileServicesImpl implements FileServices {
                     }
                 });
             } else if (checkInID != null) {
-                //find by CheckIn ID
-                CheckIn checkIn = checkInServices.read(checkInID);
-                validate(checkIn == null, String.format("Unable to find checkin record with id %s", checkInID));
-
-                if(!isAdmin) {
-                    validate((!currentUser.getId().equals(checkIn.getTeamMemberId()) && !currentUser.getId().equals(checkIn.getPdlId())), "You are not authorized to perform this operation");
-                }
+                validate(!checkInServices.accessGranted(checkInID, currentUserServices.getCurrentUser().getId()),
+                        "You are not authorized to perform this operation");
 
                 Set<CheckinDocument> checkinDocuments = checkinDocumentServices.read(checkInID);
                 for (CheckinDocument cd : checkinDocuments) {

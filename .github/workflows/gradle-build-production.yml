@@ -26,7 +26,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemble
         env:
-          REACT_APP_API_URL: https://checkins-master-tuvcfzotpq-uc.a.run.app
+          REACT_APP_API_URL: https://checkins.objectcomputing.com
 #      - name: Gradle runs tests
 #        run: ./gradlew check
       - name: Setup gcloud CLI

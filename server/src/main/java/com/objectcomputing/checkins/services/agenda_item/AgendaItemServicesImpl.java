@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.agenda_item;
 import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -22,13 +23,18 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
     private final AgendaItemRepository agendaItemRepository;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
+    private final CheckInServices checkInServices;
 
-    public AgendaItemServicesImpl(CheckInRepository checkinRepo, AgendaItemRepository agendaItemRepository,
-                                   MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
+    public AgendaItemServicesImpl(CheckInRepository checkinRepo,
+                                  AgendaItemRepository agendaItemRepository,
+                                  MemberProfileRepository memberRepo,
+                                  CurrentUserServices currentUserServices,
+                                  CheckInServices checkInServices) {
         this.checkinRepo = checkinRepo;
         this.agendaItemRepository = agendaItemRepository;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
+        this.checkInServices = checkInServices;
     }
 
     @Override
@@ -117,10 +123,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
+            validate(!checkInServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");

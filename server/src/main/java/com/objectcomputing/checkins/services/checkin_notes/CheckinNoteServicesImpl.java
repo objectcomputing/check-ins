@@ -96,14 +96,14 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
+        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
-        if (checkinRecord != null && !isAdmin && !currentUser.getId().equals(checkinRecord.getTeamMemberId()) && !currentUser.getId().equals(checkinRecord.getPdlId())) {
-            throw new PermissionException("You do not have permission to access this resource");
+        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
+        if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+            throw new PermissionException("User is unauthorized to do this operation");
         }
-
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
-        validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
         validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
         if (!isAdmin && isCompleted) {
@@ -122,7 +122,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
             CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
             final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
             final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!currentUser.getId().equals(pdlId) && !currentUser.getId().equals(teamMemberId) && !isAdmin, "User is unauthorized to do this operation");
+            validate(!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");

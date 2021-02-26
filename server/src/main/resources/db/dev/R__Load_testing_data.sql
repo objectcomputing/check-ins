@@ -217,22 +217,22 @@ VALUES
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('a8733740-cf4c-4c16-a8cf-4f928c409acc', 'Checkins Experts', 'Checkins Engineers of superior knowledge');
+    ('a8733740-cf4c-4c16-a8cf-4f928c409acc', PGP_SYM_ENCRYPT('Checkins Experts','${aeskey}'), PGP_SYM_ENCRYPT('Checkins Engineers of superior knowledge','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', 'JavaScript Gurus', 'JavaScript Engineers of Outstanding Skill');
+    ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', PGP_SYM_ENCRYPT('JavaScript Gurus','${aeskey}'), PGP_SYM_ENCRYPT('JavaScript Engineers of Outstanding Skill','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('036b95a5-357c-45bd-b60e-e8e2e1afec83', 'Micronaut Genii', 'Micronaut Engineers of Genius Caliber');
+    ('036b95a5-357c-45bd-b60e-e8e2e1afec83', PGP_SYM_ENCRYPT('Micronaut Genii','${aeskey}'), PGP_SYM_ENCRYPT('Micronaut Engineers of Genius Caliber','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', 'PMO Superness', 'Excellent PMO Artists');
+    ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', PGP_SYM_ENCRYPT('PMO Superness','${aeskey}'), PGP_SYM_ENCRYPT('Excellent PMO Artists','${aeskey}'));
 
 INSERT INTO team_member
     (id, teamid, memberid, lead)
@@ -327,7 +327,8 @@ VALUES
 INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
 VALUES
-    ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note');
+    ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Jesses note','${aeskey}'));
+
 
 INSERT INTO private_notes
     (id, checkinid, createdbyid, description)

@@ -111,6 +111,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         teamCreateDTO.setDescription("test");
         teamCreateDTO.setName(teamEntity.getName());
         teamCreateDTO.setTeamMembers(new ArrayList<>());
+        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createADefaultMemberProfile(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -121,7 +122,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Team with name %s already exists",teamCreateDTO.getName()),error);
+        assertEquals(String.format("Team with name %s already exists", teamCreateDTO.getName()), error);
     }
 
     @Test
@@ -159,7 +160,6 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testFindByName() {
-
         Team teamEntity = createDefaultTeam() ;
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", teamEntity.getName())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -271,7 +271,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Team %s does not exist, can't update.", requestId),error);
+        assertEquals(String.format("Team %s does not exist, can't update.", requestId), error);
         assertEquals(request.getPath(), href);
 
     }
@@ -287,9 +287,9 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         createLeadTeamMember(teamEntity, memberProfileofTeamLeadEntity);
         createDefaultTeamMember(teamEntity, memberProfileOfTeamMember);
 
-        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileOfTeamMember.getWorkEmail(), MEMBER_ROLE);
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileOfTeamMember.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(request, Map.class));
+                () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
@@ -306,7 +306,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         //add members to team
         createDefaultTeamMember(teamEntity, memberProfileOfAdmin);
 
-        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -322,7 +322,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         createLeadTeamMember(teamEntity, memberProfileofTeamLeadEntity);
         // createDefaultTeamMember(team, memberProfileOfTeamMember);
 
-        final MutableHttpRequest<?> request =  HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileofTeamLeadEntity.getWorkEmail(), MEMBER_ROLE);
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", teamEntity.getId())).basicAuth(memberProfileofTeamLeadEntity.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -339,7 +339,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         //throw error
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-        () -> client.toBlocking().exchange(request, Map.class));
+                () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get("message");
