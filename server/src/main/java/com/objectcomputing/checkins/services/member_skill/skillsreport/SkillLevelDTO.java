@@ -16,7 +16,7 @@ public class SkillLevelDTO {
 
     @Nullable
     @Schema(description = "Level of the skill")
-    private SkillsReportServicesImpl.SkillLevel level;
+    private SkillLevel level;
 
     public UUID getId() {
         return id;
@@ -27,11 +27,11 @@ public class SkillLevelDTO {
     }
 
     @Nullable
-    public SkillsReportServicesImpl.SkillLevel getLevel() {
+    public SkillLevel getLevel() {
         return level;
     }
 
-    public void setLevel(@Nullable SkillsReportServicesImpl.SkillLevel level) {
+    public void setLevel(@Nullable SkillLevel level) {
         this.level = level;
     }
 }

@@ -39,7 +39,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         skillLevelDTO.setId(skill.getId());
-        skillLevelDTO.setLevel(SkillsReportServicesImpl.SkillLevel.INTERMEDIATE);
+        skillLevelDTO.setLevel(SkillLevel.INTERMEDIATE);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -55,7 +55,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         assertEquals(1, skillsReportResponseDTO.getTeamMembers().size());
         assertEquals(1, skillsReportResponseDTO.getTeamMembers().get(0).getSkills().size());
         assertEquals(skill.getId(), skillsReportResponseDTO.getTeamMembers().get(0).getSkills().get(0).getId());
-        assertEquals(SkillsReportServicesImpl.SkillLevel.convertFromString(memberSkill.getSkilllevel()),
+        assertEquals(SkillLevel.convertFromString(memberSkill.getSkilllevel()),
                 skillsReportResponseDTO.getTeamMembers().get(0).getSkills().get(0).getLevel());
         assertEquals(memberProfile.getId(), skillsReportResponseDTO.getTeamMembers().get(0).getId());
     }
@@ -70,7 +70,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         skillLevelDTO.setId(skill.getId());
-        skillLevelDTO.setLevel(SkillsReportServicesImpl.SkillLevel.EXPERT);
+        skillLevelDTO.setLevel(SkillLevel.EXPERT);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
@@ -93,7 +93,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
         final SkillLevelDTO skillLevelDTO = new SkillLevelDTO();
         final UUID skillId = UUID.randomUUID();
         skillLevelDTO.setId(skillId);
-        skillLevelDTO.setLevel(SkillsReportServicesImpl.SkillLevel.ADVANCED);
+        skillLevelDTO.setLevel(SkillLevel.ADVANCED);
         skillLevelDTOList.add(skillLevelDTO);
         skillsReportRequestDTO.setSkills(skillLevelDTOList);
 
