@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.checkin_notes;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -39,6 +40,10 @@ public class CheckinNote {
 
     @Nullable
     @Column(name = "description")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "description of the check in note")
     private String description;
 
