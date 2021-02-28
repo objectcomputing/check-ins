@@ -8,23 +8,19 @@ import {
     FormControlLabel,
     IconButton
 } from '@material-ui/core';
-import RemoveIcon from "@material-ui/icons/Remove";
+import DeleteIcon from "@material-ui/icons/Delete";
 import TextField from '@material-ui/core/TextField';
-import ListItem from '@material-ui/core/ListItem';
 import { debounce } from "lodash/function";
 import { makeStyles } from "@material-ui/core/styles";
 import DiscreteSlider from '../slider/Slider'
 
 const useStyles = makeStyles((theme) => ({
-  skillRow: {
-    justifyContent: "space-around",
-  },
   hidden: {
     display: "none",
   }
 }));
 
-const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, index}) => {
+const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, index, key}) => {
     let [currCheck, setCurrCheck] = useState(!lastUsedDate);
     let [lastUsed, setLastUsed] = useState(lastUsedDate);
     let [skillLevel, setSkillLevel] = useState(startLevel);
@@ -35,13 +31,14 @@ const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, in
       setCurrCheck(!currCheck);
     };
 
+    const updateLevel = (e, value) => setSkillLevel(value);
+
     const updateSkillLevel = debounce((event, value) => {
-        setSkillLevel(value);
         onUpdate(lastUsed, value, index);
     }, 1500);
 
-    const updateDate = debounce((value) => {
-        setLastUsed(value);
+    const updateLastUsed = debounce((value) => {
+        setLastUsed(value)
         onUpdate(value, skillLevel, index);
     }, 1500);
 
@@ -56,8 +53,8 @@ const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, in
     }
 
     return (
-      <ListItem className={classes.skillRow}>
-        <DiscreteSlider title={name} inStartPos={skillLevel} onChange={updateSkillLevel}/>
+      <React.Fragment>
+        <DiscreteSlider title={name} inStartPos={skillLevel} onChange={updateLevel} onChangeCommitted={updateSkillLevel}/>
         {false && <FormControl>
           <FormControlLabel
             control={<Checkbox color="primary" value="current" />}
@@ -70,13 +67,13 @@ const SkillSlider = ({id, name, startLevel, lastUsedDate, onDelete, onUpdate, in
         {false && <TextField
           className={currCheck ? classes.hidden: undefined}
           type="date"
-          onChange={(event, value) => updateDate(value)}
+          onChange={(event, value) => updateLastUsed(value)}
           defaultValue={formatDate(lastUsed)}
         />}
         <IconButton onClick={(event) => onDelete(id)}>
-          <RemoveIcon />
+          <DeleteIcon />
         </IconButton>
-      </ListItem>
+      </React.Fragment>
     );
 };
 export default SkillSlider;

@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 
-import { AppContext, selectPendingSkills } from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
+import { selectPendingSkills } from "../context/selectors";
 import PendingSkillsCard from "../components/pending_skills/PendingSkillsCard";
 import CombineSkillsModal from "../components/pending_skills/CombineSkillsModal";
 

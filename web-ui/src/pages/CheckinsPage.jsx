@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-
+import { useParams, useHistory } from "react-router-dom";
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
-import { AppContext, selectCheckinMap, selectMostRecentCheckin, selectProfileMap, selectCurrentUser } from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
+import { selectMostRecentCheckin, selectCurrentUser, selectIsAdmin, selectIsPDL, selectCsrfToken, selectCheckin, selectProfile } from "../context/selectors";
+import { getCheckins } from "../context/thunks";
+import { UPDATE_CHECKIN } from "../context/actions";
 import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
 import Profile from "../components/profile/Profile";
@@ -17,28 +20,36 @@ import { Button, Grid, Modal } from "@material-ui/core";
 import "./CheckinsPage.css";
 import {updateCheckin} from "../api/checkins";
 
-const CheckinsPage = ({ history, memberId, checkinId }) => {
+const CheckinsPage = () => {
   const [open, setOpen] = useState(false);
-  const { state } = useContext(AppContext);
-  const { userProfile, csrf } = state;
-
-  const currentCheckin = selectCheckinMap(state)[checkinId];
-  const selectedProfile = selectProfileMap(state)[memberId];
+  const history = useHistory();
+  const { memberId, checkinId } = useParams();
+  const { state, dispatch } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
   const memberProfile = selectCurrentUser(state);
-  const id = memberProfile?.id;
+  const currentUserId = memberProfile?.id;
+  const mostRecent = selectMostRecentCheckin(state, memberId);
+  const selectedProfile = selectProfile(state, memberId);
+
+  useEffect(() => {
+    if(selectedProfile) {
+        getCheckins(memberId, selectedProfile.pdlId, dispatch, csrf);
+    }
+  }, [memberId,selectedProfile,csrf,dispatch])
 
   useEffect(() => {
     if (memberId === undefined) {
-      history.push(`/checkins/${id}`);
-    } else if (checkinId === undefined) {
-      const mostRecent = selectMostRecentCheckin(state, memberId);
-      history.push(`/checkins/${memberId}/${mostRecent}`);
+      history.push(`/checkins/${currentUserId}`);
+    } else if (checkinId === undefined && mostRecent) {
+      history.push(`/checkins/${memberId}/${mostRecent.id}`);
     }
-  }, [memberId, checkinId, history]);
+  }, [currentUserId, memberId, checkinId, mostRecent, history]);
 
-  const isAdmin = userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const canSeePersonnel = userProfile && userProfile.role && userProfile.role.includes("PDL");
-  const canViewPrivateNote = isAdmin || (memberProfile && currentCheckin && id !== currentCheckin.teamMemberId);
+  const currentCheckin = selectCheckin(state, checkinId);
+  const isAdmin = selectIsAdmin(state);
+  const canSeePersonnel = selectIsPDL(state);
+
+  const canViewPrivateNote = isAdmin || (memberProfile && currentCheckin && currentUserId !== currentCheckin.teamMemberId);
 
   const handleOpen = () => setOpen(true);
 
@@ -46,7 +57,12 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
 
   const completeCheckin = async () => {
     if (csrf) {
-      await updateCheckin({...currentCheckin, completed: true}, csrf);
+      const res = await updateCheckin({...currentCheckin, pdlId: selectedProfile.pdlId, completed: true}, csrf);
+      const updated =
+                res.payload && res.payload.data && !res.error
+                  ? res.payload.data
+                  : null;
+      dispatch({type: UPDATE_CHECKIN, payload: updated});
     }
     handleClose();
   };
@@ -54,9 +70,9 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
   return (
     <div style={{padding:12}}>
     <Grid container spacing={3} >
-      <Grid item sm={9} justify="center">
+      <Grid item xs={12} sm={9}>
         <div className="contents">
-          <Profile memberId={selectedProfile?.id || id} />
+          <Profile memberId={selectedProfile?.id || currentUserId} />
           <CheckinsHistory history={history} memberId={memberId} checkinId={checkinId} />
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>
@@ -65,7 +81,7 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
-                    : userProfile.name
+                    : memberProfile.name
                 }
               />
               <ActionItemsPanel
@@ -73,14 +89,14 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
-                    : userProfile.name
+                    : memberProfile.name
                 }
               />
               <Note
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
-                    : userProfile.name
+                    : memberProfile.name
                 }
               />
               {canViewPrivateNote && (
@@ -88,7 +104,7 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
                 memberName={
                   selectedProfile
                     ? selectedProfile.name
-                    : userProfile.name
+                    : memberProfile.name
                 }
               />
               )}
@@ -116,6 +132,7 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
               </div>
             </Modal>
             <Button
+              disabled={currentCheckin?.completed}
               color="primary"
               onClick={handleOpen}
               variant="contained"
@@ -125,7 +142,7 @@ const CheckinsPage = ({ history, memberId, checkinId }) => {
           </div>
         )}
       </Grid>
-      <Grid item sm={3} justify="flex-end">
+      <Grid item xs={12} sm={3}>
           <div className="right-sidebar">
             {canSeePersonnel && <Personnel history={history} />}
             <GuidesPanel />

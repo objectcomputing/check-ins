@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
+import { AppContext } from "../../../context/AppContext";
+import { selectCheckin } from "../../../context/selectors";
 import Button from "@material-ui/core/Button";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 // Style the Button component
 
-const FileUploader = (props) => {
-  // Create a reference to the hidden file input element
-  const { fileRef, handleFile } = props;
+const FileUploader = ({ fileRef, handleFile }) => {
+  const { state } = useContext(AppContext);
+  const { checkinId } = useParams();
+  const currentCheckin = selectCheckin(state, checkinId);
 
   // Programatically click the hidden file input element when the Button component is clicked
   const handleClick = (event) => {
@@ -19,6 +23,7 @@ const FileUploader = (props) => {
   return (
     <>
       <Button
+        disabled={currentCheckin?.completed}
         onClick={handleClick}
       >
         <AddCircleIcon></AddCircleIcon>Upload a document

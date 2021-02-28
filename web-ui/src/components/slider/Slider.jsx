@@ -108,8 +108,6 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
   const marks = inMarks ? inMarks : defaultMarks;
 
   const formatTooltipTitle = (title, children) => {
-    console.log(title);
-    console.log(children);
     return(
       <div>
         <div>
@@ -144,7 +142,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
     );
   };
 
-  const startPos = inStartPos ? inStartPos : Math.ceil(marks.length/2);
+  const startPos = inStartPos ? Number(inStartPos) : Math.ceil(marks.length/2);
 
   return (
     <div className="skill-slider">
@@ -155,7 +153,7 @@ const DiscreteSlider = ({title, onChange, onChangeCommitted, inMarks, inStartPos
       <Slider
         min={0.5}
         max={marks.length+.5}
-        defaultValue={startPos}
+        value={startPos}
         valueLabelDisplay="auto"
         ValueLabelComponent={ValueLabelComponent}
         getAriaValueText={valuetext}

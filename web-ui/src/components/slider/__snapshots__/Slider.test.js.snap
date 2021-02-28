@@ -22,16 +22,16 @@ exports[`renders slider with title 1`] = `
       style={
         Object {
           "left": "0%",
-          "width": "NaN%",
+          "width": "50%",
         }
       }
     />
     <input
       type="hidden"
-      value="NaN"
+      value="3"
     />
     <span
-      className="MuiSlider-mark"
+      className="MuiSlider-mark MuiSlider-markActive"
       data-index={0}
       style={
         Object {
@@ -41,7 +41,7 @@ exports[`renders slider with title 1`] = `
     />
     <span
       aria-hidden={true}
-      className="MuiSlider-markLabel"
+      className="MuiSlider-markLabel MuiSlider-markLabelActive"
       data-index={0}
       style={
         Object {
@@ -52,7 +52,7 @@ exports[`renders slider with title 1`] = `
       Interested
     </span>
     <span
-      className="MuiSlider-mark"
+      className="MuiSlider-mark MuiSlider-markActive"
       data-index={1}
       style={
         Object {
@@ -62,7 +62,7 @@ exports[`renders slider with title 1`] = `
     />
     <span
       aria-hidden={true}
-      className="MuiSlider-markLabel"
+      className="MuiSlider-markLabel MuiSlider-markLabelActive"
       data-index={1}
       style={
         Object {
@@ -73,7 +73,7 @@ exports[`renders slider with title 1`] = `
       Novice
     </span>
     <span
-      className="MuiSlider-mark"
+      className="MuiSlider-mark MuiSlider-markActive"
       data-index={2}
       style={
         Object {
@@ -83,7 +83,7 @@ exports[`renders slider with title 1`] = `
     />
     <span
       aria-hidden={true}
-      className="MuiSlider-markLabel"
+      className="MuiSlider-markLabel MuiSlider-markLabelActive"
       data-index={2}
       style={
         Object {
@@ -135,7 +135,31 @@ exports[`renders slider with title 1`] = `
     >
       Expert
     </span>
-    
+    <span
+      aria-describedby={null}
+      aria-orientation="horizontal"
+      aria-valuemax={5.5}
+      aria-valuemin={0.5}
+      aria-valuenow={3}
+      aria-valuetext="3"
+      className="MuiSlider-thumb MuiSlider-thumbColorPrimary"
+      data-index={0}
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      role="slider"
+      style={
+        Object {
+          "left": "50%",
+        }
+      }
+      tabIndex={0}
+      title={null}
+    />
   </span>
 </div>
 `;

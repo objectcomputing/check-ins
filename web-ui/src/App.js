@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Switch, Route, useParams } from "react-router-dom";
+import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
 //import EditPDLPage from "./pages/EditPDLPage";
@@ -14,6 +14,8 @@ import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import GroupIcon from '@material-ui/icons/Group';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 import "./App.css";
 
@@ -21,6 +23,7 @@ const customHistory = createBrowserHistory();
 
 function App() {
   return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <Router history={customHistory}>
       <AppContextProvider>
         <div>
@@ -50,7 +53,7 @@ function App() {
               </Route>
               <Route path="/checkins/:memberId?/:checkinId?" >
                 <Header title="Check-ins" />
-                <CheckinsPage history={customHistory} memberId={useParams().memberId} checkinId={useParams().checkinId} />
+                <CheckinsPage />
               </Route>
               <Route path="/pending-skills">
                 <Header title="Pending Skills" />
@@ -66,6 +69,7 @@ function App() {
         </div>
       </AppContextProvider>
     </Router>
+    </MuiPickersUtilsProvider>
   );
 }
 

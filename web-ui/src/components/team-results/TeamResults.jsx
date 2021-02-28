@@ -1,7 +1,8 @@
 import React, { useEffect, useContext, useState } from "react";
 
 import TeamSummaryCard from "./TeamSummaryCard";
-import { AppContext, UPDATE_TEAMS } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { UPDATE_TEAMS } from "../../context/actions";
 import TeamsActions from "./TeamsActions";
 import { getAllTeams } from "../../api/team";
 import PropTypes from "prop-types";

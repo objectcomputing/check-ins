@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -20,6 +22,8 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class CheckinNoteServicesImpl implements CheckinNoteServices {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CheckinNoteServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
     private final CheckInServices checkinServices;
@@ -100,13 +104,15 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
 
         validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
+            LOG.debug("Access was not granted.");
             throw new PermissionException("User is unauthorized to do this operation");
         }
         validate(createById == null, "Invalid checkin note %s", checkinNote);
         validate(id == null || checkinNoteRepository.findById(id).isEmpty(), "Unable to locate checkin note to update with id %s", checkinNote.getId());
         validate(memberRepo.findById(createById).isEmpty(), "Member %s doesn't exist", createById);
-        validate(!createById.equals(checkinRecord.getTeamMemberId()) && !createById.equals(checkinRecord.getPdlId()), "User is unauthorized to do this operation");
+
         if (!isAdmin && isCompleted) {
+            LOG.debug("User isn't admin and checkin is completed.");
             validate(!currentUser.getId().equals(pdlId), "User is unauthorized to do this operation");
         }
 

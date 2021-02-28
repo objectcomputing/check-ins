@@ -56,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  const { dispatch } = useContext(AppContext);
   const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { workEmail } =

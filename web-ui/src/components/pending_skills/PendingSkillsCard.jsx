@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { deleteMemberSkill, getSkillMembers, getMemberSkills } from "../../api/memberskill";
 import { removeSkill, updateSkill } from "../../api/skill";
+import { AppContext } from "../../context/AppContext";
+import { selectProfileMap } from "../../context/selectors";
 import {
-  AppContext,
-  selectProfileMap,
   DELETE_SKILL,
   UPDATE_SKILL,
   UPDATE_MEMBER_SKILLS,
-} from "../../context/AppContext";
+} from "../../context/actions";
 import { getAvatarURL } from "../../api/api.js";
 
 import {
