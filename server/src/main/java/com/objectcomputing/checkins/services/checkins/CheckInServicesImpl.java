@@ -9,6 +9,8 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class CheckInServicesImpl implements CheckInServices {
+
+    public static final Logger LOG = LoggerFactory.getLogger(CheckInServicesImpl.class);
 
     private final CheckInRepository checkinRepo;
     private final MemberProfileRepository memberRepo;
@@ -50,6 +54,8 @@ public class CheckInServicesImpl implements CheckInServices {
         Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
 
+        LOG.debug("Member is Admin: {}", isAdmin);
+
         if (isAdmin) {
             grantAccess = true;
         } else {
@@ -57,6 +63,11 @@ public class CheckInServicesImpl implements CheckInServices {
                 throw new NotFoundException(String.format("Team member not found %s not found", checkinRecord.getTeamMemberId()));
             });
             UUID currentPdlId = teamMemberOnCheckin.getPdlId();
+
+            LOG.debug("Member: {}", memberTryingToGainAccess.getId());
+            LOG.debug("Checkin Member: {}", checkinRecord.getTeamMemberId());
+            LOG.debug("PDL on Checkin: {}", checkinRecord.getPdlId());
+            LOG.debug("Current PDL: {}", currentPdlId);
 
             if (memberTryingToGainAccess.getId().equals(checkinRecord.getTeamMemberId())
                     || memberTryingToGainAccess.getId().equals(checkinRecord.getPdlId())

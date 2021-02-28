@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-
+import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   findActionItem,
@@ -7,8 +7,9 @@ import {
   updateActionItem,
   createActionItem,
 } from "../../api/actionitem.js";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
-
+import { AppContext } from "../../context/AppContext";
+import { UPDATE_TOAST } from "../../context/actions";
+import { selectCsrfToken, selectCurrentUser, selectCheckin } from "../../context/selectors";
 import { debounce } from "lodash/function";
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -30,11 +31,13 @@ const doUpdate = async (actionItem, csrf) => {
 
 const updateItem = debounce(doUpdate, 1500);
 
-const ActionItemsPanel = ({ checkinId, memberName }) => {
+const ActionItemsPanel = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, userProfile } = state;
-  const { memberProfile } = userProfile;
-  const { id } = memberProfile;
+  const { checkinId } = useParams();
+  const csrf = selectCsrfToken(state);
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
+  const currentCheckin = selectCheckin(state, checkinId);
 
   const [actionItems, setActionItems] = useState([]);
   const [description, setDescription] = useState("");
@@ -116,12 +119,12 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   const makeActionItem = async () => {
-    if (!checkinId || !id || description === "" || !csrf) {
+    if (!checkinId || !currentUserId || description === "" || !csrf) {
       return;
     }
     let newActionItem = {
       checkinid: checkinId,
-      createdbyid: id,
+      createdbyid: currentUserId,
       description: description,
     };
     const res = await createActionItem(newActionItem, csrf);
@@ -134,7 +137,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
   };
 
   const handleDescriptionChange = (index, e) => {
-    if (actionItems[index].createdbyid !== id) {
+    if (actionItems[index].createdbyid !== currentUserId) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -166,6 +169,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
     if (actionItems && actionItems.length > 0) {
       return actionItems.map((actionItem, index) => (
         <Draggable
+          isDragDisabled={currentCheckin?.completed}
           key={actionItem.id}
           draggableId={actionItem.id}
           index={index}
@@ -192,6 +196,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                   </div>
                 ) : (
                   <input
+                    disabled={currentCheckin?.completed}
                     className="text-input"
                     onChange={(e) => handleDescriptionChange(index, e)}
                     value={actionItem.description}
@@ -199,6 +204,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                 )}
                 <div className="action-item-button-div">
                   <IconButton
+                    disabled={currentCheckin?.completed}
                     aria-label="delete"
                     className="delete-icon"
                     onClick={() => killActionItem(actionItem.id)}
@@ -219,7 +225,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
       <CardHeader avatar={<ArrowForwardIcon  />} title="Action Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
       <CardContent className="action-items-container">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
+          <Droppable isDropDisabled={currentCheckin?.completed} droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {createActionItemEntries()}
@@ -230,6 +236,7 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
         </DragDropContext>
         <div className="add-action-item-div">
           <input
+            disabled={currentCheckin?.completed}
             className="text-input"
             placeholder="Add action item"
             onChange={(e) => setDescription(e.target.value)}
@@ -238,9 +245,11 @@ const ActionItemsPanel = ({ checkinId, memberName }) => {
                 makeActionItem();
               }
             }}
+
             value={description ? description : ""}
           />
           <IconButton
+            disabled={currentCheckin?.completed}
             aria-label="create"
             className="edit-icon"
             onClick={() => makeActionItem()}

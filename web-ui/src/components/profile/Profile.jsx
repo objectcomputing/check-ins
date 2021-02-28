@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Avatar, Typography, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  AppContext,
-  selectProfileMap,
-} from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 import { getMember } from "../../api/member";
 

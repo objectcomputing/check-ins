@@ -1,6 +1,7 @@
 import React, {useContext,  useState} from "react";
 
-import {AppContext, UPDATE_TEAMS, UPDATE_TOAST,} from "../../context/AppContext";
+import {AppContext} from "../../context/AppContext";
+import {UPDATE_TEAMS, UPDATE_TOAST} from "../../context/actions";
 import EditTeamModal from "./EditTeamModal";
 
 import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";

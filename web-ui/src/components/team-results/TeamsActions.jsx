@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 
 import AddTeamModal from "./EditTeamModal";
 import { createTeam } from "../../api/team";
-import { AppContext, ADD_TEAM } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { ADD_TEAM } from "../../context/actions";
 
 import { Button } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";

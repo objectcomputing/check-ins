@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 
-import { AppContext, selectMemberProfiles, selectCurrentUser } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { selectMemberProfiles, selectCurrentUser } from "../../context/selectors";
 
 import { Button } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";

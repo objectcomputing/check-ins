@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-
+import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   getAgendaItem,
@@ -7,8 +7,9 @@ import {
   updateAgendaItem,
   createAgendaItem,
 } from "../../api/agenda.js";
-import { AppContext, UPDATE_TOAST } from "../../context/AppContext";
-
+import { AppContext } from "../../context/AppContext";
+import { UPDATE_TOAST } from "../../context/actions";
+import { selectCsrfToken, selectCurrentUser, selectCheckin } from "../../context/selectors";
 import { debounce } from "lodash/function";
 import DragIndicator from "@material-ui/icons/DragIndicator";
 import AdjustIcon from "@material-ui/icons/Adjust";
@@ -30,11 +31,13 @@ const doUpdate = async (agendaItem, csrf) => {
 
 const updateItem = debounce(doUpdate, 1500);
 
-const AgendaItems = ({ checkinId, memberName }) => {
+const AgendaItems = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, userProfile } = state;
-  const { memberProfile } = userProfile;
-  const { id } = memberProfile;
+  const { checkinId } = useParams();
+  const csrf = selectCsrfToken(state);
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
+  const currentCheckin = selectCheckin(state, checkinId);
 
   const [agendaItems, setAgendaItems] = useState();
   const [description, setDescription] = useState("");
@@ -112,12 +115,12 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const makeAgendaItem = async () => {
-    if (!checkinId || !id || description === "" || !csrf) {
+    if (!checkinId || !currentUserId || description === "" || !csrf) {
       return;
     }
     let newAgendaItem = {
       checkinid: checkinId,
-      createdbyid: id,
+      createdbyid: currentUserId,
       description: description,
     };
     const res = await createAgendaItem(newAgendaItem, csrf);
@@ -140,7 +143,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
   };
 
   const handleDescriptionChange = (index, e) => {
-    if (agendaItems[index].createdbyid !== id) {
+    if (agendaItems[index].createdbyid !== currentUserId) {
       dispatch({
         type: UPDATE_TOAST,
         payload: {
@@ -164,6 +167,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     if (agendaItems && agendaItems.length > 0) {
       return agendaItems.map((agendaItem, index) => (
         <Draggable
+          isDragDisabled={currentCheckin?.completed}
           key={agendaItem.id}
           draggableId={agendaItem.id}
           index={index}
@@ -190,6 +194,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                   </div>
                 ) : (
                   <input
+                    disabled={currentCheckin?.completed}
                     className="text-input"
                     onChange={(e) => handleDescriptionChange(index, e)}
                     value={agendaItem.description}
@@ -197,6 +202,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
                 )}
                 <div className="agenda-item-button-div">
                   <IconButton
+                    disabled={currentCheckin?.completed}
                     aria-label="delete"
                     className="delete-icon"
                     onClick={() => killAgendaItem(agendaItem.id)}
@@ -216,7 +222,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
     <Card className="agenda-items">
       <CardHeader avatar={<AdjustIcon />} title="Agenda Items" titleTypographyProps={{variant: "h5", component: "h2"}} />
       <CardContent className="agenda-items-container">
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext isDropDisabled={currentCheckin?.completed} onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -228,6 +234,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
         </DragDropContext>
         <div className="add-agenda-item-div">
           <input
+            disabled={currentCheckin?.completed}
             className="text-input"
             placeholder="Add an agenda item"
             onChange={(e) => setDescription(e.target.value)}
@@ -239,6 +246,7 @@ const AgendaItems = ({ checkinId, memberName }) => {
             value={description ? description : ""}
           />
           <IconButton
+            disabled={currentCheckin?.completed}
             aria-label="create"
             className="edit-icon"
             onClick={() => makeAgendaItem()}

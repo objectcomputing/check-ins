@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import {createMember} from "../api/member";
-import {AppContext, UPDATE_MEMBER_PROFILES} from "../context/AppContext";
+import {AppContext} from "../context/AppContext";
+import {UPDATE_MEMBER_PROFILES} from "../context/actions";
 
 import {Button, TextField, Grid} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";

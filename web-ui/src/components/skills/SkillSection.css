@@ -22,17 +22,9 @@
   padding: 5px;
 }
 
-.container textarea {
-  border: 2px solid black;
-  min-height: 150px;
-  padding: 5px;
-  width: 100%;
-}
-
 .skeleton {
   width: 100%;
 }
-
 
 .MuiTextField-root.fullWidth {
     width: calc(100% - 1rem);

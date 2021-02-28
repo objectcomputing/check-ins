@@ -14,14 +14,16 @@ import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import GroupIcon from '@material-ui/icons/Group';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 import "./App.css";
 
 const customHistory = createBrowserHistory();
 
 function App() {
-
   return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
     <Router history={customHistory}>
       <AppContextProvider>
         <div>
@@ -35,10 +37,6 @@ function App() {
             className="App"
           >
             <Switch>
-              {/* <Route path="/admin">
-                <Header title="Edit Team" />
-                <EditPDLPage />
-              </Route> */}
               <Route path="/teams">
                 <Header title="Teams">
                   <GroupIcon fontSize="large"/>
@@ -53,9 +51,9 @@ function App() {
                 <Header title="Member Directory" />
                 <DirectoryPage />
               </Route>
-              <Route path="/checkins">
+              <Route path="/checkins/:memberId?/:checkinId?" >
                 <Header title="Check-ins" />
-                <CheckinsPage history={customHistory} />
+                <CheckinsPage />
               </Route>
               <Route path="/pending-skills">
                 <Header title="Pending Skills" />
@@ -71,6 +69,7 @@ function App() {
         </div>
       </AppContextProvider>
     </Router>
+    </MuiPickersUtilsProvider>
   );
 }
 
