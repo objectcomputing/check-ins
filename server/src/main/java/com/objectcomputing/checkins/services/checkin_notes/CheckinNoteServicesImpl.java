@@ -100,7 +100,6 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         CheckIn checkinRecord = checkinRepo.findById(checkinId).orElse(null);
         Boolean isCompleted = checkinRecord != null ? checkinRecord.isCompleted() : null;
         final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-        final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
 
         validate(checkinRecord == null, "CheckIn %s doesn't exist", checkinId);
         if (!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId())) {
@@ -125,10 +124,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
-            final UUID pdlId = checkinRecord != null ? checkinRecord.getPdlId() : null;
-            final UUID teamMemberId = checkinRecord != null ? checkinRecord.getTeamMemberId() : null;
-            validate(!checkinServices.accessGranted(checkinRecord.getId(), currentUser.getId()), "User is unauthorized to do this operation");
+            validate(!checkinServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
             validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
