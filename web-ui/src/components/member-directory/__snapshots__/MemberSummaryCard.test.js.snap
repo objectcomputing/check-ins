@@ -48,6 +48,8 @@ exports[`renders correctly 1`] = `
         >
           <a
             href="mailto:testerson@oci.com"
+            rel="noopener noreferrer"
+            target="_blank"
           >
             testerson@oci.com
           </a>

@@ -94,18 +94,18 @@ const Profile = ({memberId}) => {
       <div className={classes.profileInfo}>
         <div>
           <div className={classes.header}>
-          <Hidden smUp>
-            <Avatar className={classes.smallAvatar} src={getAvatarURL(workEmail)} />
-          </Hidden>
-          <div className={classes.title}>
-          <Typography variant="h5" component="h2">
-            {name}
-          </Typography>
-          <Typography color="textSecondary" component="h3">{title}</Typography>
-          </div>
+            <Hidden smUp>
+              <Avatar className={classes.smallAvatar} src={getAvatarURL(workEmail)} />
+            </Hidden>
+            <div className={classes.title}>
+              <Typography variant="h5" component="h2">
+                {name}
+              </Typography>
+              <Typography color="textSecondary" component="h3">{title}</Typography>
+            </div>
           </div>
           <Typography variant="body2" color="textSecondary" component="p">
-            <a href={`mailto:${workEmail}`}>
+            <a href={`mailto:${workEmail}`} target="_blank" rel="noopener noreferrer">
               {workEmail}
             </a>
             <br />

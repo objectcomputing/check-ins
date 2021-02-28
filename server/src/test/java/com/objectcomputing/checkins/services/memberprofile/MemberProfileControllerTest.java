@@ -147,8 +147,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
-        Team testTeam = createDeafultTeam();
-        createDeafultTeamMember(testTeam, memberProfileOfMember);
+        Team testTeam = createDefaultTeam();
+        createDefaultTeamMember(testTeam, memberProfileOfMember);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);

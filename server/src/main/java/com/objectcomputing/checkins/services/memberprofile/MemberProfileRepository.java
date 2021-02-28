@@ -46,4 +46,6 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId, @Nullable String workEmail, @Nullable String supervisorId);
 
     List<MemberProfile> findAll();
+
+    String findNameById(@NotNull UUID id);
 }

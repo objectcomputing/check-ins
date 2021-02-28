@@ -44,7 +44,7 @@ public class MemberProfile {
     @Nullable
     @Schema(description = "employee's title at the company")
     private String title ;
-    
+
     @Column(name="pdlId")
     @TypeDef(type=DataType.STRING)
     @Nullable
@@ -72,7 +72,7 @@ public class MemberProfile {
     @Column(name="insperityId")
     @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId; 
+    private String insperityId;
 
     @Column(name="startDate")
     @Schema(description = "employee's date of hire")
@@ -109,7 +109,7 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate) {
-       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 
     public MemberProfile(UUID id,
