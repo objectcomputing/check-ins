@@ -30,6 +30,6 @@ export const createNewCheckin = async (memberProfile, dispatch, csrf) => {
     const checkin = res.payload && res.payload.data && !res.error ? res.payload.data : null;
 
     dispatch({type: ADD_CHECKIN, payload: checkin})
-    return checkin.id;
+    return checkin?.id;
   }
 }
