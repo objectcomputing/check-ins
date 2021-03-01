@@ -217,22 +217,22 @@ VALUES
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('a8733740-cf4c-4c16-a8cf-4f928c409acc', 'Checkins Experts', 'Checkins Engineers of superior knowledge');
+    ('a8733740-cf4c-4c16-a8cf-4f928c409acc', PGP_SYM_ENCRYPT('Checkins Experts','${aeskey}'), PGP_SYM_ENCRYPT('Checkins Engineers of superior knowledge','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', 'JavaScript Gurus', 'JavaScript Engineers of Outstanding Skill');
+    ('e8f052a8-40b5-4fb4-9bab-8b16ed36adc7', PGP_SYM_ENCRYPT('JavaScript Gurus','${aeskey}'), PGP_SYM_ENCRYPT('JavaScript Engineers of Outstanding Skill','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('036b95a5-357c-45bd-b60e-e8e2e1afec83', 'Micronaut Genii', 'Micronaut Engineers of Genius Caliber');
+    ('036b95a5-357c-45bd-b60e-e8e2e1afec83', PGP_SYM_ENCRYPT('Micronaut Genii','${aeskey}'), PGP_SYM_ENCRYPT('Micronaut Engineers of Genius Caliber','${aeskey}'));
 
 INSERT INTO team
     (id, name, description)
 VALUES
-    ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', 'PMO Superness', 'Excellent PMO Artists');
+    ('e545dfa1-a07d-4099-9a5b-ed14f07b87cc', PGP_SYM_ENCRYPT('PMO Superness','${aeskey}'), PGP_SYM_ENCRYPT('Excellent PMO Artists','${aeskey}'));
 
 INSERT INTO team_member
     (id, teamid, memberid, lead)
@@ -327,7 +327,8 @@ VALUES
 INSERT INTO checkin_notes
     (id, checkinid, createdbyid, description)
 VALUES
-    ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', 'Jesses note');
+    ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Jesses note','${aeskey}'));
+
 
 INSERT INTO private_notes
     (id, checkinid, createdbyid, description)
@@ -375,3 +376,8 @@ values('7ffe3937-bdce-4ebb-a03d-8a8b7d4703ef','06cd3202-a209-4ae1-a49a-10395fbe3
 
 insert into guildmembers (id, guildid, memberid, lead)
 values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3548', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
+
+INSERT INTO pulse_response
+(id, submissiondate, updateddate, teammemberid, internalfeelings, externalfeelings)
+VALUES
+('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));

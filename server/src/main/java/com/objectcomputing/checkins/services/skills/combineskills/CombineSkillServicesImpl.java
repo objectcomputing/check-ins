@@ -59,8 +59,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         return returnSkill;
     }
 
-        private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill, List<UUID> memberIds) {
-
+    private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill, List<UUID> memberIds) {
 
         for (MemberSkill memberSkill : memberSkills) {
             if (!memberIds.contains(memberSkill.getMemberid())) {

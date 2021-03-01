@@ -1,7 +1,9 @@
 import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
-import { AppContext, UPDATE_MEMBER_PROFILES, selectProfileMap } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
+import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
@@ -58,7 +60,7 @@ const MemberSummaryCard = ({ member, index }) => {
           <CardContent>
             <Container fixed className={"info-container"}>
               <Typography variant="body2" color="textSecondary" component="p">
-                <a href={`mailto:${workEmail}`}>
+                <a href={`mailto:${workEmail}`} target="_blank" rel="noopener noreferrer">
                   {workEmail}
                 </a>
                 <br />

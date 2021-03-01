@@ -62,6 +62,7 @@ public class Skill {
     }
 
     public Skill(UUID id, String name, boolean pending, String description, boolean extraneous) {
+        this.id = id;
         this.name = name;
         this.pending = pending;
         this.description = description;

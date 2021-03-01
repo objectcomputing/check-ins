@@ -6,10 +6,8 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 public interface AgendaItemFixture extends RepositoryFixture {
 
-    default AgendaItem createADeafultAgendaItem(CheckIn checkIn, MemberProfile memberProfile) {
-        return getAgendaItemRepository().save(new AgendaItem(checkIn.getId(), memberProfile.getId(),"tests"));
+    default AgendaItem createADefaultAgendaItem(CheckIn checkIn, MemberProfile memberProfile) {
+        return getAgendaItemRepository().save(new AgendaItem(checkIn.getId(), memberProfile.getId(), "tests"));
     }
-
-
 }
 

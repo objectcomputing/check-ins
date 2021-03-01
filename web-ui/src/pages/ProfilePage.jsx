@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { debounce } from "lodash/function";
-import {
-  AppContext,
-  selectCurrentUser,
-  UPDATE_USER_BIO,
-} from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
+import { selectCurrentUser } from "../context/selectors";
+import { UPDATE_USER_BIO } from "../context/actions";
 import { updateMember } from "../api/member";
 import { Info } from "@material-ui/icons";
 import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";

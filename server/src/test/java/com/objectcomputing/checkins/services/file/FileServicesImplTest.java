@@ -210,7 +210,7 @@ public class FileServicesImplTest {
         when(files.get(any(String.class))).thenReturn(get);
         when(get.setSupportsAllDrives(any())).thenReturn(get);
         when(get.execute()).thenReturn(file);
-        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -223,23 +223,7 @@ public class FileServicesImplTest {
         assertEquals(file.getId(), result.iterator().next().getFileId());
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
-        verify(checkInServices, times(1)).read(testCheckinId);
-    }
-
-    @Test
-    void testFindByCheckinIdThrowsErrorIfCheckinIdIsInvalid() {
-        UUID testCheckinId = UUID.randomUUID();
-        when(currentUserServices.isAdmin()).thenReturn(true);
-        when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.read(testCheckinId)).thenReturn(null);
-
-        final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
-                services.findFiles(testCheckinId));
-
-        assertEquals(String.format("Unable to find checkin record with id %s", testCheckinId), responseException.getMessage());
-        verify(mockGoogleApiAccess, times(1)).getDrive();
-        verify(checkinDocumentServices, times(0)).read(any(UUID.class));
-        verify(checkInServices, times(1)).read(testCheckinId);
+        verify(checkInServices, times(1)).accessGranted(testCheckinId, testMemberProfileId);
     }
 
     @Test
@@ -248,7 +232,7 @@ public class FileServicesImplTest {
         UUID testCheckinId = UUID.randomUUID();
         UUID testMemberProfileId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfileId)).thenReturn(Boolean.TRUE);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberProfileId);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(testMemberProfileId);
@@ -260,14 +244,14 @@ public class FileServicesImplTest {
         assertTrue(result.isEmpty());
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).read(any(UUID.class));
-        verify(checkInServices, times(1)).read(any(UUID.class));
+        verify(checkInServices, times(1)).accessGranted(testCheckinId, testMemberProfileId);
     }
 
     @Test
     void testFindByCheckinIdForUnauthorizedUser() {
         UUID testCheckinId = UUID.randomUUID();
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
-        when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.FALSE);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(testMemberProfile.getId()).thenReturn(UUID.randomUUID());
@@ -277,7 +261,7 @@ public class FileServicesImplTest {
 
         assertEquals("You are not authorized to perform this operation", responseException.getMessage());
         verify(mockGoogleApiAccess, times(1)).getDrive();
-        verify(checkInServices, times(1)).read(testCheckinId);
+        verify(checkInServices, times(1)).accessGranted(testCheckinId, testMemberProfile.getId());
         verify(checkinDocumentServices, times(0)).read(any(UUID.class));
     }
 
@@ -324,6 +308,8 @@ public class FileServicesImplTest {
 
         when(currentUserServices.isAdmin()).thenReturn(true);
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
+        when(checkInServices.accessGranted(testCheckinId, testMemberProfile.getId())).thenReturn(Boolean.TRUE);
+        when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
         when(checkinDocumentServices.read(testCheckinId)).thenReturn(testCheckinDocument);
         when(testCd.getUploadDocId()).thenReturn("some.upload.doc.id");
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -338,7 +324,7 @@ public class FileServicesImplTest {
         assertEquals(testException.getMessage(), responseException.getMessage());
         verify(mockGoogleApiAccess, times(1)).getDrive();
         verify(checkinDocumentServices, times(1)).read(testCheckinId);
-        verify(checkInServices, times(1)).read(testCheckinId);
+        verify(checkInServices, times(1)).accessGranted(testCheckinId, testMemberProfile.getId());
     }
 
     @Test

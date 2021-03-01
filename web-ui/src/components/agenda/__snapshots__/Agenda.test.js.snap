@@ -43,6 +43,7 @@ exports[`renders correctly 1`] = `
     >
       <input
         className="text-input"
+        disabled={false}
         onChange={[Function]}
         onKeyPress={[Function]}
         placeholder="Add an agenda item"

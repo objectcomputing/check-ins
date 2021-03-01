@@ -17,9 +17,10 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface CheckinNoteRepository extends CrudRepository<CheckinNote, UUID> {
 
-    @Query(" SELECT * " +
+    @Query(value = "SELECT id, checkinid, createdById, " +
+            "PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description " +
             "FROM checkin_notes cn " +
-            "WHERE (:checkinid  IS NULL OR cn.checkinId= :checkinid) " +
+            "WHERE (:checkinid  IS NULL OR cn.checkinid = :checkinid) " +
             "AND (:createdById  IS NULL OR cn.createdByid= :createdById) ")
     Set<CheckinNote> search(@Nullable String checkinid, @Nullable String createdById);
 

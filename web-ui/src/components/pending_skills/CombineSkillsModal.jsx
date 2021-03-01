@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext, selectPendingSkills, ADD_SKILL, DELETE_SKILL, UPDATE_MEMBER_SKILLS } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { selectPendingSkills } from "../../context/selectors";
+import { ADD_SKILL, DELETE_SKILL, UPDATE_MEMBER_SKILLS } from "../../context/actions";
 import { combineSkill } from "../../api/skill";
 import { getMemberSkills } from "../../api/memberskill";
 

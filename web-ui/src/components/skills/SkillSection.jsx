@@ -2,23 +2,23 @@ import React, { useContext, useEffect, useState } from "react";
 
 import "./SkillSection.css"
 
+import { AppContext } from "../../context/AppContext";
+import { selectMySkills, selectOrderedSkills, selectCsrfToken } from "../../context/selectors";
 import {
-  AppContext,
   ADD_SKILL,
   ADD_MEMBER_SKILL,
   DELETE_MEMBER_SKILL,
   UPDATE_MEMBER_SKILLS,
-  selectMySkills,
-} from "../../context/AppContext";
+} from "../../context/actions";
 import { createMemberSkill, deleteMemberSkill, updateMemberSkill } from "../../api/memberskill.js";
 import { getSkill, createSkill } from "../../api/skill.js";
 import SkillSlider from "./SkillSlider"
 
-import { Card, CardHeader, TextField } from "@material-ui/core";
+import { Card, CardHeader, TextField, List, ListItem } from "@material-ui/core";
 import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
 import BuildIcon from '@material-ui/icons/Build';
 
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
 
@@ -58,12 +58,20 @@ const muiTheme = createMuiTheme({
   }
 });
 
+const useStyles = makeStyles((theme) => ({
+  skillRow: {
+    justifyContent: "space-around",
+  }
+}));
+
 const SkillSection = ({userId}) => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, skills } = state;
+  const csrf = selectCsrfToken(state);
+  const skills = selectOrderedSkills(state);
   const myMemberSkills = selectMySkills(state);
   const [mySkills, setMySkills] = useState([]);
   const [skillToAdd, setSkillToAdd] = useState();
+  const classes = useStyles();
 
   const mapMemberSkill = async (memberSkill, csrf) => {
     let thisSkill = await getSkill(memberSkill.skillid, csrf);
@@ -93,7 +101,6 @@ const SkillSection = ({userId}) => {
   }, [csrf, myMemberSkills]);
 
   const addSkill = async (name) => {
-    console.log(name);
     if (!csrf) {
       return;
     }
@@ -209,21 +216,24 @@ const SkillSection = ({userId}) => {
             title="Skills"
             titleTypographyProps={{variant: "h5", component: "h2"}}
             action={<SkillSelector />}/>
+        <List>
         {mySkills &&
           mySkills.map((memberSkill, index) => {
             return (
-              <SkillSlider
-                key={memberSkill.id}
-                id={memberSkill.id}
-                name={memberSkill.name}
-                startLevel={memberSkill.skilllevel ? memberSkill.skilllevel : 3}
-                lastUsedDate={memberSkill.lastuseddate}
-                onDelete={handleDelete}
-                onUpdate={handleUpdate}
-                index={index}
-              />
+              <ListItem key={`MemberSkill-${memberSkill.id}`} className={classes.skillRow}>
+                <SkillSlider
+                  id={memberSkill.id}
+                  name={memberSkill.name}
+                  startLevel={memberSkill.skilllevel ? memberSkill.skilllevel : 3}
+                  lastUsedDate={memberSkill.lastuseddate}
+                  onDelete={handleDelete}
+                  onUpdate={handleUpdate}
+                  index={index}
+                />
+              </ListItem>
             );
           })}
+        </List>
       </Card>
       </ThemeProvider>
   );
