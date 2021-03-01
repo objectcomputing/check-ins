@@ -4,7 +4,7 @@ import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
 import { AppContext } from "../context/AppContext";
 import { selectMostRecentCheckin, selectCurrentUser, selectIsAdmin, selectIsPDL, selectCsrfToken, selectCheckin, selectProfile } from "../context/selectors";
-import { getCheckins } from "../context/thunks";
+import { getCheckins, createNewCheckin } from "../context/thunks";
 import { UPDATE_CHECKIN } from "../context/actions";
 import CheckinDocs from "../components/checkin/documents/CheckinDocs";
 import CheckinsHistory from "../components/checkin/CheckinHistory";
@@ -14,13 +14,27 @@ import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
 import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
-
+import { makeStyles } from "@material-ui/core/styles";
 import { Button, Grid, Modal } from "@material-ui/core";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 
 import "./CheckinsPage.css";
 import {updateCheckin} from "../api/checkins";
 
+const useStyles = makeStyles({
+  navigate: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+  },
+  addButton: {
+    height: "3em",
+  }
+});
+
 const CheckinsPage = () => {
+  const classes = useStyles();
   const [open, setOpen] = useState(false);
   const history = useHistory();
   const { memberId, checkinId } = useParams();
@@ -47,9 +61,9 @@ const CheckinsPage = () => {
 
   const currentCheckin = selectCheckin(state, checkinId);
   const isAdmin = selectIsAdmin(state);
-  const canSeePersonnel = selectIsPDL(state);
+  const isPdl = selectIsPDL(state);
 
-  const canViewPrivateNote = isAdmin || (memberProfile && currentCheckin && currentUserId !== currentCheckin.teamMemberId);
+  const canViewPrivateNote = (isAdmin || selectedProfile?.pdlId === currentUserId) && currentUserId !== memberId;
 
   const handleOpen = () => setOpen(true);
 
@@ -67,84 +81,90 @@ const CheckinsPage = () => {
     handleClose();
   };
 
+  const handleCreate = async () => {
+    const newId = await createNewCheckin(selectedProfile, dispatch, csrf);
+    if (newId) history.push(`/checkins/${memberId}/${newId}`);
+  };
+
   return (
     <div style={{padding:12}}>
     <Grid container spacing={3} >
       <Grid item xs={12} sm={9}>
-        <div className="contents">
-          <Profile memberId={selectedProfile?.id || currentUserId} />
+        <Profile memberId={selectedProfile?.id || currentUserId} />
+        <div className={classes.navigate}>
           <CheckinsHistory history={history} memberId={memberId} checkinId={checkinId} />
-          {currentCheckin && currentCheckin.id && (
-            <React.Fragment>
-              <AgendaItems
-                checkinId={currentCheckin.id}
-                memberName={
-                  selectedProfile
-                    ? selectedProfile.name
-                    : memberProfile.name
-                }
-              />
-              <ActionItemsPanel
-                checkinId={currentCheckin.id}
-                memberName={
-                  selectedProfile
-                    ? selectedProfile.name
-                    : memberProfile.name
-                }
-              />
-              <Note
-                memberName={
-                  selectedProfile
-                    ? selectedProfile.name
-                    : memberProfile.name
-                }
-              />
-              {canViewPrivateNote && (
-              <PrivateNote
-                memberName={
-                  selectedProfile
-                    ? selectedProfile.name
-                    : memberProfile.name
-                }
-              />
-              )}
-              <CheckinDocs />
-            </React.Fragment>
-          )}
+          { ( isAdmin || isPdl || currentUserId === memberId ) && (<Button className={classes.addButton} startIcon={<CheckCircleIcon/>} onClick={handleCreate}>Create Check-In</Button>) }
         </div>
-        {canViewPrivateNote && (
-          <div className="modal-container">
-            <Modal open={open} close={handleClose}>
-              <div className="submit-checkin-modal">
-                The Check-In will no longer be able to be edited. Are you
-                sure that you are ready to close this Check-In?
-                <div className="submit-modal-actions">
-                  <Button onClick={handleClose} color="secondary">
-                    Cancel
-                  </Button>
-                  <Button
-                      color="primary"
-                      onClick={completeCheckin}
-                  >
-                    Complete and Close
-                  </Button>
-                </div>
+        {currentCheckin && currentCheckin.id && (
+          <React.Fragment>
+            <AgendaItems
+              checkinId={currentCheckin.id}
+              memberName={
+                selectedProfile
+                  ? selectedProfile.name
+                  : memberProfile.name
+              }
+            />
+            <ActionItemsPanel
+              checkinId={currentCheckin.id}
+              memberName={
+                selectedProfile
+                  ? selectedProfile.name
+                  : memberProfile.name
+              }
+            />
+            <Note
+              memberName={
+                selectedProfile
+                  ? selectedProfile.name
+                  : memberProfile.name
+              }
+            />
+            {canViewPrivateNote && (
+            <PrivateNote
+              memberName={
+                selectedProfile
+                  ? selectedProfile.name
+                  : memberProfile.name
+              }
+            />
+            )}
+            <CheckinDocs />
+            {canViewPrivateNote && (
+              <div className="modal-container">
+                <Modal open={open} close={handleClose}>
+                  <div className="submit-checkin-modal">
+                    The Check-In will no longer be able to be edited. Are you
+                    sure that you are ready to close this Check-In?
+                    <div className="submit-modal-actions">
+                      <Button onClick={handleClose} color="secondary">
+                        Cancel
+                      </Button>
+                      <Button
+                          color="primary"
+                          onClick={completeCheckin}
+                      >
+                        Complete and Close
+                      </Button>
+                    </div>
+                  </div>
+                </Modal>
+                <Button
+                  disabled={currentCheckin?.completed}
+                  color="primary"
+                  onClick={handleOpen}
+                  variant="contained"
+                >
+                  Complete and Close Checkin
+                </Button>
               </div>
-            </Modal>
-            <Button
-              disabled={currentCheckin?.completed}
-              color="primary"
-              onClick={handleOpen}
-              variant="contained"
-            >
-              Complete and Close Checkin
-            </Button>
-          </div>
+            )}
+          </React.Fragment>
         )}
       </Grid>
       <Grid item xs={12} sm={3}>
           <div className="right-sidebar">
-            {canSeePersonnel && <Personnel history={history} />}
+            {isPdl && <Personnel history={history} />}
             <GuidesPanel />
             <PDLGuidesPanel />
           </div>

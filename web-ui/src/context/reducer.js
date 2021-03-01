@@ -2,6 +2,7 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   UPDATE_USER_BIO,
+  ADD_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_CHECKIN,
   UPDATE_TOAST,
@@ -40,6 +41,9 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_USER_BIO:
       state.userProfile.memberProfile.bioText = action.payload;
+      break;
+    case ADD_CHECKIN:
+      state.checkins = [...state.checkins, action.payload];
       break;
     case UPDATE_CHECKINS:
       if(state?.checkins?.length > 0) {
