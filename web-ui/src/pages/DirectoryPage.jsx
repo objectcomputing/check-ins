@@ -25,6 +25,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
+    width: "100%",
   }
 });
 
