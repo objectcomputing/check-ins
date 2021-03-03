@@ -1,9 +1,8 @@
 package com.objectcomputing.checkins.services.validate.crud;
 
 import com.objectcomputing.checkins.services.action_item.ActionItem;
-import com.objectcomputing.checkins.services.checkins.CheckInServices;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
+import com.objectcomputing.checkins.services.guild.Guild;
+
 import io.micronaut.context.annotation.Factory;
 
 import javax.inject.Singleton;
@@ -13,6 +12,11 @@ public class CRUDValidatorFactory {
 
     @Singleton
     public CRUDValidator<ActionItem> createActionItemCRUDValidator(ActionItemCRUDValidator validator) {
+        return validator;
+    }
+
+    @Singleton
+    public CRUDValidator<Guild> createGuildCRUDValidator(GuildCRUDValidator validator) {
         return validator;
     }
 

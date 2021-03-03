@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -18,10 +19,13 @@ public class GuildServicesImpl implements GuildServices {
 
     private final GuildRepository guildsRepo;
     private final CurrentUserServices currentUserServices;
+    private final CRUDValidator<Guild> crudValidator;
 
-    public GuildServicesImpl(GuildRepository guildsRepo, CurrentUserServices currentUserServices) {
+
+    public GuildServicesImpl(GuildRepository guildsRepo, CurrentUserServices currentUserServices,CRUDValidator<Guild> crudValidator) {
         this.guildsRepo = guildsRepo;
         this.currentUserServices = currentUserServices;
+        this.crudValidator = crudValidator;
     }
 
     public Guild save(@NotNull Guild guild) {
@@ -45,11 +49,10 @@ public class GuildServicesImpl implements GuildServices {
 
     public Guild update(@NotNull Guild guild) {
         Guild newGuild = null;
-        if (guild.getId() != null && guildsRepo.findById(guild.getId()).isPresent()) {
-            newGuild = guildsRepo.update(guild);
-        } else {
-            throw new BadArgException(String.format("Guild %s does not exist, can't update.", guild.getId()));
-        }
+        crudValidator.validateArgumentsUpdate(guild);
+        crudValidator.validatePermissionsUpdate(guild);
+
+        newGuild = guildsRepo.update(guild);
 
         return newGuild;
     }
