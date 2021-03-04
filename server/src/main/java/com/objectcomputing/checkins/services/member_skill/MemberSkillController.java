@@ -1,21 +1,16 @@
 package com.objectcomputing.checkins.services.member_skill;
 
-import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.skills.Skill;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Error;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.hateoas.JsonError;
-import io.micronaut.http.hateoas.Link;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
-import io.reactivex.exceptions.CompositeException;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -47,58 +42,6 @@ public class MemberSkillController {
         this.ioExecutorService = ioExecutorService;
     }
 
-    @Error(exception = BadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, BadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = MemberSkillBadArgException.class)
-    public HttpResponse<?> handleBadArgs(HttpRequest<?> request, MemberSkillBadArgException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>badRequest()
-                .body(error);
-    }
-
-    @Error(exception = MemberSkillAlreadyExistsException.class)
-    public HttpResponse<?> handleAlreadyExists(HttpRequest<?> request, MemberSkillAlreadyExistsException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @Error(exception = MemberSkillNotFoundException.class)
-    public HttpResponse<?> handleNotFound(HttpRequest<?> request, MemberSkillNotFoundException e) {
-        JsonError error = new JsonError(e.getMessage())
-                .link(Link.SELF, Link.of(request.getUri()));
-
-        return HttpResponse.<JsonError>notFound()
-                .body(error);
-    }
-
-    @Error(exception = CompositeException.class)
-    public HttpResponse<?> handleRxException(HttpRequest<?> request, CompositeException e) {
-
-        for (Throwable t : e.getExceptions()) {
-            if (t instanceof MemberSkillBadArgException) {
-                return handleBadArgs(request, (MemberSkillBadArgException) t);
-            }
-            else if (t instanceof MemberSkillNotFoundException) {
-                return handleNotFound(request, (MemberSkillNotFoundException) t);
-            }
-            else if (t instanceof MemberSkillAlreadyExistsException) {
-                return handleAlreadyExists(request, (MemberSkillAlreadyExistsException) t);
-            }
-        }
-
-        return HttpResponse.<JsonError>serverError();
-    }
 
     /**
      * Create and save a new member skill.
@@ -106,7 +49,6 @@ public class MemberSkillController {
      * @param memberSkill, {@link MemberSkillCreateDTO}
      * @return {@link HttpResponse< MemberSkill >}
      */
-
     @Post()
     public Single<HttpResponse<MemberSkill>> createAMemberSkill(@Body @Valid @NotNull MemberSkillCreateDTO memberSkill, HttpRequest<MemberSkillCreateDTO> request) {
 
@@ -137,14 +79,13 @@ public class MemberSkillController {
      * @param id {@link UUID} of the member skill entry
      * @return {@link MemberSkill}
      */
-
     @Get("/{id}")
     public Single<HttpResponse<MemberSkill>> readMemberSkill(@NotNull UUID id) {
 
         return Single.fromCallable(() -> {
             MemberSkill result = memberSkillsService.read(id);
             if (result == null) {
-                throw new MemberSkillNotFoundException("No member skill for UUID");
+                throw new NotFoundException("No member skill for UUID");
             }
             return result;
         })

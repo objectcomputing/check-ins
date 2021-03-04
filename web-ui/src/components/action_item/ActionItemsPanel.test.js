@@ -4,6 +4,39 @@ import ActionItemsPanel from "./ActionItemsPanel";
 import { AppContextProvider } from "../../context/AppContext";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
+import { createMemoryHistory } from "history";
+import { Router } from 'react-router-dom';
+
+const mockMemberId = "912834091823";
+const mockCheckinId = "837465917381";
+
+const initialState = {
+  state: {
+    userProfile: {
+      memberProfile: {
+        id: mockMemberId,
+        name: "mr. test"
+      },
+    },
+    checkins: [
+      {
+        id: mockCheckinId,
+        completed: false,
+      }
+    ]
+  },
+};
+
+const history = createMemoryHistory(`/checkins/${mockMemberId}/${mockCheckinId}`);
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useParams: () => ({
+    memberId: mockMemberId,
+    checkinId: mockCheckinId,
+  }),
+  useRouteMatch: () => ({ url: `/checkins/${mockMemberId}/${mockCheckinId}` }),
+}));
 
 window.snackDispatch = jest.fn();
 
@@ -49,21 +82,13 @@ function dumpElements(root, depth = 1) {
   }
 }
 
-const initialState = {
-  state: {
-    userProfile: {
-      memberProfile: {
-        id: "912834091823",
-      },
-    },
-  },
-};
-
 it("renders correctly", () => {
   snapshot(
+    <Router history={history}>
     <AppContextProvider value={initialState}>
-      <ActionItemsPanel checkinId="394810298371" memberName="mr. test" />
+      <ActionItemsPanel />
     </AppContextProvider>
+    </Router>
   );
 });
 
@@ -89,9 +114,11 @@ it.skip("handles drag and drop", () => {
     },
   ];
   const { container } = render(
+    <Router history={history}>
     <AppContextProvider value={initialState}>
-      <ActionItemsPanel checkinId="394810371" memberName="ms. test" />
+      <ActionItemsPanel />
     </AppContextProvider>
+    </Router>
   );
 
   const createBubbledEvent = (type, props = {}) => {

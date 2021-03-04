@@ -10,10 +10,7 @@ import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class CombineSkillServicesImpl implements CombineSkillServices {
@@ -34,41 +31,58 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
     }
 
     public Skill combine(@NotNull @Valid CombineSkillsDTO skillDTO) {
-
-        boolean isAdmin = currentUserServices.isAdmin();
-        Skill returnSkill = null;
-
+        final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
 
-        Skill newSkill = new Skill(skillDTO.getName(), skillDTO.getDescription());
-        UUID[] skillsArray = skillDTO.getSkillsToCombine();
-        List<UUID> memberIds = new ArrayList<>();
+        Set<Skill> existingSkills = skillServices.findByValue(skillDTO.getName(), null);
+        for (Skill existingSkill : existingSkills) {
+            if (existingSkill.getName().equals(skillDTO.getName())) {
+                return combineWithExistingSkill(existingSkill, skillDTO);
+            }
+        }
 
-        returnSkill = skillServices.save(newSkill);
+        return combineToNewSkill(skillDTO);
+    }
+
+    private Skill combineWithExistingSkill(@NotNull Skill existingSkill, @NotNull @Valid CombineSkillsDTO skillsDTO) {
+        Set<UUID> memberIds = new HashSet<>();
+        for (UUID id : skillsDTO.getSkillsToCombine()) {
+            Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, id);
+            changeMemberSkills(memberSkills, existingSkill, memberIds);
+
+            if (!id.equals(existingSkill.getId())) {
+                skillServices.delete(id);
+            }
+        }
+
+        existingSkill.setDescription(skillsDTO.getDescription());
+        return skillServices.update(existingSkill);
+    }
+
+    private Skill combineToNewSkill(@NotNull @Valid CombineSkillsDTO skillDTO) {
+        Skill newSkill = new Skill(skillDTO.getName(), skillDTO.getDescription());
+        Skill returnSkill = skillServices.save(newSkill);
+
+        UUID[] skillsArray = skillDTO.getSkillsToCombine();
+        Set<UUID> memberIds = new HashSet<>();
 
         for (UUID skillToCombine : skillsArray) {
-
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, skillToCombine);
-
             changeMemberSkills(memberSkills, returnSkill, memberIds);
-
             skillServices.delete(skillToCombine);
-
         }
 
         return returnSkill;
     }
 
-        private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill, List<UUID> memberIds) {
-
+    private void changeMemberSkills(Set<MemberSkill> memberSkills, Skill returnSkill, Set<UUID> updatedMembers) {
 
         for (MemberSkill memberSkill : memberSkills) {
-            if (!memberIds.contains(memberSkill.getMemberid())) {
+            if (!updatedMembers.contains(memberSkill.getMemberid())) {
                 memberSkill.setSkillid(returnSkill.getId());
                 memberSkillServices.update(memberSkill);
-                memberIds.add(memberSkill.getMemberid());
-            }
-            else{
+                updatedMembers.add(memberSkill.getMemberid());
+            } else {
                 memberSkillServices.delete(memberSkill.getId());
             }
         }

@@ -2,17 +2,38 @@ import React, {useContext, useEffect, useState} from "react";
 
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import {createMember} from "../api/member";
-import {AppContext, UPDATE_MEMBER_PROFILES} from "../context/AppContext";
+import {AppContext} from "../context/AppContext";
+import {UPDATE_MEMBER_PROFILES} from "../context/actions";
 
-import {Button, TextField} from "@material-ui/core";
+import {Button, TextField, Grid} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 
 import "./DirectoryPage.css";
 import MemberModal from "../components/member-directory/MemberModal";
 
+const useStyles = makeStyles({
+  search: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  searchInput: {
+    width: "20em"
+  },
+  members: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    width: "100%",
+  }
+});
+
 const DirectoryPage = () => {
     const {state, dispatch} = useContext(AppContext);
     const {csrf, memberProfiles, userProfile} = state;
+
+    const classes = useStyles();
 
     const [members, setMembers] = useState(
         memberProfiles &&
@@ -51,9 +72,10 @@ const DirectoryPage = () => {
 
     return (
         <div className="directory-page">
-            <div className="search">
+        <Grid container spacing={3} >
+            <Grid item xs={12} className={classes.search}>
                 <TextField
-                    className="fullWidth"
+                    className={classes.searchInput}
                     label="Search Members"
                     placeholder="Member Name"
                     value={searchText}
@@ -96,8 +118,9 @@ const DirectoryPage = () => {
                         />
                     </div>
                 )}
-            </div>
-            <div className="members">{createMemberCards}</div>
+            </Grid>
+            <Grid item className={classes.members}>{createMemberCards}</Grid>
+            </Grid>
         </div>
     );
 };

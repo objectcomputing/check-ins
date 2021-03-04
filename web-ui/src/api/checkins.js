@@ -2,6 +2,8 @@ import { resolve } from "./api.js";
 
 const checkinsUrl = "/services/check-in";
 const checkinsNoteUrl = "/services/checkin-note";
+const checkinsPrivateNoteUrl = "/services/private-note";
+
 export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
     url: checkinsUrl,
@@ -108,3 +110,43 @@ export const updateCheckinNote = async ({
 };
 
 // TODO: write get/update private note api call
+
+export const getPrivateNoteByCheckinId = async (id, cookie) => {
+  return resolve({
+    url: checkinsPrivateNoteUrl,
+    responseType: "json",
+    params: {
+      checkinid: id,
+    },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const createPrivateNote = async ({
+                                          checkinid,
+                                          createdbyid,
+                                          description,
+                                        }, cookie) => {
+  return resolve({
+    method: "post",
+    url: checkinsPrivateNoteUrl,
+    responseType: "json",
+    data: { checkinid, createdbyid, description },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const updatePrivateNote = async ({
+                                          id,
+                                          checkinid,
+                                          createdbyid,
+                                          description,
+                                        }, cookie) => {
+  return resolve({
+    method: "put",
+    url: checkinsPrivateNoteUrl,
+    responseType: "json",
+    data: { id, checkinid, createdbyid, description },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};

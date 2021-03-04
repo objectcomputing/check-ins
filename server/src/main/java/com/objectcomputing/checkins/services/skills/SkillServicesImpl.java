@@ -7,10 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class SkillServicesImpl implements SkillServices {
@@ -37,8 +34,8 @@ public class SkillServicesImpl implements SkillServices {
 
             newSkill = skillRepository.save(skill);
         }
-        return newSkill;
 
+        return newSkill;
     }
 
     public Skill readSkill(@NotNull UUID id) {
@@ -47,13 +44,16 @@ public class SkillServicesImpl implements SkillServices {
 
     public Set<Skill> findByValue(String name, Boolean pending) {
         Set<Skill> skillList = new HashSet<>();
-        skillRepository.findAll().forEach(skillList::add);
 
         if (name != null) {
-            skillList.retainAll(findByNameLike(name));
-        }
-        if (pending != null) {
-            skillList.retainAll(skillRepository.findByPending(pending));
+            skillList.addAll(findByNameLike(name));
+            if (pending != null) {
+                skillList.retainAll(skillRepository.findByPending(pending));
+            }
+        } else if (pending != null) {
+            skillList.addAll(skillRepository.findByPending(pending));
+        } else {
+            skillRepository.findAll().forEach(skillList::add);
         }
 
         return skillList;
@@ -68,27 +68,19 @@ public class SkillServicesImpl implements SkillServices {
 
     protected List<Skill> findByNameLike(String name) {
         String wildcard = "%" + name + "%";
-        List<Skill> skillList = skillRepository.findByNameIlike(wildcard);
-
-        return skillList;
-
+        return skillRepository.findByNameIlike(wildcard);
     }
 
     public Skill update(@NotNull Skill skill) {
-
-        Skill newSkill = null;
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("You do not have permission to access this resource");
         }
 
         if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
-            newSkill = skillRepository.update(skill);
+            return skillRepository.update(skill);
         } else {
             throw new BadArgException(String.format("Skill %s does not exist, cannot update", skill.getId()));
         }
-
-        return newSkill;
-
     }
 
 }

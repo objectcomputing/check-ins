@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -29,14 +30,21 @@ public class MemberProfile {
 
     @Nullable
     @Column(name = "name")
-    @Schema(description = "full name of the employee")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )    @Schema(description = "full name of the employee")
     private String name;
 
     @Column(name="title")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(title::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Nullable
     @Schema(description = "employee's title at the company")
     private String title ;
-    
+
     @Column(name="pdlId")
     @TypeDef(type=DataType.STRING)
     @Nullable
@@ -44,19 +52,27 @@ public class MemberProfile {
     private UUID pdlId;
 
     @Column(name="location")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(location::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Nullable
     @Schema(description = "where the employee is geographically located")
     private String location;
 
     @NotNull
     @Column(name="workEmail")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
     private String workEmail;
 
     @Column(name="insperityId")
     @Nullable
     @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId; 
+    private String insperityId;
 
     @Column(name="startDate")
     @Schema(description = "employee's date of hire")
@@ -64,6 +80,10 @@ public class MemberProfile {
     private LocalDate startDate;
 
     @Column(name="bioText")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(bioText::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Nullable
     @Schema(description = "employee's biography")
     private String bioText;
@@ -89,7 +109,7 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate) {
-       this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+        this(null, name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 
     public MemberProfile(UUID id,

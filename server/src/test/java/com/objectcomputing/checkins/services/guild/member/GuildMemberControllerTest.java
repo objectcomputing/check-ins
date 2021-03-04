@@ -35,7 +35,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testCreateAGuildMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
@@ -99,9 +99,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testCreateDuplicateGuildMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
         guildMemberCreateDTO.setGuildid(guild.getId());
         guildMemberCreateDTO.setMemberid(memberProfile.getId());
@@ -123,7 +123,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testCreateAGuildMemberWithNonExistingGuild() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
@@ -147,7 +147,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testCreateAGuildMemberWithNonExistingMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
@@ -171,10 +171,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testReadGuildMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildMember.getId().toString()))
                 .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -202,9 +202,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testFindGuildMembers() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         Set<GuildMember> guilds = Collections.singleton(guildMember);
 
@@ -220,9 +220,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testFindGuildMembersAllParams() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         Set<GuildMember> guilds = Collections.singleton(guildMember);
 
@@ -238,9 +238,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testUpdateGuildMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
                 .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -255,9 +255,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testUpdateAnInvalidGuildMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         guildMember.setGuildid(null);
         guildMember.setMemberid(null);
 
@@ -300,9 +300,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testUpdateGuildMemberThrowException() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         guildMember.setMemberid(UUID.randomUUID());
         guildMember.setGuildid(guildMember.getGuildid());
 
@@ -323,10 +323,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
     @Test
     void testUpdateGuildMemberThrowExceptionWithNoGuild() {
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(UUID.randomUUID());
 
@@ -347,10 +347,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
     @Test
     void testUpdateGuildMemberThrowExceptionWithInvalidId() {
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         guildMember.setId(UUID.randomUUID());
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(guildMember.getGuildid());
@@ -373,9 +373,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testDeleteGuildMemberAsAdmin() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
@@ -388,10 +388,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testDeleteGuildMemberAsNonAdminNonLeadNonCurrentMember() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMemberNonLead.getId()))
@@ -414,11 +414,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testDeleteGuildMemberAsLead() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDeafultGuildMember(guild, memberProfile);
-        createDeafultGuildMemberLead(guild, secondMemberProfile);
+        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
+        createDefaultGuildMemberLead(guild, secondMemberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMemberNonLead.getId()))
@@ -433,10 +433,10 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testDeleteGuildMemberAsCurrentUser() {
 
-        Guild guild = createDeafultGuild();
+        Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDeafultGuildMember(guild, memberProfile);
+        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMemberNonLead.getId()))

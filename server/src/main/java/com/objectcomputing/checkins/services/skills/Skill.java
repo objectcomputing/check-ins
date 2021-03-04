@@ -22,25 +22,25 @@ public class Skill {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the id of the skill", required = true)
+    @Schema(description = "The id of the skill", required = true)
     private UUID id;
 
     @NotBlank
     @Column(name = "name", unique = true)
-    @Schema(description = "the name of the skill", required = true)
+    @Schema(description = "The name of the skill", required = true)
     private String name;
 
     @Column(name = "pending")
-    @Schema(description = "the pending status (approved or not) of the skill")
+    @Schema(description = "The pending status (approved or not) of the skill")
     private boolean pending = true;
 
     @Column(name = "description")
-    @Schema(description = "the description of the skill")
+    @Schema(description = "The description of the skill")
     private String description;
 
     @NotNull
     @Column(name = "extraneous")
-    @Schema(description = "the skill is extraneous (or not)", required = true)
+    @Schema(description = "The skill is extraneous (or not)", required = true)
     private boolean extraneous = false;
 
     public Skill() {
@@ -62,6 +62,7 @@ public class Skill {
     }
 
     public Skill(UUID id, String name, boolean pending, String description, boolean extraneous) {
+        this.id = id;
         this.name = name;
         this.pending = pending;
         this.description = description;

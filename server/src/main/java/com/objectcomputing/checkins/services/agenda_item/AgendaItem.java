@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.agenda_item;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -38,6 +39,10 @@ public class AgendaItem {
     private UUID createdbyid;
 
     @Nullable
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Column(name = "description")
     @Schema(description = "description of the agenda item")
     private String description;
@@ -51,7 +56,7 @@ public class AgendaItem {
     }
 
     public AgendaItem(UUID id, UUID checkinid, UUID createdbyid, String description) {
-        this(id,checkinid,createdbyid,description,1.0);
+        this(id, checkinid, createdbyid, description, 1.0);
     }
 
     public AgendaItem(UUID checkinid, UUID createdbyid, String description, double priority) {
@@ -65,6 +70,7 @@ public class AgendaItem {
         this.description = description;
         this.priority = priority;
     }
+
     public UUID getId() {
         return this.id;
     }
@@ -130,7 +136,7 @@ public class AgendaItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, checkinid, createdbyid, description,priority);
+        return Objects.hash(id, checkinid, createdbyid, description, priority);
     }
 
 }

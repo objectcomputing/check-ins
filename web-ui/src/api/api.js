@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UPDATE_TOAST } from "../context/AppContext";
+import { UPDATE_TOAST } from "../context/actions";
 
 export const BASE_API_URL = process.env.REACT_APP_API_URL
   ? process.env.REACT_APP_API_URL
@@ -39,7 +39,7 @@ export const resolve = async (payload) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: e.message,
+          toast: e.response.data.message,
         },
       });
     }

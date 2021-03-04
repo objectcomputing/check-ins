@@ -1,7 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
+import {useHistory} from "react-router-dom";
 import { getMembersByPDL } from "../../api/member";
 import { getCheckinByMemberId } from "../../api/checkins";
-import { AppContext, UPDATE_SELECTED_PROFILE } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { UPDATE_CHECKINS } from "../../context/actions";
+import { selectCurrentUserId, selectMostRecentCheckin, selectCsrfToken } from "../../context/selectors";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import List from '@material-ui/core/List';
@@ -16,13 +19,10 @@ import "./Personnel.css";
 
 const Personnel = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, userProfile } = state;
-  const id =
-    userProfile && userProfile.memberProfile
-      ? userProfile.memberProfile.id
-      : undefined;
+  const history = useHistory();
+  const csrf = selectCsrfToken(state);
+  const id = selectCurrentUserId(state);
   const [personnel, setPersonnel] = useState();
-  const [checkins, setCheckins] = useState([]);
 
   // Get personnel
   useEffect(() => {
@@ -50,38 +50,30 @@ const Personnel = () => {
   useEffect(() => {
     async function updateCheckins() {
       if (personnel) {
-        const tmpCheckins = [];
         for (const person of personnel) {
           let res = await getCheckinByMemberId(person.id, csrf);
-          let newCheckins = [];
           let data =
             res && res.payload && res.payload.status === 200
               ? res.payload.data
               : null;
           if (data && data.length > 0 && !res.error) {
-            data.sort((a, b) => (a.checkInDate < b.checkInDate ? 1 : -1));
-            newCheckins = data;
+            dispatch({type: UPDATE_CHECKINS, payload: data});
           }
-          let personWithCheckin = Object.assign({}, person);
-          personWithCheckin.checkins = newCheckins;
-          tmpCheckins.push(personWithCheckin);
         }
-        setCheckins(tmpCheckins);
       }
     }
     if (csrf) {
       updateCheckins();
     }
-  }, [csrf, personnel]);
+  }, [csrf, personnel, dispatch]);
 
   // Create entry of member and their last checkin
-  function createEntry(person, checkins, keyInput) {
+  function createEntry(person, lastCheckin, keyInput) {
     let key = keyInput ? keyInput : undefined;
     let name = "Team Member";
     let workEmail = "";
     let lastCheckInDate = "Unknown";
-    if (checkins && checkins.length) {
-      const lastCheckin = checkins[checkins.length - 1];
+    if(lastCheckin?.checkInDate) {
       const [year, month, day, hour, minute] = lastCheckin.checkInDate;
       lastCheckInDate = new Date(year, month - 1, day, hour, minute, 0).toLocaleDateString();
     }
@@ -96,7 +88,7 @@ const Personnel = () => {
     return (
       <ListItem key={key} button
           onClick={() => {
-            dispatch({ type: UPDATE_SELECTED_PROFILE, payload: person });
+            history.push(`/checkins/${person?.id}`);
           }}
       >
         <ListItemAvatar>
@@ -112,18 +104,10 @@ const Personnel = () => {
 
   // Create the entries for the personnel container
   const createPersonnelEntries = () => {
-    if (checkins && checkins.length > 0) {
-      return checkins.map((person) =>
-        createEntry(person, person.checkins, null)
-      );
-    } else if (personnel && personnel.length > 0) {
-      return personnel.map((person) => createEntry(person, null, null));
+    if (personnel && personnel.length > 0) {
+      return personnel.map((person) => createEntry(person, selectMostRecentCheckin(state, person.id), null));
     } else {
-      let fake = Array(3);
-      for (let i = 0; i < fake.length; i++) {
-        fake[i] = createEntry(null, null, `${i + 1}Personnel`);
-      }
-      return fake;
+      return [];
     }
   };
 

@@ -7,9 +7,22 @@ const initialState = {
     userProfile: {
       memberProfile: {
         id: "912834091823",
+        name: "Current",
+        pdlId: "0987654321",
+        supervisorId: "9876543210"
       },
       role: ["MEMBER"],
     },
+    memberProfiles: [
+        {
+          id: "0987654321",
+          name: "TestName"
+        },
+        {
+          id: "9876543210",
+          name: "TestName2"
+        },
+    ],
   },
 };
 

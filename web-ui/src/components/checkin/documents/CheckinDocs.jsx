@@ -1,14 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import FileUploader from "./FileUploader";
 import {
   getFiles,
   deleteFile,
   uploadFile,
 } from "../../../api/upload";
-import { AppContext, UPDATE_TOAST } from "../../../context/AppContext";
-
+import { AppContext } from "../../../context/AppContext";
+import { UPDATE_TOAST } from "../../../context/actions";
+import { selectCsrfToken, selectCurrentUser, selectIsPDL, selectIsAdmin, selectCheckin } from "../../../context/selectors";
 import DescriptionIcon from "@material-ui/icons/Description";
-import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { CircularProgress } from "@material-ui/core";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -19,18 +22,18 @@ import "./CheckinDocs.css";
 
 const UploadDocs = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, currentCheckin, userProfile } = state;
-  const { memberProfile } = userProfile;
+  const { checkinId, memberId } = useParams();
+  const csrf = selectCsrfToken(state);
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
+  const currentCheckin = selectCheckin(state, checkinId);
+
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileColors, setFileColors] = useState({});
 
-  const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
-    userProfile.role.includes("ADMIN");
-  const canView =
-    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
-  const checkinId = currentCheckin && currentCheckin.id;
+  const pdlorAdmin = selectIsPDL(state) || selectIsAdmin(state);
+  const canView = pdlorAdmin && currentUserId !== memberId;
 
   useEffect(() => {
     async function getCheckinFiles() {
@@ -42,7 +45,7 @@ const UploadDocs = () => {
             ? res.payload.data
             : null;
         if (checkinFiles) {
-          setFiles(...files, checkinFiles);
+          setFiles(checkinFiles);
           checkinFiles.forEach((file) => {
             setFileColors((fileColors) => ({
               ...fileColors,
@@ -108,8 +111,8 @@ const UploadDocs = () => {
         return (
           <div key={file.fileId} style={{ color: fileColors[file.name] }}>
             <a href={downloadUrl} download={file.name}>{file.name}</a>
-            <Button
-              className="remove-file"
+            <IconButton
+              disabled={currentCheckin?.completed}
               onClick={async () => {
                 if (csrf) {
                   await deleteFile(file.fileId, csrf);
@@ -121,8 +124,8 @@ const UploadDocs = () => {
                 }
               }}
             >
-              X
-            </Button>
+              <DeleteIcon />
+            </IconButton>
           </div>
         );
       }

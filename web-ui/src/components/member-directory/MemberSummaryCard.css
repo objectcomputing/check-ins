@@ -1,7 +1,6 @@
 .member-card {
   max-height: 20rem;
-  width: 360px;
-  margin: 5px;
+  width: 340px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -25,6 +24,7 @@
 
 .member-card .info-container {
   padding: 0;
+  margin-top: -16px;
 }
 
 .member-card .split-button {
@@ -35,12 +35,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 275px;
+  width: 225px;
 }
 
 .member-card .MuiCardHeader-content h3 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 275px;
+  width: 225px;
 }

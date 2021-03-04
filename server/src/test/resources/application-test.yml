@@ -31,3 +31,9 @@ flyway:
     default:
       locations:
         - "classpath:db/common"
+      placeholder-replacement: true
+      placeholders:
+        aeskey: BOGUS_TEST_KEY
+---
+aes:
+  key: BOGUS_TEST_KEY

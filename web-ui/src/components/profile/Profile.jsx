@@ -1,46 +1,56 @@
 import React, { useContext, useEffect, useState } from "react";
-
-import {
-  AppContext,
-  ADD_MEMBER_SKILL,
-  ADD_SKILL,
-  DELETE_MEMBER_SKILL,
-  selectMySkills,
-  selectCurrentUser,
-  UPDATE_USER_BIO,
-} from "../../context/AppContext";
-import Search from "./Search";
+import { Avatar, Typography, Hidden } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { AppContext } from "../../context/AppContext";
+import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
-import { getSkill, createSkill } from "../../api/skill.js";
-import { createMemberSkill, deleteMemberSkill } from "../../api/memberskill.js";
 import { getMember } from "../../api/member";
 
-import { Edit } from "@material-ui/icons";
-import { Avatar, Button, Chip } from "@material-ui/core";
+const useStyles = makeStyles((theme) => ({
+  profileInfo: {
+    display: "flex",
+    flexDirection: "row",
+    margin: "14px",
+  },
+  profileImage: {
+    marginRight: "20px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    cursor: "pointer",
+    width: "160px",
+    height: "160px",
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: "16px",
+  },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    marginBottom: "16px",
+    alignItems: "center",
+  },
+  title: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  smallAvatar: {
+    marginRight: "16px",
+  }
+}));
 
-import "./Profile.css";
+const Profile = ({memberId}) => {
+  const classes = useStyles();
+  const { state } = useContext(AppContext);
+  const { csrf } = state;
+  const userProfile = selectProfileMap(state)[memberId];
 
-const Profile = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { csrf, skills } = state;
-  const userProfile = selectCurrentUser(state);
-
-  const [mySkills, setMySkills] = useState([]);
-  const { bioText, workEmail, name, title, id, pdlId } = userProfile;
+  const { workEmail, name, title, location, supervisorid, pdlId } = userProfile ? userProfile : {};
 
   const [pdl, setPDL] = useState();
-  const [bio, setBio] = useState();
-  const [updating, setUpdating] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-
-  const myMemberSkills = selectMySkills(state);
-
-  useEffect(() => {
-    async function updateBio() {
-      setBio(bioText);
-    }
-    updateBio();
-  }, [bioText]);
+  const [supervisor, setSupervisor] = useState();
 
   // Get PDL's name
   useEffect(() => {
@@ -57,156 +67,54 @@ const Profile = () => {
     }
   }, [csrf, pdlId]);
 
+  // Get Supervisor's name
   useEffect(() => {
-    const getSkills = async () => {
-      const skillsResults = await Promise.all(
-        myMemberSkills.map((mSkill) => getSkill(mSkill.skillid, csrf))
-      );
-      const currentUserSkills = skillsResults.map(
-        (result) => result.payload.data
-      );
-      setMySkills(currentUserSkills);
-    };
-    if (csrf && myMemberSkills) {
-      getSkills();
-    }
-  }, [csrf, myMemberSkills]);
-
-  const addSkill = async (name) => {
-    if (!csrf) {
-      return;
-    }
-    const inSkillsList = skills.find(
-      (skill) => skill.name.toUpperCase() === name.toUpperCase()
-    );
-    let curSkill = inSkillsList;
-    if (!inSkillsList) {
-      const res = await createSkill({ name: name, pending: true }, csrf);
-      const data =
-        res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({ type: ADD_SKILL, payload: data });
-      curSkill = data;
-    }
-    if (curSkill && curSkill.id && id) {
-      if (
-        Object.values(mySkills).find(
-          (skill) => skill.name.toUpperCase === curSkill.name.toUpperCase()
-        )
-      ) {
-        return;
+    async function getSupervisorName() {
+      if (supervisorid) {
+        let res = await getMember(supervisorid, csrf);
+        let supervisorProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setSupervisor(supervisorProfile ? supervisorProfile.name : "");
       }
-      const res = await createMemberSkill(
-        { skillid: curSkill.id, memberid: id },
-        csrf
-      );
-      const data =
-        res && res.payload && res.payload.data ? res.payload.data : null;
-      data && dispatch({ type: ADD_MEMBER_SKILL, payload: data });
     }
-  };
-
-  const updateProfile = () => {
-    dispatch({
-      type: UPDATE_USER_BIO,
-      payload: bio,
-    });
-  };
-
-  const removeSkill = async (id, csrf) => {
-    const mSkill = myMemberSkills.find((s) => s.skillid === id);
-    await deleteMemberSkill(mSkill.id, csrf);
-    dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
-  };
-
-  const handleDelete = (id) => {
-    if (csrf && id) {
-      removeSkill(id, csrf);
+    if (csrf) {
+      getSupervisorName();
     }
-  };
+  }, [csrf, supervisorid]);
 
   return (
-    <div className="Profile">
-      <div className="flex-row" style={{ marginTop: "20px" }}>
-        <div className="profile-image">
-          <Avatar
-            alt="Profile"
-            src={getAvatarURL(workEmail)}
-            style={{ width: "180px", height: "180px" }}
-          />
-        </div>
-        <div className="flex-row">
-          <div style={{ textAlign: "left" }}>
-            <h2 style={{ margin: 0 }}>
-              {name}
-              {updating && (
-                <Button
-                  style={{
-                    backgroundColor: "green",
-                    color: "white",
-                    marginLeft: "20px",
-                  }}
-                  onClick={() => {
-                    setDisabled(!disabled);
-                    setUpdating(!updating);
-                    updateProfile();
-                  }}
-                >
-                  Update
-                </Button>
-              )}
-              {!updating && (
-                <Edit
-                  onClick={() => {
-                    setDisabled(!disabled);
-                    setUpdating(!updating);
-                  }}
-                  style={{
-                    color: "black",
-                    marginLeft: "20px",
-                  }}
-                />
-              )}
-            </h2>
-            <div>
-              <span>Job Title: </span>
-              {title}
-            </div>
-            <div>
-              <span>Email: </span>
-              {workEmail}
-            </div>
-            <div>
-              <span>PDL: </span>
-              {pdl}
-            </div>
-            <div>
-              <span>Bio</span>
-              <textarea
-                disabled={disabled}
-                id="Bio"
-                onChange={(e) => setBio(e.target.value)}
-                value={bio}
-              ></textarea>
+    <div className={classes.flexRow}>
+      <Hidden xsDown>
+        <Avatar
+          className={classes.profileImage}
+          alt="Profile"
+          src={getAvatarURL(workEmail)}
+        />
+      </Hidden>
+      <div className={classes.profileInfo}>
+        <div>
+          <div className={classes.header}>
+            <Hidden smUp>
+              <Avatar className={classes.smallAvatar} src={getAvatarURL(workEmail)} />
+            </Hidden>
+            <div className={classes.title}>
+              <Typography variant="h5" component="h2">
+                {name}
+              </Typography>
+              <Typography color="textSecondary" component="h3">{title}</Typography>
             </div>
           </div>
-        </div>
-      </div>
-      <div>
-        <div className="skills-section">
-          <h2>Skills</h2>
-          {mySkills &&
-            mySkills.map((memberSkill) => {
-              let { id, name } = memberSkill;
-              return (
-                <Chip
-                  color="primary"
-                  key={id}
-                  label={name}
-                  onDelete={() => handleDelete(id)}
-                />
-              );
-            })}
-          <Search mySkills={Object.values(mySkills)} addSkill={addSkill} />
+          <Typography variant="body2" color="textSecondary" component="p">
+            <a href={`mailto:${workEmail}`} target="_blank" rel="noopener noreferrer">
+              {workEmail}
+            </a>
+            <br />
+            Location: {location}
+            <br />
+            Supervisor: {supervisor}
+            <br />
+            PDL: {pdl}
+          </Typography>
         </div>
       </div>
     </div>

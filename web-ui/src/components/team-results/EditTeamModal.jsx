@@ -1,13 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 
-import { AppContext, selectMemberProfiles, selectCurrentUser } from "../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
+import { selectMemberProfiles, selectCurrentUser } from "../../context/selectors";
 
 import { Button } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditTeamModal.css";
-import { updateTeam } from "../../api/team.js";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
@@ -17,13 +17,13 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const teamMemberOptions = memberProfiles;
 
   useEffect(() => {
-    if(team.teamMembers === undefined || team.teamMembers.length === 0) {
+    if(currentUser?.id && (editedTeam.teamMembers === undefined || editedTeam.teamMembers.length === 0)) {
       setTeam({
-        ...team,
+        ...editedTeam,
         teamMembers:[{memberid: currentUser.id, name: currentUser.name, lead: true}]
       });
     }
-  }, [team, currentUser]);
+  }, [editedTeam, currentUser]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =
@@ -142,9 +142,8 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           </Button>
           <Button
             disabled={!readyToEdit(editedTeam)}
-            onClick={async () => {
+            onClick={() => {
               onSave(editedTeam);
-              await updateTeam(editedTeam);
             }}
             color="primary"
           >

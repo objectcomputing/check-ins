@@ -1,66 +1,50 @@
-import React, { useContext, useEffect, useState } from "react";
-
+import React, { useContext } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import {
-  UPDATE_CURRENT_CHECKIN,
-  UPDATE_CHECKINS,
-} from "../../context/AppContext";
+  UPDATE_CHECKIN,
+} from "../../context/actions";
 import { AppContext } from "../../context/AppContext";
 import { updateCheckin } from "../../api/checkins";
-
+import { selectCsrfToken, selectCheckinsForMember, selectProfile } from "../../context/selectors";
+import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { Link } from "react-router-dom";
+import { DateTimePicker } from "@material-ui/pickers";
 
 import "./Checkin.css";
 
-const CheckinsHistory = ({ history }) => {
+const CheckinsHistory = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { checkins, currentCheckin, csrf } = state;
-  const [index, setIndex] = useState(0);
+  const { checkinId, memberId } = useParams();
+  const history = useHistory();
+  const csrf = selectCsrfToken(state);
+  const selectedProfile = selectProfile(state, memberId);
 
-  useEffect(() => {
-    const length = checkins ? checkins.length : 0;
-    setIndex(length - 1);
-  }, [checkins]);
-
-  useEffect(() => {
-    const checkin = checkins[index];
-    if (checkin) {
-      dispatch({ type: UPDATE_CURRENT_CHECKIN, payload: checkin });
-      history.push(`/checkins/${checkin.id}`);
-    }
-  }, [index, dispatch, history, checkins]);
+  const checkins = selectCheckinsForMember(state, memberId);
+  const index = checkins.findIndex(checkin => checkin.id === checkinId);
 
   const getCheckinDate = () => {
-    if (currentCheckin && currentCheckin.checkInDate) {
-      const [year, month, day, hour, minute] = currentCheckin.checkInDate;
+    if (checkins && checkins[index]?.checkInDate) {
+      const [year, month, day, hour, minute] = checkins[index].checkInDate;
       return new Date(year, month - 1, day, hour, minute, 0);
     }
     // return new date unless you are running a Jest test
     return process.env.JEST_WORKER_ID ? new Date(2020, 9, 21) : new Date();
   };
 
-  const lastIndex = checkins.length - 1;
   const leftArrowClass = "arrow " + (index > 0 ? "enabled" : "disabled");
   const rightArrowClass =
-    "arrow " + (index < lastIndex ? "enabled" : "disabled");
+    "arrow " + (index < checkins.length - 1 ? "enabled" : "disabled");
 
   const previousCheckin = () => {
-    if (index !== 0) {
-      const i = index - 1;
-      setIndex(i);
-      history.push(`/checkins/${checkins[i].id}`);
+    if (index > 0) {
+      history.push(`/checkins/${memberId}/${checkins[index - 1].id}`);
     }
   };
 
   const nextCheckin = () => {
-    if (index !== lastIndex) {
-      const i = index + 1;
-      setIndex(i);
-      history.push(`/checkins/${checkins[i].id}`);
+    if (index < checkins.length - 1) {
+      history.push(`/checkins/${memberId}/${checkins[index + 1].id}`);
     }
   };
 
@@ -73,71 +57,54 @@ const CheckinsHistory = ({ history }) => {
       const minutes = date.getMinutes();
       const checkin = checkins[index];
       const dateArray = [year, month, day, hours, minutes, 0];
-      const updatedCheckin = await updateCheckin({
+      const res = await updateCheckin({
         ...checkin,
+        pdlId: selectedProfile?.pdlId,
         checkInDate: dateArray,
       }, csrf);
-      const newCheckin = updatedCheckin.payload.data;
-      const filtered = checkins.filter((e) => {
-        return e.id !== checkin.id;
-      });
-      filtered.push(newCheckin);
-      dispatch({
-        type: UPDATE_CHECKINS,
-        payload: filtered,
-      });
-      dispatch({
-        type: UPDATE_CURRENT_CHECKIN,
-        payload: newCheckin,
-      });
+      const updatedCheckin = res.payload && res.payload.data && !res.error
+        ? res.payload.data : null;
+      updatedCheckin && dispatch({type: UPDATE_CHECKIN, payload: updatedCheckin});
     }
   };
-
-  const DateInput = React.forwardRef((props, ref) => (
-    <div className="date-input" onClick={props.onClick} ref={ref}>
-      <p style={{ margin: "0px" }}>{props.value}</p>
-      <CalendarTodayIcon></CalendarTodayIcon>
-    </div>
-  ));
 
   return (
     <div>
       {getCheckinDate() && (
         <div>
           <div className="date-picker">
-            <Link
-              className="arrow"
+            <IconButton
+              disabled={index <= 0}
+              aria-label="Previous Check-in`"
               onClick={previousCheckin}
-              to={`${currentCheckin && currentCheckin.id}`}
             >
               <ArrowBackIcon
                 className={leftArrowClass}
-                style={{ fontSize: "50px" }}
+                style={{ fontSize: "1.2em" }}
               />
-            </Link>
-            <DatePicker
-              closeOnScroll
-              customInput={<DateInput />}
-              dateFormat="MMMM dd, yyyy h:mm aa"
-              disabled={
-                !checkins.length ||
-                (currentCheckin && currentCheckin.completed === true)
-              }
+            </IconButton>
+            <DateTimePicker
+              format="MMMM dd, yyyy @hh:mm aaaa"
+              style={{width: '18em'}}
+              value={getCheckinDate()}
               onChange={pickDate}
-              selected={getCheckinDate()}
-              showTimeSelect
-              withPortal
+              label="Check-In Date"
+              showTodayButton
+              disabled={
+                !checkins?.length ||
+                checkins[index]?.completed
+              }
             />
-            <Link
-              className="arrow"
+            <IconButton
+              disabled={index >= checkins.length - 1}
+              aria-label="Next Check-in`"
               onClick={nextCheckin}
-              to={`${currentCheckin && currentCheckin.id}`}
             >
               <ArrowForwardIcon
                 className={rightArrowClass}
-                style={{ fontSize: "50px" }}
+                style={{ fontSize: "1.2em" }}
               />
-            </Link>
+            </IconButton>
           </div>
         </div>
       )}

@@ -2,84 +2,80 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="notes"
+  className="MuiPaper-root MuiCard-root note MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
-    className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+    className="MuiCardHeader-root"
   >
     <div
-      className="MuiCardHeader-root"
+      className="MuiCardHeader-avatar"
     >
-      <div
-        className="MuiCardHeader-avatar"
+      <svg
+        aria-hidden={true}
+        className="MuiSvgIcon-root"
+        focusable="false"
+        viewBox="0 0 24 24"
       >
-        <svg
-          aria-hidden={true}
-          className="MuiSvgIcon-root"
-          focusable="false"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
-          />
-        </svg>
-      </div>
-      <div
-        className="MuiCardHeader-content"
-      >
-        <h2
-          className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
-        >
-          Notes for holmes
-        </h2>
-      </div>
+        <path
+          d="M3 18h12v-2H3v2zM3 6v2h18V6H3zm0 7h18v-2H3v2z"
+        />
+      </svg>
     </div>
     <div
-      className="MuiCardContent-root"
+      className="MuiCardHeader-content"
+    >
+      <h2
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        Notes for holmes
+      </h2>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <div
+      className="container"
     >
       <div
-        className="container"
+        className="skeleton"
       >
-        <div
-          className="skeleton"
-        >
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
             }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
             }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
             }
-          />
-          <span
-            className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
-            style={
-              Object {
-                "height": "2rem",
-                "width": undefined,
-              }
+          }
+        />
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": "2rem",
+              "width": undefined,
             }
-          />
-        </div>
+          }
+        />
       </div>
     </div>
   </div>

@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-
+import { useParams } from "react-router-dom";
 import {
   getNoteByCheckinId,
   createCheckinNote,
   updateCheckinNote,
 } from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
-
+import { selectCsrfToken, selectCurrentUser, selectCheckin, selectProfile } from "../../context/selectors";
 import { debounce } from "lodash/function";
 import NotesIcon from "@material-ui/icons/Notes";
-import LockIcon from "@material-ui/icons/Lock";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -25,32 +24,23 @@ const updateNote = debounce(realUpdate, 1000);
 
 const Notes = (props) => {
   const { state } = useContext(AppContext);
+  const { checkinId, memberId } = useParams();
+  const csrf = selectCsrfToken(state);
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
+  const currentCheckin = selectCheckin(state, checkinId);
+  const currentMember = selectProfile(state, memberId);
+  const pdlId = currentMember?.pdlId;
+
   const noteRef = useRef([]);
-  const { csrf, userProfile, currentCheckin, selectedProfile } = state;
-  const { memberProfile } = userProfile;
-  const { id } = memberProfile;
-  const { memberName } = props;
   const [note, setNote] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  // TODO: get private note
-  const [privateNote, setPrivateNote] = useState();
-  const selectedProfilePDLId = selectedProfile && selectedProfile.pdlId;
-  const pdlId = memberProfile && memberProfile.pdlId;
-  const pdlorAdmin =
-    (memberProfile && userProfile.role && userProfile.role.includes("PDL")) ||
-    userProfile.role.includes("ADMIN");
-  const Admin =
-     (memberProfile && userProfile.role && userProfile.role.includes("ADMIN"));
-
-  const canViewPrivateNote =
-    pdlorAdmin && memberProfile.id !== currentCheckin.teamMemberId;
-  const currentCheckinId = currentCheckin && currentCheckin.id;
 
   useEffect(() => {
     async function getNotes() {
       setIsLoading(true);
       try {
-        let res = await getNoteByCheckinId(currentCheckinId, csrf);
+        let res = await getNoteByCheckinId(checkinId, csrf);
         if (res.error) throw new Error(res.error);
         const currentNote =
           res.payload && res.payload.data && res.payload.data.length > 0
@@ -58,16 +48,16 @@ const Notes = (props) => {
             : null;
         if (currentNote) {
           setNote(currentNote);
-        } else if (id === selectedProfilePDLId) {
-          if (!noteRef.current.some((id) => id === currentCheckinId)) {
-            noteRef.current.push(currentCheckinId);
+        } else if (currentUserId === pdlId) {
+          if (!noteRef.current.some((id) => id === checkinId)) {
+            noteRef.current.push(checkinId);
             res = await createCheckinNote({
-              checkinid: currentCheckinId,
-              createdbyid: id,
+              checkinid: checkinId,
+              createdbyid: currentUserId,
               description: "",
             }, csrf);
             noteRef.current = noteRef.current.filter(
-              (id) => id !== currentCheckinId
+              (id) => id !== checkinId
             );
             if (res.error) throw new Error(res.error);
             if (res && res.payload && res.payload.data) {
@@ -76,8 +66,8 @@ const Notes = (props) => {
           }
         } else {
           res = await createCheckinNote({
-            checkinid: currentCheckinId,
-            createdbyid: pdlId,
+            checkinid: checkinId,
+            createdbyid: currentUserId,
             description: "",
           }, csrf);
           if (res.error) throw new Error(res.error);
@@ -93,7 +83,7 @@ const Notes = (props) => {
     if (csrf) {
       getNotes();
     }
-  }, [csrf, currentCheckinId, pdlId, id, selectedProfilePDLId, pdlorAdmin]);
+  }, [csrf, checkinId, currentUserId, pdlId]);
 
   const handleNoteChange = (e) => {
     if (Object.keys(note).length === 0 || !csrf) {
@@ -107,14 +97,9 @@ const Notes = (props) => {
     });
   };
 
-  const handlePrivateNoteChange = (e) => {
-    setPrivateNote(e.target.value);
-  };
-
   return (
-    <div className="notes">
-      <Card>
-        <CardHeader avatar={<NotesIcon />} title={`Notes for ${memberName}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
+      <Card className="note">
+        <CardHeader avatar={<NotesIcon />} title={`Notes for ${currentMember?.name}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
         <CardContent>
           <div className="container">
             {isLoading ? (
@@ -127,9 +112,8 @@ const Notes = (props) => {
             ) : (
               <textarea
                 disabled={
-                  !Admin &
-                  currentCheckin.completed === true ||
-                  Object.keys(note) === 0
+                  currentCheckin?.completed ||
+                  note === undefined || Object.keys(note) === 0
                 }
                 onChange={handleNoteChange}
                 value={note && note.description ? note.description : ""}
@@ -138,18 +122,7 @@ const Notes = (props) => {
           </div>
         </CardContent>
       </Card>
-      {canViewPrivateNote && (
-      <Card>
-        <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
-        <CardContent>
-          <div className="container">
-          <textarea onChange={handlePrivateNoteChange} value={privateNote}/>
-          </div>
-        </CardContent>
-      </Card>
-      )}
-    </div>
-  );
+      );
 };
 
 export default Notes;
