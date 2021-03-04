@@ -39,7 +39,7 @@ export const resolve = async (payload) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: e.message,
+          toast: e.response.data.message,
         },
       });
     }
