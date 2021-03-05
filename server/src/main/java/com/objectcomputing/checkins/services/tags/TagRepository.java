@@ -28,7 +28,5 @@ public interface TagRepository extends CrudRepository<Tag, UUID>{
         @Override
         <S extends Tag> S save(@Valid @NotNull @NonNull S tag);
 
-
         List<Tag> findByNameIlike(String name);
 }
-

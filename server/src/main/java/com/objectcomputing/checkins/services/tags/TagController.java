@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @io.swagger.v3.oas.annotations.tags.Tag(name = "tag")
-
     public class TagController {
 
         private final TagServices tagServices;
@@ -49,7 +48,6 @@ import java.util.concurrent.ExecutorService;
          * @param tag, {@link TagCreateDTO}
          * @return {@link HttpResponse<  Tag  >}
          */
-
         @Post()
         public Single<HttpResponse<Tag>> createTag(@Body @Valid @NotNull TagCreateDTO tag, HttpRequest<TagCreateDTO> request) {
 
@@ -69,8 +67,7 @@ import java.util.concurrent.ExecutorService;
     @Delete("/{id}")
     public HttpResponse<?> deleteTag(UUID id) {
         tagServices.delete(id);
-        return HttpResponse
-                .ok();
+        return HttpResponse.ok();
     }
 
         /**
@@ -79,7 +76,6 @@ import java.util.concurrent.ExecutorService;
          * @param id {@link UUID} of the tag entry
          * @return {@link Tag}
          */
-
         @Get("/{id}")
         public Single<HttpResponse<Tag>> readTag(@NotNull UUID id) {
 
@@ -99,7 +95,7 @@ import java.util.concurrent.ExecutorService;
          * Find tag that match all filled in parameters, return all results when given no params
          *
          * @param name {@link String} of tag
-         * @return {@link List < tag > list of tags}
+         * @return {@link Set < tag > set of tags}
          */
         @Get("/{?name}")
         public Single<HttpResponse<Set<Tag>>> findtags(@Nullable String name) {

@@ -29,7 +29,7 @@ public class TagServicesImpl implements TagServices {
             if (tag != null) {
                 if (tag.getId() != null) {
                     throw new BadArgException(String.format("Found unexpected id %s for tag", tag.getId()));
-                } else if(!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
+                } else if (!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
                     throw new AlreadyExistsException(String.format("A tag named %s already exists.", tag.getName()));
                 }
 
@@ -44,7 +44,6 @@ public class TagServicesImpl implements TagServices {
         }
 
         public Set<Tag> findByFields(String name) {
-
             return tagRepository.search(name);
         }
 
@@ -64,7 +63,6 @@ public class TagServicesImpl implements TagServices {
             return newTag;
 
         }
-
 
         public void delete(@NotNull UUID id) {
 

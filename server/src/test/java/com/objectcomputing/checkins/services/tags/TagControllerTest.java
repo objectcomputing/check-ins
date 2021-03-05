@@ -52,13 +52,11 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
         Tag tag = createADefaultTag();
         String name = "";
 
-
         final HttpRequest<Object> request = HttpRequest.DELETE(tag.getId().toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
-
 
     @Test
     void testReadAllTags() {
@@ -111,7 +109,6 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     void testFindTagByTagId() {
         Tag tag = createADefaultTag();
         String name = null;
-
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?tagid=%s", tag.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<Tag>> response = client.toBlocking().exchange(request, Argument.setOf(Tag.class));

@@ -33,7 +33,6 @@ import java.util.concurrent.ExecutorService;
             private final EntityTagServices entityTagServices;
             private final EventLoopGroup eventLoopGroup;
             private final ExecutorService ioExecutorService;
-
             public EntityTagController(EntityTagServices entityTagServices,
                                      EventLoopGroup eventLoopGroup,
                                      @Named(TaskExecutors.IO) ExecutorService ioExecutorService) {
@@ -48,7 +47,6 @@ import java.util.concurrent.ExecutorService;
          * @param entityTag, {@link EntityTagCreateDTO}
          * @return {@link HttpResponse< EntityTag >}
          */
-
         @Post()
         public Single<HttpResponse<EntityTag>> createAEntityTag(@Body @Valid @NotNull EntityTagCreateDTO entityTag, HttpRequest<EntityTagCreateDTO> request) {
 
@@ -69,8 +67,7 @@ import java.util.concurrent.ExecutorService;
         @Delete("/{id}")
         public HttpResponse<?> deleteEntityTag(@NotNull UUID id) {
             entityTagServices.delete(id);
-            return HttpResponse
-                    .ok();
+            return HttpResponse.ok();
         }
 
         /**
@@ -79,7 +76,6 @@ import java.util.concurrent.ExecutorService;
          * @param id {@link UUID} of the entity tag entry
          * @return {@link EntityTag}
          */
-
         @Get("/{id}")
         public Single<HttpResponse<EntityTag>> readEntityTag(@NotNull UUID id) {
 
@@ -104,9 +100,8 @@ import java.util.concurrent.ExecutorService;
          */
         @Get("/{?entityId,tagId}")
         public Single<HttpResponse<Set<EntityTag>>> findEntityTag(@Nullable UUID entityId,
-                                                                       @Nullable UUID tagId,
-                                                                  @Nullable EntityType type
-        ) {
+                                                                  @Nullable UUID tagId,
+                                                                  @Nullable EntityType type) {
             return Single.fromCallable(() -> entityTagServices.findByFields(entityId, tagId, type))
                     .observeOn(Schedulers.from(eventLoopGroup))
                     .map(entityTags -> (HttpResponse<Set<EntityTag>>)HttpResponse

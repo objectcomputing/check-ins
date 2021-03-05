@@ -55,7 +55,6 @@ public class EntityTagServicesImpl implements EntityTagServices {
     }
 
     public Set<EntityTag> findByFields(UUID entityId, UUID tagId, EntityType type) {
-
             return entityTagRepository.search(nullSafeUUIDToString(entityId), nullSafeUUIDToString(tagId), type);
     }
 

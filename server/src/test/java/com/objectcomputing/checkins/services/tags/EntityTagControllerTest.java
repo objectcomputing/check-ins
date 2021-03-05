@@ -139,7 +139,6 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
         }
 
         @Test
-
         void deleteEntityTagAsAdmin() {
 
             MemberProfile memberProfile = createADefaultMemberProfile();

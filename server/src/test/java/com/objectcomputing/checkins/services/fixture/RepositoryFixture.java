@@ -27,7 +27,7 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);
     }
 
-        default EntityTagRepository getEntityTagRepository() {
+    default EntityTagRepository getEntityTagRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EntityTagRepository.class);
     }
 

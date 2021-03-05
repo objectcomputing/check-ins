@@ -8,6 +8,6 @@ import com.objectcomputing.checkins.services.tags.EntityTag.EntityType;
 public interface EntityTagFixture extends RepositoryFixture{
 
     default EntityTag createADefaultEntityTag(MemberProfile memberProfile, Tag tag, EntityType type) {
-        return getEntityTagRepository().save(new EntityTag(memberProfile.getId(),tag.getId(), type));
+        return getEntityTagRepository().save(new EntityTag(memberProfile.getId(), tag.getId(), type));
     }
 }
