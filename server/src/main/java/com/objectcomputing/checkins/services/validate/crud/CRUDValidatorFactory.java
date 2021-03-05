@@ -19,6 +19,4 @@ public class CRUDValidatorFactory {
     public CRUDValidator<Guild> createGuildCRUDValidator(GuildCRUDValidator validator) {
         return validator;
     }
-
-
 }
