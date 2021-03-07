@@ -101,14 +101,14 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }
         />
         <TextField
-          id="member-insperityId-input"
-          label="InsperityId"
+          id="member-employeeId-input"
+          label="EmployeeId"
           required
           className="halfWidth"
-          placeholder="Insperity Identifier"
-          value={editedMember.insperityId ? editedMember.insperityId : ""}
+          placeholder="Employee Identifier"
+          value={editedMember.employeeId ? editedMember.employeeId : ""}
           onChange={(e) =>
-            setMember({ ...editedMember, insperityId: e.target.value })
+            setMember({ ...editedMember, employeeId: e.target.value })
           }
         />
         <Autocomplete
