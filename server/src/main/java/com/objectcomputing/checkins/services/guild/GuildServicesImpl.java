@@ -1,8 +1,8 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
-import com.objectcomputing.checkins.services.validate.crud.GuildCRUDValidator;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -17,7 +17,7 @@ public class GuildServicesImpl implements GuildServices {
     private final GuildRepository guildsRepo;
     private final CRUDValidator<Guild> crudValidator;
 
-    public GuildServicesImpl(GuildRepository guildsRepo, GuildCRUDValidator crudValidator) {
+    public GuildServicesImpl(GuildRepository guildsRepo, @Named("Guild") CRUDValidator<Guild> crudValidator) {
         this.guildsRepo = guildsRepo;
         this.crudValidator = crudValidator;
     }
