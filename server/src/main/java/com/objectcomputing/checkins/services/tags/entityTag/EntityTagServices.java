@@ -1,6 +1,6 @@
-package com.objectcomputing.checkins.services.tags;
+package com.objectcomputing.checkins.services.tags.entityTag;
 
-import com.objectcomputing.checkins.services.tags.EntityTag.EntityType;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 
 import java.util.Set;
 import java.util.UUID;

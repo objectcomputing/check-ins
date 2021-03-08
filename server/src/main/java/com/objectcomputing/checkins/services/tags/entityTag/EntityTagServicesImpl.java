@@ -1,8 +1,9 @@
-package com.objectcomputing.checkins.services.tags;
+package com.objectcomputing.checkins.services.tags.entityTag;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.tags.EntityTag.EntityType;
+import com.objectcomputing.checkins.services.tags.TagRepository;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import javax.inject.Singleton;
@@ -32,6 +33,10 @@ public class EntityTagServicesImpl implements EntityTagServices {
     }
 
     public EntityTag save(EntityTag entityTag) {
+
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+
         EntityTag entityTagToReturn = null;
         if (entityTag != null) {
             final UUID entityId = entityTag.getEntityId();
@@ -55,7 +60,7 @@ public class EntityTagServicesImpl implements EntityTagServices {
     }
 
     public Set<EntityTag> findByFields(UUID entityId, UUID tagId, EntityType type) {
-            return entityTagRepository.search(nullSafeUUIDToString(entityId), nullSafeUUIDToString(tagId), type);
+        return entityTagRepository.search(nullSafeUUIDToString(entityId), nullSafeUUIDToString(tagId), type);
     }
 
     public EntityTag update(@NotNull EntityTag entityTag) {

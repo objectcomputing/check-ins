@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.tags;
+package com.objectcomputing.checkins.services.tags.entityTag;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import io.micronaut.data.annotation.AutoPopulated;
@@ -41,6 +41,33 @@ public class EntityTag {
     @Column(name = "tag_id")
     @Schema(description = "the id of the tag", required = true)
     private UUID tagId;
+
+    public enum EntityType {
+        SKILL(0),
+        TEAM(1);
+
+        private final int value;
+
+        EntityType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static EntityType convertFromString(@NotNull String type) {
+            final String typelc = type.toLowerCase();
+            switch (typelc) {
+                case "skill":
+                    return EntityType.SKILL;
+                case "team":
+                    return EntityType.TEAM;
+                default:
+                    throw new BadArgException(String.format("Invalid type %s", type));
+            }
+        }
+    }
 
     public EntityTag(UUID id, @NotNull UUID entityId, @NotNull UUID tagId, @NotNull EntityType type) {
         this.id = id;
@@ -85,33 +112,6 @@ public class EntityTag {
 
     public void setTagId(UUID tagId) {
         this.tagId = tagId;
-    }
-
-    public enum EntityType {
-        Skill(0),
-        Team(1);
-
-        private final int value;
-
-        EntityType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public static EntityType convertFromString(@NotNull String type) {
-            final String typelc = type.toLowerCase();
-            switch (typelc) {
-                case "skill":
-                    return EntityType.Skill;
-                case "team":
-                    return EntityType.Team;
-                default:
-                    throw new BadArgException(String.format("Invalid type %s", type));
-            }
-        }
     }
 
     @Override

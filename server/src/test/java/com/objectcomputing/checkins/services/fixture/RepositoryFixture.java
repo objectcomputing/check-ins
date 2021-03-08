@@ -14,7 +14,7 @@ import com.objectcomputing.checkins.services.pulseresponse.PulseResponseReposito
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
-import com.objectcomputing.checkins.services.tags.EntityTagRepository;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;

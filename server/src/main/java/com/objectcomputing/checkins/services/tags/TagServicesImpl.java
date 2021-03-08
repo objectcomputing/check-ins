@@ -14,61 +14,66 @@ import java.util.UUID;
 @Singleton
 public class TagServicesImpl implements TagServices {
 
-        private final TagRepository tagRepository;
-        private final CurrentUserServices currentUserServices;
-        private final PermissionsValidation permissionsValidation;
+    private final TagRepository tagRepository;
+    private final CurrentUserServices currentUserServices;
+    private final PermissionsValidation permissionsValidation;
 
-        public TagServicesImpl(TagRepository tagRepository, CurrentUserServices currentUserServices, PermissionsValidation permissionsValidation) {
-            this.tagRepository = tagRepository;
-            this.currentUserServices = currentUserServices;
-            this.permissionsValidation = permissionsValidation;
-        }
+    public TagServicesImpl(TagRepository tagRepository, CurrentUserServices currentUserServices, PermissionsValidation permissionsValidation) {
+        this.tagRepository = tagRepository;
+        this.currentUserServices = currentUserServices;
+        this.permissionsValidation = permissionsValidation;
+    }
 
-        public Tag save(Tag tag) {
-            Tag tagToReturn = null;
-            if (tag != null) {
-                if (tag.getId() != null) {
+    public Tag save(Tag tag) {
+
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+
+        Tag tagToReturn = null;
+        if (tag != null) {
+            if (tag.getId() != null) {
                     throw new BadArgException(String.format("Found unexpected id %s for tag", tag.getId()));
-                } else if (!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
+            } else if (!tagRepository.findByNameIlike(tag.getName()).isEmpty()) {
                     throw new AlreadyExistsException(String.format("A tag named %s already exists.", tag.getName()));
-                }
+            }
 
                 tagToReturn = tagRepository.save(tag);
-            }
+        }
             return tagToReturn;
 
+    }
+
+    public Tag read(@NotNull UUID uuid) {
+        return tagRepository.findById(uuid).orElse(null);
+    }
+
+    public Set<Tag> findByFields(String name) {
+        return tagRepository.search(name);
+    }
+
+    public Tag update(@NotNull Tag tag) {
+
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+
+        Tag newTag = null;
+
+        if (tag.getId() != null && tagRepository.findById(tag.getId()).isPresent()) {
+            newTag = tagRepository.update(tag);
+        } else {
+            throw new BadArgException(String.format("tag %s does not exist, cannot update", tag.getId()));
         }
 
-        public Tag read(@NotNull UUID uuid) {
-            return tagRepository.findById(uuid).orElse(null);
-        }
+        return newTag;
 
-        public Set<Tag> findByFields(String name) {
-            return tagRepository.search(name);
-        }
+    }
 
-        public Tag update(@NotNull Tag tag) {
+    public void delete(@NotNull UUID id) {
 
-            final boolean isAdmin = currentUserServices.isAdmin();
-            permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
 
-            Tag newTag = null;
+        tagRepository.deleteById(id);
+    }
 
-            if (tag.getId() != null && tagRepository.findById(tag.getId()).isPresent()) {
-                newTag = tagRepository.update(tag);
-            } else {
-                throw new BadArgException(String.format("tag %s does not exist, cannot update", tag.getId()));
-            }
-
-            return newTag;
-
-        }
-
-        public void delete(@NotNull UUID id) {
-
-            final boolean isAdmin = currentUserServices.isAdmin();
-            permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
-
-            tagRepository.deleteById(id);
-        }
 }

@@ -18,8 +18,8 @@ import java.util.UUID;
 public interface TagRepository extends CrudRepository<Tag, UUID>{
 
         @Query("SELECT * " +
-                        "FROM tags tag " +
-                        "WHERE (:name  IS NULL OR UPPER(tag.name) = UPPER(:name)) " )
+                "FROM tags tag " +
+                "WHERE (:name  IS NULL OR UPPER(tag.name) = UPPER(:name)) " )
         Set<Tag> search(@Nullable String name);
 
         @Override

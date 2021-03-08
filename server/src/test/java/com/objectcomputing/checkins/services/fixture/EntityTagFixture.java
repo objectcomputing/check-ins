@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.tags.EntityTag;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag;
 import com.objectcomputing.checkins.services.tags.Tag;
-import com.objectcomputing.checkins.services.tags.EntityTag.EntityType;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 
 public interface EntityTagFixture extends RepositoryFixture{
 

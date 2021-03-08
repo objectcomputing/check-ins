@@ -1,11 +1,11 @@
-package com.objectcomputing.checkins.services.tags;
+package com.objectcomputing.checkins.services.tags.entityTag;
 
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTag.EntityType;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 import io.reactivex.annotations.NonNull;
-import com.objectcomputing.checkins.services.tags.EntityTag.EntityType;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;

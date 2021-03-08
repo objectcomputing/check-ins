@@ -30,14 +30,13 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Client("/services/tag")
     HttpClient client;
 
-
     @Test
     void testCreateATag() {
         String generatedString = RandomStringUtils.randomAlphabetic(10);
         TagCreateDTO tagCreateDTO = new TagCreateDTO();
         tagCreateDTO.setName(generatedString);
 
-        final HttpRequest<TagCreateDTO> request = HttpRequest.POST("", tagCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<TagCreateDTO> request = HttpRequest.POST("", tagCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Tag> response = client.toBlocking().exchange(request, Tag.class);
 
         Tag tag = response.body();
