@@ -13,7 +13,7 @@ public class MemberProfileTestUtil {
         dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
-        dto.setInsperityId("TestInsperityId");
+        dto.setEmployeeId("TestEmployeeId");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         return dto;
@@ -26,7 +26,7 @@ public class MemberProfileTestUtil {
         dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
-        dto.setInsperityId("TestInsperityId");
+        dto.setEmployeeId("TestEmployeeId");
         dto.setStartDate(LocalDate.of(2019, 1, 01));
         dto.setBioText("TestBio");
         return dto;
@@ -38,7 +38,7 @@ public class MemberProfileTestUtil {
                 null,
                 "TestLocation" + seed,
                 "TestEmail" + seed,
-                "TestInsperityId" + seed,
+                "TestEmployeeId" + seed,
                 LocalDate.of(2019, 1, 1),
                 "TestBio" + seed,
                 null,
@@ -55,7 +55,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
-        assertEquals(entity.getInsperityId(), dto.getInsperityId());
+        assertEquals(entity.getEmployeeId(), dto.getEmployeeId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
         assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
@@ -69,7 +69,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
-        assertEquals(entity.getInsperityId(), dto.getInsperityId());
+        assertEquals(entity.getEmployeeId(), dto.getEmployeeId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
         assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
@@ -82,7 +82,7 @@ public class MemberProfileTestUtil {
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
         assertEquals(entity.getWorkEmail(), dto.getWorkEmail());
-        assertEquals(entity.getInsperityId(), dto.getInsperityId());
+        assertEquals(entity.getEmployeeId(), dto.getEmployeeId());
         assertEquals(entity.getStartDate(), dto.getStartDate());
         assertEquals(entity.getBioText(), dto.getBioText());
         assertEquals(entity.getSupervisorid(), dto.getSupervisorid());
