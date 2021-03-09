@@ -1,5 +1,5 @@
 drop table if exists tags;
-drop table if exist entity_tags;
+drop table if exists entity_tags;
 
 CREATE TABLE tags(
    id varchar PRIMARY KEY,
