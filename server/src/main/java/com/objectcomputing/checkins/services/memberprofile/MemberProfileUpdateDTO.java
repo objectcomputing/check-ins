@@ -37,7 +37,7 @@ public class MemberProfileUpdateDTO {
     private String workEmail;
 
     @Nullable
-    @Schema(description = "unique identifier for this employee with the employee system")
+    @Schema(description = "unique identifier for this employee")
     private String employeeId;
 
     @Nullable
