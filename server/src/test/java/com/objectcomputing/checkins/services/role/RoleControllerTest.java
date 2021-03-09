@@ -29,7 +29,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     HttpClient client;
 
     @Test
-    void testCreateARole() {
+      void testCreateARole() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         Role authRole = createDefaultAdminRole(unrelatedProfile);
