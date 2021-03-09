@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.action_item;
 
 import com.objectcomputing.checkins.services.validate.crud.CRUDValidator;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ public class ActionItemServicesImpl implements ActionItemServices {
     private final CRUDValidator<ActionItem> crudValidator;
 
     public ActionItemServicesImpl(ActionItemRepository actionItemRepo,
-                                  CRUDValidator<ActionItem> crudValidator) {
+                                  @Named("ActionItem") CRUDValidator<ActionItem> crudValidator) {
         this.actionItemRepo = actionItemRepo;
         this.crudValidator = crudValidator;
     }
