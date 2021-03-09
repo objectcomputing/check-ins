@@ -7,9 +7,11 @@ import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Named("Guild")
 public class GuildCRUDValidator implements CRUDValidator<Guild> {
     private final ArgumentsValidation argumentsValidation;
     private final PermissionsValidation permissionsValidation;

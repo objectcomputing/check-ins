@@ -11,10 +11,12 @@ import com.objectcomputing.checkins.services.validate.ArgumentsValidation;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
+@Named("ActionItem")
 public class ActionItemCRUDValidator implements CRUDValidator<ActionItem> {
 
     private final CheckInServices checkInServices;
