@@ -140,13 +140,14 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            CheckIn checkinRecord = checkinRepo.findById(checkinid).orElse(null);
-            validate(!checkinServices.accessGranted(checkinid, currentUser.getId()), "User is unauthorized to do this operation");
+            if(!checkinServices.accessGranted(checkinid, currentUser.getId()))
+                throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            validate(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin, "User is unauthorized to do this operation");
-        } else {
-            validate(!isAdmin, "User is unauthorized to do this operation");
+            if(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin);
+                throw new PermissionException("User is unauthorized to do this operation");
+        } else if (!isAdmin){
+                throw new PermissionException("User is unauthorized to do this operation");
         }
 
         return privateNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
