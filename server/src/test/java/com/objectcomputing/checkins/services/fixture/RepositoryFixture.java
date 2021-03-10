@@ -2,24 +2,34 @@ package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.action_item.ActionItemRepository;
 import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
-import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
+import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
+import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
-import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
+import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
+import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
+
+    default TagRepository getTagRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);
+    }
+
+    default EntityTagRepository getEntityTagRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EntityTagRepository.class);
+    }
 
     default MemberProfileRepository getMemberProfileRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(MemberProfileRepository.class);
