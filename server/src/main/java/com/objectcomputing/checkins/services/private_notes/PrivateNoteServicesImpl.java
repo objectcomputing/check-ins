@@ -140,7 +140,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (checkinid != null) {
-            if(!checkinServices.accessGranted(checkinid, currentUser.getId()))
+            if (!checkinServices.accessGranted(checkinid, currentUser.getId()))
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
