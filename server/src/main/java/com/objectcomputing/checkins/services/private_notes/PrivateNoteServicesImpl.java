@@ -144,7 +144,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (createbyid != null) {
             MemberProfile memberRecord = memberRepo.findById(createbyid).orElseThrow();
-            if(!currentUser.getId().equals(memberRecord.getId()) && !isAdmin);
+            if (!currentUser.getId().equals(memberRecord.getId()) && !isAdmin)
                 throw new PermissionException("User is unauthorized to do this operation");
         } else if (!isAdmin) {
             throw new PermissionException("User is unauthorized to do this operation");
