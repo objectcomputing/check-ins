@@ -60,7 +60,8 @@ public class MemberProfileController {
     /**
      * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId or find all.
      *
-     * @param name
+     * @param firstName
+     * @param lastName
      * @param title
      * @param pdlId
      * @param workEmail
@@ -68,12 +69,13 @@ public class MemberProfileController {
      * @return
      */
     @Get("/{?name,title,pdlId,workEmail,supervisorId}")
-    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name,
+    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String firstName,
+                                                                            @Nullable String lastName,
                                                                             @Nullable String title,
                                                                             @Nullable UUID pdlId,
                                                                             @Nullable String workEmail,
                                                                             @Nullable UUID supervisorId) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId))
+        return Single.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
@@ -141,7 +143,7 @@ public class MemberProfileController {
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
-        dto.setName(entity.getName());
+        dto.setName(entity.getFullName());
         dto.setTitle(entity.getTitle());
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());
@@ -155,12 +157,15 @@ public class MemberProfileController {
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
+                dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
+                dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
+                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getInsperityId(),
+                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }

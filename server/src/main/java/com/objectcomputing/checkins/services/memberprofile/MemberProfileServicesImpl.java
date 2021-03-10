@@ -51,19 +51,20 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id");
+            throw new NotFoundException("No member profile for id %s" + id);
         }
         return memberProfile.get();
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name,
+    public Set<MemberProfile> findByValues(@Nullable String firstName,
+                                           @Nullable String lastName,
                                            @Nullable String title,
                                            @Nullable UUID pdlId,
                                            @Nullable String workEmail,
                                            @Nullable UUID supervisorId) {
-        return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
-                workEmail, nullSafeUUIDToString(supervisorId)));
+        return new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
+                nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId)));
     }
 
     @Override
@@ -95,13 +96,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getFullName());
         } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", memberProfile.getFullName());
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", memberProfile.getFullName());
         } else if (!userRoles.isEmpty()) {
-            LOG.info("User %s cannot be deleted since user has PDL role", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since user has PDL role", memberProfile.getFullName());
         } else {
             // delete the user
             memberProfileRepository.deleteById(id);
@@ -110,7 +111,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         // Terminate the user if user is not deleted
         // Update PDL ID for all associated members before termination
-        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null);
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
+                null, null, nullSafeUUIDToString(id), null, null);
         for (MemberProfile member : pdlFor) {
             member.setPdlId(null);
             memberProfileRepository.update(member);
@@ -124,8 +126,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     }
 
     @Override
-    public MemberProfile findByName(@NotNull String name) {
-        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
+    public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
+        List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
+                null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }

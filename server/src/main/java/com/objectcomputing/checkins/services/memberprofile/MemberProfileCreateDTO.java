@@ -13,9 +13,21 @@ import java.util.UUID;
 @Introspected
 public class MemberProfileCreateDTO {
 
+    @NotNull
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
     @Nullable
-    @Schema(description = "full name of the employee")
-    private String name;
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotNull
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Schema(description = "suffix of the employee")
+    private String suffix;
 
     @NotBlank
     @Schema(description = "employee's title at the company", required = true)
@@ -53,13 +65,40 @@ public class MemberProfileCreateDTO {
     @Schema(description = "employee's date of termination", nullable = true)
     private LocalDate terminationDate;
 
-    @Nullable
-    public String getName() {
-        return name;
+    @NotNull
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(@Nullable String name) {
-        this.name = name;
+    public void setFirstName(@NotNull String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Nullable
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(@Nullable String middleName) {
+        this.middleName = middleName;
+    }
+
+    @NotNull
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotNull String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(@Nullable String suffix) {
+        this.suffix = suffix;
     }
 
     public String getTitle() {
@@ -144,7 +183,10 @@ public class MemberProfileCreateDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MemberProfileCreateDTO that = (MemberProfileCreateDTO) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(middleName, that.middleName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(suffix, that.suffix) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
@@ -158,6 +200,7 @@ public class MemberProfileCreateDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, title, pdlId, location, workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+        return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
+                workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
     }
 }
