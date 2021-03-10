@@ -148,7 +148,7 @@ public class MemberProfileController {
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());
         dto.setWorkEmail(entity.getWorkEmail());
-        dto.setInsperityId(entity.getInsperityId());
+        dto.setEmployeeId(entity.getEmployeeId());
         dto.setStartDate(entity.getStartDate());
         dto.setBioText(entity.getBioText());
         dto.setSupervisorid(entity.getSupervisorid());
@@ -159,13 +159,13 @@ public class MemberProfileController {
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
         return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
-                dto.getInsperityId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
+                dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
                 dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
-                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getInsperityId(),
+                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
                 dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }

@@ -12,11 +12,8 @@ public class ArgumentsValidation {
     }
 
     public void validateArguments(@NotNull boolean isError, @NotNull String message, Object... args) {
-
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }
     }
-
-
 }

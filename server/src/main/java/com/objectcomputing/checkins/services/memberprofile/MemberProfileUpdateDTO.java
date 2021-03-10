@@ -49,8 +49,8 @@ public class MemberProfileUpdateDTO {
     private String workEmail;
 
     @Nullable
-    @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId;
+    @Schema(description = "unique identifier for this employee")
+    private String employeeId;
 
     @Nullable
     @Schema(description = "employee's date of hire")
@@ -148,12 +148,12 @@ public class MemberProfileUpdateDTO {
     }
 
     @Nullable
-    public String getInsperityId() {
-        return insperityId;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setInsperityId(@Nullable String insperityId) {
-        this.insperityId = insperityId;
+    public void setEmployeeId(@Nullable String employeeId) {
+        this.employeeId = employeeId;
     }
 
     @Nullable

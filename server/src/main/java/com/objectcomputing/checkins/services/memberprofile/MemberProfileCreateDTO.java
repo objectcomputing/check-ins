@@ -46,8 +46,8 @@ public class MemberProfileCreateDTO {
     private String workEmail;
 
     @Nullable
-    @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId;
+    @Schema(description = "unique identifier for this employee")
+    private String employeeId;
 
     @NotNull
     @Schema(description = "employee's date of hire", required = true)
@@ -135,12 +135,12 @@ public class MemberProfileCreateDTO {
     }
 
     @Nullable
-    public String getInsperityId() {
-        return insperityId;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setInsperityId(@Nullable String insperityId) {
-        this.insperityId = insperityId;
+    public void setEmployeeId(@Nullable String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public LocalDate getStartDate() {
@@ -191,7 +191,7 @@ public class MemberProfileCreateDTO {
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(workEmail, that.workEmail) &&
-                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
@@ -201,6 +201,6 @@ public class MemberProfileCreateDTO {
     @Override
     public int hashCode() {
         return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
     }
 }

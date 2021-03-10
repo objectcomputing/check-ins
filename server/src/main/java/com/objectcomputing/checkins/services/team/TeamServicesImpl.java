@@ -71,26 +71,34 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public TeamResponseDTO update(TeamUpdateDTO teamDTO) {
-        Team newTeamEntity = null;
-        List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
-        if (teamDTO != null) {
-            if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
-                teamMemberRepo.deleteByTeamId(teamDTO.getId().toString());
-                if (teamDTO.getTeamMembers() == null ||
-                        teamDTO.getTeamMembers().stream().noneMatch(TeamMemberResponseDTO::isLead)) {
-                    throw new BadArgException("Team must include at least one team lead");
-                }
-                newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
-                for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
-                    newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
-                }
-            } else {
-                throw new BadArgException(String.format("Team %s does not exist, can't update.", teamDTO.getId()));
-            }
-        }
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
 
-        return fromEntity(newTeamEntity, newMembers);
+        if (isAdmin || (currentUser != null &&
+                !teamMemberRepo.search(nullSafeUUIDToString(teamDTO.getId()), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
+            Team newTeamEntity = null;
+            List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
+            if (teamDTO != null) {
+                if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
+                    if (teamDTO.getTeamMembers() == null ||
+                            teamDTO.getTeamMembers().stream().noneMatch(TeamMemberResponseDTO::isLead)) {
+                        throw new BadArgException("Team must include at least one team lead");
+                    }
+                    teamMemberRepo.deleteByTeamId(teamDTO.getId().toString());
+                    newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
+                    for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
+                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
+                        newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
+                    }
+                } else {
+                    throw new BadArgException(String.format("Team ID %s does not exist, can't update.", teamDTO.getId()));
+                }
+            }
+
+            return fromEntity(newTeamEntity, newMembers);
+        } else {
+            throw new PermissionException("You are not authorized to perform this operation");
+        }
     }
 
     public Set<TeamResponseDTO> findByFields(String name, UUID memberid) {

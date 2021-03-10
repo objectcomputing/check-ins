@@ -1,21 +1,20 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import java.time.LocalDate;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.annotation.Nullable;
-
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name ="member_profile")
@@ -97,10 +96,10 @@ public class MemberProfile {
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
     private String workEmail;
 
-    @Column(name="insperityId")
+    @Column(name="employeeId")
     @Nullable
-    @Schema(description = "unique identifier for this employee with the Insperity system")
-    private String insperityId;
+    @Schema(description = "unique identifier for this employee")
+    private String employeeId;
 
     @Column(name="startDate")
     @Schema(description = "employee's date of hire")
@@ -135,13 +134,13 @@ public class MemberProfile {
                          @Nullable UUID pdlId,
                          @Nullable String location,
                          String workEmail,
-                         @Nullable String insperityId,
+                         @Nullable String employeeId,
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                insperityId, startDate, bioText, supervisorid, terminationDate);
+                employeeId, startDate, bioText, supervisorid, terminationDate);
     }
 
     public MemberProfile(UUID id,
@@ -153,7 +152,7 @@ public class MemberProfile {
                          @Nullable UUID pdlId,
                          @Nullable String location,
                          String workEmail,
-                         @Nullable String insperityId,
+                         @Nullable String employeeId,
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
@@ -167,7 +166,7 @@ public class MemberProfile {
         this.pdlId = pdlId;
         this.location = location;
         this.workEmail = workEmail;
-        this.insperityId = insperityId;
+        this.employeeId = employeeId;
         this.startDate = startDate;
         this.bioText = bioText;
         this.supervisorid = supervisorid;
@@ -249,12 +248,12 @@ public class MemberProfile {
         this.workEmail = workEmail;
     }
 
-    public String getInsperityId() {
-        return insperityId;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setInsperityId(String insperityId) {
-        this.insperityId = insperityId;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public LocalDate getStartDate() {
@@ -305,7 +304,7 @@ public class MemberProfile {
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
                 Objects.equals(workEmail, that.workEmail) &&
-                Objects.equals(insperityId, that.insperityId) &&
+                Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
@@ -315,7 +314,7 @@ public class MemberProfile {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, insperityId, startDate, bioText, supervisorid, terminationDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
     }
 
     @Override
@@ -327,7 +326,7 @@ public class MemberProfile {
                 ", pdlId=" + pdlId +
                 ", location='" + location + '\'' +
                 ", workEmail='" + workEmail + '\'' +
-                ", insperityId='" + insperityId + '\'' +
+                ", employeeId='" + employeeId + '\'' +
                 ", startDate=" + startDate +
                 ", bioText='" + bioText + '\'' +
                 ", supervisorid=" + supervisorid +
