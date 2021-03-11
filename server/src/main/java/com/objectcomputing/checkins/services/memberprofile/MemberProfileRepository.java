@@ -20,7 +20,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "pdlid, " +
             "PGP_SYM_DECRYPT(cast(location as bytea),'${aes.key}') as location, " +
             "PGP_SYM_DECRYPT(cast(workEmail as bytea),'${aes.key}') as workEmail, " +
-            "insperityId, startDate, " +
+            "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +
@@ -34,7 +34,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "pdlid, " +
             "PGP_SYM_DECRYPT(cast(location as bytea),'${aes.key}') as location, " +
             "PGP_SYM_DECRYPT(cast(workEmail as bytea),'${aes.key}') as workEmail, " +
-            "insperityId, startDate, " +
+            "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +

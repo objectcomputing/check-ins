@@ -16,10 +16,10 @@ public class CombineSkillsDTO {
 
     @NotBlank
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the name of the new skill", required = true)
+    @Schema(description = "The name of the new skill", required = true)
     private String name;
 
-    @Schema(description = "the description of the new skill")
+    @Schema(description = "The description of the new skill")
     private String description;
 
     @NotNull

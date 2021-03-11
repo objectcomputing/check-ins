@@ -7,6 +7,7 @@ on:
       - 'chore-**/*'
       - 'doc-**/*'
       - 'hotfix-**/*'
+      - 'dependabot/**/*'
 jobs:
   build:
     runs-on: ubuntu-latest
