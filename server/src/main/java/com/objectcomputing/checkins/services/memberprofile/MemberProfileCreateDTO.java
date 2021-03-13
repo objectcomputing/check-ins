@@ -13,7 +13,7 @@ import java.util.UUID;
 @Introspected
 public class MemberProfileCreateDTO {
 
-    @NotNull
+    @NotBlank
     @Schema(description = "first name of the employee")
     private String firstName;
 
@@ -21,7 +21,7 @@ public class MemberProfileCreateDTO {
     @Schema(description = "middle name of the employee")
     private String middleName;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "last name of the employee")
     private String lastName;
 
@@ -65,12 +65,12 @@ public class MemberProfileCreateDTO {
     @Schema(description = "employee's date of termination", nullable = true)
     private LocalDate terminationDate;
 
-    @NotNull
+    @NotBlank
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotNull String firstName) {
+    public void setFirstName(@NotBlank String firstName) {
         this.firstName = firstName;
     }
 
@@ -83,12 +83,12 @@ public class MemberProfileCreateDTO {
         this.middleName = middleName;
     }
 
-    @NotNull
+    @NotBlank
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(@NotNull String lastName) {
+    public void setLastName(@NotBlank String lastName) {
         this.lastName = lastName;
     }
 

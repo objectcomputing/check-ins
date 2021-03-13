@@ -269,7 +269,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
 
@@ -308,7 +308,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     void testFindByMemberName() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName())))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
 
         assertEquals(Set.of(memberProfile), response.body());
@@ -362,7 +363,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(dto.getName(), response.body().getName());
+        assertEquals(MemberProfileUtils.getFullName(dto), MemberProfileUtils.getFullName(response.body()));
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), "/services" + response.getHeaders().get("location"));
     }
 
@@ -442,7 +443,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testPUTUpdateNonexistentMemberProfile() {
 
         MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
-        memberProfileCreateDTO.setName("reincarnation");
+        memberProfileCreateDTO.setFirstName("reincarnation");
+        memberProfileCreateDTO.setLastName("gentleman");
 
         final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.
                 PUT("/", memberProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -486,7 +488,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testPostWithNullName() {
 
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
-        requestBody.setName(null);
+        requestBody.setFirstName(null);
 
         final HttpResponse<MemberProfileResponseDTO> response = client
                 .toBlocking()

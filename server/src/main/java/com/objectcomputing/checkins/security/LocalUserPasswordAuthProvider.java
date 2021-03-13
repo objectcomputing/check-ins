@@ -36,7 +36,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
     @Override
     public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
         String email = authReq.getIdentity().toString();
-        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
+        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, "", email);
 
         List<String> roles;
         String role;
@@ -46,7 +46,8 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
                 return Flowable.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
             }
 
-            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getId()).stream().map(r -> r.getRole().toString()).collect(Collectors.toList());
+            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getId()).stream()
+                    .map(r -> r.getRole().toString()).collect(Collectors.toList());
             currentRoles.removeAll(roles);
 
             // Create the roles if they don't already exist, delete roles not asked for

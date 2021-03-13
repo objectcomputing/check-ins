@@ -67,10 +67,9 @@ public class LocalLoginController {
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
-                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
-                String name = memberProfile.getName() != null ? memberProfile.getName() : "";
-                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "name", name,
-                        "picture", ""));
+                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, "", email);
+                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "firstName", email,
+                        "lastName", "", "picture", ""));
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
                 return loginHandler.loginSuccess(userDetails, request);
             } else {

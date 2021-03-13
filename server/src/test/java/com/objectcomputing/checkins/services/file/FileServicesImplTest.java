@@ -152,7 +152,7 @@ public class FileServicesImplTest {
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
-        when(currentUserServices.findOrSaveUser(any(), any())).thenReturn(testMemberProfile);
+        when(currentUserServices.findOrSaveUser(any(), any(), any())).thenReturn(testMemberProfile);
         when(googleServiceConfiguration.getDirectory_id()).thenReturn("testDirectoryId");
     }
 

@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -44,10 +45,11 @@ public class CurrentUserController {
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();
-        String name = authentication.getAttributes().get("name").toString();
+        String firstName = authentication.getAttributes().get("firstName").toString();
+        String lastName = authentication.getAttributes().get("lastName").toString();
         String imageUrl = authentication.getAttributes().get("picture").toString();
 
-        MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
+        MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
         List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
@@ -62,7 +64,7 @@ public class CurrentUserController {
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
-        dto.setName(entity.getName());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

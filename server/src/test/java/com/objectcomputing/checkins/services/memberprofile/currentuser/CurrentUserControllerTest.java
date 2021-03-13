@@ -26,9 +26,11 @@ import static org.mockito.Mockito.when;
 public class CurrentUserControllerTest {
 
     private static Map<String, Object> userAttributes = new HashMap<>();
-    private static String userName = "some.user.name";
+    private static String firstName = "some.first.name";
+    private static String lastName = "some.last.name";
     private static String userEmail = "some.email.address";
     private static String imageUrl = "some.picture.url";
+
     @Inject
     CurrentUserController currentUserController;
     @Mock
@@ -36,7 +38,8 @@ public class CurrentUserControllerTest {
 
     @BeforeAll
     void setup() {
-        userAttributes.put("name", userName);
+        userAttributes.put("firstName", firstName);
+        userAttributes.put("lastName", lastName);
         userAttributes.put("email", userEmail);
         userAttributes.put("picture", imageUrl);
 
@@ -67,7 +70,7 @@ public class CurrentUserControllerTest {
         MemberProfile expected = mkMemberProfile();
         expected.setWorkEmail(userEmail);
 
-        when(currentUserServices.findOrSaveUser(userName, userEmail)).thenReturn(expected);
+        when(currentUserServices.findOrSaveUser(firstName, lastName, userEmail)).thenReturn(expected);
 
         HttpResponse<CurrentUserDTO> actual = currentUserController.currentUser(auth);
 
@@ -75,7 +78,7 @@ public class CurrentUserControllerTest {
         CurrentUserDTO currentUserDTO = actual.body();
         assertNotNull(currentUserDTO);
         assertEquals(userEmail, currentUserDTO.getMemberProfile().getWorkEmail());
-        assertEquals(userName, currentUserDTO.getName());
+        assertEquals(firstName + lastName, currentUserDTO.getName());
         assertEquals(imageUrl, currentUserDTO.getImageUrl());
         assertNotNull(actual.getHeaders().get("location"));
     }

@@ -16,7 +16,7 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "first name of the employee")
     private String firstName;
 
@@ -24,7 +24,7 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "middle name of the employee")
     private String middleName;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "last name of the employee")
     private String lastName;
 
@@ -76,12 +76,12 @@ public class MemberProfileUpdateDTO {
         this.id = id;
     }
 
-    @NotNull
+    @NotBlank
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(@NotNull String firstName) {
+    public void setFirstName(@NotBlank String firstName) {
         this.firstName = firstName;
     }
 
@@ -94,12 +94,12 @@ public class MemberProfileUpdateDTO {
         this.middleName = middleName;
     }
 
-    @NotNull
+    @NotBlank
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(@NotNull String lastName) {
+    public void setLastName(@NotBlank String lastName) {
         this.lastName = lastName;
     }
 

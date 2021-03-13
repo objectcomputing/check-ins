@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -27,7 +28,7 @@ public class MemberProfile {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "firstName")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(firstName::bytea,'${aes.key}')",
@@ -45,7 +46,7 @@ public class MemberProfile {
     @Schema(description = "middle name of the employee")
     private String middleName;
 
-    @NotNull
+    @NotBlank
     @Column(name = "lastName")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
@@ -332,13 +333,5 @@ public class MemberProfile {
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
                 '}';
-    }
-
-    public String getFullName() {
-        String name = firstName + " " + middleName + " " + lastName;
-        if (suffix != null && !suffix.isEmpty()) {
-            name += ", " + suffix;
-        }
-        return name;
     }
 }

@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
@@ -112,8 +113,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                //final String memberName = memberProfileRepo.findNameById(memberId);
-                final String memberName = memberProfileServices.getName(memberId);
+                final String memberName = MemberProfileUtils.getFullName(memberProfileServices.getById(memberId));
                 dto.setName(memberName);
 
                 final List<SkillLevelDTO> memberSkills = new ArrayList<>();
