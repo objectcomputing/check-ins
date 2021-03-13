@@ -5,16 +5,25 @@ import javax.validation.constraints.NotBlank;
 
 public class MemberProfileUtils {
     public static String getFullName(MemberProfile memberProfile) {
+        if (memberProfile == null) {
+            return null;
+        }
         return constructFullName(memberProfile.getFirstName(), memberProfile.getMiddleName(),
                 memberProfile.getLastName(), memberProfile.getSuffix());
     }
 
     public static String getFullName(MemberProfileCreateDTO createDTO) {
+        if (createDTO == null) {
+            return null;
+        }
         return constructFullName(createDTO.getFirstName(), createDTO.getMiddleName(),
                 createDTO.getLastName(), createDTO.getSuffix());
     }
 
     public static String getFullName(MemberProfileUpdateDTO updateDTO) {
+        if (updateDTO == null) {
+            return null;
+        }
         return constructFullName(updateDTO.getFirstName(), updateDTO.getMiddleName(),
                 updateDTO.getLastName(), updateDTO.getSuffix());
     }

@@ -15,6 +15,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.http.multipart.CompletedFileUpload;
@@ -640,7 +641,7 @@ public class FileServicesImplTest {
         when(testCheckIn.isCompleted()).thenReturn(false);
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn(memberName);
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -700,7 +701,7 @@ public class FileServicesImplTest {
         when(testCheckIn.isCompleted()).thenReturn(false);
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
         when(currentUserServices.getCurrentUser()).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn(memberName);
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
         when(testMemberProfile.getId()).thenReturn(testMemberId);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
@@ -755,7 +756,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn(memberName);
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
@@ -863,7 +864,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn("test.name");
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(null);
 
         final FileRetrievalException responseException = assertThrows(FileRetrievalException.class, () ->
@@ -888,7 +889,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(testMemberId);
         when(memberProfileServices.getById(testMemberId)).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn("test.name");
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn("test.name");
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
         when(files.list()).thenReturn(list);
@@ -920,7 +921,7 @@ public class FileServicesImplTest {
         when(checkInServices.read(testCheckinId)).thenReturn(testCheckIn);
         when(testCheckIn.getTeamMemberId()).thenReturn(UUID.randomUUID());
         when(memberProfileServices.getById(any(UUID.class))).thenReturn(testMemberProfile);
-        when(testMemberProfile.getName()).thenReturn(memberName);
+        when(MemberProfileUtils.getFullName(testMemberProfile)).thenReturn(memberName);
 
         when(mockGoogleApiAccess.getDrive()).thenReturn(drive);
         when(drive.files()).thenReturn(files);
