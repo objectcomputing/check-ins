@@ -1,12 +1,15 @@
-CREATE TYPE FullName AS (firstName varchar, lastName varchar);
+DROP FUNCTION IF EXISTS split_name(varchar);
+DROP TYPE IF EXISTS FullNamePair;
 
-CREATE OR REPLACE FUNCTION split_name(name varchar) RETURNS FullName
+CREATE TYPE FullNamePair AS (firstName varchar, lastName varchar);
+
+CREATE OR REPLACE FUNCTION split_name(name varchar) RETURNS FullNamePair
 AS $$
 DECLARE
-    result FullName;
+    result FullNamePair;
 BEGIN
     result.firstName := SUBSTRING(name, 1, POSITION(' ' in name) - 1);
-    result.lastName := SUBSTRING(name, POSITION(' ' in name) + 1, LEN(name) - POSITION(' ' in name));
+    result.lastName := SUBSTRING(name, POSITION(' ' in name) + 1, CHAR_LENGTH(name) - POSITION(' ' in name));
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;
@@ -19,20 +22,18 @@ ALTER TABLE member_profile
 
 DO $$
 DECLARE
-    row RECORD;
-    fullName FullName;
+    row_var RECORD;
+    name_var FullNamePair;
 BEGIN
-    FOR row IN SELECT id, name FROM member_profile LOOP
-        EXECUTE 'SELECT split_name($1) AS fullName;' USING row.name;
-        EXECUTE 'UPDATE member_profile SET firstName = $1, lastName = $2 WHERE id = $3;'
-            USING fullName.firstName, fullName.lastName, row.id;
-        --SELECT split_name(row.name) AS fullName;
-        --UPDATE member_profile SET firstName = fullName.firstName, lastName = fullName.lastName WHERE id = row.id;
+    FOR row_var IN SELECT id, name FROM member_profile LOOP
+		SELECT * INTO name_var FROM split_name(row_var.name);
+        UPDATE member_profile SET firstName = name_var.firstName, lastName = name_var.lastName WHERE id = row_var.id;
     END LOOP;
 END;
 $$;
 
-ALTER TABLE member_profile DROP COLUMN name;
 ALTER TABLE member_profile
     ALTER COLUMN firstName SET NOT NULL,
     ALTER COLUMN lastName SET NOT NULL;
+
+ALTER TABLE member_profile DROP COLUMN name;

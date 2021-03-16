@@ -44,10 +44,10 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +
-            "WHERE (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea), '${aes.key}') = :firstName) " +
-            "AND (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea), '${aes.key}') = :middleName) " +
-            "AND (:lastName IS NULL OR PGP_SYM_DECRYPT(cast(mp.lastName as bytea), '${aes.key}') = :lastName) " +
-            "AND (:suffix IS NULL OR PGP_SYM_DECRYPT(cast(mp.suffix as bytea), '${aes.key}') = :suffix) " +
+            "WHERE (:firstName IS NULL OR firstName = :firstName) " +
+            "AND (:middleName IS NULL OR middleName = :middleName) " +
+            "AND (:lastName IS NULL OR lastName = :lastName) " +
+            "AND (:suffix IS NULL OR suffix = :suffix) " +
             "AND (:title IS NULL OR PGP_SYM_DECRYPT(cast(mp.title as bytea), '${aes.key}') = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) " +
