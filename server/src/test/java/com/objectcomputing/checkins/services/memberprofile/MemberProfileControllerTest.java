@@ -238,7 +238,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-        assertEquals("No member profile for id", error);
+        assertEquals("No member profile for id " + memberProfileOfMember.getId(), error);
     }
 
     @Test

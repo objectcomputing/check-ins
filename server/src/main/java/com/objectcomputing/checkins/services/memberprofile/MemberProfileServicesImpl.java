@@ -51,7 +51,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id %s" + id);
+            throw new NotFoundException("No member profile for id " + id);
         }
         return memberProfile.get();
     }

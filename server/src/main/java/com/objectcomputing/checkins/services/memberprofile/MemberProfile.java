@@ -94,7 +94,7 @@ public class MemberProfile {
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Column(name="employeeId")
@@ -127,9 +127,9 @@ public class MemberProfile {
     @Nullable
     private LocalDate terminationDate;
 
-    public MemberProfile(@NotNull String firstName,
+    public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
-                         @NotNull String lastName,
+                         @NotBlank String lastName,
                          @Nullable String suffix,
                          @Nullable String title,
                          @Nullable UUID pdlId,
@@ -145,9 +145,9 @@ public class MemberProfile {
     }
 
     public MemberProfile(UUID id,
-                         @NotNull String firstName,
+                         @NotBlank String firstName,
                          @Nullable String middleName,
-                         @NotNull String lastName,
+                         @NotBlank String lastName,
                          @Nullable String suffix,
                          @Nullable String title,
                          @Nullable UUID pdlId,
@@ -322,7 +322,7 @@ public class MemberProfile {
     public String toString() {
         return "MemberProfile{" +
                 "id=" + id +
-                ", name='" + firstName + ' ' + middleName + ' ' + lastName + ", " + suffix + '\'' +
+                ", name='" + MemberProfileUtils.getFullName(this) + '\'' +
                 ", title='" + title + '\'' +
                 ", pdlId=" + pdlId +
                 ", location='" + location + '\'' +

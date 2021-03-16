@@ -252,7 +252,7 @@ public class SkillsReportServicesImplTest {
 
         assertEquals(1, response4.getTeamMembers().size());
         assertEquals(memberId4, response4.getTeamMembers().get(0).getId());
-        assertEquals("Ross", response4.getTeamMembers().get(0).getName());
+        assertEquals("Ross Geller", response4.getTeamMembers().get(0).getName());
         assertEquals(2, response4.getTeamMembers().get(0).getSkills().size());
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
@@ -269,7 +269,7 @@ public class SkillsReportServicesImplTest {
     }
 
     private void assertReturnedMember1(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Joey", elem.getName());
+        assertEquals("Joey Tribbiani", elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
@@ -295,7 +295,7 @@ public class SkillsReportServicesImplTest {
     }
 
     private void assertReturnedMember4(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Ross", elem.getName());
+        assertEquals("Ross Geller", elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));

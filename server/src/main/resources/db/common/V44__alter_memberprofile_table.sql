@@ -1,27 +1,38 @@
-ALTER TABLE member_profile
-ADD firstName varchar NOT NULL, middleName varchar, lastName varchar NOT NULL, suffix varchar;
+CREATE TYPE FullName AS (firstName varchar, lastName varchar);
 
-CREATE OR REPLACE PROCEDURE split_name(IN name varchar, OUT firstName varchar, OUT lastName varchar)
-LANGUAGE plpgsql
+CREATE OR REPLACE FUNCTION split_name(name varchar) RETURNS FullName
 AS $$
+DECLARE
+    result FullName;
 BEGIN
-    firstName := SUBSTRING(name, 1, POSITION(' ', name) - 1)
-    lastName := SUBSTRING(name, POSITION(' ', name) + 1, LEN(name) - POSITION(' ', name))
+    result.firstName := SUBSTRING(name, 1, POSITION(' ' in name) - 1);
+    result.lastName := SUBSTRING(name, POSITION(' ' in name) + 1, LEN(name) - POSITION(' ' in name));
+    RETURN result;
 END;
-$$;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE member_profile
+    ADD COLUMN firstName varchar,
+    ADD COLUMN middleName varchar,
+    ADD COLUMN lastName varchar,
+    ADD COLUMN suffix varchar;
 
 DO $$
 DECLARE
     row RECORD;
-    first_name varchar;
-    last_name varchar;
+    fullName FullName;
 BEGIN
     FOR row IN SELECT id, name FROM member_profile LOOP
-        EXECUTE 'CALL split_name($1, first_name, last_name);' USING row.name;
+        EXECUTE 'SELECT split_name($1) AS fullName;' USING row.name;
         EXECUTE 'UPDATE member_profile SET firstName = $1, lastName = $2 WHERE id = $3;'
-            USING first_name, last_name, row.id;
+            USING fullName.firstName, fullName.lastName, row.id;
+        --SELECT split_name(row.name) AS fullName;
+        --UPDATE member_profile SET firstName = fullName.firstName, lastName = fullName.lastName WHERE id = row.id;
     END LOOP;
 END;
 $$;
 
-DROP COLUMN name;
+ALTER TABLE member_profile DROP COLUMN name;
+ALTER TABLE member_profile
+    ALTER COLUMN firstName SET NOT NULL,
+    ALTER COLUMN lastName SET NOT NULL;
