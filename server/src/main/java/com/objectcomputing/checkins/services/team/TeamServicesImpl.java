@@ -51,7 +51,7 @@ public class TeamServicesImpl implements TeamServices {
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getFirstName());
+                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
                     newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
                 }
             }

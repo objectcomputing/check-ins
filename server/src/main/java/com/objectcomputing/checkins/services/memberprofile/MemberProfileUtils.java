@@ -28,6 +28,14 @@ public class MemberProfileUtils {
                 updateDTO.getLastName(), updateDTO.getSuffix());
     }
 
+    public static String getFullName(MemberProfileResponseDTO responseDTO) {
+        if (responseDTO == null) {
+            return null;
+        }
+        return constructFullName(responseDTO.getFirstName(), responseDTO.getMiddleName(),
+                responseDTO.getLastName(), responseDTO.getSuffix());
+    }
+
     private static String constructFullName(@NotBlank String firstName, @Nullable String middleName,
                                             @NotBlank String lastName, @Nullable String suffix) {
         return firstName +

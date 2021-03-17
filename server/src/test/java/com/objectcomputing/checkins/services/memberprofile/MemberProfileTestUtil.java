@@ -55,7 +55,10 @@ public class MemberProfileTestUtil {
     }
 
     public static void assertProfilesEqual(MemberProfile entity, MemberProfileResponseDTO dto) {
-        assertEquals(MemberProfileUtils.getFullName(entity), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
@@ -69,7 +72,10 @@ public class MemberProfileTestUtil {
 
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getId(), dto.getId());
-        assertEquals(MemberProfileUtils.getFullName(entity), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
@@ -82,7 +88,10 @@ public class MemberProfileTestUtil {
     }
 
     public static void assertProfilesEqual(MemberProfileCreateDTO entity, MemberProfileResponseDTO dto) {
-        assertEquals(MemberProfileUtils.getFullName(entity), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());

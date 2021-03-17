@@ -16,9 +16,21 @@ public class MemberProfileResponseDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
+    @NotBlank
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
     @Nullable
-    @Schema(description = "full name of the employee")
-    private String name;
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotBlank
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Schema(description = "suffix name of the employee")
+    private String suffix;
 
     @NotBlank
     @Schema(description = "employee's title at the company", required = true)
@@ -64,13 +76,40 @@ public class MemberProfileResponseDTO {
         this.id = id;
     }
 
-    @Nullable
-    public String getName() {
-        return name;
+    @NotBlank
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(@Nullable String name) {
-        this.name = name;
+    public void setFirstName(@NotBlank String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Nullable
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(@Nullable String middleName) {
+        this.middleName = middleName;
+    }
+
+    @NotBlank
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(@Nullable String suffix) {
+        this.suffix = suffix;
     }
 
     public String getTitle() {

@@ -143,7 +143,10 @@ public class MemberProfileController {
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
-        dto.setName(MemberProfileUtils.getFullName(entity));
+        dto.setFirstName(entity.getFirstName());
+        dto.setMiddleName(entity.getMiddleName());
+        dto.setLastName(entity.getLastName());
+        dto.setSuffix(entity.getSuffix());
         dto.setTitle(entity.getTitle());
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());

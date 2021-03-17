@@ -78,7 +78,8 @@ public class CurrentUserControllerTest {
         CurrentUserDTO currentUserDTO = actual.body();
         assertNotNull(currentUserDTO);
         assertEquals(userEmail, currentUserDTO.getMemberProfile().getWorkEmail());
-        assertEquals(firstName + lastName, currentUserDTO.getName());
+        assertEquals(firstName, currentUserDTO.getFirstName());
+        assertEquals(lastName, currentUserDTO.getLastName());
         assertEquals(imageUrl, currentUserDTO.getImageUrl());
         assertNotNull(actual.getHeaders().get("location"));
     }

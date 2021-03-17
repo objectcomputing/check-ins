@@ -64,7 +64,8 @@ public class CurrentUserController {
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
-        dto.setName(MemberProfileUtils.getFullName(entity));
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

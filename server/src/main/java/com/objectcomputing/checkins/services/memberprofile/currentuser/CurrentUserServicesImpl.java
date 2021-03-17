@@ -10,7 +10,6 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
