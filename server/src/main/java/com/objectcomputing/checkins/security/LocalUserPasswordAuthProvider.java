@@ -36,7 +36,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
     @Override
     public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authReq) {
         String email = authReq.getIdentity().toString();
-        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, "", email);
+        MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email, email);
 
         List<String> roles;
         String role;

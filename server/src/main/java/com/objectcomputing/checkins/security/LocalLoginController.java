@@ -36,9 +36,9 @@ public class LocalLoginController {
     private final CurrentUserServices currentUserServices;
 
     /**
-     * @param authenticator  {@link Authenticator} collaborator
-     * @param loginHandler   A collaborator which helps to build HTTP response depending on success or failure.
-     * @param eventPublisher The application event publisher
+     * @param authenticator       {@link Authenticator} collaborator
+     * @param loginHandler        A collaborator which helps to build HTTP response depending on success or failure.
+     * @param eventPublisher      The application event publisher
      * @param currentUserServices Current User services
      */
     public LocalLoginController(Authenticator authenticator,
@@ -67,9 +67,10 @@ public class LocalLoginController {
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
-                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, "", email);
-                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "firstName", email,
-                        "lastName", "", "picture", ""));
+                // The values for attributes email, firstName, lastName match the arguments passed to the call
+                // to method CurrentUserServices.findOrSaveUser in LocalUserPasswordAuthProvider.authenticate
+                userDetails.setAttributes(Map.of("email", email, "firstName", email,
+                        "lastName", email, "picture", ""));
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
                 return loginHandler.loginSuccess(userDetails, request);
             } else {

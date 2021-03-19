@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.security.authentication.Authentication;
@@ -8,6 +9,7 @@ import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -31,10 +33,14 @@ public class CurrentUserControllerTest {
     private static String userEmail = "some.email.address";
     private static String imageUrl = "some.picture.url";
 
-    @Inject
-    CurrentUserController currentUserController;
     @Mock
     CurrentUserServices currentUserServices;
+
+    @Mock
+    RoleRepository roleRepository;
+
+    @InjectMocks
+    CurrentUserController currentUserController;
 
     @BeforeAll
     void setup() {
@@ -69,6 +75,8 @@ public class CurrentUserControllerTest {
 
         MemberProfile expected = mkMemberProfile();
         expected.setWorkEmail(userEmail);
+        expected.setFirstName(firstName);
+        expected.setLastName(lastName);
 
         when(currentUserServices.findOrSaveUser(firstName, lastName, userEmail)).thenReturn(expected);
 

@@ -31,7 +31,6 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     @Override
     public MemberProfile findOrSaveUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
-
         Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
         if (userProfile.isPresent()) {
             return userProfile.get();
