@@ -108,7 +108,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                final String memberName = memberProfileRepo.findNameById(memberId);
+                final String memberName = memberProfileRepo.findNameById(memberId.toString());
                 dto.setName(memberName);
 
                 final List<SkillLevelDTO> memberSkills = new ArrayList<>();
@@ -133,7 +133,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             for (SkillLevelDTO reqSkill : requestedSkills) {
                 boolean found = false;
                 for (SkillLevelDTO memSkill : memberSkills) {
-                    if (memSkill.getId() == reqSkill.getId()) {
+                    if (memSkill.getId().equals(reqSkill.getId())) {
                         found = true;
                         break;
                     }
