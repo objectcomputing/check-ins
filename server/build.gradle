@@ -1,23 +1,18 @@
-buildscript{
-    dependencies{
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.3'
-    }
-}
-
 plugins {
-    id "java"
-    id "net.ltgt.apt-eclipse" version "0.21"
-    id "net.ltgt.apt-idea" version "0.21"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "application"
-    id "idea"
-    id "groovy"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id("io.micronaut.application") version "1.4.2"
     id "jacoco"
 }
 
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.objectcomputing.*")
+    }
+}
 
-targetCompatibility = "11"
-sourceCompatibility = "11"
 archivesBaseName = "check-ins-server"
 
 version "0.1"
@@ -37,6 +32,7 @@ configurations {
 }
 
 dependencies {
+    compileOnly("org.graalvm.nativeimage:svm")
     implementation 'org.jetbrains:annotations:19.0.0'
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
@@ -106,13 +102,22 @@ dependencies {
     publicResources project(':web-ui')
 }
 
-test.classpath += configurations.developmentOnly
-
-mainClassName = "com.objectcomputing.checkins.Application"
-// use JUnit 5 platform
-test {
-    useJUnitPlatform()
+application {
+    mainClass.set("com.objectcomputing.checkins.Application")
 }
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
+
+dockerBuild {
+    images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
+}
+dockerBuildNative {
+    images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
+}
+
+test.classpath += configurations.developmentOnly
 
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
