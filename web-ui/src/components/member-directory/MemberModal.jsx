@@ -120,7 +120,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             <TextField
               {...params}
               className="fullWidth"
-              label="PDLs"
+              label="PDL"
               placeholder="Change PDL"
             />
           )}
