@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -17,6 +18,9 @@ public class TeamMemberResponseDTO {
     @Schema(description = "last name of the member this entry is associated with", required = true)
     private String lastName;
 
+    @Schema(description = "full name of the member this entry is associated with", required = true)
+    private String name;
+
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
     private Boolean lead;
@@ -28,6 +32,7 @@ public class TeamMemberResponseDTO {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.name = firstName + ' ' + lastName;
         this.memberId = memberId;
         this.lead = lead;
     }
@@ -76,6 +81,14 @@ public class TeamMemberResponseDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Boolean isLead() {

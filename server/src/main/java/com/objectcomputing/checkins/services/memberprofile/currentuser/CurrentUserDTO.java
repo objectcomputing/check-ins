@@ -21,6 +21,10 @@ public class CurrentUserDTO {
     @Schema(description = "last name of the user")
     private String lastName;
 
+    @NotBlank
+    @Schema(description = "full name of the user")
+    private String name;
+
     @Nullable
     @Schema(description = "User's roles")
     private List<String> role;
@@ -49,6 +53,15 @@ public class CurrentUserDTO {
 
     public void setLastName(@NotBlank String lastName) {
         this.lastName = lastName;
+    }
+
+    @NotBlank
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NotBlank String name) {
+        this.name = name;
     }
 
     @Nullable

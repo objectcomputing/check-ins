@@ -33,6 +33,10 @@ public class MemberProfileResponseDTO {
     private String suffix;
 
     @NotBlank
+    @Schema(description = "full name of the employee")
+    private String name;
+
+    @NotBlank
     @Schema(description = "employee's title at the company", required = true)
     private String title ;
 
@@ -110,6 +114,15 @@ public class MemberProfileResponseDTO {
 
     public void setSuffix(@Nullable String suffix) {
         this.suffix = suffix;
+    }
+
+    @NotBlank
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NotBlank String name) {
+        this.name = name;
     }
 
     public String getTitle() {

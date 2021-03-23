@@ -41,7 +41,7 @@ public class MemberProfileController {
     }
 
     /**
-     * Find team member profile by id.
+     * Find member profile by id.
      *
      * @param id {@link UUID} ID of the member profile
      * @return {@link MemberProfileResponseDTO} Returned member profile
@@ -58,7 +58,7 @@ public class MemberProfileController {
     }
 
     /**
-     * Find team member profile by first name, last name, title, leader's ID, email, supervisor's ID or find all.
+     * Find member profile by first name, last name, title, leader's ID, email, supervisor's ID or find all.
      *
      * @param firstName {@link String} Find members with the given first name
      * @param lastName {@link String} Find member with the given last name
@@ -87,7 +87,7 @@ public class MemberProfileController {
     }
 
     /**
-     * Save a new team member profile.
+     * Save a new member profile.
      *
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
@@ -102,7 +102,7 @@ public class MemberProfileController {
     }
 
     /**
-     * Update a team member profile.
+     * Update a member profile.
      *
      * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
      * @return {@link MemberProfileResponseDTO} The updated member profile
@@ -147,6 +147,7 @@ public class MemberProfileController {
         dto.setMiddleName(entity.getMiddleName());
         dto.setLastName(entity.getLastName());
         dto.setSuffix(entity.getSuffix());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setTitle(entity.getTitle());
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());

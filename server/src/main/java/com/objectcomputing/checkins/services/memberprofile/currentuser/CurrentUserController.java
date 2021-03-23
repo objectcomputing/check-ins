@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -65,6 +66,7 @@ public class CurrentUserController {
         CurrentUserDTO dto = new CurrentUserDTO();
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

@@ -30,6 +30,10 @@ public class MemberProfileCreateDTO {
     private String suffix;
 
     @NotBlank
+    @Schema(description = "full name of the employee")
+    private String name;
+
+    @NotBlank
     @Schema(description = "employee's title at the company", required = true)
     private String title ;
 
@@ -99,6 +103,15 @@ public class MemberProfileCreateDTO {
 
     public void setSuffix(@Nullable String suffix) {
         this.suffix = suffix;
+    }
+
+    @NotBlank
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NotBlank String name) {
+        this.name = name;
     }
 
     public String getTitle() {
@@ -187,6 +200,7 @@ public class MemberProfileCreateDTO {
                 Objects.equals(middleName, that.middleName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(suffix, that.suffix) &&
+                Objects.equals(name, that.name) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
@@ -200,7 +214,7 @@ public class MemberProfileCreateDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
+        return Objects.hash(firstName, middleName, lastName, suffix, name, title, pdlId, location,
                 workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
     }
 }
