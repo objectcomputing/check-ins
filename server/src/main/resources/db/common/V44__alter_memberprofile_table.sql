@@ -25,9 +25,10 @@ DECLARE
     row_var RECORD;
     name_var FullNamePair;
 BEGIN
-    FOR row_var IN SELECT id, name FROM member_profile LOOP
+    FOR row_var IN SELECT id, PGP_SYM_DECRYPT(name::bytea, '${aeskey}') AS name FROM member_profile LOOP
 		SELECT * INTO name_var FROM split_name(row_var.name);
-        UPDATE member_profile SET firstName = name_var.firstName, lastName = name_var.lastName WHERE id = row_var.id;
+        UPDATE member_profile SET firstName = PGP_SYM_ENCRYPT(name_var.firstName, '${aeskey}'),
+        lastName = PGP_SYM_ENCRYPT(name_var.lastName, '${aeskey}') WHERE id = row_var.id;
     END LOOP;
 END;
 $$;
