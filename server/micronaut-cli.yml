@@ -3,3 +3,5 @@ defaultPackage: com.objectcomputing
 ---
 testFramework: junit
 sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, github-workflow-google-cloud-run-graalvm, graalvm, gradle, http-client, java, java-application, junit, logback, netty-server, readme, shade, yaml]

@@ -7,6 +7,7 @@ env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
   RUN_REGION: us-central1
   SERVICE_NAME: checkins-develop
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +29,12 @@ jobs:
           REACT_APP_API_URL: https://checkins-develop-tuvcfzotpq-uc.a.run.app
       - name: Gradle runs tests
         run: ./gradlew check
+
       # Setup gcloud CLI
+          graalvm-version: 21.0.0.2.java11
+      - name: Install Native Image
+        run: gu install native-image
+      - name: Setup Google Cloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: "290.0.1"
@@ -37,14 +43,13 @@ jobs:
       - name: Auth Configure Docker
         run: |-
           gcloud --quiet auth configure-docker
-      - name: Build the Docker image
-        run: |-
-          cd server
-          docker build --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" .
-      - name: Push the Docker image to Google Container Registry
-        run: |-
-          cd server
-          docker push "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+      - name: Build And Push Docker Image
+          env:
+            GCLOUD_IMAGE_REPOSITORY: ${{ secrets.GCLOUD_IMAGE_REPOSITORY }}
+            TESTCONTAINERS_RYUK_DISABLED: true
+          run: |
+            export DOCKER_IMAGE=`echo "${GCLOUD_GCR}/${GCLOUD_PROJECT_ID}/${GCLOUD_IMAGE_REPOSITORY}/demo" | sed -e 's#//#/#' -e 's#^/##'`
+            ./gradlew check dockerPushNative --no-daemon
       - name: Deploy image to Cloud Run
         run: |-
           gcloud run deploy "$SERVICE_NAME" \

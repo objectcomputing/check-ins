@@ -59,10 +59,24 @@ alias git=hub
 ## SSH Keys
 If you haven't already, you will want to [configure git to use ssh for connecting to GitHub.](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/connecting-to-github-with-ssh)
 
-# Install OpenJDK
-Install OpenJDK 14 with Homebrew:
+# Install SDKMAN
+SDKMan is a tool for managing parallel versions of multiple Software Development Kits. It can be installed by running the following on the command line:
 ```shell
-brew install --cask AdoptOpenJDK/openjdk/adoptopenjdk14
+curl -s "https://get.sdkman.io" | bash
+```
+Next run:
+```shell
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+```
+
+# Install GraalVM
+GraalVM is a high-performance runtime that provides significant improvements in application performance and efficiency. It can be installed with SDKMAN by running the following on the command line:
+```shell
+sdk install java 21.0.0.2.r11-grl
+```
+If you don’t install it as the default JVM, you can select it as the current JVM with this:
+```shell
+sdk default java 21.0.0.2.r11-grl
 ```
 
 # Install jEnv
@@ -77,6 +91,11 @@ As instructed in the `==> Caveats` section of the Homebrew installation output, 
 ```shell
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+```
+
+Lastly add:
+```shell
+jenv add ~/.sdkman/candidates/java/21.0.0.2.r11-grl
 ```
 
 ## Plugins
