@@ -108,7 +108,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                final String memberName = memberProfileRepo.findNameById(memberId.toString());
+                final String memberName = memberProfileRepo.findNameById(memberId);
                 dto.setName(memberName);
 
                 final List<SkillLevelDTO> memberSkills = new ArrayList<>();

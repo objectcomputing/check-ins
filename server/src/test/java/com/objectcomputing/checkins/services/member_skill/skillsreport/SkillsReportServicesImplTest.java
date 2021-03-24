@@ -50,7 +50,7 @@ public class SkillsReportServicesImplTest {
     void testReportNullRequest() {
         assertNull(skillsReportServices.report(null));
         verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, never()).findNameById(any(String.class));
+        verify(memberProfileRepository, never()).findNameById(any(UUID.class));
         verify(skillRepository, never()).existsById(any(UUID.class));
         verify(memberProfileRepository, never()).existsById(any(UUID.class));
     }
@@ -95,7 +95,7 @@ public class SkillsReportServicesImplTest {
         assertNotNull(response);
 
         verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, never()).findNameById(any(String.class));
+        verify(memberProfileRepository, never()).findNameById(any(UUID.class));
     }
 
     @Test
@@ -137,10 +137,10 @@ public class SkillsReportServicesImplTest {
         when(memberSkillRepository.findBySkillid(skillId2)).thenReturn(skillList2);
         when(memberSkillRepository.findBySkillid(skillId3)).thenReturn(skillList3);
         when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
-        when(memberProfileRepository.findNameById(memberId1.toString())).thenReturn("Joey");
-        when(memberProfileRepository.findNameById(memberId2.toString())).thenReturn("Chandler");
-        when(memberProfileRepository.findNameById(memberId3.toString())).thenReturn(null);
-        when(memberProfileRepository.findNameById(memberId4.toString())).thenReturn("Ross");
+        when(memberProfileRepository.findNameById(memberId1)).thenReturn("Joey");
+        when(memberProfileRepository.findNameById(memberId2)).thenReturn("Chandler");
+        when(memberProfileRepository.findNameById(memberId3)).thenReturn(null);
+        when(memberProfileRepository.findNameById(memberId4)).thenReturn("Ross");
         when(skillRepository.existsById(skillId1)).thenReturn(true);
         when(skillRepository.existsById(skillId2)).thenReturn(true);
         when(skillRepository.existsById(skillId3)).thenReturn(true);
@@ -183,7 +183,7 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(3)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(3)).findNameById(any(String.class));
+        verify(memberProfileRepository, times(3)).findNameById(any(UUID.class));
         verify(skillRepository, times(3)).existsById(any(UUID.class));
         verify(memberProfileRepository, never()).existsById(any(UUID.class));
 
@@ -205,7 +205,7 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(6)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(6)).findNameById(any(String.class));
+        verify(memberProfileRepository, times(6)).findNameById(any(UUID.class));
         verify(skillRepository, times(6)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(3)).existsById(any(UUID.class));
 
@@ -214,7 +214,7 @@ public class SkillsReportServicesImplTest {
         final SkillsReportResponseDTO response3 = skillsReportServices.report(request1);
         assertTrue(response3.getTeamMembers().isEmpty());
         verify(memberSkillRepository, times(9)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(9)).findNameById(any(String.class));
+        verify(memberProfileRepository, times(9)).findNameById(any(UUID.class));
         verify(skillRepository, times(9)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
 
@@ -248,7 +248,7 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(11)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(12)).findNameById(any(String.class));
+        verify(memberProfileRepository, times(12)).findNameById(any(UUID.class));
         verify(skillRepository, times(11)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
     }
