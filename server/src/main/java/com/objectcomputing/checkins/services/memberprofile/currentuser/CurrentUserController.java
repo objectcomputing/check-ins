@@ -45,12 +45,14 @@ public class CurrentUserController {
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();
-        String firstName = authentication.getAttributes().get("firstName").toString();
-        String lastName = authentication.getAttributes().get("lastName").toString();
         String imageUrl = authentication.getAttributes().get("picture").toString();
+        String name = authentication.getAttributes().get("name").toString().trim();
+        String firstName = name.substring(0, name.indexOf(' '));
+        String lastName = name.substring(name.indexOf(' ') + 1).trim();
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
+        List<String> roles = roleRepository.findByMemberid(user.getId()).stream()
+                .map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()

@@ -44,8 +44,7 @@ public class CurrentUserControllerTest {
 
     @BeforeAll
     void setup() {
-        userAttributes.put("firstName", firstName);
-        userAttributes.put("lastName", lastName);
+        userAttributes.put("name", firstName + ' ' + lastName);
         userAttributes.put("email", userEmail);
         userAttributes.put("picture", imageUrl);
 
