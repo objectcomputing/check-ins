@@ -57,8 +57,4 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                                @Nullable String workEmail, @Nullable String supervisorId);
 
     List<MemberProfile> findAll();
-
-    @Query(value = "SELECT PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') FROM member_profile as mp " +
-            "WHERE mp.id = cast(:id as varchar)", nativeQuery = true)
-    String findNameById(@NotNull UUID id);
 }
