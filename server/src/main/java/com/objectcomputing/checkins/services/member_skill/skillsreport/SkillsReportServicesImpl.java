@@ -140,7 +140,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             for (SkillLevelDTO reqSkill : requestedSkills) {
                 boolean found = false;
                 for (SkillLevelDTO memSkill : memberSkills) {
-                    if (memSkill.getId() == reqSkill.getId()) {
+                    if (memSkill.getId().equals(reqSkill.getId())) {
                         found = true;
                         break;
                     }

@@ -21,14 +21,14 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(mp.suffix as bytea),'${aes.key}') as suffix," +
             "PGP_SYM_DECRYPT(cast(title as bytea),'${aes.key}') as title, " +
             "pdlid, " +
-            "PGP_SYM_DECRYPT(cast(location as bytea),'${aes.key}') as location, " +
-            "PGP_SYM_DECRYPT(cast(workEmail as bytea),'${aes.key}') as workEmail, " +
+            "PGP_SYM_DECRYPT(cast(location as bytea), '${aes.key}') as location, " +
+            "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
-            "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
+            "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +
             "WHERE  (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) ",
-             nativeQuery = true )
+            nativeQuery = true)
     Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail);
 
     @Query(value = "SELECT id, " +
@@ -38,10 +38,10 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(mp.suffix as bytea),'${aes.key}') as suffix, " +
             "PGP_SYM_DECRYPT(cast(title as bytea),'${aes.key}') as title, " +
             "pdlid, " +
-            "PGP_SYM_DECRYPT(cast(location as bytea),'${aes.key}') as location, " +
-            "PGP_SYM_DECRYPT(cast(workEmail as bytea),'${aes.key}') as workEmail, " +
+            "PGP_SYM_DECRYPT(cast(location as bytea), '${aes.key}') as location, " +
+            "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
-            "PGP_SYM_DECRYPT(cast(bioText as bytea),'${aes.key}') as bioText, " +
+            "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +
             "WHERE (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
@@ -57,4 +57,8 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
                                @Nullable String workEmail, @Nullable String supervisorId);
 
     List<MemberProfile> findAll();
+
+    @Query(value = "SELECT PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') FROM member_profile as mp " +
+            "WHERE mp.id = cast(:id as varchar)", nativeQuery = true)
+    String findNameById(@NotNull UUID id);
 }

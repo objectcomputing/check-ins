@@ -74,4 +74,5 @@ jobs:
               --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.PROD_CLIENT_X509_CERT_URL }}" \
               --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
               --platform "managed" \
+              --max-instances 10 \
               --allow-unauthenticated

@@ -67,10 +67,16 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     return team.name && numLeads > 0;
   };
 
+  const close = () => {
+    onClose();
+    setTeam({
+    });
+  };
+
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={close}
       aria-labelledby="edit-team-modal-title"
     >
       <div className="EditTeamModal">
@@ -137,7 +143,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           )}
         />
         <div className="EditTeamModal-actions fullWidth">
-          <Button onClick={onClose} color="secondary">
+          <Button onClick={close} color="secondary">
             Cancel
           </Button>
           <Button

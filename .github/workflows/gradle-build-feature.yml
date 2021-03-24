@@ -6,6 +6,7 @@ on:
       - 'bugfix-**/*'
       - 'chore-**/*'
       - 'doc-**/*'
+      - 'hotfix-**/*'
       - 'dependabot/**/*'
 jobs:
   build:

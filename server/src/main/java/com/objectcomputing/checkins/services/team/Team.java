@@ -40,10 +40,10 @@ public class Team {
             read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "description of the team")
+    @Schema(description = "description of the team", nullable = true)
     private String description;
 
-    public Team(String name, String description) {
+    public Team(String name, @Nullable String description) {
         this(null, name, description);
     }
 
