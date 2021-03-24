@@ -393,7 +393,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(6, errors.size());
+        assertEquals(7, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
@@ -427,16 +427,15 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Test
     public void testPUTUpdateMemberProfile() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        memberProfile.setStartDate(LocalDate.of(2019, 1, 01));
+        MemberProfileUpdateDTO profileUpdateDTO = mkUpdateMemberProfileDTO();
 
-        final HttpRequest<MemberProfile> request = HttpRequest.PUT("/", memberProfile)
+        final HttpRequest<MemberProfileUpdateDTO> request = HttpRequest.PUT("/", profileUpdateDTO)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(request, MemberProfile.class);
+        final HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(request, MemberProfileResponseDTO.class);
 
-        assertEquals(memberProfile, response.body());
+        assertProfilesEqual(profileUpdateDTO, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), memberProfile.getId()), "/services" + response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), profileUpdateDTO.getId()), "/services" + response.getHeaders().get("location"));
     }
 
     @Test
@@ -510,7 +509,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(4, errors.size());
+        assertEquals(5, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 

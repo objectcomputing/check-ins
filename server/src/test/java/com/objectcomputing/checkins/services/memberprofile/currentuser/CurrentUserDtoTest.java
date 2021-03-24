@@ -32,7 +32,7 @@ public class CurrentUserDtoTest {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 3);
+        assertEquals(violations.size(), 4);
         int nullViolations = 0, blankViolations = 0;
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
             if (violation.getMessage().equals("must not be null")) {
@@ -42,7 +42,7 @@ public class CurrentUserDtoTest {
             }
         }
         assertEquals(1, nullViolations);
-        assertEquals(2, blankViolations);
+        assertEquals(3, blankViolations);
     }
 
     @Test
@@ -53,6 +53,7 @@ public class CurrentUserDtoTest {
         assertEquals("some.first.name", dto.getFirstName());
         dto.setLastName("some.last.name");
         assertEquals("some.last.name", dto.getLastName());
+        dto.setName(dto.getFirstName() + ' ' + dto.getLastName());
 
         dto.setMemberProfile(new MemberProfile());
 
