@@ -1,6 +1,9 @@
 package com.objectcomputing.checkins.services.feedback;
 
-public interface FeedbackServices {
+import java.util.UUID;
 
+public interface FeedbackServices {
     Feedback save(Feedback feedback);
+
+    Boolean delete(UUID id);
 }

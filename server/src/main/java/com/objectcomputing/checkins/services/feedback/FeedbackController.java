@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -40,12 +41,11 @@ public class FeedbackController {
     /**
      * Create a feedback
      *
-     * @param
-     * @return
+     * @param requestBody {@link FeedbackCreateDTO} New feedback to create
+     * @return {@link FeedbackResponseDTO}
      */
     @Post()
-    public Single<HttpResponse<FeedbackResponseDTO>> save(@Body @Valid @NotNull FeedbackCreateDTO requestBody,
-                                                          HttpRequest<FeedbackCreateDTO> request) {
+    public Single<HttpResponse<FeedbackResponseDTO>> save(@Body @Valid @NotNull FeedbackCreateDTO requestBody) {
         return Single.fromCallable(() -> feedbackServices.save(fromDTO(requestBody)))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedback -> (HttpResponse<FeedbackResponseDTO>) HttpResponse
@@ -57,21 +57,40 @@ public class FeedbackController {
     /**
      * Update a feedback
      *
-     * @param
-     * @return
-     *
+     * @param requestBody {@link FeedbackUpdateDTO} The updated feedback
+     * @return {@link FeedbackResponseDTO}
      */
     @Put()
-    public Single<HttpResponse<FeedbackResponseDTO>> update(@Body @Valid @NotNull FeedbackUpdateDTO requestBody,
-                                                            HttpRequest<FeedbackUpdateDTO> request) {
-        return null;
+    public Single<HttpResponse<FeedbackResponseDTO>> update(@Body @Valid @NotNull FeedbackUpdateDTO requestBody) {
+        return Single.fromCallable(() -> feedbackServices.save(fromDTO(requestBody)))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(savedFeedback -> (HttpResponse<FeedbackResponseDTO>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create("/feedback/" + savedFeedback.getId())))
+                        .body(fromEntity(savedFeedback)))
+                .subscribeOn(Schedulers.from(executorService));
     }
 
+    /**
+     * Delete a feedback
+     *
+     * @param id {@link UUID} ID of the feedback being deleted
+     * @return
+     */
     @Delete("/{id}")
-    public void delete(UUID id) {
-
+    public Single<HttpResponse> delete(@NotNull UUID id) {
+        return Single.fromCallable(() -> feedbackServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(successFlag -> (HttpResponse) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
     }
 
+    /**
+     * Read feedback by ID
+     *
+     * @param
+     * @return
+     */
     @Get("/{id}")
     public void read(UUID id) {
 
@@ -81,8 +100,8 @@ public class FeedbackController {
         FeedbackResponseDTO dto = new FeedbackResponseDTO();
         dto.setId(feedback.getId());
         dto.setContent(feedback.getContent());
-        dto.setSendTo(feedback.getSendTo());
-        dto.setSendBy(feedback.getSendBy());
+        dto.setSentTo(feedback.getSentTo());
+        dto.setSentBy(feedback.getSentBy());
         dto.setConfidential(feedback.getConfidential());
         dto.setCreatedOn(feedback.getCreatedOn());
         dto.setUpdatedOn(feedback.getUpdatedOn());
@@ -90,7 +109,12 @@ public class FeedbackController {
     }
 
     private Feedback fromDTO(FeedbackCreateDTO dto) {
-        return new Feedback(dto.getContent(), dto.getSendTo(), dto.getSendBy(),
+        return new Feedback(dto.getContent(), dto.getSentTo(), dto.getSentBy(),
+                dto.getConfidential(), dto.getCreatedOn(), dto.getUpdatedOn());
+    }
+
+    private Feedback fromDTO(FeedbackUpdateDTO dto) {
+        return new Feedback(dto.getId(), dto.getContent(), dto.getSentTo(), dto.getSentBy(),
                 dto.getConfidential(), dto.getCreatedOn(), dto.getUpdatedOn());
     }
 }

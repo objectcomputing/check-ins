@@ -36,17 +36,17 @@ public class Feedback {
     )
     private String content;
 
-    @Column(name = "sendTo")
+    @Column(name = "sentTo")
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile to whom the feedback was sent", required = true)
-    private UUID sendTo;
+    private UUID sentTo;
 
-    @Column(name = "sendBy")
+    @Column(name = "sentBy")
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile who created the feedback", required = true)
-    private UUID sendBy;
+    private UUID sentBy;
 
     @Column(name = "confidential")
     @NotNull
@@ -82,8 +82,8 @@ public class Feedback {
                     @Nullable LocalDateTime updatedOn) {
         this.id = id;
         this.content = content;
-        this.sendTo = sendTo;
-        this.sendBy = sendBy;
+        this.sentTo = sendTo;
+        this.sentBy = sendBy;
         this.confidential = confidential;
         this.createdOn = createdOn;
         this.updatedOn = updatedOn;
@@ -105,20 +105,20 @@ public class Feedback {
         this.content = content;
     }
 
-    public UUID getSendTo() {
-        return sendTo;
+    public UUID getSentTo() {
+        return sentTo;
     }
 
-    public void setSendTo(UUID sendTo) {
-        this.sendTo = sendTo;
+    public void setSentTo(UUID sendTo) {
+        this.sentTo = sendTo;
     }
 
-    public UUID getSendBy() {
-        return sendBy;
+    public UUID getSentBy() {
+        return sentBy;
     }
 
-    public void setSendBy(UUID sendBy) {
-        this.sendBy = sendBy;
+    public void setSentBy(UUID sendBy) {
+        this.sentBy = sendBy;
     }
 
     public boolean getConfidential() {
@@ -152,8 +152,8 @@ public class Feedback {
         Feedback that = (Feedback) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(content, that.content) &&
-                Objects.equals(sendTo, that.sendTo) &&
-                Objects.equals(sendBy, that.sendBy) &&
+                Objects.equals(sentTo, that.sentTo) &&
+                Objects.equals(sentBy, that.sentBy) &&
                 Objects.equals(confidential, that.confidential) &&
                 Objects.equals(createdOn, that.createdOn) &&
                 Objects.equals(updatedOn, that.updatedOn);
@@ -164,8 +164,8 @@ public class Feedback {
         return "Feedback{" +
                 "id=" + id +
                 ", content=" + content +
-                ", sendTo=" + sendTo +
-                ", sendBy=" + sendBy +
+                ", sendTo=" + sentTo +
+                ", sendBy=" + sentBy +
                 ", confidential=" + confidential +
                 ", createdOn=" + createdOn +
                 ", updatedOn=" + updatedOn +
@@ -174,6 +174,6 @@ public class Feedback {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, sendTo, sendBy, confidential, createdOn, updatedOn);
+        return Objects.hash(id, content, sentTo, sentBy, confidential, createdOn, updatedOn);
     }
 }

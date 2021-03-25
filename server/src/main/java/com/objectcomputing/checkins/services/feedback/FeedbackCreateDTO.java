@@ -18,11 +18,11 @@ public class FeedbackCreateDTO {
 
     @NotNull
     @Schema(description = "id of member profile to whom the feedback was sent", required = true)
-    private UUID sendTo;
+    private UUID sentTo;
 
     @NotNull
     @Schema(description = "id of member profile who created the feedback", required = true)
-    private UUID sendBy;
+    private UUID sentBy;
 
     @NotNull
     @Schema(description = "whether the feedback is public or private", required = true)
@@ -44,20 +44,20 @@ public class FeedbackCreateDTO {
         this.content = content;
     }
 
-    public UUID getSendTo() {
-        return sendTo;
+    public UUID getSentTo() {
+        return sentTo;
     }
 
-    public void setSendTo(UUID sendTo) {
-        this.sendTo = sendTo;
+    public void setSentTo(UUID sendTo) {
+        this.sentTo = sendTo;
     }
 
-    public UUID getSendBy() {
-        return sendBy;
+    public UUID getSentBy() {
+        return sentBy;
     }
 
-    public void setSendBy(UUID sendBy) {
-        this.sendBy = sendBy;
+    public void setSentBy(UUID sendBy) {
+        this.sentBy = sendBy;
     }
 
     public Boolean getConfidential() {
