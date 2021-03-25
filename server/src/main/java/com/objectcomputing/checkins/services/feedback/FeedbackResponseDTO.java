@@ -4,16 +4,19 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackCreateDTO {
+public class FeedbackResponseDTO {
 
-    @NotBlank
-    @Schema(description = "content of the feedback", required = true)
+    @NotNull
+    @Schema(description = "id of the entry the feedback is associated with", required = true)
+    private UUID id;
+
+    @NotNull
+    @Schema(description = "the content of the feedback", required = true)
     private String content;
 
     @NotNull
@@ -35,6 +38,14 @@ public class FeedbackCreateDTO {
     @Nullable
     @Schema(description = "date of the latest update to the feedback", required = true)
     private LocalDateTime updatedOn;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getContent() {
         return content;
@@ -76,11 +87,12 @@ public class FeedbackCreateDTO {
         this.createdOn = createdOn;
     }
 
+    @Nullable
     public LocalDateTime getUpdatedOn() {
         return updatedOn;
     }
 
-    public void setUpdatedOn(LocalDateTime updatedOn) {
+    public void setUpdatedOn(@Nullable LocalDateTime updatedOn) {
         this.updatedOn = updatedOn;
     }
 }
