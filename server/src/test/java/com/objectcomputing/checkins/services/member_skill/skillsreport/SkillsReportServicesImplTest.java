@@ -3,7 +3,9 @@ package com.objectcomputing.checkins.services.member_skill.skillsreport;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +34,9 @@ public class SkillsReportServicesImplTest {
     private MemberProfileRepository memberProfileRepository;
 
     @Mock
+    private MemberProfileServices memberProfileServices;
+
+    @Mock
     private SkillRepository skillRepository;
 
     @InjectMocks
@@ -51,7 +56,7 @@ public class SkillsReportServicesImplTest {
     void testReportNullRequest() {
         assertNull(skillsReportServices.report(null));
         verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, never()).findNameById(any(UUID.class));
+        verify(memberProfileServices, never()).getById(any(UUID.class));
         verify(skillRepository, never()).existsById(any(UUID.class));
         verify(memberProfileRepository, never()).existsById(any(UUID.class));
     }
@@ -96,7 +101,7 @@ public class SkillsReportServicesImplTest {
         assertNotNull(response);
 
         verify(memberSkillRepository, never()).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, never()).findNameById(any(UUID.class));
+        verify(memberProfileServices, never()).getById(any(UUID.class));
     }
 
     @Test
@@ -138,10 +143,20 @@ public class SkillsReportServicesImplTest {
         when(memberSkillRepository.findBySkillid(skillId2)).thenReturn(skillList2);
         when(memberSkillRepository.findBySkillid(skillId3)).thenReturn(skillList3);
         when(memberSkillRepository.findBySkillid(skillId4)).thenReturn(skillList4);
-        when(memberProfileRepository.findNameById(memberId1)).thenReturn("Joey");
-        when(memberProfileRepository.findNameById(memberId2)).thenReturn("Chandler");
-        when(memberProfileRepository.findNameById(memberId3)).thenReturn(null);
-        when(memberProfileRepository.findNameById(memberId4)).thenReturn("Ross");
+        MemberProfile joey = new MemberProfile("Joey", null, "Tribbiani", null,
+                null, null, null, null, null, null, null,
+                null, null);
+        MemberProfile chandler = new MemberProfile("Chandler", null, "Bing", null,
+                null, null, null, null, null, null, null,
+                null, null);
+        MemberProfile ross = new MemberProfile("Ross", null, "Geller", null,
+                null, null, null, null, null, null, null,
+                null, null);
+        when(memberProfileServices.getById(memberId1)).thenReturn(joey);
+        when(memberProfileServices.getById(memberId2)).thenReturn(chandler);
+        when(memberProfileServices.getById(memberId3)).thenReturn(null);
+        when(memberProfileServices.getById(memberId4)).thenReturn(ross);
+
         when(skillRepository.existsById(skillId1)).thenReturn(true);
         when(skillRepository.existsById(skillId2)).thenReturn(true);
         when(skillRepository.existsById(skillId3)).thenReturn(true);
@@ -184,7 +199,7 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(3)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(3)).findNameById(any(UUID.class));
+        verify(memberProfileServices, times(3)).getById(any(UUID.class));
         verify(skillRepository, times(3)).existsById(any(UUID.class));
         verify(memberProfileRepository, never()).existsById(any(UUID.class));
 
@@ -206,7 +221,7 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(6)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(6)).findNameById(any(UUID.class));
+        verify(memberProfileServices, times(6)).getById(any(UUID.class));
         verify(skillRepository, times(6)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(3)).existsById(any(UUID.class));
 
@@ -215,7 +230,7 @@ public class SkillsReportServicesImplTest {
         final SkillsReportResponseDTO response3 = skillsReportServices.report(request1);
         assertTrue(response3.getTeamMembers().isEmpty());
         verify(memberSkillRepository, times(9)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(9)).findNameById(any(UUID.class));
+        verify(memberProfileServices, times(9)).getById(any(UUID.class));
         verify(skillRepository, times(9)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
 
@@ -238,7 +253,7 @@ public class SkillsReportServicesImplTest {
 
         assertEquals(1, response4.getTeamMembers().size());
         assertEquals(memberId4, response4.getTeamMembers().get(0).getId());
-        assertEquals("Ross", response4.getTeamMembers().get(0).getName());
+        assertEquals("Ross Geller", response4.getTeamMembers().get(0).getName());
         assertEquals(2, response4.getTeamMembers().get(0).getSkills().size());
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
@@ -249,13 +264,13 @@ public class SkillsReportServicesImplTest {
             }
         }
         verify(memberSkillRepository, times(11)).findBySkillid(any(UUID.class));
-        verify(memberProfileRepository, times(12)).findNameById(any(UUID.class));
+        verify(memberProfileServices, times(12)).getById(any(UUID.class));
         verify(skillRepository, times(11)).existsById(any(UUID.class));
         verify(memberProfileRepository, times(6)).existsById(any(UUID.class));
     }
 
     private void assertReturnedMember1(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Joey", elem.getName());
+        assertEquals("Joey Tribbiani", elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
@@ -281,7 +296,7 @@ public class SkillsReportServicesImplTest {
     }
 
     private void assertReturnedMember4(TeamMemberSkillDTO elem, UUID skillId1, UUID skillId2) {
-        assertEquals("Ross", elem.getName());
+        assertEquals("Ross Geller", elem.getName());
         assertEquals(2, elem.getSkills().size());
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
