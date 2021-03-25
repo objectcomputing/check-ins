@@ -45,7 +45,7 @@ public class CurrentUserController {
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();
-        String imageUrl = authentication.getAttributes().get("picture").toString();
+        String imageUrl = authentication.getAttributes().get("picture") != null ? authentication.getAttributes().get("picture").toString() : "";
         String name = authentication.getAttributes().get("name").toString().trim();
         String firstName = name.substring(0, name.indexOf(' '));
         String lastName = name.substring(name.indexOf(' ') + 1).trim();
