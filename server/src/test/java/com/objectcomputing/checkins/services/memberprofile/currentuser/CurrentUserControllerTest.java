@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.security.authentication.Authentication;
@@ -8,6 +9,7 @@ import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -26,17 +28,23 @@ import static org.mockito.Mockito.when;
 public class CurrentUserControllerTest {
 
     private static Map<String, Object> userAttributes = new HashMap<>();
-    private static String userName = "some.user.name";
+    private static String firstName = "some.first.name";
+    private static String lastName = "some.last.name";
     private static String userEmail = "some.email.address";
     private static String imageUrl = "some.picture.url";
-    @Inject
-    CurrentUserController currentUserController;
+
     @Mock
     CurrentUserServices currentUserServices;
 
+    @Mock
+    RoleRepository roleRepository;
+
+    @InjectMocks
+    CurrentUserController currentUserController;
+
     @BeforeAll
     void setup() {
-        userAttributes.put("name", userName);
+        userAttributes.put("name", firstName + ' ' + lastName);
         userAttributes.put("email", userEmail);
         userAttributes.put("picture", imageUrl);
 
@@ -66,8 +74,10 @@ public class CurrentUserControllerTest {
 
         MemberProfile expected = mkMemberProfile();
         expected.setWorkEmail(userEmail);
+        expected.setFirstName(firstName);
+        expected.setLastName(lastName);
 
-        when(currentUserServices.findOrSaveUser(userName, userEmail)).thenReturn(expected);
+        when(currentUserServices.findOrSaveUser(firstName, lastName, userEmail)).thenReturn(expected);
 
         HttpResponse<CurrentUserDTO> actual = currentUserController.currentUser(auth);
 
@@ -75,7 +85,8 @@ public class CurrentUserControllerTest {
         CurrentUserDTO currentUserDTO = actual.body();
         assertNotNull(currentUserDTO);
         assertEquals(userEmail, currentUserDTO.getMemberProfile().getWorkEmail());
-        assertEquals(userName, currentUserDTO.getName());
+        assertEquals(firstName, currentUserDTO.getFirstName());
+        assertEquals(lastName, currentUserDTO.getLastName());
         assertEquals(imageUrl, currentUserDTO.getImageUrl());
         assertNotNull(actual.getHeaders().get("location"));
     }

@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.team.member;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
@@ -12,43 +12,51 @@ public class TeamMemberResponseDTO {
     @Schema(description = "id of the entry", required = true)
     private UUID id;
 
-    @Schema(description = "name of the member this entry is associated with", required = true)
+    @Schema(description = "first name of the member this entry is associated with", required = true)
+    private String firstName;
+
+    @Schema(description = "last name of the member this entry is associated with", required = true)
+    private String lastName;
+
+    @Schema(description = "full name of the member this entry is associated with", required = true)
     private String name;
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
     private Boolean lead;
 
-    private UUID teamid;
-    private UUID memberid;
+    private UUID teamId;
+    private UUID memberId;
 
-    public TeamMemberResponseDTO(UUID id, String name, UUID memberid, Boolean lead) {
+    public TeamMemberResponseDTO(UUID id, String firstName, String lastName, UUID memberId, Boolean lead) {
         this.id = id;
-        this.name = name;
-        this.memberid = memberid;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.name = firstName + ' ' + lastName;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
-    public TeamMemberResponseDTO(UUID teamid, UUID memberid, Boolean lead) {
-        this.teamid = teamid;
-        this.memberid = memberid;
+    public TeamMemberResponseDTO(UUID teamId, UUID memberId, Boolean lead) {
+        this.teamId = teamId;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getMemberId() {
+        return memberId;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
     }
 
-    public UUID getTeamid() {
-        return teamid;
+    public UUID getTeamId() {
+        return teamId;
     }
 
-    public void setTeamid(UUID teamid) {
-        this.teamid = teamid;
+    public void setTeamId(UUID teamId) {
+        this.teamId = teamId;
     }
 
     public UUID getId() {
@@ -57,6 +65,22 @@ public class TeamMemberResponseDTO {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getName() {

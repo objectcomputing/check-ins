@@ -51,7 +51,7 @@ public class TeamServicesImpl implements TeamServices {
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
+                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
                     newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
                 }
             }
@@ -87,7 +87,7 @@ public class TeamServicesImpl implements TeamServices {
                     teamMemberRepo.deleteByTeamId(teamDTO.getId().toString());
                     newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
                     for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getName());
+                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
                         newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
                     }
                 } else {
@@ -161,6 +161,7 @@ public class TeamServicesImpl implements TeamServices {
         if (teamMember == null || memberProfile == null) {
             return null;
         }
-        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getName(), memberProfile.getId(), teamMember.isLead());
+        return new TeamMemberResponseDTO(teamMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
+                memberProfile.getId(), teamMember.isLead());
     }
 }

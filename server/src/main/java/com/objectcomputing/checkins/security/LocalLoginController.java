@@ -36,9 +36,9 @@ public class LocalLoginController {
     private final CurrentUserServices currentUserServices;
 
     /**
-     * @param authenticator  {@link Authenticator} collaborator
-     * @param loginHandler   A collaborator which helps to build HTTP response depending on success or failure.
-     * @param eventPublisher The application event publisher
+     * @param authenticator       {@link Authenticator} collaborator
+     * @param loginHandler        A collaborator which helps to build HTTP response depending on success or failure.
+     * @param eventPublisher      The application event publisher
      * @param currentUserServices Current User services
      */
     public LocalLoginController(Authenticator authenticator,
@@ -67,10 +67,12 @@ public class LocalLoginController {
         return authenticationResponseFlowable.map(authenticationResponse -> {
             if (authenticationResponse.isAuthenticated() && authenticationResponse.getUserDetails().isPresent()) {
                 UserDetails userDetails = authenticationResponse.getUserDetails().get();
-                MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email);
-                String name = memberProfile.getName() != null ? memberProfile.getName() : "";
-                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(), "name", name,
-                        "picture", ""));
+                // Get member profile by work email
+                MemberProfile memberProfile = currentUserServices.findOrSaveUser("", "", email);
+                String firstName = memberProfile.getFirstName() != null ? memberProfile.getFirstName() : "";
+                String lastName = memberProfile.getLastName() != null ? memberProfile.getLastName() : "";
+                userDetails.setAttributes(Map.of("email", memberProfile.getWorkEmail(),
+                        "name", firstName + ' ' + lastName, "picture", ""));
                 eventPublisher.publishEvent(new LoginSuccessfulEvent(userDetails));
                 return loginHandler.loginSuccess(userDetails, request);
             } else {

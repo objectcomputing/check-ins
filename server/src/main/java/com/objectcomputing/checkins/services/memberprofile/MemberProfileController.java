@@ -41,10 +41,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by id.
+     * Find member profile by id.
      *
-     * @param id
-     * @return
+     * @param id {@link UUID} ID of the member profile
+     * @return {@link MemberProfileResponseDTO} Returned member profile
      */
     @Get("/{id}")
     public Single<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
@@ -58,22 +58,24 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId or find all.
+     * Find member profile by first name, last name, title, leader's ID, email, supervisor's ID or find all.
      *
-     * @param name
-     * @param title
-     * @param pdlId
-     * @param workEmail
-     * @param supervisorId
-     * @return
+     * @param firstName {@link String} Find members with the given first name
+     * @param lastName {@link String} Find member with the given last name
+     * @param title {@link String} Find member
+     * @param pdlId {@link UUID} ID of the leader
+     * @param workEmail {@link String} Requested work email
+     * @param supervisorId {@link UUID} ID of the supervisor
+     * @return {@link List<MemberProfileResponseDTO>} List of members that match the input parameters
      */
-    @Get("/{?name,title,pdlId,workEmail,supervisorId}")
-    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name,
+    @Get("/{?firstName,lastName,title,pdlId,workEmail,supervisorId}")
+    public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String firstName,
+                                                                            @Nullable String lastName,
                                                                             @Nullable String title,
                                                                             @Nullable UUID pdlId,
                                                                             @Nullable String workEmail,
                                                                             @Nullable UUID supervisorId) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId))
+        return Single.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
@@ -85,10 +87,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Save a new team member profile.
+     * Save a new member profile.
      *
-     * @param memberProfile
-     * @return
+     * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
+     * @return {@link MemberProfileResponseDTO} The created member profile
      */
     @Post()
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
@@ -102,10 +104,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Update a Team member profile.
+     * Update a member profile.
      *
-     * @param memberProfile
-     * @return
+     * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
+     * @return {@link MemberProfileResponseDTO} The updated member profile
      */
     @Put()
     public Single<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
@@ -125,7 +127,7 @@ public class MemberProfileController {
     /**
      * Delete a member profile
      *
-     * @param id member unique id
+     * @param id {@link UUID} Member unique id
      * @return
      */
     @Delete("/{id}")
@@ -143,7 +145,11 @@ public class MemberProfileController {
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
-        dto.setName(entity.getName());
+        dto.setFirstName(entity.getFirstName());
+        dto.setMiddleName(entity.getMiddleName());
+        dto.setLastName(entity.getLastName());
+        dto.setSuffix(entity.getSuffix());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setTitle(entity.getTitle());
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());
@@ -157,12 +163,15 @@ public class MemberProfileController {
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
+                dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
+                dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
+                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
+                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }
