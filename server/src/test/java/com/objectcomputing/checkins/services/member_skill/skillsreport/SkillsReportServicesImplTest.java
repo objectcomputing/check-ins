@@ -24,6 +24,13 @@ import static org.mockito.Mockito.*;
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SkillsReportServicesImplTest {
+
+    private final String INTERESTED_LEVEL = "1";
+    private final String NOVICE_LEVEL = "2";
+    private final String INTERMEDIATE_LEVEL = "3";
+    private final String ADVANCED_LEVEL = "4";
+    private final String EXPERT_LEVEL = "5";
+
     @Mock
     private MemberSkillRepository memberSkillRepository;
 
@@ -109,15 +116,15 @@ public class SkillsReportServicesImplTest {
         final UUID memberId3 = UUID.randomUUID();
         final UUID memberId4 = UUID.randomUUID();
 
-        final MemberSkill ms1 = new MemberSkill(memberId1, skillId1, "intermediate", LocalDate.now());
-        final MemberSkill ms2 = new MemberSkill(memberId1, skillId2, "advanced", LocalDate.now());
-        final MemberSkill ms3 = new MemberSkill(memberId2, skillId3, "novice", LocalDate.now());
-        final MemberSkill ms4 = new MemberSkill(memberId2, skillId4, "expert", LocalDate.now());
-        final MemberSkill ms5 = new MemberSkill(memberId3, skillId2, "interested", LocalDate.now());
-        final MemberSkill ms6 = new MemberSkill(memberId3, skillId3, "advanced", LocalDate.now());
-        final MemberSkill ms7 = new MemberSkill(memberId4, skillId1, "advanced", LocalDate.now());
-        final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, "intermediate", LocalDate.now());
-        final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, "expert", LocalDate.now());
+        final MemberSkill ms1 = new MemberSkill(memberId1, skillId1, INTERMEDIATE_LEVEL, LocalDate.now());
+        final MemberSkill ms2 = new MemberSkill(memberId1, skillId2, ADVANCED_LEVEL, LocalDate.now());
+        final MemberSkill ms3 = new MemberSkill(memberId2, skillId3, NOVICE_LEVEL, LocalDate.now());
+        final MemberSkill ms4 = new MemberSkill(memberId2, skillId4, EXPERT_LEVEL, LocalDate.now());
+        final MemberSkill ms5 = new MemberSkill(memberId3, skillId2, INTERESTED_LEVEL, LocalDate.now());
+        final MemberSkill ms6 = new MemberSkill(memberId3, skillId3, ADVANCED_LEVEL, LocalDate.now());
+        final MemberSkill ms7 = new MemberSkill(memberId4, skillId1, ADVANCED_LEVEL, LocalDate.now());
+        final MemberSkill ms8 = new MemberSkill(memberId4, skillId2, INTERMEDIATE_LEVEL, LocalDate.now());
+        final MemberSkill ms9 = new MemberSkill(memberId4, skillId4, EXPERT_LEVEL, LocalDate.now());
 
         final List<MemberSkill> skillList1 = new ArrayList<>();
         skillList1.add(ms1);
@@ -242,9 +249,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : response4.getTeamMembers().get(0).getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId4));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevel.convertFromString("intermediate"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(INTERMEDIATE_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString("expert"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(EXPERT_LEVEL), skill.getLevel());
             }
         }
         verify(memberSkillRepository, times(11)).findBySkillid(any(UUID.class));
@@ -259,9 +266,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevel.convertFromString("intermediate"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(INTERMEDIATE_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString("advanced"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(ADVANCED_LEVEL), skill.getLevel());
             }
         }
     }
@@ -272,9 +279,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId2) || skill.getId().equals(skillId3));
             if (skill.getId().equals(skillId2)) {
-                assertEquals(SkillLevel.convertFromString("interested"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(INTERESTED_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString("advanced"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(ADVANCED_LEVEL), skill.getLevel());
             }
         }
     }
@@ -285,9 +292,9 @@ public class SkillsReportServicesImplTest {
         for (SkillLevelDTO skill : elem.getSkills()) {
             assertTrue(skill.getId().equals(skillId1) || skill.getId().equals(skillId2));
             if (skill.getId().equals(skillId1)) {
-                assertEquals(SkillLevel.convertFromString("advanced"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(ADVANCED_LEVEL), skill.getLevel());
             } else {
-                assertEquals(SkillLevel.convertFromString("intermediate"), skill.getLevel());
+                assertEquals(SkillLevel.convertFromString(INTERMEDIATE_LEVEL), skill.getLevel());
             }
         }
     }

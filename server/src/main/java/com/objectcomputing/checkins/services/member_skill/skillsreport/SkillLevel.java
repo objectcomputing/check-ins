@@ -5,11 +5,11 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import javax.validation.constraints.NotNull;
 
 public enum SkillLevel {
-    INTERESTED(0),
-    NOVICE(1),
-    INTERMEDIATE(2),
-    ADVANCED(3),
-    EXPERT(4);
+    INTERESTED(1),
+    NOVICE(2),
+    INTERMEDIATE(3),
+    ADVANCED(4),
+    EXPERT(5);
 
     private final int value;
 
@@ -24,15 +24,15 @@ public enum SkillLevel {
     public static SkillLevel convertFromString(@NotNull String level) {
         final String levelLc = level.toLowerCase();
         switch (levelLc) {
-            case "interested":
+            case "1":
                 return SkillLevel.INTERESTED;
-            case "novice":
+            case "2":
                 return SkillLevel.NOVICE;
-            case "intermediate":
+            case "3":
                 return SkillLevel.INTERMEDIATE;
-            case "advanced":
+            case "4":
                 return SkillLevel.ADVANCED;
-            case "expert":
+            case "5":
                 return SkillLevel.EXPERT;
             default:
                 throw new BadArgException(String.format("Invalid skill level %s", level));
