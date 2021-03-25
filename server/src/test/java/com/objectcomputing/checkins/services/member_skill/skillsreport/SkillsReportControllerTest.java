@@ -25,9 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SkillsReportControllerTest extends TestContainersSuite
         implements MemberSkillFixture, MemberProfileFixture, SkillFixture {
 
-    private final String INTERMEDIATE_LEVEL = "3";
-    private final String ADVANCED_LEVEL = "4";
-
     @Inject
     @Client("/reports/skills")
     HttpClient client;
@@ -36,7 +33,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
     void testValidRequestNonEmptyResponse() {
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, ADVANCED_LEVEL, LocalDate.now());
+        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
@@ -67,7 +64,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
     void testValidRequestEmptyResponse() {
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        createMemberSkill(memberProfile, skill, INTERMEDIATE_LEVEL, null);
+        createMemberSkill(memberProfile, skill, SkillLevel.INTERMEDIATE_LEVEL, null);
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();

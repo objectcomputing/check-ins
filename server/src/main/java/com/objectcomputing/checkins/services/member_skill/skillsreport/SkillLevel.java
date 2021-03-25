@@ -11,6 +11,12 @@ public enum SkillLevel {
     ADVANCED(4),
     EXPERT(5);
 
+    public static final String INTERESTED_LEVEL = "1";
+    public static final String NOVICE_LEVEL = "2";
+    public static final String INTERMEDIATE_LEVEL = "3";
+    public static final String ADVANCED_LEVEL = "4";
+    public static final String EXPERT_LEVEL = "5";
+
     private final int value;
 
     SkillLevel(int value) {
@@ -24,15 +30,15 @@ public enum SkillLevel {
     public static SkillLevel convertFromString(@NotNull String level) {
         final String levelLc = level.toLowerCase();
         switch (levelLc) {
-            case "1":
+            case INTERESTED_LEVEL:
                 return SkillLevel.INTERESTED;
-            case "2":
+            case NOVICE_LEVEL:
                 return SkillLevel.NOVICE;
-            case "3":
+            case INTERMEDIATE_LEVEL:
                 return SkillLevel.INTERMEDIATE;
-            case "4":
+            case ADVANCED_LEVEL:
                 return SkillLevel.ADVANCED;
-            case "5":
+            case EXPERT_LEVEL:
                 return SkillLevel.EXPERT;
             default:
                 throw new BadArgException(String.format("Invalid skill level %s", level));
