@@ -25,7 +25,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
     const results = await Promise.all(promises);
     const pdlArray = results.map((res) => res.payload.data);
-    setPdls(pdlArray);
+    setPdls(pdlArray.sort(compare));
   };
 
   const onSupervisorChange = (event, newValue) => {
@@ -34,6 +34,17 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
         supervisorid: newValue ? newValue.id : "",
       });
    };
+
+ function compare(a, b) {
+     var splitA = a.name.split(" ");
+     var splitB = b.name.split(" ");
+     var lastA = splitA[splitA.length - 1];
+     var lastB = splitB[splitB.length - 1];
+
+     if (lastA < lastB) return -1;
+     if (lastA > lastB) return 1;
+     return 0;
+ }
 
   useEffect(() => {
     if (open && csrf) {
