@@ -64,21 +64,21 @@ public class Feedback {
     @Schema(description = "date of the latest update to the feedback", required = true)
     private LocalDateTime updatedOn;
 
-    public Feedback(@Nullable String content,
-                    @Nullable UUID sendTo,
-                    @Nullable UUID sendBy,
-                    @Nullable Boolean confidential,
-                    @Nullable LocalDateTime createdOn,
+    public Feedback(@NotNull String content,
+                    @NotNull UUID sendTo,
+                    @NotNull UUID sendBy,
+                    @NotNull Boolean confidential,
+                    @NotNull LocalDateTime createdOn,
                     @Nullable LocalDateTime updatedOn) {
         this(null, content, sendTo, sendBy, confidential, createdOn, updatedOn);
     }
 
     public Feedback(@Nullable UUID id,
-                    @Nullable String content,
-                    @Nullable UUID sendTo,
-                    @Nullable UUID sendBy,
-                    @Nullable Boolean confidential,
-                    @Nullable LocalDateTime createdOn,
+                    @NotNull String content,
+                    @NotNull UUID sendTo,
+                    @NotNull UUID sendBy,
+                    @NotNull Boolean confidential,
+                    @NotNull LocalDateTime createdOn,
                     @Nullable LocalDateTime updatedOn) {
         this.id = id;
         this.content = content;
