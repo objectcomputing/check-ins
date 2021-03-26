@@ -121,7 +121,7 @@ public class Feedback {
         this.sentBy = sendBy;
     }
 
-    public boolean getConfidential() {
+    public Boolean getConfidential() {
         return confidential;
     }
 

@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.feedback;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileResponseDTO;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -13,12 +11,15 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -86,14 +87,40 @@ public class FeedbackController {
     }
 
     /**
-     * Read feedback by ID
+     * Get feedback by ID
      *
-     * @param
-     * @return
+     * @param id {@link UUID} ID of the requested feedback
+     * @return {@link FeedbackResponseDTO}
      */
     @Get("/{id}")
-    public void read(UUID id) {
+    public Single<HttpResponse<FeedbackResponseDTO>> getById(UUID id) {
+        return Single.fromCallable(() -> feedbackServices.getById(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedback -> (HttpResponse<FeedbackResponseDTO>) HttpResponse
+                        .ok(fromEntity(feedback))
+                        .headers(headers -> headers.location(URI.create("/feedback/" + feedback.getId()))))
+                .subscribeOn(Schedulers.from(executorService));
+    }
 
+    /**
+     * Get feedbacks by creator's ID, receiver's ID, confidentiality, or get all if no input provided
+     *
+     * @param sentBy {@link UUID} ID of member profile who created the feedbacks
+     * @param sentTo {@link UUID} ID of member profile who received the feedbacks
+     * @param confidential {@link Boolean} True for private feedbacks, else false
+     * @return {@link List<FeedbackResponseDTO>} List of feedbacks that match the input parameters
+     */
+    @Get("/{?sentBy,sentTo,confidential}")
+    public Single<HttpResponse<List<FeedbackResponseDTO>>> getByValues(@Nullable UUID sentBy,
+                                                                       @Nullable UUID sentTo,
+                                                                       @Nullable Boolean confidential) {
+        return Single.fromCallable(() -> feedbackServices.getByValues(sentBy, sentTo, confidential))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbacks -> {
+                    List<FeedbackResponseDTO> dtoList = feedbacks.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackResponseDTO fromEntity(Feedback feedback) {
