@@ -56,7 +56,6 @@ it("renders correctly", () => {
         onSave={onSave}
         open={open}
         onClose={close}
-        compare={compare}
       />
     </AppContextProvider>
   );
