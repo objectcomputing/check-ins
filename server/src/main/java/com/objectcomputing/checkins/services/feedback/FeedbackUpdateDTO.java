@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public class FeedbackUpdateDTO {
     @Schema(description = "id of the entry the feedback is associated with", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "the updated content of the feedback", required = true)
     private String content;
 
