@@ -61,14 +61,15 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable String title,
                                            @Nullable UUID pdlId,
                                            @Nullable String workEmail,
-                                           @Nullable UUID supervisorId) {
+                                           @Nullable UUID supervisorId,
+                                           @Nullable Boolean terminated) {
         return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
-                workEmail, nullSafeUUIDToString(supervisorId)));
+                workEmail, nullSafeUUIDToString(supervisorId), terminated));
     }
 
     @Override
     public MemberProfile saveProfile(MemberProfile memberProfile) {
-        MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
+    MemberProfile emailProfile = memberProfileRepository.findByWorkEmail(memberProfile.getWorkEmail()).orElse(null);
 
         if (emailProfile != null && emailProfile.getId() != null && !Objects.equals(memberProfile.getId(), emailProfile.getId())) {
             throw new AlreadyExistsException(String.format("Email %s already exists in database",
@@ -110,7 +111,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         // Terminate the user if user is not deleted
         // Update PDL ID for all associated members before termination
-        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null);
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null, null);
         for (MemberProfile member : pdlFor) {
             member.setPdlId(null);
             memberProfileRepository.update(member);
@@ -125,7 +126,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public MemberProfile findByName(@NotNull String name) {
-        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
+        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }

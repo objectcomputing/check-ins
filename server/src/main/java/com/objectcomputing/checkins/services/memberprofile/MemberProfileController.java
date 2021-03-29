@@ -58,22 +58,24 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId or find all.
+     * Find Team Member profile by Name, title, PdlId, workEmail, SupervisorId, terminated or find all.
      *
      * @param name
      * @param title
      * @param pdlId
      * @param workEmail
      * @param supervisorId
+     * @param terminated
      * @return
      */
-    @Get("/{?name,title,pdlId,workEmail,supervisorId}")
+    @Get("/{?name,title,pdlId,workEmail,supervisorId,terminated}")
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String name,
                                                                             @Nullable String title,
                                                                             @Nullable UUID pdlId,
                                                                             @Nullable String workEmail,
-                                                                            @Nullable UUID supervisorId) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId))
+                                                                            @Nullable UUID supervisorId,
+                                                                            @QueryValue(value = "terminated" , defaultValue = "false") boolean terminated) {
+        return Single.fromCallable(() -> memberProfileServices.findByValues(name, title, pdlId, workEmail, supervisorId, terminated))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()

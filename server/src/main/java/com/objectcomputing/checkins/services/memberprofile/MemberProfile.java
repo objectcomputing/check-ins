@@ -93,9 +93,9 @@ public class MemberProfile {
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 
+    @Nullable
     @Column(name="terminationDate")
     @Schema(description = "employee's date of termination")
-    @Nullable
     private LocalDate terminationDate;
 
     public MemberProfile(@Nullable String name,

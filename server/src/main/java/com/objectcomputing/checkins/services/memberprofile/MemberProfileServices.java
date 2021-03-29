@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface MemberProfileServices {
     MemberProfile getById(UUID id);
 
-    Set<MemberProfile> findByValues(String name, String title, UUID pdlId, String workEmail, UUID supervisorId);
+    Set<MemberProfile> findByValues(String name, String title, UUID pdlId, String workEmail, UUID supervisorId, Boolean terminated);
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 
