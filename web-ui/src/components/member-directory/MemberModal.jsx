@@ -35,7 +35,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
       });
    };
 
- function compare(a, b) {
+  function compare(a, b) {
      var splitA = a.name.split(" ");
      var splitB = b.name.split(" ");
      var lastA = splitA[splitA.length - 1];
@@ -44,7 +44,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
      if (lastA < lastB) return -1;
      if (lastA > lastB) return 1;
      return 0;
- }
+  }
 
   useEffect(() => {
     if (open && csrf) {
