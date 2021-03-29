@@ -39,7 +39,7 @@ public class FeedbackServicesImpl implements FeedbackServices {
     public Boolean delete(@NotNull UUID id) {
         final Optional<Feedback> feedback = feedbackRepository.findById(id);
         if (!feedback.isPresent()) {
-            throw new NotFoundException("No feedback with id %s" + id);
+            throw new NotFoundException("No feedback with id " + id);
         }
 
         if (!isPermitted(feedback.get().getSentBy())) {
@@ -54,7 +54,7 @@ public class FeedbackServicesImpl implements FeedbackServices {
     public Feedback getById(@NotNull UUID id) {
         final Optional<Feedback> feedback = feedbackRepository.findById(id);
         if (!feedback.isPresent()) {
-            throw new NotFoundException("No feedback with id %s" + id);
+            throw new NotFoundException("No feedback with id " + id);
         }
 
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();

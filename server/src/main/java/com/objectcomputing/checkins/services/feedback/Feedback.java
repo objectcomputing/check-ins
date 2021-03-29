@@ -65,25 +65,25 @@ public class Feedback {
     private LocalDateTime updatedOn;
 
     public Feedback(@NotNull String content,
-                    @NotNull UUID sendTo,
-                    @NotNull UUID sendBy,
+                    @NotNull UUID sentTo,
+                    @NotNull UUID sentBy,
                     @NotNull Boolean confidential,
                     @NotNull LocalDateTime createdOn,
                     @Nullable LocalDateTime updatedOn) {
-        this(null, content, sendTo, sendBy, confidential, createdOn, updatedOn);
+        this(null, content, sentTo, sentBy, confidential, createdOn, updatedOn);
     }
 
     public Feedback(@Nullable UUID id,
                     @NotNull String content,
-                    @NotNull UUID sendTo,
-                    @NotNull UUID sendBy,
+                    @NotNull UUID sentTo,
+                    @NotNull UUID sentBy,
                     @NotNull Boolean confidential,
                     @NotNull LocalDateTime createdOn,
                     @Nullable LocalDateTime updatedOn) {
         this.id = id;
         this.content = content;
-        this.sentTo = sendTo;
-        this.sentBy = sendBy;
+        this.sentTo = sentTo;
+        this.sentBy = sentBy;
         this.confidential = confidential;
         this.createdOn = createdOn;
         this.updatedOn = updatedOn;
@@ -109,16 +109,16 @@ public class Feedback {
         return sentTo;
     }
 
-    public void setSentTo(UUID sendTo) {
-        this.sentTo = sendTo;
+    public void setSentTo(UUID sentTo) {
+        this.sentTo = sentTo;
     }
 
     public UUID getSentBy() {
         return sentBy;
     }
 
-    public void setSentBy(UUID sendBy) {
-        this.sentBy = sendBy;
+    public void setSentBy(UUID sentBy) {
+        this.sentBy = sentBy;
     }
 
     public Boolean getConfidential() {
@@ -167,8 +167,8 @@ public class Feedback {
                 ", sendTo=" + sentTo +
                 ", sendBy=" + sentBy +
                 ", confidential=" + confidential +
-                ", createdOn=" + createdOn +
-                ", updatedOn=" + updatedOn +
+                ", createdOn=" + createdOn.withNano(0) +
+                ", updatedOn=" + updatedOn != null ? updatedOn.withNano(0).toString() : "null" +
                 '}';
     }
 

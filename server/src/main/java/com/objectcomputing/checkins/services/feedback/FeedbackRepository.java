@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface FeedbackRepository extends CrudRepository<Feedback, UUID> {
 
     @Query(value = "SELECT id, " +
-            "PGP_SYM_DECRYPT(cast(content as bytea), '${aes.key}'), " +
+            "PGP_SYM_DECRYPT(cast(content as bytea), '${aes.key}') as content, " +
             "sentTo, sentBy, confidential, createdOn, updatedOn " +
             "FROM feedback " +
             "WHERE (:sentBy IS NULL OR sentBy = :sentBy) " +

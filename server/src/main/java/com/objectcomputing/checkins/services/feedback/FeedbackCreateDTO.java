@@ -48,16 +48,16 @@ public class FeedbackCreateDTO {
         return sentTo;
     }
 
-    public void setSentTo(UUID sendTo) {
-        this.sentTo = sendTo;
+    public void setSentTo(UUID sentTo) {
+        this.sentTo = sentTo;
     }
 
     public UUID getSentBy() {
         return sentBy;
     }
 
-    public void setSentBy(UUID sendBy) {
-        this.sentBy = sendBy;
+    public void setSentBy(UUID sentBy) {
+        this.sentBy = sentBy;
     }
 
     public Boolean getConfidential() {

@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
