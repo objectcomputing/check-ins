@@ -20,7 +20,8 @@ public class CurrentUserDtoTest {
     @Test
     void testDTOInstantiation() {
         CurrentUserDTO dto = new CurrentUserDTO();
-        assertNull(dto.getName());
+        assertNull(dto.getFirstName());
+        assertNull(dto.getLastName());
         assertNull(dto.getRole());
         assertNull(dto.getImageUrl());
         assertNull(dto.getMemberProfile());
@@ -31,18 +32,28 @@ public class CurrentUserDtoTest {
         CurrentUserDTO dto = new CurrentUserDTO();
 
         Set<ConstraintViolation<CurrentUserDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 1);
+        assertEquals(violations.size(), 4);
+        int nullViolations = 0, blankViolations = 0;
         for (ConstraintViolation<CurrentUserDTO> violation : violations) {
-            assertEquals(violation.getMessage(), "must not be null");
+            if (violation.getMessage().equals("must not be null")) {
+                ++nullViolations;
+            } else if (violation.getMessage().equals("must not be blank")) {
+                ++blankViolations;
+            }
         }
+        assertEquals(1, nullViolations);
+        assertEquals(3, blankViolations);
     }
 
     @Test
     void testPopulatedDTO() {
         CurrentUserDTO dto = new CurrentUserDTO();
 
-        dto.setName("some.name");
-        assertEquals("some.name", dto.getName());
+        dto.setFirstName("some.first.name");
+        assertEquals("some.first.name", dto.getFirstName());
+        dto.setLastName("some.last.name");
+        assertEquals("some.last.name", dto.getLastName());
+        dto.setName(dto.getFirstName() + ' ' + dto.getLastName());
 
         dto.setMemberProfile(new MemberProfile());
 

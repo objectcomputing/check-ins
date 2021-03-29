@@ -41,10 +41,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Find Team Member profile by id.
+     * Find member profile by id.
      *
-     * @param id
-     * @return
+     * @param id {@link UUID} ID of the member profile
+     * @return {@link MemberProfileResponseDTO} Returned member profile
      */
     @Get("/{id}")
     public Single<HttpResponse<MemberProfileResponseDTO>> getById(UUID id) {
@@ -87,10 +87,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Save a new team member profile.
+     * Save a new member profile.
      *
-     * @param memberProfile
-     * @return
+     * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
+     * @return {@link MemberProfileResponseDTO} The created member profile
      */
     @Post()
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
@@ -102,10 +102,10 @@ public class MemberProfileController {
     }
 
     /**
-     * Update a Team member profile.
+     * Update a member profile.
      *
-     * @param memberProfile
-     * @return
+     * @param memberProfile {@link MemberProfileUpdateDTO} Information of the member profile being updated
+     * @return {@link MemberProfileResponseDTO} The updated member profile
      */
     @Put()
     public Single<HttpResponse<MemberProfileResponseDTO>> update(@Body @Valid MemberProfileUpdateDTO memberProfile) {
@@ -125,7 +125,7 @@ public class MemberProfileController {
     /**
      * Delete a member profile
      *
-     * @param id member unique id
+     * @param id {@link UUID} Member unique id
      * @return
      */
     @Delete("/{id}")
@@ -143,7 +143,11 @@ public class MemberProfileController {
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {
         MemberProfileResponseDTO dto = new MemberProfileResponseDTO();
         dto.setId(entity.getId());
-        dto.setName(entity.getName());
+        dto.setFirstName(entity.getFirstName());
+        dto.setMiddleName(entity.getMiddleName());
+        dto.setLastName(entity.getLastName());
+        dto.setSuffix(entity.getSuffix());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setTitle(entity.getTitle());
         dto.setPdlId(entity.getPdlId());
         dto.setLocation(entity.getLocation());
@@ -157,12 +161,15 @@ public class MemberProfileController {
     }
 
     private MemberProfile fromDTO(MemberProfileUpdateDTO dto) {
-        return new MemberProfile(dto.getId(), dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
+                dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
+                dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
+                dto.getTerminationDate());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
-        return new MemberProfile(dto.getName(), dto.getTitle(), dto.getPdlId(), dto.getLocation(),
-                dto.getWorkEmail(), dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+        return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
+                dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
+                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
     }
 }

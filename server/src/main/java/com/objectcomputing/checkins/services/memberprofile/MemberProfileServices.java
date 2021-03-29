@@ -13,5 +13,5 @@ public interface MemberProfileServices {
 
     Boolean deleteProfile(UUID id);
 
-    MemberProfile findByName(@NotNull String name);
+    MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
 }

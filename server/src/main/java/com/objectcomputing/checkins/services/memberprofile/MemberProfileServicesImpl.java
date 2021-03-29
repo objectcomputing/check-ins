@@ -51,13 +51,14 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id");
+            throw new NotFoundException("No member profile for id " + id);
         }
         return memberProfile.get();
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name,
+    public Set<MemberProfile> findByValues(@Nullable String firstName,
+                                           @Nullable String lastName,
                                            @Nullable String title,
                                            @Nullable UUID pdlId,
                                            @Nullable String workEmail,
@@ -96,13 +97,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
         } else if (!userRoles.isEmpty()) {
-            LOG.info("User %s cannot be deleted since user has PDL role", memberProfile.getName());
+            LOG.info("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
         } else {
             // delete the user
             memberProfileRepository.deleteById(id);
