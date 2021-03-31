@@ -88,13 +88,8 @@ export const selectMappedPdls = createSelector(
 export const selectOrderedPdls = createSelector(
   selectMappedPdls,
   (mappedPdls) => mappedPdls.sort((a, b) => {
-    var splitA = a.name.split(" ");
-    var splitB = b.name.split(" ");
-    var lastA = splitA[splitA.length - 1];
-    var lastB = splitB[splitB.length - 1];
-
-    if (lastA < lastB) return -1;
-    if (lastA > lastB) return 1;
+    if (a.lastName < b.lastName) return -1;
+    if (a.lastName > b.lastName) return 1;
     return 0;
   })
 );
