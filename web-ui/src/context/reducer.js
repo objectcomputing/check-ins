@@ -17,6 +17,7 @@ import {
   UPDATE_SKILL,
   UPDATE_SKILLS,
   ADD_TEAM,
+  SET_ROLES,
 } from "./actions";
 
 export const initialState = {
@@ -127,6 +128,9 @@ export const reducer = (state, action) => {
       break;
     case ADD_MEMBER_SKILL:
       state.memberSkills = [...state.memberSkills, action.payload];
+      break;
+    case SET_ROLES:
+      state.roles = action.payload;
       break;
     default:
   }

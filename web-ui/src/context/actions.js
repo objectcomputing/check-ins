@@ -16,3 +16,4 @@ export const UPDATE_SKILL = "@@check-ins/update_skill";
 export const UPDATE_SKILLS = "@@check-ins/update_skills";
 export const ADD_TEAM = "@@check-ins/add_team";
 export const SET_CSRF = "@@check-ins/update_csrf";
+export const SET_ROLES = "@@check-ins/set_roles";
