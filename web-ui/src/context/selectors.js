@@ -80,18 +80,9 @@ export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
 );
 
 export const selectMappedPdls = createSelector(
-  selectMemberProfiles,
+  selectProfileMap,
   selectPdlRoles,
-  (memberProfiles, roles) => {
-    let pdlProfiles = [];
-    memberProfiles.forEach(memberProfile => {
-        roles.forEach(role => {
-            if(memberProfile.id === role.memberid)
-                pdlProfiles.push(memberProfile);
-        });
-    });
-    return pdlProfiles;
-  }
+  (memberProfileMap, roles) => roles.map(role => memberProfileMap[role.memberid])
 );
 
 export const selectOrderedPdls = createSelector(
