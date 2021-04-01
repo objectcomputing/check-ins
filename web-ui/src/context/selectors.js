@@ -7,6 +7,7 @@ export const selectTeamMembers = state => state.teamMembers;
 export const selectUserProfile = state => state.userProfile;
 export const selectCheckins = state => state.checkins;
 export const selectCsrfToken = state => state.csrf;
+export const selectMemberRoles = state => state.roles;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -72,6 +73,25 @@ export const selectMySkills = createSelector(
 
 export const selectPendingSkills = createSelector(selectSkills, (skills) =>
   skills.filter((skill) => skill.pending)
+);
+
+export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
+  roles.filter((role) => role.role.includes("PDL"))
+);
+
+export const selectMappedPdls = createSelector(
+  selectProfileMap,
+  selectPdlRoles,
+  (memberProfileMap, roles) => roles.map(role => memberProfileMap[role.memberid])
+);
+
+export const selectOrderedPdls = createSelector(
+  selectMappedPdls,
+  (mappedPdls) => mappedPdls.sort((a, b) => {
+    if (a.lastName < b.lastName) return -1;
+    if (a.lastName > b.lastName) return 1;
+    return 0;
+  })
 );
 
 export const selectCheckinMap = createSelector(

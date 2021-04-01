@@ -7,8 +7,9 @@ import {
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_SKILLS,
+  SET_ROLES,
 } from "./actions";
-import { getCurrentUser, getAllMembers } from "../api/member";
+import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getSkills } from "../api/skill";
@@ -115,6 +116,26 @@ const AppContextProvider = (props) => {
       getAllSkills();
     }
   }, [csrf]);
+
+  useEffect(() => {
+      const getRoles = async () => {
+        const res = await getAllRoles(csrf);
+        const data =
+          res &&
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+            ? res.payload.data
+            : null;
+        if (data && data.length > 0) {
+          dispatch({ type: SET_ROLES, payload: data });
+        }
+      };
+      if (csrf) {
+        getRoles();
+      }
+    }, [csrf]);
 
   const value = useMemo(() => {
     return { state, dispatch };

@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-
-import { getAllPDLs, getMember } from "../../api/member";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import { selectOrderedPdls } from "../../context/selectors"
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -16,31 +15,15 @@ import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
-  const { csrf, memberProfiles } = state;
+  const { memberProfiles } = state;
   const [editedMember, setMember] = useState(member);
-  const [pdls, setPdls] = useState([]);
-
-  const getPdls = async () => {
-    let res = await getAllPDLs(csrf);
-    let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
-    const results = await Promise.all(promises);
-    const pdlArray = results.map((res) => res.payload.data);
-    setPdls(pdlArray);
-  };
-
+  const sortedPdls = selectOrderedPdls(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
       ...editedMember,
         supervisorid: newValue ? newValue.id : "",
       });
    };
-
-  useEffect(() => {
-    if (open && csrf) {
-      getPdls();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, csrf]);
 
   if(!editedMember.startDate) {
     setMember({ ...editedMember, startDate: new Date() });
@@ -112,8 +95,8 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
-          options={["", ...pdls]}
-          value={pdls.find((pdl) => pdl.id === editedMember.pdlId) || ""}
+          options={["", ...sortedPdls]}
+          value={sortedPdls.find((pdl) => pdl.id === editedMember.pdlId) || ""}
           onChange={onPdlChange}
           getOptionLabel={(option) => option.name || ""}
           renderInput={(params) => (
