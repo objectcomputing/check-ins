@@ -46,7 +46,7 @@ public class MemberProfileCreateDTO {
     private String location;
 
     @NotBlank
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Nullable

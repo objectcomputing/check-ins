@@ -96,9 +96,11 @@ public class MemberProfileController {
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
         return Single.fromCallable(() -> memberProfileServices.saveProfile(fromDTO(memberProfile)))
-                .observeOn(Schedulers.from(eventLoopGroup)).map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(savedProfile -> (HttpResponse<MemberProfileResponseDTO>) HttpResponse
                         .created(fromEntity(savedProfile))
-                        .headers(headers -> headers.location(location(savedProfile.getId())))).subscribeOn(Schedulers.from(ioExecutorService));
+                        .headers(headers -> headers.location(location(savedProfile.getId()))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
