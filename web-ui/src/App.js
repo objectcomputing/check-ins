@@ -10,6 +10,7 @@ import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import DirectoryPage from './pages/DirectoryPage'
 import PendingSkillsPage from './pages/PendingSkillsPage'
+import SkillReportPage from './pages/SkillReportPage'
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -58,6 +59,10 @@ function App() {
               <Route path="/pending-skills">
                 <Header title="Pending Skills" />
                 <PendingSkillsPage />
+              </Route>
+              <Route path="/skill-report">
+                <Header title="Skill Report" />
+                <SkillReportPage />
               </Route>
               <Route path="/">
                 <Header />
