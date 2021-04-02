@@ -64,10 +64,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable String workEmail,
                                            @Nullable UUID supervisorId,
                                            @Nullable Boolean terminated) {
-        LOG.info("terminated = {}", terminated);
         HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
-        LOG.info("member profiles = {}", memberProfiles);
         return memberProfiles;
     }
 

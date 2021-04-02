@@ -84,7 +84,6 @@ public class MemberProfileController {
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
-                    LOG.info("member profiles = {}", dtoList);
                     return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
                             .ok(dtoList);
 
