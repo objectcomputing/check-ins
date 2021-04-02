@@ -8,7 +8,7 @@ public interface MemberProfileServices {
     MemberProfile getById(UUID id);
 
     Set<MemberProfile> findByValues(String firstName, String lastName, String title,
-                                    UUID pdlId, String workEmail, UUID supervisorId);
+                                    UUID pdlId, String workEmail, UUID supervisorId, Boolean terminated);
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 
