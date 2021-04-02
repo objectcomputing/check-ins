@@ -10,6 +10,8 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Tag(name = "member profile")
 public class MemberProfileController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
     private final MemberProfileServices memberProfileServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
@@ -68,18 +71,20 @@ public class MemberProfileController {
      * @param supervisorId {@link UUID} ID of the supervisor
      * @return {@link List<MemberProfileResponseDTO>} List of members that match the input parameters
      */
-    @Get("/{?firstName,lastName,title,pdlId,workEmail,supervisorId}")
+    @Get("/{?firstName,lastName,title,pdlId,workEmail,supervisorId,terminated}")
     public Single<HttpResponse<List<MemberProfileResponseDTO>>> findByValue(@Nullable String firstName,
                                                                             @Nullable String lastName,
                                                                             @Nullable String title,
                                                                             @Nullable UUID pdlId,
                                                                             @Nullable String workEmail,
-                                                                            @Nullable UUID supervisorId) {
-        return Single.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId))
+                                                                            @Nullable UUID supervisorId,
+                                                                            @QueryValue(value = "terminated" , defaultValue = "false") Boolean terminated) {
+        return Single.fromCallable(() -> memberProfileServices.findByValues(firstName, lastName, title, pdlId, workEmail, supervisorId, terminated))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(memberProfiles -> {
                     List<MemberProfileResponseDTO> dtoList = memberProfiles.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
+                    LOG.info("member profiles = {}", dtoList);
                     return (HttpResponse<List<MemberProfileResponseDTO>>) HttpResponse
                             .ok(dtoList);
 

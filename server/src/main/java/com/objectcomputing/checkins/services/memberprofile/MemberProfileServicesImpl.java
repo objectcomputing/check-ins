@@ -62,9 +62,13 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable String title,
                                            @Nullable UUID pdlId,
                                            @Nullable String workEmail,
-                                           @Nullable UUID supervisorId) {
-        return new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
-                nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId)));
+                                           @Nullable UUID supervisorId,
+                                           @Nullable Boolean terminated) {
+        LOG.info("terminated = {}", terminated);
+        HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
+                nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
+        LOG.info("member profiles = {}", memberProfiles);
+        return memberProfiles;
     }
 
     @Override
@@ -112,7 +116,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         // Terminate the user if user is not deleted
         // Update PDL ID for all associated members before termination
         List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
-                null, null, nullSafeUUIDToString(id), null, null);
+                null, null, nullSafeUUIDToString(id), null, null, null);
         for (MemberProfile member : pdlFor) {
             member.setPdlId(null);
             memberProfileRepository.update(member);
@@ -128,7 +132,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     @Override
     public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
         List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
-                null, null, null, null, null);
+                null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
