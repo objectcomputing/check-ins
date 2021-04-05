@@ -90,7 +90,7 @@ const CheckinsPage = () => {
     <div style={{padding:12}}>
     <Grid container spacing={3} >
       <Grid item xs={12} sm={9}>
-        <Profile memberId={selectedProfile?.id || currentUserId} />
+        <Profile memberId={selectedProfile?.id || currentUserId} pdlId={currentCheckin?currentCheckin.pdlId:null} />
         <div className={classes.navigate}>
           <CheckinsHistory history={history} memberId={memberId} checkinId={checkinId} />
           { ( isAdmin || isPdl || currentUserId === memberId ) && (<Button className={classes.addButton} startIcon={<CheckCircleIcon/>} onClick={handleCreate}>Create Check-In</Button>) }
