@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
+import TerminateMemberModal from "./TerminateMemberModal";
+import {UPDATE_TOAST} from "../../context/actions";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
@@ -33,11 +35,46 @@ const MemberSummaryCard = ({ member, index }) => {
 
   const handleClose = () => setOpen(false);
 
+  const [openTerminal, setOpenTerminal] = useState(false);
+  const handleOpenTerminal = () => setOpenTerminal(true);
+
+  const handleCloseTerminal = () => setOpenTerminal(false);
+
+  const deleteMember = async (id) => {
+      if (id && csrf) {
+          const result = await deleteMember(id, csrf);
+          if (result && result.payload && result.payload.status === 200) {
+              window.snackDispatch({
+                  type: UPDATE_TOAST,
+                  payload: {
+                      severity: "success",
+                      toast: "Member deleted",
+                  },
+              });
+//               let newTeams = teams.filter((team) => {
+//                   return team.id !== id;
+//               });
+//               dispatch({
+//                   type: UPDATE_TEAMS,
+//                   payload: newTeams,
+//               });
+          }
+      }
+  };
   const options =
       isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
 
-  const handleAction = (e, index) =>
-      index === 0 ? handleOpen() : handleClose();
+  const handleAction = (e, index) => {
+      if (index === 0)
+      handleOpen();
+      else if
+      (index === 1)
+      handleOpenTerminal();
+      else if
+      (index === 2)
+      deleteMember(member.id);
+      }
+
 
   return (
     <Box display="flex" flexWrap="wrap">
@@ -73,28 +110,50 @@ const MemberSummaryCard = ({ member, index }) => {
             {isAdmin && (
             <CardActions>
               <SplitButton className = "split-button" options={options} onClick={handleAction} />
-              <MemberModal
-                member={currentMember}
-                open={open}
-                onClose={handleClose}
-                onSave={async (member) => {
-                  setCurrentMember(member);
-                  let res = await updateMember(member, csrf);
-                  let data =
-                      res.payload && res.payload.data && !res.error
-                          ? res.payload.data
-                          : null;
-                  if (data) {
-                    const copy = [...memberProfiles];
-                    copy[index] = member;
-                    dispatch({
-                      type: UPDATE_MEMBER_PROFILES,
-                      payload: copy,
-                    });
-                    handleClose();
-                  }
-                }}
-              />
+               <MemberModal
+                  member={currentMember}
+                  open={open}
+                  onClose={handleClose}
+                  onSave={async (member) => {
+                    setCurrentMember(member);
+                    let res = await updateMember(member, csrf);
+                    let data =
+                        res.payload && res.payload.data && !res.error
+                            ? res.payload.data
+                            : null;
+                    if (data) {
+                      const copy = [...memberProfiles];
+                      copy[index] = member;
+                      dispatch({
+                        type: UPDATE_MEMBER_PROFILES,
+                        payload: copy,
+                      });
+                      handleClose();
+                    }
+                  }}
+                />
+               <TerminateMemberModal
+                 member={currentMember}
+                 open={openTerminal}
+                 onClose={handleCloseTerminal}
+                 onSave={async (member) => {
+                   setCurrentMember(member);
+                   let res = await updateMember(member, csrf);
+                   let data =
+                       res.payload && res.payload.data && !res.error
+                           ? res.payload.data
+                           : null;
+                   if (data) {
+                     const copy = [...memberProfiles];
+                     copy[index] = member;
+                     dispatch({
+                       type: UPDATE_MEMBER_PROFILES,
+                       payload: copy,
+                     });
+                     handleCloseTerminal();
+                   }
+                 }}
+               />
             </CardActions>
           )}
         </Card>
