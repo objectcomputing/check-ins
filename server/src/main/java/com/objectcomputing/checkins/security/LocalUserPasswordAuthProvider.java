@@ -12,7 +12,7 @@ import io.micronaut.security.authentication.*;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.stream.Collectors;

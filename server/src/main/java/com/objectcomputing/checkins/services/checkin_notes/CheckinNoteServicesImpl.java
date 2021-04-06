@@ -12,7 +12,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;

@@ -80,7 +80,7 @@ flyway:
   enabled: enabled
   datasources:
     default:
-      locations: "classpath:db/common"
+      locations: "classpath:db/migration"
       placeholder-replacement: true
       placeholders:
         aeskey: ${ AES_KEY }

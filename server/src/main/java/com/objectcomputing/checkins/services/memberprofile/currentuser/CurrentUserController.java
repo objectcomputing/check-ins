@@ -10,7 +10,7 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;

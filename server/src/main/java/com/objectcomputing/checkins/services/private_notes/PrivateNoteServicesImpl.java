@@ -13,7 +13,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;

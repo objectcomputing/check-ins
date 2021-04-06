@@ -4,7 +4,7 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;

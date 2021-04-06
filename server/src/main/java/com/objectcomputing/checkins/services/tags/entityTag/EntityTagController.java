@@ -13,7 +13,7 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
