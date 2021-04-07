@@ -162,15 +162,16 @@ public class Feedback {
 
     @Override
     public String toString() {
-        return "Feedback{" +
-                "id=" + id +
-                ", content=" + content +
-                ", sendTo=" + sentTo +
-                ", sendBy=" + sentBy +
-                ", confidential=" + confidential +
-                ", createdOn=" + createdOn.withNano(0) +
-                ", updatedOn=" + updatedOn != null ? updatedOn.withNano(0).toString() : "null" +
-                '}';
+        final StringBuilder sb = new StringBuilder("Feedback{");
+        sb.append("id=").append(id);
+        sb.append(", content='").append(content).append('\'');
+        sb.append(", sentTo=").append(sentTo);
+        sb.append(", sentBy=").append(sentBy);
+        sb.append(", confidential=").append(confidential);
+        sb.append(", createdOn=").append(createdOn);
+        sb.append(", updatedOn=").append(updatedOn);
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
