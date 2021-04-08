@@ -17,6 +17,13 @@ import CardContent from "@material-ui/core/CardContent";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import {updateMember} from "../../api/member";
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/Dialog';
+import DialogContentText from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import {deleteMember} from "../../api/member.js";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -31,14 +38,24 @@ const MemberSummaryCard = ({ member, index }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
 
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+
   const handleClose = () => setOpen(false);
+  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
+
 
   const options =
       isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
 
-  const handleAction = (e, index) =>
-      index === 0 ? handleOpen() : handleClose();
+  const handleAction = (e, index) => {
+    if (index === 0){
+        handleOpen();
+    } else if(index === 2){
+        handleOpenDeleteConfirmation();
+    }
 
+  }
   return (
     <Box display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
@@ -73,6 +90,30 @@ const MemberSummaryCard = ({ member, index }) => {
             {isAdmin && (
             <CardActions>
               <SplitButton className = "split-button" options={options} onClick={handleAction} />
+      <Dialog
+        open={openDelete}
+        onClose={handleCloseDeleteConfirmation}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description">
+            <DialogTitle id="alert-dialog-title">{"Delete Member's data?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete the member's data?
+                    </DialogContentText>
+                </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseDeleteConfirmation} color="primary">
+                    Cancel
+                </Button>
+                <Button onClick={async (id) => {
+                    let res = await deleteMember(id, csrf);
+                    if (res.error) throw new Error(res.error)
+                        handleCloseDeleteConfirmation();
+                }} color="primary" autoFocus>
+                    Yes
+                </Button>
+            </DialogActions>
+      </Dialog>
               <MemberModal
                 member={currentMember}
                 open={open}
