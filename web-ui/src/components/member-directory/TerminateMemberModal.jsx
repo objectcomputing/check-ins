@@ -18,41 +18,11 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
   const { csrf, memberProfiles } = state;
   const [editedMember, setMember] = useState(member);
-  const [pdls, setPdls] = useState([]);
-
-  const getPdls = async () => {
-    let res = await getAllPDLs(csrf);
-    let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
-    const results = await Promise.all(promises);
-    const pdlArray = results.map((res) => res.payload.data);
-    setPdls(pdlArray);
-  };
-
-  const onSupervisorChange = (event, newValue) => {
-    setMember({
-      ...editedMember,
-        supervisorid: newValue ? newValue.id : "",
-      });
-   };
-
-  useEffect(() => {
-    if (open && csrf) {
-      getPdls();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, csrf]);
 
   if(!editedMember.terminateDate) {
     setMember({ ...editedMember, terminateDate: new Date() });
   }
   const date = new Date(editedMember.terminateDate);
-
-  const onPdlChange = (event, newValue) => {
-    setMember({
-      ...editedMember,
-      pdlId: newValue ? newValue.id : "",
-    });
-  };
 
   return (
     <Modal open={open} onClose={onClose}>
