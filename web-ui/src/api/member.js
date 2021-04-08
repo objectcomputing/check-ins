@@ -83,3 +83,12 @@ export const createMember = async (newMember, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const deleteMember = async (id, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${memberProfileUrl}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
