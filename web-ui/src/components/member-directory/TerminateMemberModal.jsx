@@ -1,10 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { getAllPDLs, getMember } from "../../api/member";
-import { AppContext } from "../../context/AppContext";
-
-import { Modal, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Modal} from "@material-ui/core";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -15,8 +11,6 @@ import { Button } from "@material-ui/core";
 import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
-  const { state } = useContext(AppContext);
-  const { csrf, memberProfiles } = state;
   const [editedMember, setMember] = useState(member);
 
   if(!editedMember.terminateDate) {
