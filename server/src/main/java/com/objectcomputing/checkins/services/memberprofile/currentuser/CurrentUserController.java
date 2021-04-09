@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -44,11 +45,14 @@ public class CurrentUserController {
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();
-        String name = authentication.getAttributes().get("name").toString();
-        String imageUrl = authentication.getAttributes().get("picture").toString();
+        String imageUrl = authentication.getAttributes().get("picture") != null ? authentication.getAttributes().get("picture").toString() : "";
+        String name = authentication.getAttributes().get("name").toString().trim();
+        String firstName = name.substring(0, name.indexOf(' '));
+        String lastName = name.substring(name.indexOf(' ') + 1).trim();
 
-        MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
+        MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
+        List<String> roles = roleRepository.findByMemberid(user.getId()).stream()
+                .map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()
@@ -62,7 +66,9 @@ public class CurrentUserController {
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
-        dto.setName(entity.getName());
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

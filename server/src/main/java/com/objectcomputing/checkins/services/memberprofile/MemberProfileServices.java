@@ -7,11 +7,12 @@ import java.util.UUID;
 public interface MemberProfileServices {
     MemberProfile getById(UUID id);
 
-    Set<MemberProfile> findByValues(String name, String title, UUID pdlId, String workEmail, UUID supervisorId);
+    Set<MemberProfile> findByValues(String firstName, String lastName, String title,
+                                    UUID pdlId, String workEmail, UUID supervisorId, Boolean terminated);
 
     MemberProfile saveProfile(MemberProfile memberProfile);
 
     Boolean deleteProfile(UUID id);
 
-    MemberProfile findByName(@NotNull String name);
+    MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
 }

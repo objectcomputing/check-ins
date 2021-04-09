@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.authentication.UserDetails;
@@ -46,7 +47,7 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         OpenIdClaims openIdClaims = new JWTOpenIdClaims(
                 new JWTClaimsSet.Builder().
                         claim("email", memberProfile.getWorkEmail())
-                        .claim("sub", memberProfile.getName())
+                        .claim("sub", MemberProfileUtils.getFullName(memberProfile))
                         .build());
         AuthenticationResponse auth = checkinsOpenIdUserDetailMapper.createAuthenticationResponse(provider,
                 openIdTokenResponse, openIdClaims, null);
@@ -54,7 +55,7 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         assertNotNull(auth);
         UserDetails userDetails = auth.getUserDetails().orElse(null);
         assertNotNull(userDetails);
-        assertEquals(memberProfile.getName(), userDetails.getUsername());
+        assertEquals(MemberProfileUtils.getFullName(memberProfile), userDetails.getUsername());
         assertEquals(roles, userDetails.getRoles());
     }
 }

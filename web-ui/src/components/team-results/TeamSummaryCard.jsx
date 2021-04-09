@@ -125,7 +125,7 @@ const TeamSummaryCard = ({team, index}) => {
 
             </CardContent>
             <CardActions>
-                <SplitButton options={options} onClick={handleAction}/>
+                {(isAdmin || isTeamLead) && <SplitButton options={options} onClick={handleAction}/>}
             </CardActions>
             <EditTeamModal
                 team={team}

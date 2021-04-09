@@ -16,7 +16,23 @@ public class MemberProfileResponseDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
+    @NotBlank
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
     @Nullable
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotBlank
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Schema(description = "suffix name of the employee")
+    private String suffix;
+
+    @NotBlank
     @Schema(description = "full name of the employee")
     private String name;
 
@@ -33,7 +49,7 @@ public class MemberProfileResponseDTO {
     private String location;
 
     @NotBlank
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Nullable
@@ -64,12 +80,48 @@ public class MemberProfileResponseDTO {
         this.id = id;
     }
 
+    @NotBlank
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(@NotBlank String firstName) {
+        this.firstName = firstName;
+    }
+
     @Nullable
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(@Nullable String middleName) {
+        this.middleName = middleName;
+    }
+
+    @NotBlank
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(@Nullable String suffix) {
+        this.suffix = suffix;
+    }
+
+    @NotBlank
     public String getName() {
         return name;
     }
 
-    public void setName(@Nullable String name) {
+    public void setName(@NotBlank String name) {
         this.name = name;
     }
 
@@ -148,5 +200,26 @@ public class MemberProfileResponseDTO {
 
     public void setTerminationDate(LocalDate terminationDate) {
         this.terminationDate = terminationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "MemberProfileResponseDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", suffix='" + suffix + '\'' +
+                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
+                ", pdlId=" + pdlId +
+                ", location='" + location + '\'' +
+                ", workEmail='" + workEmail + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                ", startDate=" + startDate +
+                ", bioText='" + bioText + '\'' +
+                ", supervisorid=" + supervisorid +
+                ", terminationDate=" + terminationDate +
+                '}';
     }
 }

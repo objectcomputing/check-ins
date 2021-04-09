@@ -33,7 +33,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
     void testValidRequestNonEmptyResponse() {
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, "advanced", LocalDate.now());
+        final MemberSkill memberSkill = createMemberSkill(memberProfile, skill, SkillLevel.ADVANCED_LEVEL, LocalDate.now());
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
@@ -64,7 +64,7 @@ public class SkillsReportControllerTest extends TestContainersSuite
     void testValidRequestEmptyResponse() {
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final Skill skill = createADefaultSkill();
-        createMemberSkill(memberProfile, skill, "intermediate", null);
+        createMemberSkill(memberProfile, skill, SkillLevel.INTERMEDIATE_LEVEL, null);
 
         final SkillsReportRequestDTO skillsReportRequestDTO = new SkillsReportRequestDTO();
         final List<SkillLevelDTO> skillLevelDTOList = new ArrayList<>();
