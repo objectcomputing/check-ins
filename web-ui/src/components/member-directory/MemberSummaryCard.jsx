@@ -24,6 +24,8 @@ import DialogContentText from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import {deleteMember} from "../../api/member.js";
+import {DELETE_MEMBER_PROFILE} from "../../context/actions.js";
+import {UPDATE_TOAST} from "../../context/actions.js";
 
 const MemberSummaryCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -106,10 +108,21 @@ const MemberSummaryCard = ({ member, index }) => {
                     Cancel
                 </Button>
                 <Button onClick={async (id) => {
-                    let res = await deleteMember(id, csrf);
-                    if (res.error) throw new Error(res.error)
-                        handleCloseDeleteConfirmation();
-                }} color="primary" autoFocus>
+                    let res = await deleteMember(id, csrf)
+                    if (res && res.payload && res.payload.status === 200) {
+                            dispatch({ type: DELETE_MEMBER_PROFILE, payload: id });
+                            window.snackDispatch({
+                                type: UPDATE_TOAST,
+                                payload: {
+                                    severity: "success",
+                                    toast: "Member deleted",
+                                }
+                            })
+                    handleCloseDeleteConfirmation();
+                    }
+                }}
+                />
+                <Button onClick={handleCloseDeleteConfirmation} color="primary" autoFocus>
                     Yes
                 </Button>
             </DialogActions>
