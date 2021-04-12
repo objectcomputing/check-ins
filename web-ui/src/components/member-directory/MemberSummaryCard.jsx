@@ -107,7 +107,9 @@ const MemberSummaryCard = ({ member, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                     Cancel
                 </Button>
-                <Button onClick={async (id) => {
+                <Button
+                    onClick={handleCloseDeleteConfirmation} color="primary" autoFocus
+                    onSave={async (id) => {
                     let res = await deleteMember(id, csrf)
                     if (res && res.payload && res.payload.status === 200) {
                             dispatch({ type: DELETE_MEMBER_PROFILE, payload: id });
@@ -121,8 +123,7 @@ const MemberSummaryCard = ({ member, index }) => {
                     handleCloseDeleteConfirmation();
                     }
                 }}
-                />
-                <Button onClick={handleCloseDeleteConfirmation} color="primary" autoFocus>
+                >
                     Yes
                 </Button>
             </DialogActions>
