@@ -39,4 +39,22 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null));
     }
 
+    default MemberProfile createAPastTerminatedMemberProfile() {
+        return getMemberProfileRepository().save(new MemberProfile("past terminated", null, "user",
+                null, "Bully Relief PDL", null, "New York, New York",
+                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
+                LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
+                null, LocalDate.now().minusDays(7)));
+    }
+
+    default MemberProfile createAFutureTerminatedMemberProfile() {
+        return getMemberProfileRepository().save(new MemberProfile("past terminated", null, "user",
+                null, "Bully Relief PDL", null, "New York, New York",
+                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
+                LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
+                null, LocalDate.now().plusDays(7)));
+
+    }
+
 }
+

@@ -201,4 +201,25 @@ public class MemberProfileResponseDTO {
     public void setTerminationDate(LocalDate terminationDate) {
         this.terminationDate = terminationDate;
     }
+
+    @Override
+    public String toString() {
+        return "MemberProfileResponseDTO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", suffix='" + suffix + '\'' +
+                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
+                ", pdlId=" + pdlId +
+                ", location='" + location + '\'' +
+                ", workEmail='" + workEmail + '\'' +
+                ", employeeId='" + employeeId + '\'' +
+                ", startDate=" + startDate +
+                ", bioText='" + bioText + '\'' +
+                ", supervisorid=" + supervisorid +
+                ", terminationDate=" + terminationDate +
+                '}';
+    }
 }

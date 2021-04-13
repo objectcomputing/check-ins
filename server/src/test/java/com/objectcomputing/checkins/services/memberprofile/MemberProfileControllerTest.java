@@ -22,10 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -539,4 +536,55 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals("memberProfile.id: must not be null", thrown.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
+
+    @Test
+    public void testMemberProfileWithNullTerminationDate() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        final HttpResponse<List < MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithUpcomingTerminationDate() {
+        MemberProfile memberProfile = createAFutureTerminatedMemberProfile();
+
+        final HttpResponse<List < MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDate() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(0, response.body().size());
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDateReturnsWhenTerminatedTrue() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
 }

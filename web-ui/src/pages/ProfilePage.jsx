@@ -20,7 +20,7 @@ const ProfilePage = () => {
   const userProfile = selectCurrentUser(state);
   const {csrf} = state;
 
-  const { id, bioText } = userProfile;
+  const { id, bioText, pdlId } = userProfile;
 
   const [bio, setBio] = useState();
 
@@ -50,7 +50,7 @@ const ProfilePage = () => {
 
   return (
     <div className="Profile">
-      <Profile memberId={id} />
+      <Profile memberId={id} pdlId={pdlId} />
       <Card>
         <CardHeader
           avatar={<Info />}
