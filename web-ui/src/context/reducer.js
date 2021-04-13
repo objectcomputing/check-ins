@@ -18,6 +18,7 @@ import {
   UPDATE_SKILLS,
   ADD_TEAM,
   SET_ROLES,
+  DELETE_MEMBER_PROFILE
 } from "./actions";
 
 export const initialState = {
@@ -123,6 +124,13 @@ export const reducer = (state, action) => {
       state.memberSkills = [
         ...state.memberSkills.filter(
           (mSkill) => mSkill.skillid !== action.payload
+        ),
+      ];
+      break;
+    case DELETE_MEMBER_PROFILE:
+      state.memberProfile = [
+        ...state.memberProfile.filter(
+          (profile) => profile.id !== action.payload
         ),
       ];
       break;
