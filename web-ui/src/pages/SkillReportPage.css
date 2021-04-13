@@ -1,5 +1,6 @@
 .skills-report-page {
     margin: 2rem;
+    align-items: center;
 }
 
 .skills-list {
@@ -12,4 +13,9 @@
     align-items: center;
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+.results-section {
+    align-items: center;
+    justify-content: space-between;
 }
