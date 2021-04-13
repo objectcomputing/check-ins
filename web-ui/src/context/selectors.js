@@ -94,6 +94,12 @@ export const selectOrderedPdls = createSelector(
   })
 );
 
+export const selectOrderedMemberProfiles = createSelector(
+    selectMemberProfiles,
+    (mappedMemberProfiles) => mappedMemberProfiles.sort((a,b) =>
+        a.lastName.localeCompare(b.lastName))
+);
+
 export const selectCheckinMap = createSelector(
   selectCheckins,
   checkins => {
