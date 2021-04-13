@@ -87,10 +87,12 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
             }
 
             final List<MemberSkill> temp = memberSkillRepo.findBySkillid(skill.getId());
-            if (skill.getLevel() != null) {
+            if (skill.getLevel() != null && temp.size() > 0) {
                 for (MemberSkill memSkill : temp) {
-                    if (isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
-                        entries.add(memSkill);
+                    if (memSkill.getSkilllevel() != null) {
+                        if (isSkillLevelSatisfied(memSkill.getSkilllevel(), skill.getLevel())) {
+                            entries.add(memSkill);
+                        }
                     }
                 }
             } else {
