@@ -93,6 +93,7 @@ const SkillSection = ({userId}) => {
           return skill;
         }
       );
+      currentUserSkills.sort((a, b) => a.name.localeCompare(b.name))
       setMySkills(currentUserSkills);
     };
     if (csrf && myMemberSkills) {
