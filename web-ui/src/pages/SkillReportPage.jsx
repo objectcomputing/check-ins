@@ -6,7 +6,7 @@ import { selectOrderedSkills, selectCsrfToken } from "../context/selectors";
 
 import SkillsReportModal from "../components/skills/SkillsReportModal";
 
-import { Button, Card, CardActions, CardHeader, Chip, List, ListItem } from "@material-ui/core";
+import { Button, CardActions, CardHeader, Chip, List, ListItem } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 
 import "./SkillReportPage.css";
