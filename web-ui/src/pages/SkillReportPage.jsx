@@ -52,8 +52,6 @@ const SkillReportPage = (props) => {
       setSearchResults(results);
   }
 
-
-
   function membersToIdArray(members) {
         return members.map((member) => {
             return member.id;
@@ -83,20 +81,20 @@ const SkillReportPage = (props) => {
     return newSearchRequest;
   }
 
-  const onSkillsChange = (event, newValue) => {
+  function onSkillsChange (event, newValue) {
     let skillsCopy = newValue.sort((a,b) =>
         a.name.localeCompare(b.name))
     setSearchSkills([...skillsCopy]);
   };
 
-  const onMembersChange = (event, newValue) => {
+  function onMembersChange(event, newValue) {
     setSearchMembers([...newValue]);
     let membersCopy = newValue.sort((a,b) =>
         a.lastName.localeCompare(b.lastName))
     setSearchMembers([...membersCopy])
   };
 
-  const reset = () => {
+  function reset () {
     setSearchSkills([]);
     setSearchMembers([]);
   };
