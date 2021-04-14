@@ -2,11 +2,11 @@ import React, { useContext, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
+import { getAvatarURL } from "../api/api.js";
 import { selectOrderedSkills, selectCsrfToken, selectOrderedMemberProfiles } from "../context/selectors";
 
-import { Button, Card, CardHeader, Chip, List, ListItem, TextField } from "@material-ui/core";
+import { Avatar, Button, Card, CardHeader, Chip, List, ListItem, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import PersonIcon from "@material-ui/icons/Person";
 
 import "./SkillReportPage.css";
 
@@ -31,6 +31,7 @@ const SkillReportPage = (props) => {
     }
     if (memberSkillsToSearch) {
         getSkillNames(memberSkillsToSearch);
+        getMemberProfiles(memberSkillsToSearch);
     } else {
         setSearchResults(undefined);
     }
@@ -50,6 +51,21 @@ const SkillReportPage = (props) => {
         })
       })
       setSearchResults(results);
+  }
+
+  function getMemberProfiles(results) {
+    results = results.map((teamMember, index) => {
+        let memberProfile = memberProfiles.find((memberProfile) => memberProfile.id === teamMember.id);
+        let mappedTeamMember = {
+            id: memberProfile.id,
+            name: memberProfile.name,
+            workEmail: memberProfile.workEmail,
+            title: memberProfile.title,
+            skills: teamMember.skills
+        }
+        return mappedTeamMember;
+    })
+    setSearchResults(results)
   }
 
   function membersToIdArray(members) {
@@ -191,10 +207,20 @@ const SkillReportPage = (props) => {
                   return (
                   <Card>
                   <CardHeader
-                    avatar={<PersonIcon />}
-                    title={teamMember.name}
-                    titleTypographyProps={{variant: "h5", component: "h2"}}
-                    action={null}/>
+                    title={
+                      <Typography variant="h5" component="h2">
+                        {teamMember.name}
+                      </Typography>
+                    }
+                    subheader={<Typography color="textSecondary" component="h3">{teamMember.title}</Typography>}
+                    disableTypography
+                    avatar={
+                      <Avatar
+                        className={"large"}
+                        src={getAvatarURL(teamMember.workEmail)}
+                      />
+                    }
+                    />
                     <ListItem key={`teamMember-${teamMember.name}`} >
                       {teamMember.skills.map((skill, index) => {
                         return (
