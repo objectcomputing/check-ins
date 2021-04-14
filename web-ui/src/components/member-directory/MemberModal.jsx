@@ -28,7 +28,11 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   if(!editedMember.startDate) {
     setMember({ ...editedMember, startDate: new Date() });
   }
-  const date = new Date(editedMember.startDate);
+  if(!editedMember.terminationDate) {
+    setMember({ ...editedMember, terminationDate: new Date() });
+  }
+  const terminationDate = new Date(editedMember.terminationDate);
+  const startDate = new Date(editedMember.startDate);
 
   const onPdlChange = (event, newValue) => {
     setMember({
@@ -95,8 +99,8 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
-          options={["", ...sortedPdls]}
-          value={sortedPdls.find((pdl) => pdl.id === editedMember.pdlId) || ""}
+          options={sortedPdls && ["", ...sortedPdls]}
+          value={(sortedPdls && sortedPdls.find((pdl) => pdl?.id === editedMember.pdlId)) || ""}
           onChange={onPdlChange}
           getOptionLabel={(option) => option.name || ""}
           renderInput={(params) => (
@@ -129,9 +133,23 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             required
             label="Start Date"
             format="MM/dd/yyyy"
-            value={date}
+            value={startDate}
             onChange={(e) => {
               setMember({ ...editedMember, startDate: e });
+            }}
+            KeyboardButtonProps={{
+              "aria-label": "Change Date",
+            }}
+          />
+          <KeyboardDatePicker
+            margin="normal"
+            id="member-datepicker-dialog"
+            required
+            label="Termination Date"
+            format="MM/dd/yyyy"
+            value={terminationDate}
+            onChange={(e) => {
+              setMember({ ...editedMember, terminationDate: e });
             }}
             KeyboardButtonProps={{
               "aria-label": "Change Date",

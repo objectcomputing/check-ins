@@ -128,8 +128,8 @@ export const reducer = (state, action) => {
       ];
       break;
     case DELETE_MEMBER_PROFILE:
-      state.memberProfile = [
-        ...state.memberProfile.filter(
+      state.memberProfiles = [
+        ...state.memberProfiles.filter(
           (profile) => profile.id !== action.payload
         ),
       ];

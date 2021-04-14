@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 
 import MemberModal from "./MemberModal";
-import TerminateMemberModal from "./TerminateMemberModal";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
@@ -19,10 +18,10 @@ import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import {updateMember} from "../../api/member";
 import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/Dialog';
-import DialogContentText from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import {deleteMember} from "../../api/member.js";
 import {DELETE_MEMBER_PROFILE} from "../../context/actions.js";
@@ -34,6 +33,7 @@ const MemberSummaryCard = ({ member, index }) => {
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid, pdlId } = member;
+  const memberId = member?.id;
   const [currentMember, setCurrentMember] = useState(member);
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
@@ -47,24 +47,31 @@ const MemberSummaryCard = ({ member, index }) => {
   const handleClose = () => setOpen(false);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
-
-  const [openTerminal, setOpenTerminal] = useState(false);
-  const handleOpenTerminal = () => setOpenTerminal(true);
-
-  const handleCloseTerminal = () => setOpenTerminal(false);
-
   const options =
-      isAdmin ? ["Edit", "Terminate", "Delete"] : ["Edit"];
+      isAdmin ? ["Edit", "Delete"] : ["Edit"];
 
   const handleAction = (e, index) => {
     if (index === 0){
         handleOpen();
     } else if(index === 1) {
-        handleOpenTerminal();
-    } else if(index === 2){
         handleOpenDeleteConfirmation();
     }
-  }
+  };
+
+  const handleDeleteMember = async () => {
+     let res = await deleteMember(memberId, csrf);
+     if (res && res.payload && res.payload.status === 200) {
+        dispatch({ type: DELETE_MEMBER_PROFILE, payload: memberId });
+        window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+             severity: "success",
+             toast: "Member deleted",
+            }
+        });
+     }
+     handleCloseDeleteConfirmation();
+  };
 
   return (
     <Box display="flex" flexWrap="wrap">
@@ -105,32 +112,18 @@ const MemberSummaryCard = ({ member, index }) => {
                 onClose={handleCloseDeleteConfirmation}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
-                    <DialogTitle id="alert-dialog-title">{"Delete Member's data?"}</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                                Are you sure you want to delete the member's data?
-                            </DialogContentText>
-                        </DialogContent>
+                    <DialogTitle id="alert-dialog-title">Delete member?</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete the member's data?
+                        </DialogContentText>
+                    </DialogContent>
                     <DialogActions>
                         <Button onClick={handleCloseDeleteConfirmation} color="primary">
                             Cancel
                         </Button>
                         <Button
-                            onClick={handleCloseDeleteConfirmation} color="primary" autoFocus
-                            onSave={async (id) => {
-                            let res = await deleteMember(id, csrf)
-                            if (res && res.payload && res.payload.status === 200) {
-                                    dispatch({ type: DELETE_MEMBER_PROFILE, payload: id });
-                                    window.snackDispatch({
-                                        type: UPDATE_TOAST,
-                                        payload: {
-                                            severity: "success",
-                                            toast: "Member deleted",
-                                        }
-                                    })
-                            handleCloseDeleteConfirmation();
-                            }
-                        }}
+                            onClick={handleDeleteMember} color="primary" autoFocus
                         >
                             Yes
                         </Button>
@@ -155,28 +148,6 @@ const MemberSummaryCard = ({ member, index }) => {
                       payload: copy,
                     });
                     handleClose();
-                  }
-                }}
-              />
-              <TerminateMemberModal
-                member={currentMember}
-                open={openTerminal}
-                onClose={handleCloseTerminal}
-                onSave={async (member) => {
-                  setCurrentMember(member);
-                  let res = await updateMember(member, csrf);
-                  let data =
-                      res.payload && res.payload.data && !res.error
-                          ? res.payload.data
-                          : null;
-                  if (data) {
-                    const copy = [...memberProfiles];
-                    copy[index] = member;
-                    dispatch({
-                      type: UPDATE_MEMBER_PROFILES,
-                      payload: copy,
-                    });
-                    handleCloseTerminal();
                   }
                 }}
               />
