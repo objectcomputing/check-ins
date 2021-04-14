@@ -19,7 +19,6 @@ const SkillReportPage = (props) => {
   const [ searchResults, setSearchResults ] = useState([]);
   const [open, setOpen] = useState(false);
   const [ searchRequestDTO ] = useState([]);
-//   const isAdmin = true;
   const isAdmin =
           userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
