@@ -15,8 +15,11 @@ import java.util.UUID;
 public interface MemberProfileRepository extends CrudRepository<MemberProfile, UUID> {
 
     @Query(value = "SELECT id, " +
-            "PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') as name, " +
-            "PGP_SYM_DECRYPT(cast(title as bytea), '${aes.key}') as title, " +
+            "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
+            "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName," +
+            "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName," +
+            "PGP_SYM_DECRYPT(cast(mp.suffix as bytea),'${aes.key}') as suffix," +
+            "PGP_SYM_DECRYPT(cast(title as bytea),'${aes.key}') as title, " +
             "pdlid, " +
             "PGP_SYM_DECRYPT(cast(location as bytea), '${aes.key}') as location, " +
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
@@ -29,8 +32,11 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
     Optional<MemberProfile> findByWorkEmail(@NotNull String workEmail);
 
     @Query(value = "SELECT id, " +
-            "PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') as name, " +
-            "PGP_SYM_DECRYPT(cast(title as bytea), '${aes.key}') as title, " +
+            "PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') as firstName, " +
+            "PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') as middleName, " +
+            "PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') as lastName, " +
+            "PGP_SYM_DECRYPT(cast(mp.suffix as bytea),'${aes.key}') as suffix, " +
+            "PGP_SYM_DECRYPT(cast(title as bytea),'${aes.key}') as title, " +
             "pdlid, " +
             "PGP_SYM_DECRYPT(cast(location as bytea), '${aes.key}') as location, " +
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
@@ -38,17 +44,19 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
             "supervisorid, terminationDate " +
             "FROM member_profile mp " +
-            "WHERE (:name IS NULL OR PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') = :name) " +
+            "WHERE (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
+            "AND (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') = :middleName) " +
+            "AND (:lastName IS NULL OR PGP_SYM_DECRYPT(cast(mp.lastName as bytea),'${aes.key}') = :lastName) " +
+            "AND (:suffix IS NULL OR PGP_SYM_DECRYPT(cast(mp.suffix as bytea),'${aes.key}') = :suffix) " +
             "AND (:title IS NULL OR PGP_SYM_DECRYPT(cast(mp.title as bytea), '${aes.key}') = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) " +
-            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) ", nativeQuery = true)
-    List<MemberProfile> search(@Nullable String name, @Nullable String title, @Nullable String pdlId,
-                               @Nullable String workEmail, @Nullable String supervisorId);
+            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) " +
+            "AND (((:terminated IS FALSE OR :terminated IS NULL) AND (mp.terminationdate IS NULL OR mp.terminationdate >= CURRENT_DATE)) " +
+            "OR (:terminated IS TRUE AND mp.terminationdate < CURRENT_DATE))", nativeQuery = true )
+    List<MemberProfile> search(@Nullable String firstName, @Nullable String middleName, @Nullable String lastName,
+                               @Nullable String suffix, @Nullable String title, @Nullable String pdlId,
+                               @Nullable String workEmail, @Nullable String supervisorId, @Nullable Boolean terminated);
 
     List<MemberProfile> findAll();
-
-    @Query(value = "SELECT PGP_SYM_DECRYPT(cast(mp.name as bytea), '${aes.key}') FROM member_profile as mp " +
-            "WHERE mp.id = cast(:id as varchar)", nativeQuery = true)
-    String findNameById(@NotNull UUID id);
 }

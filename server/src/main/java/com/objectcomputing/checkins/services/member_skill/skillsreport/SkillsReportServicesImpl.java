@@ -1,9 +1,12 @@
 package com.objectcomputing.checkins.services.member_skill.skillsreport;
 
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 
 import javax.inject.Singleton;
@@ -14,13 +17,16 @@ import java.util.*;
 public class SkillsReportServicesImpl implements SkillsReportServices {
     private final MemberSkillRepository memberSkillRepo;
     private final MemberProfileRepository memberProfileRepo;
+    private final MemberProfileServices memberProfileServices;
     private final SkillRepository skillRepo;
 
     public SkillsReportServicesImpl(MemberSkillRepository memberSkillRepo,
                                     MemberProfileRepository memberProfileRepo,
+                                    MemberProfileServices memberProfileServices,
                                     SkillRepository skillRepo) {
         this.memberSkillRepo = memberSkillRepo;
         this.memberProfileRepo = memberProfileRepo;
+        this.memberProfileServices = memberProfileServices;
         this.skillRepo = skillRepo;
     }
 
@@ -108,7 +114,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
                 final TeamMemberSkillDTO dto = new TeamMemberSkillDTO();
                 dto.setId(memberId);
 
-                final String memberName = memberProfileRepo.findNameById(memberId);
+                final MemberProfile memProfile = memberProfileServices.getById(memberId);
+                final String memberName = MemberProfileUtils.getFullName(memProfile);
                 dto.setName(memberName);
 
                 final List<SkillLevelDTO> memberSkills = new ArrayList<>();

@@ -10,6 +10,14 @@ export const getAllMembers = async (cookie) => {
   });
 };
 
+export const getAllRoles = async (cookie) => {
+  return resolve({
+    url: "services/role",
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getAllPDLs = async (cookie) => {
   return resolve({
     url: "/services/role?role=PDL",
@@ -72,6 +80,15 @@ export const createMember = async (newMember, cookie) => {
     url: memberProfileUrl,
     responseType: "json",
     data: newMember,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const deleteMember = async (id, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${memberProfileUrl}/${id}`,
+    responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
 };
