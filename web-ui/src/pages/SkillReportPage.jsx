@@ -34,7 +34,6 @@ const SkillReportPage = (props) => {
     } else {
         setSearchResults(undefined);
     }
-    console.log(memberSkillsFound)
   }
 
   function getSkillNames(results) {
