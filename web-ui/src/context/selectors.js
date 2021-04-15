@@ -65,6 +65,12 @@ export const selectProfile = createSelector(
     (profileMap, profileId) => profileMap[profileId]
 );
 
+export const selectSkill = createSelector(
+    selectSkills,
+    (state, skillId) => skillId,
+    (skills, skillId) => skills.find((skill) => skill.id === skillId)
+);
+
 export const selectMySkills = createSelector(
   selectCurrentUserId,
   selectMemberSkills,
