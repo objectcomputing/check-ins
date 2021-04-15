@@ -28,7 +28,7 @@ const SkillReportPage = (props) => {
             res.payload.data.teamMembers && !res.error ?
             res.payload.data.teamMembers : undefined;
     }
-    if (memberSkillsFound) {
+    if (memberSkillsFound && memberProfiles) {
         getSkillNames(memberSkillsFound);
         getMemberProfiles(memberSkillsFound);
     } else {
@@ -53,8 +53,9 @@ const SkillReportPage = (props) => {
 
   function getMemberProfiles(results) {
     results = results.map((teamMember, index) => {
-        let memberProfile = memberProfiles.find((memberProfile) => memberProfile.id === teamMember.id);
-        let mappedTeamMember = {
+        let mappedTeamMember;
+        let memberProfile = memberProfiles.find((mp) => mp.id === teamMember.id);
+        mappedTeamMember = {
             id: memberProfile.id,
             name: memberProfile.name,
             workEmail: memberProfile.workEmail,
