@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
 import { getAvatarURL } from "../api/api.js";
-import { selectOrderedSkills, selectCsrfToken, selectOrderedMemberProfiles } from "../context/selectors";
+import { selectOrderedSkills, selectCsrfToken, selectOrderedMemberProfiles, selectProfile, selectSkill } from "../context/selectors";
 
 import { Avatar, Button, Card, CardHeader, Chip, List, ListItem, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -29,42 +29,10 @@ const SkillReportPage = (props) => {
             res.payload.data.teamMembers : undefined;
     }
     if (memberSkillsFound && memberProfiles) {
-        getSkillNames(memberSkillsFound);
-        getMemberProfiles(memberSkillsFound);
+        setSearchResults(memberSkillsFound);
     } else {
         setSearchResults(undefined);
     }
-  }
-
-  function getSkillNames(results) {
-     results.forEach(teamMember => {
-         teamMember.skills = teamMember.skills.map((memberSkill, index) => {
-            let skill = skills.find((skill) => skill.id === memberSkill.id);
-            let namedMemberSkill = {
-                id: memberSkill.id,
-                level: memberSkill.level,
-                name: skill.name
-            }
-            return namedMemberSkill;
-        })
-      })
-      setSearchResults(results);
-  }
-
-  function getMemberProfiles(results) {
-    results = results.map((teamMember, index) => {
-        let mappedTeamMember;
-        let memberProfile = memberProfiles.find((mp) => mp.id === teamMember.id);
-        mappedTeamMember = {
-            id: memberProfile.id,
-            name: memberProfile.name,
-            workEmail: memberProfile.workEmail,
-            title: memberProfile.title,
-            skills: teamMember.skills
-        }
-        return mappedTeamMember;
-    })
-    setSearchResults(results)
   }
 
   function skillsToSkillLevelDTO(skills) {
@@ -99,7 +67,8 @@ const SkillReportPage = (props) => {
   const chip = (skill) => {
     let level = skill.level
     let skillLevel = level.charAt(0) + level.slice(1).toLowerCase();
-    let chipLabel = skill.name + " - " + skillLevel;
+    let mappedSkill = selectSkill(state, skill.id)
+    let chipLabel = mappedSkill.name + " - " + skillLevel;
     return (
       <Chip
         label={chipLabel}
@@ -110,7 +79,7 @@ const SkillReportPage = (props) => {
   return (
     <div className="skills-report-page">
       <div className="SkillReportModal">
-        <h2>{'Select desired skills...'}</h2>
+        <h2>Select desired skills...</h2>
           <Autocomplete
             id="skillSelect"
             multiple
@@ -158,22 +127,21 @@ const SkillReportPage = (props) => {
                   No Results
                 </ListItem> :
                 searchResults.map((teamMember, index) => {
+                  const memberProfile = selectProfile(state, teamMember.id);
                   return (
                   <Card className={"member-skills-card"} key={`card-${teamMember.id}`}>
                   <CardHeader
-                    key={`cardHeader-${teamMember.id}`}
                     title={
                       <Typography variant="h5" component="h2">
-                        {teamMember.name}
+                        {memberProfile?.name || teamMember.name}
                       </Typography>
                     }
-                    subheader={<Typography color="textSecondary" component="h3">{teamMember.title}</Typography>}
+                    subheader={<Typography color="textSecondary" component="h3">{memberProfile?.title || ''}</Typography>}
                     disableTypography
                     avatar={
                       <Avatar
-                        key={`avatar-${teamMember.name}`}
                         className={"large"}
-                        src={getAvatarURL(teamMember.workEmail)}
+                        src={getAvatarURL(memberProfile?.workEmail || '')}
                       />
                     }
                     />
