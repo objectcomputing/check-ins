@@ -98,20 +98,15 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile));
+            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!userRoles.isEmpty()) {
-            LOG.info("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile));
-        } else {
-            // delete the user
-            memberProfileRepository.deleteById(id);
-            return true;
+            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
         }
 
-        // Terminate the user if user is not deleted
         // Update PDL ID for all associated members before termination
         List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
                 null, null, nullSafeUUIDToString(id), null, null, null);
@@ -119,11 +114,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
             member.setPdlId(null);
             memberProfileRepository.update(member);
         }
-
-        // Terminate user
-        memberProfile.setTerminationDate(LocalDate.now());
-        memberProfile.setPdlId(null);
-        memberProfileRepository.update(memberProfile);
+        memberProfileRepository.deleteById(id);
         return true;
     }
 

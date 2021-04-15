@@ -35,14 +35,7 @@ const DirectoryPage = () => {
 
     const classes = useStyles();
 
-    const [members, setMembers] = useState(
-        memberProfiles &&
-        memberProfiles.sort((a, b) => {
-            const aPieces = a.name.split(" ").slice(-1);
-            const bPieces = b.name.split(" ").slice(-1);
-            return aPieces.toString().localeCompare(bPieces);
-        })
-    );
+    const [members, setMembers] = useState([]);
 
     const [open, setOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
@@ -51,7 +44,15 @@ const DirectoryPage = () => {
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
     useEffect(() => {
-        setMembers(memberProfiles);
+        memberProfiles && setMembers(memberProfiles.filter((profile) => {
+                               const today = new Date();
+                               today.setHours(0,0,0,0);
+                               return profile.terminationDate === null || profile.terminationDate === undefined || today <= new Date(profile.terminationDate)
+                           }).sort((a, b) => {
+                               const aPieces = a.name.split(" ").slice(-1);
+                               const bPieces = b.name.split(" ").slice(-1);
+                               return aPieces.toString().localeCompare(bPieces);
+                           }));
     }, [memberProfiles]);
 
     const handleOpen = () => setOpen(true);

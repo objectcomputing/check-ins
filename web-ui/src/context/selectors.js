@@ -68,26 +68,26 @@ export const selectProfile = createSelector(
 export const selectMySkills = createSelector(
   selectCurrentUserId,
   selectMemberSkills,
-  (id, skills) => skills.filter((skill) => skill.memberid === id)
+  (id, skills) => skills?.filter((skill) => skill.memberid === id)
 );
 
 export const selectPendingSkills = createSelector(selectSkills, (skills) =>
-  skills.filter((skill) => skill.pending)
+  skills?.filter((skill) => skill.pending)
 );
 
 export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
-  roles.filter((role) => role.role.includes("PDL"))
+  roles?.filter((role) => role.role.includes("PDL"))
 );
 
 export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
-  (memberProfileMap, roles) => roles.map(role => memberProfileMap[role.memberid])
+  (memberProfileMap, roles) => roles?.map(role => memberProfileMap[role.memberid])
 );
 
 export const selectOrderedPdls = createSelector(
   selectMappedPdls,
-  (mappedPdls) => mappedPdls.sort((a, b) => {
+  (mappedPdls) => mappedPdls?.sort((a, b) => {
     if (a.lastName < b.lastName) return -1;
     if (a.lastName > b.lastName) return 1;
     return 0;
