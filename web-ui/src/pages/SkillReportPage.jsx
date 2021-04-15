@@ -17,25 +17,24 @@ const SkillReportPage = (props) => {
   const memberProfiles = selectOrderedMemberProfiles(state);
   const [ searchResults, setSearchResults ] = useState([]);
   const [ searchRequestDTO ] = useState([]);
-  const [ searchMembers, setSearchMembers ] = useState([]);
   const [ searchSkills, setSearchSkills ] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState(searchRequestDTO);
 
   const handleSearch = async (searchRequestDTO) => {
     let res = await reportSkills(searchRequestDTO, csrf);
-    let memberSkillsToSearch;
+    let memberSkillsFound;
     if (res && res.payload) {
-        memberSkillsToSearch =
+        memberSkillsFound =
             res.payload.data.teamMembers && !res.error ?
             res.payload.data.teamMembers : undefined;
     }
-    if (memberSkillsToSearch) {
-        getSkillNames(memberSkillsToSearch);
-        getMemberProfiles(memberSkillsToSearch);
+    if (memberSkillsFound) {
+        getSkillNames(memberSkillsFound);
+        getMemberProfiles(memberSkillsFound);
     } else {
         setSearchResults(undefined);
     }
-    console.log(memberSkillsToSearch)
+    console.log(memberSkillsFound)
   }
 
   function getSkillNames(results) {
@@ -68,12 +67,6 @@ const SkillReportPage = (props) => {
     setSearchResults(results)
   }
 
-  function membersToIdArray(members) {
-        return members.map((member) => {
-            return member.id;
-        })
-      }
-
   function skillsToSkillLevelDTO(skills) {
     return skills.map((skill, index) => {
       let skillLevel = {
@@ -86,7 +79,7 @@ const SkillReportPage = (props) => {
 
   function createRequestDTO(editedSearchRequest) {
     let skills = skillsToSkillLevelDTO(searchSkills);
-    let members = membersToIdArray(searchMembers);
+    let members = [];
     let inclusive = false;
     let newSearchRequest = {
       skills: skills,
@@ -103,18 +96,6 @@ const SkillReportPage = (props) => {
     setSearchSkills([...skillsCopy]);
   };
 
-  function onMembersChange(event, newValue) {
-    setSearchMembers([...newValue]);
-    let membersCopy = newValue.sort((a,b) =>
-        a.lastName.localeCompare(b.lastName))
-    setSearchMembers([...membersCopy])
-  };
-
-  function reset () {
-    setSearchSkills([]);
-    setSearchMembers([]);
-  };
-
   const chip = (skill) => {
     let level = skill.level
     let skillLevel = level.charAt(0) + level.slice(1).toLowerCase();
@@ -129,7 +110,7 @@ const SkillReportPage = (props) => {
   return (
     <div className="skills-report-page">
       <div className="SkillReportModal">
-        <h2>{'Choose Search Options'}</h2>
+        <h2>{'Select desired skills...'}</h2>
           <Autocomplete
             id="skillSelect"
             multiple
@@ -153,37 +134,10 @@ const SkillReportPage = (props) => {
               />
             )}
           />
-          <Autocomplete
-            id="memberSelect"
-            multiple
-            options={memberProfiles.filter((memberProfile) =>
-              !searchMembers.map((sMember) =>
-                sMember.id).includes(memberProfile.id)
-            )}
-            value={
-              searchMembers
-                ? searchMembers
-                : []
-            }
-            onChange={onMembersChange}
-            getOptionLabel={(option) => option.name}
-            getOptionSelected={(option, value) =>
-              value ? value.id === option.id : false
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className="fullWidth"
-                label="Members *"
-                placeholder="Add a member..."
-              />
-            )}
-          />
           <div className="SkillsSearch-actions fullWidth">
             <Button
               onClick={() => {
                 handleSearch(createRequestDTO(editedSearchRequest));
-                reset();
               }}
               color="primary"
             >
@@ -198,15 +152,16 @@ const SkillReportPage = (props) => {
                   titleTypographyProps={{variant: "h5", component: "h2"}}
                   action={null}
               />
-              <List>
+              <List >
               {(searchResults === undefined) ?
-                <ListItem >
+                <ListItem key={`no-results`}>
                   No Results
                 </ListItem> :
                 searchResults.map((teamMember, index) => {
                   return (
-                  <Card>
+                  <Card className={"member-skills-card"} key={`card-${teamMember.id}`}>
                   <CardHeader
+                    key={`cardHeader-${teamMember.id}`}
                     title={
                       <Typography variant="h5" component="h2">
                         {teamMember.name}
@@ -216,6 +171,7 @@ const SkillReportPage = (props) => {
                     disableTypography
                     avatar={
                       <Avatar
+                        key={`avatar-${teamMember.name}`}
                         className={"large"}
                         src={getAvatarURL(teamMember.workEmail)}
                       />

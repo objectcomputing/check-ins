@@ -3,6 +3,14 @@
     align-items: center;
 }
 
+.member-skills-card {
+  max-height: 20rem;
+  width: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .skills-list {
     margin: 1rem;
 }
