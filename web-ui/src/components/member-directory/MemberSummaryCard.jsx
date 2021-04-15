@@ -34,7 +34,6 @@ const MemberSummaryCard = ({ member, index }) => {
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
   const { location, name, workEmail, title, supervisorid, pdlId } = member;
   const memberId = member?.id;
-  const [currentMember, setCurrentMember] = useState(member);
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
 
@@ -130,11 +129,10 @@ const MemberSummaryCard = ({ member, index }) => {
                     </DialogActions>
               </Dialog>
               <MemberModal
-                member={currentMember}
+                member={member}
                 open={open}
                 onClose={handleClose}
                 onSave={async (member) => {
-                  setCurrentMember(member);
                   let res = await updateMember(member, csrf);
                   let data =
                       res.payload && res.payload.data && !res.error
@@ -142,7 +140,8 @@ const MemberSummaryCard = ({ member, index }) => {
                           : null;
                   if (data) {
                     const copy = [...memberProfiles];
-                    copy[index] = member;
+                    const index = copy.findIndex(profile => profile.id === data.id);
+                    copy[index] = data;
                     dispatch({
                       type: UPDATE_MEMBER_PROFILES,
                       payload: copy,

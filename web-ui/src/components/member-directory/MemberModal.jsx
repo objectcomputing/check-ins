@@ -9,6 +9,7 @@ import {
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import { format } from 'date-fns';
 import { Button } from "@material-ui/core";
 
 import "./MemberModal.css";
@@ -28,10 +29,8 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   if(!editedMember.startDate) {
     setMember({ ...editedMember, startDate: new Date() });
   }
-  if(!editedMember.terminationDate) {
-    setMember({ ...editedMember, terminationDate: new Date() });
-  }
-  const terminationDate = new Date(editedMember.terminationDate);
+
+  const terminationDate = editedMember && editedMember.terminationDate ? new Date(editedMember.terminationDate) : null;
   const startDate = new Date(editedMember.startDate);
 
   const onPdlChange = (event, newValue) => {
@@ -129,7 +128,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             margin="normal"
-            id="member-datepicker-dialog"
+            id="start-datepicker-dialog"
             required
             label="Start Date"
             format="MM/dd/yyyy"
@@ -143,13 +142,14 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           />
           <KeyboardDatePicker
             margin="normal"
-            id="member-datepicker-dialog"
-            required
+            id="termination-datepicker-dialog"
             label="Termination Date"
+            clearable
             format="MM/dd/yyyy"
             value={terminationDate}
-            onChange={(e) => {
-              setMember({ ...editedMember, terminationDate: e });
+            placeholder={format(new Date(), "MM/dd/yyy")}
+            onChange={(date) => {
+              setMember({ ...editedMember, terminationDate: date });
             }}
             KeyboardButtonProps={{
               "aria-label": "Change Date",
