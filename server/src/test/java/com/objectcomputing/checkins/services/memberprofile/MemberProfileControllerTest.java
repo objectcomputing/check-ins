@@ -81,7 +81,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteTerminatesUserIfCheckinDataExists() {
+    public void testDeleteThrowsExceptionIfCheckinDataExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -90,26 +90,18 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberSkillExists() {
+    public void testDeleteThrowsExceptionIfMemberSkillExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -120,26 +112,18 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberIsPartOfATeam() {
+    public void testDeleteThrowsExceptionIfMemberIsPartOfATeam() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -150,64 +134,34 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberHasPDLRole() {
+    public void testDeleteThrowsExceptionIfMemberHasPDLRole() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         createDefaultRole(RoleType.PDL, memberProfileOfPDL);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfPDL.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfPDL.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
-
-        // Ensure PDL record is updated for people under the terminated user
-        final HttpRequest<Object> requestForTestingPDLRecord = HttpRequest.GET(String.format("/%s", memberProfileOfMember.getId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForTestingPDLRecord = client.toBlocking().exchange(requestForTestingPDLRecord, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForTestingPDLRecord.getStatus());
-        assertNotNull(responseForTestingPDLRecord.body());
-        MemberProfile memberProfileOfEmployee = responseForTestingPDLRecord.body();
-        assertNotNull(memberProfileOfEmployee);
-        Assertions.assertNull(result.getPdlId());
-        assertNull(memberProfileOfEmployee.getTerminationDate());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfileOfPDL)),
+                responseException.getMessage()
+        );
     }
 
     @Test
