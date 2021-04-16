@@ -116,11 +116,7 @@ const SkillReportPage = (props) => {
           </div>
         </div>
         <div className="results-section">
-              <CardHeader
-                  title="Search Results"
-                  titleTypographyProps={{variant: "h5", component: "h2"}}
-                  action={null}
-              />
+              <h2>Search Results</h2>
               <List >
               {(searchResults === undefined) ?
                 <ListItem key={`no-results`}>
