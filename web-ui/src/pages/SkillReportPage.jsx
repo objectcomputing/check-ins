@@ -3,9 +3,23 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
 import { getAvatarURL } from "../api/api.js";
-import { selectOrderedSkills, selectCsrfToken, selectOrderedMemberProfiles, selectProfile, selectSkill } from "../context/selectors";
+import { selectOrderedSkills,
+    selectCsrfToken,
+    selectOrderedMemberProfiles,
+    selectProfile,
+    selectSkill
+} from "../context/selectors";
 
-import { Avatar, Button, Card, CardHeader, Chip, List, ListItem, TextField, Typography } from "@material-ui/core";
+import { Avatar,
+    Button,
+    Card,
+    CardHeader,
+    Chip,
+    List,
+    ListItem,
+    TextField,
+    Typography
+} from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 import "./SkillReportPage.css";
