@@ -71,22 +71,23 @@ public class Feedback {
                     @NotNull Boolean confidential,
                     @NotNull LocalDateTime createdOn,
                     @Nullable LocalDateTime updatedOn) {
-        this(null, content, sentTo, sentBy, confidential, createdOn, updatedOn);
-    }
-
-    public Feedback(@Nullable UUID id,
-                    @NotNull String content,
-                    @NotNull UUID sentTo,
-                    @NotNull UUID sentBy,
-                    @NotNull Boolean confidential,
-                    @NotNull LocalDateTime createdOn,
-                    @Nullable LocalDateTime updatedOn) {
-        this.id = id;
+        this.id = null;
         this.content = content;
         this.sentTo = sentTo;
         this.sentBy = sentBy;
         this.confidential = confidential;
         this.createdOn = createdOn;
+        this.updatedOn = updatedOn;
+    }
+
+    public Feedback(@Nullable UUID id,
+                    @NotNull String content,
+                    @NotNull Boolean confidential,
+                    @Nullable LocalDateTime updatedOn
+                    ) {
+        this.id = id;
+        this.content = content;
+        this.confidential = confidential;
         this.updatedOn = updatedOn;
     }
 

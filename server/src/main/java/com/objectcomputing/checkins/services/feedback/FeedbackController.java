@@ -15,7 +15,11 @@ import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -30,13 +34,15 @@ public class FeedbackController {
     private final FeedbackServices feedbackServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService executorService;
+    private final CurrentUserServices currentUserServices;
 
     public FeedbackController(FeedbackServices feedbackServices,
                               EventLoopGroup eventLoopGroup,
-                              @Named(TaskExecutors.IO) ExecutorService executorService) {
+                              @Named(TaskExecutors.IO) ExecutorService executorService, CurrentUserServices currentUserServices) {
         this.feedbackServices = feedbackServices;
         this.eventLoopGroup = eventLoopGroup;
         this.executorService = executorService;
+        this.currentUserServices = currentUserServices;
     }
 
     /**
@@ -136,12 +142,14 @@ public class FeedbackController {
     }
 
     private Feedback fromDTO(FeedbackCreateDTO dto) {
-        return new Feedback(dto.getContent(), dto.getSentTo(), dto.getSentBy(),
-                dto.getConfidential(), dto.getCreatedOn(), dto.getUpdatedOn());
+            LocalDateTime currentTime = LocalDateTime.now();
+        return new Feedback(dto.getContent(), dto.getSentTo(), currentUserServices.getCurrentUser().getId(),
+                dto.getConfidential(), currentTime, currentTime);
     }
 
     private Feedback fromDTO(FeedbackUpdateDTO dto) {
-        return new Feedback(dto.getId(), dto.getContent(), dto.getSentTo(), dto.getSentBy(),
-                dto.getConfidential(), dto.getCreatedOn(), dto.getUpdatedOn());
+            LocalDateTime currentTime = LocalDateTime.now();
+        return new Feedback(dto.getId(), dto.getContent(),
+                dto.getConfidential(), currentTime);
     }
 }
