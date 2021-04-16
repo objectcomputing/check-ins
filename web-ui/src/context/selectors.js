@@ -65,6 +65,12 @@ export const selectProfile = createSelector(
     (profileMap, profileId) => profileMap[profileId]
 );
 
+export const selectSkill = createSelector(
+    selectSkills,
+    (state, skillId) => skillId,
+    (skills, skillId) => skills.find((skill) => skill.id === skillId)
+);
+
 export const selectMySkills = createSelector(
   selectCurrentUserId,
   selectMemberSkills,
@@ -92,6 +98,12 @@ export const selectOrderedPdls = createSelector(
     if (a.lastName > b.lastName) return 1;
     return 0;
   })
+);
+
+export const selectOrderedMemberProfiles = createSelector(
+    selectMemberProfiles,
+    (mappedMemberProfiles) => mappedMemberProfiles.sort((a,b) =>
+        a.lastName.localeCompare(b.lastName))
 );
 
 export const selectCheckinMap = createSelector(
