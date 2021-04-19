@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -38,7 +39,8 @@ public class FeedbackController {
 
     public FeedbackController(FeedbackServices feedbackServices,
                               EventLoopGroup eventLoopGroup,
-                              @Named(TaskExecutors.IO) ExecutorService executorService, CurrentUserServices currentUserServices) {
+                              @Named(TaskExecutors.IO) ExecutorService executorService,
+                              CurrentUserServices currentUserServices) {
         this.feedbackServices = feedbackServices;
         this.eventLoopGroup = eventLoopGroup;
         this.executorService = executorService;
@@ -69,7 +71,7 @@ public class FeedbackController {
      */
     @Put()
     public Single<HttpResponse<FeedbackResponseDTO>> update(@Body @Valid @NotNull FeedbackUpdateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackServices.save(fromDTO(requestBody)))
+        return Single.fromCallable(() -> feedbackServices.update(fromDTO(requestBody)))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedback -> (HttpResponse<FeedbackResponseDTO>) HttpResponse
                         .ok()
@@ -142,13 +144,13 @@ public class FeedbackController {
     }
 
     private Feedback fromDTO(FeedbackCreateDTO dto) {
-            LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.now();
         return new Feedback(dto.getContent(), dto.getSentTo(), currentUserServices.getCurrentUser().getId(),
                 dto.getConfidential(), currentTime, currentTime);
     }
 
     private Feedback fromDTO(FeedbackUpdateDTO dto) {
-            LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.now();
         return new Feedback(dto.getId(), dto.getContent(),
                 dto.getConfidential(), currentTime);
     }
