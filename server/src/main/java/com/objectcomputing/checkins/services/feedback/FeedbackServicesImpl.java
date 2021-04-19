@@ -48,6 +48,33 @@ public class FeedbackServicesImpl implements FeedbackServices {
     }
 
     @Override
+    public Feedback update(@NotNull Feedback feedback) {
+        Feedback updatedFeedback = null;
+        if (feedback.getId() != null) {
+            updatedFeedback = getById(feedback.getId());
+        }
+        if (updatedFeedback != null) {
+            try {
+                memberProfileServices.getById(updatedFeedback.getSentBy());
+                memberProfileServices.getById(updatedFeedback.getSentTo());
+            } catch (NotFoundException e) {
+                throw new BadArgException("Either the sender id or the receiver id is invalid");
+            }
+
+            if (!isPermitted(currentUserServices.getCurrentUser().getId())) {
+                throw new PermissionException("You are not authorized to do this operation");
+            }
+            feedback.setSentBy(updatedFeedback.getSentBy());
+            feedback.setSentTo(updatedFeedback.getSentTo());
+            feedback.setCreatedOn(updatedFeedback.getCreatedOn());
+
+            return feedbackRepository.update(feedback);
+        } else {
+            throw new NotFoundException("This feedback does not exist");
+        }
+    }
+
+    @Override
     public Boolean delete(@NotNull UUID id) {
         final Optional<Feedback> feedback = feedbackRepository.findById(id);
         if (!feedback.isPresent()) {
