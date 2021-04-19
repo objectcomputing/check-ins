@@ -9,19 +9,19 @@ const initialState = {
         id: "912834091823",
         name: "Current",
         pdlId: "0987654321",
-        supervisorId: "9876543210"
+        supervisorId: "9876543210",
       },
       role: ["MEMBER"],
     },
     memberProfiles: [
-        {
-          id: "0987654321",
-          name: "TestName"
-        },
-        {
-          id: "9876543210",
-          name: "TestName2"
-        },
+      {
+        id: "0987654321",
+        name: "TestName",
+      },
+      {
+        id: "9876543210",
+        name: "TestName2",
+      },
     ],
   },
 };
@@ -39,7 +39,8 @@ const close = () => {
 };
 
 const member = {
-  name: "testerson",
+  firstName: "tester",
+  lastName: "teserson",
   id: "2o34i2j34",
   startDate: [2018, 1, 10],
   location: "STL",

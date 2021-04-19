@@ -27,9 +27,7 @@ exports[`renders correctly 1`] = `
       >
         <h2
           className="MuiTypography-root MuiTypography-h5"
-        >
-          testerson
-        </h2>
+        />
         <h3
           className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
         >
