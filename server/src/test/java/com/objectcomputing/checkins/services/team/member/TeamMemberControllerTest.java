@@ -528,4 +528,67 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemeberIsAdded() {
+        Team team = createDefaultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO(team.getId(), memberProfile.getId(), false);
+        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        TeamMember teamMember = response.body();
+
+        assertEquals(teamMemberCreateDTO.getMemberid(), teamMember.getMemberid());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
+
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemeberIsRemovedAsLead() {
+
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemeberIsMadeLead() {
+        Team team = createDefaultTeam();
+
+        // Create a team lead and add him to the team
+        MemberProfile memberProfileOfTeamLead = createADefaultMemberProfile();
+        createLeadTeamMember(team, memberProfileOfTeamLead);
+
+        // Create a member and add him to team
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfileOfUser);
+
+        // Update member
+        TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), true);
+        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth(memberProfileOfTeamLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        TeamMember result = response.body();
+        assertNotNull(result);
+        assertEquals(teamMember.getMemberid(), result.getMemberid());
+        assertTrue(result.isLead());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemeberIsRemoved() {
+        Team team = createDefaultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+
 }
