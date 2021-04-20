@@ -1,7 +1,7 @@
 // import axios from "axios";
 import { resolve } from "./api.js";
 
-const memberSkillUrl = "/services/member-skill";
+const memberSkillUrl = "/services/member-skills";
 const skillReportUrl = "/reports/skills"
 
 export const getMemberSkills = async (cookie) => {
