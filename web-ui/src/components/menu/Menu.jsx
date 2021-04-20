@@ -139,6 +139,14 @@ function Menu() {
           </Link>
         </Button>
       )} */}
+      <br />
+      {isAdmin && (
+        <Button size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/skill-report">
+            Skill Report
+          </Link>
+        </Button>
+      )}
     </div>
   );
 
