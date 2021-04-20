@@ -344,7 +344,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(7, errors.size());
+        assertEquals(6, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
@@ -460,7 +460,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(5, errors.size());
+        assertEquals(4, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
