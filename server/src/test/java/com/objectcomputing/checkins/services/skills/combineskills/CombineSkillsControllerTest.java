@@ -44,7 +44,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
     private HttpClient skillClient;
 
     @Inject
-    @Client("/services/member-skill")
+    @Client("/services/member-skills")
     private HttpClient memberSkillClient;
 
     private final SkillServices skillServices;
