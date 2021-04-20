@@ -143,14 +143,12 @@ public class FeedbackController {
     }
 
     private Feedback fromDTO(FeedbackCreateDTO dto) {
-        LocalDateTime currentTime = LocalDateTime.now();
         return new Feedback(dto.getContent(), dto.getSentTo(), currentUserServices.getCurrentUser().getId(),
-                dto.getConfidential(), currentTime, currentTime);
+                dto.getConfidential());
     }
 
     private Feedback fromDTO(FeedbackUpdateDTO dto) {
-        LocalDateTime currentTime = LocalDateTime.now();
         return new Feedback(dto.getId(), dto.getContent(),
-                dto.getConfidential(), currentTime);
+                dto.getConfidential());
     }
 }
