@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;

@@ -78,8 +78,6 @@ public class Feedback {
         this.sentTo = sentTo;
         this.sentBy = sentBy;
         this.confidential = confidential;
-//        this.createdOn = createdOn;
-//        this.updatedOn = updatedOn;
     }
 
     public Feedback(@Nullable UUID id,
