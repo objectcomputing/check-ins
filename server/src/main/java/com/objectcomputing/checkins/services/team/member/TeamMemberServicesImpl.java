@@ -116,8 +116,8 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         try {
             String originalTeamMemberString = objectMapper.writeValueAsString(originalTeamMember.get());
             String newTeamMemberString = objectMapper.writeValueAsString(teamMember);
-            String message = String.format("Updated from %s to %s", originalTeamMemberString, newTeamMemberString);
-            memberHistoryRepository.save(buildMemberHistory(teamId, memberId, message, LocalDateTime.now()));
+            String update = String.format("from %s to %s", originalTeamMemberString, newTeamMemberString);
+            memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "updated", LocalDateTime.now()));
         } catch (JsonProcessingException e) {
             //Log info on error here...include new team member id and team id in log message
             LOG.error("Error occurred while updating member profile. teamId = %s , memberId = %s", teamId, memberId, e);
