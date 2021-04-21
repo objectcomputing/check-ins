@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const checkinsUrl = "/services/check-in";
+const checkinsUrl = "/services/check-ins";
 const checkinsNoteUrl = "/services/checkin-note";
 const checkinsPrivateNoteUrl = "/services/private-note";
 
