@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller("/services/member-profile/current")
+@Controller("/services/member-profiles/current")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "current user")
 public class CurrentUserController {
