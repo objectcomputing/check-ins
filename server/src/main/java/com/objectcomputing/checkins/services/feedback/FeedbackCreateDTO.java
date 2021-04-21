@@ -3,12 +3,9 @@ package com.objectcomputing.checkins.services.feedback;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.UUID;
-
 @Introspected
 public class FeedbackCreateDTO {
 
@@ -21,20 +18,8 @@ public class FeedbackCreateDTO {
     private UUID sentTo;
 
     @NotNull
-    @Schema(description = "id of member profile who created the feedback", required = true)
-    private UUID sentBy;
-
-    @NotNull
     @Schema(description = "whether the feedback is public or private", required = true)
     private Boolean confidential;
-
-    @NotNull
-    @Schema(description = "date when the feedback was created", required = true)
-    private LocalDateTime createdOn;
-
-    @Nullable
-    @Schema(description = "date of the latest update to the feedback", required = true)
-    private LocalDateTime updatedOn;
 
     public String getContent() {
         return content;
@@ -52,14 +37,6 @@ public class FeedbackCreateDTO {
         this.sentTo = sentTo;
     }
 
-    public UUID getSentBy() {
-        return sentBy;
-    }
-
-    public void setSentBy(UUID sentBy) {
-        this.sentBy = sentBy;
-    }
-
     public Boolean getConfidential() {
         return confidential;
     }
@@ -68,19 +45,4 @@ public class FeedbackCreateDTO {
         this.confidential = confidential;
     }
 
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public LocalDateTime getUpdatedOn() {
-        return updatedOn;
-    }
-
-    public void setUpdatedOn(LocalDateTime updatedOn) {
-        this.updatedOn = updatedOn;
-    }
 }

@@ -6,6 +6,8 @@ import java.util.UUID;
 public interface FeedbackServices {
     Feedback save(Feedback feedback);
 
+    Feedback update(Feedback feedback);
+
     Boolean delete(UUID id);
 
     Feedback getById(UUID id);

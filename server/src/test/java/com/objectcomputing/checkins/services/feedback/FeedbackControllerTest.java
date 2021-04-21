@@ -24,11 +24,12 @@ import java.util.stream.Collectors;
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class FeedbackControllerTest extends TestContainersSuite implements FeedbackFixture, RoleFixture {
 
     @Inject
     @Client("/services/feedback")
-    private HttpClient client;
+    HttpClient client;
 
     private Feedback setupGet(boolean confidential) {
         final MemberProfile from = getMemberProfileRepository().save(mkMemberProfile("1"));
@@ -235,14 +236,13 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         final MemberProfile bob = getMemberProfileRepository().save(mkMemberProfile("Bob"));
         final FeedbackCreateDTO dto = new FeedbackCreateDTO();
+
         dto.setContent("Feedback from Alice to Bob");
-        dto.setSentBy(alice.getId());
         dto.setSentTo(bob.getId());
         dto.setConfidential(true);
-        dto.setCreatedOn(LocalDateTime.now());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(RoleType.Constants.MEMBER_ROLE, RoleType.Constants.MEMBER_ROLE);
+                .basicAuth(alice.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackResponseDTO> response = client.toBlocking().exchange(request, FeedbackResponseDTO.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
@@ -257,13 +257,11 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
         final FeedbackCreateDTO dto = new FeedbackCreateDTO();
         dto.setContent("Alice's feedback");
-        dto.setSentBy(alice.getId());
         dto.setSentTo(UUID.randomUUID());
         dto.setConfidential(false);
-        dto.setCreatedOn(LocalDateTime.now());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(RoleType.Constants.MEMBER_ROLE, RoleType.Constants.MEMBER_ROLE);
+                .basicAuth(alice.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -276,8 +274,9 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
 
     @Test
     public void testPostValidationFailed() {
+        final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("boss"));
         final HttpRequest<?> request = HttpRequest.POST("", new FeedbackCreateDTO())
-                .basicAuth(RoleType.Constants.MEMBER_ROLE, RoleType.Constants.MEMBER_ROLE);
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -286,17 +285,13 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         final List<String> errorList = List.of(errors.get(0).get("message").asText(),
                 errors.get(1).get("message").asText(),
-                errors.get(2).get("message").asText(),
-                errors.get(3).get("message").asText(),
-                errors.get(4).get("message").asText())
+                errors.get(2).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
 
-        assertEquals(5, errors.size());
+        assertEquals(3, errors.size());
         assertEquals("requestBody.confidential: must not be null", errorList.get(0));
         assertEquals("requestBody.content: must not be blank", errorList.get(1));
-        assertEquals("requestBody.createdOn: must not be null", errorList.get(2));
-        assertEquals("requestBody.sentBy: must not be null", errorList.get(3));
-        assertEquals("requestBody.sentTo: must not be null", errorList.get(4));
+        assertEquals("requestBody.sentTo: must not be null", errorList.get(2));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
@@ -330,11 +325,7 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         final FeedbackUpdateDTO dto = new FeedbackUpdateDTO();
         dto.setId(feedback.getId());
         dto.setContent("Alice's another feedback");
-        dto.setSentBy(alice.getId());
-        dto.setSentTo(bob.getId());
         dto.setConfidential(false);
-        dto.setCreatedOn(feedback.getCreatedOn());
-        dto.setUpdatedOn(LocalDateTime.now());
 
         HttpRequest<?> request = HttpRequest.PUT("", dto)
                 .basicAuth(admin.getWorkEmail(), role.getRole().name());
@@ -348,7 +339,6 @@ public class FeedbackControllerTest extends TestContainersSuite implements Feedb
         // Update by owner
         dto.setContent("Alice makes the feedback private again");
         dto.setConfidential(true);
-        dto.setUpdatedOn(LocalDateTime.now());
 
         request = HttpRequest.PUT("", dto).basicAuth(alice.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         response = client.toBlocking().exchange(request, FeedbackResponseDTO.class);

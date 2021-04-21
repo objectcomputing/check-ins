@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.feedback;
 
 import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.DateCreated;
+import io.micronaut.data.annotation.DateUpdated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
@@ -56,11 +58,13 @@ public class Feedback {
     private Boolean confidential;
 
     @Column(name = "createdOn")
-    @NotNull
+    @DateCreated
+    @Nullable
     @Schema(description = "date when the feedback was created", required = true)
     private LocalDateTime createdOn;
 
     @Column(name = "updatedOn")
+    @DateUpdated
     @Nullable
     @Schema(description = "date of the latest update to the feedback", required = true)
     private LocalDateTime updatedOn;
@@ -68,26 +72,21 @@ public class Feedback {
     public Feedback(@NotNull String content,
                     @NotNull UUID sentTo,
                     @NotNull UUID sentBy,
-                    @NotNull Boolean confidential,
-                    @NotNull LocalDateTime createdOn,
-                    @Nullable LocalDateTime updatedOn) {
-        this(null, content, sentTo, sentBy, confidential, createdOn, updatedOn);
-    }
-
-    public Feedback(@Nullable UUID id,
-                    @NotNull String content,
-                    @NotNull UUID sentTo,
-                    @NotNull UUID sentBy,
-                    @NotNull Boolean confidential,
-                    @NotNull LocalDateTime createdOn,
-                    @Nullable LocalDateTime updatedOn) {
-        this.id = id;
+                    @NotNull Boolean confidential) {
+        this.id = null;
         this.content = content;
         this.sentTo = sentTo;
         this.sentBy = sentBy;
         this.confidential = confidential;
-        this.createdOn = createdOn;
-        this.updatedOn = updatedOn;
+    }
+
+    public Feedback(@Nullable UUID id,
+                    @NotNull String content,
+                    @NotNull Boolean confidential
+                    ) {
+        this.id = id;
+        this.content = content;
+        this.confidential = confidential;
     }
 
     public UUID getId() {
