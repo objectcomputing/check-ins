@@ -61,7 +61,7 @@ public class CurrentUserController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/services/member-profile/" + uuid);
+        return URI.create("/services/member-profiles/" + uuid);
     }
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
