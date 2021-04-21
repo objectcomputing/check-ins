@@ -29,7 +29,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, GuildMemberFixture {
 
     @Inject
-    @Client("/services/guild")
+    @Client("/services/guilds")
     HttpClient client;
 
     @Test

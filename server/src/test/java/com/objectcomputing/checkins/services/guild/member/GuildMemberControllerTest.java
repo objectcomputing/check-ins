@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GuildMemberControllerTest extends TestContainersSuite implements GuildFixture, MemberProfileFixture, GuildMemberFixture {
 
     @Inject
-    @Client("/services/guild/member")
+    @Client("/services/guilds/members")
     HttpClient client;
 
     @Test
