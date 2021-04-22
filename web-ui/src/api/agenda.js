@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const agendaURL = "/services/agenda-item";
+const agendaURL = "/services/agenda-items";
 
 export const createAgendaItem = async (agendaItem, cookie) => {
   return resolve({
