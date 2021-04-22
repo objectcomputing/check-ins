@@ -2,7 +2,7 @@ import { resolve } from "./api.js";
 
 const checkinsUrl = "/services/check-ins";
 const checkinsNoteUrl = "/services/checkin-note";
-const checkinsPrivateNoteUrl = "/services/private-note";
+const checkinsPrivateNoteUrl = "/services/private-notes";
 
 export const getMemberCheckinsByPDL = async (memberId, pdlId, cookie) => {
   return resolve({
