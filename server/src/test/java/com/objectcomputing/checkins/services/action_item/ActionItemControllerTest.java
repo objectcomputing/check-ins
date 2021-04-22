@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, ActionItemFixture {
 
     @Inject
-    @Client("/services/action-item")
+    @Client("/services/action-items")
     HttpClient client;
 
     @Test
