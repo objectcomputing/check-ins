@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const teamUrl = `/services/team`;
+const teamUrl = `/services/teams`;
 const teamMemberUrl = `/services/team/member`;
 
 export const getAllTeamMembers = async (cookie) => {
