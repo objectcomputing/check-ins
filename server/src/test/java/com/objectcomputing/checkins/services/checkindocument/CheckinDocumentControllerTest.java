@@ -30,7 +30,7 @@ public class CheckinDocumentControllerTest extends TestContainersSuite implement
         RoleFixture, CheckInFixture, CheckInDocumentFixture {
 
     @Inject
-    @Client("/services/checkin-document")
+    @Client("/services/checkin-documents")
     HttpClient client;
 
     @Test

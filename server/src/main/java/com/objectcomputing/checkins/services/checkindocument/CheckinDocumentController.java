@@ -20,10 +20,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/checkin-document")
+@Controller("/services/checkin-documents")
 @Secured({RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE})
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "checkin document")
+@Tag(name = "checkin documents")
 
 public class CheckinDocumentController {
         
