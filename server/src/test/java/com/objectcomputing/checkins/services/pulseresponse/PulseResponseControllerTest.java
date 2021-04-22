@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, PulseResponseFixture {
 
     @Inject
-    @Client("/services/pulse-response")
+    @Client("/services/pulse-responses")
     private HttpClient client;
 
     @Test
