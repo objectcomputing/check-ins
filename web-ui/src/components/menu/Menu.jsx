@@ -105,10 +105,7 @@ function Menu() {
         </Link>
       </Button>
       <br />
-      <Button
-        size="large"
-        style={{ width: "100%" }}
-      >
+      <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
@@ -127,6 +124,15 @@ function Menu() {
           </Link>
         </Button>
       )}
+      <br />
+      {isAdmin && (
+        <Button size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/skill-report">
+            Skill Report
+          </Link>
+        </Button>
+      )}
+      <br />
       <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
@@ -139,14 +145,6 @@ function Menu() {
           </Link>
         </Button>
       )} */}
-      <br />
-      {isAdmin && (
-        <Button size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/skill-report">
-            Skill Report
-          </Link>
-        </Button>
-      )}
     </div>
   );
 
@@ -171,19 +169,19 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-        <Link style={{ textDecoration: "none" }} to="/profile">
-          <Avatar
-            src={getAvatarURL(workEmail)}
-            style={{
-              position: "absolute",
-              right: "5px",
-              top: "10px",
-            }}
-           />
-         </Link>
+          <Link style={{ textDecoration: "none" }} to="/profile">
+            <Avatar
+              src={getAvatarURL(workEmail)}
+              style={{
+                position: "absolute",
+                right: "5px",
+                top: "10px",
+              }}
+            />
+          </Link>
         </div>
       </AppBar>
-      <nav className={classes.drawer} >
+      <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"

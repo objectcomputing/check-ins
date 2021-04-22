@@ -1,0 +1,17 @@
+.left {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+}
+
+.member-profile-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
