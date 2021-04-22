@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 @Controller("/services/roles")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "role")
+@Tag(name = "roles")
 public class RoleController {
 
     private final RoleServices roleServices;
