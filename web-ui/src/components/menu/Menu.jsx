@@ -100,7 +100,7 @@ function Menu() {
       </div>
       <br />
       <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/">
+        <Link style={linkStyle} to="/home">
           Home
         </Link>
       </Button>
@@ -124,7 +124,6 @@ function Menu() {
           </Link>
         </Button>
       )}
-      <br />
       {isAdmin && (
         <Button size="large" style={{ width: "100%" }}>
           <Link style={linkStyle} to="/skill-report">
@@ -132,7 +131,6 @@ function Menu() {
           </Link>
         </Button>
       )}
-      <br />
       <Button size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
@@ -169,7 +167,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to="/profile">
+          <Link style={{ textDecoration: "none" }} to="/home">
             <Avatar
               src={getAvatarURL(workEmail)}
               style={{

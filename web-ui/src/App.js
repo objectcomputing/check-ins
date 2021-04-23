@@ -45,7 +45,7 @@ function App() {
                   </Header>
                   <TeamsPage />
                 </Route>
-                <Route path="/profile">
+                <Route path="/home">
                   <Header />
                   <ProfilePage />
                 </Route>
@@ -57,7 +57,7 @@ function App() {
                   <Header title="Check-ins" />
                   <CheckinsPage />
                 </Route>
-                <Route path="/member-profile/:memberId?">
+                <Route path="/profile/:memberId?">
                   <Header title="Member Profile" />
                   <MemberProfilePage />
                 </Route>

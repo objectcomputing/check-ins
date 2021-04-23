@@ -95,7 +95,7 @@ const MemberSummaryCard = ({ member, index }) => {
             dispatch({ type: SET_SELECTED_MEMBER, payload: member })
           }
           style={{ color: "black", textDecoration: "none" }}
-          to={`/member-profile/${member.id}`}
+          to={`/profile/${member.id}`}
         >
           <CardHeader
             className={classes.header}

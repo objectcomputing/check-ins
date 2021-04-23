@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const guildUrl = `/services/guild`;
+const guildUrl = `/services/guilds`;
 
 export const getGuildsForMember = async (id, cookie) => {
   return resolve({
