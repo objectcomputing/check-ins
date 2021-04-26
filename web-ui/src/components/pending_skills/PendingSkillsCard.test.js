@@ -32,7 +32,7 @@ let open = true;
 const handleClose = () => (open = false);
 
 const server = setupServer(
-  rest.get("http://localhost:8080/services/skill", (req, res, ctx) => {
+  rest.get("http://localhost:8080/services/skills", (req, res, ctx) => {
     return res(ctx.json("Hello World"));
   }),
   rest.get("http://localhost:8080/fail", (req, res, ctx) => {
