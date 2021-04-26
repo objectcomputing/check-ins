@@ -76,6 +76,7 @@ const MemberProfilePage = () => {
             ? teamRes.payload.data
             : null;
         let memberTeams = teamData && !teamRes.error ? teamData : [];
+        memberTeams.sort((a, b) => a.name.localeCompare(b.name));
         setTeams(memberTeams);
 
         let guildRes = await getGuildsForMember(id, csrf);
@@ -84,6 +85,7 @@ const MemberProfilePage = () => {
             ? guildRes.payload.data
             : null;
         let memberGuilds = guildData && !guildRes.error ? guildData : [];
+        memberGuilds.sort((a, b) => a.name.localeCompare(b.name));
         setGuilds(memberGuilds);
       }
     }
@@ -107,13 +109,16 @@ const MemberProfilePage = () => {
             );
             level && level[0] && level[0].label
               ? (skill.skilllevel = level[0].label)
-              : (skill.skilllevel = mSkill.skilllevel)
+              : skill.skilllevel === mSkill.skilllevel &&
+                mSkill.skilllevel !== undefined
               ? (skill.skilllevel = mSkill.skilllevel)
               : (skill.skilllevel = "Intermediate");
             return skill;
           }
+          return null;
         });
       });
+      memberSkills.sort((a, b) => a.name.localeCompare(b.name));
       setSelectedMemberSkills(memberSkills);
     }
     if (csrf) {
