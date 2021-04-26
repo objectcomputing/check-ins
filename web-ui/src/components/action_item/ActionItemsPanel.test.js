@@ -48,7 +48,7 @@ const actionItems = [
 
 const server = setupServer(
   rest.get(
-    "http://localhost:8080/services/member-profile/current",
+    "http://localhost:8080/services/member-profiles/current",
     (req, res, ctx) => {
       return res(ctx.json({ id: "12345", name: "Test User" }));
     }
@@ -57,7 +57,7 @@ const server = setupServer(
     return res(ctx.json([{ id: "12345", name: "Test User" }]));
   }),
   rest.get(
-    "http://localhost:8080/services/action-item?checkinid=394810298371&createdbyid=912834091823",
+    "http://localhost:8080/services/action-items?checkinid=394810298371&createdbyid=912834091823",
     (req, res, ctx) => {
       return res(ctx.json(actionItems));
     }
