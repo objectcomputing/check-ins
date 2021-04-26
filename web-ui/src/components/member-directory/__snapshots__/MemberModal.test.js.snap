@@ -2,39 +2,50 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="MuiBox-root MuiBox-root-1"
+  className="MuiBox-root MuiBox-root-2"
 >
   <div
     className="MuiPaper-root MuiCard-root member-card MuiPaper-elevation1 MuiPaper-rounded"
   >
-    <div
-      className="MuiCardHeader-root"
+    <a
+      href="/profile/2o34i2j34"
+      onClick={[Function]}
+      style={
+        Object {
+          "color": "black",
+          "textDecoration": "none",
+        }
+      }
     >
       <div
-        className="MuiCardHeader-avatar"
+        className="MuiCardHeader-root makeStyles-header-1"
       >
         <div
-          className="MuiAvatar-root MuiAvatar-circle large"
+          className="MuiCardHeader-avatar"
         >
-          <img
-            className="MuiAvatar-img"
-            src="http://localhost:8080/services/member-profile/member-photo/testerson%40oci.com"
+          <div
+            className="MuiAvatar-root MuiAvatar-circle large"
+          >
+            <img
+              className="MuiAvatar-img"
+              src="http://localhost:8080/services/member-profile/member-photo/testerson%40oci.com"
+            />
+          </div>
+        </div>
+        <div
+          className="MuiCardHeader-content"
+        >
+          <h2
+            className="MuiTypography-root MuiTypography-h5"
           />
+          <h3
+            className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+          >
+            engineer
+          </h3>
         </div>
       </div>
-      <div
-        className="MuiCardHeader-content"
-      >
-        <h2
-          className="MuiTypography-root MuiTypography-h5"
-        />
-        <h3
-          className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
-        >
-          engineer
-        </h3>
-      </div>
-    </div>
+    </a>
     <div
       className="MuiCardContent-root"
     >
