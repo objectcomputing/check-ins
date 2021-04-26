@@ -40,13 +40,13 @@ public class Feedback {
     private String content;
 
     @Column(name = "sentTo")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile to whom the feedback was sent", required = true)
     private UUID sentTo;
 
     @Column(name = "sentBy")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile who created the feedback", required = true)
     private UUID sentBy;
