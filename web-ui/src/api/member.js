@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const memberProfileUrl = "/services/member-profile";
+const memberProfileUrl = "/services/member-profiles";
 
 export const getAllMembers = async (cookie) => {
   return resolve({
