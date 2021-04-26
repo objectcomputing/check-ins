@@ -23,11 +23,11 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-@Controller("/services/member-profile")
+@Controller("/services/member-profiles")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "member profile")
+@Tag(name = "member profiles")
 public class MemberProfileController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberProfileController.class);
@@ -143,7 +143,7 @@ public class MemberProfileController {
     }
 
     protected URI location(UUID id) {
-        return URI.create("/member-profile/" + id);
+        return URI.create("/member-profiles/" + id);
     }
 
     private MemberProfileResponseDTO fromEntity(MemberProfile entity) {

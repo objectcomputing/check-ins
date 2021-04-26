@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const memberProfileUrl = "/services/member-profile";
+const memberProfileUrl = "/services/member-profiles";
 
 export const getAllMembers = async (cookie) => {
   return resolve({
@@ -12,7 +12,7 @@ export const getAllMembers = async (cookie) => {
 
 export const getAllRoles = async (cookie) => {
   return resolve({
-    url: "services/role",
+    url: "services/roles",
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
@@ -20,7 +20,7 @@ export const getAllRoles = async (cookie) => {
 
 export const getAllPDLs = async (cookie) => {
   return resolve({
-    url: "/services/role?role=PDL",
+    url: "/services/roles?role=PDL",
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });
