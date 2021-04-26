@@ -36,7 +36,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         SkillFixture, MemberSkillFixture, TeamFixture, TeamMemberFixture, RoleFixture {
 
     @Inject
-    @Client("/services/member-profile")
+    @Client("/services/member-profiles")
     private HttpClient client;
 
     /*
@@ -430,7 +430,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body());
         assertProfilesEqual(requestBody, response.body());
-        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+        assertEquals("/member-profiles/" + response.body().getId(), response.header("location"));
     }
 
     // POST - NotBlank MemberProfile first name (and last name)
