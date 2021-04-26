@@ -1,7 +1,7 @@
 import { resolve } from "./api.js";
 
-const skillUrl = "/services/skill";
-const skillCombineUrl = "/services/skill/combine";
+const skillUrl = "/services/skills";
+const skillCombineUrl = "/services/skills/combine";
 
 export const getSkills = async (cookie) => {
   return resolve({

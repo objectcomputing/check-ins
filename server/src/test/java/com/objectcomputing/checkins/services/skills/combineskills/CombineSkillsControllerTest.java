@@ -36,11 +36,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         implements MemberProfileFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
-    @Client("/services/skill/combine")
+    @Client("/services/skills/combine")
     private HttpClient client;
 
     @Inject
-    @Client("/services/skill")
+    @Client("/services/skills")
     private HttpClient skillClient;
 
     @Inject
