@@ -70,8 +70,8 @@ public class Feedback {
     private LocalDateTime updatedOn;
 
     public Feedback(@NotNull String content,
-                    @NotNull UUID sentTo,
-                    @NotNull UUID sentBy,
+                    @Nullable UUID sentTo,
+                    @Nullable UUID sentBy,
                     @NotNull Boolean confidential) {
         this.id = null;
         this.content = content;
