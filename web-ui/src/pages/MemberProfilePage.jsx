@@ -9,24 +9,6 @@ import ProfilePage from "./ProfilePage";
 import "./MemberProfilePage.css";
 
 import { Avatar, Chip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles({
-  search: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  searchInput: {
-    width: "20em",
-  },
-  members: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
-});
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -112,34 +94,33 @@ const MemberProfilePage = () => {
 
   useEffect(() => {
     async function getMemberSkills() {
-      if (id) {
-        let res = await getSelectedMemberSkills(id, csrf);
-        let data =
-          res.payload && res.payload.data && !res.error ? res.payload.data : [];
-        let memberSkills = skills.filter((skill) => {
-          //filter out memberSkills and set level
-          return data.some((mSkill) => {
-            if (mSkill.skillid === skill.id) {
-              let level = levels.filter(
-                (level) => parseInt(mSkill.skilllevel) === level.value
-              );
-              level && level[0] && level[0].label
-                ? (skill.skilllevel = level[0].label)
-                : (skill.skilllevel = mSkill.skilllevel)
-                ? (skill.skilllevel = mSkill.skilllevel)
-                : (skill.skilllevel = "Intermediate");
-              return skill;
-            }
-          });
+      if (!id) return;
+      let res = await getSelectedMemberSkills(id, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : [];
+      let memberSkills = skills.filter((skill) => {
+        //filter out memberSkills and set level
+        return data.some((mSkill) => {
+          if (mSkill.skillid === skill.id) {
+            let level = levels.filter(
+              (level) => parseInt(mSkill.skilllevel) === level.value
+            );
+            level && level[0] && level[0].label
+              ? (skill.skilllevel = level[0].label)
+              : (skill.skilllevel = mSkill.skilllevel)
+              ? (skill.skilllevel = mSkill.skilllevel)
+              : (skill.skilllevel = "Intermediate");
+            return skill;
+          }
         });
-        setSelectedMemberSkills(memberSkills);
-      }
+      });
+      setSelectedMemberSkills(memberSkills);
     }
     if (csrf) {
       getMemberSkills();
     }
+    // complains about needing 'levels' but levels is a const
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // complains about needing 'levels' but levels is a const and won't change
   }, [csrf, id, skills, selectedMember]);
 
   return (
