@@ -40,13 +40,13 @@ public class Feedback {
     private String content;
 
     @Column(name = "sentTo")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile to whom the feedback was sent", required = true)
     private UUID sentTo;
 
     @Column(name = "sentBy")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile who created the feedback", required = true)
     private UUID sentBy;
@@ -70,8 +70,8 @@ public class Feedback {
     private LocalDateTime updatedOn;
 
     public Feedback(@NotNull String content,
-                    @NotNull UUID sentTo,
-                    @NotNull UUID sentBy,
+                    @Nullable UUID sentTo,
+                    @Nullable UUID sentBy,
                     @NotNull Boolean confidential) {
         this.id = null;
         this.content = content;
