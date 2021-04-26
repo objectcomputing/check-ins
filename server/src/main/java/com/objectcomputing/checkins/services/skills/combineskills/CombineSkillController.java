@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/skill/combine")
+@Controller("/services/skills/combine")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Tag(name = "combineskill")

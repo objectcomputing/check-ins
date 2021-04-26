@@ -14,7 +14,6 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.Resource;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -28,7 +27,6 @@ import static com.objectcomputing.checkins.services.memberprofile.MemberProfileT
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,7 +34,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         SkillFixture, MemberSkillFixture, TeamFixture, TeamMemberFixture, RoleFixture {
 
     @Inject
-    @Client("/services/member-profile")
+    @Client("/services/member-profiles")
     private HttpClient client;
 
     /*
@@ -430,7 +428,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body());
         assertProfilesEqual(requestBody, response.body());
-        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+        assertEquals("/member-profiles/" + response.body().getId(), response.header("location"));
     }
 
     // POST - NotBlank MemberProfile first name (and last name)

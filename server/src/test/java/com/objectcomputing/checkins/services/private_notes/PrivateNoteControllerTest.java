@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PrivateNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, PrivateNoteFixture {
 
     @Inject
-    @Client("/services/private-note")
+    @Client("/services/private-notes")
     HttpClient client;
 
     /////////////////////////////////// READ TESTS /////////////////////////////////////////////////
