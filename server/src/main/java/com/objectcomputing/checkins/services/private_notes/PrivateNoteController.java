@@ -21,10 +21,10 @@ import java.util.UUID;
 
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/private-note")
+@Controller("/services/private-notes")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "private-note")
+@Tag(name = "private-notes")
 public class PrivateNoteController {
 
     private final PrivateNoteServices privateNoteServices;
