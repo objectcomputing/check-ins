@@ -27,6 +27,10 @@ jobs:
         run: ./gradlew assemble
       - name: Gradle runs tests
         run: ./gradlew check
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
       - name: Do SonarQube checks
         run: |
           ./gradlew sonarqube -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.host.url=$SONAR_URL -Dsonar.login=$TOKEN

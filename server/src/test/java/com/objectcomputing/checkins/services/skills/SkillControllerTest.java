@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SkillControllerTest extends TestContainersSuite implements SkillFixture {
 
     @Inject
-    @Client("/services/skill")
+    @Client("/services/skills")
     private HttpClient client;
 
     private String encodeValue(String value) {

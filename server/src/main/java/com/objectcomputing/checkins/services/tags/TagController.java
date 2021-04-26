@@ -23,10 +23,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 
-@Controller("/services/tag")
+@Controller("/services/tags")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@io.swagger.v3.oas.annotations.tags.Tag(name = "tag")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "tags")
 
 public class TagController {
 

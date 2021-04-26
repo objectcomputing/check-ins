@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class EntityTagControllerTest extends TestContainersSuite implements EntityTagFixture, TagFixture, MemberProfileFixture {
 
     @Inject
-    @Client("/services/entity_tag")
+    @Client("/services/entity-tags")
         HttpClient client;
 
 
