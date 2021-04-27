@@ -70,7 +70,14 @@ const TeamResults = () => {
       </div>
       <div className="teams">
         {teams.map((team, index) =>
-          team.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+          team.name
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+            .includes(
+                searchText.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+            ) ?
+          (
             <TeamSummaryCard
               key={`team-summary-${team.id}`}
               index={index}
