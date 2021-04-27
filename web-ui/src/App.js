@@ -60,8 +60,8 @@ function App() {
                 <Header title="Pending Skills" />
                 <PendingSkillsPage />
               </Route>
-              <Route path="/skill-report">
-                <Header title="Skill Report" />
+              <Route path="/skills">
+                <Header title="Skills" />
                 <SkillReportPage />
               </Route>
               <Route path="/">
