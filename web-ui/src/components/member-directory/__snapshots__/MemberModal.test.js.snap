@@ -26,10 +26,10 @@ exports[`renders correctly 1`] = `
           <div
             className="MuiAvatar-root MuiAvatar-circle large"
           >
-          <img
-            className="MuiAvatar-img"
-            src="http://localhost:8080/services/member-profiles/member-photos/testerson%40oci.com"
-          />
+            <img
+              className="MuiAvatar-img"
+              src="http://localhost:8080/services/member-profiles/member-photos/testerson%40oci.com"
+            />
           </div>
         </div>
         <div
