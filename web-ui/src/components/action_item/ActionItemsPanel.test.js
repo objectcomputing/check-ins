@@ -48,12 +48,12 @@ const actionItems = [
 
 const server = setupServer(
   rest.get(
-    "http://localhost:8080/services/member-profile/current",
+    "http://localhost:8080/services/member-profiles/current",
     (req, res, ctx) => {
       return res(ctx.json({ id: "12345", name: "Test User" }));
     }
   ),
-  rest.get("http://localhost:8080/services/team/member", (req, res, ctx) => {
+  rest.get("http://localhost:8080/services/teams/members", (req, res, ctx) => {
     return res(ctx.json([{ id: "12345", name: "Test User" }]));
   }),
   rest.get(
