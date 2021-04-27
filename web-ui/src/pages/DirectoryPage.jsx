@@ -69,7 +69,9 @@ const DirectoryPage = () => {
   const handleClose = () => setOpen(false);
 
   const createMemberCards = members.map((member, index) => {
-    if (member.name.toLowerCase().includes(searchText.toLowerCase())) {
+    let normName = member.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    if (normName.toLowerCase().includes(normSearchText.toLowerCase())) {
       return (
         <MemberSummaryCard
           key={`${member.name}-${member.id}`}
