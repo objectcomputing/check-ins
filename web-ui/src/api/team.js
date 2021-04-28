@@ -1,7 +1,7 @@
 import { resolve } from "./api.js";
 
 const teamUrl = `/services/teams`;
-const teamMemberUrl = `/services/team/member`;
+const teamMemberUrl = `/services/teams/members`;
 
 export const getAllTeamMembers = async (cookie) => {
   return resolve({
@@ -30,6 +30,18 @@ export const updateTeam = async (team, cookie) => {
     url: teamUrl,
     responseType: "json",
     data: team,
+    withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
+export const getTeamByMember = async (id, cookie) => {
+  return resolve({
+    url: teamUrl,
+    responseType: "json",
+    params: {
+      memberid: id,
+    },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },
   });
