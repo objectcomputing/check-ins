@@ -20,6 +20,7 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
+import com.objectcomputing.checkins.services.survey.SurveyRepository;
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
@@ -97,5 +98,8 @@ public interface RepositoryFixture {
 
     default FeedbackRepository getFeedbackRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackRepository.class);
+    }
+    default SurveyRepository getSurveyRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SurveyRepository.class);
     }
 }
