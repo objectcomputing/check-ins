@@ -113,7 +113,7 @@ function Menu() {
       </div>
       <br />
       <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/">
+        <Link style={linkStyle} to="/home">
           Home
         </Link>
       </Button>
