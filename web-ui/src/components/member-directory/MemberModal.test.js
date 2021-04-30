@@ -1,6 +1,7 @@
 import React from "react";
 import MemberSummaryCard from "./MemberSummaryCard";
 import { AppContextProvider } from "../../context/AppContext";
+import { BrowserRouter } from "react-router-dom";
 
 const initialState = {
   state: {
@@ -52,12 +53,14 @@ const member = {
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <MemberSummaryCard
-        member={member}
-        onSave={onSave}
-        open={open}
-        onClose={close}
-      />
+      <BrowserRouter>
+        <MemberSummaryCard
+          member={member}
+          onSave={onSave}
+          open={open}
+          onClose={close}
+        />
+      </BrowserRouter>
     </AppContextProvider>
   );
 });
