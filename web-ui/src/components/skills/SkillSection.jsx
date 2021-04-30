@@ -1,26 +1,36 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import "./SkillSection.css"
+import "./SkillSection.css";
 
 import { AppContext } from "../../context/AppContext";
-import { selectMySkills, selectOrderedSkills, selectCsrfToken } from "../../context/selectors";
+import {
+  selectMySkills,
+  selectOrderedSkills,
+  selectCsrfToken,
+} from "../../context/selectors";
 import {
   ADD_SKILL,
   ADD_MEMBER_SKILL,
   DELETE_MEMBER_SKILL,
   UPDATE_MEMBER_SKILLS,
 } from "../../context/actions";
-import { createMemberSkill, deleteMemberSkill, updateMemberSkill } from "../../api/memberskill.js";
+import {
+  createMemberSkill,
+  deleteMemberSkill,
+  updateMemberSkill,
+} from "../../api/memberskill.js";
 import { getSkill, createSkill } from "../../api/skill.js";
-import SkillSlider from "./SkillSlider"
+import SkillSlider from "./SkillSlider";
 
 import { Card, CardHeader, TextField, List, ListItem } from "@material-ui/core";
-import Autocomplete, { createFilterOptions } from "@material-ui/lab/Autocomplete";
-import BuildIcon from '@material-ui/icons/Build';
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
+import BuildIcon from "@material-ui/icons/Build";
 
 import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints'
+import createBreakpoints from "@material-ui/core/styles/createBreakpoints";
 
 const customBreakpointValues = {
   values: {
@@ -30,9 +40,9 @@ const customBreakpointValues = {
     lg: 992,
     xl: 1200,
   },
-}
+};
 
-const breakpoints = createBreakpoints({ ...customBreakpointValues })
+const breakpoints = createBreakpoints({ ...customBreakpointValues });
 
 const muiTheme = createMuiTheme({
   breakpoints: {
@@ -40,37 +50,38 @@ const muiTheme = createMuiTheme({
   },
   overrides: {
     MuiCardHeader: {
-      title:{
-      [breakpoints.down('sm')]: {
-        fontSize: "1.1rem",
+      title: {
+        [breakpoints.down("sm")]: {
+          fontSize: "1.1rem",
         },
-      [breakpoints.between('sm', 'md')]: {
-        fontSize: "1.2rem",
+        [breakpoints.between("sm", "md")]: {
+          fontSize: "1.2rem",
         },
-      [breakpoints.between('md', 'lg')]: {
-        fontSize: "1.3rem",
+        [breakpoints.between("md", "lg")]: {
+          fontSize: "1.3rem",
         },
-      [breakpoints.up('lg')]: {
-        fontSize: "1.5rem",
+        [breakpoints.up("lg")]: {
+          fontSize: "1.5rem",
         },
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 const useStyles = makeStyles((theme) => ({
   skillRow: {
     justifyContent: "space-around",
-  }
+  },
 }));
 
-const SkillSection = ({userId}) => {
+const SkillSection = ({ userId }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
   const myMemberSkills = selectMySkills(state);
   const [mySkills, setMySkills] = useState([]);
   const [skillToAdd, setSkillToAdd] = useState();
+
   const classes = useStyles();
 
   const mapMemberSkill = async (memberSkill, csrf) => {
@@ -78,22 +89,20 @@ const SkillSection = ({userId}) => {
     thisSkill.lastuseddate = memberSkill.lastuseddate;
     thisSkill.skilllevel = memberSkill.skilllevel;
     return thisSkill;
-  }
+  };
 
   useEffect(() => {
     const getSkills = async () => {
       const skillsResults = await Promise.all(
         myMemberSkills.map((mSkill) => mapMemberSkill(mSkill, csrf))
       );
-      const currentUserSkills = skillsResults.map(
-        (result) => {
-          let skill = result.payload.data;
-          skill.skilllevel = result.skilllevel;
-          skill.lastuseddate = result.lastuseddate;
-          return skill;
-        }
-      );
-      currentUserSkills.sort((a, b) => a.name.localeCompare(b.name))
+      const currentUserSkills = skillsResults.map((result) => {
+        let skill = result.payload.data;
+        skill.skilllevel = result.skilllevel;
+        skill.lastuseddate = result.lastuseddate;
+        return skill;
+      });
+      currentUserSkills.sort((a, b) => a.name.localeCompare(b.name));
       setMySkills(currentUserSkills);
     };
     if (csrf && myMemberSkills) {
@@ -148,96 +157,99 @@ const SkillSection = ({userId}) => {
 
   const handleUpdate = async (lastUsedDate, skillLevel, index) => {
     if (csrf && skillLevel) {
-        let copy = [...myMemberSkills];
-        copy[index].lastuseddate = lastUsedDate;
-        copy[index].skilllevel = skillLevel;
-        await updateMemberSkill(copy[index], csrf);
-        dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
+      let copy = [...myMemberSkills];
+      copy[index].lastuseddate = lastUsedDate;
+      copy[index].skilllevel = skillLevel;
+      await updateMemberSkill(copy[index], csrf);
+      dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
     }
   };
   const filter = createFilterOptions();
 
   const SkillSelector = (props) => (
     <Autocomplete
-        value={skillToAdd}
-        style={{width:"18em"}}
-        id="skillSearchAutocomplete"
-        selectOnFocus
-        clearOnBlur={true}
-        handleHomeEndKeys
-        blurOnSelect
-        options={
-          skills
-            .filter((skill) =>
-                !mySkills.map((mSkill) => mSkill.id).includes(skill.id))
-            .map((skill) => {
-              return {
-                displayLabel: skill.name,
-                name: skill.name
-              }
-            })
-        }
-        renderOption={(option) => option.displayLabel}
-
-        filterOptions={(options, params) => {
-          const filtered = filter(options, params);
-
-          if (params.inputValue !== '') {
-            filtered.push({
-              name: params.inputValue,
-              displayLabel: `Add "${params.inputValue}"`,
-            });
+      value={skillToAdd}
+      style={{ width: "18em" }}
+      id="skillSearchAutocomplete"
+      selectOnFocus
+      clearOnBlur={true}
+      handleHomeEndKeys
+      blurOnSelect
+      options={skills
+        .filter(
+          (skill) => !mySkills.map((mSkill) => mSkill.id).includes(skill.id)
+        )
+        .map((skill) => {
+          return {
+            displayLabel: skill.name,
+            name: skill.name,
           };
-          return filtered;
-        }}
+        })}
+      renderOption={(option) => option.displayLabel}
+      filterOptions={(options, params) => {
+        const filtered = filter(options, params);
 
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            className="fullWidth"
-            label="Add a skill..."
-            placeholder="Enter a skill name"
-          />
-        )}
-
-        onChange={(event, value) => {
-          addSkill(value.name);
-          setSkillToAdd(undefined);
-        }}
-
-        getOptionLabel={(option) => option.displayLabel || ""}
-      />
+        if (params.inputValue !== "") {
+          filtered.push({
+            name: params.inputValue,
+            displayLabel: `Add "${params.inputValue}"`,
+          });
+        }
+        return filtered;
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          className="fullWidth"
+          label="Add a skill..."
+          placeholder="Enter a skill name"
+        />
+      )}
+      onChange={(event, value) => {
+        addSkill(value.name);
+        setSkillToAdd(undefined);
+      }}
+      getOptionLabel={(option) => option.displayLabel || ""}
+    />
   );
 
   return (
-  <ThemeProvider theme={muiTheme}>
+    <ThemeProvider theme={muiTheme}>
       <Card>
         <CardHeader
-            avatar={<BuildIcon />}
-            title="Skills"
-            titleTypographyProps={{variant: "h5", component: "h2"}}
-            action={<SkillSelector />}/>
+          avatar={<BuildIcon />}
+          title="Skills"
+          titleTypographyProps={{ variant: "h5", component: "h2" }}
+          action={<SkillSelector />}
+        />
         <List>
-        {mySkills &&
-          mySkills.map((memberSkill, index) => {
-            return (
-              <ListItem key={`MemberSkill-${memberSkill.id}`} className={classes.skillRow}>
-                <SkillSlider
-                  id={memberSkill.id}
-                  name={memberSkill.name}
-                  startLevel={memberSkill.skilllevel ? memberSkill.skilllevel : 3}
-                  lastUsedDate={memberSkill.lastuseddate}
-                  onDelete={handleDelete}
-                  onUpdate={handleUpdate}
-                  index={index}
-                />
-              </ListItem>
-            );
-          })}
+          {mySkills &&
+            mySkills.map((memberSkill, index) => {
+              return (
+                <ListItem
+                  key={`MemberSkill-${memberSkill.id}`}
+                  className={classes.skillRow}
+                >
+                  <div>
+                    <SkillSlider
+                      id={memberSkill.id}
+                      description={memberSkill.description}
+                      name={memberSkill.name}
+                      startLevel={
+                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
+                      }
+                      lastUsedDate={memberSkill.lastuseddate}
+                      onDelete={handleDelete}
+                      onUpdate={handleUpdate}
+                      index={index}
+                    />
+                  </div>
+                </ListItem>
+              );
+            })}
         </List>
       </Card>
-      </ThemeProvider>
+    </ThemeProvider>
   );
-
 };
 export default SkillSection;
