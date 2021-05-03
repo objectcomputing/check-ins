@@ -66,32 +66,34 @@ const SkillSlider = ({
 
   return (
     <React.Fragment>
-      <Tooltip
-        open={tooltipIsOpen}
-        onOpen={() => setTooltipIsOpen(true)}
-        onClose={() => setTooltipIsOpen(false)}
-        enterTouchDelay={0}
-        placement="top-start"
-        title={description}
-      >
-        <div className="skill-slider">{name}</div>
-      </Tooltip>
-      <DiscreteSlider
-        inStartPos={skillLevel}
-        onChange={updateLevel}
-        onChangeCommitted={updateSkillLevel}
-      />
-      {false && (
-        <FormControl>
-          <FormControlLabel
-            control={<Checkbox color="primary" value="current" />}
-            label="Currently Used"
-            labelPlacement="top"
-            checked={currCheck}
-            onChange={datePickerVisibility}
-          />
-        </FormControl>
-      )}
+      <div>
+        <Tooltip
+          open={tooltipIsOpen && description ? true : false}
+          onOpen={() => setTooltipIsOpen(true)}
+          onClose={() => setTooltipIsOpen(false)}
+          enterTouchDelay={0}
+          placement="top-start"
+          title={description}
+        >
+          <div className="skill-slider">{name}</div>
+        </Tooltip>
+        <DiscreteSlider
+          inStartPos={skillLevel}
+          onChange={updateLevel}
+          onChangeCommitted={updateSkillLevel}
+        />
+        {false && (
+          <FormControl>
+            <FormControlLabel
+              control={<Checkbox color="primary" value="current" />}
+              label="Currently Used"
+              labelPlacement="top"
+              checked={currCheck}
+              onChange={datePickerVisibility}
+            />
+          </FormControl>
+        )}
+      </div>
       {false && (
         <TextField
           className={currCheck ? classes.hidden : undefined}
