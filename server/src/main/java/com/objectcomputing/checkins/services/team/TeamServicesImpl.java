@@ -7,15 +7,12 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
+import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -24,16 +21,16 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 public class TeamServicesImpl implements TeamServices {
 
     private final TeamRepository teamsRepo;
-    private final TeamMemberRepository teamMemberRepo;
+    private final TeamMemberServices teamMemberServices;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
 
     public TeamServicesImpl(TeamRepository teamsRepo,
-                            TeamMemberRepository teamMemberRepo,
+                            TeamMemberServices teamMemberServices,
                             CurrentUserServices currentUserServices,
                             MemberProfileServices memberProfileServices) {
         this.teamsRepo = teamsRepo;
-        this.teamMemberRepo = teamMemberRepo;
+        this.teamMemberServices = teamMemberServices;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
     }
@@ -51,8 +48,12 @@ public class TeamServicesImpl implements TeamServices {
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
                 for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
-                    newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, newTeamEntity.getId(), existingMember)), existingMember));
+                    //TODO: This is a super busted hack because of the way that the front end is behaving. This needs addressing.
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getId());
+                    memberDTO.setId(null);
+                    memberDTO.setMemberId(existingMember.getId());
+                    memberDTO.setTeamId(newTeamEntity.getId());
+                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO)), existingMember));
                 }
             }
         }
@@ -61,8 +62,8 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
-        List<TeamMemberResponseDTO> teamMembers = teamMemberRepo
-                .findByTeamid(teamId)
+        List<TeamMemberResponseDTO> teamMembers = teamMemberServices
+                .findByFields(teamId, null, null)
                 .stream()
                 .map(teamMember ->
                         fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberid()))).collect(Collectors.toList());
@@ -75,8 +76,9 @@ public class TeamServicesImpl implements TeamServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         if (isAdmin || (currentUser != null &&
-                !teamMemberRepo.search(nullSafeUUIDToString(teamDTO.getId()), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
-            Team newTeamEntity = null;
+                !teamMemberServices.findByFields(teamDTO.getId(), currentUser.getId(), true).isEmpty())) {
+
+            TeamResponseDTO updated = null;
             List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
             if (teamDTO != null) {
                 if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
@@ -84,18 +86,50 @@ public class TeamServicesImpl implements TeamServices {
                             teamDTO.getTeamMembers().stream().noneMatch(TeamMemberResponseDTO::isLead)) {
                         throw new BadArgException("Team must include at least one team lead");
                     }
-                    teamMemberRepo.deleteByTeamId(teamDTO.getId().toString());
-                    newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
+
+                    Team newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
+
+                    Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
+                    //add any new members
+                    teamDTO.getTeamMembers().stream().forEach((updated) -> {
+                        if(!existingTeamMembers.stream().filter((existing) -> existing.getMemberid() == updated.getMemberId()).findFirst().isPresent()) {
+                            //TODO: This is a super busted hack because of the way that the front end is behaving. This needs addressing.
+                            MemberProfile existingMember = memberProfileServices.getById(updated.getId());
+                            updated.setId(null);
+                            updated.setMemberId(existingMember.getId());
+                            updated.setTeamId(newTeamEntity.getId());
+                            newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updated), );
+                        } else {
+                            teamMemberServices.update(fromMemberDTO(updated));
+                        }
+                    });
+
+                    //filter to only those that need removed, updating along the way...
+                    existingTeamMembers.stream().filter((existingMember) -> {
+                        Optional<TeamMemberResponseDTO> first = teamDTO.getTeamMembers().stream().findFirst();
+                        if(first.isPresent()) {
+
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+
                     for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
                         MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
-                        newMembers.add(fromMemberEntity(teamMemberRepo.save(fromMemberDTO(memberDTO, teamDTO.getId(), existingMember)), existingMember));
+                        TeamMember newTeamMember = fromMemberDTO(memberDTO);
+                        newTeamMember.setId(null);
+                        newMembers.add(fromMemberEntity(teamMemberServices.save(newTeamMember), existingMember));
                     }
+
+                    updated = fromEntity(newTeamEntity, newMembers);
                 } else {
                     throw new BadArgException(String.format("Team ID %s does not exist, can't update.", teamDTO.getId()));
                 }
             }
 
-            return fromEntity(newTeamEntity, newMembers);
+            return updated;
         } else {
             throw new PermissionException("You are not authorized to perform this operation");
         }
@@ -105,7 +139,7 @@ public class TeamServicesImpl implements TeamServices {
         Set<TeamResponseDTO> foundTeams = teamsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (TeamResponseDTO foundTeam : foundTeams) {
-            List<TeamMember> foundMembers = teamMemberRepo.findByTeamid(foundTeam.getId());
+            Set<TeamMember> foundMembers = teamMemberServices.findByFields(foundTeam.getId(), null, null);
             for (TeamMember foundMember : foundMembers) {
                 foundTeam.getTeamMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberid())));
             }
@@ -117,8 +151,8 @@ public class TeamServicesImpl implements TeamServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        if (isAdmin || (currentUser != null && !teamMemberRepo.search(nullSafeUUIDToString(id), nullSafeUUIDToString(currentUser.getId()), true).isEmpty())) {
-            teamMemberRepo.deleteByTeamId(id.toString());
+        if (isAdmin || (currentUser != null && !teamMemberServices.findByFields(id, currentUser.getId(), true).isEmpty())) {
+            teamMemberServices.deleteByTeam(id);
             teamsRepo.deleteById(id);
         } else {
             throw new PermissionException("You are not authorized to perform this operation");
@@ -133,8 +167,8 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(dto.getId(), dto.getName(), dto.getDescription());
     }
 
-    private TeamMember fromMemberDTO(TeamMemberResponseDTO memberDTO, UUID teamId, MemberProfile savedMember) {
-        return new TeamMember(memberDTO.getId() == null ? null : memberDTO.getId(), teamId, savedMember.getId(), memberDTO.isLead());
+    private TeamMember fromMemberDTO(TeamMemberResponseDTO memberDTO) {
+        return new TeamMember(memberDTO.getId(), memberDTO.getTeamId(), memberDTO.getMemberId(), memberDTO.isLead());
     }
 
     private TeamResponseDTO fromEntity(Team entity) {

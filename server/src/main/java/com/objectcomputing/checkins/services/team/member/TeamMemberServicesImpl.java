@@ -18,10 +18,8 @@ import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class TeamMemberServicesImpl implements TeamMemberServices {
@@ -161,5 +159,26 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         teamMemberRepo.delete(teamMember);
         memberHistoryRepository.save(buildMemberHistory(teamMember.getTeamid(), teamMember.getMemberid(), "Deleted", LocalDateTime.now()));
+    }
+
+    public void deleteByTeam(@NotNull UUID id) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        boolean isAdmin = currentUserServices.isAdmin();
+
+        List<TeamMember> teamMembers = teamMemberRepo.findByTeamid(id);
+        if (teamMembers != null) {
+            List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
+
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+                throw new PermissionException("You are not authorized to perform this operation");
+            } else {
+                teamMembers.forEach(member -> {
+                    teamMemberRepo.deleteById(member.getId());
+                    memberHistoryRepository.save(buildMemberHistory(member.getTeamid(), member.getMemberid(), "Team Deleted", LocalDateTime.now()));
+                });
+            }
+        } else {
+            throw new NotFoundException(String.format("Unable to locate team with id %s", id));
+        }
     }
 }
