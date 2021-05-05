@@ -35,6 +35,18 @@ export const updateTeam = async (team, cookie) => {
   });
 };
 
+export const getTeamByMember = async (id, cookie) => {
+  return resolve({
+    url: teamUrl,
+    responseType: "json",
+    params: {
+      memberid: id,
+    },
+    withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getTeamsByMember = async (id, cookie) => {
   return resolve({
     url: teamMemberUrl,
