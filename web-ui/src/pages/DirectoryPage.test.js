@@ -3,9 +3,9 @@ import DirectoryPage from "./DirectoryPage";
 import { AppContextProvider } from "../context/AppContext";
 
 it("renders correctly", () => {
+  snapshot(
     <AppContextProvider>
-      snapshot(
-        <DirectoryPage />
-      );
-    </AppContextProvider>;
+      <DirectoryPage />
+    </AppContextProvider>
+  );
 });
