@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
 import { createMember } from "../api/member";
 import { AppContext } from "../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../context/actions";
+import { selectNormalizedMembers, selectCurrentMembers, selectMemberProfiles } from "../context/selectors";
 
 import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -35,51 +36,28 @@ const DirectoryPage = () => {
 
   const classes = useStyles();
 
-  const [members, setMembers] = useState([]);
-
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const mps = selectMemberProfiles(state);
+  console.log(mps);
+
+  const normalizedMembers = selectNormalizedMembers(state, searchText);
 
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-
-  useEffect(() => {
-    memberProfiles &&
-      setMembers(
-        memberProfiles
-          .filter((profile) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return (
-              profile.terminationDate === null ||
-              profile.terminationDate === undefined ||
-              today <= new Date(profile.terminationDate)
-            );
-          })
-          .sort((a, b) => {
-            const aPieces = a.name.split(" ").slice(-1);
-            const bPieces = b.name.split(" ").slice(-1);
-            return aPieces.toString().localeCompare(bPieces);
-          })
-      );
-  }, [memberProfiles]);
 
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
 
-  const createMemberCards = members.map((member, index) => {
-    let normName = member.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    if (normName.toLowerCase().includes(normSearchText.toLowerCase())) {
-      return (
-        <MemberSummaryCard
-          key={`${member.name}-${member.id}`}
-          index={index}
-          member={member}
-        />
-      );
-    } else return null;
+  const createMemberCards = normalizedMembers.map((member, index) => {
+    return (
+      <MemberSummaryCard
+        key={`${member.name}-${member.id}`}
+        index={index}
+        member={member}
+      />
+    );
   });
 
   return (
