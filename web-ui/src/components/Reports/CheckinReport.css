@@ -1,0 +1,26 @@
+#accordion-checkin-date {
+  flex-direction: column;
+}
+
+.MuiAccordionSummary-content {
+  align-items: center;
+}
+
+.MuiAccordionSummary-content > p {
+  margin-left: 1rem;
+}
+
+#member-sub-card {
+  background-color: #fafafa;
+  margin-top: 1rem;
+}
+
+#pdl-card {
+  margin: 1rem;
+  width: 100vw;
+}
+
+#pdl-large {
+  height: 4rem;
+  width: 4rem;
+}

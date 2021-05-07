@@ -8,6 +8,7 @@ import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
 import TeamsPage from "./pages/TeamsPage";
 import CheckinsPage from "./pages/CheckinsPage";
+import CheckinsReportPage from "./pages/CheckinsReportPage";
 import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import PendingSkillsPage from "./pages/PendingSkillsPage";
@@ -65,7 +66,11 @@ function App() {
                   <Header title="Pending Skills" />
                   <PendingSkillsPage />
                 </Route>
-                <Route path="/skills">
+                <Route path="/checkins-reports">
+                  <Header title="Checkins" />
+                  <CheckinsReportPage />
+                </Route>
+                <Route path="/skills-reports">
                   <Header title="Skills" />
                   <SkillReportPage />
                 </Route>

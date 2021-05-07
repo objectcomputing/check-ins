@@ -148,9 +148,14 @@ function Menu() {
           </Button>
           <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link style={linkStyle} to="/skills">
+              <Link style={linkStyle} to="/checkins-reports">
                 <ListItem button className={classes.nested}>
-                  <ListItemText primary="Skills" />
+                  <ListItemText primary="CHECKINS" />
+                </ListItem>
+              </Link>
+              <Link style={linkStyle} to="/skills-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText primary="SKILLS" />
                 </ListItem>
               </Link>
             </List>
@@ -162,13 +167,6 @@ function Menu() {
           Teams
         </Link>
       </Button>
-      {/* {isAdmin && (
-        <Button>
-          <Link style={linkStyle} to="/admin">
-            Edit PDLs
-          </Link>
-        </Button>
-      )} */}
     </div>
   );
 
