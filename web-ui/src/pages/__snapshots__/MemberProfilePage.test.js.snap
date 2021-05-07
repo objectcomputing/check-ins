@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <div
+    className="profile-page"
+  >
+    <div
+      className="left"
+    >
+      <div
+        className="profile-details"
+      >
+        <h3>
+          No member details found
+        </h3>
+      </div>
+    </div>
+    <div
+      className="right"
+    >
+      <div
+        className="profile-skills"
+      >
+        <h2>
+          Skills
+        </h2>
+        <div
+          className="profile-skills"
+        >
+          <h3>
+            No member skills found
+          </h3>
+        </div>
+      </div>
+      <div
+        className="profile-teams"
+      >
+        <h2>
+          Teams
+        </h2>
+        <div
+          className="profile-teams"
+        >
+          <h3>
+            No member teams found
+          </h3>
+        </div>
+      </div>
+      <div
+        className="profile-guilds"
+      >
+        <h2>
+          Guilds
+        </h2>
+        <div
+          className="profile-guilds"
+        >
+          <h3>
+            No member guilds found
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
