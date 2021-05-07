@@ -12,6 +12,17 @@ export const getMemberSkills = async (cookie) => {
   });
 };
 
+export const getSelectedMemberSkills = async (id, cookie) => {
+  return resolve({
+    url: memberSkillUrl,
+    params: {
+      memberid: id,
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getSkillMembers = async (id, cookie) => {
   return resolve({
     url: memberSkillUrl,
@@ -61,4 +72,3 @@ export const reportSkills = async (skillLevels, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
-

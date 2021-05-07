@@ -1,19 +1,19 @@
 import {
+  ADD_CHECKIN,
+  ADD_MEMBER_SKILL,
+  ADD_SKILL,
+  ADD_TEAM,
+  DELETE_MEMBER_PROFILE,
+  DELETE_MEMBER_SKILL,
+  DELETE_SKILL,
   MY_PROFILE_UPDATE,
   SET_CSRF,
-  UPDATE_USER_BIO,
-  ADD_CHECKIN,
-  UPDATE_CHECKINS,
+  SET_ROLES,
+  SET_SELECTED_MEMBER,
   UPDATE_CHECKIN,
-  UPDATE_TOAST,
-  UPDATE_MEMBER_SKILLS,
-  DELETE_MEMBER_SKILL,
-  ADD_MEMBER_SKILL,
-  UPDATE_TEAMS,
+  UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
-  UPDATE_TEAM_MEMBERS,
-  ADD_SKILL,
-  DELETE_SKILL,
+  UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
   ADD_TEAM,
@@ -22,14 +22,19 @@ import {
   UPDATE_GUILDS,
   UPDATE_GUILD_MEMBERS,
   ADD_GUILD
+  UPDATE_TEAMS,
+  UPDATE_TEAM_MEMBERS,
+  UPDATE_TOAST,
+  UPDATE_USER_BIO,
 } from "./actions";
 
 export const initialState = {
   checkins: [],
   csrf: undefined,
-  memberSkills: [],
   index: 0,
   memberProfiles: [],
+  memberSkills: [],
+  selectedMember: undefined,
   skills: [],
   teams: [],
   guilds: [],
@@ -52,13 +57,13 @@ export const reducer = (state, action) => {
       state.checkins = [...state.checkins, action.payload];
       break;
     case UPDATE_CHECKINS:
-      if(state?.checkins?.length > 0) {
+      if (state?.checkins?.length > 0) {
         state.checkins = [...state.checkins];
-        action.payload.forEach(checkin => {
+        action.payload.forEach((checkin) => {
           const checkInIndex = state.checkins.findIndex(
             (current) => current.id === checkin.id
           );
-          if(checkInIndex >= 0) {
+          if (checkInIndex >= 0) {
             state.checkins[checkInIndex] = checkin;
           } else {
             state.checkins.push(checkin);
@@ -73,7 +78,7 @@ export const reducer = (state, action) => {
       const checkInIndex = state.checkins.findIndex(
         (checkin) => checkin.id === action.payload.id
       );
-      if(checkInIndex >= 0) {
+      if (checkInIndex >= 0) {
         state.checkins[checkInIndex] = action.payload;
       } else {
         state.checkins.push(action.payload);
@@ -122,7 +127,7 @@ export const reducer = (state, action) => {
         : (state.teamMembers = action.payload);
       break;
     case UPDATE_MEMBER_SKILLS:
-      state.memberSkills = action.payload
+      state.memberSkills = action.payload;
       break;
     case DELETE_MEMBER_SKILL:
       state.memberSkills = [
@@ -159,6 +164,9 @@ export const reducer = (state, action) => {
         ? (state.guildMembers = [...state.guildMembers, action.payload])
         : (state.guildMembers = action.payload);
         break;
+    case SET_SELECTED_MEMBER:
+      state.selectedMember = action.payload;
+      break;
     default:
   }
   return { ...state };
