@@ -8,7 +8,6 @@ export const DELETE_SKILL = "@@check-ins/delete-skill";
 export const MY_PROFILE_UPDATE = "@@check-ins/update_profile";
 export const SET_CSRF = "@@check-ins/update_csrf";
 export const SET_ROLES = "@@check-ins/set_roles";
-export const DELETE_MEMBER_PROFILE = "@@check-ins/delete_member_profile";
 export const UPDATE_GUILDS = "@@check-ins/update_guild";
 export const UPDATE_GUILD_MEMBERS = "@@check-ins/update_guild_members";
 export const ADD_GUILD = "@@check-ins/add_guild";
