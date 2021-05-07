@@ -132,6 +132,11 @@ function Menu() {
           Teams
         </Link>
       </Button>
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/guilds">
+          Guilds
+        </Link>
+      </Button>
       {/* {isAdmin && (
         <Button>
           <Link style={linkStyle} to="/admin">

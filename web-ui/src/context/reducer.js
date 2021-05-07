@@ -18,7 +18,10 @@ import {
   UPDATE_SKILLS,
   ADD_TEAM,
   SET_ROLES,
-  DELETE_MEMBER_PROFILE
+  DELETE_MEMBER_PROFILE,
+  UPDATE_GUILDS,
+  UPDATE_GUILD_MEMBERS,
+  ADD_GUILD
 } from "./actions";
 
 export const initialState = {
@@ -29,6 +32,7 @@ export const initialState = {
   memberProfiles: [],
   skills: [],
   teams: [],
+  guilds: [],
   toast: {
     severity: "",
     toast: "",
@@ -140,6 +144,21 @@ export const reducer = (state, action) => {
     case SET_ROLES:
       state.roles = action.payload;
       break;
+    case ADD_GUILD:
+        state.guilds = [...state.guilds, action.payload];
+        //sort by name
+        state.guilds.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+    case UPDATE_GUILDS:
+        state.guilds = action.payload;
+        //sort by name
+        state.guilds.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+    case UPDATE_GUILD_MEMBERS:
+        state.guildMembers
+        ? (state.guildMembers = [...state.guildMembers, action.payload])
+        : (state.guildMembers = action.payload);
+        break;
     default:
   }
   return { ...state };
