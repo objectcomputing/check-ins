@@ -42,6 +42,10 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
 
     @Override
     public QuestionCategory saveQuestionCategory(QuestionCategory questionCategory) {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You do not have permission to access this resource");
+        }
+
         if (questionCategory.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for category, please try updating instead.",
                     questionCategory.getId()));
@@ -79,7 +83,7 @@ public class QuestionCategoryServicesImpl implements QuestionCategoryServices {
             }
             return questionCategoryRepository.update(questionCategory);
         } else {
-            throw new NotFoundException("This question category does not exist");
+            throw new BadArgException("This question category does not exist");
         }
     }
 
