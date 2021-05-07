@@ -13,6 +13,7 @@ import {
   ADD_MEMBER_SKILL,
   DELETE_MEMBER_SKILL,
   UPDATE_MEMBER_SKILLS,
+  UPDATE_TOAST,
 } from "../../context/actions";
 import {
   createMemberSkill,
@@ -25,7 +26,13 @@ import SkillSlider from "./SkillSlider";
 import {
   Button,
   Card,
+  CardActions,
   CardHeader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   List,
   ListItem,
   Modal,
@@ -91,11 +98,16 @@ const SkillSection = ({ userId }) => {
   const [mySkills, setMySkills] = useState([]);
   const [skillToAdd, setSkillToAdd] = useState({ name: "", description: "" });
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState(null);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const classes = useStyles();
+
+  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
   const mapMemberSkill = async (memberSkill, csrf) => {
     let thisSkill = await getSkill(memberSkill.skillid, csrf);
@@ -167,13 +179,23 @@ const SkillSection = ({ userId }) => {
 
   const removeSkill = async (id, csrf) => {
     const mSkill = myMemberSkills.find((s) => s.skillid === id);
-    await deleteMemberSkill(mSkill.id, csrf);
-    dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
+    const result = await deleteMemberSkill(mSkill.id, csrf);
+    if (result && result.payload && result.payload.status === 200) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: "Skill deleted",
+        },
+      });
+      dispatch({ type: DELETE_MEMBER_SKILL, payload: id });
+      handleCloseDeleteConfirmation();
+    }
   };
 
-  const handleDelete = (id) => {
-    if (csrf && id) {
-      removeSkill(id, csrf);
+  const handleDelete = () => {
+    if (csrf && selectedSkillId) {
+      removeSkill(selectedSkillId, csrf);
     }
   };
 
@@ -190,6 +212,9 @@ const SkillSection = ({ userId }) => {
 
   const SkillSelector = (props) => (
     <Autocomplete
+      getOptionSelected={(option, value) =>
+        value ? value.id === option.id : false
+      }
       value={skillToAdd}
       style={{ width: "18em" }}
       id="skillSearchAutocomplete"
@@ -287,24 +312,50 @@ const SkillSection = ({ userId }) => {
                   key={`MemberSkill-${memberSkill.id}`}
                   className={classes.skillRow}
                 >
-                  <div className="slider-div">
-                    <SkillSlider
-                      id={memberSkill.id}
-                      description={memberSkill.description}
-                      name={memberSkill.name}
-                      startLevel={
-                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
-                      }
-                      lastUsedDate={memberSkill.lastuseddate}
-                      onDelete={handleDelete}
-                      onUpdate={handleUpdate}
-                      index={index}
-                    />
-                  </div>
+                  <SkillSlider
+                    description={memberSkill.description}
+                    id={memberSkill.id}
+                    name={memberSkill.name}
+                    startLevel={
+                      memberSkill.skilllevel ? memberSkill.skilllevel : 3
+                    }
+                    lastUsedDate={memberSkill.lastuseddate}
+                    onDelete={() => {
+                      handleOpenDeleteConfirmation();
+                      setSelectedSkillId(memberSkill.id);
+                    }}
+                    onUpdate={handleUpdate}
+                    index={index}
+                  />
                 </ListItem>
               );
             })}
         </List>
+        <CardActions>
+          <div>
+            <Dialog
+              open={openDelete}
+              onClose={handleCloseDeleteConfirmation}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">Delete Skill?</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete the skill?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDeleteConfirmation} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={handleDelete} color="primary" autoFocus>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+        </CardActions>
       </Card>
     </ThemeProvider>
   );
