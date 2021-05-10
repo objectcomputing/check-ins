@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 
 import { getAvatarURL } from "../../api/api.js";
 import { AppContext } from "../../context/AppContext";
-import {
-  selectCheckinsForTeamMemberAndPDL,
-  selectProfile,
-  selectTeamMembersWithCheckinPDL,
-} from "../../context/selectors";
+import { selectCheckinsForTeamMemberAndPDL } from "../../context/selectors";
 
 import {
   Accordion,
@@ -24,7 +20,6 @@ import {
 } from "@material-ui/core";
 
 import "./CheckinReport.css";
-import { getMemberSkills } from "../../api/memberskill.js";
 
 const CheckinsReport = ({ pdl }) => {
   const { state } = useContext(AppContext);
@@ -38,6 +33,8 @@ const CheckinsReport = ({ pdl }) => {
       member.name.includes(searchText)
     );
     setFilteredMembers(newMembers);
+    // don't need to watch searchText
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [members]);
 
   const getCheckinDate = (checkin) => {
@@ -49,7 +46,7 @@ const CheckinsReport = ({ pdl }) => {
     return filteredMembers.map(
       (member) =>
         member.name.toLowerCase().includes(searchText.toLowerCase()) && (
-          <Accordion id="member-sub-card">
+          <Accordion id="member-sub-card" key={member.name}>
             <AccordionSummary
               aria-controls="panel1a-content"
               id="accordion-summary"
@@ -64,6 +61,7 @@ const CheckinsReport = ({ pdl }) => {
               {selectCheckinsForTeamMemberAndPDL(state, member.id, id).map(
                 (checkin) => (
                   <Link
+                    key={checkin.id}
                     style={{ textDecoration: "none" }}
                     to={`/checkins/${member.id}/${checkin.id}`}
                   >

@@ -14,7 +14,6 @@ import "./CheckinsReportPage.css";
 
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
-  const [searchText, setSearchText] = useState("");
   const pdls = selectCheckinPDLS(state).sort((a, b) => {
     const aPieces = a.name.split(" ").slice(-1);
     const bPieces = b.name.split(" ").slice(-1);
@@ -22,7 +21,6 @@ const CheckinsReportPage = () => {
   });
   const [filteredPdls, setFilteredPdls] = useState(pdls);
   const [selectedPdls, setSelectedPdls] = useState([]);
-  const [pdlOptions, setPdlOptions] = useState([]);
 
   useEffect(() => {
     if (!pdls) return;
@@ -30,16 +28,17 @@ const CheckinsReportPage = () => {
       (pdl) => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
     setFilteredPdls(pdls);
-    if (!filteredPdls) return;
-    let options = filteredPdls.map((pdl) => pdl.name);
-    setPdlOptions(options);
-  }, [pdls, filteredPdls]);
+  }, [pdls, filteredPdls, state]);
 
-  console.log({ pdls, filteredPdls, selectedPdls });
-
-  const onLeadsChange = (event, newValue) => {
-    setFilteredPdls([...filteredPdls, newValue]);
-    console.log({ event, newValue });
+  const onPdlChange = (event, newValue) => {
+    let extantPdls = filteredPdls || [];
+    newValue.forEach((val) => {
+      extantPdls = extantPdls.filter((pdl) => pdl.id !== val.id);
+    });
+    extantPdls = [...new Set(extantPdls)];
+    newValue = [...new Set(newValue)];
+    setFilteredPdls([...newValue]);
+    setSelectedPdls(newValue);
   };
 
   return (
@@ -48,16 +47,22 @@ const CheckinsReportPage = () => {
         <Autocomplete
           id="pdlSelect"
           multiple
-          options={pdlOptions}
-          value={filteredPdls ? filteredPdls : []}
-          onChange={onLeadsChange}
+          options={pdls}
+          value={selectedPdls || []}
+          onChange={onPdlChange}
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
-            <TextField {...params} label="PDLs" placeholder="Select PDLs" />
+            <TextField
+              {...params}
+              label="Select PDLs"
+              placeholder="Choose which PDLs to display"
+            />
           )}
         />
       </div>
-      {filteredPdls && filteredPdls.map((pdl) => <CheckinReport pdl={pdl} />)}
+      {selectedPdls.length
+        ? selectedPdls.map((pdl) => <CheckinReport key={pdl.id} pdl={pdl} />)
+        : filteredPdls.map((pdl) => <CheckinReport key={pdl.id} pdl={pdl} />)}
     </div>
   );
 };
