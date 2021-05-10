@@ -99,6 +99,10 @@ function Menu() {
     setReportsOpen(!reportsOpen);
   };
 
+  const closeSubMenus = () => {
+    setReportsOpen(false);
+  };
+
   const linkStyle = { textDecoration: "none", color: "white" };
 
   const drawer = (
@@ -112,26 +116,26 @@ function Menu() {
         />
       </div>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/home">
           Home
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/directory">
           Directory
         </Link>
       </Button>
       <br />
       {isAdmin && (
-        <Button size="large" style={{ width: "100%" }}>
+        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
           <Link style={linkStyle} to="/pending-skills">
             Pending Skills
           </Link>
@@ -150,25 +154,18 @@ function Menu() {
             <List component="div" disablePadding>
               <Link style={linkStyle} to="/skills">
                 <ListItem button className={classes.nested}>
-                  <ListItemText primary="Skills" />
+                  <ListItemText primary="SKILLS" />
                 </ListItem>
               </Link>
             </List>
           </Collapse>
         </div>
       )}
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
         </Link>
       </Button>
-      {/* {isAdmin && (
-        <Button>
-          <Link style={linkStyle} to="/admin">
-            Edit PDLs
-          </Link>
-        </Button>
-      )} */}
     </div>
   );
 
