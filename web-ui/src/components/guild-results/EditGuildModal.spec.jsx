@@ -15,7 +15,7 @@ const server = setupServer(
   rest.get('http://localhost:8080/services/member-profile/current', (req, res, ctx) => {
     return res(ctx.json({ id: "12345", name: "Test User" }));
   }),
-  rest.get('http://localhost:8080/services/guild/member', (req, res, ctx) => {
+  rest.get('http://localhost:8080/services/guilds/members', (req, res, ctx) => {
     return res(ctx.json([{ id: "12345", name: "Test User" }]));
   })
 );

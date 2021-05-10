@@ -46,6 +46,12 @@ function App() {
                   </Header>
                   <TeamsPage />
                 </Route>
+                <Route path="/guilds">
+                  <Header title="Guilds">
+                     <GroupIcon fontSize="large" />
+                  </Header>
+                  <GuildsPage />
+                </Route>
                 <Route path="/home">
                   <Header />
                   <ProfilePage />

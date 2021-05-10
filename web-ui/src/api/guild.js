@@ -1,7 +1,7 @@
 import { resolve } from "./api.js";
 
-const guildUrl = `/services/guild`;
-const guildMemberUrl = `/services/guild/member`;
+const guildUrl = `/services/guilds`;
+const guildMemberUrl = `/services/guilds/members`;
 
 export const getAllGuildMembers = async (cookie) => {
   return resolve({
