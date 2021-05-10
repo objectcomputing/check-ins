@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.guild;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -11,6 +12,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @MicronautTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GuildCreateDTOTest {
 
     @Inject
