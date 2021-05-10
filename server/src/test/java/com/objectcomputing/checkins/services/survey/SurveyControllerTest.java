@@ -6,7 +6,6 @@ import com.objectcomputing.checkins.services.fixture.SurveyFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -166,7 +165,6 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-//        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
 
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));

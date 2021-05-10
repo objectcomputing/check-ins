@@ -53,7 +53,6 @@ public class SurveyServicesImpl implements SurveyService {
     public Set<Survey> readAll() {
         final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
-//        return new HashSet<String>(surveyResponseRepo.findAll());;
         return surveyResponseRepo.findAll();
     }
 
