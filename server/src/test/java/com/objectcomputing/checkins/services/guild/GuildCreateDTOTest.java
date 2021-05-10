@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.guild;
 
+import com.objectcomputing.checkins.services.team.TeamCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class GuildCreateDTOTest {
         dto.setName("");
 
         Set<ConstraintViolation<GuildCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
+        assertEquals(1, violations.size());
         for (ConstraintViolation<GuildCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be blank");
         }
