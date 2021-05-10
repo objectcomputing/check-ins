@@ -4,7 +4,7 @@ import MemberSummaryCard from "../components/member-directory/MemberSummaryCard"
 import { createMember } from "../api/member";
 import { AppContext } from "../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../context/actions";
-import { selectNormalizedMembers, selectMemberProfiles } from "../context/selectors";
+import { selectNormalizedMembers } from "../context/selectors";
 
 import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
