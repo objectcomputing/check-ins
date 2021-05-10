@@ -39,7 +39,6 @@ const DirectoryPage = () => {
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const mps = selectMemberProfiles(state);
-  console.log(mps);
 
   const normalizedMembers = selectNormalizedMembers(state, searchText);
 
