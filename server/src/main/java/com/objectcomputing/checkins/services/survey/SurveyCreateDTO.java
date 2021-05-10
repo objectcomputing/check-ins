@@ -11,6 +11,14 @@ import java.time.LocalDate;
 public class SurveyCreateDTO {
 
     @NotNull
+    @Schema(required = true, description = "description of internal feelings")
+    private String name;
+
+    @NotNull
+    @Schema(required = true, description = "description of external feelings")
+    private String description;
+
+    @NotNull
     @Schema(required = true, description = "date for createdOn")
     private LocalDate createdOn;
 
@@ -18,13 +26,19 @@ public class SurveyCreateDTO {
     @Schema(required = true, description = "id of the associated member")
     private UUID createdBy;
 
-    @NotNull
-    @Schema(required = true, description = "description of internal feelings")
-    private String name;
+    public String getName() { return name; }
 
-    @NotNull
-    @Schema(required = true, description = "description of external feelings")
-    private String description;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public LocalDate getCreatedOn() {
         return createdOn;
@@ -42,19 +56,4 @@ public class SurveyCreateDTO {
         this.createdBy = createdBy;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

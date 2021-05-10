@@ -1,10 +1,5 @@
 package com.objectcomputing.checkins.services.survey;
 
-import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.survey.Survey;
-import com.objectcomputing.checkins.services.survey.SurveyCreateDTO;
-import com.objectcomputing.checkins.services.survey.SurveyService;
-import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -22,10 +17,11 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+
 
 @Controller("/services/survey")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -48,18 +44,22 @@ public class SurveyController {
     }
 
     /**
-     * Find survey by Team Member or Date Range.
+     * Find survey by Name, Team Member or Date Range.
      *
+     * @param name
      * @param createdBy
-     * @param dateFrom
-     * @param dateTo
      * @return
      */
-    @Get("/{?createdBy,dateFrom,dateTo}")
-    public Single<HttpResponse<Set<Survey>>> findSurveys(@Nullable @Format("yyyy-MM-dd") LocalDate dateFrom,
-                                                                       @Nullable @Format("yyyy-MM-dd") LocalDate dateTo,
+    @Get("/{?name,createdBy}")
+    public Single<HttpResponse<Set<Survey>>> findSurveys(@Nullable String name,
                                                                        @Nullable UUID createdBy) {
-        return Single.fromCallable(() -> surveyResponseServices.findByFields(createdBy, dateFrom, dateTo))
+        return Single.fromCallable(() -> {
+            if (name!=null || createdBy!=null) {
+                return surveyResponseServices.findByFields(name, createdBy);
+            } else {
+                return surveyResponseServices.readAll();
+            }
+        })
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(survey -> (HttpResponse<Set<Survey>>) HttpResponse.ok(survey))
                 .subscribeOn(Schedulers.from(ioExecutorService));
@@ -103,23 +103,14 @@ public class SurveyController {
     }
 
     /**
+     * Delete A survey
      *
-     * @param id
-     * @return
+     * @param id, id of {@link Survey} to delete
      */
-    @Get("/{id}")
-    public Single<HttpResponse<Survey>> readRole(@NotNull UUID id) {
-        return Single.fromCallable(() -> {
-            Survey result = surveyResponseServices.read(id);
-            if (result == null) {
-                throw new NotFoundException("No role item for UUID");
-            }
-            return result;
-        })
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(survey -> {
-                    return (HttpResponse<Survey>)HttpResponse.ok(survey);
-                }).subscribeOn(Schedulers.from(ioExecutorService));
-
+    @Delete("/{id}")
+    public HttpResponse<?> deleteSurvey(@NotNull UUID id) {
+        surveyResponseServices.delete(id);
+        return HttpResponse
+                .ok();
     }
 }

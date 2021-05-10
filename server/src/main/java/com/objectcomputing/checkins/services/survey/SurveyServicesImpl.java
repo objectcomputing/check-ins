@@ -2,9 +2,8 @@ package com.objectcomputing.checkins.services.survey;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.survey.Survey;
-import com.objectcomputing.checkins.services.survey.SurveyRepository;
-import com.objectcomputing.checkins.services.survey.SurveyService;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -18,15 +17,23 @@ public class SurveyServicesImpl implements SurveyService {
 
     private final SurveyRepository surveyResponseRepo;
     private final MemberProfileRepository memberRepo;
+    private final PermissionsValidation permissionsValidation;
+    private final CurrentUserServices currentUserServices;
 
     public SurveyServicesImpl(SurveyRepository surveyResponseRepo,
-                              MemberProfileRepository memberRepo) {
+                              MemberProfileRepository memberRepo,
+                              PermissionsValidation permissionsValidation,
+                              CurrentUserServices currentUserServices) {
         this.surveyResponseRepo = surveyResponseRepo;
         this.memberRepo = memberRepo;
+        this.permissionsValidation = permissionsValidation;
+        this.currentUserServices = currentUserServices;
     }
 
     @Override
     public Survey save(Survey surveyResponse) {
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Survey surveyResponseRet = null;
         if(surveyResponse!=null){
             final UUID memberId = surveyResponse.getCreatedBy();
@@ -43,14 +50,17 @@ public class SurveyServicesImpl implements SurveyService {
         return surveyResponseRet ;
     }
 
-
-    @Override
-    public Survey read(@NotNull UUID id) {
-        return surveyResponseRepo.findById(id).orElse(null);
+    public Set<Survey> readAll() {
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+//        return new HashSet<String>(surveyResponseRepo.findAll());;
+        return surveyResponseRepo.findAll();
     }
 
     @Override
     public Survey update(Survey surveyResponse) {
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Survey surveyResponseRet = null;
         if(surveyResponse!=null){
             final UUID id = surveyResponse.getId();
@@ -72,13 +82,22 @@ public class SurveyServicesImpl implements SurveyService {
     }
 
     @Override
-    public Set<Survey> findByFields(UUID createdBy, LocalDate dateFrom, LocalDate dateTo) {
+    public void delete(@NotNull UUID id) {
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
+        surveyResponseRepo.deleteById(id);
+    }
+
+    @Override
+    public Set<Survey> findByFields(String name, UUID createdBy) {
+        final boolean isAdmin = currentUserServices.isAdmin();
+        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Set<Survey> surveyResponse = new HashSet<>();
         surveyResponseRepo.findAll().forEach(surveyResponse::add);
-        if(createdBy!=null){
+        if(name!=null){
+            surveyResponse.addAll(surveyResponseRepo.findByName(name));
+        } else if(createdBy!=null){
             surveyResponse.retainAll(surveyResponseRepo.findByCreatedBy(createdBy));
-        } else if(dateFrom!=null && dateTo!=null) {
-            surveyResponse.retainAll(surveyResponseRepo.findByCreatedOnBetween(dateFrom, dateTo));
         }
         return surveyResponse;
     }

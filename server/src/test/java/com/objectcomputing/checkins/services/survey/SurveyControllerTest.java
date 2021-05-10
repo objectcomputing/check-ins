@@ -6,8 +6,6 @@ import com.objectcomputing.checkins.services.fixture.SurveyFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.survey.Survey;
-import com.objectcomputing.checkins.services.survey.SurveyCreateDTO;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -23,6 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,13 +39,12 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
-        surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
-//        surveyResponseCreateDTO.setUpdatedDate(LocalDate.now());
-        surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
         surveyResponseCreateDTO.setName("Name");
         surveyResponseCreateDTO.setDescription("Description");
+        surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
+        surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
 
-        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Survey> response = client.toBlocking().exchange(request,Survey.class);
 
         Survey surveyResponseResponse = response.body();
@@ -61,7 +59,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     void testCreateAnInvalidSurvey() {
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
 
-        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -79,13 +77,12 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testCreateSurveyForNonExistingMember(){
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
-        surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
-//        surveyResponseCreateDTO.setUpdatedDate(LocalDate.now());
-        surveyResponseCreateDTO.setCreatedBy(UUID.randomUUID());
         surveyResponseCreateDTO.setName("Name");
         surveyResponseCreateDTO.setDescription("Description");
+        surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
+        surveyResponseCreateDTO.setCreatedBy(UUID.randomUUID());
 
-        HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -99,7 +96,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testCreateANullSurvey() {
-        final HttpRequest<String> request = HttpRequest.POST("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("","").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -116,13 +113,12 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     void testCreateASurveyForInvalidDate() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
-        surveyResponseCreateDTO.setCreatedOn(LocalDate.of(1965,11,12));
-//        surveyResponseCreateDTO.setUpdatedDate(LocalDate.of(1965,11,12));
-        surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
         surveyResponseCreateDTO.setName("Name");
         surveyResponseCreateDTO.setDescription("Description");
+        surveyResponseCreateDTO.setCreatedOn(LocalDate.of(1965,11,12));
+        surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
 
-        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -135,6 +131,20 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     }
 
     @Test
+    public void testGETFindByValueName() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+
+        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", surveyResponse.getName())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+        assertEquals(Set.of(surveyResponse), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
+    }
+
+    @Test
     public void testGetFindByCreatedBy() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -142,60 +152,28 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
         assertEquals(Set.of(surveyResponse), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
 
     }
 
-    // Find By findByCreatedOnBetween returns empty array - when no data exists
     @Test
-    public void testGetFindByCreatedOnBetweenReturnsEmptyBody() {
-
-        LocalDate testDateFrom = LocalDate.of(2019, 01, 01);
-        LocalDate testDateTo = LocalDate.of(2019, 02, 01);
+    public void testGetFindAll() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(2, response.getContentLength());
-    }
+//        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
 
-    // Find By findByCreatedOnBetween
-    @Test
-    public void testGetFindByfindByCreatedOnBetween() {
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        Survey surveyResponse  = createADefaultSurvey(memberProfile);
-
-        LocalDate testDateFrom = LocalDate.of(2019, 01, 01);
-        LocalDate testDateTo = Util.MAX.toLocalDate();
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?dateFrom=%tF&dateTo=%tF", testDateFrom, testDateTo)).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotEquals(2, response.getContentLength());
-    }
-
-    @Test
-    public void testGetFindById() {
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        Survey surveyResponse  = createADefaultSurvey(memberProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", surveyResponse.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
-        assertEquals(Set.of(surveyResponse), response.body());
-        assertEquals(HttpStatus.OK,response.getStatus());
-
+        assertNotNull(response.getContentLength());
+        response.equals(surveyResponse);
     }
 
     @Test
@@ -204,7 +182,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(Set.of(surveyResponse), response.body());
@@ -215,7 +193,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
     @Test
     void testSurveyDoesNotExist() {
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s",UUID.randomUUID())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s",UUID.randomUUID())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(Set.of(), response.body());
@@ -230,7 +208,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<Survey> response = client.toBlocking().exchange(request, Survey.class);
 
         assertEquals(surveyResponse, response.body());
@@ -246,7 +224,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponse.setId(UUID.randomUUID());
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -267,7 +245,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponse.setCreatedBy(UUID.randomUUID());
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -288,7 +266,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponse.setId(null);
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -303,7 +281,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateUnAuthorized() {
-        Survey surveyResponse = new Survey(LocalDate.now(),UUID.randomUUID(),"internalfeeling","externalfeeling");
+        Survey surveyResponse = new Survey(LocalDate.now(),UUID.randomUUID(),"jobSurvey","survey job interests");
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -316,7 +294,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateANullSurvey() {
-        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -337,7 +315,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponse.setCreatedOn(LocalDate.of(1965,12,11));
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -349,4 +327,91 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         assertEquals(request.getPath(), href);
 
     }
+
+    @Test
+    public void testMemberCreateASurvey(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
+        surveyResponseCreateDTO.setName("Name");
+        surveyResponseCreateDTO.setDescription("Description");
+        surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
+        surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
+
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+    @Test
+    public void testMemberGETFindByValueName() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", surveyResponse.getName())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    public void testMemberGetFindByCreatedBy() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+
+        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+
+        assertEquals("User is unauthorized to do this operation", error);
+
+    }
+
+    @Test
+    void testMemberUpdateSurvey(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+    @Test
+    void deleteTeamByMember() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Survey surveyResponse  = createADefaultSurvey(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", surveyResponse.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
+
+        assertEquals(HttpStatus.OK,response.getStatus());
+    }
+
 }

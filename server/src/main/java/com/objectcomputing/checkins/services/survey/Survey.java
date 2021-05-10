@@ -28,17 +28,6 @@ public class Survey {
     @Schema(description = "the id of the survey", required = true)
     private UUID id;
 
-    @Column(name="createdOn")
-    @NotNull
-    @Schema(description = "date for createdOn", required = true)
-    private LocalDate createdOn;
-
-    @Column(name="createdBy")
-    @TypeDef(type=DataType.STRING)
-    @NotNull
-    @Schema(description = "id of the teamMember this entry is associated with", required = true)
-    private UUID createdBy;
-
     @Column(name="name")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
@@ -56,6 +45,17 @@ public class Survey {
     @NotNull
     @Schema(description = "description of Description", required = true)
     private String description;
+
+    @Column(name="createdOn")
+    @NotNull
+    @Schema(description = "date for createdOn", required = true)
+    private LocalDate createdOn;
+
+    @Column(name="createdBy")
+    @TypeDef(type=DataType.STRING)
+    @NotNull
+    @Schema(description = "id of the teamMember this entry is associated with", required = true)
+    private UUID createdBy;
 
     public Survey(UUID id,LocalDate createdOn, UUID createdBy, String name, String description) {
         this.id = id;
@@ -77,22 +77,6 @@ public class Survey {
         this.id = id;
     }
 
-    public LocalDate getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDate createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public UUID getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public String getName() {
         return name;
     }
@@ -109,31 +93,47 @@ public class Survey {
         this.description = description;
     }
 
+    public LocalDate getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDate createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         com.objectcomputing.checkins.services.survey.Survey that = (com.objectcomputing.checkins.services.survey.Survey) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(createdOn, that.createdOn) &&
-                Objects.equals(createdBy, that.createdBy) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+                Objects.equals(description, that.description) &&
+                Objects.equals(createdOn, that.createdOn) &&
+                Objects.equals(createdBy, that.createdBy);
     }
 
     @Override
     public String toString() {
         return "Survey{" +
                 "id=" + id +
-                ", createdOn=" + createdOn +
-                ", createdBy=" + createdBy +
                 ", name=" + name +
                 ", description=" + description +
+                ", createdOn=" + createdOn +
+                ", createdBy=" + createdBy +
                 '}';
     }
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdOn, createdBy, name, description);
+        return Objects.hash(id, name, description, createdOn, createdBy);
     }
 }
 
