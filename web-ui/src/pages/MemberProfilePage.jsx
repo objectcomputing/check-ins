@@ -10,7 +10,7 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip } from "@material-ui/core";
+import { Avatar, Chip, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -153,14 +153,29 @@ const MemberProfilePage = () => {
                 </div>
               )}
               {selectedMemberSkills.length > 0 &&
-                selectedMemberSkills.map((skill) => (
-                  <Chip
-                    className="chip"
-                    color="primary"
-                    key={skill.id}
-                    label={skill.name + " - " + skill.skilllevel}
-                  />
-                ))}
+                selectedMemberSkills.map((skill, index) =>
+                  skill.description ? (
+                    <Tooltip
+                      enterTouchDelay={0}
+                      placement="top-start"
+                      title={skill.description}
+                    >
+                      <Chip
+                        className="chip"
+                        color="primary"
+                        key={skill.id}
+                        label={skill.name + " - " + skill.skilllevel}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Chip
+                      className="chip"
+                      color="primary"
+                      key={skill.id}
+                      label={skill.name + " - " + skill.skilllevel}
+                    />
+                  )
+                )}
             </div>
             <div className="profile-teams">
               <h2>Teams</h2>

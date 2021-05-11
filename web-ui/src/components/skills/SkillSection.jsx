@@ -35,6 +35,7 @@ import {
   DialogTitle,
   List,
   ListItem,
+  Modal,
   TextField,
 } from "@material-ui/core";
 import Autocomplete, {
@@ -84,6 +85,7 @@ const muiTheme = createMuiTheme({
 
 const useStyles = makeStyles((theme) => ({
   skillRow: {
+    fontWeight: "bold",
     justifyContent: "space-around",
   },
 }));
@@ -94,9 +96,13 @@ const SkillSection = ({ userId }) => {
   const skills = selectOrderedSkills(state);
   const myMemberSkills = selectMySkills(state);
   const [mySkills, setMySkills] = useState([]);
-  const [skillToAdd, setSkillToAdd] = useState();
+  const [skillToAdd, setSkillToAdd] = useState({ name: "", description: "" });
+  const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedSkillId, setSelectedSkillId] = useState(null);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const classes = useStyles();
 
@@ -129,16 +135,24 @@ const SkillSection = ({ userId }) => {
     }
   }, [csrf, myMemberSkills]);
 
-  const addSkill = async (name) => {
+  const addSkill = async () => {
     if (!csrf) {
       return;
     }
     const inSkillsList = skills.find(
-      (skill) => skill.name.toUpperCase() === name.toUpperCase()
+      (skill) =>
+        skill && skill.name.toUpperCase() === skillToAdd.name.toUpperCase()
     );
     let curSkill = inSkillsList;
     if (!inSkillsList) {
-      const res = await createSkill({ name: name, pending: true }, csrf);
+      handleOpen();
+      const res = await createSkill(
+        {
+          ...skillToAdd,
+          pending: true,
+        },
+        csrf
+      );
       const data =
         res && res.payload && res.payload.data ? res.payload.data : null;
       data && dispatch({ type: ADD_SKILL, payload: data });
@@ -160,6 +174,7 @@ const SkillSection = ({ userId }) => {
         res && res.payload && res.payload.data ? res.payload.data : null;
       data && dispatch({ type: ADD_MEMBER_SKILL, payload: data });
     }
+    handleClose();
   };
 
   const removeSkill = async (id, csrf) => {
@@ -197,6 +212,9 @@ const SkillSection = ({ userId }) => {
 
   const SkillSelector = (props) => (
     <Autocomplete
+      getOptionSelected={(option, value) =>
+        value ? value.id === option.id : false
+      }
       value={skillToAdd}
       style={{ width: "18em" }}
       id="skillSearchAutocomplete"
@@ -235,8 +253,9 @@ const SkillSection = ({ userId }) => {
         />
       )}
       onChange={(event, value) => {
-        addSkill(value.name);
-        setSkillToAdd(undefined);
+        if (value === null) return;
+        handleOpen();
+        setSkillToAdd({ name: value.name, description: "" });
       }}
       getOptionLabel={(option) => option.displayLabel || ""}
     />
@@ -244,6 +263,40 @@ const SkillSection = ({ userId }) => {
 
   return (
     <ThemeProvider theme={muiTheme}>
+      <Modal open={open} onClose={handleClose}>
+        <div className="skill-modal">
+          <TextField
+            className="fullWidth"
+            id="skill-name-input"
+            label="Name"
+            placeholder="Skill Name"
+            required
+            value={skillToAdd.name ? skillToAdd.name : ""}
+            onChange={(e) =>
+              setSkillToAdd({ ...skillToAdd, name: e.target.value })
+            }
+          />
+          <TextField
+            className="fullWidth"
+            id="skill-description-input"
+            label="Description"
+            placeholder="Skill Description"
+            required
+            value={skillToAdd.description ? skillToAdd.description : ""}
+            onChange={(e) =>
+              setSkillToAdd({ ...skillToAdd, description: e.target.value })
+            }
+          />
+          <div className="skill-modal-actions fullWidth">
+            <Button onClick={handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={addSkill} color="primary">
+              Save Skill
+            </Button>
+          </div>
+        </div>
+      </Modal>
       <Card>
         <CardHeader
           avatar={<BuildIcon />}
@@ -260,6 +313,7 @@ const SkillSection = ({ userId }) => {
                   className={classes.skillRow}
                 >
                   <SkillSlider
+                    description={memberSkill.description}
                     id={memberSkill.id}
                     name={memberSkill.name}
                     startLevel={

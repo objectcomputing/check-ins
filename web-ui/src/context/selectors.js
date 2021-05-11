@@ -8,6 +8,7 @@ export const selectUserProfile = state => state.userProfile;
 export const selectCheckins = state => state.checkins;
 export const selectCsrfToken = state => state.csrf;
 export const selectMemberRoles = state => state.roles;
+export const selectTeams = state => state.teams;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -146,3 +147,44 @@ export const selectMostRecentCheckin = createSelector(
     return undefined;
   }
 );
+
+export const selectCurrentMembers = createSelector(
+    selectMemberProfiles,
+    (memberProfiles) => memberProfiles?.filter((profile) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return (
+          profile.terminationDate === null ||
+          profile.terminationDate === undefined ||
+          today <= new Date(profile.terminationDate)
+        );
+    })
+    .sort((a,b) => a.lastName.localeCompare(b.lastName))
+);
+
+export const selectNormalizedMembers = createSelector(
+  selectCurrentMembers,
+  (state, searchText) => searchText,
+  (currentMembers, searchText) =>
+    currentMembers?.filter((member) => {
+      let normName = member.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      return(
+        normName.toLowerCase().includes(normSearchText.toLowerCase())
+      );
+    })
+);
+
+export const selectNormalizedTeams = createSelector(
+  selectTeams,
+  (state, searchText) => searchText,
+  (teams, searchText) =>
+    teams?.filter((team) => {
+      let normName = team.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+      return(
+        normName.toLowerCase().includes(normSearchText.toLowerCase())
+      );
+    })
+);
+
