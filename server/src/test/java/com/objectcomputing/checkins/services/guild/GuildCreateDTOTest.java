@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.team.TeamCreateDTO;
 import io.micronaut.test.annotation.MicronautTest;
 import io.micronaut.validation.validator.Validator;
 import org.junit.jupiter.api.Test;
