@@ -1,6 +1,6 @@
 import {
     selectMemberProfiles, selectProfileMap, selectMemberRoles, selectPdlRoles, selectMappedPdls,
-    selectOrderedPdls
+    selectOrderedPdls, selectCurrentMembers, selectNormalizedMembers, selectNormalizedTeams
 } from './selectors';
 
 describe('Selectors', () => {
@@ -432,5 +432,158 @@ describe('Selectors', () => {
             ]
         };
         expect(selectOrderedPdls(testState)).toEqual(matchingMembers);
+    });
+
+    it('selectCurrentMembers should return an array of non-terminated profiles', () => {
+        const testMemberProfiles = [
+            {
+                id: 1,
+                bioText: 'foo',
+                employeeId: 11,
+                name: 'Iván López Martín',
+                firstName: 'Iván',
+                lastName: 'Martín',
+                location: 'St Louis',
+                title: 'engineer',
+                workEmail: 'employee@sample.com',
+                pdlId: 9,
+                startDate: [2012, 9, 29]
+            },
+            {
+                id: 2,
+                bioText: 'foo',
+                employeeId: 12,
+                name: 'B Person',
+                firstName: 'B',
+                lastName: 'PersonB',
+                location: 'St Louis',
+                title: 'engineer',
+                workEmail: 'employee@sample.com',
+                pdlId: 9,
+                startDate: [2012, 9, 29]
+            },
+            {
+                id: 3,
+                bioText: 'foo',
+                employeeId: 13,
+                name: 'C Person',
+                firstName: 'C',
+                lastName: 'PersonC',
+                location: 'St Louis',
+                title: 'engineer',
+                workEmail: 'employee@sample.com',
+                pdlId: 9,
+                startDate: [2012, 9, 29],
+                terminationDate: [2020,12,31]
+            }
+        ];
+        const testState = {
+            memberProfiles: [
+                testMemberProfiles[0],
+                testMemberProfiles[1],
+                testMemberProfiles[2]
+            ]
+        };
+
+        const result = {
+            memberProfiles: [
+                testMemberProfiles[0],
+                testMemberProfiles[1]
+            ]
+        };
+
+        expect(selectCurrentMembers(testState)).toEqual(result.memberProfiles);
+    });
+
+    it('selectNormalizedMembers should return an array of appropriate member profiles despite accents', () => {
+            const testMemberProfiles = [
+                {
+                    id: 1,
+                    bioText: 'foo',
+                    employeeId: 11,
+                    name: 'Iván López Martín',
+                    firstName: 'Iván',
+                    lastName: 'Martín',
+                    location: 'St Louis',
+                    title: 'engineer',
+                    workEmail: 'employee@sample.com',
+                    pdlId: 9,
+                    startDate: [2012, 9, 29]
+                },
+                {
+                    id: 2,
+                    bioText: 'foo',
+                    employeeId: 12,
+                    name: 'B Person',
+                    firstName: 'B',
+                    lastName: 'PersonB',
+                    location: 'St Louis',
+                    title: 'engineer',
+                    workEmail: 'employee@sample.com',
+                    pdlId: 9,
+                    startDate: [2012, 9, 29]
+                },
+                {
+                    id: 3,
+                    bioText: 'foo',
+                    employeeId: 13,
+                    name: 'C Person',
+                    firstName: 'C',
+                    lastName: 'PersonC',
+                    location: 'St Louis',
+                    title: 'engineer',
+                    workEmail: 'employee@sample.com',
+                    pdlId: 9,
+                    startDate: [2012, 9, 29]
+                }
+            ];
+            const testState = {
+                memberProfiles: [
+                    testMemberProfiles[0],
+                    testMemberProfiles[1],
+                    testMemberProfiles[2]
+                ]
+            };
+
+            const result = {
+                memberProfiles: [
+                    testMemberProfiles[0]
+                ]
+            };
+
+            const searchText = "ivan"
+
+            expect(selectNormalizedMembers(testState, searchText)).toEqual(result.memberProfiles);
+    });
+
+    it('selectNormalizedTeams should return an array of appropriate teams despite accents', () => {
+            const testTeams = [
+              {
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                name: "Iváns Team",
+                description: "string",
+              },
+              {
+                id: "3fa4-5717-4562-b3fc-2c963f66afa6",
+                name: "stuff",
+                description: "",
+              }
+            ];
+            const testState = {
+                teams: [
+                    testTeams[0],
+                    testTeams[1]
+                ]
+            };
+
+            const searchText = "ivan";
+
+            const result = {
+                teams: [
+                   testTeams[0]
+                ]
+            };
+
+            expect(selectNormalizedTeams(testState, searchText)).toEqual(result.teams);
     });
 });

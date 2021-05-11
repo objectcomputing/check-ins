@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TeamControllerTest extends TestContainersSuite implements TeamFixture, MemberProfileFixture, TeamMemberFixture {
 
     @Inject
-    @Client("/services/team")
+    @Client("/services/teams")
     HttpClient client;
 
     @Test

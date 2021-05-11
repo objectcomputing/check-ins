@@ -3,6 +3,7 @@ import React, { useEffect, useContext, useState } from "react";
 import TeamSummaryCard from "./TeamSummaryCard";
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS } from "../../context/actions";
+import { selectNormalizedTeams } from "../../context/selectors";
 import TeamsActions from "./TeamsActions";
 import { getAllTeams } from "../../api/team";
 import PropTypes from "prop-types";
@@ -30,8 +31,10 @@ const displayName = "TeamResults";
 
 const TeamResults = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, teams } = state;
+  const { csrf } = state;
+
   const [searchText, setSearchText] = useState("");
+  const teams = selectNormalizedTeams(state, searchText);
 
   const classes = useStyles();
 
@@ -70,13 +73,11 @@ const TeamResults = () => {
       </div>
       <div className="teams">
         {teams.map((team, index) =>
-          team.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-            <TeamSummaryCard
-              key={`team-summary-${team.id}`}
-              index={index}
-              team={team}
-            />
-          ) : null
+          <TeamSummaryCard
+            key={`team-summary-${team.id}`}
+            index={index}
+            team={team}
+          />
         )}
       </div>
     </div>

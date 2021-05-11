@@ -15,7 +15,7 @@ exports[`renders correctly 1`] = `
   >
     <img
       className="MuiAvatar-img"
-      src="http://localhost:8080/services/member-profile/member-photo/undefined"
+      src="http://localhost:8080/services/member-profiles/member-photos/undefined"
     />
   </div>
   <div
