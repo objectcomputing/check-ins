@@ -21,11 +21,13 @@ import {
 
 import "./CheckinReport.css";
 
-const CheckinsReport = ({ pdl }) => {
+const CheckinsReport = ({ closed, pdl, planned }) => {
   const { state } = useContext(AppContext);
   const { name, id, members, workEmail } = pdl;
   const [searchText, setSearchText] = useState("");
   const [filteredMembers, setFilteredMembers] = useState(members);
+
+  const now = Date.now();
 
   useEffect(() => {
     if (!members) return;
@@ -42,38 +44,60 @@ const CheckinsReport = ({ pdl }) => {
     const [year, month, day, hour, minute] = checkin.checkInDate;
     return new Date(year, month - 1, day, hour, minute, 0);
   };
+
+  const LinkSection = ({ checkin, member }) => {
+    return (
+      <Link
+        key={checkin.id}
+        style={{ textDecoration: "none" }}
+        to={`/checkins/${member.id}/${checkin.id}`}
+      >
+        <Typography>{new Date(getCheckinDate(checkin)).toString()}</Typography>
+      </Link>
+    );
+  };
   const TeamMemberMap = () => {
-    return filteredMembers.map(
-      (member) =>
-        member.name.toLowerCase().includes(searchText.toLowerCase()) && (
-          <Accordion id="member-sub-card" key={member.name}>
-            <AccordionSummary
-              aria-controls="panel1a-content"
-              id="accordion-summary"
-            >
-              <Avatar
-                className={"large"}
-                src={getAvatarURL(member.workEmail)}
-              />
-              <Typography>{member.name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails id="accordion-checkin-date">
-              {selectCheckinsForTeamMemberAndPDL(state, member.id, id).map(
-                (checkin) => (
-                  <Link
-                    key={checkin.id}
-                    style={{ textDecoration: "none" }}
-                    to={`/checkins/${member.id}/${checkin.id}`}
-                  >
-                    <Typography>
-                      {new Date(getCheckinDate(checkin)).toString()}
-                    </Typography>
-                  </Link>
-                )
-              )}
-            </AccordionDetails>
-          </Accordion>
-        )
+    return (
+      filteredMembers &&
+      filteredMembers.map(
+        (member) =>
+          member.name.toLowerCase().includes(searchText.toLowerCase()) && (
+            <Accordion id="member-sub-card" key={member.name}>
+              <AccordionSummary
+                aria-controls="panel1a-content"
+                id="accordion-summary"
+              >
+                <Avatar
+                  className={"large"}
+                  src={getAvatarURL(member.workEmail)}
+                />
+                <Typography>{member.name}</Typography>
+              </AccordionSummary>
+              <AccordionDetails id="accordion-checkin-date">
+                {selectCheckinsForTeamMemberAndPDL(state, member.id, id).map(
+                  (checkin) => {
+                    const pastCheckin =
+                      now >= getCheckinDate(checkin).getTime();
+                    const shouldRender =
+                      (!closed &&
+                        !planned &&
+                        !checkin.completed &&
+                        pastCheckin) || // open checkin
+                      (closed && checkin.completed) || //closed checkin
+                      (planned && !pastCheckin && !checkin.completed); //planned checkin
+                    return shouldRender ? (
+                      <LinkSection
+                        checkin={checkin}
+                        key={checkin.id}
+                        member={member}
+                      />
+                    ) : null;
+                  }
+                )}
+              </AccordionDetails>
+            </Accordion>
+          )
+      )
     );
   };
 

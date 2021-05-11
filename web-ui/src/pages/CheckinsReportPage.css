@@ -1,3 +1,13 @@
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  margin-top: .5rem
+}
+
+.checkbox-row label {
+  margin-left: 0.5rem;
+}
+
 .MuiFormControl-root {
   margin-left: 1rem;
 }

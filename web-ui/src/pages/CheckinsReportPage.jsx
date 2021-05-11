@@ -21,6 +21,8 @@ const CheckinsReportPage = () => {
   });
   const [filteredPdls, setFilteredPdls] = useState(pdls);
   const [selectedPdls, setSelectedPdls] = useState([]);
+  const [planned, setPlanned] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     if (!pdls) return;
@@ -39,6 +41,14 @@ const CheckinsReportPage = () => {
     newValue = [...new Set(newValue)];
     setFilteredPdls([...newValue]);
     setSelectedPdls(newValue);
+  };
+
+  const handleClosed = () => {
+    setClosed(!closed);
+  };
+
+  const handlePlanned = () => {
+    setPlanned(!planned);
   };
 
   return (
@@ -60,9 +70,29 @@ const CheckinsReportPage = () => {
           )}
         />
       </div>
+      <div className="checkbox-row">
+        <label htmlFor="closed">Show Closed</label>
+        <input id="closed" onClick={handleClosed} type="checkbox" />
+        <label htmlFor="planned">Show Planned</label>
+        <input id="planned" onClick={handlePlanned} type="checkbox" />
+      </div>
       {selectedPdls.length
-        ? selectedPdls.map((pdl) => <CheckinReport key={pdl.id} pdl={pdl} />)
-        : filteredPdls.map((pdl) => <CheckinReport key={pdl.id} pdl={pdl} />)}
+        ? selectedPdls.map((pdl) => (
+            <CheckinReport
+              closed={closed}
+              key={pdl.id}
+              pdl={pdl}
+              planned={planned}
+            />
+          ))
+        : filteredPdls.map((pdl) => (
+            <CheckinReport
+              closed={closed}
+              key={pdl.id}
+              pdl={pdl}
+              planned={planned}
+            />
+          ))}
     </div>
   );
 };

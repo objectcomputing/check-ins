@@ -66,11 +66,11 @@ function App() {
                   <PendingSkillsPage />
                 </Route>
                 <Route path="/checkins-reports">
-                  <Header title="Checkins" />
+                  <Header title="Checkin Reports" />
                   <CheckinsReportPage />
                 </Route>
                 <Route path="/skills-reports">
-                  <Header title="Skills" />
+                  <Header title="Skill Reports" />
                   <SkillReportPage />
                 </Route>
                 <Route path="/">
