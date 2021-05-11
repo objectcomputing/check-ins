@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, SurveyFixture {
 
     @Inject
-    @Client("/services/survey")
+    @Client("/services/surveys")
     private HttpClient client;
 
     @Test
