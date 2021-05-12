@@ -82,13 +82,14 @@ public class QuestionController {
     }
 
     /**
-     * Find questions with a particular string or read all questions.
+     * Find questions with a particular string, a particular categoryId or read all questions.
      *
      * @param text, the text of the question
-     *              * @return {@link List HttpResponse< QuestionResponseDTO >}
+     * @param categoryId, the category id of the question
+     * @return {@link List HttpResponse< QuestionResponseDTO >}
      */
-    @Get("/{?text}")
-    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(Optional<String> text) {
+    @Get("/{?text,categoryId}")
+    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(Optional<String> text, Optional<UUID> categoryId) {
         return Single.fromCallable(() -> {
             if (text.isPresent()) {
                 return questionService.findByText(text.get());
