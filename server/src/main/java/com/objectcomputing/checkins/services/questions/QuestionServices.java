@@ -9,4 +9,5 @@ public interface QuestionServices {
     Question findById(UUID skillId);
     Question update(Question question);
     Set<Question> findByText(String text);
+    Set<Question> findByCategoryId(UUID categoryId);
 }

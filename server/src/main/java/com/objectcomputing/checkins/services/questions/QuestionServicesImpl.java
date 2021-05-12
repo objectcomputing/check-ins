@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -63,6 +64,12 @@ public class QuestionServicesImpl implements QuestionServices {
 
         return returned;
 
+    }
+
+    @Override
+    public Set<Question> findByCategoryId(UUID categoryId) {
+        Set<Question> results = questionRepository.findByCategoryId(categoryId);
+        return results;
     }
 
 }
