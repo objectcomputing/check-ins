@@ -40,7 +40,7 @@ public class Question {
     private String text;
 
     @Nullable
-    @Column(name="category")
+    @Column(name="categoryId")
     @TypeDef(type= DataType.STRING)
     @Schema(description = "id of the category this question is associated with")
     private UUID categoryId;
