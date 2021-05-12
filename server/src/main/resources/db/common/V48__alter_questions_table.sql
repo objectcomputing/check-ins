@@ -1,2 +1,2 @@
 ALTER TABLE questions
-ADD column category varchar REFERENCES question_categories(id);
+ADD column categoryId varchar REFERENCES question_categories(id);
