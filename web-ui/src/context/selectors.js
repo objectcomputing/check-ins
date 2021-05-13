@@ -1,14 +1,14 @@
 import { createSelector } from "reselect";
 
-export const selectMemberProfiles = state => state.memberProfiles;
-export const selectMemberSkills = state => state.memberSkills;
-export const selectSkills = state => state.skills;
-export const selectTeamMembers = state => state.teamMembers;
-export const selectUserProfile = state => state.userProfile;
-export const selectCheckins = state => state.checkins;
-export const selectCsrfToken = state => state.csrf;
-export const selectMemberRoles = state => state.roles;
-export const selectTeams = state => state.teams;
+export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectMemberSkills = (state) => state.memberSkills;
+export const selectSkills = (state) => state.skills;
+export const selectTeamMembers = (state) => state.teamMembers;
+export const selectUserProfile = (state) => state.userProfile;
+export const selectCheckins = (state) => state.checkins;
+export const selectCsrfToken = (state) => state.csrf;
+export const selectMemberRoles = (state) => state.roles;
+export const selectTeams = (state) => state.teams;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -188,19 +188,44 @@ export const selectCheckinsForTeamMemberAndPDL = createSelector(
   (checkins, pdlId) => checkins.filter((checkin) => checkin.pdlId === pdlId)
 );
 
+const getCheckinDate = (checkin) => {
+  if (!checkin || !checkin.checkInDate) return;
+  const [year, month, day, hour, minute] = checkin.checkInDate;
+  return new Date(year, month - 1, day, hour, minute, 0);
+};
+
+const pastCheckin = (checkin) =>
+  Date.now() >= getCheckinDate(checkin).getTime();
+
+export const selectFilteredCheckinsForTeamMemberAndPDL = createSelector(
+  selectCheckinsForTeamMemberAndPDL,
+  (state, teamMemberId, pdlId, includeClosed, includePlanned) => includeClosed,
+  (state, teamMemberId, pdlId, includeClosed, includePlanned) => includePlanned,
+  (checkins, includeClosed, includePlanned) =>
+    checkins
+      .filter((checkin) => includeClosed || !checkin.completed)
+      .filter((checkin) => includePlanned || pastCheckin(checkin))
+);
+
 export const selectCheckinPDLS = createSelector(
   selectMemberProfiles,
   selectCheckins,
-  (memberProfiles, checkins) => {
+  (state, includeClosed, includePlanned) => includeClosed,
+  (state, includeClosed, includePlanned) => includePlanned,
+  (memberProfiles, checkins, includeClosed, includePlanned) => {
     const pdlSet = new Set();
-    checkins.forEach((checkin) => pdlSet.add(checkin.pdlId));
-    return memberProfiles
-      .filter((member) => pdlSet.has(member.id))
+    checkins
+      .filter((checkin) => includeClosed || !checkin.completed)
+      .filter((checkin) => includePlanned || pastCheckin(checkin))
+      .forEach((checkin) => pdlSet.add(checkin.pdlId));
+    return memberProfiles.filter((member) => pdlSet.has(member.id));
   }
 );
 export const selectCurrentMembers = createSelector(
-    selectMemberProfiles,
-    (memberProfiles) => memberProfiles?.filter((profile) => {
+  selectMemberProfiles,
+  (memberProfiles) =>
+    memberProfiles
+      ?.filter((profile) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return (
@@ -208,8 +233,8 @@ export const selectCurrentMembers = createSelector(
           profile.terminationDate === undefined ||
           today <= new Date(profile.terminationDate)
         );
-    })
-    .sort((a,b) => a.lastName.localeCompare(b.lastName))
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembers = createSelector(
@@ -217,11 +242,13 @@ export const selectNormalizedMembers = createSelector(
   (state, searchText) => searchText,
   (currentMembers, searchText) =>
     currentMembers?.filter((member) => {
-      let normName = member.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-      return(
-        normName.toLowerCase().includes(normSearchText.toLowerCase())
-      );
+      let normName = member.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
 );
 
@@ -230,11 +257,10 @@ export const selectNormalizedTeams = createSelector(
   (state, searchText) => searchText,
   (teams, searchText) =>
     teams?.filter((team) => {
-      let normName = team.name.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-      return(
-        normName.toLowerCase().includes(normSearchText.toLowerCase())
-      );
+      let normName = team.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
 );
-

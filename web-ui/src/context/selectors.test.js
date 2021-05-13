@@ -471,8 +471,9 @@ it("selectCheckinPdls should return an array of all member PDL profiles that hav
 
   const testState = {
     checkins: [
-      { pdlId: 13, completed: false, checkInDate: [2020, 9, 10] },
-      { pdlId: 12, completed: false, checkInDate: [2020, 9, 10] },
+      { pdlId: 13, completed: false, checkInDate: [2020, 9, 13] },
+      { pdlId: 12, completed: false, checkInDate: [2021, 9, 12] },
+      { pdlId: 12, completed: true, checkInDate: [2020, 9, 11] },
     ],
     memberProfiles: [
       {
@@ -484,7 +485,6 @@ it("selectCheckinPdls should return an array of all member PDL profiles that hav
         location: "St Louis",
         title: "engineer",
         workEmail: "employee@sample.com",
-        pdlId: 9,
         startDate: [2012, 9, 29],
       },
       {
@@ -511,7 +511,7 @@ it("selectCheckinPdls should return an array of all member PDL profiles that hav
       },
     ],
   };
-  expect(selectCheckinPDLS(testState)).toEqual(matchingMembers);
+  expect(selectCheckinPDLS(testState, true, true)).toEqual(matchingMembers);
 });
 
 it("selectTeamMembersWithCheckinPDL should return an array of all members associated with a pdl that have a checkin", () => {

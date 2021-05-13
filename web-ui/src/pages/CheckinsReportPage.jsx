@@ -14,23 +14,34 @@ import "./CheckinsReportPage.css";
 
 const CheckinsReportPage = () => {
   const { state } = useContext(AppContext);
-  const pdls = selectCheckinPDLS(state).sort((a, b) => {
+  const [selectedPdls, setSelectedPdls] = useState([]);
+  const [planned, setPlanned] = useState(false);
+  const [closed, setClosed] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const pdls = selectCheckinPDLS(state, closed, planned).sort((a, b) => {
     const aPieces = a.name.split(" ").slice(-1);
     const bPieces = b.name.split(" ").slice(-1);
     return aPieces.toString().localeCompare(bPieces);
   });
   const [filteredPdls, setFilteredPdls] = useState(pdls);
-  const [selectedPdls, setSelectedPdls] = useState([]);
-  const [planned, setPlanned] = useState(false);
-  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     if (!pdls) return;
     pdls.map(
       (pdl) => (pdl.members = selectTeamMembersWithCheckinPDL(state, pdl.id))
     );
-    setFilteredPdls(pdls);
-  }, [pdls, filteredPdls, state]);
+    let newPdlList = pdls.filter((pdl) => {
+      pdl.members =
+        pdl.members &&
+        pdl.members.filter((member) =>
+          member.name.toLowerCase().includes(searchText.toLowerCase())
+        );
+      return pdl.members.length > 0;
+    });
+
+    setFilteredPdls(newPdlList);
+  }, [pdls, searchText, state]);
 
   const onPdlChange = (event, newValue) => {
     let extantPdls = filteredPdls || [];
@@ -53,7 +64,7 @@ const CheckinsReportPage = () => {
 
   return (
     <div>
-      <div>
+      <div className="filter-pdls-and-members">
         <Autocomplete
           id="pdlSelect"
           multiple
@@ -69,11 +80,19 @@ const CheckinsReportPage = () => {
             />
           )}
         />
+        <TextField
+          label="Search Members"
+          placeholder="Member Name"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+        />
       </div>
       <div className="checkbox-row">
-        <label htmlFor="closed">Show Closed</label>
+        <label htmlFor="closed">Include Closed</label>
         <input id="closed" onClick={handleClosed} type="checkbox" />
-        <label htmlFor="planned">Show Planned</label>
+        <label htmlFor="planned">Include Planned</label>
         <input id="planned" onClick={handlePlanned} type="checkbox" />
       </div>
       {selectedPdls.length
