@@ -2,11 +2,11 @@ import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
-//import EditPDLPage from "./pages/EditPDLPage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
 import TeamsPage from "./pages/TeamsPage";
+import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
@@ -44,6 +44,12 @@ function App() {
                     <GroupIcon fontSize="large" />
                   </Header>
                   <TeamsPage />
+                </Route>
+                <Route path="/guilds">
+                  <Header title="Guilds">
+                     <GroupIcon fontSize="large" />
+                  </Header>
+                  <GuildsPage />
                 </Route>
                 <Route path="/home">
                   <Header />

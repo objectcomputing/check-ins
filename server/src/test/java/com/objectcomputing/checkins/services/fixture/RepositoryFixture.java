@@ -12,6 +12,7 @@ import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
+import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -20,6 +21,7 @@ import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
+import com.objectcomputing.checkins.services.survey.SurveyRepository;
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
@@ -97,5 +99,13 @@ public interface RepositoryFixture {
 
     default FeedbackRepository getFeedbackRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackRepository.class);
+    }
+
+    default QuestionCategoryRepository getQuestionCategoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(QuestionCategoryRepository.class);
+    }
+        
+    default SurveyRepository getSurveyRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SurveyRepository.class);
     }
 }

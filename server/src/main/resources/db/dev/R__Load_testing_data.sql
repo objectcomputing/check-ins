@@ -4,8 +4,8 @@ delete from checkin_document;
 delete from checkin_notes;
 delete from private_notes;
 delete from checkins;
-delete from guildmembers;
-delete from guilds;
+delete from guild_member;
+delete from guild;
 delete from member_skills;
 delete from pulse_response;
 delete from questions;
@@ -351,30 +351,31 @@ INSERT INTO action_items
     (id, checkinid, createdbyid, description)
 Values('0ead3434-82e7-47b4-a0ef-d1f44d01732b', '1343411e-26bf-4274-81ca-1b46ba3f0cb0', '6884ab96-2275-4af9-89d8-ad84254d8759', PGP_SYM_ENCRYPT('Action Item for Pramukh Bagur','${aeskey}'));
 
-insert into guilds (id, name, description)
-values('ba42d181-3c5b-4ee3-938d-be122c314bee', 'Software Engineering', 'Resource for Software Engineering Topics');
+insert into guild (id, name, description)
+values('ba42d181-3c5b-4ee3-938d-be122c314bee',  PGP_SYM_ENCRYPT('Software Engineering','${aeskey}'), PGP_SYM_ENCRYPT('Resource for Software Engineering Topics','${aeskey}'));
 
-insert into guilds (id, name, description)
-values('06cd3202-a209-4ae1-a49a-10395fbe3548', 'Micronaut', 'For Micronaut Lovers and Learners');
+insert into guild (id, name, description)
+values('06cd3202-a209-4ae1-a49a-10395fbe3548', PGP_SYM_ENCRYPT('Micronaut','${aeskey}'), PGP_SYM_ENCRYPT('For Micronaut Lovers and Learners','${aeskey}'));
 
-insert into guilds (id, name, description)
-values('d1d4af0e-b1a5-47eb-be49-f3581271f1e3', 'Fullstack Development', 'Full Stack Development Interests');
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild (id, name, description)
+values('d1d4af0e-b1a5-47eb-be49-f3581271f1e3', PGP_SYM_ENCRYPT('Fullstack Development','${aeskey}'), PGP_SYM_ENCRYPT('Full Stack Development Interests','${aeskey}'));
+
+insert into guild_member (id, guildId, memberId, lead)
 values('fd976615-6a8b-4cd1-8aea-cb7751c8ee1a','ba42d181-3c5b-4ee3-938d-be122c314bee', 'b2d35288-7f1e-4549-aa2b-68396b162490', true);
 
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild_member (id, guildId, memberId, lead)
 values('86dc52b9-5b2a-4241-9c54-0fde07600c58','ba42d181-3c5b-4ee3-938d-be122c314bee', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', false);
 
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild_member (id, guildId, memberId, lead)
 values('7cd12bb9-6aa4-4edc-831f-f4ebe8f22f62','ba42d181-3c5b-4ee3-938d-be122c314bee', '6884ab96-2275-4af9-89d8-ad84254d8759', false);
 
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild_member (id, guildId, memberId, lead)
 values('8a20e99f-c326-4529-8024-26724a8586b1','ba42d181-3c5b-4ee3-938d-be122c314bee', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
 
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild_member (id, guildId, memberId, lead)
 values('7ffe3937-bdce-4ebb-a03d-8a8b7d4703ef','06cd3202-a209-4ae1-a49a-10395fbe3548', '802cb1f5-a255-4236-8719-773fa53d79d9', true);
 
-insert into guildmembers (id, guildid, memberid, lead)
+insert into guild_member (id, guildId, memberId, lead)
 values('dd694cf2-c0f9-4470-b897-00c564c1252b','06cd3202-a209-4ae1-a49a-10395fbe3548', '8fa673c0-ca19-4271-b759-41cb9db2e83a', false);
 
 INSERT INTO pulse_response

@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -8,31 +10,20 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip } from "@material-ui/core";
+import { Avatar, Chip, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const { csrf, memberProfiles, skills, userProfile } = state;
-  const pathname =
-    (window &&
-      window.location &&
-      window.location.pathname &&
-      window.location.pathname.split("/")) ||
-    null;
-
-  const locationId = pathname[2] || null;
+  const { memberId } = useParams();
 
   const selectedMember = state.selectedMember
     ? state.selectedMember
-    : memberProfiles.length && locationId
-    ? memberProfiles.find((member) => member.id === locationId)
+    : memberProfiles.length && memberId
+    ? memberProfiles.find((member) => member.id === memberId)
     : null;
 
-  const id = selectedMember
-    ? selectedMember.id
-    : locationId
-    ? locationId
-    : null;
+  const id = selectedMember ? selectedMember.id : memberId ? memberId : null;
 
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -162,14 +153,29 @@ const MemberProfilePage = () => {
                 </div>
               )}
               {selectedMemberSkills.length > 0 &&
-                selectedMemberSkills.map((skill) => (
-                  <Chip
-                    className="chip"
-                    color="primary"
-                    key={skill.id}
-                    label={skill.name + " - " + skill.skilllevel}
-                  />
-                ))}
+                selectedMemberSkills.map((skill, index) =>
+                  skill.description ? (
+                    <Tooltip
+                      enterTouchDelay={0}
+                      placement="top-start"
+                      title={skill.description}
+                    >
+                      <Chip
+                        className="chip"
+                        color="primary"
+                        key={skill.id}
+                        label={skill.name + " - " + skill.skilllevel}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Chip
+                      className="chip"
+                      color="primary"
+                      key={skill.id}
+                      label={skill.name + " - " + skill.skilllevel}
+                    />
+                  )
+                )}
             </div>
             <div className="profile-teams">
               <h2>Teams</h2>

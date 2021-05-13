@@ -28,7 +28,7 @@ public enum SkillLevel {
     }
 
     public static SkillLevel convertFromString(@NotNull String level) {
-        final String levelLc = level.toLowerCase();
+        final String levelLc = level != null ? level.toLowerCase() : "3";
         switch (levelLc) {
             case INTERESTED_LEVEL:
                 return SkillLevel.INTERESTED;
