@@ -13,11 +13,11 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -66,7 +66,6 @@ public class QuestionController {
      * @param id {@link UUID} of the question entry
      * @return {@link HttpResponse< QuestionResponseDTO >}
      */
-
     @Get("/{id}")
     public Single<HttpResponse<QuestionResponseDTO>> getById(UUID id) {
         return Single.fromCallable(() -> {
@@ -89,22 +88,24 @@ public class QuestionController {
      * @return {@link List HttpResponse< QuestionResponseDTO >}
      */
     @Get("/{?text,categoryId}")
-    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(Optional<String> text, Optional<UUID> categoryId) {
+    public Single<HttpResponse<Set<QuestionResponseDTO>>> findByText(@Nullable String text, @Nullable UUID categoryId) {
         return Single.fromCallable(() -> {
-            if (text.isPresent()) {
-                return questionService.findByText(text.get());
+            if (text != null) {
+                return questionService.findByText(text);
+            } else if (categoryId != null) {
+                return questionService.findByCategoryId(categoryId);
             } else {
                 return questionService.readAllQuestions();
             }
         })
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(questions -> {
-                    Set<QuestionResponseDTO> responseBody = questions.stream()
-                            .map(question -> fromModel(question))
-                            .collect(Collectors.toSet());
-                    return (HttpResponse<Set<QuestionResponseDTO>>) HttpResponse.ok(responseBody);
-                })
-                .subscribeOn(Schedulers.from(ioExecutorService));
+        .observeOn(Schedulers.from(eventLoopGroup))
+        .map(questions -> {
+            Set<QuestionResponseDTO> responseBody = questions.stream()
+                    .map(question -> fromModel(question))
+                    .collect(Collectors.toSet());
+            return (HttpResponse<Set<QuestionResponseDTO>>) HttpResponse.ok(responseBody);
+        })
+        .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
     /**
@@ -131,8 +132,11 @@ public class QuestionController {
 
     private QuestionResponseDTO fromModel(Question question) {
         QuestionResponseDTO qrdto = new QuestionResponseDTO();
-        qrdto.setQuestionId(question.getId());
+        qrdto.setId(question.getId());
         qrdto.setText(question.getText());
+        if (question.getCategoryId() != null) {
+            qrdto.setCategoryId(question.getCategoryId());
+        }
         return qrdto;
     }
 
@@ -140,12 +144,18 @@ public class QuestionController {
         Question model = new Question();
         model.setId(dto.getId());
         model.setText(dto.getText());
+        if (dto.getCategoryId() != null) {
+            model.setCategoryId(dto.getCategoryId());
+        }
         return model;
     }
 
     private Question toModel(QuestionCreateDTO dto) {
         Question model = new Question();
         model.setText(dto.getText());
+        if (dto.getCategoryId() != null) {
+            model.setCategoryId(dto.getCategoryId());
+        }
         return model;
     }
 
