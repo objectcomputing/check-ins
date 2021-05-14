@@ -37,7 +37,7 @@ export const updateGuild = async (guild, cookie) => {
 
 export const getGuildsForMember = async (id, cookie) => {
   return resolve({
-    url: guildMemberUrl,
+    url: guildUrl,
     responseType: "json",
     params: {
       memberId: id,
