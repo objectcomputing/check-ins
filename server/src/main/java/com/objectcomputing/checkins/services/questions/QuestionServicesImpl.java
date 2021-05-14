@@ -66,10 +66,8 @@ public class QuestionServicesImpl implements QuestionServices {
 
     }
 
-    @Override
-    public Set<Question> findByCategoryId(UUID categoryId) {
-        Set<Question> results = questionRepository.findByCategoryId(categoryId);
-        return results;
+    public Set<Question> findByCategoryId(@NotNull UUID categoryId) {
+        return questionRepository.findByCategoryId(categoryId);
     }
 
 }
