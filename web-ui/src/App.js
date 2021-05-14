@@ -6,7 +6,9 @@ import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
 import TeamsPage from "./pages/TeamsPage";
+import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
+import CheckinsReportPage from "./pages/CheckinsReportPage";
 import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import PendingSkillsPage from "./pages/PendingSkillsPage";
@@ -44,6 +46,12 @@ function App() {
                   </Header>
                   <TeamsPage />
                 </Route>
+                <Route path="/guilds">
+                  <Header title="Guilds">
+                     <GroupIcon fontSize="large" />
+                  </Header>
+                  <GuildsPage />
+                </Route>
                 <Route path="/home">
                   <Header />
                   <ProfilePage />
@@ -64,8 +72,12 @@ function App() {
                   <Header title="Pending Skills" />
                   <PendingSkillsPage />
                 </Route>
-                <Route path="/skills">
-                  <Header title="Skills" />
+                <Route path="/checkins-reports">
+                  <Header title="Checkin Reports" />
+                  <CheckinsReportPage />
+                </Route>
+                <Route path="/skills-reports">
+                  <Header title="Skill Reports" />
                   <SkillReportPage />
                 </Route>
                 <Route path="/">

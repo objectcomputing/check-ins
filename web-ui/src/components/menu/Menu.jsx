@@ -152,7 +152,12 @@ function Menu() {
           </Button>
           <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link style={linkStyle} to="/skills">
+              <Link style={linkStyle} to="/checkins-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText primary="CHECKINS" />
+                </ListItem>
+              </Link>
+              <Link style={linkStyle} to="/skills-reports">
                 <ListItem button className={classes.nested}>
                   <ListItemText primary="SKILLS" />
                 </ListItem>
@@ -164,6 +169,11 @@ function Menu() {
       <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
+        </Link>
+      </Button>
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/guilds">
+          Guilds
         </Link>
       </Button>
     </div>

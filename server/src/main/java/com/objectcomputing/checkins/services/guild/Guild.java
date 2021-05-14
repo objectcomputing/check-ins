@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.guild;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "guilds")
+@Table(name = "guild")
 public class Guild {
     @Id
     @Column(name = "id")
@@ -25,11 +26,19 @@ public class Guild {
 
     @NotBlank
     @Column(name = "name", unique = true)
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "name of the guild")
     private String name;
 
     @NotBlank
     @Column(name = "description")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
     @Schema(description = "description of the guild")
     private String description;
 

@@ -27,6 +27,14 @@ export const getCheckinByMemberId = async (id, cookie) => {
   });
 };
 
+export const getAllCheckins = async (cookie) => {
+  return resolve({
+    url: checkinsUrl,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getCheckinByPdlId = async (id, cookie) => {
   return resolve({
     url: checkinsUrl,
@@ -38,12 +46,10 @@ export const getCheckinByPdlId = async (id, cookie) => {
   });
 };
 
-export const createCheckin = async ({
-  teamMemberId,
-  pdlId,
-  checkInDate,
-  completed,
-}, cookie) => {
+export const createCheckin = async (
+  { teamMemberId, pdlId, checkInDate, completed },
+  cookie
+) => {
   return resolve({
     method: "post",
     url: checkinsUrl,
@@ -64,13 +70,10 @@ export const getNoteByCheckinId = async (id, cookie) => {
   });
 };
 
-export const updateCheckin = async ({
-  completed,
-  id,
-  teamMemberId,
-  pdlId,
-  checkInDate,
-}, cookie) => {
+export const updateCheckin = async (
+  { completed, id, teamMemberId, pdlId, checkInDate },
+  cookie
+) => {
   return resolve({
     method: "put",
     url: checkinsUrl,
@@ -80,11 +83,10 @@ export const updateCheckin = async ({
   });
 };
 
-export const createCheckinNote = async ({
-  checkinid,
-  createdbyid,
-  description,
-}, cookie) => {
+export const createCheckinNote = async (
+  { checkinid, createdbyid, description },
+  cookie
+) => {
   return resolve({
     method: "post",
     url: checkinsNoteUrl,
@@ -94,12 +96,10 @@ export const createCheckinNote = async ({
   });
 };
 
-export const updateCheckinNote = async ({
-  id,
-  checkinid,
-  createdbyid,
-  description,
-}, cookie) => {
+export const updateCheckinNote = async (
+  { id, checkinid, createdbyid, description },
+  cookie
+) => {
   return resolve({
     method: "put",
     url: checkinsNoteUrl,
@@ -122,11 +122,10 @@ export const getPrivateNoteByCheckinId = async (id, cookie) => {
   });
 };
 
-export const createPrivateNote = async ({
-                                          checkinid,
-                                          createdbyid,
-                                          description,
-                                        }, cookie) => {
+export const createPrivateNote = async (
+  { checkinid, createdbyid, description },
+  cookie
+) => {
   return resolve({
     method: "post",
     url: checkinsPrivateNoteUrl,
@@ -136,12 +135,10 @@ export const createPrivateNote = async ({
   });
 };
 
-export const updatePrivateNote = async ({
-                                          id,
-                                          checkinid,
-                                          createdbyid,
-                                          description,
-                                        }, cookie) => {
+export const updatePrivateNote = async (
+  { id, checkinid, createdbyid, description },
+  cookie
+) => {
   return resolve({
     method: "put",
     url: checkinsPrivateNoteUrl,

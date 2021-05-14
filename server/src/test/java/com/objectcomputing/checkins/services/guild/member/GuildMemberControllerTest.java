@@ -8,9 +8,9 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GuildMemberControllerTest extends TestContainersSuite implements GuildFixture, MemberProfileFixture, GuildMemberFixture {
 
@@ -33,34 +32,71 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     HttpClient client;
 
     @Test
-    void testCreateAGuildMember() {
-
+    void testCreateAGuildMemberByAdmin() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
-        guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getId());
-        guildMemberCreateDTO.setLead(true);
-
-        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
 
-        assertEquals(guildMemberCreateDTO.getGuildid(), response.body().getGuildid());
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), response.getHeaders().get("location"));
+        GuildMember guildMember = response.body();
 
+        assertEquals(guildMemberCreateDTO.getMemberid(), guildMember.getMemberid());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testCreateAGuildMemberByGuildLead() {
+        Guild guild = createDefaultGuild();
+
+        // Create a guild lead and add him to the guild
+        MemberProfile memberProfileOfGuildLead = createADefaultMemberProfile();
+        createLeadGuildMember(guild, memberProfileOfGuildLead);
+
+        // Create a member and add him to guild
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfileOfUser.getId(), false);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(memberProfileOfGuildLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        GuildMember guildMember = response.body();
+
+        assertEquals(guildMemberCreateDTO.getMemberid(), guildMember.getMemberid());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testCreateAGuildMemberThrowsExceptionForNotAdminAndNotGuildLead() {
+        Guild guild = createDefaultGuild();
+
+        // Create a user (not guild lead) and add him to the guild
+        MemberProfile memberProfileOfGuildmate = createADefaultMemberProfile();
+        createDefaultGuildMember(guild, memberProfileOfGuildmate);
+
+        // Create a member and add him to guild
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfileOfUser.getId(), false);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(memberProfileOfGuildmate.getWorkEmail(), MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
     void testCreateAnInvalidGuildMember() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMemberCreateDTO dto = new GuildMemberCreateDTO(null, null, null);
 
-        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
-
-        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", dto).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -69,7 +105,6 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-
         assertEquals("guildMember.guildid: must not be null", errorList.get(0));
         assertEquals("guildMember.memberid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
@@ -80,10 +115,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     @Test
     void testCreateANullGuildMember() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        final HttpRequest<String> request = HttpRequest.POST("", "")
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -93,31 +125,6 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertEquals("Required Body [guildMember] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
-    }
-
-    @Test
-    void testCreateDuplicateGuildMember() {
-
-        Guild guild = createDefaultGuild();
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
-        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
-        guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(memberProfile.getId());
-
-        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        assertEquals(String.format("Member %s already exists in guild %s", guildMemberCreateDTO.getMemberid(), guildMemberCreateDTO.getGuildid()), errors.asText());
-        assertEquals(request.getPath(), href.asText());
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
     }
 
     @Test
@@ -126,13 +133,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
-        guildMemberCreateDTO.setGuildid(UUID.randomUUID());
-        guildMemberCreateDTO.setMemberid(memberProfile.getId());
-        guildMemberCreateDTO.setLead(false);
+        GuildMemberCreateDTO guildMemberResponseDTO = new GuildMemberCreateDTO(UUID.randomUUID(), memberProfile.getId(), false);
 
-        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberResponseDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -141,7 +144,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Guild %s doesn't exist", guildMemberCreateDTO.getGuildid()), error);
+        assertEquals(String.format("Guild %s doesn't exist", guildMemberResponseDTO.getGuildid()), error);
     }
 
     @Test
@@ -150,13 +153,9 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO();
-        guildMemberCreateDTO.setGuildid(guild.getId());
-        guildMemberCreateDTO.setMemberid(UUID.randomUUID());
-        guildMemberCreateDTO.setLead(false);
+        GuildMemberCreateDTO requestDTO = new GuildMemberCreateDTO(guild.getId(), UUID.randomUUID(), false);
 
-        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", requestDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -165,104 +164,202 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Member %s doesn't exist", guildMemberCreateDTO.getMemberid()), error);
+        assertEquals(String.format("Member %s doesn't exist", requestDTO.getMemberid()), error);
     }
 
     @Test
-    void testReadGuildMember() {
+    void testCreateAGuildMemberWithExistingMemberAndGuild() {
 
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildMember.getId().toString()))
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        GuildMemberCreateDTO guildMemberResponseDTO = new GuildMemberCreateDTO(guildMember.getGuildid(), memberProfile.getId(), false);
+
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberResponseDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Member %s already exists in guild %s", guildMemberResponseDTO.getMemberid(), guildMemberResponseDTO.getGuildid()), error);
+    }
+
+    @Test
+    void testReadGuildMember() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildMember.getId().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
 
         assertEquals(guildMember, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
     void testReadGuildMemberNotFound() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID()))
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
-        HttpClientResponseException responseException =
-                assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, GuildMember.class));
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, GuildMember.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
 
+    @Test
+    void testFindAllGuildMembers() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
+
+        assertEquals(Set.of(guildMember), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testFindByGuildId() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?guildid=%s", guildMember.getGuildid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
+
+        assertEquals(Set.of(guildMember), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testFindByMemberId() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", guildMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
+
+        assertEquals(Set.of(guildMember), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
     void testFindGuildMembers() {
-
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
-        Set<GuildMember> guilds = Collections.singleton(guildMember);
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?guildid=%s&memberid=%s", guildMember.getGuildid(),
-                guildMember.getMemberid())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+                guildMember.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
 
-        assertEquals(guilds, response.body());
+        assertEquals(Set.of(guildMember), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
     void testFindGuildMembersAllParams() {
-
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
-        Set<GuildMember> guilds = Collections.singleton(guildMember);
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?guildid=%s&memberid=%s&lead=%s", guildMember.getGuildid(),
-                guildMember.getMemberid(), guildMember.isLead())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+                guildMember.getMemberid(), guildMember.isLead())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildMember>> response = client.toBlocking().exchange(request, Argument.setOf(GuildMember.class));
 
-        assertEquals(guilds, response.body());
+        assertEquals(Set.of(guildMember), response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
     @Test
-    void testUpdateGuildMember() {
-
+    void testUpdateGuildMemberByAdmin() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
-        final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        GuildMemberUpdateDTO guildMemberUpdateDTO = new GuildMemberUpdateDTO(guildMember.getId(), guildMember.getGuildid(), guildMember.getMemberid(), true);
+        final MutableHttpRequest<GuildMemberUpdateDTO> request = HttpRequest.PUT("", guildMemberUpdateDTO).basicAuth("test@test.com", ADMIN_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
 
-        assertEquals(guildMember, response.body());
+        GuildMember result = response.body();
+        assertNotNull(result);
+        assertEquals(guildMember.getMemberid(), result.getMemberid());
+        assertTrue(result.isLead());
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
+    }
 
+    @Test
+    void testUpdateGuildMemberByGuildLead() {
+        Guild guild = createDefaultGuild();
+
+        // Create a guild lead and add him to the guild
+        MemberProfile memberProfileOfGuildLead = createADefaultMemberProfile();
+        createLeadGuildMember(guild, memberProfileOfGuildLead);
+
+        // Create a member and add him to guild
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfileOfUser);
+
+        // Update member
+        GuildMemberUpdateDTO guildMemberUpdateDTO = new GuildMemberUpdateDTO(guildMember.getId(), guildMember.getGuildid(), guildMember.getMemberid(), true);
+        final MutableHttpRequest<GuildMemberUpdateDTO> request = HttpRequest.PUT("", guildMemberUpdateDTO).basicAuth(memberProfileOfGuildLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        GuildMember result = response.body();
+        assertNotNull(result);
+        assertEquals(guildMember.getMemberid(), result.getMemberid());
+        assertTrue(result.isLead());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdateGuildMemberThrowsExceptionForNotAdminAndNotGuildLead() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("You are not authorized to perform this operation", error);
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
     void testUpdateAnInvalidGuildMember() {
-
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
-        guildMember.setGuildid(null);
-        guildMember.setMemberid(null);
 
-        final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+        guildMember.setMemberid(null);
+        guildMember.setGuildid(null);
+
+        final HttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -275,16 +372,11 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertEquals("guildMember.memberid: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
     }
 
     @Test
     void testUpdateANullGuildMember() {
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        final HttpRequest<String> request = HttpRequest.PUT("", "")
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -294,29 +386,28 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertEquals("Required Body [guildMember] not specified", errors.asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-
     }
+
 
     @Test
     void testUpdateGuildMemberThrowException() {
-
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
         guildMember.setMemberid(UUID.randomUUID());
         guildMember.setGuildid(guildMember.getGuildid());
 
-        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("message");
-        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", guildMember.getMemberid()), errors.asText());
-        assertEquals(request.getPath(), href.asText());
+        assertEquals(String.format("Member %s doesn't exist", guildMember.getMemberid()), error);
+        assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
     }
@@ -330,8 +421,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(UUID.randomUUID());
 
-        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -355,8 +445,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         guildMember.setMemberid(guildMember.getMemberid());
         guildMember.setGuildid(guildMember.getGuildid());
 
-        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember)
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final MutableHttpRequest<GuildMember> request = HttpRequest.PUT("", guildMember).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -372,57 +461,47 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
     @Test
     void testDeleteGuildMemberAsAdmin() {
-
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
-    void testDeleteGuildMemberAsNonAdminNonLeadNonCurrentMember() {
-
+    void testDeleteGuildMemberWithoutAdminPrivilege() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", guildMemberNonLead.getId()))
-                .basicAuth(secondMemberProfile.getWorkEmail(), MEMBER_ROLE);
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals("You are not authorized to perform this operation", error);
-        assertEquals(request.getPath(), href);
+        assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-
     }
 
-
     @Test
-    void testDeleteGuildMemberAsLead() {
-
+    void testDeleteGuildMemberWithGuildLead() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
-        createDefaultGuildMemberLead(guild, secondMemberProfile);
+        MemberProfile leadMemberProfile = createAnUnrelatedUser();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+        GuildMember guildLead = createLeadGuildMember(guild, leadMemberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", guildMemberNonLead.getId()))
-                .basicAuth(secondMemberProfile.getWorkEmail(), MEMBER_ROLE);
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(leadMemberProfile.getWorkEmail(), MEMBER_ROLE);
 
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
 
@@ -431,21 +510,20 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     }
 
     @Test
-    void testDeleteGuildMemberAsCurrentUser() {
-
+    void testDeleteInvalidGuildMemberAsAdmin() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile secondMemberProfile = createAnUnrelatedUser();
-        GuildMember guildMemberNonLead = createDefaultGuildMember(guild, memberProfile);
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+        guildMember.setId(UUID.randomUUID());
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", guildMemberNonLead.getId()))
-                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.OK, response.getStatus());
-
+        assertNotNull(responseException.getResponse());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
-
 }

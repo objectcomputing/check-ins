@@ -73,22 +73,22 @@ class GuildMemberTest {
         final UUID guildId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        GuildMember g = new GuildMember(id, guildId, memberId, lead);
-        GuildMember g2 = new GuildMember(id, guildId, memberId, lead);
+        GuildMember tm = new GuildMember(id, guildId, memberId, lead);
+        GuildMember tm2 = new GuildMember(id, guildId, memberId, lead);
 
-        assertEquals(g, g2);
+        assertEquals(tm, tm2);
 
-        g2.setId(null);
+        tm2.setId(null);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(tm, tm2);
 
-        g2.setId(g.getId());
+        tm2.setId(tm.getId());
 
-        assertEquals(g, g2);
+        assertEquals(tm, tm2);
 
-        g2.setLead(false);
+        tm2.setLead(false);
 
-        assertNotEquals(g, g2);
+        assertNotEquals(tm, tm2);
     }
 
     @Test
@@ -98,11 +98,11 @@ class GuildMemberTest {
         final UUID guildId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        GuildMember g = new GuildMember(id, guildId, memberId, lead);
+        GuildMember tm = new GuildMember(id, guildId, memberId, lead);
 
-        map.put(g, true);
+        map.put(tm, true);
 
-        assertTrue(map.get(g));
+        assertTrue(map.get(tm));
     }
 
     @Test
@@ -111,9 +111,9 @@ class GuildMemberTest {
         final UUID guildId = UUID.randomUUID();
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
-        GuildMember g = new GuildMember(id, guildId, memberId, lead);
+        GuildMember tm = new GuildMember(id, guildId, memberId, lead);
 
-        String toString = g.toString();
+        String toString = tm.toString();
         assertTrue(toString.contains(guildId.toString()));
         assertTrue(toString.contains(id.toString()));
         assertTrue(toString.contains(memberId.toString()));

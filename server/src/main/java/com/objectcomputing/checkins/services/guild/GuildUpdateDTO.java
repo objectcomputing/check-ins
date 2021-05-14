@@ -6,11 +6,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDFromString;
 
 @Introspected
-public class GuildCreateDTO {
+public class GuildUpdateDTO {
+    @NotNull
+    private UUID id;
+
     @NotBlank
     @Schema(required = true, description = "name of the guild")
     private String name;
@@ -22,26 +29,42 @@ public class GuildCreateDTO {
     @Schema(description = "members of this guild")
     private List<GuildMemberResponseDTO> guildMembers;
 
-    public GuildCreateDTO(String name, @Nullable String description) {
+    public GuildUpdateDTO(UUID id, String name, @Nullable String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public GuildCreateDTO() {
+    public GuildUpdateDTO(String id, String name, String description) {
+        this(nullSafeUUIDFromString(id), name, description);
+    }
+
+    public GuildUpdateDTO() {
+        id = UUID.randomUUID();
+    }
+
+    @Override
+    public String toString() {
+        return "GuildUpdateDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        com.objectcomputing.checkins.services.guild.GuildCreateDTO that = (com.objectcomputing.checkins.services.guild.GuildCreateDTO) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+        com.objectcomputing.checkins.services.guild.GuildUpdateDTO updateDTO = (com.objectcomputing.checkins.services.guild.GuildUpdateDTO) o;
+        return Objects.equals(id, updateDTO.id) &&
+                Objects.equals(name, updateDTO.name) &&
+                Objects.equals(description, updateDTO.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description);
+        return Objects.hash(id, name, description);
     }
 
     public List<GuildMemberResponseDTO> getGuildMembers() {
@@ -50,6 +73,14 @@ public class GuildCreateDTO {
 
     public void setGuildMembers(List<GuildMemberResponseDTO> guildMembers) {
         this.guildMembers = guildMembers;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
