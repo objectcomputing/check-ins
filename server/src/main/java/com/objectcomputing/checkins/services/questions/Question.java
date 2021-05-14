@@ -1,12 +1,11 @@
 package com.objectcomputing.checkins.services.questions;
 
-import com.sun.istack.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
-import io.micronaut.http.annotation.Body;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,6 +18,11 @@ import java.util.UUID;
 @Entity
 @Table(name ="questions")
 public class Question {
+
+    public Question(@NotBlank String text, @Nullable UUID categoryId) {
+        this.text = text;
+        this.categoryId = categoryId;
+    }
 
     public Question(@NotBlank String text) {
         this.text = text;
