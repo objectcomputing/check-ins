@@ -152,7 +152,12 @@ function Menu() {
           </Button>
           <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link style={linkStyle} to="/skills">
+              <Link style={linkStyle} to="/checkins-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText primary="CHECKINS" />
+                </ListItem>
+              </Link>
+              <Link style={linkStyle} to="/skills-reports">
                 <ListItem button className={classes.nested}>
                   <ListItemText primary="SKILLS" />
                 </ListItem>
