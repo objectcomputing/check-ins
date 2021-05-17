@@ -10,7 +10,7 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Container, Chip, Grid, Tooltip } from "@material-ui/core";
+import { Avatar, Chip, Grid, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
