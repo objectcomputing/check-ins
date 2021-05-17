@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.questions;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.QuestionCategoryFixture;
 import com.objectcomputing.checkins.services.fixture.QuestionFixture;
+import com.objectcomputing.checkins.services.question_category.QuestionCategory;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -16,16 +18,14 @@ import javax.inject.Inject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class QuestionControllerTest extends TestContainersSuite implements QuestionFixture {
+public class QuestionControllerTest extends TestContainersSuite implements QuestionFixture, QuestionCategoryFixture {
 
     @Inject
     @Client("/services/questions")
@@ -70,26 +70,28 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
         Question question = createADefaultQuestion();
         String partOfQuestion = question.getText().substring(0,3);
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?text=%s", encodeValue(String.valueOf(partOfQuestion)))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+                GET(String.format("/?text=%s", encodeValue(partOfQuestion))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
 
         assertNotNull(response.getContentLength());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertNotNull(response.getContentLength());
+        assertEquals(Set.of(question), response.getBody().get());
 
     }
 
     @Test
     public void testGETGetByIdHappyPath() {
 
-        Question question = createADefaultQuestion();
+        QuestionCategory questionCategory = createADefaultQuestionCategory();
+        Question question = createADefaultQuestionWithCategory(questionCategory.getId());
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/%s", question.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
 
         final HttpResponse<Question> response = client.toBlocking().exchange(request, Question.class);
 
+        assertEquals(question.getCategoryId(), response.body().getCategoryId());
         assertEquals(question.getText(), response.body().getText());
         assertEquals(HttpStatus.OK,response.getStatus());
 
@@ -204,6 +206,36 @@ public class QuestionControllerTest extends TestContainersSuite implements Quest
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
 
+    }
+
+    @Test
+    public void testGETFindQuestionWithCategory() {
+
+        QuestionCategory questionCategory = createADefaultQuestionCategory();
+        Question question = createADefaultQuestionWithCategory(questionCategory.getId());
+
+        UUID categoryId = question.getCategoryId();
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(categoryId)))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
+
+        assertNotNull(response.getContentLength());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(Set.of(question), response.getBody().get());
+
+    }
+
+    @Test
+    public void testGETFindQuestionWithCategoryNotFound() {
+
+        final HttpRequest<Object> request = HttpRequest.
+                GET(String.format("/?categoryId=%s", encodeValue(String.valueOf(UUID.randomUUID())))).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+
+        final HttpResponse<Set<Question>> response = client.toBlocking().exchange(request, Argument.setOf(Question.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assert(response.body().isEmpty());
     }
 
 }

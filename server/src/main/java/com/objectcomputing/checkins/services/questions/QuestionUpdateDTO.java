@@ -17,6 +17,9 @@ public class QuestionUpdateDTO {
     @Schema(description = "text of the question being asked", required = true)
     private String text;
 
+    @Schema(description = "id of the category of the question being asked")
+    private UUID categoryId;
+
     public String getText() {
         return text;
     }
@@ -32,4 +35,8 @@ public class QuestionUpdateDTO {
     public void setId(UUID id) {
         this.id = id;
     }
+
+    public UUID getCategoryId() { return categoryId; }
+
+    public void setCategoryId(UUID categoryId) { this.categoryId = categoryId; }
 }
