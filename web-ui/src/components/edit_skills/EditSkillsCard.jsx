@@ -29,7 +29,7 @@ import {
 
 import "./EditSkills.css";
 
-const EditSkillsCard = ({ skill, showAllSkills }) => {
+const EditSkillsCard = ({ skill }) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
 

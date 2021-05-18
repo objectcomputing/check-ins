@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import { selectPendingSkills } from "../../context/selectors";
 import {
   ADD_SKILL,
   DELETE_SKILL,
