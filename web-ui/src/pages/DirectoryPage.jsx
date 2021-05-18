@@ -4,7 +4,7 @@ import MemberSummaryCard from "../components/member-directory/MemberSummaryCard"
 import { createMember } from "../api/member";
 import { AppContext } from "../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../context/actions";
-import { selectNormalizedMembers } from "../context/selectors";
+import { selectNormalizedMembers, selectNormalizedMembersAdmin } from "../context/selectors";
 
 import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -39,10 +39,11 @@ const DirectoryPage = () => {
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const normalizedMembers = selectNormalizedMembers(state, searchText);
-
   const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+      userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+
+  const normalizedMembers = isAdmin ? selectNormalizedMembersAdmin(state, searchText) :
+        selectNormalizedMembers(state, searchText);
 
   const handleOpen = () => setOpen(true);
 
