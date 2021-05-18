@@ -252,6 +252,21 @@ export const selectNormalizedMembers = createSelector(
     })
 );
 
+export const selectNormalizedMembersAdmin = createSelector(
+  selectMemberProfiles,
+  (state, searchText) => searchText,
+  (memberProfiles, searchText) =>
+    memberProfiles?.filter((member) => {
+      let normName = member.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normName.toLowerCase().includes(normSearchText.toLowerCase());
+    }).sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
 export const selectNormalizedTeams = createSelector(
   selectTeams,
   (state, searchText) => searchText,
