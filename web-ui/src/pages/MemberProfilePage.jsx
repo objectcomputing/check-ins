@@ -10,7 +10,7 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip, Tooltip } from "@material-ui/core";
+import { Avatar, Chip, Grid, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -120,12 +120,12 @@ const MemberProfilePage = () => {
   }, [csrf, id, skills, selectedMember]);
 
   return (
-    <div>
+    <>
       {isCurrentUser ? (
         <ProfilePage />
       ) : (
-        <div className="profile-page">
-          <div className="left">
+        <Grid container className="profile-page">
+          <Grid item sm={3} className="left">
             {!selectedMember && (
               <div className="profile-details">
                 <h3>No member details found</h3>
@@ -143,8 +143,8 @@ const MemberProfilePage = () => {
                 <h3>Location: {selectedMember.location || ""}</h3>
               </div>
             )}
-          </div>
-          <div className="right">
+          </Grid>
+          <Grid item sm={3} className="right">
             <div className="profile-skills">
               <h2>Skills</h2>
               {!selectedMemberSkills.length > 0 && (
@@ -211,10 +211,10 @@ const MemberProfilePage = () => {
                   />
                 ))}
             </div>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       )}
-    </div>
+    </>
   );
 };
 
