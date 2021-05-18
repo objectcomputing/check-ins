@@ -1,65 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div>
+<div
+  className="MuiGrid-root profile-page MuiGrid-container"
+>
   <div
-    className="profile-page"
+    className="MuiGrid-root left MuiGrid-item MuiGrid-grid-sm-3"
   >
     <div
-      className="left"
+      className="profile-details"
     >
+      <h3>
+        No member details found
+      </h3>
+    </div>
+  </div>
+  <div
+    className="MuiGrid-root right MuiGrid-item MuiGrid-grid-sm-3"
+  >
+    <div
+      className="profile-skills"
+    >
+      <h2>
+        Skills
+      </h2>
       <div
-        className="profile-details"
+        className="profile-skills"
       >
         <h3>
-          No member details found
+          No member skills found
         </h3>
       </div>
     </div>
     <div
-      className="right"
+      className="profile-teams"
     >
-      <div
-        className="profile-skills"
-      >
-        <h2>
-          Skills
-        </h2>
-        <div
-          className="profile-skills"
-        >
-          <h3>
-            No member skills found
-          </h3>
-        </div>
-      </div>
+      <h2>
+        Teams
+      </h2>
       <div
         className="profile-teams"
       >
-        <h2>
-          Teams
-        </h2>
-        <div
-          className="profile-teams"
-        >
-          <h3>
-            No member teams found
-          </h3>
-        </div>
+        <h3>
+          No member teams found
+        </h3>
       </div>
+    </div>
+    <div
+      className="profile-guilds"
+    >
+      <h2>
+        Guilds
+      </h2>
       <div
         className="profile-guilds"
       >
-        <h2>
-          Guilds
-        </h2>
-        <div
-          className="profile-guilds"
-        >
-          <h3>
-            No member guilds found
-          </h3>
-        </div>
+        <h3>
+          No member guilds found
+        </h3>
       </div>
     </div>
   </div>

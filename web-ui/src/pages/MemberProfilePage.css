@@ -10,10 +10,6 @@
 
 @media (max-width: 750px) {
   .profile-page {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     margin-left: 1rem;
   }
   .left {

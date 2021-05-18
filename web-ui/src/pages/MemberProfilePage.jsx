@@ -120,12 +120,11 @@ const MemberProfilePage = () => {
   }, [csrf, id, skills, selectedMember]);
 
   return (
-    <Grid container>
+    <>
       {isCurrentUser ? (
         <ProfilePage />
       ) : (
         <Grid container className="profile-page">
-          {/*  <Grid item className="profile-page"> */}
           <Grid item sm={3} className="left">
             {!selectedMember && (
               <div className="profile-details">
@@ -215,7 +214,7 @@ const MemberProfilePage = () => {
           </Grid>
         </Grid>
       )}
-    </Grid>
+    </>
   );
 };
 
