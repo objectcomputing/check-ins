@@ -35,6 +35,7 @@ public class TeamServicesImpl implements TeamServices {
         this.memberProfileServices = memberProfileServices;
     }
 
+
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
         Team newTeamEntity = null;
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
@@ -91,16 +92,16 @@ public class TeamServicesImpl implements TeamServices {
 
                     Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
                     //add any new members
-                    teamDTO.getTeamMembers().stream().forEach((updated) -> {
-                        if(!existingTeamMembers.stream().filter((existing) -> existing.getMemberid() == updated.getMemberId()).findFirst().isPresent()) {
+                    teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
+                        if(!existingTeamMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberId()).findFirst().isPresent()) {
                             //TODO: This is a super busted hack because of the way that the front end is behaving. This needs addressing.
-                            MemberProfile existingMember = memberProfileServices.getById(updated.getId());
-                            updated.setId(null);
-                            updated.setMemberId(existingMember.getId());
-                            updated.setTeamId(newTeamEntity.getId());
-                            newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updated), );
+                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getId());
+                            updatedMember.setId(null);
+                            updatedMember.setMemberId(existingMember.getId());
+                            updatedMember.setTeamId(newTeamEntity.getId());
+                            newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember)), existingMember));
                         } else {
-                            teamMemberServices.update(fromMemberDTO(updated));
+                            teamMemberServices.update(fromMemberDTO(updatedMember));
                         }
                     });
 
