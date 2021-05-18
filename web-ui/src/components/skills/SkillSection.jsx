@@ -135,13 +135,15 @@ const SkillSection = ({ userId }) => {
     }
   }, [csrf, myMemberSkills]);
 
-  const addSkill = async () => {
+  const addSkill = async (name) => {
     if (!csrf) {
       return;
     }
     const inSkillsList = skills.find(
       (skill) =>
-        skill && skill.name.toUpperCase() === skillToAdd.name.toUpperCase()
+        skill &&
+        skill.name.toUpperCase() ===
+          (name ? name.toUpperCase() : skillToAdd.name.toUpperCase())
     );
     let curSkill = inSkillsList;
     if (!inSkillsList) {
@@ -175,6 +177,7 @@ const SkillSection = ({ userId }) => {
       data && dispatch({ type: ADD_MEMBER_SKILL, payload: data });
     }
     handleClose();
+    setSkillToAdd({ name: "", description: "" });
   };
 
   const removeSkill = async (id, csrf) => {
@@ -254,8 +257,16 @@ const SkillSection = ({ userId }) => {
       )}
       onChange={(event, value) => {
         if (value === null) return;
-        handleOpen();
-        setSkillToAdd({ name: value.name, description: "" });
+        const inSkillsList = skills.find(
+          (skill) =>
+            skill && skill.name.toUpperCase() === value.name.toUpperCase()
+        );
+        if (!inSkillsList) {
+          setSkillToAdd({ name: value.name, description: "" });
+          handleOpen();
+        } else {
+          addSkill(value.name);
+        }
       }}
       getOptionLabel={(option) => option.displayLabel || ""}
     />
@@ -291,7 +302,7 @@ const SkillSection = ({ userId }) => {
             <Button onClick={handleClose} color="secondary">
               Cancel
             </Button>
-            <Button onClick={addSkill} color="primary">
+            <Button onClick={() => addSkill(skillToAdd.name)} color="primary">
               Save Skill
             </Button>
           </div>
