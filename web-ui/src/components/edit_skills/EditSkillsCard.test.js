@@ -1,5 +1,5 @@
 import React from "react";
-import PendingSkillsCard from "./PendingSkillsCard";
+import EditSkillsCard from "./EditSkillsCard";
 import PendingSkillsPage from "../../pages/PendingSkillsPage";
 import { AppContextProvider } from "../../context/AppContext";
 import { rest } from "msw";
@@ -47,14 +47,14 @@ afterAll(() => server.close());
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <PendingSkillsCard pendingSkill={pendingSkill} />
+      <EditSkillsCard pendingSkill={pendingSkill} />
     </AppContextProvider>
   );
 });
 
 it("renders correctly", () => {
   {
-    /* PendingSkillsPage contains CombineSkillsModal */
+    /* PendingSkillsPage contains EditSkillsModal */
   }
   snapshot(
     <AppContextProvider value={initialState}>
