@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import { selectOrderedPdls } from "../../context/selectors";
+import { selectOrderedPdls, selectCurrentMembers } from "../../context/selectors";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -16,7 +16,7 @@ import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
-  const { memberProfiles } = state;
+  const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
   const onSupervisorChange = (event, newValue) => {
