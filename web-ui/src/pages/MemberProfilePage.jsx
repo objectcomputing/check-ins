@@ -149,7 +149,7 @@ const MemberProfilePage = () => {
               <h2>Skills</h2>
               {!selectedMemberSkills.length > 0 && (
                 <div className="profile-skills">
-                  <h3>No member skills found</h3>
+                  <h3>No skills found</h3>
                 </div>
               )}
               {selectedMemberSkills.length > 0 &&
@@ -181,7 +181,7 @@ const MemberProfilePage = () => {
               <h2>Teams</h2>
               {!teams.length > 0 && (
                 <div className="profile-teams">
-                  <h3>No member teams found</h3>
+                  <h3>No teams found</h3>
                 </div>
               )}
               {teams.length > 0 &&
@@ -198,7 +198,7 @@ const MemberProfilePage = () => {
               <h2>Guilds</h2>
               {!guilds.length > 0 && (
                 <div className="profile-guilds">
-                  <h3>No member guilds found</h3>
+                  <h3>No guilds found</h3>
                 </div>
               )}
               {guilds.length > 0 &&
