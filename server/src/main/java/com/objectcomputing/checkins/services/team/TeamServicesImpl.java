@@ -6,9 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
+import com.objectcomputing.checkins.services.team.member.*;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -44,16 +42,12 @@ public class TeamServicesImpl implements TeamServices {
                 throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 if (teamDTO.getTeamMembers() == null ||
-                        teamDTO.getTeamMembers().stream().noneMatch(TeamMemberResponseDTO::isLead)) {
+                        teamDTO.getTeamMembers().stream().noneMatch(TeamMemberCreateDTO::getLead)) {
                     throw new BadArgException("Team must include at least one team lead");
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
-                for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                    //TODO: This is a super busted hack because of the way that the front end is behaving. This needs addressing.
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getId());
-                    memberDTO.setId(null);
-                    memberDTO.setMemberId(existingMember.getId());
-                    memberDTO.setTeamId(newTeamEntity.getId());
+                for (TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
                     newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO)), existingMember));
                 }
             }
@@ -84,45 +78,29 @@ public class TeamServicesImpl implements TeamServices {
             if (teamDTO != null) {
                 if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
                     if (teamDTO.getTeamMembers() == null ||
-                            teamDTO.getTeamMembers().stream().noneMatch(TeamMemberResponseDTO::isLead)) {
+                            teamDTO.getTeamMembers().stream().noneMatch(TeamMemberUpdateDTO::getLead)) {
                         throw new BadArgException("Team must include at least one team lead");
                     }
 
                     Team newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
 
                     Set<TeamMember> existingTeamMembers = teamMemberServices.findByFields(teamDTO.getId(), null, null);
-                    //add any new members
+                    //add any new members & updates
                     teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
-                        if(!existingTeamMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberId()).findFirst().isPresent()) {
-                            //TODO: This is a super busted hack because of the way that the front end is behaving. This needs addressing.
-                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getId());
-                            updatedMember.setId(null);
-                            updatedMember.setMemberId(existingMember.getId());
-                            updatedMember.setTeamId(newTeamEntity.getId());
+                        if(!existingTeamMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberid()).findFirst().isPresent()) {
+                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberid());
                             newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember)), existingMember));
                         } else {
                             teamMemberServices.update(fromMemberDTO(updatedMember));
                         }
                     });
 
-                    //filter to only those that need removed, updating along the way...
-                    existingTeamMembers.stream().filter((existingMember) -> {
-                        Optional<TeamMemberResponseDTO> first = teamDTO.getTeamMembers().stream().findFirst();
-                        if(first.isPresent()) {
-
-                            return false;
+                    //delete any removed members
+                    existingTeamMembers.stream().forEach((existingMember) -> {
+                        if(!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberid() == existingMember.getMemberid()).findFirst().isPresent()) {
+                            teamMemberServices.delete(existingMember.getId());
                         }
-
-                        return true;
                     });
-
-
-                    for (TeamMemberResponseDTO memberDTO : teamDTO.getTeamMembers()) {
-                        MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
-                        TeamMember newTeamMember = fromMemberDTO(memberDTO);
-                        newTeamMember.setId(null);
-                        newMembers.add(fromMemberEntity(teamMemberServices.save(newTeamMember), existingMember));
-                    }
 
                     updated = fromEntity(newTeamEntity, newMembers);
                 } else {
@@ -168,8 +146,12 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(dto.getId(), dto.getName(), dto.getDescription());
     }
 
-    private TeamMember fromMemberDTO(TeamMemberResponseDTO memberDTO) {
-        return new TeamMember(memberDTO.getId(), memberDTO.getTeamId(), memberDTO.getMemberId(), memberDTO.isLead());
+    private TeamMember fromMemberDTO(TeamMemberCreateDTO memberDTO) {
+        return new TeamMember(memberDTO.getTeamid(), memberDTO.getMemberid(), memberDTO.getLead());
+    }
+
+    private TeamMember fromMemberDTO(TeamMemberUpdateDTO memberDTO) {
+        return new TeamMember(memberDTO.getTeamid(), memberDTO.getMemberid(), memberDTO.getLead());
     }
 
     private TeamResponseDTO fromEntity(Team entity) {

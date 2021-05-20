@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -36,7 +37,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setName("name");
         teamCreateDTO.setDescription("description");
-        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createADefaultMemberProfile(), true)));
+        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createDefaultTeam(), createADefaultMemberProfile(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
@@ -110,7 +111,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         teamCreateDTO.setDescription("test");
         teamCreateDTO.setName(teamEntity.getName());
         teamCreateDTO.setTeamMembers(new ArrayList<>());
-        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createADefaultMemberProfile(), true)));
+        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createAnotherDefaultTeam(), createADefaultMemberProfile(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -206,7 +207,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
-        TeamMemberResponseDTO newMember = createDefaultTeamMemberDto(teamEntity, memberProfile);
+        TeamMemberUpdateDTO newMember = updateDefaultTeamMemberDto(teamEntity, memberProfile, true);
         newMember.setLead(true);
         requestBody.setTeamMembers(Collections.singletonList(newMember));
 
@@ -228,7 +229,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamUpdateDTO requestBody = updateFromEntity(teamEntity);
-        TeamMemberResponseDTO newMember = createDefaultTeamMemberDto(teamEntity, memberProfile);
+        TeamMemberUpdateDTO newMember = updateDefaultTeamMemberDto(teamEntity, memberProfile, true);
         newMember.setLead(true);
         requestBody.setTeamMembers(Collections.singletonList(newMember));
 
