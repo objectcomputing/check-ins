@@ -28,7 +28,7 @@ exports[`renders correctly 1`] = `
         className="profile-skills"
       >
         <h3>
-          No member skills found
+          No skills found
         </h3>
       </div>
     </div>
@@ -42,7 +42,7 @@ exports[`renders correctly 1`] = `
         className="profile-teams"
       >
         <h3>
-          No member teams found
+          No teams found
         </h3>
       </div>
     </div>
@@ -56,7 +56,7 @@ exports[`renders correctly 1`] = `
         className="profile-guilds"
       >
         <h3>
-          No member guilds found
+          No guilds found
         </h3>
       </div>
     </div>
