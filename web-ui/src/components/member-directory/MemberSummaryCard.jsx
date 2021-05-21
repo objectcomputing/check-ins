@@ -111,10 +111,11 @@ const MemberSummaryCard = ({ member, index }) => {
               </Typography>
             }
             disableTypography
-            avatar={
+            avatar= {!terminationDate?
+              <Avatar className={"large"} src={getAvatarURL(workEmail)} /> :
               <Avatar className={"large"} >
-                src = {!terminationDate? (getAvatarURL(workEmail)) : <MoodBadIcon /> }
-              </Avatar>
+                 <MoodBadIcon />
+               </Avatar>
             }
           />
         </Link>
