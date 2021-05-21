@@ -49,6 +49,22 @@ export const selectOrderedSkills = createSelector(selectSkills, (skills) =>
   })
 );
 
+export const selectCurrentMembers = createSelector(
+  selectMemberProfiles,
+  (memberProfiles) =>
+    memberProfiles
+      ?.filter((profile) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return (
+          profile.terminationDate === null ||
+          profile.terminationDate === undefined ||
+          today <= new Date(profile.terminationDate)
+        );
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
 export const selectProfileMap = createSelector(
   selectMemberProfiles,
   (memberProfiles) => {
@@ -220,21 +236,6 @@ export const selectCheckinPDLS = createSelector(
       .forEach((checkin) => pdlSet.add(checkin.pdlId));
     return memberProfiles.filter((member) => pdlSet.has(member.id));
   }
-);
-export const selectCurrentMembers = createSelector(
-  selectMemberProfiles,
-  (memberProfiles) =>
-    memberProfiles
-      ?.filter((profile) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return (
-          profile.terminationDate === null ||
-          profile.terminationDate === undefined ||
-          today <= new Date(profile.terminationDate)
-        );
-      })
-      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedMembers = createSelector(
