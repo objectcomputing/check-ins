@@ -70,7 +70,8 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        }
+        else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 

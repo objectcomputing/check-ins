@@ -42,19 +42,20 @@ public class TeamServicesImpl implements TeamServices {
                 throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 if (teamDTO.getTeamMembers() == null ||
-                        teamDTO.getTeamMembers().stream().noneMatch(TeamMemberCreateDTO::getLead)) {
+                        teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMember::getLead)) {
                     throw new BadArgException("Team must include at least one team lead");
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
-                for (TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
+                for (TeamCreateDTO.TeamMember memberDTO : teamDTO.getTeamMembers()) {
                     MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
-                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO)), existingMember));
+                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
                 }
             }
         }
 
         return fromEntity(newTeamEntity, newMembers);
     }
+
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
         List<TeamMemberResponseDTO> teamMembers = teamMemberServices
@@ -146,8 +147,8 @@ public class TeamServicesImpl implements TeamServices {
         return new Team(dto.getId(), dto.getName(), dto.getDescription());
     }
 
-    private TeamMember fromMemberDTO(TeamMemberCreateDTO memberDTO) {
-        return new TeamMember(memberDTO.getTeamid(), memberDTO.getMemberid(), memberDTO.getLead());
+    private TeamMember fromMemberDTO(TeamCreateDTO.TeamMember memberDTO, UUID teamId) {
+        return new TeamMember(teamId, memberDTO.getMemberid(), memberDTO.getLead());
     }
 
     private TeamMember fromMemberDTO(TeamMemberUpdateDTO memberDTO) {

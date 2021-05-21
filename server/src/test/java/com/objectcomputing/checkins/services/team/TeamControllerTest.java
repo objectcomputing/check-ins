@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
-import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -37,7 +36,8 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamCreateDTO teamCreateDTO = new TeamCreateDTO();
         teamCreateDTO.setName("name");
         teamCreateDTO.setDescription("description");
-        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createDefaultTeam(), createADefaultMemberProfile(), true)));
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        teamCreateDTO.setTeamMembers(List.of(new TeamCreateDTO.TeamMember(memberProfile.getId(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
@@ -111,7 +111,8 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         teamCreateDTO.setDescription("test");
         teamCreateDTO.setName(teamEntity.getName());
         teamCreateDTO.setTeamMembers(new ArrayList<>());
-        teamCreateDTO.setTeamMembers(List.of(createDefaultTeamMemberDto(createAnotherDefaultTeam(), createADefaultMemberProfile(), true)));
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        teamCreateDTO.setTeamMembers(List.of(new TeamCreateDTO.TeamMember(memberProfile.getId(), true)));
 
         final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
