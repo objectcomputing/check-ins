@@ -66,15 +66,16 @@ export const selectCurrentMembers = createSelector(
 );
 
 export const selectProfileMap = createSelector(
-  selectMemberProfiles,
-  (memberProfiles) => {
-    if (memberProfiles && memberProfiles.length) {
-      memberProfiles = memberProfiles.reduce((mappedById, profile) => {
-        mappedById[profile.id] = profile;
+  selectCurrentMembers,
+  (currentMembers) => {
+    if (currentMembers && currentMembers.length) {
+      currentMembers = currentMembers.reduce((mappedById, member) => {
+        mappedById[member.id] = member;
+        console.log(mappedById);
         return mappedById;
       }, {});
     }
-    return memberProfiles;
+    return currentMembers;
   }
 );
 
@@ -108,7 +109,7 @@ export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
   (memberProfileMap, roles) =>
-    roles?.map((role) => memberProfileMap[role.memberid])
+    roles?.map((role) => (role.memberid in memberProfileMap)? memberProfileMap[role.memberid]: {})
 );
 
 export const selectOrderedPdls = createSelector(
