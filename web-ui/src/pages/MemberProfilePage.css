@@ -5,7 +5,16 @@
 .left {
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 100%;
+}
+
+@media (max-width: 750px) {
+  .profile-page {
+    margin-left: 1rem;
+  }
+  .left {
+    justify-content: flex-start;
+  }
 }
 
 .profile-details .avatar {
@@ -15,6 +24,7 @@
 
 .profile-page {
   display: flex;
+  justify-content: space-evenly;
   height: 100%;
   width: 100%;
 }
@@ -22,5 +32,5 @@
 .right {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
 }

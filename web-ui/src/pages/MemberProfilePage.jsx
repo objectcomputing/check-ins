@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -8,31 +10,20 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip } from "@material-ui/core";
+import { Avatar, Chip, Grid, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const { csrf, memberProfiles, skills, userProfile } = state;
-  const pathname =
-    (window &&
-      window.location &&
-      window.location.pathname &&
-      window.location.pathname.split("/")) ||
-    null;
-
-  const locationId = pathname[2] || null;
+  const { memberId } = useParams();
 
   const selectedMember = state.selectedMember
     ? state.selectedMember
-    : memberProfiles.length && locationId
-    ? memberProfiles.find((member) => member.id === locationId)
+    : memberProfiles.length && memberId
+    ? memberProfiles.find((member) => member.id === memberId)
     : null;
 
-  const id = selectedMember
-    ? selectedMember.id
-    : locationId
-    ? locationId
-    : null;
+  const id = selectedMember ? selectedMember.id : memberId ? memberId : null;
 
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -129,12 +120,12 @@ const MemberProfilePage = () => {
   }, [csrf, id, skills, selectedMember]);
 
   return (
-    <div>
+    <>
       {isCurrentUser ? (
         <ProfilePage />
       ) : (
-        <div className="profile-page">
-          <div className="left">
+        <Grid container className="profile-page">
+          <Grid item sm={3} className="left">
             {!selectedMember && (
               <div className="profile-details">
                 <h3>No member details found</h3>
@@ -152,30 +143,45 @@ const MemberProfilePage = () => {
                 <h3>Location: {selectedMember.location || ""}</h3>
               </div>
             )}
-          </div>
-          <div className="right">
+          </Grid>
+          <Grid item sm={3} className="right">
             <div className="profile-skills">
               <h2>Skills</h2>
               {!selectedMemberSkills.length > 0 && (
                 <div className="profile-skills">
-                  <h3>No member skills found</h3>
+                  <h3>No skills found</h3>
                 </div>
               )}
               {selectedMemberSkills.length > 0 &&
-                selectedMemberSkills.map((skill) => (
-                  <Chip
-                    className="chip"
-                    color="primary"
-                    key={skill.id}
-                    label={skill.name + " - " + skill.skilllevel}
-                  />
-                ))}
+                selectedMemberSkills.map((skill, index) =>
+                  skill.description ? (
+                    <Tooltip
+                      enterTouchDelay={0}
+                      placement="top-start"
+                      title={skill.description}
+                    >
+                      <Chip
+                        className="chip"
+                        color="primary"
+                        key={skill.id}
+                        label={skill.name + " - " + skill.skilllevel}
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Chip
+                      className="chip"
+                      color="primary"
+                      key={skill.id}
+                      label={skill.name + " - " + skill.skilllevel}
+                    />
+                  )
+                )}
             </div>
             <div className="profile-teams">
               <h2>Teams</h2>
               {!teams.length > 0 && (
                 <div className="profile-teams">
-                  <h3>No member teams found</h3>
+                  <h3>No teams found</h3>
                 </div>
               )}
               {teams.length > 0 &&
@@ -192,7 +198,7 @@ const MemberProfilePage = () => {
               <h2>Guilds</h2>
               {!guilds.length > 0 && (
                 <div className="profile-guilds">
-                  <h3>No member guilds found</h3>
+                  <h3>No guilds found</h3>
                 </div>
               )}
               {guilds.length > 0 &&
@@ -205,10 +211,10 @@ const MemberProfilePage = () => {
                   />
                 ))}
             </div>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       )}
-    </div>
+    </>
   );
 };
 

@@ -28,7 +28,13 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
       setTeam({
         ...editedTeam,
         teamMembers: [
-          { memberid: currentUser.id, name: currentUser.name, lead: true },
+          {
+            memberid: currentUser.id,
+            name: `${currentUser.firstName} ${currentUser.lastName}`,
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+            lead: true,
+          },
         ],
       });
     }
@@ -123,6 +129,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           id="teamLeadSelect"
           multiple
           options={teamMemberOptions}
+          required
           value={
             editedTeam.teamMembers
               ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
@@ -10,9 +10,13 @@ import {
   Avatar,
   Button,
   CssBaseline,
+  Collapse,
   Drawer,
   Hidden,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
   Toolbar,
 } from "@material-ui/core";
 
@@ -53,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+    textAlign: "center",
+  },
 }));
 
 function Menu() {
@@ -66,15 +74,16 @@ function Menu() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const anchorRef = React.useRef(null);
+  const [reportsOpen, setReportsOpen] = useState(false);
+  const anchorRef = useRef(null);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
+  const prevOpen = useRef(open);
+  useEffect(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
@@ -84,6 +93,14 @@ function Menu() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const toggleReports = () => {
+    setReportsOpen(!reportsOpen);
+  };
+
+  const closeSubMenus = () => {
+    setReportsOpen(false);
   };
 
   const linkStyle = { textDecoration: "none", color: "white" };
@@ -99,50 +116,66 @@ function Menu() {
         />
       </div>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/home">
           Home
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/checkins">
           Check-ins
         </Link>
       </Button>
       <br />
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/directory">
           Directory
         </Link>
       </Button>
       <br />
       {isAdmin && (
-        <Button size="large" style={{ width: "100%" }}>
+        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
           <Link style={linkStyle} to="/pending-skills">
             Pending Skills
           </Link>
         </Button>
       )}
       {isAdmin && (
-        <Button size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/skill-report">
-            Skill Report
-          </Link>
-        </Button>
+        <div>
+          <Button
+            onClick={toggleReports}
+            size="large"
+            style={{ color: "white", width: "100%" }}
+          >
+            Reports
+          </Button>
+          <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link style={linkStyle} to="/checkins-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText primary="CHECKINS" />
+                </ListItem>
+              </Link>
+              <Link style={linkStyle} to="/skills-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText primary="SKILLS" />
+                </ListItem>
+              </Link>
+            </List>
+          </Collapse>
+        </div>
       )}
-      <Button size="large" style={{ width: "100%" }}>
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
         </Link>
       </Button>
-      {/* {isAdmin && (
-        <Button>
-          <Link style={linkStyle} to="/admin">
-            Edit PDLs
-          </Link>
-        </Button>
-      )} */}
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/guilds">
+          Guilds
+        </Link>
+      </Button>
     </div>
   );
 
@@ -167,7 +200,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to="/home">
+          <Link style={{ textDecoration: "none" }} to="/profile">
             <Avatar
               src={getAvatarURL(workEmail)}
               style={{
