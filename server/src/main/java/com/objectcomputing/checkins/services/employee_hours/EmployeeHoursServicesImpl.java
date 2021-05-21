@@ -62,15 +62,16 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
 
     @Override
     public Set<EmployeeHours> findByFields(String employeeId) {
-//        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
         Set<EmployeeHours> employeeHours = new HashSet<>();
         employeehourRepo.findAll().forEach(employeeHours::add);
 
         if(employeeId !=null) {
+            validate((!isAdmin && currentUser!=null&& currentUser.getEmployeeId()!=employeeId),
+                       "You are not authorized to perform this operation");
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
-            //validate(true,"You are not authorized to perform this operation");
         } else {
             validate(!isAdmin, "You are not authorized to perform this operation");
         }
