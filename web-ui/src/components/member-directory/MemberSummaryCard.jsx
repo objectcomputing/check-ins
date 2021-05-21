@@ -12,6 +12,7 @@ import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
+import MoodBadIcon from "@material-ui/icons/MoodBad";
 
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
@@ -100,7 +101,7 @@ const MemberSummaryCard = ({ member, index }) => {
           <CardHeader
             className={classes.header}
             title={
-              <Typography variant="h5" component="h2" color={terminationDate == null? "primary" : "error"}>
+              <Typography variant="h5" component="h2" >
                 {name}
               </Typography>
             }
@@ -111,7 +112,9 @@ const MemberSummaryCard = ({ member, index }) => {
             }
             disableTypography
             avatar={
-              <Avatar className={"large"} src={getAvatarURL(workEmail)} />
+              <Avatar className={"large"} >
+                src = {!terminationDate? (getAvatarURL(workEmail)) : <MoodBadIcon /> }
+              </Avatar>
             }
           />
         </Link>
