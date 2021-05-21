@@ -12,7 +12,7 @@ import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
-import MoodBadIcon from "@material-ui/icons/MoodBad";
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
@@ -114,7 +114,7 @@ const MemberSummaryCard = ({ member, index }) => {
             avatar= {!terminationDate?
               <Avatar className={"large"} src={getAvatarURL(workEmail)} /> :
               <Avatar className={"large"} >
-                 <MoodBadIcon />
+                 <PriorityHighIcon />
                </Avatar>
             }
           />
