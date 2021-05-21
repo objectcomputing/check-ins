@@ -10,7 +10,7 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip, Tooltip } from "@material-ui/core";
+import { Avatar, Chip, Grid, Tooltip } from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -120,12 +120,12 @@ const MemberProfilePage = () => {
   }, [csrf, id, skills, selectedMember]);
 
   return (
-    <div>
+    <>
       {isCurrentUser ? (
         <ProfilePage />
       ) : (
-        <div className="profile-page">
-          <div className="left">
+        <Grid container className="profile-page">
+          <Grid item sm={3} className="left">
             {!selectedMember && (
               <div className="profile-details">
                 <h3>No member details found</h3>
@@ -143,13 +143,13 @@ const MemberProfilePage = () => {
                 <h3>Location: {selectedMember.location || ""}</h3>
               </div>
             )}
-          </div>
-          <div className="right">
+          </Grid>
+          <Grid item sm={3} className="right">
             <div className="profile-skills">
               <h2>Skills</h2>
               {!selectedMemberSkills.length > 0 && (
                 <div className="profile-skills">
-                  <h3>No member skills found</h3>
+                  <h3>No skills found</h3>
                 </div>
               )}
               {selectedMemberSkills.length > 0 &&
@@ -181,7 +181,7 @@ const MemberProfilePage = () => {
               <h2>Teams</h2>
               {!teams.length > 0 && (
                 <div className="profile-teams">
-                  <h3>No member teams found</h3>
+                  <h3>No teams found</h3>
                 </div>
               )}
               {teams.length > 0 &&
@@ -198,7 +198,7 @@ const MemberProfilePage = () => {
               <h2>Guilds</h2>
               {!guilds.length > 0 && (
                 <div className="profile-guilds">
-                  <h3>No member guilds found</h3>
+                  <h3>No guilds found</h3>
                 </div>
               )}
               {guilds.length > 0 &&
@@ -211,10 +211,10 @@ const MemberProfilePage = () => {
                   />
                 ))}
             </div>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       )}
-    </div>
+    </>
   );
 };
 

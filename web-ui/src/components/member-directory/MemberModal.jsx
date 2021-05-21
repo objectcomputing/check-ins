@@ -1,6 +1,10 @@
 import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
-import { selectOrderedPdls, selectCurrentMembers } from "../../context/selectors";
+import {
+  selectOrderedPdls,
+  selectOrderedMemberFirstName,
+  selectCurrentMembers,
+} from "../../context/selectors";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -19,6 +23,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
+  const sortedMembers = selectOrderedMemberFirstName(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
       ...editedMember,
@@ -151,11 +156,14 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           )}
         />
         <Autocomplete
-          options={["", ...memberProfiles]}
+          options={sortedMembers && ["", ...memberProfiles]}
           value={
-            memberProfiles.find(
-              (memberProfile) => memberProfile.id === editedMember.supervisorid
-            ) || ""
+            (sortedMembers &&
+              sortedMembers.find(
+                (memberProfile) =>
+                  memberProfile.id === editedMember.supervisorid
+              )) ||
+            ""
           }
           onChange={onSupervisorChange}
           getOptionLabel={(option) => option.name || ""}

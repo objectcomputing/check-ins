@@ -127,6 +127,12 @@ export const selectOrderedMemberProfiles = createSelector(
     mappedMemberProfiles.sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
+export const selectOrderedMemberFirstName = createSelector(
+  selectMemberProfiles,
+  (mappedMemberProfiles) =>
+    mappedMemberProfiles.sort((a, b) => a.firstName.localeCompare(b.firstName))
+);
+
 export const selectCheckinMap = createSelector(selectCheckins, (checkins) => {
   if (checkins && checkins.length) {
     checkins = checkins.reduce((mappedById, checkin) => {
