@@ -1,15 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import { debounce } from "lodash/function";
 import { AppContext } from "../context/AppContext";
 import { selectCurrentUser } from "../context/selectors";
-import { UPDATE_USER_BIO } from "../context/actions";
+import {
+  UPDATE_GUILD,
+  UPDATE_USER_BIO,
+  UPDATE_TOAST,
+} from "../context/actions";
+import { getGuildsForMember, updateGuild } from "../api/guild";
 import { updateMember } from "../api/member";
+import Profile from "../components/profile/Profile";
+import SkillSection from "../components/skills/SkillSection";
+
 import { Info } from "@material-ui/icons";
 import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";
+import GroupIcon from "@material-ui/icons/Group";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 import "./ProfilePage.css";
-import Profile from '../components/profile/Profile';
-import SkillSection from '../components/skills/SkillSection';
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -18,11 +27,24 @@ const storeMember = debounce(realStoreMember, 1500);
 const ProfilePage = () => {
   const { state, dispatch } = useContext(AppContext);
   const userProfile = selectCurrentUser(state);
-  const {csrf} = state;
 
+  const { csrf, guilds } = state;
   const { id, bioText, pdlId } = userProfile;
 
   const [bio, setBio] = useState();
+  const [myGuilds, setMyGuilds] = useState([]);
+
+  useEffect(() => {
+    async function getMyGuilds() {
+      let res = await getGuildsForMember(id, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      if (data) setMyGuilds(data);
+    }
+    if (csrf && id) {
+      getMyGuilds();
+    }
+  }, [csrf, id, guilds]);
 
   useEffect(() => {
     async function updateBio() {
@@ -44,8 +66,50 @@ const ProfilePage = () => {
     }
     const { value } = e.target;
     setBio(value);
-    storeMember({...userProfile, bioText: value}, csrf);
+    storeMember({ ...userProfile, bioText: value }, csrf);
     updateProfile(value);
+  };
+
+  const addOrDeleteGuildMember = async (newVal) => {
+    if (!csrf) {
+      return;
+    }
+    if (newVal.length > 3) {
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast:
+            "You must contact the guild leader in order to be added to more guilds",
+        },
+      });
+      return;
+    }
+    const index = newVal.length - 1;
+    const newId = newVal[index].id;
+    if (newVal.length > myGuilds.length) {
+      if (myGuilds.some((guild) => guild.id === newId)) return;
+      newVal.filter((guild) => !myGuilds.includes(guild.id));
+      newVal[index].guildMembers = [...newVal[index].guildMembers, userProfile];
+      let res = await updateGuild(newVal[index], csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      dispatch({ type: UPDATE_GUILD, payload: data });
+      setMyGuilds(newVal);
+    } else {
+      const guildToEdit = myGuilds.find((guild) =>
+        newVal.every((newGuild) => newGuild.id !== guild.id)
+      );
+      const guildMembers = guildToEdit.guildMembers.filter(
+        (member) => member.memberId !== userProfile.id
+      );
+      guildToEdit.guildMembers = guildMembers;
+      let res = await updateGuild(guildToEdit, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      dispatch({ type: UPDATE_GUILD, payload: data });
+      setMyGuilds(newVal);
+    }
   };
 
   return (
@@ -55,7 +119,8 @@ const ProfilePage = () => {
         <CardHeader
           avatar={<Info />}
           title="Bio"
-          titleTypographyProps={{variant: "h5", component: "h2"}} />
+          titleTypographyProps={{ variant: "h5", component: "h2" }}
+        />
         <CardContent>
           <TextField
             onChange={handleBioChange}
@@ -71,6 +136,36 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
+      <Card>
+        <CardHeader
+          avatar={<GroupIcon />}
+          title="Guilds"
+          titleTypographyProps={{ variant: "h5", component: "h2" }}
+        />
+        <CardContent>
+          <Autocomplete
+            id="guildsSelect"
+            getOptionLabel={(option) => option.name}
+            getOptionSelected={(option, value) =>
+              value ? value.id === option.id : false
+            }
+            multiple
+            onChange={(event, newVal) => {
+              addOrDeleteGuildMember(newVal);
+            }}
+            options={guilds}
+            required
+            value={myGuilds}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                placeholder="Join a guild..."
+              />
+            )}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
