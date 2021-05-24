@@ -159,7 +159,7 @@ const ProfilePage = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                className="fullWidth"
+                className="halfWidth"
                 placeholder="Join a guild..."
               />
             )}
