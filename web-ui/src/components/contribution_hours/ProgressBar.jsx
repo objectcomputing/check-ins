@@ -11,22 +11,15 @@ function LinearProgressWithLabel(props) {
       <Box width="100%" mr={1}>
         <LinearProgress variant="buffer" {...props} />
       </Box>
-      <Box borderRadius={16} minWidth={35}>
-        <Typography variant="body2" color="textSecondary">{`${Math.round(
-          props.value
-        )}%`}</Typography>
-      </Box>
     </Box>
   );
 }
 
-LinearProgressWithLabel.propTypes = {
+const propTypes = {
   /**
    * The value of the progress indicator for the determinate and buffer variants.
    * Value between 0 and 100.
    */
-  value: PropTypes.number.isRequired,
-  bufferValue: PropTypes.number.isRequired,
   billableHours: PropTypes.number,
   contributionHours: PropTypes.number.isRequired,
   targetHours: PropTypes.number.isRequired,
@@ -38,18 +31,32 @@ const useStyles = makeStyles({
   },
 });
 
-export default function LinearBuffer() {
+const LinearBuffer = ({
+  billableHours,
+  contributionHours = 0,
+  targetHours = 1850,
+}) => {
   const classes = useStyles();
-  const [billableHours] = React.useState(23);
-  const [contributionHours] = React.useState(95);
 
   return (
     <div className={classes.root}>
       <LinearProgressWithLabel
         variant={billableHours ? "buffer" : "determinate"}
-        value={billableHours ? billableHours : 50}
-        valueBuffer={billableHours ? contributionHours : null}
+        value={
+          billableHours
+            ? (billableHours / targetHours) * 100
+            : (contributionHours / targetHours) * 100
+        }
+        valueBuffer={
+          billableHours ? (contributionHours / targetHours) * 100 : null
+        }
       />
+      <Typography align="right" variant="body2" color="textSecondary">
+        {billableHours && <span>Billable Hours: {billableHours} - </span>}
+        Contribution Hours: {contributionHours} - Target Hours: {targetHours}
+      </Typography>
     </div>
   );
-}
+};
+LinearBuffer.propTypes = propTypes;
+export default LinearBuffer;

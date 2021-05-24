@@ -10,7 +10,6 @@ import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";
 import "./ProfilePage.css";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
-import ProgressBar from "../components/contribution_hours/ProgressBar";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
