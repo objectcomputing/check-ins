@@ -39,7 +39,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         teamCreateDTO.setTeamMembers(List.of(new TeamCreateDTO.TeamMember(memberProfile.getId(), true)));
 
-        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<TeamCreateDTO> request = HttpRequest.POST("", teamCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
 
         TeamResponseDTO teamEntity = response.body();
