@@ -532,11 +532,23 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         final HttpResponse<List <MemberProfileResponseDTO >> response = client
                 .toBlocking()
-                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(1, response.body().size());
         assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDateReturnsNothingIfNotAdmin() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(0, response.body().size());
     }
 
 }

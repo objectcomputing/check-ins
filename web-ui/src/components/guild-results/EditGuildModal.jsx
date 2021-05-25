@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 
 import { AppContext } from "../../context/AppContext";
 import {
-  selectMemberProfiles,
   selectCurrentUser,
+  selectCurrentMembers,
 } from "../../context/selectors";
 
 import { Button } from "@material-ui/core";
@@ -14,10 +14,10 @@ import "./EditGuildModal.css";
 
 const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const memberProfiles = selectMemberProfiles(state);
   const currentUser = selectCurrentUser(state);
   const [editedGuild, setGuild] = useState(guild);
   const [guildMemberOptions, setGuildMemberOptions] = useState([]);
+  const currentMembers = selectCurrentMembers(state);
 
   useEffect(() => {
     if (
@@ -35,14 +35,14 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   }, [editedGuild, currentUser]);
 
   useEffect(() => {
-    if (!editedGuild || !editedGuild.guildMembers || !memberProfiles) return;
+    if (!editedGuild || !editedGuild.guildMembers || !currentMembers) return;
     let guildMemberNames = editedGuild.guildMembers.map(
       (guildMember) => guildMember.name
     );
     setGuildMemberOptions(
-      memberProfiles.filter((member) => !guildMemberNames.includes(member.name))
+      currentMembers.filter((member) => !guildMemberNames.includes(member.name))
     );
-  }, [memberProfiles, editedGuild]);
+  }, [currentMembers, editedGuild]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =

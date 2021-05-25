@@ -61,7 +61,7 @@ const initialState = {
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
     index: 0,
-    memberProfiles: [{id:123, name:"Guild Leader"}, {id:124, name: "Other Leader"}, {id:125, name:"Guild Member"}, {id:126, name: "Other Member"}]
+    memberProfiles: [{id:123, name:"Guild Leader", lastName:"Leader"}, {id:124, name: "Other Leader", lastName:"OLeader"}, {id:125, name:"Guild Member", lastName:"Member"}, {id:126, name: "Other Member", lastName:"OMember"}]
   }
 }
 
