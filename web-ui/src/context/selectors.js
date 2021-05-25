@@ -71,7 +71,6 @@ export const selectProfileMap = createSelector(
     if (currentMembers && currentMembers.length) {
       currentMembers = currentMembers.reduce((mappedById, member) => {
         mappedById[member.id] = member;
-        console.log(mappedById);
         return mappedById;
       }, {});
     }
