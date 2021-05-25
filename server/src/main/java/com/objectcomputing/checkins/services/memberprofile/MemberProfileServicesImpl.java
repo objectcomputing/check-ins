@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -66,6 +67,12 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable Boolean terminated) {
         HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
+        if (!currentUserServices.isAdmin()) {
+            return memberProfiles.stream()
+                    .filter(member -> member.getTerminationDate() == null || member.getTerminationDate().isAfter(LocalDate.now()))
+                    .collect(Collectors.toSet());
+        }
+
         return memberProfiles;
     }
 

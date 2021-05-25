@@ -1,6 +1,6 @@
 import React from "react";
-import PendingSkillsCard from "./PendingSkillsCard";
-import PendingSkillsPage from "../../pages/PendingSkillsPage";
+import EditSkillsCard from "./EditSkillsCard";
+import EditSkillsPage from "../../pages/EditSkillsPage";
 import { AppContextProvider } from "../../context/AppContext";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
@@ -26,6 +26,7 @@ const pendingSkill = {
   id: "1134511f3e-7ab7-4edf-86f5-ab0b0a0d2ca9",
   name: "Le test skill",
   pending: false,
+  description: "le description",
 };
 
 let open = true;
@@ -47,18 +48,15 @@ afterAll(() => server.close());
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider value={initialState}>
-      <PendingSkillsCard pendingSkill={pendingSkill} />
+      <EditSkillsCard skill={pendingSkill} />
     </AppContextProvider>
   );
 });
 
 it("renders correctly", () => {
-  {
-    /* PendingSkillsPage contains CombineSkillsModal */
-  }
   snapshot(
     <AppContextProvider value={initialState}>
-      <PendingSkillsPage />
+      <EditSkillsPage />
     </AppContextProvider>
   );
 });

@@ -26,7 +26,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
     default MemberProfile createAnUnrelatedUser() {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
                 null, "Comedic Relief", null, "New York, New York",
-                "nobody@objectcomputing.com", "mr-bill-employee",
+                "nobody@objectcomputing.com", "mr-bill-employee-unrelated",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null));
     }
@@ -42,7 +42,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
     default MemberProfile createAPastTerminatedMemberProfile() {
         return getMemberProfileRepository().save(new MemberProfile("past terminated", null, "user",
                 null, "Bully Relief PDL", null, "New York, New York",
-                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
+                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl-past-terminated",
                 LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
                 null, LocalDate.now().minusDays(7)));
     }
@@ -50,7 +50,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
     default MemberProfile createAFutureTerminatedMemberProfile() {
         return getMemberProfileRepository().save(new MemberProfile("past terminated", null, "user",
                 null, "Bully Relief PDL", null, "New York, New York",
-                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
+                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl-future terminated",
                 LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
                 null, LocalDate.now().plusDays(7)));
 

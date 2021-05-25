@@ -128,19 +128,24 @@ function Menu() {
         </Link>
       </Button>
       <br />
+      {isAdmin && (
+        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/edit-skills">
+            Edit Skills
+          </Link>
+        </Button>
+      )}
       <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/directory">
           Directory
         </Link>
       </Button>
+      <Button size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/guilds">
+          Guilds
+        </Link>
+      </Button>
       <br />
-      {isAdmin && (
-        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/pending-skills">
-            Pending Skills
-          </Link>
-        </Button>
-      )}
       {isAdmin && (
         <div>
           <Button
@@ -169,11 +174,6 @@ function Menu() {
       <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
         <Link style={linkStyle} to="/teams">
           Teams
-        </Link>
-      </Button>
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/guilds">
-          Guilds
         </Link>
       </Button>
     </div>

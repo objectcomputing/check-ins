@@ -49,16 +49,32 @@ export const selectOrderedSkills = createSelector(selectSkills, (skills) =>
   })
 );
 
-export const selectProfileMap = createSelector(
+export const selectCurrentMembers = createSelector(
   selectMemberProfiles,
-  (memberProfiles) => {
-    if (memberProfiles && memberProfiles.length) {
-      memberProfiles = memberProfiles.reduce((mappedById, profile) => {
-        mappedById[profile.id] = profile;
+  (memberProfiles) =>
+    memberProfiles
+      ?.filter((profile) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return (
+          profile.terminationDate === null ||
+          profile.terminationDate === undefined ||
+          today <= new Date(profile.terminationDate)
+        );
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
+);
+
+export const selectProfileMap = createSelector(
+  selectCurrentMembers,
+  (currentMembers) => {
+    if (currentMembers && currentMembers.length) {
+      currentMembers = currentMembers.reduce((mappedById, member) => {
+        mappedById[member.id] = member;
         return mappedById;
       }, {});
     }
-    return memberProfiles;
+    return currentMembers;
   }
 );
 
@@ -92,7 +108,7 @@ export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
   (memberProfileMap, roles) =>
-    roles?.map((role) => memberProfileMap[role.memberid])
+    roles?.map((role) => (role.memberid in memberProfileMap)? memberProfileMap[role.memberid]: {})
 );
 
 export const selectOrderedPdls = createSelector(
@@ -227,21 +243,6 @@ export const selectCheckinPDLS = createSelector(
     return memberProfiles.filter((member) => pdlSet.has(member.id));
   }
 );
-export const selectCurrentMembers = createSelector(
-  selectMemberProfiles,
-  (memberProfiles) =>
-    memberProfiles
-      ?.filter((profile) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return (
-          profile.terminationDate === null ||
-          profile.terminationDate === undefined ||
-          today <= new Date(profile.terminationDate)
-        );
-      })
-      .sort((a, b) => a.lastName.localeCompare(b.lastName))
-);
 
 export const selectNormalizedMembers = createSelector(
   selectCurrentMembers,
@@ -256,6 +257,21 @@ export const selectNormalizedMembers = createSelector(
         .replace(/[\u0300-\u036f]/g, "");
       return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
+);
+
+export const selectNormalizedMembersAdmin = createSelector(
+  selectMemberProfiles,
+  (state, searchText) => searchText,
+  (memberProfiles, searchText) =>
+    memberProfiles?.filter((member) => {
+      let normName = member.name
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      let normSearchText = searchText
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normName.toLowerCase().includes(normSearchText.toLowerCase());
+    }).sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedTeams = createSelector(

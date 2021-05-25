@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { deleteMemberSkill, getSkillMembers, getMemberSkills } from "../../api/memberskill";
+import {
+  deleteMemberSkill,
+  getSkillMembers,
+  getMemberSkills,
+} from "../../api/memberskill";
 import { removeSkill, updateSkill } from "../../api/skill";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
@@ -23,21 +27,21 @@ import {
   TextField,
 } from "@material-ui/core";
 
-import "./PendingSkills.css";
+import "./EditSkills.css";
 
-const PendingSkillsCard = ({ pendingSkill }) => {
+const EditSkillsCard = ({ skill }) => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf } = state;
 
   const [members, setMembers] = useState([]);
 
   const [open, setOpen] = useState(false);
-  const [editedSkill, setEditedSkill] = useState(pendingSkill);
+  const [editedSkill, setEditedSkill] = useState(skill);
   const { description, id, name } = editedSkill;
 
   const handleOpen = () => {
     setOpen(true);
-    setEditedSkill(pendingSkill);
+    setEditedSkill(skill);
   };
   const handleClose = () => {
     setOpen(false);
@@ -99,9 +103,11 @@ const PendingSkillsCard = ({ pendingSkill }) => {
       }
       await removeSkill(id, csrf);
       dispatch({ type: DELETE_SKILL, payload: id });
-    const result = await getMemberSkills(csrf);
-    const memberSkills =
-      result && result.payload && result.payload.data ? result.payload.data : null;
+      const result = await getMemberSkills(csrf);
+      const memberSkills =
+        result && result.payload && result.payload.data
+          ? result.payload.data
+          : null;
       if (memberSkills) {
         dispatch({ type: UPDATE_MEMBER_SKILLS, payload: memberSkills });
       }
@@ -131,8 +137,8 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   };
 
   const submittedBy = (members) => {
-  const [first, second, ...rest] = members;
-  const firstProfile = selectProfileMap(state)[first];
+    const [first, second, ...rest] = members;
+    const firstProfile = selectProfileMap(state)[first];
     if (second) {
       const secondProfile = selectProfileMap(state)[second];
       return (
@@ -156,10 +162,12 @@ const PendingSkillsCard = ({ pendingSkill }) => {
         <div>{members && submittedBy(members)}</div>
       </CardContent>
       <CardActions>
-        <Button onClick={acceptSkill}>Accept</Button>
+        {skill.pending && <Button onClick={acceptSkill}>Accept</Button>}
         <Button onClick={handleOpen}>Edit</Button>
         <Button onClick={deleteSkill}>Delete</Button>
-        <Button onClick={setExtraneous}>Mark Extraneous</Button>
+        {skill.pending && (
+          <Button onClick={setExtraneous}>Mark Extraneous</Button>
+        )}
         <Modal open={open} onClose={handleClose}>
           <div className="pending-skills-modal">
             <TextField
@@ -193,4 +201,4 @@ const PendingSkillsCard = ({ pendingSkill }) => {
   );
 };
 
-export default PendingSkillsCard;
+export default EditSkillsCard;

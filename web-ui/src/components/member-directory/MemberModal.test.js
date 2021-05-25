@@ -18,10 +18,12 @@ const initialState = {
       {
         id: "0987654321",
         name: "TestName",
+        lastName: "Name",
       },
       {
         id: "9876543210",
         name: "TestName2",
+        lastName: "Name2",
       },
     ],
   },

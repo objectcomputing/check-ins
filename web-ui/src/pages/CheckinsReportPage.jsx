@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
-import CheckinReport from "../components/Reports/CheckinReport";
+import CheckinReport from "../components/reports/CheckinReport";
 import {
   selectCheckinPDLS,
   selectTeamMembersWithCheckinPDL,

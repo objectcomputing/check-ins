@@ -3,6 +3,7 @@ import { AppContext } from "../../context/AppContext";
 import {
   selectOrderedPdls,
   selectOrderedMemberFirstName,
+  selectCurrentMembers,
 } from "../../context/selectors";
 
 import { Modal, TextField } from "@material-ui/core";
@@ -19,7 +20,7 @@ import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
-  const { memberProfiles } = state;
+  const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
   const sortedPdls = selectOrderedPdls(state);
   const sortedMembers = selectOrderedMemberFirstName(state);

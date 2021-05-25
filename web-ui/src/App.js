@@ -11,7 +11,7 @@ import CheckinsPage from "./pages/CheckinsPage";
 import CheckinsReportPage from "./pages/CheckinsReportPage";
 import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
-import PendingSkillsPage from "./pages/PendingSkillsPage";
+import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
@@ -48,7 +48,7 @@ function App() {
                 </Route>
                 <Route path="/guilds">
                   <Header title="Guilds">
-                     <GroupIcon fontSize="large" />
+                    <GroupIcon fontSize="large" />
                   </Header>
                   <GuildsPage />
                 </Route>
@@ -68,9 +68,9 @@ function App() {
                   <Header title="Member Profile" />
                   <MemberProfilePage />
                 </Route>
-                <Route path="/pending-skills">
-                  <Header title="Pending Skills" />
-                  <PendingSkillsPage />
+                <Route path="/edit-skills">
+                  <Header title="Edit Skills" />
+                  <EditSkillsPage />
                 </Route>
                 <Route path="/checkins-reports">
                   <Header title="Checkin Reports" />
