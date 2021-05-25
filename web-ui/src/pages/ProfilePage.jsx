@@ -8,8 +8,8 @@ import { Info } from "@material-ui/icons";
 import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";
 
 import "./ProfilePage.css";
-import Profile from '../components/profile/Profile';
-import SkillSection from '../components/skills/SkillSection';
+import Profile from "../components/profile/Profile";
+import SkillSection from "../components/skills/SkillSection";
 
 const realStoreMember = (member, csrf) => updateMember(member, csrf);
 
@@ -18,7 +18,7 @@ const storeMember = debounce(realStoreMember, 1500);
 const ProfilePage = () => {
   const { state, dispatch } = useContext(AppContext);
   const userProfile = selectCurrentUser(state);
-  const {csrf} = state;
+  const { csrf } = state;
 
   const { id, bioText, pdlId } = userProfile;
 
@@ -44,7 +44,7 @@ const ProfilePage = () => {
     }
     const { value } = e.target;
     setBio(value);
-    storeMember({...userProfile, bioText: value}, csrf);
+    storeMember({ ...userProfile, bioText: value }, csrf);
     updateProfile(value);
   };
 
@@ -55,7 +55,8 @@ const ProfilePage = () => {
         <CardHeader
           avatar={<Info />}
           title="Bio"
-          titleTypographyProps={{variant: "h5", component: "h2"}} />
+          titleTypographyProps={{ variant: "h5", component: "h2" }}
+        />
         <CardContent>
           <TextField
             onChange={handleBioChange}
