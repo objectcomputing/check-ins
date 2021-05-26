@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,4 +16,6 @@ public interface MemberProfileServices {
     Boolean deleteProfile(UUID id);
 
     MemberProfile findByName(@NotNull String firstName, @NotNull String lastName);
+
+    List<MemberProfile> findAll();
 }
