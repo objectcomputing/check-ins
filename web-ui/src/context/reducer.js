@@ -17,6 +17,7 @@ import {
   UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
+  UPDATE_GUILD,
   UPDATE_GUILDS,
   UPDATE_GUILD_MEMBERS,
   UPDATE_TEAMS,
@@ -147,20 +148,25 @@ export const reducer = (state, action) => {
       state.roles = action.payload;
       break;
     case ADD_GUILD:
-        state.guilds = [...state.guilds, action.payload];
-        //sort by name
-        state.guilds.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+      state.guilds = [...state.guilds, action.payload];
+      //sort by name
+      state.guilds.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+    case UPDATE_GUILD:
+      const { id } = action.payload;
+      const idx = state.guilds.findIndex((guild) => guild.id === id);
+      state.guilds[idx] = action.payload;
+      break;
     case UPDATE_GUILDS:
-        state.guilds = action.payload;
-        //sort by name
-        state.guilds.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+      state.guilds = action.payload;
+      //sort by name
+      state.guilds.sort((a, b) => a.name.localeCompare(b.name));
+      break;
     case UPDATE_GUILD_MEMBERS:
-        state.guildMembers
+      state.guildMembers
         ? (state.guildMembers = [...state.guildMembers, action.payload])
         : (state.guildMembers = action.payload);
-        break;
+      break;
     case SET_SELECTED_MEMBER:
       state.selectedMember = action.payload;
       break;

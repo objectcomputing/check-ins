@@ -4,6 +4,7 @@ import { getCheckins, getAllCheckinsForAdmin } from "./thunks";
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
+  UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_SKILLS,
@@ -12,6 +13,7 @@ import {
 import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
+import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
 import axios from "axios";
 
@@ -41,6 +43,25 @@ const AppContextProvider = (props) => {
       }
     };
     getCsrf();
+  }, [csrf]);
+
+  useEffect(() => {
+    async function getGuilds() {
+      let res = await getAllGuilds(csrf);
+      let data =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_GUILDS, payload: data });
+      }
+    }
+    if (csrf) {
+      getGuilds();
+    }
   }, [csrf]);
 
   useEffect(() => {
