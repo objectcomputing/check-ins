@@ -50,8 +50,13 @@ const CheckinsReportPage = () => {
     });
     extantPdls = [...new Set(extantPdls)];
     newValue = [...new Set(newValue)];
-    setFilteredPdls([...newValue]);
-    setSelectedPdls(newValue);
+    if (newValue.length > 0) {
+      setSelectedPdls(newValue);
+      setFilteredPdls([...newValue]);
+    } else {
+      setSelectedPdls([]);
+      setFilteredPdls(pdls);
+    }
   };
 
   const handleClosed = () => {
