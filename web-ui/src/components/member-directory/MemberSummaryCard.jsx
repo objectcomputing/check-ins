@@ -12,6 +12,7 @@ import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
@@ -46,7 +47,7 @@ const MemberSummaryCard = ({ member, index }) => {
   const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
-  const { location, name, workEmail, title, supervisorid, pdlId } = member;
+  const { location, name, workEmail, title, supervisorid, pdlId, terminationDate } = member;
   const memberId = member?.id;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
@@ -100,18 +101,21 @@ const MemberSummaryCard = ({ member, index }) => {
           <CardHeader
             className={classes.header}
             title={
-              <Typography variant="h5" component="h2">
+              <Typography variant="h5" component="h2" >
                 {name}
               </Typography>
             }
             subheader={
-              <Typography color="textSecondary" component="h3">
+              <Typography color="textSecondary" component="h3" >
                 {title}
               </Typography>
             }
             disableTypography
-            avatar={
-              <Avatar className={"large"} src={getAvatarURL(workEmail)} />
+            avatar= {!terminationDate?
+              <Avatar className={"large"} src={getAvatarURL(workEmail)} /> :
+              <Avatar className={"large"} >
+                 <PriorityHighIcon />
+               </Avatar>
             }
           />
         </Link>

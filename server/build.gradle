@@ -46,6 +46,8 @@ dependencies {
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
 
     compile "commons-io:commons-io:2.8.0"
+    compile 'org.apache.commons:commons-csv:1.8'
+
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "io.micronaut:micronaut-inject"

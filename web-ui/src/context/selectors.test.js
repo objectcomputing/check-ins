@@ -109,15 +109,22 @@ describe("Selectors", () => {
         startDate: [2012, 9, 29],
       },
     ];
-    const testState = {
-      memberProfiles: {
+
+    const matchingProfiles = {
         [testMemberProfiles[0].id]: testMemberProfiles[0],
         [testMemberProfiles[1].id]: testMemberProfiles[1],
         [testMemberProfiles[2].id]: testMemberProfiles[2],
-      },
     };
 
-    expect(selectProfileMap(testState)).toEqual(testState.memberProfiles);
+    const testState = {
+      memberProfiles: [
+        testMemberProfiles[0],
+        testMemberProfiles[1],
+        testMemberProfiles[2],
+      ],
+    };
+
+    expect(selectProfileMap(testState)).toEqual(matchingProfiles);
   });
 
   it("selectMemberRoles should return an array of all member roles", () => {
@@ -300,11 +307,47 @@ describe("Selectors", () => {
       matchingRoles[1],
     ];
     const testState = {
-      memberProfiles: {
-        [testMemberProfiles[0].id]: testMemberProfiles[0],
-        [testMemberProfiles[1].id]: testMemberProfiles[1],
-        [testMemberProfiles[2].id]: testMemberProfiles[2],
-      },
+      memberProfiles: [
+        {
+          id: 1,
+          bioText: "foo",
+          employeeId: 11,
+          name: "A Person",
+          firstName: "A",
+          lastName: "PersonA",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
+        {
+          id: 2,
+          bioText: "foo",
+          employeeId: 12,
+          name: "B Person",
+          firstName: "B",
+          lastName: "PersonB",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
+        {
+          id: 3,
+          bioText: "foo",
+          employeeId: 13,
+          name: "C Person",
+          firstName: "C",
+          lastName: "PersonC",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
+      ],
       roles: [
         {
           id: "11",
@@ -416,11 +459,47 @@ describe("Selectors", () => {
       },
     ];
     const testState = {
-      memberProfiles: {
-        [testMemberProfiles[0].id]: testMemberProfiles[0],
-        [testMemberProfiles[1].id]: testMemberProfiles[1],
-        [testMemberProfiles[2].id]: testMemberProfiles[2],
-      },
+      memberProfiles: [
+        {
+            id: 1,
+            bioText: "foo",
+            employeeId: 11,
+            name: "A PersonA",
+            firstName: "A",
+            lastName: "PersonA",
+            location: "St Louis",
+            title: "engineer",
+            workEmail: "employee@sample.com",
+            pdlId: 9,
+            startDate: [2012, 9, 29],
+          },
+          {
+            id: 2,
+            bioText: "foo",
+            employeeId: 12,
+            name: "C PersonC",
+            firstName: "C",
+            lastName: "PersonC",
+            location: "St Louis",
+            title: "engineer",
+            workEmail: "employee@sample.com",
+            pdlId: 9,
+            startDate: [2012, 9, 29],
+          },
+          {
+            id: 3,
+            bioText: "foo",
+            employeeId: 13,
+            name: "B PersonB",
+            firstName: "B",
+            lastName: "PersonB",
+            location: "St Louis",
+            title: "engineer",
+            workEmail: "employee@sample.com",
+            pdlId: 9,
+            startDate: [2012, 9, 29],
+          },
+      ],
       roles: [
         {
           id: "11",

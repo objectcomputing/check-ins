@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 
 import { AppContext } from "../../context/AppContext";
 import {
-  selectMemberProfiles,
   selectCurrentUser,
+  selectCurrentMembers,
 } from "../../context/selectors";
 
 import { Button } from "@material-ui/core";
@@ -14,7 +14,7 @@ import "./EditTeamModal.css";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const memberProfiles = selectMemberProfiles(state);
+  const currentMembers = selectCurrentMembers(state);
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
   const [teamMemberOptions, setTeamMemberOptions] = useState([]);
@@ -41,14 +41,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   }, [editedTeam, currentUser]);
 
   useEffect(() => {
-    if (!editedTeam || !editedTeam.teamMembers || !memberProfiles) return;
+    if (!editedTeam || !editedTeam.teamMembers || !currentMembers) return;
     let teamMemberNames = editedTeam.teamMembers.map(
       (teamMember) => teamMember.name
     );
     setTeamMemberOptions(
-      memberProfiles.filter((member) => !teamMemberNames.includes(member.name))
+      currentMembers.filter((member) => !teamMemberNames.includes(member.name))
     );
-  }, [memberProfiles, editedTeam]);
+  }, [currentMembers, editedTeam]);
 
   const onLeadsChange = (event, newValue) => {
     let extantMembers =
