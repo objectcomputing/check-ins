@@ -73,7 +73,7 @@ const SkillSlider = ({
           onClose={() => setTooltipIsOpen(false)}
           enterTouchDelay={0}
           placement="top-start"
-          title={description}
+          title={description || ""}
         >
           <div className="skill-slider">{name}</div>
         </Tooltip>
