@@ -3,8 +3,10 @@
 }
 
 .left {
+  align-items: center;
   display: flex;
   justify-content: center;
+  height: 100%;
   width: 100%;
 }
 
@@ -17,9 +19,24 @@
   }
 }
 
+.member-profile-card .MuiCardHeader-root .MuiCardHeader-avatar .large {
+  height: 8rem;
+  width: 8rem;
+}
+
+.MuiCard-root .member-profile-card {
+  overflow: unset !important;
+}
+
+.profile-details {
+  display: flex;
+  align-items: center;
+}
+
 .profile-details .avatar {
-  height: 5rem;
-  width: 5rem;
+  height: 10rem;
+  width: 10rem;
+  margin-right: 1rem;
 }
 
 .profile-page {
@@ -27,6 +44,7 @@
   justify-content: space-evenly;
   height: 100%;
   width: 100%;
+  margin-top: 5rem;
 }
 
 .right {
