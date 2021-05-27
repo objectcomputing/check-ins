@@ -69,7 +69,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
         employeehourRepo.findAll().forEach(employeeHours::add);
 
         if(employeeId !=null) {
-            validate((!isAdmin && currentUser!=null&& currentUser.getEmployeeId()!=employeeId),
+            validate((!isAdmin && currentUser!=null&& !currentUser.getEmployeeId().equals(employeeId)),
                        "You are not authorized to perform this operation");
             employeeHours.retainAll(employeehourRepo.findByEmployeeId(employeeId));
         } else {
