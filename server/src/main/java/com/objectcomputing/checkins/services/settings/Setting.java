@@ -52,6 +52,12 @@ public class Setting {
         this.userId = userId;
         this.value = value;
     }
+    
+    public Setting(String name, UUID userId, String value) {
+        this.name = name;
+        this.userId = userId;
+        this.value = value;
+    }
 
     public UUID getId() {
         return this.id;

@@ -10,7 +10,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Introspected
-public class SettingsResponseDTO {
+public class SettingsUpdateDTO{
 
     @NotNull
     @Schema(required = true, description = "id of the setting")
