@@ -4,7 +4,10 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.memberprofile.memberphoto.MemberPhotoServiceImpl;
 import io.micronaut.http.multipart.CompletedFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -17,6 +20,8 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final EmployeeHoursRepository employeehourRepo;
+    private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
+
 
 
     public EmployeeHoursServicesImpl(MemberProfileRepository memberRepo,
@@ -47,7 +52,7 @@ public class EmployeeHoursServicesImpl implements EmployeeHoursServices{
             responseDTO.setRecordCountInserted(employeeHours.size());
             responseDTO.setEmployeehoursSet(employeeHours);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error occurred while retrieving files from Google Drive.", e);
         }
         return  responseDTO;
     }
