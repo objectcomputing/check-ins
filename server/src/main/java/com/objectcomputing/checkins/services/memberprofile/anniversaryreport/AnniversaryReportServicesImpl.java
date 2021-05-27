@@ -7,6 +7,8 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,6 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         }
 
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
-        System.out.print(memberProfiles.size());
-        if (memberProfiles.size() > 0) {
-            System.out.print(memberProfiles.get(0).getStartDate().getMonth().name());
-            System.out.print(month);
-        }
         if (month != null) {
             memberProfiles = memberProfiles
                     .stream()
@@ -52,10 +49,14 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         LocalDate currentDate = LocalDate.now();
         for (MemberProfile member : memberProfiles) {
             if (member.getTerminationDate() == null || member.getTerminationDate().isAfter(currentDate)) {
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.CEILING);
+                double yearsOfService = (currentDate.toEpochDay() - member.getStartDate().toEpochDay()) / 365.25;
+
                 AnniversaryReportResponseDTO anniversary = new AnniversaryReportResponseDTO();
                 anniversary.setUserId(member.getId());
                 anniversary.setName(member.getFirstName() + " " + member.getLastName());
-                anniversary.setYearsOfService((currentDate.toEpochDay() - member.getStartDate().toEpochDay()) / 365.25);
+                anniversary.setYearsOfService(Double.parseDouble(df.format(yearsOfService)));
                 if (member.getStartDate() != null) {
                     anniversary.setAnniversary(member.getStartDate().getMonthValue() + "/" + member.getStartDate().getDayOfMonth());
                 }
