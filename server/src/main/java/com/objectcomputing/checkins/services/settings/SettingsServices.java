@@ -11,5 +11,5 @@ public interface SettingsServices {
 
     List<SettingsResponseDTO> findByName(String name);
 
-    void delete(UUID id);    
+    Boolean delete(UUID id);
 }

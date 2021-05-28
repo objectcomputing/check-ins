@@ -1,19 +1,22 @@
 package com.objectcomputing.checkins.services.settings;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.question_category.QuestionCategory;
 
+@Singleton
 public class SettingsServicesImpl implements SettingsServices {
 
     private final SettingsRepository settingsRepository;
@@ -60,7 +63,12 @@ public class SettingsServicesImpl implements SettingsServices {
         return settingResponseDTOs;
     }
 
-    public void delete(@NotNull UUID id) {
+    public Boolean delete(@NotNull UUID id) {
+        final Optional<Setting> setting = settingsRepository.findById(id);
+        if (setting.isEmpty()) {
+            throw new NotFoundException("No setting with id " + id);
+        }
         settingsRepository.deleteById(id);
+        return true;
     }
 }
