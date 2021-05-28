@@ -12,7 +12,6 @@ import io.micronaut.security.annotation.Secured;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
@@ -53,7 +52,7 @@ public class SettingsController {
      * Find setting by name.
      *
      * @param name {@link String} name of the setting
-     * @return {@link SettingResponseDTO} Returned setting
+     * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
     @Get("/{?name}")
     public Single<HttpResponse<List<SettingsResponseDTO>>> getById(@Nullable String name) {
@@ -66,7 +65,7 @@ public class SettingsController {
     /**
      * Create and save a new setting.
      *
-     * @param setting, {@link SettingsCreateDTO}
+     * @param settingDTO, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
     @Post()
@@ -83,8 +82,8 @@ public class SettingsController {
     /**
      * Update the setting.
      *
-     * @param setting, {@link SettingsUpdateDTO}
-     * @return {@link HttpResponse<SettingsReponseDTO>}
+     * @param settingDTO, {@link SettingsUpdateDTO}
+     * @return {@link <SettingsReponseDTO>}
      */
     @Put()
     public Single<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO,
@@ -101,10 +100,9 @@ public class SettingsController {
      /**
      * Delete the setting.
      *
-     * @param setting, {@link SettingsUpdateDTO}
-     * @return {@link HttpResponse<SettingsReponseDTO>}
+     * @param id, {@link UUID}
      */
-    @Delete
+    @Delete("/{id}")
     public HttpResponse<?> delete(UUID id) {
         settingsServices.delete(id);
         return HttpResponse.ok();
@@ -115,7 +113,7 @@ public class SettingsController {
     }
 
     private Setting fromUpdateDTO(SettingsUpdateDTO settingsUpdateDTO) {
-        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), settingsUpdateDTO.getUserId(),
+        return new Setting(settingsUpdateDTO.getId(), settingsUpdateDTO.getName(), currentUserServices.getCurrentUser().getId(),
                 settingsUpdateDTO.getValue());
     }
       
