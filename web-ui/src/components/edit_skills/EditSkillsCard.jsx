@@ -142,7 +142,7 @@ const EditSkillsCard = ({ skill }) => {
     if (second) {
       const secondProfile = selectProfileMap(state)[second];
       return (
-        <div>
+        <div style={rest.length ? { display: "block" } : { display: "none" }}>
           Submitted By: {chip(firstProfile)} {chip(secondProfile)}
           {rest && ` and ${rest.length} others`}.
         </div>
