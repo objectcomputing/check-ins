@@ -10,7 +10,17 @@ import ProfilePage from "./ProfilePage";
 
 import "./MemberProfilePage.css";
 
-import { Avatar, Chip, Grid, Tooltip } from "@material-ui/core";
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Container,
+  Grid,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
@@ -125,92 +135,137 @@ const MemberProfilePage = () => {
         <ProfilePage />
       ) : (
         <Grid container className="profile-page">
-          <Grid item sm={3} className="left">
+          <Grid item md={4} className="left">
             {!selectedMember && (
               <div className="profile-details">
                 <h3>No member details found</h3>
               </div>
             )}
             {selectedMember && (
-              <div className="profile-details">
-                <Avatar
-                  className="avatar"
-                  src={getAvatarURL(selectedMember.workEmail)}
+              <Card className="member-profile-card">
+                <CardHeader
+                  title={
+                    <Typography variant="h5" component="h1">
+                      {selectedMember.name}
+                    </Typography>
+                  }
+                  subheader={
+                    <Typography color="textSecondary" component="h2">
+                      {selectedMember.title}
+                    </Typography>
+                  }
+                  disableTypography
+                  avatar={
+                    <Avatar
+                      className="large"
+                      src={getAvatarURL(selectedMember.workEmail)}
+                    />
+                  }
                 />
-                <h3>Name: {selectedMember.name || ""}</h3>
-                <h3>Bio: {selectedMember.bioText || ""}</h3>
-                <h3>Email: {selectedMember.workEmail || ""}</h3>
-                <h3>Location: {selectedMember.location || ""}</h3>
-              </div>
+                <CardContent>
+                  <Container fixed className="info-container">
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      <h4>Email: {selectedMember.workEmail || ""}</h4>
+                      <h4>Location: {selectedMember.location || ""}</h4>
+                      <h4>Bio: {selectedMember.bioText || ""}</h4>
+                    </Typography>
+                  </Container>
+                </CardContent>
+              </Card>
             )}
           </Grid>
-          <Grid item sm={3} className="right">
-            <div className="profile-skills">
-              <h2>Skills</h2>
-              {!selectedMemberSkills.length > 0 && (
+          <Grid item md={7} className="right">
+            <Card>
+              <CardHeader
+                title="Skills"
+                titleTypographyProps={{ variant: "h5", component: "h1" }}
+              />
+              <CardContent>
                 <div className="profile-skills">
-                  <h3>No skills found</h3>
+                  {!selectedMemberSkills.length > 0 && (
+                    <div className="profile-skills">
+                      <h3>No skills found</h3>
+                    </div>
+                  )}
+                  {selectedMemberSkills.length > 0 &&
+                    selectedMemberSkills.map((skill, index) =>
+                      skill.description ? (
+                        <Tooltip
+                          enterTouchDelay={0}
+                          placement="top-start"
+                          title={skill.description}
+                        >
+                          <Chip
+                            className="chip"
+                            color="primary"
+                            key={skill.id}
+                            label={skill.name + " - " + skill.skilllevel}
+                          />
+                        </Tooltip>
+                      ) : (
+                        <Chip
+                          className="chip"
+                          color="primary"
+                          key={skill.id}
+                          label={skill.name + " - " + skill.skilllevel}
+                        />
+                      )
+                    )}
                 </div>
-              )}
-              {selectedMemberSkills.length > 0 &&
-                selectedMemberSkills.map((skill, index) =>
-                  skill.description ? (
-                    <Tooltip
-                      enterTouchDelay={0}
-                      placement="top-start"
-                      title={skill.description}
-                    >
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader
+                title="Teams"
+                titleTypographyProps={{ variant: "h5", component: "h1" }}
+              />
+              <CardContent>
+                <div className="profile-teams">
+                  {!teams.length > 0 && (
+                    <div className="profile-teams">
+                      <h3>No teams found</h3>
+                    </div>
+                  )}
+                  {teams.length > 0 &&
+                    teams.map((team) => (
                       <Chip
                         className="chip"
                         color="primary"
-                        key={skill.id}
-                        label={skill.name + " - " + skill.skilllevel}
+                        key={team.id}
+                        label={team.name}
                       />
-                    </Tooltip>
-                  ) : (
-                    <Chip
-                      className="chip"
-                      color="primary"
-                      key={skill.id}
-                      label={skill.name + " - " + skill.skilllevel}
-                    />
-                  )
-                )}
-            </div>
-            <div className="profile-teams">
-              <h2>Teams</h2>
-              {!teams.length > 0 && (
-                <div className="profile-teams">
-                  <h3>No teams found</h3>
+                    ))}
                 </div>
-              )}
-              {teams.length > 0 &&
-                teams.map((team) => (
-                  <Chip
-                    className="chip"
-                    color="primary"
-                    key={team.id}
-                    label={team.name}
-                  />
-                ))}
-            </div>
-            <div className="profile-guilds">
-              <h2>Guilds</h2>
-              {!guilds.length > 0 && (
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader
+                title="Guilds"
+                titleTypographyProps={{ variant: "h5", component: "h1" }}
+              />
+              <CardContent>
                 <div className="profile-guilds">
-                  <h3>No guilds found</h3>
+                  {!guilds.length > 0 && (
+                    <div className="profile-guilds">
+                      <h3>No guilds found</h3>
+                    </div>
+                  )}
+                  {guilds.length > 0 &&
+                    guilds.map((guild) => (
+                      <Chip
+                        className="chip"
+                        color="primary"
+                        key={guild.id}
+                        label={guild.name}
+                      />
+                    ))}
                 </div>
-              )}
-              {guilds.length > 0 &&
-                guilds.map((guild) => (
-                  <Chip
-                    className="chip"
-                    color="primary"
-                    key={guild.id}
-                    label={guild.name}
-                  />
-                ))}
-            </div>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       )}
