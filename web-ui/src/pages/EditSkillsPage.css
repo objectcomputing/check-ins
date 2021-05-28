@@ -21,6 +21,7 @@
 }
 
 .show-all-skills {
-  display: flex;
   align-items: center;
+  display: flex;
+  margin-top: 1rem;
 }

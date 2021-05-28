@@ -110,49 +110,51 @@ exports[`renders correctly 2`] = `
   <div
     className="search"
   >
-    <div
-      className="MuiFormControl-root MuiTextField-root"
-    >
-      <label
-        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
-        data-shrink={false}
-      >
-        Search Skills
-      </label>
+    <div>
       <div
-        className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
-        onClick={[Function]}
+        className="MuiFormControl-root MuiTextField-root"
       >
+        <label
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+          data-shrink={false}
+        >
+          Search skills
+        </label>
+        <div
+          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+          onClick={[Function]}
+        >
+          <input
+            aria-invalid={false}
+            autoFocus={false}
+            className="MuiInputBase-input MuiInput-input"
+            disabled={false}
+            onAnimationStart={[Function]}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Skill Name"
+            required={false}
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="show-all-skills"
+      >
+        <label
+          htmlFor="all-skills"
+        >
+          Show all skills
+        </label>
         <input
-          aria-invalid={false}
-          autoFocus={false}
-          className="MuiInputBase-input MuiInput-input"
-          disabled={false}
-          onAnimationStart={[Function]}
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          placeholder="Skill Name"
-          required={false}
-          type="text"
-          value=""
+          id="all-skills"
+          onClick={[Function]}
+          type="checkbox"
+          value={false}
         />
       </div>
-    </div>
-    <div
-      className="show-all-skills"
-    >
-      <label
-        htmlFor="all-skills"
-      >
-        Show All Skills
-      </label>
-      <input
-        id="all-skills"
-        onClick={[Function]}
-        type="checkbox"
-        value={false}
-      />
     </div>
     <div
       className="combine-skills"
