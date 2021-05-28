@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.settings;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -20,10 +19,6 @@ public class SettingsUpdateDTO{
     @NotBlank
     @Schema(required = true, description = "name of the setting")
     private String name;
-
-    @Nullable
-    @Schema(description = "userId of the setting")
-    private UUID userId;
     
     @NotNull
     @NotBlank
@@ -44,14 +39,6 @@ public class SettingsUpdateDTO{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public UUID getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public String getValue() {
