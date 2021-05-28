@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
+import { SET_SELECTED_MEMBER } from "../../context/actions";
 import { getAvatarURL } from "../../api/api";
 
 import MenuIcon from "@material-ui/icons/Menu";
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  const { state } = useContext(AppContext);
+  const { dispatch, state } = useContext(AppContext);
   const { userProfile } = state;
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
@@ -80,8 +81,6 @@ function Menu() {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
-  console.log({ id });
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
@@ -202,7 +201,16 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to={`/home`}>
+          <Link
+            onClick={() =>
+              dispatch({
+                type: SET_SELECTED_MEMBER,
+                payload: userProfile.memberProfile,
+              })
+            }
+            style={{ textDecoration: "none" }}
+            to={`/profile/${id}`}
+          >
             <Avatar
               src={getAvatarURL(workEmail)}
               style={{

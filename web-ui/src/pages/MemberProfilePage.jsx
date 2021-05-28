@@ -38,12 +38,16 @@ const MemberProfilePage = () => {
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
 
-  const isCurrentUser =
-    userProfile &&
-    userProfile.memberProfile &&
-    selectedMember &&
-    userProfile.memberProfile.id === selectedMember.id;
+  useEffect(() => {
+    let currentUser =
+      userProfile &&
+      userProfile.memberProfile &&
+      selectedMember &&
+      userProfile.memberProfile.id === selectedMember.id;
+    setIsCurrentUser(currentUser);
+  }, [selectedMember, userProfile]);
 
   const levels = [
     {
