@@ -3,15 +3,23 @@ package com.objectcomputing.checkins.services.settings;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.security.annotation.Secured;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
+
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -31,23 +39,39 @@ public class SettingsController {
     
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
-    private final SettingsServices settingsService;
+    private final SettingsServices settingsServices;
+    private final CurrentUserServices currentUserServices;
 
-    public SettingsController(EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService, SettingsServices settingsService) {
+    public SettingsController(EventLoopGroup eventLoopGroup, ExecutorService ioExecutorService, SettingsServices settingsServices, CurrentUserServices currentUserServices) {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-        this.settingsService = settingsService;
+        this.settingsServices = settingsServices;
+        this.currentUserServices = currentUserServices;
     }
- /**
+
+    /**
+     * Find setting by name.
+     *
+     * @param name {@link String} name of the setting
+     * @return {@link SettingResponseDTO} Returned setting
+     */
+    @Get("/{?name}")
+    public Single<HttpResponse<List<SettingsResponseDTO>>> getById(@Nullable String name) {
+        return Single.fromCallable(() -> settingsServices.findByName(name))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(settings -> (HttpResponse<List<SettingsResponseDTO>>) HttpResponse.ok(settings))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+
+    /**
      * Create and save a new setting.
      *
      * @param setting, {@link SettingsCreateDTO}
      * @return {@link HttpResponse<SettingsResponseDTO>}
      */
-
     @Post()
     public Single<HttpResponse<SettingsResponseDTO>> save(@Body @Valid SettingsCreateDTO settingDTO, HttpRequest<SettingsCreateDTO> request) {
-        return Single.fromCallable(() -> settingsService.save(fromDTO(settingDTO)))
+        return Single.fromCallable(() -> settingsServices.save(fromDTO(settingDTO)))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse
                         .created(fromEntity(savedSetting))
@@ -62,20 +86,32 @@ public class SettingsController {
      * @param setting, {@link SettingsUpdateDTO}
      * @return {@link HttpResponse<SettingsReponseDTO>}
      */
-
     @Put()
-    public Single<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO, HttpRequest<SettingsUpdateDTO>request) {
-            return Single.fromCallable(() -> settingsService.update(fromUpdateDTO(settingDTO)))
+    public Single<HttpResponse<SettingsResponseDTO>> update(@Body @Valid SettingsUpdateDTO settingDTO,
+            HttpRequest<SettingsUpdateDTO> request) {
+        return Single.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse
-                        .created(fromEntity(savedSetting))
-                        .headers(headers -> headers.location(
-                            URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))))
-                            .subscribeOn(Schedulers.from(ioExecutorService));
-        }
-                        
+                .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse.created(fromEntity(savedSetting))
+                        .headers(headers -> headers
+                                .location(URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))))
+                .subscribeOn(Schedulers.from(ioExecutorService));
+    }
+       
+    
+     /**
+     * Delete the setting.
+     *
+     * @param setting, {@link SettingsUpdateDTO}
+     * @return {@link HttpResponse<SettingsReponseDTO>}
+     */
+    @Delete
+    public HttpResponse<?> delete(UUID id) {
+        settingsServices.delete(id);
+        return HttpResponse.ok();
+    }
+                    
     private Setting fromDTO(SettingsCreateDTO settingsCreateDTO) {
-        return new Setting(settingsCreateDTO.getName(), settingsCreateDTO.getUserId(), settingsCreateDTO.getValue());
+        return new Setting(settingsCreateDTO.getName(), currentUserServices.getCurrentUser().getId(), settingsCreateDTO.getValue());
     }
 
     private Setting fromUpdateDTO(SettingsUpdateDTO settingsUpdateDTO) {
@@ -87,7 +123,6 @@ public class SettingsController {
         SettingsResponseDTO dto = new SettingsResponseDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setUserId(entity.getUserId());
         dto.setValue(entity.getValue());
         return dto;
     }

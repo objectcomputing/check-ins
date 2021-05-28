@@ -20,10 +20,6 @@ public class SettingsResponseDTO {
     @NotBlank
     @Schema(required = true, description = "name of the setting")
     private String name;
-
-    @Nullable
-    @Schema(description = "userId of the setting")
-    private UUID userId;
     
     @NotNull
     @NotBlank
@@ -44,14 +40,6 @@ public class SettingsResponseDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public UUID getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public String getValue() {

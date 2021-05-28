@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.settings;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public interface SettingsServices {
@@ -9,7 +9,7 @@ public interface SettingsServices {
 
     Setting update(Setting setting);
 
-    Set<Setting> findByValue(String value, String name, UUID userId);
+    List<SettingsResponseDTO> findByName(String name);
 
     void delete(UUID id);    
 }
