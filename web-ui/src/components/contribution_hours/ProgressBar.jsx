@@ -23,6 +23,7 @@ const propTypes = {
   billableHours: PropTypes.number,
   contributionHours: PropTypes.number.isRequired,
   targetHours: PropTypes.number.isRequired,
+  ptoHours: PropTypes.number,
 };
 
 const useStyles = makeStyles({
@@ -33,8 +34,9 @@ const useStyles = makeStyles({
 
 const LinearBuffer = ({
   billableHours,
-  contributionHours = 0,
+  contributionHours = 925,
   targetHours = 1850,
+  ptoHours = 0,
 }) => {
   const classes = useStyles();
 
@@ -51,9 +53,22 @@ const LinearBuffer = ({
           billableHours ? (contributionHours / targetHours) * 100 : null
         }
       />
-      <Typography align="right" variant="body2" color="textSecondary">
+      <Typography
+        align="right"
+        variant="body2"
+        color="textSecondary"
+        style={{ display: "block" }}
+      >
         {billableHours && <span>Billable Hours: {billableHours} - </span>}
         Contribution Hours: {contributionHours} - Target Hours: {targetHours}
+      </Typography>
+      <Typography
+        align="right"
+        variant="body2"
+        color="textSecondary"
+        style={ptoHours ? { display: "block" } : { display: "none" }}
+      >
+        PTO Hours: {ptoHours}
       </Typography>
     </div>
   );

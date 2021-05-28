@@ -12,6 +12,7 @@ import { getGuildsForMember, updateGuild } from "../api/guild";
 import { updateMember } from "../api/member";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
+import ProgressBar from "../components/contribution_hours/ProgressBar";
 
 import { Info } from "@material-ui/icons";
 import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";
@@ -130,6 +131,16 @@ const ProfilePage = () => {
             placeholder="Tell us about yourself..."
             multiline
             fullWidth
+          />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader avatar={<Info />} title="Contribution Hours" />
+        <CardContent>
+          <ProgressBar
+            billableHours={userProfile.billableHours}
+            contributionHours={userProfile.contributionHours}
+            ptoHours={userProfile.ptoHours}
           />
         </CardContent>
       </Card>
