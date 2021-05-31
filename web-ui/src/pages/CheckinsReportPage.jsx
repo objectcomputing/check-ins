@@ -80,13 +80,13 @@ const CheckinsReportPage = () => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Select PDLs"
+              label="Select PDLs..."
               placeholder="Choose which PDLs to display"
             />
           )}
         />
         <TextField
-          label="Search Members"
+          label="Select employees..."
           placeholder="Member Name"
           value={searchText}
           onChange={(e) => {
@@ -95,9 +95,9 @@ const CheckinsReportPage = () => {
         />
       </div>
       <div className="checkbox-row">
-        <label htmlFor="closed">Include Closed</label>
+        <label htmlFor="closed">Include closed</label>
         <input id="closed" onClick={handleClosed} type="checkbox" />
-        <label htmlFor="planned">Include Planned</label>
+        <label htmlFor="planned">Include planned</label>
         <input id="planned" onClick={handlePlanned} type="checkbox" />
       </div>
       {selectedPdls.length
