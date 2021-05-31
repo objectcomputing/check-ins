@@ -62,7 +62,7 @@ const TeamResults = () => {
       <div className="team-search">
         <TextField
           className={classes.searchInput}
-          label="Search Teams"
+          label="Search teams..."
           placeholder="Team Name"
           value={searchText}
           onChange={(e) => {
