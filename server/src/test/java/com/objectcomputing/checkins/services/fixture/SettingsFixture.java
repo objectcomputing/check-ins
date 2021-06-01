@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.settings.Setting;
 
 public interface SettingsFixture extends RepositoryFixture {
 
-    default Setting createADefaultSetting() {
-        return getSettingsRepository().save(new Setting("dark-mode", UUID.randomUUID(), "on"));
+    default Setting createADefaultSetting(UUID memberId) {
+        return getSettingsRepository().save(new Setting("dark-mode", memberId, "on"));
     }
 }
