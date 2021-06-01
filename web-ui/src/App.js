@@ -73,7 +73,7 @@ function App() {
                   <EditSkillsPage />
                 </Route>
                 <Route path="/checkins-reports">
-                  <Header title="Checkin Reports" />
+                  <Header title="Check-in Report" />
                   <CheckinsReportPage />
                 </Route>
                 <Route path="/skills-reports">
