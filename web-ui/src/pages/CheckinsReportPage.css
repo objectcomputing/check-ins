@@ -18,6 +18,10 @@
   margin-bottom: 1rem;
 }
 
+.filter-pdls-and-members > * {
+  width: 15%;
+}
+
 .MuiFormControl-root {
   margin-left: 1rem;
 }
