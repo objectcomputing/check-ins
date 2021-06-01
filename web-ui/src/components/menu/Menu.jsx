@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
-import { SET_SELECTED_MEMBER } from "../../context/actions";
 import { getAvatarURL } from "../../api/api";
 
 import MenuIcon from "@material-ui/icons/Menu";
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Menu() {
-  const { dispatch, state } = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const { userProfile } = state;
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
@@ -201,16 +200,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link
-            onClick={() =>
-              dispatch({
-                type: SET_SELECTED_MEMBER,
-                payload: userProfile.memberProfile,
-              })
-            }
-            style={{ textDecoration: "none" }}
-            to={`/profile/${id}`}
-          >
+          <Link style={{ textDecoration: "none" }} to={`/profile/${id}`}>
             <Avatar
               src={getAvatarURL(workEmail)}
               style={{

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { selectProfile } from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -24,30 +25,16 @@ import {
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
-  const { csrf, memberProfiles, skills, userProfile } = state;
+  const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
 
-  const selectedMember = state.selectedMember
-    ? state.selectedMember
-    : memberProfiles.length && memberId
-    ? memberProfiles.find((member) => member.id === memberId)
-    : null;
-
-  const id = selectedMember ? selectedMember.id : memberId ? memberId : null;
+  const selectedMember = selectProfile(state, memberId);
 
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
   const [guilds, setGuilds] = useState([]);
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
 
-  useEffect(() => {
-    let currentUser =
-      userProfile &&
-      userProfile.memberProfile &&
-      selectedMember &&
-      userProfile.memberProfile.id === selectedMember.id;
-    setIsCurrentUser(currentUser);
-  }, [selectedMember, userProfile]);
+  const isCurrentUser = userProfile?.memberProfile?.id === memberId;
 
   const levels = [
     {
@@ -74,8 +61,8 @@ const MemberProfilePage = () => {
 
   useEffect(() => {
     async function getTeamsAndGuilds() {
-      if (id) {
-        let teamRes = await getTeamByMember(id, csrf);
+      if (memberId) {
+        let teamRes = await getTeamByMember(memberId, csrf);
         let teamData =
           teamRes.payload && teamRes.payload.status === 200
             ? teamRes.payload.data
@@ -84,7 +71,7 @@ const MemberProfilePage = () => {
         memberTeams.sort((a, b) => a.name.localeCompare(b.name));
         setTeams(memberTeams);
 
-        let guildRes = await getGuildsForMember(id, csrf);
+        let guildRes = await getGuildsForMember(memberId, csrf);
         let guildData =
           guildRes.payload && guildRes.payload.status === 200
             ? guildRes.payload.data
@@ -97,12 +84,12 @@ const MemberProfilePage = () => {
     if (csrf) {
       getTeamsAndGuilds();
     }
-  }, [csrf, id]);
+  }, [csrf, memberId]);
 
   useEffect(() => {
     async function getMemberSkills() {
-      if (!id) return;
-      let res = await getSelectedMemberSkills(id, csrf);
+      if (!memberId) return;
+      let res = await getSelectedMemberSkills(memberId, csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : [];
       let memberSkills = skills.filter((skill) => {
@@ -131,7 +118,7 @@ const MemberProfilePage = () => {
     }
     // complains about needing 'levels' but levels is a const
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [csrf, id, skills, selectedMember]);
+  }, [csrf, memberId, skills, selectedMember]);
 
   return (
     <>
@@ -171,7 +158,7 @@ const MemberProfilePage = () => {
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      component="p"
+                      component="div"
                     >
                       <h4>Email: {selectedMember.workEmail || ""}</h4>
                       <h4>Location: {selectedMember.location || ""}</h4>

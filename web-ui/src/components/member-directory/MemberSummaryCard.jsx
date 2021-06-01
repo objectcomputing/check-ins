@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import MemberModal from "./MemberModal";
 import { AppContext } from "../../context/AppContext";
 import {
-  SET_SELECTED_MEMBER,
   UPDATE_MEMBER_PROFILES,
 } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
@@ -92,9 +91,6 @@ const MemberSummaryCard = ({ member, index }) => {
     <Box display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
         <Link
-          onClick={() =>
-            dispatch({ type: SET_SELECTED_MEMBER, payload: member })
-          }
           style={{ color: "black", textDecoration: "none" }}
           to={`/profile/${member.id}`}
         >
