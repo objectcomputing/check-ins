@@ -75,6 +75,7 @@ function Menu() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
+  const [directoryOpen, setDirectoryOpen] = useState(false);
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -99,8 +100,13 @@ function Menu() {
     setReportsOpen(!reportsOpen);
   };
 
+  const toggleDirectory = () => {
+    setDirectoryOpen(!directoryOpen);
+  };
+
   const closeSubMenus = () => {
     setReportsOpen(false);
+    setDirectoryOpen(false);
   };
 
   const linkStyle = { textDecoration: "none", color: "white" };
@@ -128,24 +134,32 @@ function Menu() {
         </Link>
       </Button>
       <br />
-      {isAdmin && (
-        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/edit-skills">
-            Edit Skills
+      <Button
+        onClick={toggleDirectory}
+        size="large"
+        style={{ color: "white", width: "100%" }}
+      >
+        Directory
+      </Button>
+      <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <Link style={linkStyle} to="/guilds">
+            <ListItem button className={classes.nested}>
+              <ListItemText primary="GUILDS" />
+            </ListItem>
           </Link>
-        </Button>
-      )}
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/directory">
-          Directory
-        </Link>
-      </Button>
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/guilds">
-          Guilds
-        </Link>
-      </Button>
-      <br />
+          <Link style={linkStyle} to="/directory">
+            <ListItem button className={classes.nested}>
+              <ListItemText primary="PEOPLE" />
+            </ListItem>
+          </Link>
+          <Link style={linkStyle} to="/teams">
+            <ListItem button className={classes.nested}>
+              <ListItemText primary="TEAMS" />
+            </ListItem>
+          </Link>
+        </List>
+      </Collapse>
       {isAdmin && (
         <div>
           <Button
@@ -171,11 +185,13 @@ function Menu() {
           </Collapse>
         </div>
       )}
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teams">
-          Teams
-        </Link>
-      </Button>
+      {isAdmin && (
+        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/edit-skills">
+            Skills
+          </Link>
+        </Button>
+      )}
     </div>
   );
 
