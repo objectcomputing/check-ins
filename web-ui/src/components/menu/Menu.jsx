@@ -168,6 +168,11 @@ function Menu() {
                 </ListItem>
               </Link>
             </List>
+          <Link style={linkStyle} to="/team-skills-reports">
+            <ListItem button className={classes.nested}>
+              <ListItemText primary="TEAM SKILLS" />
+            </ListItem>
+          </Link>
           </Collapse>
         </div>
       )}
