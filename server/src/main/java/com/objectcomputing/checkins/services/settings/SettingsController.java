@@ -90,7 +90,7 @@ public class SettingsController {
             HttpRequest<SettingsUpdateDTO> request) {
         return Single.fromCallable(() -> settingsServices.update(fromUpdateDTO(settingDTO)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse.created(fromEntity(savedSetting))
+                .map(savedSetting -> (HttpResponse<SettingsResponseDTO>) HttpResponse.ok(fromEntity(savedSetting))
                         .headers(headers -> headers
                                 .location(URI.create(String.format("%s/%s", request.getPath(), savedSetting.getId())))))
                 .subscribeOn(Schedulers.from(ioExecutorService));
@@ -100,7 +100,7 @@ public class SettingsController {
      /**
      * Delete the setting.
      *
-     * @param id, {@link UUID}
+     * @param id, id of {@link Setting} to delete
      */
     @Delete("/{id}")
     public HttpResponse<?> delete(UUID id) {
