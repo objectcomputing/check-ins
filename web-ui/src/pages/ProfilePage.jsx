@@ -10,6 +10,7 @@ import {
 } from "../context/actions";
 import { getGuildsForMember, updateGuild } from "../api/guild";
 import { updateMember } from "../api/member";
+import { getEmployeeHours } from "../api/hours";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
@@ -34,6 +35,7 @@ const ProfilePage = () => {
 
   const [bio, setBio] = useState();
   const [myGuilds, setMyGuilds] = useState([]);
+  const [myHours, setMyHours] = useState([]);
 
   useEffect(() => {
     async function getMyGuilds() {
@@ -137,11 +139,7 @@ const ProfilePage = () => {
       <Card>
         <CardHeader avatar={<Info />} title="Contribution Hours" />
         <CardContent>
-          <ProgressBar
-            billableHours={userProfile.billableHours}
-            contributionHours={userProfile.contributionHours}
-            ptoHours={userProfile.ptoHours}
-          />
+          <ProgressBar />
         </CardContent>
       </Card>
       <div className="skills-section">
