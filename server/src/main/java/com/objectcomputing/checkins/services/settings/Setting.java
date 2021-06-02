@@ -91,26 +91,6 @@ public class Setting {
         this.value = value;
     }
 
-    public Setting id(UUID id) {
-        setId(id);
-        return this;
-    }
-
-    public Setting name(String name) {
-        setName(name);
-        return this;
-    }
-
-    public Setting userId(UUID userId) {
-        setUserId(userId);
-        return this;
-    }
-
-    public Setting value(String value) {
-        setValue(value);
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this)
