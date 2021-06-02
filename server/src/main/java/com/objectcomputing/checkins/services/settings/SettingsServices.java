@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface SettingsServices {
     
-    Setting save(Setting settings);
+    Setting save(Setting setting);
 
     Setting update(Setting setting);
 
