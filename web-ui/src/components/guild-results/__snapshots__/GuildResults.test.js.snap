@@ -12,7 +12,7 @@ exports[`renders correctly 1`] = `
         className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
         data-shrink={false}
       >
-        Search Guilds
+        Search guilds...
       </label>
       <div
         className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
