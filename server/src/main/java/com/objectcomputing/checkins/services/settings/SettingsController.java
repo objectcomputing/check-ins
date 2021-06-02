@@ -49,13 +49,13 @@ public class SettingsController {
     }
 
     /**
-     * Find setting by name.
+     * Find setting by its name, or if blank find all settings.
      *
      * @param name {@link String} name of the setting
      * @return {@link <List<SettingResponseDTO>>} Returned setting
      */
     @Get("/{?name}")
-    public Single<HttpResponse<List<SettingsResponseDTO>>> getById(@Nullable String name) {
+    public Single<HttpResponse<List<SettingsResponseDTO>>> getByValue(@Nullable String name) {
         return Single.fromCallable(() -> settingsServices.findByName(name))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(settings -> (HttpResponse<List<SettingsResponseDTO>>) HttpResponse.ok(settings))
