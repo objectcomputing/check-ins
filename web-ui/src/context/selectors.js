@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { getSelectedMemberSkills } from "../api/memberskill.js"
 
 export const selectMemberProfiles = (state) => state.memberProfiles;
 export const selectMemberSkills = (state) => state.memberSkills;
@@ -286,3 +287,12 @@ export const selectNormalizedTeams = createSelector(
       return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
 );
+
+export const selectMembersSkills = createSelector(
+  selectMemberProfiles,
+  (memberProfiles) =>
+    memberProfiles.map((member) => {
+      let skills = getSelectedMemberSkills(member.id);
+      member.skills = skills
+    })
+)

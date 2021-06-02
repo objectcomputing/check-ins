@@ -26,6 +26,7 @@ import {
   selectOrderedMemberProfiles,
   selectProfile,
   selectSkill,
+//   getSelectedMemberSkills,
 } from "../context/selectors";
 
 import {
@@ -47,7 +48,6 @@ const styles = {
   fontFamily: "sans-serif",
   textAlign: "center"
 };
-
 
 const useQontoStepIconStyles = makeStyles({
   root: {
@@ -213,12 +213,15 @@ const SkillReportPage = (props) => {
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
   const memberProfiles = selectOrderedMemberProfiles(state);
+  const [selectedMembers, setSelectedMembers] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchRequestDTO] = useState([]);
   const [searchSkills, setSearchSkills] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState(
     searchRequestDTO
   );
+
+//   const test = getSelectedMemberSkills()
 
   const handleSearch = async (searchRequestDTO) => {
     let res = await reportSkills(searchRequestDTO, csrf);
@@ -263,6 +266,10 @@ const SkillReportPage = (props) => {
     let skillsCopy = newValue.sort((a, b) => a.name.localeCompare(b.name));
     setSearchSkills([...skillsCopy]);
   }
+
+    const onMemberChange = (event, newValue) => {
+    setSelectedMembers(newValue)
+    };
 
   const chip = (skill) => {
     let level = skill.level;
@@ -355,25 +362,28 @@ const data = [
   "Joe": 4
 }
 ];
+console.log(selectedMembers);
+
+
 
   return (
     <div className="skills-report-page">
       <div className="and-members">
-{/*         <Autocomplete */}
-{/*           id="pdlSelect" */}
-{/*           multiple */}
-{/*           options={pdls} */}
-{/*           value={selectedPdls || []} */}
-{/*           onChange={onPdlChange} */}
-{/*           getOptionLabel={(option) => option.name} */}
-{/*           renderInput={(params) => ( */}
-{/*             <TextField */}
-{/*               {...params} */}
-{/*               label="Select PDLs" */}
-{/*               placeholder="Choose which PDLs to display" */}
-{/*             /> */}
-{/*           )} */}
-{/*         /> */}
+        <Autocomplete
+          id="pdlSelect"
+          multiple
+          options={memberProfiles}
+          value={selectedMembers || []}
+          onChange={onMemberChange}
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Select Members"
+              placeholder="Choose which Member to radar chart"
+            />
+          )}
+        />
         <TextField
           label="Add Members"
           placeholder="Member Name"
