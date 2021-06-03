@@ -38,7 +38,7 @@ const GuildResults = () => {
       <div className="guild-search">
         <TextField
           className={classes.searchInput}
-          label="Search Guilds"
+          label="Search guilds..."
           placeholder="Guild Name"
           value={searchText}
           onChange={(e) => {
