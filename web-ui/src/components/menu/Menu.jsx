@@ -61,6 +61,9 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
     textAlign: "center",
   },
+  ListItemText : {
+    fontSize: "0.9rem",
+  }
 }));
 
 function Menu() {
@@ -145,17 +148,17 @@ function Menu() {
         <List component="div" disablePadding>
           <Link style={linkStyle} to="/guilds">
             <ListItem button className={classes.nested}>
-              <ListItemText primary="GUILDS" />
+              <ListItemText classes={{primary:classes.ListItemText}} primary="GUILDS" />
             </ListItem>
           </Link>
           <Link style={linkStyle} to="/directory">
             <ListItem button className={classes.nested}>
-              <ListItemText primary="PEOPLE" />
+              <ListItemText classes={{primary:classes.ListItemText}} primary="PEOPLE" />
             </ListItem>
           </Link>
           <Link style={linkStyle} to="/teams">
             <ListItem button className={classes.nested}>
-              <ListItemText primary="TEAMS" />
+              <ListItemText classes={{primary: classes.ListItemText}} primary="TEAMS" />
             </ListItem>
           </Link>
         </List>
@@ -173,12 +176,12 @@ function Menu() {
             <List component="div" disablePadding>
               <Link style={linkStyle} to="/checkins-reports">
                 <ListItem button className={classes.nested}>
-                  <ListItemText primary="CHECKINS" />
+                  <ListItemText classes={{primary: classes.ListItemText}} primary="CHECKINS" />
                 </ListItem>
               </Link>
               <Link style={linkStyle} to="/skills-reports">
                 <ListItem button className={classes.nested}>
-                  <ListItemText primary="SKILLS" />
+                  <ListItemText classes={{primary: classes.ListItemText}} primary="SKILLS" />
                 </ListItem>
               </Link>
             </List>
