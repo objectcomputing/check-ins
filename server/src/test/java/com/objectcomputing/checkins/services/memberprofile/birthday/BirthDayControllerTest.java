@@ -33,7 +33,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     @Test
     public void testGETFindByValueNameOfTheMonth() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?month=%s", memberProfile.getStartDate().getMonth().toString())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
@@ -47,7 +47,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     @Test
     public void testGETFindByValueNameOfTheMonthNotAuthorized() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?month=%s", memberProfile.getStartDate().getMonth().toString())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 

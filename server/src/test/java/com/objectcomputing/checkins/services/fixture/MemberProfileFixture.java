@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import net.bytebuddy.asm.Advice;
 
 import java.time.LocalDate;
 
@@ -11,7 +12,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, "Comedic Relief", null, "New York, New York",
                 "billm@objectcomputing.com", "mr-bill-employee", LocalDate.now(),
                 "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null,LocalDate.now()));
+                null, null,null));
     }
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
@@ -55,6 +56,15 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, LocalDate.now().plusDays(7),null));
 
     }
+
+    default MemberProfile createADefaultMemberProfileWithBirthDay() {
+        return getMemberProfileRepository().save(new MemberProfile("Bill", null, "Charles",
+                null, "Comedic Relief", null, "New York, New York",
+                "billm@objectcomputing.com", "mr-bill-employee-birthday", LocalDate.now(),
+                "is a clay figurine clown star of a parody of children's clay animation shows",
+                null, null, LocalDate.now()));
+    }
+
 
 }
 
