@@ -1,23 +1,13 @@
 import { resolve } from "./api.js";
 
-const hoursUrl = `/services/employee_hours`;
+const hoursUrl = `/services/employee/hours`;
 
-export const getEmployeeHours = async (
-  employeeId,
-  contributionHours,
-  billableHours,
-  ptoHours,
-  cookie
-) => {
+export const getEmployeeHours = async (cookie, employeeId) => {
   return resolve({
-    method: postMessage,
     url: hoursUrl,
     responseType: "json",
-    data: {
-      employeeId: employeeId,
-      contributionHours: contributionHours,
-      billableHours: billableHours,
-      ptoHours: ptoHours,
+    params: {
+      employeeId,
     },
     headers: { "X-CSRF-Header": cookie },
   });

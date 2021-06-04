@@ -60,14 +60,7 @@ const LinearBuffer = ({
         style={{ display: "block" }}
       >
         {billableHours && <span>Billable Hours: {billableHours} - </span>}
-        Contribution Hours: {contributionHours} - Target Hours: {targetHours}
-      </Typography>
-      <Typography
-        align="right"
-        variant="body2"
-        color="textSecondary"
-        style={ptoHours ? { display: "block" } : { display: "none" }}
-      >
+        Contribution Hours: {contributionHours} - Target Hours: {targetHours} -
         PTO Hours: {ptoHours}
       </Typography>
     </div>

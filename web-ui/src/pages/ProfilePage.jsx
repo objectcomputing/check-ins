@@ -16,7 +16,13 @@ import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
 
 import { Info } from "@material-ui/icons";
-import { Card, CardContent, CardHeader, TextField } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  TextField,
+} from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
@@ -35,7 +41,7 @@ const ProfilePage = () => {
 
   const [bio, setBio] = useState();
   const [myGuilds, setMyGuilds] = useState([]);
-  const [myHours, setMyHours] = useState([]);
+  const [myHours, setMyHours] = useState(null);
 
   useEffect(() => {
     async function getMyGuilds() {
@@ -48,6 +54,18 @@ const ProfilePage = () => {
       getMyGuilds();
     }
   }, [csrf, id, guilds]);
+
+  useEffect(() => {
+    async function getHours() {
+      let res = await getEmployeeHours(csrf, userProfile?.employeeId);
+      let data =
+        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+      if (data && data.length > 0) setMyHours(data[0]);
+    }
+    if (csrf && userProfile?.employeeId) {
+      getHours();
+    }
+  }, [csrf, userProfile]);
 
   useEffect(() => {
     async function updateBio() {
@@ -136,45 +154,55 @@ const ProfilePage = () => {
           />
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader avatar={<Info />} title="Contribution Hours" />
-        <CardContent>
-          <ProgressBar />
-        </CardContent>
-      </Card>
+      <div>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            {myHours && (
+              <Card style={{ minHeight: 150 }}>
+                <CardHeader avatar={<Info />} title="Contribution Hours" />
+                <CardContent>
+                  <ProgressBar {...myHours} />
+                </CardContent>
+              </Card>
+            )}
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Card style={{ minHeight: 150 }}>
+              <CardHeader
+                avatar={<GroupIcon />}
+                title="Guilds"
+                titleTypographyProps={{ variant: "h5", component: "h2" }}
+              />
+              <CardContent>
+                <Autocomplete
+                  id="guildsSelect"
+                  getOptionLabel={(option) => option.name}
+                  getOptionSelected={(option, value) =>
+                    value ? value.id === option.id : false
+                  }
+                  multiple
+                  onChange={(event, newVal) => {
+                    addOrDeleteGuildMember(newVal);
+                  }}
+                  options={guilds}
+                  required
+                  value={myGuilds}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      className="halfWidth"
+                      placeholder="Join a guild..."
+                    />
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </div>
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <Card>
-        <CardHeader
-          avatar={<GroupIcon />}
-          title="Guilds"
-          titleTypographyProps={{ variant: "h5", component: "h2" }}
-        />
-        <CardContent>
-          <Autocomplete
-            id="guildsSelect"
-            getOptionLabel={(option) => option.name}
-            getOptionSelected={(option, value) =>
-              value ? value.id === option.id : false
-            }
-            multiple
-            onChange={(event, newVal) => {
-              addOrDeleteGuildMember(newVal);
-            }}
-            options={guilds}
-            required
-            value={myGuilds}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                className="halfWidth"
-                placeholder="Join a guild..."
-              />
-            )}
-          />
-        </CardContent>
-      </Card>
     </div>
   );
 };
