@@ -163,6 +163,7 @@ public class MemberProfileController {
         dto.setBioText(entity.getBioText());
         dto.setSupervisorid(entity.getSupervisorid());
         dto.setTerminationDate(entity.getTerminationDate());
+        dto.setBirthDay(entity.getBirthDate());
         return dto;
     }
 
@@ -170,12 +171,12 @@ public class MemberProfileController {
         return new MemberProfile(dto.getId(), dto.getFirstName(), dto.getMiddleName(), dto.getLastName(),
                 dto.getSuffix(), dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(),
                 dto.getEmployeeId(), dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(),
-                dto.getTerminationDate());
+                dto.getTerminationDate(),dto.getBirthDay());
     }
 
     private MemberProfile fromDTO(MemberProfileCreateDTO dto) {
         return new MemberProfile(dto.getFirstName(), dto.getMiddleName(), dto.getLastName(), dto.getSuffix(),
                 dto.getTitle(), dto.getPdlId(), dto.getLocation(), dto.getWorkEmail(), dto.getEmployeeId(),
-                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate());
+                dto.getStartDate(), dto.getBioText(), dto.getSupervisorid(), dto.getTerminationDate(), dto.getBirthDay());
     }
 }

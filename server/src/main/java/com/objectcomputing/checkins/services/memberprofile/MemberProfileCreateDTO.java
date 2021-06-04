@@ -65,6 +65,10 @@ public class MemberProfileCreateDTO {
     @Schema(description = "employee's date of termination", nullable = true)
     private LocalDate terminationDate;
 
+    @Nullable
+    @Schema(description = "Birth date of employee", nullable = true)
+    private LocalDate birthDay;
+
     @NotBlank
     public String getFirstName() {
         return firstName;
@@ -178,6 +182,11 @@ public class MemberProfileCreateDTO {
         this.terminationDate = terminationDate;
     }
 
+    @Nullable
+    public LocalDate getBirthDay() { return birthDay; }
+
+    public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -195,12 +204,14 @@ public class MemberProfileCreateDTO {
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
-                Objects.equals(terminationDate, that.terminationDate);
+                Objects.equals(terminationDate, that.terminationDate) &&
+                Objects.equals(birthDay, that.birthDay);
+
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay);
     }
 }

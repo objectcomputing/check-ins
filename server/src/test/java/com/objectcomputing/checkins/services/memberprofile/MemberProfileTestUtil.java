@@ -47,7 +47,7 @@ public class MemberProfileTestUtil {
                 LocalDate.of(2019, 1, 1),
                 "TestBio" + seed,
                 null,
-                null);
+                null,null);
     }
 
     public static MemberProfile mkMemberProfile() {

@@ -25,7 +25,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
-            "supervisorid, terminationDate " +
+            "supervisorid, terminationDate, birthDate " +
             "FROM member_profile mp " +
             "WHERE  (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) ",
             nativeQuery = true)
@@ -42,7 +42,7 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "PGP_SYM_DECRYPT(cast(workEmail as bytea), '${aes.key}') as workEmail, " +
             "employeeId, startDate, " +
             "PGP_SYM_DECRYPT(cast(bioText as bytea), '${aes.key}') as bioText, " +
-            "supervisorid, terminationDate " +
+            "supervisorid, terminationDate, birthDate " +
             "FROM member_profile mp " +
             "WHERE (:firstName IS NULL OR PGP_SYM_DECRYPT(cast(mp.firstName as bytea),'${aes.key}') = :firstName) " +
             "AND (:middleName IS NULL OR PGP_SYM_DECRYPT(cast(mp.middleName as bytea),'${aes.key}') = :middleName) " +
