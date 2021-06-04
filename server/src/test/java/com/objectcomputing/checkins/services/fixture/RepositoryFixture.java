@@ -15,6 +15,7 @@ import com.objectcomputing.checkins.services.pulseresponse.PulseResponseReposito
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
@@ -113,5 +114,9 @@ public interface RepositoryFixture {
 
     default EmployeeHoursRepository getEmployeeHoursRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmployeeHoursRepository.class);
+    }
+
+     default SettingsRepository getSettingsRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SettingsRepository.class);
     }
 }
