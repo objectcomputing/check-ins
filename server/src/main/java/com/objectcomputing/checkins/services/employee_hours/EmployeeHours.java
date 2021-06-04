@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,18 +47,26 @@ public class EmployeeHours {
     @Schema(description ="PTO hours of employee")
     private float ptoHours;
 
+    @Column(name="updatedDate")
+    @NotNull
+    @Schema(description = "date for updatedDate", required = true)
+    private LocalDate updatedDate;
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours) {
+
+
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
         this.billableHours = billableHours;
         this.ptoHours = ptoHours;
+        this.updatedDate=updatedDate;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours) {
-        this(null,employeeId,contributionHours,billableHours,ptoHours);
+    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate) {
+        this(null,employeeId,contributionHours,billableHours,ptoHours,updatedDate);
     }
+
 
     public UUID getId() {
         return id;
@@ -99,6 +108,10 @@ public class EmployeeHours {
         this.ptoHours = ptoHours;
     }
 
+    public LocalDate getUpdatedDate() { return updatedDate; }
+
+    public void setUpdatedDate(LocalDate updatedDate) { this.updatedDate = updatedDate; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,13 +120,14 @@ public class EmployeeHours {
         return Float.compare(that.contributionHours, contributionHours) == 0 &&
                 Float.compare(that.billableHours, billableHours) == 0 &&
                 Float.compare(that.ptoHours, ptoHours) == 0 &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(employeeId, that.employeeId);
+                id.equals(that.id) &&
+                employeeId.equals(that.employeeId) &&
+                updatedDate.equals(that.updatedDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours);
+        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate);
     }
 
     @Override
@@ -124,7 +138,7 @@ public class EmployeeHours {
                 ", contributionHours=" + contributionHours +
                 ", billableHours=" + billableHours +
                 ", ptoHours=" + ptoHours +
+                ", updatedDate=" + updatedDate +
                 '}';
     }
-
 }

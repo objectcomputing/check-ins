@@ -28,22 +28,24 @@ const EditSkillsPage = (props) => {
   return (
     <div className="pending-skills-page">
       <div className="search">
-        <TextField
-          label="Search Skills"
-          placeholder="Skill Name"
-          value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-          }}
-        />
-        <div className='show-all-skills'>
-          <label htmlFor="all-skills">Show All Skills</label>
-          <input
-            onClick={handleClick}
-            id="all-skills"
-            type="checkbox"
-            value={showAllSkills}
+        <div>
+          <TextField
+            label="Search skills"
+            placeholder="Skill Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
           />
+          <div className="show-all-skills">
+            <label htmlFor="all-skills">Show all skills</label>
+            <input
+              onClick={handleClick}
+              id="all-skills"
+              type="checkbox"
+              value={showAllSkills}
+            />
+          </div>
         </div>
         <div className="combine-skills">
           <Button onClick={handleOpen}>Combine Skills</Button>

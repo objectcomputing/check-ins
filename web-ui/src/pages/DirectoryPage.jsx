@@ -65,7 +65,7 @@ const DirectoryPage = () => {
         <Grid item xs={12} className={classes.search}>
           <TextField
             className={classes.searchInput}
-            label="Search Members"
+            label="Select employees..."
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {

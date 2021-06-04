@@ -69,11 +69,11 @@ function App() {
                   <MemberProfilePage />
                 </Route>
                 <Route path="/edit-skills">
-                  <Header title="Edit Skills" />
+                  <Header title="Skills" />
                   <EditSkillsPage />
                 </Route>
                 <Route path="/checkins-reports">
-                  <Header title="Checkin Reports" />
+                  <Header title="Check-in Report" />
                   <CheckinsReportPage />
                 </Route>
                 <Route path="/skills-reports">

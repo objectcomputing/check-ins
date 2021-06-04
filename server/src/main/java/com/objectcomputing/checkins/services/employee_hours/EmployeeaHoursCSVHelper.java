@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class EmployeeaHoursCSVHelper {
                 EmployeeHours employeeHours = new EmployeeHours(csvRecord.get("employeeId"),
                         Float.parseFloat(csvRecord.get("contributionHours")),
                         Float.parseFloat(csvRecord.get("billableHours")),
-                        Float.parseFloat(csvRecord.get("ptoHours")));
+                        Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now());
                 employeeHoursList.add(employeeHours);
             }
             return employeeHoursList;

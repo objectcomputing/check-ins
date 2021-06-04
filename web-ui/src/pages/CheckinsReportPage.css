@@ -11,9 +11,15 @@
 
 .filter-pdls-and-members {
   display: flex;
-  flex-direction: column;
-  margin-left: 1rem;
-  width: 35%;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 1rem;
+}
+
+.filter-pdls-and-members > * {
+  width: 15%;
 }
 
 .MuiFormControl-root {

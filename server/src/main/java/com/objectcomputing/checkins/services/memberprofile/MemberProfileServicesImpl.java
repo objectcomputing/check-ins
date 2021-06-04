@@ -134,4 +134,9 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         }
         return searchResult.get(0);
     }
+
+    @Override
+    public List<MemberProfile> findAll() {
+        return memberProfileRepository.findAll();
+    }
 }
