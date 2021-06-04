@@ -75,12 +75,12 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         // Create a user (not team lead) and add him to the team
         MemberProfile memberProfileOfTeammate = createADefaultMemberProfile();
-        createDefaultTeamMember(team, memberProfileOfTeammate);
+        createLeadTeamMember(team, memberProfileOfTeammate);
 
         // Create a member and add him to team
         MemberProfile memberProfileOfUser = createAnUnrelatedUser();
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO(team.getId(), memberProfileOfUser.getId(), false);
-        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfTeammate.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
