@@ -154,52 +154,50 @@ const ProfilePage = () => {
           />
         </CardContent>
       </Card>
-      <div>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            {myHours && (
-              <Card style={{ minHeight: 150 }}>
-                <CardHeader avatar={<Info />} title="Contribution Hours" />
-                <CardContent>
-                  <ProgressBar {...myHours} />
-                </CardContent>
-              </Card>
-            )}
-          </Grid>
-          <Grid item xs={12} sm={6}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          {myHours && (
             <Card style={{ minHeight: 150 }}>
-              <CardHeader
-                avatar={<GroupIcon />}
-                title="Guilds"
-                titleTypographyProps={{ variant: "h5", component: "h2" }}
-              />
+              <CardHeader avatar={<Info />} title="Contribution Hours" />
               <CardContent>
-                <Autocomplete
-                  id="guildsSelect"
-                  getOptionLabel={(option) => option.name}
-                  getOptionSelected={(option, value) =>
-                    value ? value.id === option.id : false
-                  }
-                  multiple
-                  onChange={(event, newVal) => {
-                    addOrDeleteGuildMember(newVal);
-                  }}
-                  options={guilds}
-                  required
-                  value={myGuilds}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      className="halfWidth"
-                      placeholder="Join a guild..."
-                    />
-                  )}
-                />
+                <ProgressBar {...myHours} />
               </CardContent>
             </Card>
-          </Grid>
+          )}
         </Grid>
-      </div>
+        <Grid item xs={12} sm={6}>
+          <Card style={{ minHeight: 150 }}>
+            <CardHeader
+              avatar={<GroupIcon />}
+              title="Guilds"
+              titleTypographyProps={{ variant: "h5", component: "h2" }}
+            />
+            <CardContent>
+              <Autocomplete
+                id="guildsSelect"
+                getOptionLabel={(option) => option.name}
+                getOptionSelected={(option, value) =>
+                  value ? value.id === option.id : false
+                }
+                multiple
+                onChange={(event, newVal) => {
+                  addOrDeleteGuildMember(newVal);
+                }}
+                options={guilds}
+                required
+                value={myGuilds}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    className="halfWidth"
+                    placeholder="Join a guild..."
+                  />
+                )}
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
