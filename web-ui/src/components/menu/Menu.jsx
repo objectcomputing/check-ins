@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 function Menu() {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail } =
+  const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
@@ -219,7 +219,7 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to="/profile">
+          <Link style={{ textDecoration: "none" }} to={`/profile/${id}`}>
             <Avatar
               src={getAvatarURL(workEmail)}
               style={{

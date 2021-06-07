@@ -4,11 +4,26 @@ import { AppContextProvider } from "../context/AppContext";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router-dom";
 
+const initialState = {
+  state: {
+    memberProfiles: [
+      { name: "homie test", firstName: "homie", lastName: "test", id: "123" },
+      { name: "mr. test", firstName: "mr", lastName: "test", id: "1234" },
+    ],
+    userProfile: {
+      memberProfile: {
+        id: "12345",
+        name: "mr. test",
+      },
+    },
+  },
+};
+
 it("renders correctly", () => {
   const history = createMemoryHistory(`/profile/12345`);
   snapshot(
     <Router history={history}>
-      <AppContextProvider>
+      <AppContextProvider value={initialState}>
         <MemberProfilePage />
       </AppContextProvider>
     </Router>

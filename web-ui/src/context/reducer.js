@@ -10,7 +10,6 @@ import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
   SET_ROLES,
-  SET_SELECTED_MEMBER,
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
@@ -32,7 +31,6 @@ export const initialState = {
   index: 0,
   memberProfiles: [],
   memberSkills: [],
-  selectedMember: undefined,
   skills: [],
   teams: [],
   guilds: [],
@@ -166,9 +164,6 @@ export const reducer = (state, action) => {
       state.guildMembers
         ? (state.guildMembers = [...state.guildMembers, action.payload])
         : (state.guildMembers = action.payload);
-      break;
-    case SET_SELECTED_MEMBER:
-      state.selectedMember = action.payload;
       break;
     default:
   }
