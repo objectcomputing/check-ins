@@ -13,7 +13,7 @@ exports[`has billable hours 1`] = `
       <div
         aria-valuemax={100}
         aria-valuemin={0}
-        aria-valuenow={0}
+        aria-valuenow={50}
         className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-determinate"
         role="progressbar"
       >
@@ -21,7 +21,7 @@ exports[`has billable hours 1`] = `
           className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Determinate"
           style={
             Object {
-              "transform": "translateX(-100%)",
+              "transform": "translateX(-50%)",
             }
           }
         />
@@ -30,11 +30,18 @@ exports[`has billable hours 1`] = `
   </div>
   <p
     className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-alignRight"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
   >
     Contribution Hours: 
-    0
+    925
      - Target Hours: 
     1850
+     - PTO Hours: 
+    0
   </p>
 </div>
 `;
@@ -52,7 +59,7 @@ exports[`has no billable hours 1`] = `
       <div
         aria-valuemax={100}
         aria-valuemin={0}
-        aria-valuenow={0}
+        aria-valuenow={50}
         className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-determinate"
         role="progressbar"
       >
@@ -60,7 +67,7 @@ exports[`has no billable hours 1`] = `
           className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Determinate"
           style={
             Object {
-              "transform": "translateX(-100%)",
+              "transform": "translateX(-50%)",
             }
           }
         />
@@ -69,11 +76,18 @@ exports[`has no billable hours 1`] = `
   </div>
   <p
     className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-alignRight"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
   >
     Contribution Hours: 
-    0
+    925
      - Target Hours: 
     1850
+     - PTO Hours: 
+    0
   </p>
 </div>
 `;
