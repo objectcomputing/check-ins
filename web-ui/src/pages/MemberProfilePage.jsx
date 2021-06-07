@@ -7,6 +7,7 @@ import { getTeamByMember } from "../api/team";
 import { getGuildsForMember } from "../api/guild";
 import { getAvatarURL } from "../api/api.js";
 import ProfilePage from "./ProfilePage";
+import { levelList } from "../context/util";
 
 import "./MemberProfilePage.css";
 
@@ -45,29 +46,6 @@ const MemberProfilePage = () => {
     selectedMember &&
     userProfile.memberProfile.id === selectedMember.id;
 
-  const levels = [
-    {
-      value: 1,
-      label: "Interested",
-    },
-    {
-      value: 2,
-      label: "Novice",
-    },
-    {
-      value: 3,
-      label: "Intermediate",
-    },
-    {
-      value: 4,
-      label: "Advanced",
-    },
-    {
-      value: 5,
-      label: "Expert",
-    },
-  ];
-
   useEffect(() => {
     async function getTeamsAndGuilds() {
       if (id) {
@@ -105,15 +83,7 @@ const MemberProfilePage = () => {
         //filter out memberSkills and set level
         return data.some((mSkill) => {
           if (mSkill.skillid === skill.id) {
-            let level = levels.filter(
-              (level) => parseInt(mSkill.skilllevel) === level.value
-            );
-            level && level[0] && level[0].label
-              ? (skill.skilllevel = level[0].label)
-              : skill.skilllevel === mSkill.skilllevel &&
-                mSkill.skilllevel !== undefined
-              ? (skill.skilllevel = mSkill.skilllevel)
-              : (skill.skilllevel = "Intermediate");
+            skill.skilllevel = levelList[mSkill.skilllevel || 3];
             return skill;
           }
           return null;
@@ -203,7 +173,11 @@ const MemberProfilePage = () => {
                             className="chip"
                             color="primary"
                             key={skill.id}
-                            label={skill.name + " - " + skill.skilllevel}
+                            label={
+                              skill.name +
+                              " - " +
+                              skill.skilllevel.toLowerCase()
+                            }
                           />
                         </Tooltip>
                       ) : (
@@ -211,7 +185,9 @@ const MemberProfilePage = () => {
                           className="chip"
                           color="primary"
                           key={skill.id}
-                          label={skill.name + " - " + skill.skilllevel}
+                          label={
+                            skill.name + " - " + skill.skilllevel.toLowerCase()
+                          }
                         />
                       )
                     )}

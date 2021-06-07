@@ -1,6 +1,43 @@
-.and-members {
+.active {
+  background-color: rgb(242, 113, 33);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+}
+
+.button {
+  margin: 2rem;
+}
+
+.button-parent {
+  display: flex;
+  margin-left: 20%;
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  height: 3rem;
+  width: 3rem;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.member-skills-card {
+  max-height: 20rem;
+  width: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.team-skill-autocomplete {
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
-  width: 15%;
+  width: 25%;
 }
