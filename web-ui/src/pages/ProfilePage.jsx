@@ -155,17 +155,21 @@ const ProfilePage = () => {
         </CardContent>
       </Card>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          {myHours && (
-            <Card style={{ minHeight: 150 }}>
-              <CardHeader avatar={<Info />} title="Contribution Hours" />
-              <CardContent>
-                <ProgressBar {...myHours} />
-              </CardContent>
-            </Card>
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6}>
+        {myHours ? (
+          <Grid item xs>
+            {myHours && (
+              <Card style={{ minHeight: 150 }}>
+                <CardHeader avatar={<Info />} title="Contribution Hours" />
+                <CardContent>
+                  <ProgressBar {...myHours} />
+                </CardContent>
+              </Card>
+            )}
+          </Grid>
+        ) : (
+          ""
+        )}
+        <Grid item xs>
           <Card style={{ minHeight: 150 }}>
             <CardHeader
               avatar={<GroupIcon />}
