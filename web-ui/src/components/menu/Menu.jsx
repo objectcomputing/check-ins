@@ -24,7 +24,6 @@ import "./Menu.css";
 
 const drawerWidth = 150;
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -64,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
   },
   ListItemText : {
     fontSize: "0.9rem",
-    
   },
   listStyle: {
     textDecoration: "none", color: "white", 
@@ -74,9 +72,6 @@ const useStyles = makeStyles((theme) => ({
   },
   subListItem: {
     fontSize: "0.9rem",
-  },
-  active: {
-    backgroundColor: "green",
   }
 }));
 
@@ -112,11 +107,14 @@ function Menu() {
     prevOpen.current = open;
   }, [open]);
 
-
   useEffect(() => {
     const loc = location.pathname;
-    if (loc === "/guilds" || loc === "/people" || loc === "/teams") setDirectoryOpen(true);
-    if (loc === "/checkins-reports" || loc === "skills-reports") setReportsOpen(true);
+    if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
+      if (!directoryOpen) setDirectoryOpen(true);
+    }
+    if (loc === "/checkins-reports" || loc === "skills-reports") {
+      if(!reportsOpen) setReportsOpen(true);
+    }
   }, [location])
 
   const handleDrawerToggle = () => {
@@ -207,7 +205,6 @@ function Menu() {
           }
         </List>
       </Collapse>
-
       {isAdmin && (
         <div>
           <Button
