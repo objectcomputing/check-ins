@@ -97,6 +97,15 @@ function Menu() {
     setOpen((prevOpen) => !prevOpen);
   };
 
+  
+  const loc = location.pathname;
+  if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
+    if (!directoryOpen) setDirectoryOpen(true);
+  }
+  if (loc === "/checkins-reports" || loc === "/skills-reports") {
+    if(!reportsOpen) setReportsOpen(true);
+  }
+
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
   useEffect(() => {
@@ -107,15 +116,15 @@ function Menu() {
     prevOpen.current = open;
   }, [open]);
 
-  useEffect(() => {
-    const loc = location.pathname;
-    if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
-      if (!directoryOpen) setDirectoryOpen(true);
-    }
-    if (loc === "/checkins-reports" || loc === "skills-reports") {
-      if(!reportsOpen) setReportsOpen(true);
-    }
-  }, [location])
+  // useEffect(() => {
+  //   const loc = location.pathname;
+  //   if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
+  //     if (!directoryOpen) setDirectoryOpen(true);
+  //   }
+  //   if (loc === "/checkins-reports" || loc === "skills-reports") {
+  //     if(!reportsOpen) setReportsOpen(true);
+  //   }
+  // }, [location])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
