@@ -14,4 +14,6 @@ public interface TeamMemberServices {
     void delete(UUID id);
 
     Set<TeamMember> findByFields(UUID teamid, UUID memberid, Boolean lead);
+
+    void deleteByTeam(UUID id);
 }
