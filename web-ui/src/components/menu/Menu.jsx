@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
 function Menu() {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
@@ -91,13 +92,12 @@ function Menu() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const history = useHistory();
   const [reportsOpen, setReportsOpen] = useState(false);
   const [directoryOpen, setDirectoryOpen] = useState(false);
   const anchorRef = useRef(null);
 
-  const location = useLocation();
-  const history = useHistory();
-  console.log(location)
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -111,6 +111,13 @@ function Menu() {
 
     prevOpen.current = open;
   }, [open]);
+
+
+  useEffect(() => {
+    const loc = location.pathname;
+    if (loc === "/guilds" || loc === "/people" || loc === "/teams") setDirectoryOpen(true);
+    if (loc === "/checkins-reports" || loc === "skills-reports") setReportsOpen(true);
+  }, [location])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -129,7 +136,7 @@ function Menu() {
     setDirectoryOpen(false);
   };
 
-  const checkIsSelected = (path) => {
+  const isLinkSelected = (path) => {
     if (path === "/checkins" && location.pathname.includes("/checkins/")) return true;
     return location.pathname === path ? true : false;
   }
@@ -147,8 +154,7 @@ function Menu() {
             closeSubMenus()
           }
         }
-        selected={checkIsSelected(path)}
-        
+        selected={isLinkSelected(path)}
       >
         <ListItemText classes={isSubLink? {primary: classes.subListItem} : null} primary={name} />
       </ListItem>
