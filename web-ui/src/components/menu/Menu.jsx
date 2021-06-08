@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -23,6 +23,7 @@ import {
 import "./Menu.css";
 
 const drawerWidth = 150;
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,6 +64,19 @@ const useStyles = makeStyles((theme) => ({
   },
   ListItemText : {
     fontSize: "0.9rem",
+    
+  },
+  listStyle: {
+    textDecoration: "none", color: "white", 
+  },
+  listItem: {
+    textAlign: 'center'
+  },
+  subListItem: {
+    fontSize: "0.9rem",
+  },
+  active: {
+    backgroundColor: "green",
   }
 }));
 
@@ -81,6 +95,9 @@ function Menu() {
   const [directoryOpen, setDirectoryOpen] = useState(false);
   const anchorRef = useRef(null);
 
+  const location = useLocation();
+  const history = useHistory();
+  console.log(location)
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -112,7 +129,38 @@ function Menu() {
     setDirectoryOpen(false);
   };
 
-  const linkStyle = { textDecoration: "none", color: "white" };
+  const checkIsSelected = (path) => {
+    if (path === "/checkins" && location.pathname.includes("/checkins/")) return true;
+    return location.pathname === path ? true : false;
+  }
+
+  const createLinkJsx = (path, name, isSubLink) => {
+    return (
+      <ListItem
+        key={path}
+        className={isSubLink? `${classes.listItem} ${classes.nested}` : classes.listItem}
+        button
+        onClick={isSubLink? 
+          () => history.push(path): 
+          () => {
+            history.push(path)
+            closeSubMenus()
+          }
+        }
+        selected={checkIsSelected(path)}
+        
+      >
+        <ListItemText classes={isSubLink? {primary: classes.subListItem} : null} primary={name} />
+      </ListItem>
+    )
+  }
+
+  const createListJsx = (listArr, isSublink) => {
+    return listArr.map(listItem => {
+      const [path, name] = listItem;
+      return createLinkJsx(path, name, isSublink);
+    })
+  }
 
   const drawer = (
     <div>
@@ -124,19 +172,16 @@ function Menu() {
           style={{ width: "50%" }}
         />
       </div>
-      <br />
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/home">
-          Home
-        </Link>
-      </Button>
-      <br />
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/checkins">
-          Check-ins
-        </Link>
-      </Button>
-      <br />
+      
+      <List component="nav" className={classes.listStyle}>
+        {createListJsx(
+          [
+            ["/home", "HOME",], 
+            ["/checkins", "CHECK-INS",]
+          ], 
+          false)
+        }
+      </List>
       <Button
         onClick={toggleDirectory}
         size="large"
@@ -145,24 +190,18 @@ function Menu() {
         Directory
       </Button>
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link style={linkStyle} to="/guilds">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary:classes.ListItemText}} primary="GUILDS" />
-            </ListItem>
-          </Link>
-          <Link style={linkStyle} to="/directory">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary:classes.ListItemText}} primary="PEOPLE" />
-            </ListItem>
-          </Link>
-          <Link style={linkStyle} to="/teams">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary: classes.ListItemText}} primary="TEAMS" />
-            </ListItem>
-          </Link>
+        <List className={classes.listStyle} component="nav" disablePadding>
+          {createListJsx(
+            [
+              ["/guilds", "GUILDS"], 
+              ["/people", "PEOPLE"], 
+              ["/teams", "TEAMS"]
+            ], 
+              true)
+          }
         </List>
       </Collapse>
+
       {isAdmin && (
         <div>
           <Button
@@ -172,28 +211,19 @@ function Menu() {
           >
             Reports
           </Button>
-          <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <Link style={linkStyle} to="/checkins-reports">
-                <ListItem button className={classes.nested}>
-                  <ListItemText classes={{primary: classes.ListItemText}} primary="CHECKINS" />
-                </ListItem>
-              </Link>
-              <Link style={linkStyle} to="/skills-reports">
-                <ListItem button className={classes.nested}>
-                  <ListItemText classes={{primary: classes.ListItemText}} primary="SKILLS" />
-                </ListItem>
-              </Link>
-            </List>
-          </Collapse>
+          <List className={classes.listStyle} component="nav" disablePadding>
+            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(
+                  [
+                    ["/checkins-reports", "CHECK-INS"], 
+                    ["/skills-reports", "SKILLS"]
+                  ], 
+                  true)
+                }
+            </Collapse>
+            {createLinkJsx("/edit-skills", "SKILLS", false)}
+          </List>
         </div>
-      )}
-      {isAdmin && (
-        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/edit-skills">
-            Skills
-          </Link>
-        </Button>
       )}
     </div>
   );
