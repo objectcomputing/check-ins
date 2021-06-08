@@ -1,17 +1,17 @@
 import React, { useContext, useState } from "react";
 
-import { AppContext } from "../context/AppContext";
 import { reportSkills } from "../api/memberskill.js";
-import { levelMap } from "../context/util";
 import SearchResults from "../components/search-results/SearchResults";
 import MyResponsiveRadar from "../components/radar/Radar";
-
+import { UPDATE_TOAST } from "../context/actions";
+import { AppContext } from "../context/AppContext";
 import {
   selectOrderedSkills,
   selectCsrfToken,
   selectOrderedMemberProfiles,
   selectSkill,
 } from "../context/selectors";
+import { levelMap } from "../context/util";
 
 import { Button, TextField } from "@material-ui/core";
 
@@ -21,15 +21,18 @@ import { Group, GroupAdd } from "@material-ui/icons";
 
 import "./TeamSkillReportPage.css";
 
-const TeamSkillReportPage = (props) => {
+const TeamSkillReportPage = () => {
   const { state } = useContext(AppContext);
+  const { teams } = state;
 
   const csrf = selectCsrfToken(state);
   const skills = selectOrderedSkills(state);
   const memberProfiles = selectOrderedMemberProfiles(state);
-  
+
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
+  const [allSearchResults, setAllSearchResults] = useState([]);
   const [searchSkills, setSearchSkills] = useState([]);
   const [editedSearchRequest, setEditedSearchRequest] = useState([]);
   const [showRadar, setShowRadar] = useState(false);
@@ -46,9 +49,16 @@ const TeamSkillReportPage = (props) => {
           : undefined;
     }
     if (memberSkillsFound && memberProfiles) {
-      setSearchResults(memberSkillsFound);
+      setAllSearchResults(memberSkillsFound);
+      setSearchResults(
+        memberSkillsFound.filter((mSkill) =>
+          selectedMembers.some((member) => member.id === mSkill.id)
+        )
+      );
     } else {
       setSearchResults([]);
+      setAllSearchResults([]);
+      setAllSearchResults([]);
     }
     setShowRadar(true);
   };
@@ -64,11 +74,9 @@ const TeamSkillReportPage = (props) => {
   }
 
   function createRequest(editedSearchRequest) {
-    let skills = skillsToSkillLevel(searchSkills);
-    let members = [];
     let newSearchRequest = {
-      skills: skills,
-      members: members,
+      skills: skillsToSkillLevel(searchSkills),
+      members: [],
     };
     setEditedSearchRequest(newSearchRequest);
     return newSearchRequest;
@@ -80,16 +88,42 @@ const TeamSkillReportPage = (props) => {
   }
 
   const onMemberChange = (event, newValue) => {
-    console.log({ newValue });
     setSelectedMembers(newValue);
   };
 
-  console.log({ selectedMembers });
+  const onTeamChange = (event, newValue) => {
+    setSelectedTeam(newValue);
+    setSelectedMembers(
+      // since teamMembers has an id and a memberId
+      newValue.teamMembers.map((member) => ({
+        ...member,
+        id: member.memberId || member.id,
+      }))
+    );
+  };
+
+  const handleExistingTeam = () => {
+    setSelectedMembers([]);
+    setSearchSkills([]);
+    setSearchResults([]);
+    setShowExistingTeam(true);
+    setShowAdHocTeam(false);
+    setShowRadar(false);
+  };
+
+  const handleAdHocTeam = () => {
+    setSelectedMembers([]);
+    setSearchSkills([]);
+    setSearchResults([]);
+    setShowExistingTeam(false);
+    setShowAdHocTeam(true);
+    setShowRadar(false);
+  };
 
   const skillMap = {};
 
-  const selectedMembersCopy = [...selectedMembers];
-  const searchResultsCopy = [...searchResults];
+  const selectedMembersCopy = selectedMembers.map((member) => ({ ...member }));
+  let searchResultsCopy = searchResults.map((result) => ({ ...result }));
   const filteredResults = searchResultsCopy.filter((result) => {
     result.name = result.name.split(" ")[0];
     return selectedMembersCopy.some((member) => {
@@ -130,75 +164,13 @@ const TeamSkillReportPage = (props) => {
     }
   }
 
-  console.log({ memberProfiles });
-
   return (
     <div className="team-skill-report-page">
       <div className="filter-section">
-        {showAdHocTeam ? (
-          <div className="team-skill-autocomplete">
-            <Autocomplete
-              id="pdlSelect"
-              multiple
-              options={memberProfiles}
-              value={selectedMembers || []}
-              onChange={onMemberChange}
-              getOptionSelected={(option, value) =>
-                value ? value.id === option.id : false
-              }
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  className="fullWidth"
-                  label="Members"
-                  placeholder="Choose members for radar chart"
-                />
-              )}
-            />
-            <Autocomplete
-              id="skillSelect"
-              multiple
-              options={skills.filter(
-                (skill) =>
-                  !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
-              )}
-              value={searchSkills ? searchSkills : []}
-              onChange={onSkillsChange}
-              getOptionSelected={(option, value) =>
-                value ? value.id === option.id : false
-              }
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  className="fullWidth"
-                  label="Skills"
-                  placeholder="Choose skills for radar chart"
-                />
-              )}
-            />
-            <div className="skills-search halfWidth">
-              <Button
-                onClick={() => {
-                  handleSearch(createRequest(editedSearchRequest));
-                }}
-                color="primary"
-              >
-                Run Search
-              </Button>
-            </div>
-          </div>
-        ) : null}
         <div className="button-parent">
           <div className="button">
             <h5>Existing Team</h5>
-            <div
-              onClick={() => {
-                setShowExistingTeam(true);
-                setShowAdHocTeam(false);
-              }}
-            >
+            <div onClick={handleExistingTeam}>
               <div
                 className={
                   showExistingTeam ? "active circle" : "inactive circle"
@@ -210,12 +182,7 @@ const TeamSkillReportPage = (props) => {
           </div>
           <div className="button">
             <h5>Ad Hoc Team</h5>
-            <div
-              onClick={() => {
-                setShowExistingTeam(false);
-                setShowAdHocTeam(true);
-              }}
-            >
+            <div onClick={handleAdHocTeam}>
               <div
                 className={showAdHocTeam ? "active circle" : "inactive circle"}
               >
@@ -224,19 +191,114 @@ const TeamSkillReportPage = (props) => {
             </div>
           </div>
         </div>
+        <div className="team-skill-autocomplete">
+          {showAdHocTeam ? (
+            <div>
+              <Autocomplete
+                id="member"
+                multiple
+                options={memberProfiles}
+                value={selectedMembers || []}
+                onChange={onMemberChange}
+                getOptionSelected={(option, value) =>
+                  value ? value.id === option.id : false
+                }
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    className="fullWidth"
+                    label="Members"
+                    placeholder="Choose members for radar chart"
+                  />
+                )}
+              />
+            </div>
+          ) : showExistingTeam ? (
+            <Autocomplete
+              id="team"
+              options={teams}
+              value={selectedTeam || []}
+              onChange={onTeamChange}
+              getOptionSelected={(option, value) =>
+                value ? value.id === option.id : false
+              }
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className="fullWidth"
+                  label="Team"
+                  placeholder="Choose a team for radar chart"
+                />
+              )}
+            />
+          ) : null}
+          <Autocomplete
+            id="skillSelect"
+            multiple
+            options={skills.filter(
+              (skill) =>
+                !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
+            )}
+            value={searchSkills ? searchSkills : []}
+            onChange={onSkillsChange}
+            getOptionSelected={(option, value) =>
+              value ? value.id === option.id : false
+            }
+            getOptionLabel={(option) => option.name}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className="fullWidth"
+                label="Skills"
+                placeholder="Choose skills for radar chart"
+              />
+            )}
+          />
+          <div className="skills-search halfWidth">
+            <Button
+              onClick={() => {
+                if (!searchSkills.length) {
+                  window.snackDispatch({
+                    type: UPDATE_TOAST,
+                    payload: {
+                      severity: "error",
+                      toast: "Must select a skill",
+                    },
+                  });
+                  return;
+                }
+                handleSearch(createRequest(editedSearchRequest));
+              }}
+              color="primary"
+            >
+              Run Search
+            </Button>
+          </div>
+        </div>
       </div>
-
-      <div>
-        {showRadar && (
+      {showRadar && (
+        <div>
           <div style={{ height: "400px" }}>
             <MyResponsiveRadar
               data={chartData || []}
               selectedMembers={selectedMembers}
             />
           </div>
-        )}
-        <SearchResults searchResults={searchResultsCopy} />
-      </div>
+          <div className="search-results">
+            <h2>Search Results</h2>
+            {!searchResultsCopy.length && <h4>No Matches</h4>}
+            <SearchResults searchResults={searchResultsCopy} />
+          </div>
+          {showAdHocTeam && (
+            <div className="search-results">
+              <h2>All Employees With Selected Skills</h2>
+              <SearchResults searchResults={allSearchResults} />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

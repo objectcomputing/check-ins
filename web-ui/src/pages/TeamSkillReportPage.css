@@ -1,15 +1,24 @@
 .active {
-  background-color: rgb(242, 113, 33);
+  background: linear-gradient(
+    95deg,
+    rgb(242, 113, 33) 0%,
+    rgb(233, 64, 87) 50%,
+    rgb(138, 35, 135) 100%
+  );
   box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
 }
 
 .button {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 2rem;
 }
 
 .button-parent {
   display: flex;
-  margin-left: 20%;
 }
 
 .circle {
@@ -23,8 +32,11 @@
 
 .filter-section {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
+}
+
+.inactive {
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
 }
 
 .member-skills-card {
@@ -35,9 +47,26 @@
   justify-content: space-between;
 }
 
+.search-results {
+  margin: 1rem;
+}
+
+.search-results .MuiChip-root {
+  margin: 0.25rem;
+}
+
 .team-skill-autocomplete {
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
-  width: 25%;
+  width: 30%;
+}
+
+@media (max-width: 850px) {
+  .button-parent {
+    justify-content: center;
+  }
+  .team-skill-autocomplete {
+    width: unset;
+  }
 }

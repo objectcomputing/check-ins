@@ -29,7 +29,6 @@ const SearchResults = ({ searchResults }) => {
 
   return (
     <div className="results-section">
-      {searchResults.length ? <h2>Search Results</h2> : null}
       <List>
         {searchResults === undefined ? (
           <div />
