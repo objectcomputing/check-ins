@@ -69,7 +69,7 @@ const Personnel = () => {
   }, [csrf, personnel, dispatch]);
 
 // Create feedback request link
-const createFeedbackRequestLink = (memberid) => (<Link to="">Request Feedback</Link>);
+const createFeedbackRequestLink = (memberId) => (<Link to={`/feedback/request?for=${memberId}`}>Request Feedback</Link>);
 
   // Create entry of member and their last checkin
   function createEntry(person, lastCheckin, keyInput) {
