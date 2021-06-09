@@ -1,0 +1,11 @@
+.feedback-request-page {
+    margin: 4rem 2rem 2rem 2rem;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}

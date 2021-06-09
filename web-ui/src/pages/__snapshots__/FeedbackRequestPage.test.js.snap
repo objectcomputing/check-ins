@@ -1,0 +1,264 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="feedback-request-page"
+>
+  <div
+    className="header-container"
+  >
+    <h4
+      className="MuiTypography-root MuiTypography-h4"
+    >
+      Feedback Request for 
+      <b>
+        John Doe
+      </b>
+    </h4>
+    <div>
+      <div>
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-text Mui-disabled Mui-disabled"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={-1}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Back
+          </span>
+        </button>
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Next
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-root-1 MuiPaper-elevation0"
+  >
+    <div
+      className="MuiStep-root MuiStep-horizontal"
+    >
+      <span
+        className="MuiStepLabel-root MuiStepLabel-horizontal"
+      >
+        <span
+          className="MuiStepLabel-iconContainer"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiStepIcon-root MuiStepIcon-active"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="12"
+            />
+            <text
+              className="MuiStepIcon-text"
+              textAnchor="middle"
+              x="12"
+              y="16"
+            >
+              1
+            </text>
+          </svg>
+        </span>
+        <span
+          className="MuiStepLabel-labelContainer"
+        >
+          <span
+            className="MuiTypography-root MuiStepLabel-label MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
+          >
+            Select recipients
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
+    >
+      <span
+        className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+      />
+    </div>
+    <div
+      className="MuiStep-root MuiStep-horizontal"
+    >
+      <span
+        className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+      >
+        <span
+          className="MuiStepLabel-iconContainer"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiStepIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="12"
+            />
+            <text
+              className="MuiStepIcon-text"
+              textAnchor="middle"
+              x="12"
+              y="16"
+            >
+              2
+            </text>
+          </svg>
+        </span>
+        <span
+          className="MuiStepLabel-labelContainer"
+        >
+          <span
+            className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+          >
+            Select template
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
+    >
+      <span
+        className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+      />
+    </div>
+    <div
+      className="MuiStep-root MuiStep-horizontal"
+    >
+      <span
+        className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+      >
+        <span
+          className="MuiStepLabel-iconContainer"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiStepIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="12"
+            />
+            <text
+              className="MuiStepIcon-text"
+              textAnchor="middle"
+              x="12"
+              y="16"
+            >
+              3
+            </text>
+          </svg>
+        </span>
+        <span
+          className="MuiStepLabel-labelContainer"
+        >
+          <span
+            className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+          >
+            Set due date
+          </span>
+        </span>
+      </span>
+    </div>
+    <div
+      className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
+    >
+      <span
+        className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+      />
+    </div>
+    <div
+      className="MuiStep-root MuiStep-horizontal"
+    >
+      <span
+        className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+      >
+        <span
+          className="MuiStepLabel-iconContainer"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root MuiStepIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="12"
+            />
+            <text
+              className="MuiStepIcon-text"
+              textAnchor="middle"
+              x="12"
+              y="16"
+            >
+              4
+            </text>
+          </svg>
+        </span>
+        <span
+          className="MuiStepLabel-labelContainer"
+        >
+          <span
+            className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+          >
+            Done!
+          </span>
+        </span>
+      </span>
+    </div>
+  </div>
+  <div
+    className="current-step-content"
+  />
+</div>
+`;
