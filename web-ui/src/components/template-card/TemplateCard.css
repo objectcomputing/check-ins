@@ -1,0 +1,28 @@
+.root{
+    min-Width: 50px;
+    max-Width: 275px;
+}
+
+.templateName{
+    width: 50%;
+    margin: auto;
+}
+
+.description{
+    width: 50%;
+    margin: auto;
+}
+
+.bullet {
+    display: inline-block;
+    margin: 0.2px;
+    transform: scale(0.8);
+}
+
+.title {
+    fontSize: 14
+}
+
+.pos {
+    marginBottom: 12,
+}
