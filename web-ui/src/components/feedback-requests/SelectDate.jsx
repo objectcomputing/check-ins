@@ -3,14 +3,25 @@ import {
   DatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-//import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-// import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
-// import LocalizationProvider from '@material-ui/lab/LocalizationProvider'
+import { makeStyles } from "@material-ui/core/styles";
+
+
+const useStyles = makeStyles({
+pickercontain: {
+  marginLeft: '2em',
+  marginTop:'2em',
+},
+ picker: {
+  minWidth: '60%',
+  maxWidth: "80%",
+  display:'block',
+ }
+});
 
 const SelectDate = () =>{
+ const classes = useStyles();
 const [dueDate, setDueDate] = React.useState(null);
 const [sendDate, setSendDate] = React.useState(new Date());
-console.log(sendDate)
 
 const handleDueDateChange = (date) => {
   setDueDate(date);
@@ -21,8 +32,10 @@ const handleSendDateChange = (date) => {
 };
 
 return (
-<React.Fragment>
+<React.Fragment className={classes.root}>
+  <div className={classes.pickercontain}>
        <DatePicker
+       className= {classes.picker}
                disableToolbar
                format="MM/dd/yyyy"
                margin="normal"
@@ -35,17 +48,20 @@ return (
                }}
              />
             <DatePicker
+            className= {classes.picker}
                 disableToolbar
                 format="MM/dd/yyyy"
                 margin="normal"
                 id="set-due-date"
                 label="Due Date:"
+                emptyLabel="No due date"
                 value={dueDate}
                 onChange={handleDueDateChange}
                 KeyboardButtonProps={{
                    'aria-label': 'change date',
                 }}
              />
+             </div>
 </React.Fragment>
 
     );
