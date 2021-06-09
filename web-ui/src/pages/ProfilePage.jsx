@@ -14,7 +14,6 @@ import { getEmployeeHours } from "../api/hours";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
-import TemplateCard from "../components/template-card/TemplateCard";
 
 import { Info } from "@material-ui/icons";
 import {
@@ -206,7 +205,6 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
-      <TemplateCard></TemplateCard>
     </div>
   );
 };

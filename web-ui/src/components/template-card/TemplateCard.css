@@ -9,20 +9,30 @@
 }
 
 .description{
-    width: 50%;
-    margin: auto;
+    text-align: center;
+    min-height: 60px;
+    max-height: 120px;
+    max-width: 200px;
+    color: gray;
 }
+.creator-wrapper{
+    display: flex;
+    padding-top: 20px;
+    margin-left:  auto;
+    margin-right:  auto;
+}
+.creator{
+    font-weight: bold;
+    text-align: center;
+    margin-left: 2px;
+    flex-direction: row;
 
-.bullet {
-    display: inline-block;
-    margin: 0.2px;
-    transform: scale(0.8);
 }
 
 .title {
-    fontSize: 14
+    font-size: 14px;
 }
 
 .pos {
-    marginBottom: 12,
+    margin-bottom: 12px;
 }
