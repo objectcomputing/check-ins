@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the confirmation message 1`] = `
+<div
+  className="request-confirmation"
+>
+  <img
+    alt="Checkmark"
+    className="checkmark-image"
+    src="checkmark.png"
+  />
+  <h3
+    className="MuiTypography-root MuiTypography-h3"
+  >
+    <b>
+      Feedback scheduled for today
+    </b>
+  </h3>
+  <h6
+    className="MuiTypography-root recipients-list MuiTypography-h6"
+  >
+    <b>
+      From:
+    </b>
+     
+    Alice, Bob, Eve
+  </h6>
+</div>
+`;

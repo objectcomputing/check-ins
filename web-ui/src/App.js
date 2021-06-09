@@ -13,6 +13,7 @@ import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
+import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -51,6 +52,9 @@ function App() {
                     <GroupIcon fontSize="large" />
                   </Header>
                   <GuildsPage />
+                </Route>
+                <Route path="/request">
+                  <FeedbackRequestPage />
                 </Route>
                 <Route path="/home">
                   <Header />

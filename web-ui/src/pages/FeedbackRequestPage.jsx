@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 import "./FeedbackRequestPage.css";
+import FeedbackRequestConfirmation from "../components/feedback_request_confirmation/FeedbackRequestConfirmation";
 
 const useStyles = makeStyles({
     root: {
@@ -73,9 +74,7 @@ const FeedbackRequestPage = () => {
                 })}
             </Stepper>
             <div className="current-step-content">
-                {/* Render components conditionally based on current step */}
-                {/* if step==0 then render step0 */}
-                {/* etc... */}
+              {activeStep === 3 && <FeedbackRequestConfirmation />}
             </div>
         </div>
         

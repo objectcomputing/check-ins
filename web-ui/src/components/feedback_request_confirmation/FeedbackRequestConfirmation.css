@@ -1,0 +1,19 @@
+.request-confirmation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    padding-top: 40px;
+}
+
+.recipients-list {
+    padding-top: 10px;
+}
+
+.checkmark-image {
+    width: 20vw;
+    height: auto;
+}
