@@ -75,6 +75,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const isDirectoryOpen = (loc) => {
+  if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
+    return true;
+  }
+  return false;
+}
+
+const isReportsOpen = (loc) => {
+  if (loc === "/checkins-reports" || loc === "/skills-reports") {
+    return true;
+  }
+  return false;
+}
 
 function Menu() {
   const { state } = useContext(AppContext);
@@ -89,22 +102,13 @@ function Menu() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const history = useHistory();
-  const [reportsOpen, setReportsOpen] = useState(false);
-  const [directoryOpen, setDirectoryOpen] = useState(false);
+  const [reportsOpen, setReportsOpen] = useState(isReportsOpen(location.pathname));
+  const [directoryOpen, setDirectoryOpen] = useState(isDirectoryOpen(location.pathname));
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
-  
-  const loc = location.pathname;
-  if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
-    if (!directoryOpen) setDirectoryOpen(true);
-  }
-  if (loc === "/checkins-reports" || loc === "/skills-reports") {
-    if(!reportsOpen) setReportsOpen(true);
-  }
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
@@ -112,19 +116,8 @@ function Menu() {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
-
-  // useEffect(() => {
-  //   const loc = location.pathname;
-  //   if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
-  //     if (!directoryOpen) setDirectoryOpen(true);
-  //   }
-  //   if (loc === "/checkins-reports" || loc === "skills-reports") {
-  //     if(!reportsOpen) setReportsOpen(true);
-  //   }
-  // }, [location])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -144,7 +137,8 @@ function Menu() {
   };
 
   const isLinkSelected = (path) => {
-    if (path === "/checkins" && location.pathname.includes("/checkins/")) return true;
+    // /checkins route is special case as additional info is added to url
+    if (path === "/checkins" && location.pathname.includes(`${path}/`)) return true;
     return location.pathname === path ? true : false;
   }
 
