@@ -13,7 +13,6 @@ import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
-import Sandbox from "./pages/Sandbox";
 import { AppContextProvider } from "./context/AppContext";
 
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
@@ -47,9 +46,6 @@ function App() {
                     <GroupIcon fontSize="large" />
                   </Header>
                   <TeamsPage />
-                </Route>
-                <Route path='/sandbox'>
-                  <Sandbox/>
                 </Route>
                 <Route path="/guilds">
                   <Header title="Guilds">

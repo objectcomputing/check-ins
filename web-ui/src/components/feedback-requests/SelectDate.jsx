@@ -1,13 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   DatePicker,
 } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from "@material-ui/core/styles";
 
 
 const useStyles = makeStyles({
-pickercontain: {
+pickerContain: {
   marginLeft: '2em',
   marginTop:'2em',
 },
@@ -33,7 +32,7 @@ const handleSendDateChange = (date) => {
 
 return (
 <React.Fragment className={classes.root}>
-  <div className={classes.pickercontain}>
+  <div className={classes.pickerContain}>
        <DatePicker
        className= {classes.picker}
                disableToolbar
