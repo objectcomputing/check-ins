@@ -76,9 +76,32 @@ const FeedbackRequestPage = () => {
                 {/* Render components conditionally based on current step */}
                 {/* if step==0 then render step0 */}
                 {/* etc... */}
+              {activeStep === 0 &&
+                <div className="card-container">
+                  <TemplateCard
+                    title="Ad Hoc"
+                    description="Send a single question"
+                    creator="Admin"
+                  />
+                  <TemplateCard
+                    title="Survey 1"
+                    description="Make a survey of a few questions"
+                    creator="Admin"
+                  />
+                  <TemplateCard
+                    title="Feedback Survey 2"
+                    description="Another type of survey"
+                    creator="Jane Doe"
+                  />
+                  <TemplateCard
+                    title="Custom Template"
+                    description="A very very very very very very very very very very very very very very very very very very very very very very very very very very long description"
+                    creator="Bob Smith"
+                  />
+                </div>
+              }
             </div>
         </div>
-        
     );
 }
 

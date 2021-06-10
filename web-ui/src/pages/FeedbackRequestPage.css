@@ -11,6 +11,8 @@
 }
 
 .card-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    margin: 1rem calc(2rem - 20px) 1rem calc(2rem - 20px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
