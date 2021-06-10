@@ -5,6 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import FeedbackRecipientCard from "../components/feedback_request/Feedback_recipient_card";
 
 import "./FeedbackRequestPage.css";
 
@@ -73,9 +74,8 @@ const FeedbackRequestPage = () => {
                 })}
             </Stepper>
             <div className="current-step-content">
-                {/* Render components conditionally based on current step */}
-                {/* if step==0 then render step0 */}
-                {/* etc... */}
+
+              {activeStep === 0 && <FeedbackRecipientCard />}
             </div>
         </div>
         

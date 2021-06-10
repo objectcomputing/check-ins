@@ -259,6 +259,43 @@ exports[`renders correctly 1`] = `
   </div>
   <div
     className="current-step-content"
-  />
+  >
+    <div
+      className="MuiPaper-root MuiCard-root makeStyles-root-2 MuiPaper-elevation1 MuiPaper-rounded"
+    >
+      <div
+        className="MuiCardContent-root makeStyles-cardContent-3"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circle avatar"
+          id="avatar-pic"
+          name="avatar-pic"
+        >
+          <img
+            className="MuiAvatar-img"
+            src="../../../public/default_profile.jpg"
+          />
+        </div>
+        <p
+          className="MuiTypography-root makeStyles-pos-8 MuiTypography-body1 MuiTypography-colorTextSecondary"
+          id="name"
+          name="name"
+        >
+          Slim Jim
+        </p>
+        <hr
+          className="MuiDivider-root makeStyles-divider-5 MuiDivider-middle"
+        />
+        <p
+          className="MuiTypography-root makeStyles-recommendationText-4 MuiTypography-body1"
+          id="rec_reason"
+          name="rec_reason"
+        >
+          Recommended for being a local opossum
+          <br />
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 `;
