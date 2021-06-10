@@ -106,9 +106,9 @@ const ProfilePage = () => {
       });
       return;
     }
-    const index = newVal.length - 1;
-    const newId = newVal[index].id;
     if (newVal.length > myGuilds.length) {
+      const index = newVal.length - 1;
+      const newId = newVal[index].id;
       if (myGuilds.some((guild) => guild.id === newId)) return;
       newVal.filter((guild) => !myGuilds.includes(guild.id));
       newVal[index].guildMembers = [...newVal[index].guildMembers, userProfile];
@@ -124,6 +124,16 @@ const ProfilePage = () => {
       const guildMembers = guildToEdit.guildMembers.filter(
         (member) => member.memberId !== userProfile.id
       );
+      if (!guildMembers.some((member) => member.lead === true)) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Guild must have at least one lead",
+          },
+        });
+        return;
+      }
       guildToEdit.guildMembers = guildMembers;
       let res = await updateGuild(guildToEdit, csrf);
       let data =

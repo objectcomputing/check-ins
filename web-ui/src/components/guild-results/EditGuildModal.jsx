@@ -28,7 +28,13 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       setGuild({
         ...editedGuild,
         guildMembers: [
-          { memberid: currentUser.id, name: currentUser.name, lead: true },
+          {
+            memberid: currentUser.id,
+            name: `${currentUser.firstName} ${currentUser.lastName}`,
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+            lead: true,
+          },
         ],
       });
     }
@@ -123,9 +129,12 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           id="guildLeadSelect"
           multiple
           options={guildMemberOptions}
+          required
           value={
             editedGuild.guildMembers
-              ? editedGuild.guildMembers.filter((guildMember) => guildMember.lead)
+              ? editedGuild.guildMembers.filter(
+                  (guildMember) => guildMember.lead
+                )
               : []
           }
           onChange={onLeadsChange}
@@ -144,7 +153,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           options={guildMemberOptions}
           value={
             editedGuild.guildMembers
-              ? editedGuild.guildMembers.filter((guildMember) => !guildMember.lead)
+              ? editedGuild.guildMembers.filter(
+                  (guildMember) => !guildMember.lead
+                )
               : []
           }
           onChange={onGuildMembersChange}
