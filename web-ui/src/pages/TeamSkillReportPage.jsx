@@ -58,7 +58,6 @@ const TeamSkillReportPage = () => {
     } else {
       setSearchResults([]);
       setAllSearchResults([]);
-      setAllSearchResults([]);
     }
     setShowRadar(true);
   };
