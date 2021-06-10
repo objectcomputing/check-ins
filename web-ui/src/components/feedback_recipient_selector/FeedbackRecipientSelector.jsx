@@ -4,9 +4,14 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Search from "@material-ui/icons/Search";
 
+import "./FeedbackRecipientSelector.css";
+
 const useStyles = makeStyles({
   root: {
     color: "gray"
+  },
+  textField: {
+    width: "40ch"
   }
 });
 
@@ -16,7 +21,7 @@ const FeedbackRecipientSelector = () => {
   return (
     <div className="feedback-recipient-selector">
       <TextField
-        id="recipient-search"
+        className={classes.textField}
         placeholder="Search..."
         InputProps={{
           startAdornment: (
@@ -26,6 +31,9 @@ const FeedbackRecipientSelector = () => {
           ),
         }}
       />
+      <div className="card-container">
+        {/* Cards rendered here */}
+      </div>
     </div>
   )
 }
