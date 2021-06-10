@@ -111,7 +111,16 @@ const ProfilePage = () => {
       const newId = newVal[index].id;
       if (myGuilds.some((guild) => guild.id === newId)) return;
       newVal.filter((guild) => !myGuilds.includes(guild.id));
-      newVal[index].guildMembers = [...newVal[index].guildMembers, userProfile];
+      newVal[index].guildMembers = [
+        ...newVal[index].guildMembers,
+        {
+          memberId: userProfile.id,
+          name: `${userProfile.firstName} ${userProfile.lastName}`,
+          firstName: userProfile.firstName,
+          lastName: userProfile.lastName,
+          lead: false,
+        },
+      ];
       let res = await updateGuild(newVal[index], csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
