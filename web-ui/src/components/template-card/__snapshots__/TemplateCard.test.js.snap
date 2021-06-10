@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardContent-root"
+  >
+    <div
+      className="card-content"
+    >
+      <div
+        className="templateName"
+      >
+        Ad Hoc
+      </div>
+      <div
+        className="description-and-creator"
+      >
+        <div
+          className="description"
+        >
+          Ask a single question
+        </div>
+        <div
+          className="creator-wrapper"
+        >
+          Created by:
+          <div
+            className="creator"
+          >
+            Admin
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
