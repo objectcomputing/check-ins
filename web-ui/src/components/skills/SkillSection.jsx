@@ -106,6 +106,15 @@ const SkillSection = ({ userId }) => {
 
   const classes = useStyles();
 
+  myMemberSkills.forEach(async (mSkill) => {
+    let skill = await getSkill(mSkill.skillid, csrf);
+    const { name } = skill.payload.data;
+    mSkill.name = name;
+  });
+  myMemberSkills.sort(
+    (a, b) => a.name && b.name && a.name.localeCompare(b.name)
+  );
+
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
