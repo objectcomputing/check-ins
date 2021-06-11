@@ -20,10 +20,6 @@ function getSteps() {
     return ["Select recipients", "Select template", "Set due date", "Done!"];
 }
 
-function trackSteps(activeStep) {
-    let urlStep = activeStep;
-}
-
 const FeedbackRequestPage = () => {
     const [activeStep, setActiveStep] = useState(0);
     const steps = getSteps();
@@ -35,7 +31,13 @@ const FeedbackRequestPage = () => {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
+        setURLStep((prev) => {
+            return {
+                ...prev,
+                search: `?step=${activeStep}`
+            }
+        })
+     };
 
     return (
         <div className="feedback-request-page">
@@ -76,9 +78,9 @@ const FeedbackRequestPage = () => {
                     );
                 })}
             </Stepper>
-            <div className="current-step-content">
-                {/* Render components conditionally based on current step */}
-                {/* if step==0 then render step0 */}
+            <div className="current-urlStep-content">
+                {/* Render components conditionally based on current urlStep */}
+                {/* if urlStep==0 then render step0 */}
                 {/* etc... */}
             </div>
         </div>

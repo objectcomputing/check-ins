@@ -258,7 +258,7 @@ exports[`renders correctly 1`] = `
     </div>
   </div>
   <div
-    className="current-step-content"
+    className="current-urlStep-content"
   />
 </div>
 `;
