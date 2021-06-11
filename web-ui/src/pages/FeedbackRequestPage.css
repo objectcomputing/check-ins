@@ -9,3 +9,10 @@
     align-items: center;
     margin-bottom: 20px;
 }
+.disabled-link {
+    pointer-events: none;
+    text-decoration: none;
+}
+.no-underline-link{
+    text-decoration: none;
+}
