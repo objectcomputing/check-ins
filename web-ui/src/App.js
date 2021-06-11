@@ -22,7 +22,6 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 import "./App.css";
-import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 
 const customHistory = createBrowserHistory();
 
