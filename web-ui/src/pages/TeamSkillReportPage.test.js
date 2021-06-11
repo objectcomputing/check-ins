@@ -8,11 +8,9 @@ it("renders correctly", () => {
   const history = createMemoryHistory(`/profile/12345`);
   snapshot(
     <Router history={history}>
-      {" "}
       <AppContextProvider>
-        {" "}
-        <TeamSkillReportPage />{" "}
-      </AppContextProvider>{" "}
+        <TeamSkillReportPage />
+      </AppContextProvider>
     </Router>
   );
 });
