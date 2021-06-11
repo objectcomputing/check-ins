@@ -21,13 +21,19 @@ function getSteps() {
 }
 
 const FeedbackRequestPage = () => {
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState(1);
     const steps = getSteps();
     const classes = useStyles();
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
+        setURLStep((prev) => {
+            return {
+                ...prev,
+                search: `?step=${activeStep}`
+            }
+        })
+     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -52,7 +58,7 @@ const FeedbackRequestPage = () => {
                         </div>
                     ) : (
                         <div>
-                            <Button disabled={activeStep === 0} onClick={handleBack}>
+                            <Button disabled={activeStep === 1} onClick={handleBack}>
                                 Back
                             </Button>
 
@@ -61,13 +67,13 @@ const FeedbackRequestPage = () => {
                                 color="primary"
                                 onClick={handleNext}
                             >
-                                {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                                {activeStep === steps.length ? "Finish" : "Next"}
                             </Button>
                         </div>
                     )}
                 </div>
             </div>
-            <Stepper activeStep={activeStep} className={classes.root}>
+            <Stepper activeStep={activeStep - 1} className={classes.root}>
                 {steps.map((label) => {
                     const stepProps = {};
                     const labelProps = {};
