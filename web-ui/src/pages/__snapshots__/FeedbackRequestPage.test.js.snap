@@ -107,7 +107,7 @@ exports[`renders correctly 1`] = `
           <span
             className="MuiTypography-root MuiStepLabel-label MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
           >
-            Select recipients
+            Select template
           </span>
         </span>
       </span>
@@ -155,7 +155,7 @@ exports[`renders correctly 1`] = `
           <span
             className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
           >
-            Select template
+            Select recipients
           </span>
         </span>
       </span>

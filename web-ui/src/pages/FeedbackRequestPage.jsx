@@ -10,15 +10,16 @@ import queryString from 'query-string';
 import { Redirect } from "react-router-dom"
 
 import "./FeedbackRequestPage.css";
+import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 
 const useStyles = makeStyles({
-    root: {
-        background: "transparent"
-    },
+  root: {
+    background: "transparent"
+  },
 });
 
 function getSteps() {
-    return ["Select template", "Select recipients", "Set due date", "Done!"];
+  return ["Select template", "Select recipients", "Set due date", "Done!"];
 }
 
 const FeedbackRequestPage = () => {
@@ -57,7 +58,6 @@ const FeedbackRequestPage = () => {
                                 </Button>
                             </Link>
 
-
                             <Link
                                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
                                 to={`?step=${activeStep + 1}`}>
@@ -84,12 +84,9 @@ const FeedbackRequestPage = () => {
                 })}
             </Stepper>
             <div className="current-urlStep-content">
-                {/* Render components conditionally based on current urlStep */}
-                {/* if urlStep==0 then render step0 */}
-                {/* etc... */}
+                {activeStep === 1 && <FeedbackRecipientSelector/>}
             </div>
         </div>
-        
     );
 }
 
