@@ -20,6 +20,10 @@ function getSteps() {
     return ["Select recipients", "Select template", "Set due date", "Done!"];
 }
 
+function trackSteps(activeStep) {
+    let urlStep = activeStep;
+}
+
 const FeedbackRequestPage = () => {
     const [activeStep, setActiveStep] = useState(0);
     const steps = getSteps();
