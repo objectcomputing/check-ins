@@ -84,7 +84,7 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-urlStep-content">
-        {activeStep === 1 && <FeedbackRecipientSelector/>}
+        {activeStep === 2 && <FeedbackRecipientSelector/>}
       </div>
     </div>
   );
