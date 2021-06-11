@@ -21,6 +21,7 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 import "./App.css";
+import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 
 const customHistory = createBrowserHistory();
 
@@ -45,6 +46,9 @@ function App() {
                     <GroupIcon fontSize="large" />
                   </Header>
                   <TeamsPage />
+                </Route>
+                <Route path="/feedback/request">
+                  <FeedbackRequestPage/>
                 </Route>
                 <Route path="/guilds">
                   <Header title="Guilds">
