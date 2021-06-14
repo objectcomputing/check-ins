@@ -9,7 +9,7 @@ const templateCard = () => {
     const creator = "Admin"
 
     return (
-        <Card className = 'card'>
+        <Card className = 'feedback-template-card'>
             <CardContent>
                 <div className='card-content'>
                     <div className='templateName' >

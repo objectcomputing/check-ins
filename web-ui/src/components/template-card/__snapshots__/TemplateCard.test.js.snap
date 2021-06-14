@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
     className="MuiCardContent-root"
