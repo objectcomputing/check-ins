@@ -4,17 +4,19 @@ import { getCheckins, getAllCheckinsForAdmin } from "./thunks";
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
+  SET_ROLES,
   UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_SKILLS,
-  SET_ROLES,
+  UPDATE_TEAMS,
 } from "./actions";
 import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
+import { getAllTeams } from "../api/team";
 import axios from "axios";
 
 const AppContext = React.createContext();
@@ -63,6 +65,25 @@ const AppContextProvider = (props) => {
       getGuilds();
     }
   }, [csrf]);
+
+  useEffect(() => {
+    async function getTeams() {
+      let res = await getAllTeams(csrf);
+      let data =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_TEAMS, payload: data });
+      }
+    }
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, dispatch]);
 
   useEffect(() => {
     const updateUserProfile = async () => {
