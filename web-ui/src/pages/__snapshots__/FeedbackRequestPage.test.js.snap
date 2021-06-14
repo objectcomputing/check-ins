@@ -264,7 +264,7 @@ exports[`renders correctly 1`] = `
       className="card-container"
     >
       <div
-        className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
       >
         <div
           className="MuiCardContent-root"
@@ -302,7 +302,7 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
       >
         <div
           className="MuiCardContent-root"
@@ -340,7 +340,7 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
       >
         <div
           className="MuiCardContent-root"
@@ -378,7 +378,7 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
       <div
-        className="MuiPaper-root MuiCard-root card MuiPaper-elevation1 MuiPaper-rounded"
+        className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
       >
         <div
           className="MuiCardContent-root"

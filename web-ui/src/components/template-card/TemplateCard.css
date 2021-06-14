@@ -17,7 +17,7 @@
   height: 100%;
 }
 
-.template-name {
+.feedback-template-card .template-name {
   font-weight: bold;
   text-align: center;
   margin: auto;
@@ -26,13 +26,13 @@
   max-height: 90px;
 }
 
-.description-and-creator {
+.feedback-template-card .description-and-creator {
   display: flex;
   padding: 0;
   flex-direction: column;
 }
 
-.description {
+.feedback-template-card .description {
   text-align: center;
   min-height: 60px;
   max-height: 80px;
@@ -40,13 +40,13 @@
   color: gray;
 }
 
-.creator-wrapper {
+.feedback-template-card .creator-wrapper {
   display: flex;
   margin-left: auto;
   margin-right: auto;
 }
 
-.creator {
+.feedback-template-card .creator {
   font-weight: bold;
   text-align: center;
   margin-left: 2px;
