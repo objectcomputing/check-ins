@@ -27,23 +27,41 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Test
     void testCreateFeedbackRequestByAdmin() {
-        //create two member profiles: one for normal employee, one for pdl of normal employee
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        Role authRole = createDefaultRole(RoleType.PDL, memberProfileForPDL);
-
-        //create feedebakc request
-
-
-        //send feedback request
-
-        //assert that content of some feedback request equals the test
-
 
     }
 
     @Test
-    void testCreateFeedbackRequestByAssignedPdl() {
+    void testCreateFeedbackRequestByAdmin() {
+        //create two member profiles: one for normal employee, one for pdl of normal employee
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        Role authRole = createDefaultRole(RoleType.PDL, memberProfileForPDL);
+        getMemberProfileRepository().save(memberProfile);
+        getMemberProfileRepository().save(memberProfileForPDL);
+
+        //create feedback request
+        final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+
+        dto.setCreatorId(memberProfileForPDL.getId());
+        dto.setRequesteeId(memberProfile.getId());
+        dto.setSendDate(LocalDate.now());
+        dto.setTemplateId(UUID.randomUUID());
+        dto.setStatus("pending");
+        dto.setDueDate(null);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(memberProfileForPDL.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        //assert that content of some feedback request equals the test
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(response.body().getCreatorId(), memberProfileForPDL.getId());
+        assertEquals(response.body().getRequesteeId(), memberProfile.getId());
+        assertEquals(response.body().getDueDate(), dto.getDueDate());
+        assertEquals(response.body().getTemplateId(), dto.getTemplateId());
+        assertEquals(response.body().getStatus(), dto.getStatus());
+        assertEquals(response.body().getSendDate(), dto.getSendDate());
 
     }
 
