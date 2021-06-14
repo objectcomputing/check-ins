@@ -17,54 +17,64 @@ exports[`renders correctly 1`] = `
     </h4>
     <div>
       <div>
-        <button
-          className="MuiButtonBase-root MuiButton-root MuiButton-text Mui-disabled Mui-disabled"
-          disabled={true}
-          onBlur={[Function]}
+        <a
+          className="no-underline-link disabled-link"
+          href="/?step=0"
           onClick={[Function]}
-          onDragLeave={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          tabIndex={-1}
-          type="button"
         >
-          <span
-            className="MuiButton-label"
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-text Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
           >
-            Back
-          </span>
-        </button>
-        <button
-          className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
-          disabled={false}
-          onBlur={[Function]}
+            <span
+              className="MuiButton-label"
+            >
+              Back
+            </span>
+          </button>
+        </a>
+        <a
+          className="no-underline-link "
+          href="/?step=2"
           onClick={[Function]}
-          onDragLeave={[Function]}
-          onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
-          onMouseLeave={[Function]}
-          onMouseUp={[Function]}
-          onTouchEnd={[Function]}
-          onTouchMove={[Function]}
-          onTouchStart={[Function]}
-          tabIndex={0}
-          type="button"
         >
-          <span
-            className="MuiButton-label"
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+            disabled={false}
+            onBlur={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={0}
+            type="button"
           >
-            Next
-          </span>
-        </button>
+            <span
+              className="MuiButton-label"
+            >
+              Next
+            </span>
+          </button>
+        </a>
       </div>
     </div>
   </div>
