@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.feedback.Feedback;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -84,12 +85,38 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     @Override
     public Boolean delete(UUID id) {
-        return null;
+        final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
+        if (!feedbackReq.isPresent()) {
+            throw new NotFoundException("No feedback request with id " + id);
+        }
+
+        if (!isPermitted(feedbackReq.get().getCreatorId())) {
+            throw new PermissionException("You are not authorized to perform this operation");
+        }
+
+        feedbackReqRepository.deleteById(id);
+        return true;
     }
 
     @Override
     public FeedbackRequest getById(UUID id) {
-        return null;
+        final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
+        if (!feedbackReq.isPresent()) {
+            throw new NotFoundException("No feedback req with id " + id);
+        }
+
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        final UUID creatorId = feedbackReq.get().getCreatorId();
+        final UUID requesteeId = feedbackReq.get().getRequesteeId();
+        final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
+
+        if ((currentUserId != creatorId) || (currentUserId != requesteeId) || !(currentUserId.equals(requesteePDL))) {
+            throw new PermissionException("You are not authorized to read this feedback req");
+        }
+
+        return feedbackReq.get();
+
+
     }
 
     @Override
