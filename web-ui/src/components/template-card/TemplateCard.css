@@ -1,4 +1,4 @@
-.card {
+.feedback-template-card {
   width: 270px;
   height: 250px;
   padding: 15px;
@@ -7,7 +7,7 @@
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
-.card-content {
+.feedback-template-card .card-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,12 +51,4 @@
   text-align: center;
   margin-left: 2px;
   flex-direction: row;
-}
-
-.title {
-  font-size: 14px;
-}
-
-.pos {
-  margin-bottom: 12px;
 }

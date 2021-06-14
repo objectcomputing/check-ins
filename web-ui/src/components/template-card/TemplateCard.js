@@ -21,7 +21,7 @@ const cutText = (text, maxCharacters) => {
 
 const TemplateCard = (props) => {
     return (
-        <Card className = 'card'>
+        <Card className = 'feedback-template-card'>
             <CardContent>
                 <div className='card-content'>
                     <div>
