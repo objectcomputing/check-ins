@@ -526,4 +526,22 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
+
+    @Test
+    void testGuildMemberHistoryWhenAGuildMemberIsSavedByAdmin() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        GuildMember guildMember = response.body();
+
+        final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
+
+        assertEquals(guildMemberCreateDTO.getMemberid(), guildMember.getMemberid());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildMember.getId()), response.getHeaders().get("location"));
+    }
 }
