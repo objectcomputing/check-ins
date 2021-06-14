@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -255,22 +255,26 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to={`/profile/${id}`}>
-            <Avatar
-              src={getAvatarURL(workEmail)}
-              style={{
-                position: "absolute",
-                right: "5px",
-                top: "10px",
-              }}
-            />
-          </Link>
+
+          <Avatar
+            onClick={() => history.push(`/profile/${id}`)}
+            src={getAvatarURL(workEmail)}
+            style={{
+              position: "absolute",
+              cursor: "pointer",
+              right: "5px",
+              top: "10px",
+              textDecoration: "none"
+            }}
+          />
+
         </div>
       </AppBar>
       <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
+            disablePortal
             anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}
