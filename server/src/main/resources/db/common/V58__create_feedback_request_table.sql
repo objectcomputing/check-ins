@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS feedback_request;
+DROP TABLE IF EXISTS feedback_requests;
 
-CREATE TABLE feedback_request (
+CREATE TABLE feedback_requests (
   id varchar PRIMARY KEY,
   creatorId varchar REFERENCES member_profile(id),
   requesteeId varchar REFERENCES member_profile(id),

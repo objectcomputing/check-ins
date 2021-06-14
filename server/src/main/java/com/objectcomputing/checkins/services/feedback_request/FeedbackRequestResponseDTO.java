@@ -2,13 +2,18 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackRequestCreateDTO {
+public class FeedbackRequestResponseDTO {
+
+    @NotNull
+    @Schema(description = "unique id of the feedback request", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "id of the feedback request creator", required = true)
@@ -32,6 +37,14 @@ public class FeedbackRequestCreateDTO {
     @NotNull
     @Schema(description = "Completion status of request", required = true)
     private String status;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public UUID getCreatorId() {
         return creatorId;
@@ -82,4 +95,3 @@ public class FeedbackRequestCreateDTO {
         this.status = status;
     }
 }
-
