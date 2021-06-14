@@ -20,7 +20,7 @@
 }
 .feedback-template-card .description-and-creator{
     display: flex;
-    padding: 0px;
+    padding: 0;
     flex-direction: column;
 }
 .feedback-template-card .description{
@@ -42,12 +42,4 @@
     margin-left: 2px;
     flex-direction: row;
 
-}
-
-.feedback-template-card .title {
-    font-size: 14px;
-}
-
-.feedback-template-card .pos {
-    margin-bottom: 12px;
 }
