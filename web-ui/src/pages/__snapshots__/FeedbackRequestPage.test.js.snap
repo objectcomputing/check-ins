@@ -270,8 +270,165 @@ Array [
       </div>
     </div>
     <div
-      className="current-urlStep-content"
-    />
+      className="current-step-content"
+    >
+      <div
+        className="card-container"
+      >
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          <div
+            className="MuiCardContent-root"
+          >
+            <div
+              className="card-content"
+            >
+              <div>
+                <div
+                  className="template-name"
+                >
+                  Ad Hoc
+                </div>
+                <div
+                  className="description-and-creator"
+                >
+                  <div
+                    className="description"
+                  >
+                    Send a single question
+                  </div>
+                </div>
+              </div>
+              <div
+                className="creator-wrapper"
+              >
+                Created by:
+                <div
+                  className="creator"
+                >
+                  Admin
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          <div
+            className="MuiCardContent-root"
+          >
+            <div
+              className="card-content"
+            >
+              <div>
+                <div
+                  className="template-name"
+                >
+                  Survey 1
+                </div>
+                <div
+                  className="description-and-creator"
+                >
+                  <div
+                    className="description"
+                  >
+                    Make a survey of a few questions
+                  </div>
+                </div>
+              </div>
+              <div
+                className="creator-wrapper"
+              >
+                Created by:
+                <div
+                  className="creator"
+                >
+                  Admin
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          <div
+            className="MuiCardContent-root"
+          >
+            <div
+              className="card-content"
+            >
+              <div>
+                <div
+                  className="template-name"
+                >
+                  Feedback Survey 2
+                </div>
+                <div
+                  className="description-and-creator"
+                >
+                  <div
+                    className="description"
+                  >
+                    Another type of survey
+                  </div>
+                </div>
+              </div>
+              <div
+                className="creator-wrapper"
+              >
+                Created by:
+                <div
+                  className="creator"
+                >
+                  Jane Doe
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          <div
+            className="MuiCardContent-root"
+          >
+            <div
+              className="card-content"
+            >
+              <div>
+                <div
+                  className="template-name"
+                >
+                  Custom Template
+                </div>
+                <div
+                  className="description-and-creator"
+                >
+                  <div
+                    className="description"
+                  >
+                    A very very very very very very very very very very very very very very very very very ver...
+                  </div>
+                </div>
+              </div>
+              <div
+                className="creator-wrapper"
+              >
+                Created by:
+                <div
+                  className="creator"
+                >
+                  Bob Smith
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>,
 ]
 `;
