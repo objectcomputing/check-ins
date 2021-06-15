@@ -23,12 +23,18 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
     if (
       currentUser?.id &&
       (editedGuild.guildMembers === undefined ||
-        editedGuild.guildMembers.length === 0)
+        editedGuild.guildMembers.length === 0 ||
+        editedGuild.guildMembers.filter(member => member.lead === true).length === 0)
     ) {
       setGuild({
         ...editedGuild,
-        guildMembers: [
-          { memberid: currentUser.id, name: currentUser.name, lead: true },
+        guildMembers: [...new Set(editedGuild?.guildMembers?.filter(member => member.lead === false && member.memberid !== currentUser.id)),
+          {
+            name: `${currentUser.firstName} ${currentUser.lastName}`,
+            memberid: currentUser.id,
+            guildid: editedGuild.id,
+            lead: true,
+          },
         ],
       });
     }
@@ -49,10 +55,16 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       editedGuild && editedGuild.guildMembers
         ? editedGuild.guildMembers.filter((guildMember) => !guildMember.lead)
         : [];
-    newValue.forEach((lead) => (lead.lead = true));
+    newValue = newValue.map((newLead) => ({
+      id: newLead.memberid ? newLead.id : undefined,
+      name: newLead.name,
+      memberid: newLead.memberid ? newLead.memberid : newLead.id,
+      guildid: editedGuild.id,
+      lead: true,
+    }));
     newValue.forEach((newLead) => {
       extantMembers = extantMembers.filter(
-        (member) => member.memberid !== newLead.id && member.id !== newLead.id
+        (member) => member.memberid !== newLead.memberid
       );
     });
     extantMembers = [...new Set(extantMembers)];
@@ -68,10 +80,16 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       editedGuild && editedGuild.guildMembers
         ? editedGuild.guildMembers.filter((guildMember) => guildMember.lead)
         : [];
-    newValue.forEach((guildMember) => (guildMember.lead = false));
+    newValue = newValue.map((newMember) => ({
+      id: newMember.memberid ? newMember.id : undefined,
+      name: newMember.name,
+      memberid: newMember.memberid ? newMember.memberid : newMember.id,
+      guildid: editedGuild.id,
+      lead: false,
+    }));
     newValue.forEach((newMember) => {
       extantLeads = extantLeads.filter(
-        (lead) => lead.memberid !== newMember.id && lead.id !== newMember.id
+        (lead) => lead.memberid !== newMember.memberid
       );
     });
     extantLeads = [...new Set(extantLeads)];
@@ -123,9 +141,12 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           id="guildLeadSelect"
           multiple
           options={guildMemberOptions}
+          required
           value={
             editedGuild.guildMembers
-              ? editedGuild.guildMembers.filter((guildMember) => guildMember.lead)
+              ? editedGuild.guildMembers.filter(
+                  (guildMember) => guildMember.lead
+                )
               : []
           }
           onChange={onLeadsChange}
@@ -144,7 +165,9 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
           options={guildMemberOptions}
           value={
             editedGuild.guildMembers
-              ? editedGuild.guildMembers.filter((guildMember) => !guildMember.lead)
+              ? editedGuild.guildMembers.filter(
+                  (guildMember) => !guildMember.lead
+                )
               : []
           }
           onChange={onGuildMembersChange}
