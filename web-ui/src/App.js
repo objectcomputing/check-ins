@@ -48,6 +48,9 @@ function App() {
                   </Header>
                   <TeamsPage />
                 </Route>
+                <Route path="/feedback/request">
+                  <FeedbackRequestPage/>
+                </Route>
                 <Route path="/guilds">
                   <Header title="Guilds">
                     <GroupIcon fontSize="large" />

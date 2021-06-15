@@ -16,3 +16,11 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
+
+.disabled-link {
+    pointer-events: none;
+    text-decoration: none;
+}
+.no-underline-link{
+    text-decoration: none;
+}
