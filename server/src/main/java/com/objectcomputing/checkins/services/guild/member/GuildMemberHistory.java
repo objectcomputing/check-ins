@@ -33,10 +33,10 @@ public class GuildMemberHistory {
     private UUID guildId;
 
     @NotNull
-    @Column(name = "guildMemberId")
+    @Column(name = "memberId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the guild member this entry is associated with", required = true)
-    private UUID guildMemberId;
+    private UUID memberId;
 
     @Nullable
     @Column(name = "change")
@@ -48,17 +48,17 @@ public class GuildMemberHistory {
     @Schema(description = "The date of the latest change to the guild member.", required = true)
     private LocalDateTime date;
 
-    public GuildMemberHistory(@NotNull UUID guildId, @NotNull UUID guildMemberId, @Nullable String change, @Nullable LocalDateTime date) {
+    public GuildMemberHistory(@NotNull UUID guildId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
         this.guildId = guildId;
-        this.guildMemberId = guildMemberId;
+        this.memberId = memberId;
         this.change = change;
         this.date = date;
     }
 
-    public GuildMemberHistory(UUID id, @NotNull UUID guildId, @NotNull UUID guildMemberId, @Nullable String change, @Nullable LocalDateTime date) {
+    public GuildMemberHistory(UUID id, @NotNull UUID guildId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
         this.id = id;
         this.guildId = guildId;
-        this.guildMemberId = guildMemberId;
+        this.memberId = memberId;
         this.change = change;
         this.date = date;
     }
@@ -79,12 +79,12 @@ public class GuildMemberHistory {
         this.guildId = guildId;
     }
 
-    public UUID getGuildMemberId() {
-        return guildMemberId;
+    public UUID getMemberId() {
+        return memberId;
     }
 
-    public void setGuildMemberId(UUID guildMemberId) {
-        this.guildMemberId = guildMemberId;
+    public void setMemberId(UUID guildMemberId) {
+        this.memberId = memberId;
     }
 
     @Nullable
@@ -112,14 +112,14 @@ public class GuildMemberHistory {
         GuildMemberHistory that = (GuildMemberHistory) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(guildId, that.guildId) &&
-                Objects.equals(guildMemberId, that.guildMemberId) &&
+                Objects.equals(memberId, that.memberId) &&
                 Objects.equals(change, that.change) &&
                 Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, guildId, guildMemberId, change, date);
+        return Objects.hash(id, guildId, memberId, change, date);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class GuildMemberHistory {
         return "GuildMemberHistory{" +
                 "id=" + id +
                 ", guildId=" + guildId +
-                ", guildMemberId=" + guildMemberId +
+                ", guildMemberId=" + memberId +
                 ", change='" + change + '\'' +
                 ", date=" + date +
                 '}';
