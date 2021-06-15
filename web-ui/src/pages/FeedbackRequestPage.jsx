@@ -26,7 +26,7 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const urlStep = useLocation();
-  const query = queryString.parse(urlStep?.search).step.toString();
+  const query = queryString.parse(urlStep?.search).step?.toString();
   let activeStep = urlStep?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
   if (activeStep < 1 || activeStep > getSteps().length || !numbersOnly) {
