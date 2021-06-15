@@ -26,13 +26,14 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const urlStep = useLocation();
-  let activeStep = urlStep?.search ? parseInt(queryString.parse(urlStep.search).step) : 1;
-  if (activeStep < 1 || activeStep > getSteps().length) {
+  const query = queryString.parse(urlStep?.search).step.toString();
+  let activeStep = urlStep?.search ? parseInt(query) : 1;
+  const numbersOnly = /^\d+$/.test(query);
+  if (activeStep < 1 || activeStep > getSteps().length || !numbersOnly) {
     return (
       <Redirect to="/feedback/request?step=1"/>
     );
   }
-  console.log(activeStep);
 
   return (
     <div className="feedback-request-page">
