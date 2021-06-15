@@ -1,0 +1,54 @@
+.feedback-template-card {
+  width: 270px;
+  height: 250px;
+  padding: 15px;
+  margin: 20px;
+  box-shadow: #282c34;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.feedback-template-card .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 170px;
+  height: 100%;
+}
+
+.feedback-template-card .template-name {
+  font-weight: bold;
+  text-align: center;
+  margin: auto;
+  font-size: 30px;
+  overflow: hidden;
+  max-height: 90px;
+}
+
+.feedback-template-card .description-and-creator {
+  display: flex;
+  padding: 0;
+  flex-direction: column;
+}
+
+.feedback-template-card .description {
+  text-align: center;
+  min-height: 60px;
+  max-height: 80px;
+  max-width: 200px;
+  color: gray;
+}
+
+.feedback-template-card .creator-wrapper {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feedback-template-card .creator {
+  font-weight: bold;
+  text-align: center;
+  margin-left: 2px;
+  flex-direction: row;
+}
