@@ -112,20 +112,21 @@ const ProfilePage = () => {
       if (myGuilds.some((guild) => guild.id === newId)) return;
       newVal.filter((guild) => !myGuilds.includes(guild.id));
       newVal[index].guildMembers = [
-        ...newVal[index].guildMembers,
+        ...new Set(newVal[index].guildMembers),
         {
-          memberId: userProfile.id,
+          memberid: userProfile.id,
+          guildid: newVal[index].id,
           name: `${userProfile.firstName} ${userProfile.lastName}`,
-          firstName: userProfile.firstName,
-          lastName: userProfile.lastName,
           lead: false,
         },
       ];
       let res = await updateGuild(newVal[index], csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      dispatch({ type: UPDATE_GUILD, payload: data });
-      setMyGuilds(newVal);
+      if(data) {
+        dispatch({ type: UPDATE_GUILD, payload: data });
+        setMyGuilds(newVal);
+      }
     } else {
       const guildToEdit = myGuilds.find((guild) =>
         newVal.every((newGuild) => newGuild.id !== guild.id)
