@@ -106,15 +106,6 @@ const SkillSection = ({ userId }) => {
 
   const classes = useStyles();
 
-  myMemberSkills.forEach(async (mSkill) => {
-    let skill = await getSkill(mSkill.skillid, csrf);
-    const { name } = skill.payload.data;
-    mSkill.name = name;
-  });
-  myMemberSkills.sort(
-    (a, b) => a.name && b.name && a.name.localeCompare(b.name)
-  );
-
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
@@ -178,7 +169,7 @@ const SkillSection = ({ userId }) => {
         return;
       }
       const res = await createMemberSkill(
-        { skillid: curSkill.id, memberid: userId },
+        { skillid: curSkill.id, memberid: userId, skilllevel: 3},
         csrf
       );
       const data =
@@ -211,12 +202,13 @@ const SkillSection = ({ userId }) => {
     }
   };
 
-  const handleUpdate = async (lastUsedDate, skillLevel, index) => {
+  const handleUpdate = async (lastUsedDate, skillLevel, id) => {
     if (csrf && skillLevel) {
-      let copy = [...myMemberSkills];
-      copy[index].lastuseddate = lastUsedDate;
-      copy[index].skilllevel = skillLevel;
-      await updateMemberSkill(copy[index], csrf);
+      const mSkill = {...myMemberSkills.find((s) => s.skillid === id)};
+      mSkill.lastuseddate = lastUsedDate;
+      mSkill.skilllevel = skillLevel;
+      await updateMemberSkill(mSkill, csrf);
+      let copy = [...myMemberSkills.filter((skill) => skill.id !== mSkill.id), mSkill];
       dispatch({ type: UPDATE_MEMBER_SKILLS, payload: copy });
     }
   };
@@ -326,7 +318,7 @@ const SkillSection = ({ userId }) => {
         />
         <List>
           {mySkills &&
-            mySkills.map((memberSkill, index) => {
+            mySkills.map((memberSkill) => {
               return (
                 <ListItem
                   key={`MemberSkill-${memberSkill.id}`}
@@ -340,12 +332,11 @@ const SkillSection = ({ userId }) => {
                       memberSkill.skilllevel ? memberSkill.skilllevel : 3
                     }
                     lastUsedDate={memberSkill.lastuseddate}
-                    onDelete={() => {
+                    onDelete={(id) => {
                       handleOpenDeleteConfirmation();
-                      setSelectedSkillId(memberSkill.id);
+                      setSelectedSkillId(id);
                     }}
                     onUpdate={handleUpdate}
-                    index={index}
                   />
                 </ListItem>
               );
