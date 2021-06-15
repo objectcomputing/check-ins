@@ -20,6 +20,7 @@ import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
+import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
@@ -28,6 +29,10 @@ import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursReposit
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
+
+    default MemberHistoryRepository getMemberHistoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberHistoryRepository.class);
+    }
 
     default TagRepository getTagRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);

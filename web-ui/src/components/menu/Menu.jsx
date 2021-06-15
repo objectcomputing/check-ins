@@ -222,18 +222,20 @@ function Menu() {
                 {createListJsx(
                   [
                     ["/checkins-reports", "CHECK-INS"], 
-                    ["/skills-reports", "SKILLS"]
+                    ["/skills-reports", "SKILLS"],
+                    ["/team-skills-reports", "TEAM SKILLS"],
                   ], 
                   true)
                 }
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
           </List>
+
         </div>
       )}
     </div>
   );
-
+  
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />

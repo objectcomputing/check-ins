@@ -75,12 +75,12 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         // Create a user (not team lead) and add him to the team
         MemberProfile memberProfileOfTeammate = createADefaultMemberProfile();
-        createDefaultTeamMember(team, memberProfileOfTeammate);
+        createLeadTeamMember(team, memberProfileOfTeammate);
 
         // Create a member and add him to team
         MemberProfile memberProfileOfUser = createAnUnrelatedUser();
         TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO(team.getId(), memberProfileOfUser.getId(), false);
-        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfTeammate.getWorkEmail(), MEMBER_ROLE);
+        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfUser.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -526,6 +526,92 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemberIsAdded() {
+
+        Team team = createDefaultTeam();
+
+        long numHistoryRows = getMemberHistoryRepository().count();
+
+        // Create a team lead and add him to the team
+        MemberProfile memberProfileOfTeamLead = createADefaultMemberProfile();
+        createLeadTeamMember(team, memberProfileOfTeamLead);
+
+        // Create a member and add him to team
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        TeamMemberCreateDTO teamMemberCreateDTO = new TeamMemberCreateDTO(team.getId(), memberProfileOfUser.getId(), false);
+        final HttpRequest<TeamMemberCreateDTO> request = HttpRequest.POST("", teamMemberCreateDTO).basicAuth(memberProfileOfTeamLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        TeamMember teamMember = response.body();
+
+
+        assertEquals(numHistoryRows + 1, getMemberHistoryRepository().count());
+
+        final List<MemberHistory> actualEntries = getMemberHistoryRepository().findByTeamIdAndMemberId(team.getId(), memberProfileOfUser.getId());
+        actualEntries.sort(Comparator.comparing(MemberHistory::getDate));
+        MemberHistory last = actualEntries.get(actualEntries.size() - 1);
+
+        assertEquals("Added", last.getChange());
+
+        assertEquals(teamMemberCreateDTO.getMemberid(), teamMember.getMemberid());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemberIsUpdated() {
+        Team team = createDefaultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
+
+        long numHistoryRows = getMemberHistoryRepository().count();
+
+        TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), true);
+        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(numHistoryRows + 1, getMemberHistoryRepository().count());
+
+        final List<MemberHistory> actualEntries = getMemberHistoryRepository().findByTeamIdAndMemberId(team.getId(), memberProfile.getId());
+        actualEntries.sort(Comparator.comparing(MemberHistory::getDate));
+        MemberHistory last = actualEntries.get(actualEntries.size() - 1);
+
+        assertEquals("updated", last.getChange());
+
+        TeamMember result = response.body();
+        assertNotNull(result);
+        assertEquals(teamMember.getMemberid(), result.getMemberid());
+        assertTrue(result.isLead());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), teamMember.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testMemberHistoryTableIsCreatedWhenTeamMemberIsRemoved() {
+        Team team = createDefaultTeam();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
+
+        long numHistoryRows = getMemberHistoryRepository().count();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(numHistoryRows + 1, getMemberHistoryRepository().count());
+
+        final List<MemberHistory> actualEntries = getMemberHistoryRepository().findByTeamIdAndMemberId(team.getId(), memberProfile.getId());
+        actualEntries.sort(Comparator.comparing(MemberHistory::getDate));
+        MemberHistory last = actualEntries.get(actualEntries.size() - 1);
+
+        assertEquals("Deleted", last.getChange());
     }
 
 }
