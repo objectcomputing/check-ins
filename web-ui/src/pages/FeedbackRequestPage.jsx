@@ -9,6 +9,7 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
+import FeedbackRequestConfirmation from "../components/feedback_request_confirmation/FeedbackRequestConfirmation";
 
 import "./FeedbackRequestPage.css";
 
@@ -30,7 +31,7 @@ const FeedbackRequestPage = () => {
   const query = queryString.parse(urlStep?.search).step?.toString();
   let activeStep = urlStep?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
-  if (activeStep < 1 || activeStep > getSteps().length || !numbersOnly) {
+  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
     return (
       <Redirect to="/feedback/request?step=1"/>
     );
@@ -109,7 +110,8 @@ const FeedbackRequestPage = () => {
             />
           </div>
         }
-        {activeStep === 2 && <FeedbackRecipientSelector/>}
+        {activeStep === 2 && <FeedbackRecipientSelector />}
+        {activeStep === 4 && <FeedbackRequestConfirmation />}
       </div>
     </div>
   );
