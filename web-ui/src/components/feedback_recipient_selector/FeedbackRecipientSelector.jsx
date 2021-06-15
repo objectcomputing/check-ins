@@ -5,6 +5,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Search from "@material-ui/icons/Search";
 
 import "./FeedbackRecipientSelector.css";
+import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 
 const useStyles = makeStyles({
   root: {
@@ -32,7 +33,7 @@ const FeedbackRecipientSelector = () => {
         }}
       />
       <div className="card-container">
-        {/* Cards rendered here */}
+        <FeedbackRecipientCard></FeedbackRecipientCard>
       </div>
     </div>
   )
