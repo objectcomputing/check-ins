@@ -13,6 +13,7 @@ import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
+import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import FeedbackRequestPage from "./pages/FeedbackRequestPage"
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
@@ -56,9 +57,6 @@ function App() {
                   </Header>
                   <GuildsPage />
                 </Route>
-                <Route path="/feedback/request">
-                  <FeedbackRequestPage />
-                </Route>
                 <Route path="/home">
                   <Header />
                   <ProfilePage />
@@ -86,6 +84,10 @@ function App() {
                 <Route path="/skills-reports">
                   <Header title="Skill Reports" />
                   <SkillReportPage />
+                </Route>
+                <Route path="/team-skills-reports">
+                  <Header title="Team Skill Reports" />
+                  <TeamSkillReportPage />
                 </Route>
                 <Route path="/">
                   <Header />
