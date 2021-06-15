@@ -43,13 +43,12 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         } catch (NotFoundException e) {
             throw new BadArgException("Either the creator id or the requestee id is invalid");
         }
+        if (!isPermitted(feedbackRequest.getCreatorId())) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
 
         if (feedbackRequest.getId() == null) {
             return feedbackReqRepository.save(feedbackRequest);
-        }
-
-        if (!isPermitted(feedbackRequest.getCreatorId())) {
-            throw new PermissionException("You are not authorized to do this operation");
         }
 
         return feedbackReqRepository.update(feedbackRequest);
@@ -89,6 +88,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         if (!feedbackReq.isPresent()) {
             throw new NotFoundException("No feedback request with id " + id);
         }
+
 
         if (!isPermitted(feedbackReq.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to perform this operation");
@@ -135,7 +135,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         if (currentUserServices.isAdmin()) {
             return true;
         }
-
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
         if (currentUseRole.getRole() == RoleType.PDL && currentUserId.equals(requesteePDL)) {
             return true;

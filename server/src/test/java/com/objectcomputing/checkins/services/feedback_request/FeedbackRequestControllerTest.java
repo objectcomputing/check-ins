@@ -96,7 +96,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testCreateFeedbackRequestByOtherMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileTwo = createADefaultMemberProfile();
+        MemberProfile memberProfileTwo = createAnotherDefaultMemberProfile();
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
@@ -121,7 +121,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testCreateFeedbackRequestByUnassignedPdl() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfile();
+        MemberProfile memberProfileForPDL = createAnotherDefaultMemberProfile();
         createDefaultRole(RoleType.PDL, memberProfileForPDL);
 
         //create feedback request
@@ -153,7 +153,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testCreateFeedbackRequestByMember() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile requesteeProfile = createADefaultMemberProfile();
+        MemberProfile requesteeProfile = createAnotherDefaultMemberProfile();
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
