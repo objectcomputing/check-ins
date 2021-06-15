@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback.Feedback;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -12,6 +13,8 @@ import javax.inject.Singleton;
 
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -24,6 +27,8 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final RoleServices roleServices;
+
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImplementation.class);
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
@@ -43,7 +48,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         } catch (NotFoundException e) {
             throw new BadArgException("Either the creator id or the requestee id is invalid");
         }
-        if (!isPermitted(feedbackRequest.getCreatorId())) {
+        if (!isPermitted(feedbackRequest.getRequesteeId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -131,12 +136,20 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     private boolean isPermitted(@NotNull UUID requesteeId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final Role currentUseRole = roleServices.read(currentUserId);
+        final Role currentUserRole = roleServices.read(currentUserId);
+
+        LOG.info("{}", currentUserServices.getCurrentUser());
+        LOG.info("isAdmin: {}", currentUserServices.isAdmin());
+        LOG.info("currentUseRole: {}", currentUserRole);
+
         if (currentUserServices.isAdmin()) {
             return true;
         }
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
-        if (currentUseRole.getRole() == RoleType.PDL && currentUserId.equals(requesteePDL)) {
+        LOG.info("requesteeId: {}", requesteeId);
+        LOG.info("requesteePDL: {}", requesteePDL);
+
+        if (currentUserId.equals(requesteePDL)) {
             return true;
         }
         //TODO: Can a person's supervisor send a feedback request?

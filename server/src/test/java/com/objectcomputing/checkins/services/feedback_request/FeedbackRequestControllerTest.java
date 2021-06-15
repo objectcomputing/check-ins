@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -12,6 +13,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -19,10 +21,13 @@ import org.slf4j.Logger;
 import javax.inject.Inject;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackRequestFixture, RoleFixture {
     @Inject
@@ -65,14 +70,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testCreateFeedbackRequestByAssignedPDL() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        createDefaultRole(RoleType.PDL, memberProfileForPDL);
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
-        dto.setCreatorId(memberProfileForPDL.getId());
-        dto.setRequesteeId(memberProfile.getId());
+        dto.setCreatorId(pdlMemberProfile.getId());
+        dto.setRequesteeId(employeeMemberProfile.getId());
         dto.setSendDate(LocalDate.now());
         dto.setTemplateId(UUID.randomUUID());
         dto.setStatus("pending");
@@ -80,13 +85,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(memberProfileForPDL.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(response.body().getCreatorId(), memberProfileForPDL.getId());
-        assertEquals(response.body().getRequesteeId(), memberProfile.getId());
+        assertEquals(response.body().getCreatorId(), pdlMemberProfile.getId());
+        assertEquals(response.body().getRequesteeId(), employeeMemberProfile.getId());
         assertEquals(response.body().getDueDate(), dto.getDueDate());
         assertEquals(response.body().getTemplateId(), dto.getTemplateId());
         assertEquals(response.body().getStatus(), dto.getStatus());
@@ -110,10 +115,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileTwo.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-        //assert that content of some feedback request equals the test
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        assertEquals("You are not authorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
     }
 
@@ -136,17 +144,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileForPDL.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-        //assert that content of some feedback request equals the test
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
-//        assertEquals(response.body().getCreatorId(), memberProfileForPDL.getId());
-//        assertEquals(response.body().getRequesteeId(), memberProfile.getId());
-//        assertEquals(response.body().getDueDate(), dto.getDueDate());
-//        assertEquals(response.body().getTemplateId(), dto.getTemplateId());
-//        assertEquals(response.body().getStatus(), dto.getStatus());
-//        assertEquals(response.body().getSendDate(), dto.getSendDate());
-
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        assertEquals("You are not authorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -167,10 +171,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(requesteeProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
 
-        //assert that content of some feedback request equals the test
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        assertEquals("You are not authorized to do this operation", error);
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
 
     }
 
