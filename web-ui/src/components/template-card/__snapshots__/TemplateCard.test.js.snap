@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardContent-root"
+  >
+    <div
+      className="card-content"
+    >
+      <div>
+        <div
+          className="template-name"
+        >
+          Template
+        </div>
+        <div
+          className="description-and-creator"
+        >
+          <div
+            className="description"
+          >
+            Sample feedback template
+          </div>
+        </div>
+      </div>
+      <div
+        className="creator-wrapper"
+      >
+        Created by:
+        <div
+          className="creator"
+        >
+          Admin
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
