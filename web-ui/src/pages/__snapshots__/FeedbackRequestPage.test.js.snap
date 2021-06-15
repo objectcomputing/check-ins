@@ -220,54 +220,6 @@ Array [
           </span>
         </span>
       </div>
-      <div
-        className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
-      >
-        <span
-          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
-        />
-      </div>
-      <div
-        className="MuiStep-root MuiStep-horizontal"
-      >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
-        >
-          <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="12"
-              />
-              <text
-                className="MuiStepIcon-text"
-                textAnchor="middle"
-                x="12"
-                y="16"
-              >
-                4
-              </text>
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
-          >
-            <span
-              className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
-            >
-              Done!
-            </span>
-          </span>
-        </span>
-      </div>
     </div>
     <div
       className="current-step-content"

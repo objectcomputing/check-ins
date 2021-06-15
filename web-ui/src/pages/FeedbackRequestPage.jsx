@@ -9,7 +9,6 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
-import FeedbackRequestConfirmation from "../components/feedback_request_confirmation/FeedbackRequestConfirmation";
 
 import "./FeedbackRequestPage.css";
 
@@ -20,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date", "Done!"];
+  return ["Select template", "Select recipients", "Set due date"];
 }
 
 const FeedbackRequestPage = () => {
@@ -42,13 +41,6 @@ const FeedbackRequestPage = () => {
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
         <div>
-          {activeStep === steps.length ? (
-            <div>
-              <Typography>
-                All steps completed!
-              </Typography>
-            </div>
-          ) : (
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
@@ -62,7 +54,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={`?step=${activeStep + 1}`}>
+                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
@@ -71,7 +63,6 @@ const FeedbackRequestPage = () => {
                 </Button>
               </Link>
             </div>
-          )}
         </div>
       </div>
       <Stepper activeStep={activeStep - 1} className={classes.root}>
@@ -112,7 +103,6 @@ const FeedbackRequestPage = () => {
         }
 
         {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 4 && <FeedbackRequestConfirmation />}
 
       </div>
     </div>
