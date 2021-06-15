@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class OpportunitiesControllerTest extends TestContainersSuite implements MemberProfileFixture, OpportunitiesFixture {
 
     @Inject
-    @Client("/services/opportunitiess")
+    @Client("/services/opportunities")
     private HttpClient client;
 
     @Test
@@ -42,8 +42,11 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
         opportunitiesResponseCreateDTO.setName("Name");
         opportunitiesResponseCreateDTO.setDescription("Description");
+        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
+        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
+        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
         final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Opportunities> response = client.toBlocking().exchange(request,Opportunities.class);
@@ -80,8 +83,11 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
         opportunitiesResponseCreateDTO.setName("Name");
         opportunitiesResponseCreateDTO.setDescription("Description");
+        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
+        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedBy(UUID.randomUUID());
+        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
         HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -116,8 +122,11 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
         opportunitiesResponseCreateDTO.setName("Name");
         opportunitiesResponseCreateDTO.setDescription("Description");
+        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
+        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.of(1965,11,13));
         opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.of(1965,11,12));
         opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
+        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
         final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -281,7 +290,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
 
     @Test
     void testUpdateUnAuthorized() {
-        Opportunities opportunitiesResponse = new Opportunities(LocalDate.now(),UUID.randomUUID(),"jobOpportunities","opportunities job interests");
+        Opportunities opportunitiesResponse = new Opportunities("https://objectcomputing.com/jobs", LocalDate.now(), LocalDate.now(),UUID.randomUUID(),"jobOpportunities","opportunities job interests", Boolean.TRUE );
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -335,8 +344,11 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
         opportunitiesResponseCreateDTO.setName("Name");
         opportunitiesResponseCreateDTO.setDescription("Description");
+        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
+        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
         opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
+        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
         final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));

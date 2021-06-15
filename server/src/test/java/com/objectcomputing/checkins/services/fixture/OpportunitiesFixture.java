@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public interface OpportunitiesFixture extends RepositoryFixture {
     default Opportunities createADefaultOpportunities(MemberProfile memberprofile) {
-        return getOpportunitiesRepository().save(new Opportunities(LocalDate.now(),
-                memberprofile.getId(), "Name", "Description"));
+        return getOpportunitiesRepository().save(new Opportunities("https://objectcomputing.com/jobs", LocalDate.now(), LocalDate.now(),
+                memberprofile.getId(), "Name", "Description", Boolean.FALSE));
     }
 }

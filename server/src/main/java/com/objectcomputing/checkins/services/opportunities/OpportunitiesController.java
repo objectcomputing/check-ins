@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 
-@Controller("/services/opportunitiess")
+@Controller("/services/opportunities")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -47,15 +47,15 @@ public class OpportunitiesController {
      * Find opportunities by Name, Team Member or Date Range.
      *
      * @param name
-     * @param submittedBy
+     * @param description
      * @return
      */
-    @Get("/{?name,submittedBy}")
-    public Single<HttpResponse<Set<Opportunities>>> findOpportunitiess(@Nullable String name,
-                                                         @Nullable UUID submittedBy) {
+    @Get("/{?name,description}")
+    public Single<HttpResponse<Set<Opportunities>>> findOpportunities(@Nullable String name,
+                                                         @Nullable String description) {
         return Single.fromCallable(() -> {
-            if (name!=null || submittedBy!=null) {
-                return opportunitiesResponseServices.findByFields(name, submittedBy);
+            if (name!=null || description!=null) {
+                return opportunitiesResponseServices.findByFields(name, description);
             } else {
                 return opportunitiesResponseServices.readAll();
             }
@@ -75,7 +75,7 @@ public class OpportunitiesController {
     @Post()
     public Single<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<OpportunitiesCreateDTO> request) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getSubmittedOn(), opportunitiesResponse.getSubmittedBy(), opportunitiesResponse.getName(), opportunitiesResponse.getDescription())))
+        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(), opportunitiesResponse.getSubmittedOn(), opportunitiesResponse.getSubmittedBy(), opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getPending())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(opportunities -> {return (HttpResponse<Opportunities>) HttpResponse
                         .created(opportunities)

@@ -13,6 +13,6 @@ public interface OpportunitiesService {
 
     void delete(UUID id);
 
-    Set<Opportunities> findByFields(String name, UUID submittedBy);
+    Set<Opportunities> findByFields(String name, String description);
 
 }

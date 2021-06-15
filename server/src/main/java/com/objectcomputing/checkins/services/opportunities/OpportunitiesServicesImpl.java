@@ -88,15 +88,16 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     }
 
     @Override
-    public Set<Opportunities> findByFields(String name, UUID submittedBy) {
+    public Set<Opportunities> findByFields(String name, String description) {
         final boolean isAdmin = currentUserServices.isAdmin();
         permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Set<Opportunities> opportunitiesResponse = new HashSet<>();
         opportunitiesResponseRepo.findAll().forEach(opportunitiesResponse::add);
         if(name!=null){
             opportunitiesResponse.addAll(opportunitiesResponseRepo.findByName(name));
-        } else if(submittedBy!=null){
-            opportunitiesResponse.retainAll(opportunitiesResponseRepo.findBySubmittedBy(submittedBy));
+        }
+        else if(description!=null){
+            opportunitiesResponse.retainAll(opportunitiesResponseRepo.findByDescription(description));
         }
         return opportunitiesResponse;
     }

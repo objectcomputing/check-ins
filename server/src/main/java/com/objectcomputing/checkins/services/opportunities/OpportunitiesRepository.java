@@ -17,6 +17,6 @@ import io.micronaut.data.repository.CrudRepository;
 public interface OpportunitiesRepository extends CrudRepository<Opportunities, UUID> {
 
     List<Opportunities> findByName(@NotBlank String name);
-    List<Opportunities> findBySubmittedBy(@NotBlank UUID submittedBy);
+    List<Opportunities> findByDescription(@NotBlank String description);
     Set<Opportunities> findAll();
 }

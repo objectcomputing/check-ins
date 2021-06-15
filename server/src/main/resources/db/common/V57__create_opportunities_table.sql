@@ -6,7 +6,7 @@ CREATE TABLE opportunities (
    url varchar,
    expiresOn date,
    submittedOn date,
-   submittedBy varchar REFERENCES member_profile(id)
+   submittedBy varchar REFERENCES member_profile(id),
    pending boolean
 );
 --drop table if exists opportunities;
