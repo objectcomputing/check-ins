@@ -2,9 +2,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -17,6 +15,7 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Controller("/services/feedback/requests")
@@ -51,6 +50,31 @@ public class FeedbackRequestController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedbackRequest -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
                         .created(fromEntity(savedFeedbackRequest))
+                        .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+
+    @Delete("/{id}")
+    public Single<HttpResponse> delete(@NotNull UUID id) {
+        return Single.fromCallable(() -> feedbackReqServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(successFlag -> (HttpResponse) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
+     * Get feedback requst by ID
+     *
+     * @param id {@link UUID} ID of the request
+     * @return {@link FeedbackRequestResponseDTO}
+     */
+    @Get("/{id}")
+    public Single<HttpResponse<FeedbackRequestResponseDTO>> getById(UUID id) {
+        return Single.fromCallable(() -> feedbackReqServices.getById(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(savedFeedbackRequest -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
+                        .ok(fromEntity(savedFeedbackRequest))
                         .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }

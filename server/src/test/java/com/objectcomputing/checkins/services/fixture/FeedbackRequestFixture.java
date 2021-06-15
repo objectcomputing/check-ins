@@ -14,9 +14,9 @@ import java.util.UUID;
 //              this.status = status;\
 public interface FeedbackRequestFixture extends RepositoryFixture {
 
-    default FeedbackRequest createFeedbackRequest(MemberProfile memberprofile, MemberProfile memberProfileForPDL) {
+    default FeedbackRequest createFeedbackRequest(MemberProfile memberProfile, MemberProfile memberProfileForPDL) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), memberProfileForPDL.getId(), memberprofile.getId(), UUID.randomUUID(), testDate, null, "Pending"));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), memberProfileForPDL.getId(), memberProfile.getId(), UUID.randomUUID(), testDate, null, "pending"));
     }
 
 }

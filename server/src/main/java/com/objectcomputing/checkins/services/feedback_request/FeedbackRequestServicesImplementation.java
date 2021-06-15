@@ -3,8 +3,6 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.feedback.Feedback;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
@@ -12,10 +10,10 @@ import com.objectcomputing.checkins.services.role.RoleServices;
 import javax.inject.Singleton;
 
 import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -48,7 +46,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         } catch (NotFoundException e) {
             throw new BadArgException("Either the creator id or the requestee id is invalid");
         }
-        if (!isPermitted(feedbackRequest.getRequesteeId())) {
+        if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -95,8 +93,8 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         }
 
 
-        if (!isPermitted(feedbackReq.get().getCreatorId())) {
-            throw new PermissionException("You are not authorized to perform this operation");
+        if (!createIsPermitted(feedbackReq.get().getCreatorId())) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
 
         feedbackReqRepository.deleteById(id);
@@ -115,8 +113,8 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
-        if ((currentUserId != creatorId) || (currentUserId != requesteeId) || !(currentUserId.equals(requesteePDL))) {
-            throw new PermissionException("You are not authorized to read this feedback req");
+        if (!getIsPermitted(requesteeId)) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
 
         return feedbackReq.get();
@@ -134,20 +132,18 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         return null;
     }
 
-    private boolean isPermitted(@NotNull UUID requesteeId) {
+    private boolean getIsPermitted(@NotNull UUID requesteeId) {
+        return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId() == requesteeId;
+    }
+
+    private boolean createIsPermitted(@NotNull UUID requesteeId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final Role currentUserRole = roleServices.read(currentUserId);
-
-        LOG.info("{}", currentUserServices.getCurrentUser());
-        LOG.info("isAdmin: {}", currentUserServices.isAdmin());
-        LOG.info("currentUseRole: {}", currentUserRole);
 
         if (currentUserServices.isAdmin()) {
             return true;
         }
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
-        LOG.info("requesteeId: {}", requesteeId);
-        LOG.info("requesteePDL: {}", requesteePDL);
 
         if (currentUserId.equals(requesteePDL)) {
             return true;
