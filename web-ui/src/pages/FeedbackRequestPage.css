@@ -9,3 +9,10 @@
     align-items: center;
     margin-bottom: 20px;
 }
+
+.card-container {
+    margin: 1rem calc(2rem - 20px) 1rem calc(2rem - 20px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

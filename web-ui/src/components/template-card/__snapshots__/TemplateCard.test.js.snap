@@ -10,28 +10,30 @@ exports[`renders correctly 1`] = `
     <div
       className="card-content"
     >
-      <div
-        className="templateName"
-      >
-        Ad Hoc
-      </div>
-      <div
-        className="description-and-creator"
-      >
+      <div>
         <div
-          className="description"
+          className="template-name"
         >
-          Ask a single question
+          Template
         </div>
         <div
-          className="creator-wrapper"
+          className="description-and-creator"
         >
-          Created by:
           <div
-            className="creator"
+            className="description"
           >
-            Admin
+            Sample feedback template
           </div>
+        </div>
+      </div>
+      <div
+        className="creator-wrapper"
+      >
+        Created by:
+        <div
+          className="creator"
+        >
+          Admin
         </div>
       </div>
     </div>
