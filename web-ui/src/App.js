@@ -14,8 +14,8 @@ import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
-import FeedbackRequestPage from "./pages/FeedbackRequestPage"
 import { AppContextProvider } from "./context/AppContext";
+
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
 import GroupIcon from "@material-ui/icons/Group";
