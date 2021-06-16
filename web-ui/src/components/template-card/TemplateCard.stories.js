@@ -14,5 +14,6 @@ export const PeerFeedbackTemplate = Template.bind({});
 PeerFeedbackTemplate.args = {
   templateName: "Peer Feedback",
   description: "A simple feedback template",
-  creator: "Bob Jones"
+  creator: "Bob Jones",
+  questions: ["Test 1", "Test 2"]
 };

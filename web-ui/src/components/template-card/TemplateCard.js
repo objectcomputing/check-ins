@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1000,
     },
+    appBar: {
+        position: 'relative',
+    },
     media: {
         height: 0,
     },
@@ -41,7 +44,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single question", creator = "Admin"}) => {
+const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single question", creator = "Admin", questions = []}) => {
     const classes = useStyles();
 
     const [expanded, setExpanded] = useState(false);
@@ -103,21 +106,14 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
                     </Toolbar>
                 </AppBar>
                 <List>
-                    <ListItem button>
-                        <ListItemText primary="Question 1" secondary="What are this team member's top strengths (include examples where possible)?" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button>
-                        <ListItemText primary="Question 2" secondary="In what ways are this team member’s contributions impacting the objectives of the organization, their project, or their team?" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button>
-                        <ListItemText primary="Question 3" secondary="What can this team member improve on that would help them increase their effectiveness (include examples where possible)?" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button>
-                        <ListItemText primary="Question 4" secondary="In what ways does this team member represent OCI's values? (OCI Values: All of us is better than any one of us, Innovate courageously, Share it back)" />
-                    </ListItem>
+                    {questions.map((question, index) => (
+                      <React.Fragment>
+                          <ListItem button>
+                              <ListItemText primary={`Question ${index + 1}`} secondary={question} />
+                          </ListItem>
+                          <Divider />
+                      </React.Fragment>
+                    ))}
                 </List>
             </Dialog>
         </Card>
