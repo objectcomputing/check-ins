@@ -53,6 +53,7 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
         setExpanded(!expanded);
     }
 
+const TemplateCard = (props) => {
     return (
         <Card className={classes.root}
               className = 'feedback-template-card'>
@@ -71,18 +72,13 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
             </CardActions>
             <CardContent>
                 <div className='card-content'>
-                    <div className='templateName' >
-                        {templateName}
-                    </div>
-                    <div className='description-and-creator'>
-                        <div className='description'>
-                            {description}
+                    <div>
+                        <div className='template-name'>
+                            {cutText(props.title, 20)}
                         </div>
-
-                        <div className='creator-wrapper'>
-                            Created by:
-                            <div className='creator'>
-                                {creator}
+                        <div className='description-and-creator'>
+                            <div className='description'>
+                                {cutText(props.description, 90)}
                             </div>
                         </div>
                     </div>

@@ -1,9 +1,13 @@
 import React from 'react';
 import CheckinCycle from './CheckinCycle';
+import {AppContextProvider} from "../../context/AppContext";
 
 export default {
   title: 'Check-Ins/CheckinCycle',
   component: CheckinCycle,
+  decorators: [(Story) => {
+    return (<AppContextProvider><Story/></AppContextProvider>);
+  }]
 };
 
 const Template = (args) => <CheckinCycle {...args} />;

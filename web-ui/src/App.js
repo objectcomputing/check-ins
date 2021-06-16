@@ -13,16 +13,16 @@ import DirectoryPage from "./pages/DirectoryPage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
+import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
-import FeedbackRequestPage from "./pages/FeedbackRequestPage"
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
-
 import GroupIcon from "@material-ui/icons/Group";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 import "./App.css";
+import FeedbackRequestConfirmation from "./components/feedback_request_confirmation/FeedbackRequestConfirmation";
 
 const customHistory = createBrowserHistory();
 
@@ -53,6 +53,12 @@ function App() {
                     <GroupIcon fontSize="large" />
                   </Header>
                   <GuildsPage />
+                </Route>
+                <Route exact path="/feedback/request/confirmation">
+                  <FeedbackRequestConfirmation />
+                </Route>
+                <Route path="/feedback/request">
+                  <FeedbackRequestPage />
                 </Route>
                 <Route path="/home">
                   <Header />
