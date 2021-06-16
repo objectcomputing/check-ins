@@ -8,7 +8,7 @@ import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
 import {selectCurrentMembers} from "../../context/selectors";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
 
 const useStyles = makeStyles({
@@ -24,9 +24,21 @@ const FeedbackRecipientSelector = () => {
   const classes = useStyles();
   const {state} = useContext(AppContext);
   const profiles = selectCurrentMembers(state);
+  const history = useHistory();
   const location = useLocation();
-  const fromString = queryString.parse(location?.search).from?.toString();
-  let from = fromString ? fromString.split(",") : [];
+  const parsed = queryString.parse(location?.search);
+  let from = parsed.from;
+
+  const cardClickHandler = (id) => {
+    if(!Array.isArray(from)) from = from ? [from] : [];
+    if(from.includes(id)) {
+      from.splice(from.indexOf(id), 1);
+    }
+    else from[from.length] = id;
+
+    parsed.from = from;
+    history.push({...location, search: queryString.stringify(parsed)});
+  }
 
   return (
     <div className="feedback-recipient-selector">
@@ -43,7 +55,7 @@ const FeedbackRecipientSelector = () => {
       />
       <div className="card-container">
         {profiles && profiles.map((profile) => (
-          <FeedbackRecipientCard profileId={profile.id} reason={undefined} selected={from.includes(profile.id)} />
+          <FeedbackRecipientCard profileId={profile.id} reason={undefined} selected={from && from.includes(profile.id)} onClick ={() => cardClickHandler(profile.id)}/>
         ))}
       </div>
     </div>

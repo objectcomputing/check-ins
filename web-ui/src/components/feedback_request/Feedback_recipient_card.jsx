@@ -109,13 +109,13 @@ const BrandCardHeader = withStyles(brandCardHeaderStyles, {
   </div>
 ));
 
-const FeedbackRecipientCard = ({profileId, reason, selected=false}) => {
+const FeedbackRecipientCard = ({profileId, reason, selected=false, onClick}) => {
   const classes = useStyles();
   const {state} = useContext(AppContext);
   const recipientProfile = selectProfile(state, profileId);
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={onClick}>
       <CardHeader component={BrandCardHeader} image={getAvatarURL(recipientProfile?.workEmail)} selected={selected}/>
       <CardContent className={classes.cardContent}>
         <Typography id="name" name="name" className={classes.pos} color="textSecondary">
