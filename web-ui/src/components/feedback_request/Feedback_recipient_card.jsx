@@ -1,10 +1,16 @@
-import React from "react";
+import React, {useContext} from "react";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import AvatarComponent from '../avatar/Avatar';
+import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
+import {selectProfile} from "../../context/selectors";
+import {AppContext} from "../../context/AppContext";
+import {getAvatarURL} from "../../api/api";
+import {CardHeader} from "@material-ui/core";
+import {green} from "@material-ui/core/colors";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 
 
 const useStyles = makeStyles({
@@ -50,23 +56,81 @@ const useStyles = makeStyles({
   },
 });
 
+const brandCardHeaderStyles = ({ palette, breakpoints }) => {
+  const space = 24;
+  return {
+    root: {
+      minWidth: 256,
+    },
+    header: {
+      padding: `4px ${space}px 0`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      transform: 'translateY(50%)',
+      '& > img': {
+        margin: 0,
+        backgroundColor: palette.common.white,
+      },
+      [breakpoints.up('sm')]: {
+        width: 60,
+        height: 60,
+      },
+    },
+    divider: {
+      backgroundColor: palette.grey[200],
+      marginBottom: 24 - 1, // minus 1 due to divider height
+      [breakpoints.up('sm')]: {
+        marginBottom: 30 - 1, // minus 1 due to divider height
+      },
+    },
+    extra: {
+      textTransform: 'uppercase',
+      fontSize: 14,
+      color: palette.grey[500],
+      letterSpacing: '1px',
+    },
+  };
+};
 
-const FeedbackRecipientCard = () => {
+const BrandCardHeader = withStyles(brandCardHeaderStyles, {
+  name: 'BrandCardHeader',
+})(({ classes, image, selected }) => (
+  <div className={classes.root}>
+    <div className={classes.header}>
+      <Avatar alt={'brand logo'} className={classes.avatar} src={image} />
+      {selected && (<CheckCircleIcon style={{ color: green[500]}}>checkmark-image</CheckCircleIcon>)}
+    </div>
+    <hr className={classes.divider} />
+  </div>
+));
+
+const FeedbackRecipientCard = ({profileId, reason, selected=false}) => {
   const classes = useStyles();
-  const name = "Slim Jim"
-  const reason = "Recommended for being a local opossum"
+  const {state} = useContext(AppContext);
+  const recipientProfile = selectProfile(state, profileId);
+
   return (
     <Card className={classes.root}>
+      <CardHeader component={BrandCardHeader} image={getAvatarURL(recipientProfile?.workEmail)} selected={selected}/>
       <CardContent className={classes.cardContent}>
-        <AvatarComponent id="avatar-pic" name="avatar-pic" src='../../../public/default_profile.jpg'></AvatarComponent>
         <Typography id="name" name="name" className={classes.pos} color="textSecondary">
-          {name}
+          {recipientProfile?.name}
         </Typography>
-        <Divider variant="middle" className={classes.divider} />
-        <Typography id="rec_reason" name="rec_reason" component="p" className={classes.recommendationText}>
-          {reason}
-          <br />
+        <Typography id="title" name="title" variant="subtitle1">
+          {recipientProfile?.title}
         </Typography>
+        {reason &&
+        (<React.Fragment>
+          <Divider variant="middle" className={classes.divider}/>
+          <Typography id="rec_reason" name="rec_reason" component="p" className={classes.recommendationText}>
+            {reason}
+          </Typography>
+        </React.Fragment>)}
       </CardContent>
     </Card>
   );
