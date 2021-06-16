@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the confirmation message 1`] = `
+<div
+  className="request-confirmation"
+>
+  <svg
+    aria-hidden={true}
+    className="MuiSvgIcon-root"
+    focusable="false"
+    style={
+      Object {
+        "color": "#4caf50",
+        "fontSize": 400,
+      }
+    }
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+    />
+  </svg>
+  <h3
+    className="MuiTypography-root MuiTypography-h3"
+  >
+    <b>
+      Feedback scheduled for today
+    </b>
+  </h3>
+  <h6
+    className="MuiTypography-root recipients-list MuiTypography-h6"
+  >
+    <b>
+      From:
+    </b>
+     
+    Alice, Bob, Eve
+  </h6>
+</div>
+`;

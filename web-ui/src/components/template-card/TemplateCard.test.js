@@ -5,7 +5,11 @@ import { AppContextProvider } from "../../context/AppContext";
 it("renders correctly", () => {
     snapshot(
         <AppContextProvider >
-            <TemplateCard />
+            <TemplateCard
+              title="Template"
+              description="Sample feedback template"
+              creator="Admin"
+            />
         </AppContextProvider>
     );
 });

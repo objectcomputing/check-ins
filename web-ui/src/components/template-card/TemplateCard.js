@@ -54,8 +54,7 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
     }
 
     return (
-        <Card className={classes.root}
-              className = 'feedback-template-card'>
+        <Card className={ `feedback-template-card ${classes.root}` }>
             <CardActions disableSpacing>
                 <IconButton
                     className={clsx(classes.expand, {
@@ -65,13 +64,13 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
                     aria-expanded={expanded}
                     aria-label="show more"
                 >
-                    {!expanded ? <Fullscreen /> : <FullscreenExit/>}
+                    {!expanded ? <Fullscreen/> : <FullscreenExit/>}
 
                 </IconButton>
             </CardActions>
             <CardContent>
                 <div className='card-content'>
-                    <div className='templateName' >
+                    <div className='templateName'>
                         {templateName}
                     </div>
                     <div className='description-and-creator'>
@@ -93,7 +92,7 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit" onClick={handleExpandClick} aria-label="close">
-                            <CloseIcon />
+                            <CloseIcon/>
                         </IconButton>
                         <div className={classes.title}>
                             <Typography variant="h6">
@@ -107,18 +106,18 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
                 </AppBar>
                 <List>
                     {questions.map((question, index) => (
-                      <React.Fragment>
-                          <ListItem button>
-                              <ListItemText primary={`Question ${index + 1}`} secondary={question} />
-                          </ListItem>
-                          <Divider />
-                      </React.Fragment>
+                        <React.Fragment>
+                            <ListItem button>
+                                <ListItemText primary={`Question ${index + 1}`} secondary={question}/>
+                            </ListItem>
+                            <Divider/>
+                        </React.Fragment>
                     ))}
                 </List>
             </Dialog>
         </Card>
     );
 
-}
+};
 
 export default TemplateCard;
