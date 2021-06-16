@@ -1,11 +1,8 @@
-package com.objectcomputing.checkins.services.feedback.suggestions.;
+package com.objectcomputing.checkins.services.feedback.suggestions;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
@@ -56,26 +53,37 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         assertNotNull(response.getBody().get());
 
         assertEquals(HttpStatus.OK, response.getStatus());
-      assertEquals(response.getBody().get().size(), 2 );
-
-        //reason, string
-        //id??
-//        [
-//        {
-//            reason: "Supervisor of requestee"
-//            id: supervisor.getId()
-//        },
-//        {
-//            reason: " Team lead for requestee"
-//            id: requesteeTeamLeadMember.getId()
-//        },
-//        ]
-
-
+        assertEquals(response.getBody().get().size(), 2 );
+        assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
+        assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
     }
     @Test
     void testGetRecsIfSupervisor() {
+        Team team = createDefaultTeam();
+        MemberProfile pdlProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlProfile);
+        MemberProfile supervisor = createADefaultSupervisor();
+        createDefaultRole(RoleType.ADMIN, supervisor);
+        MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
+        MemberProfile requesteeTeamLead = createAnUnrelatedUser();
+        TeamMember requesteeTeamLeadMember = createLeadTeamMember(team, requesteeTeamLead);
+        TeamMember requesteeTeamMember = createDefaultTeamMember(team, requestee);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", requestee.getId()))
+                .basicAuth(supervisor.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackSuggestionDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackSuggestionDTO.class));
+
+
+        FeedbackSuggestionDTO idealOne = createFeedbackSuggestion(pdlReason, pdlProfile.getId());
+        FeedbackSuggestionDTO idealTwo = createFeedbackSuggestion(teamLeadReason, requesteeTeamLead.getId());
+
+        assertNotNull(JSON.toString(response.getBody().get()));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(response.getBody().get().size(), 2 );
+        assertContentEqualsEntity(idealOne, response.getBody().get().get(0));
+        assertContentEqualsEntity(idealTwo, response.getBody().get().get(1));
 
 
     }

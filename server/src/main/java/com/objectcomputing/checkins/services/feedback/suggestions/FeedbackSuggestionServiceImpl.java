@@ -55,7 +55,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamid(), null, null);
             Set<TeamMember> leads = teamMembers.stream().filter((member)-> member.isLead()).collect(Collectors.toSet());
             for(TeamMember lead: leads) {
-                if(suggestions.size() < maxSuggestions) {
+                if(suggestions.size() < maxSuggestions && !lead.getMemberid().equals(id) && !lead.getMemberid().equals(currentUserId)) {
                     suggestions.add(new FeedbackSuggestionDTO("Team lead for requestee", lead.getMemberid()));
                 }
             }
@@ -67,7 +67,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
             Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamid(), null, null);
             teamMembers = teamMembers.stream().filter((member)-> !member.isLead()).collect(Collectors.toSet());
             for(TeamMember teamMember: teamMembers) {
-                if(suggestions.size() < maxSuggestions) {
+                if(suggestions.size() < maxSuggestions && !teamMember.getMemberid().equals(id) && !teamMember.getMemberid().equals(currentUserId)) {
                     suggestions.add(new FeedbackSuggestionDTO("Team member for requestee", teamMember.getMemberid()));
                 }
             }
