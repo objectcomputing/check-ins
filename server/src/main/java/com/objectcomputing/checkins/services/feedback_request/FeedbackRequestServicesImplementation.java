@@ -6,17 +6,11 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.RoleServices;
 
 import javax.inject.Singleton;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -27,18 +21,13 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private final RoleServices roleServices;
-
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImplementation.class);
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices,
-                                                 RoleServices roleServices) {
+                                                 MemberProfileServices memberProfileServices) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
-        this.roleServices = roleServices;
     }
 
     @Override
@@ -72,7 +61,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new NotFoundException("No feedback request with id " + id);
         }
 
-
         if (!createIsPermitted(feedbackReq.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -88,11 +76,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new NotFoundException("No feedback req with id " + id);
         }
 
-        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final UUID creatorId = feedbackReq.get().getCreatorId();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
-        final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
-
         if (!getIsPermitted(requesteeId)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -105,9 +89,9 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     public Set<FeedbackRequest> findByValue(UUID creatorId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
-        boolean isAdmin = currentUserServices.isAdmin();
         Set<FeedbackRequest> feedbackReqSet= new HashSet<>();
         if (currentUserId != null) {
+            //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId)) {
                 feedbackReqSet.addAll(feedbackReqRepository.findByCreatorId(Util.nullSafeUUIDToString(creatorId)));
             } else {
@@ -124,13 +108,13 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     private boolean createIsPermitted(@NotNull UUID requesteeId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        final Role currentUserRole = roleServices.read(currentUserId);
 
         if (currentUserServices.isAdmin()) {
             return true;
         }
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
+        //a PDL may create a request for a user who is assigned to them
         if (currentUserId.equals(requesteePDL)) {
             return true;
         }
