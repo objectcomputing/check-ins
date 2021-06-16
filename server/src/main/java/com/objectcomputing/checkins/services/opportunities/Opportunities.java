@@ -56,23 +56,19 @@ public class Opportunities {
     private String url;
 
     @Column(name="expiresOn")
-    @NotNull
     @Schema(description = "date for expiresOn", required = true)
     private LocalDate expiresOn;
 
     @Column(name="submittedOn")
-    @NotNull
     @Schema(description = "date for submittedOn", required = true)
     private LocalDate submittedOn;
 
     @Column(name="submittedBy")
     @TypeDef(type=DataType.STRING)
-    @NotNull
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
     private UUID submittedBy;
 
     @Column(name = "pending")
-    @NotNull
     @TypeDef(type = DataType.BOOLEAN)
     @Schema(description = "whether the opportunity is pending", required = true)
     private Boolean pending;
