@@ -108,7 +108,9 @@ export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
   (memberProfileMap, roles) =>
-    roles?.map((role) => (role.memberid in memberProfileMap)? memberProfileMap[role.memberid]: {})
+    roles?.map((role) =>
+      role.memberid in memberProfileMap ? memberProfileMap[role.memberid] : {}
+    )
 );
 
 export const selectOrderedPdls = createSelector(
@@ -263,15 +265,17 @@ export const selectNormalizedMembersAdmin = createSelector(
   selectMemberProfiles,
   (state, searchText) => searchText,
   (memberProfiles, searchText) =>
-    memberProfiles?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    }).sort((a, b) => a.lastName.localeCompare(b.lastName))
+    memberProfiles
+      ?.filter((member) => {
+        let normName = member.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        let normSearchText = searchText
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedTeams = createSelector(
