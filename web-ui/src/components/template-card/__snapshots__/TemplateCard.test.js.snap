@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiPaper-root MuiCard-root feedback-template-card makeStyles-root-1 MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
     className="MuiCardActions-root"
@@ -49,30 +49,28 @@ exports[`renders correctly 1`] = `
     <div
       className="card-content"
     >
-      <div>
-        <div
-          className="template-name"
-        >
-          Template
-        </div>
-        <div
-          className="description-and-creator"
-        >
-          <div
-            className="description"
-          >
-            Sample feedback template
-          </div>
-        </div>
+      <div
+        className="templateName"
+      >
+        Ad Hoc
       </div>
       <div
-        className="creator-wrapper"
+        className="description-and-creator"
       >
-        Created by:
         <div
-          className="creator"
+          className="description"
         >
-          Admin
+          Sample feedback template
+        </div>
+        <div
+          className="creator-wrapper"
+        >
+          Created by:
+          <div
+            className="creator"
+          >
+            Admin
+          </div>
         </div>
       </div>
     </div>
