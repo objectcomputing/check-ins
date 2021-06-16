@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
-
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,14 +38,19 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
     @Override
     public List<FeedbackSuggestionDTO> getSuggestionsByProfileId(UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
+        UUID currentUserId = currentUser.getId();
         MemberProfile suggestFor = memberProfileServices.getById(id);
 
+        if (currentUserId == null) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
         List<FeedbackSuggestionDTO> suggestions = new LinkedList<FeedbackSuggestionDTO>();
-        if(suggestFor.getSupervisorid() != null && suggestFor.getSupervisorid() != currentUser.getId()) {
+        if(!suggestFor.getSupervisorid().equals(null) && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("Supervisor of requestee", suggestFor.getSupervisorid()));
         }
 
-        if(suggestFor.getPdlId() != null && suggestFor.getPdlId() != currentUser.getId()) {
+        if(!suggestFor.getPdlId().equals(null) && !suggestFor.getPdlId().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("PDL of requestee", suggestFor.getPdlId()));
         }
 

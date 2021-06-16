@@ -15,6 +15,14 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
 
+    default MemberProfile createASecondMemberProfile() {
+        return getMemberProfileRepository().save(new MemberProfile("Slim", null, "Jim",
+                null, "Office Opossum", null, "New York, New York",
+                "slimjim@objectcomputing.com", "slim-jim-employee", LocalDate.now(),
+                "A Virginia opossum, one of North America's only marsupials",
+                null, null,null));
+    }
+
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Bill PDL", null, "Johnson",
                 null, "Comedic Relief PDL", memberProfile.getId(), "New York, New York",
@@ -22,6 +30,8 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
                 memberProfile.getId(), null,null));
     }
+
+
 
     default MemberProfile createADefaultSupervisor() {
         return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
@@ -31,9 +41,9 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
     default MemberProfile createASupervisedAndPDLUser(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
-        return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Charizard",
+        return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Char",
                 null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
-                "charizard@objectcomputing.com", "local-怪獣",
+                "charizard@objectcomputing.com", "local-kaiju",
                 LocalDate.now(), "Needs a lot of supervision due to building being ultra flammable",
                 supervisorProfile.getId(), null,null));
     }
