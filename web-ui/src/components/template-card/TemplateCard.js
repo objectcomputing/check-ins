@@ -120,4 +120,5 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
 
 };
 
+
 export default TemplateCard;
