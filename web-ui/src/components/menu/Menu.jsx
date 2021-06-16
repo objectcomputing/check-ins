@@ -79,6 +79,7 @@ function Menu() {
   const [open, setOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
   const [directoryOpen, setDirectoryOpen] = useState(false);
+  const [fDirectoryOpen, setFDirectoryOpen] = useState(false);
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -103,8 +104,17 @@ function Menu() {
     setReportsOpen(!reportsOpen);
   };
 
-  const toggleDirectory = () => {
-    setDirectoryOpen(!directoryOpen);
+  const toggleDirectory = (dNum) => {
+    switch(dNum) {
+      case 0:
+        setDirectoryOpen(!directoryOpen);
+        break;
+      case 1:
+        setFDirectoryOpen(!fDirectoryOpen);
+        break;
+      default:
+        setDirectoryOpen(!directoryOpen);
+    }
   };
 
   const closeSubMenus = () => {
@@ -138,12 +148,13 @@ function Menu() {
       </Button>
       <br />
       <Button
-        onClick={toggleDirectory}
+        onClick={toggleDirectory(0)}
         size="large"
         style={{ color: "white", width: "100%" }}
       >
         Directory
       </Button>
+      <br />
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <Link style={linkStyle} to="/guilds">
@@ -159,6 +170,27 @@ function Menu() {
           <Link style={linkStyle} to="/teams">
             <ListItem button className={classes.nested}>
               <ListItemText classes={{primary: classes.ListItemText}} primary="TEAMS" />
+            </ListItem>
+          </Link>
+        </List>
+      </Collapse>
+      <Button
+        onClick={toggleDirectory(1)}
+        size="large"
+        style={{ color: "white", width: "100%" }}
+      >
+        Feedback
+      </Button>
+      <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <Link style={linkStyle} to="/feedback/request">
+            <ListItem button className={classes.nested}>
+              <ListItemText classes={{primary:classes.ListItemText}} primary="REQUEST" />
+            </ListItem>
+          </Link>
+          <Link style={linkStyle}>
+            <ListItem button className={classes.nested}>
+              <ListItemText classes={{primary:classes.ListItemText}} primary="VIEW" />
             </ListItem>
           </Link>
         </List>
