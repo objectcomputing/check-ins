@@ -94,10 +94,10 @@ const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single ques
                         </IconButton>
                         <div className={classes.title}>
                             <Typography variant="h6">
-                                Peer Feedback
+                                {templateName}
                             </Typography>
                             <Typography variant="subtitle2">
-                                A short and simple survey targeting strengths and opportunities
+                                {description}
                             </Typography>
                         </div>
                     </Toolbar>
