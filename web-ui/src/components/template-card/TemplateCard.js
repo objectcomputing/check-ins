@@ -1,22 +1,23 @@
 import "./TemplateCard.css";
-import IconButton from '@material-ui/core/IconButton';
 import React, {useState} from "react";
 import Card from '@material-ui/core/Card';
-import Collapse from '@material-ui/core/Collapse';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Dialog from '@material-ui/core/Dialog';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,12 +37,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const TemplateCard = () => {
-    const classes = useStyles();
-    const templateName = "Ad Hoc"
-    const description = "Ask a single question"
-    const creator = "Admin"
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
+const TemplateCard = ({templateName = "Ad Hoc", description = "Ask a single question", creator = "Admin"}) => {
+    const classes = useStyles();
 
     const [expanded, setExpanded] = useState(false);
 
@@ -85,11 +86,40 @@ const TemplateCard = () => {
                 </div>
 
             </CardContent>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-                    asdfasdf
-                </CardContent>
-            </Collapse>
+            <Dialog fullScreen open={expanded} onClose={handleExpandClick} TransitionComponent={Transition}>
+                <AppBar className={classes.appBar}>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={handleExpandClick} aria-label="close">
+                            <CloseIcon />
+                        </IconButton>
+                        <div className={classes.title}>
+                            <Typography variant="h6">
+                                Peer Feedback
+                            </Typography>
+                            <Typography variant="subtitle2">
+                                A short and simple survey targeting strengths and opportunities
+                            </Typography>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+                <List>
+                    <ListItem button>
+                        <ListItemText primary="Question 1" secondary="What are this team member's top strengths (include examples where possible)?" />
+                    </ListItem>
+                    <Divider />
+                    <ListItem button>
+                        <ListItemText primary="Question 2" secondary="In what ways are this team member’s contributions impacting the objectives of the organization, their project, or their team?" />
+                    </ListItem>
+                    <Divider />
+                    <ListItem button>
+                        <ListItemText primary="Question 3" secondary="What can this team member improve on that would help them increase their effectiveness (include examples where possible)?" />
+                    </ListItem>
+                    <Divider />
+                    <ListItem button>
+                        <ListItemText primary="Question 4" secondary="In what ways does this team member represent OCI's values? (OCI Values: All of us is better than any one of us, Innovate courageously, Share it back)" />
+                    </ListItem>
+                </List>
+            </Dialog>
         </Card>
     );
 
