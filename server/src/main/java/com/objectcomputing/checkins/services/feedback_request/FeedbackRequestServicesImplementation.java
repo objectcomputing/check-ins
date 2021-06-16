@@ -62,29 +62,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     @Override
     public FeedbackRequest update(FeedbackRequest feedbackRequest) {
-//        FeedbackRequest updatedFeedbackRequest = null;
-//        if (feedbackRequest.getId() != null) {
-//            updatedFeedbackRequest = getById(feedbackRequest.getId());
-//        }
-//        if (updatedFeedbackRequest != null) {
-//            try {
-//                memberProfileServices.getById(updatedFeedbackRequest.getCreatorId());
-//                memberProfileServices.getById(updatedFeedbackRequest.getRequesteeId());
-//            } catch (NotFoundException e) {
-//                throw new BadArgException("Either the sender id or the requestee id is invalid");
-//            }
-//
-//            if (!isPermitted(currentUserServices.getCurrentUser().getId())) {
-//                throw new PermissionException("You are not authorized to do this operation");
-//            }
-//            feedbackRequest.setSentBy(updatedFeedback.getSentBy());
-//            feedbackRequest.setSentTo(updatedFeedback.getSentTo());
-//            feedbackRequest.setCreatedOn(updatedFeedback.getCreatedOn());
-//
-//            return feedbackReqRepository.update(feedbackRequest);
-//        } else {
-//            throw new NotFoundException("This feedback req does not exist");
-//        }
         return null;
     }
 
