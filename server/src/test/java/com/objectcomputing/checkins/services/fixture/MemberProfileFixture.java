@@ -23,6 +23,20 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
+    default MemberProfile createADefaultSupervisor() {
+        return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
+                null, "Supervisor Man", null, "New York, New York",
+                "dubebro@objectcomputing.com", "dude-bro-supervisor",
+                LocalDate.now(), "is such like a bro dude, you know?",
+                null, null,null));
+    }
+    default MemberProfile createASupervisedAndPDLUser(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Charizard",
+                null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
+                "charizard@objectcomputing.com", "local-怪獣",
+                LocalDate.now(), "Needs a lot of supervision due to building being ultra flammable",
+                supervisorProfile.getId(), null,null));
+    }
     // this user is not connected to other users in the system
     default MemberProfile createAnUnrelatedUser() {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
