@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import java.util.ArrayList;
 import java.util.List;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
@@ -19,11 +18,6 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
-
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-
 import javax.inject.Inject;
 
 import java.time.LocalDate;
@@ -39,8 +33,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Inject
     @Client("/services/feedback/requests")
     HttpClient client;
-
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestControllerTest.class);
 
     private FeedbackRequest createSampleFeedbackRequest(MemberProfile pdlMember, MemberProfile employeeMember) {
         createDefaultRole(RoleType.PDL, pdlMember);
@@ -283,8 +275,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //search for feedback requests by a specific creator
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackReq.getCreatorId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<Set<FeedbackRequestResponseDTO>> response = client.toBlocking()
-                .exchange(request, Argument.setOf(FeedbackRequestResponseDTO.class));
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
         if (response.getBody().isPresent()) {
             for (FeedbackRequestResponseDTO dto : response.getBody().get()) {
                 assertResponseEqualsEntity(feedbackReq, dto);
@@ -312,11 +304,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackReq.getCreatorId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<Set<FeedbackRequestResponseDTO>> response = client.toBlocking()
-                .exchange(request, Argument.setOf(FeedbackRequestResponseDTO.class));
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
         if (response.getBody().isPresent()) {
-            List<FeedbackRequestResponseDTO> dtoList = new ArrayList<>(response.getBody().get());
+            List<FeedbackRequestResponseDTO> dtoList = response.body();
 
             assertEquals(dtoList.size(), 2);
             assertResponseEqualsEntity(feedbackReq, dtoList.get(0));

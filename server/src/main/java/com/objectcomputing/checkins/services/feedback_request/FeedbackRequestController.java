@@ -16,7 +16,7 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -57,7 +57,12 @@ public class FeedbackRequestController {
                 .subscribeOn(Schedulers.from(executorService));
     }
 
-
+    /**
+     * Delete a feedback request by UUID
+     *
+     * @param id {@link UUID} of the feedback request to be deleted
+     * @return {@link HttpResponse}
+     */
     @Delete("/{id}")
     public Single<HttpResponse> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> feedbackReqServices.delete(id))
@@ -85,16 +90,16 @@ public class FeedbackRequestController {
      * Get feedback request by creator's ID
      *
      * @param creatorId {@link UUID} ID of member profile who created the feedback request
-     * @return {@link Set <FeedbackResponseDTO>} Set of feedback requests that were made by certain creator
+     * @return {@link List<FeedbackResponseDTO>} List of feedback requests that were made by certain creator
      */
     @Get("/{?creatorId}")
-    public Single<HttpResponse<Set<FeedbackRequestResponseDTO>>> findByValue(@Nullable UUID creatorId) {
+    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValue(@Nullable UUID creatorId) {
         return Single.fromCallable(() -> feedbackReqServices.findByValue(creatorId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqs -> {
-                    Set<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
-                            .map(this::fromEntity).collect(Collectors.toSet());
-                    return (HttpResponse<Set<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
+                    List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }
 

@@ -8,9 +8,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;
-import java.util.HashSet;
-import java.util.Set;
-import com.objectcomputing.checkins.util.Util;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -86,20 +83,20 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
 
     @Override
-    public Set<FeedbackRequest> findByValue(UUID creatorId) {
+    public List<FeedbackRequest> findByValue(UUID creatorId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
-        Set<FeedbackRequest> feedbackReqSet= new HashSet<>();
+        List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId)) {
-                feedbackReqSet.addAll(feedbackReqRepository.findByCreatorId(Util.nullSafeUUIDToString(creatorId)));
+                feedbackReqList.addAll(feedbackReqRepository.findByCreatorId(creatorId));
             } else {
             throw new PermissionException("You are not authorized to do this operation");
             }
         }
 
-        return feedbackReqSet;
+        return feedbackReqList;
     }
 
     private boolean getIsPermitted(@NotNull UUID requesteeId) {

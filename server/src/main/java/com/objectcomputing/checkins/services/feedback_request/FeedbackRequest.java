@@ -44,6 +44,7 @@ public class FeedbackRequest {
     private UUID templateId;
 
     @Column(name="sendDate")
+    @NotNull
     @Schema(description = "date request was sent")
     private LocalDate sendDate;
 
