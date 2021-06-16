@@ -60,6 +60,29 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
+    public void testMemberCreateAnOpportunities(){
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
+        opportunitiesResponseCreateDTO.setName("Name");
+        opportunitiesResponseCreateDTO.setDescription("Description");
+        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
+        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
+        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
+        opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
+        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
+
+        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpResponse<Opportunities> response = client.toBlocking().exchange(request, Opportunities.class);
+
+        Opportunities opportunitiesResponseResponse = response.body();
+
+        assertNotNull(opportunitiesResponseResponse);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(opportunitiesResponseCreateDTO.getSubmittedBy(),opportunitiesResponseResponse.getSubmittedBy());
+        assertEquals(String.format("%s/%s", request.getPath(), opportunitiesResponseResponse.getId()), response.getHeaders().get("location"));
+    }
+    @Test
     void testCreateAnInvalidOpportunities() {
         OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
 
@@ -163,6 +186,37 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?submittedBy=%s", opportunitiesResponse.getSubmittedBy())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpResponse<Set<Opportunities>> response = client.toBlocking().exchange(request, Argument.setOf(Opportunities.class));
+        assertEquals(Set.of(opportunitiesResponse), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
+    }
+
+    @Test
+    public void testGetFindByDescription() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+
+        Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?description=%s", opportunitiesResponse.getDescription())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpResponse<Set<Opportunities>> response = client.toBlocking().exchange(request, Argument.setOf(Opportunities.class));
+        assertEquals(Set.of(opportunitiesResponse), response.body());
+        assertEquals(HttpStatus.OK,response.getStatus());
+
+    }
+
+
+    @Test
+    public void testGetFindByPending() {
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+
+        Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?pending=%s", opportunitiesResponse.getPending())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
         final HttpResponse<Set<Opportunities>> response = client.toBlocking().exchange(request, Argument.setOf(Opportunities.class));
         assertEquals(Set.of(opportunitiesResponse), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -290,7 +344,7 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
 
     @Test
     void testUpdateUnAuthorized() {
-        Opportunities opportunitiesResponse = new Opportunities("https://objectcomputing.com/jobs", LocalDate.now(), LocalDate.now(),UUID.randomUUID(),"jobOpportunities","opportunities job interests", Boolean.TRUE );
+        Opportunities opportunitiesResponse = new Opportunities("jobOpportunities","opportunities job interests","https://objectcomputing.com/jobs", LocalDate.now(), LocalDate.now(), UUID.randomUUID(), Boolean.TRUE );
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -338,43 +392,16 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testMemberCreateAOpportunities(){
-        MemberProfile memberProfile = createADefaultMemberProfile();
-
-        OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
-        opportunitiesResponseCreateDTO.setName("Name");
-        opportunitiesResponseCreateDTO.setDescription("Description");
-        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
-        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
-        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
-
-        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(), href);
-        assertEquals("User is unauthorized to do this operation", error);
-    }
-
-    @Test
     public void testMemberGETFindByValueName() {
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", opportunitiesResponse.getName())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+        final HttpResponse<Opportunities> response = client.toBlocking().exchange(request, Opportunities.class);
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(opportunitiesResponse, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
@@ -387,12 +414,10 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?submittedBy=%s", opportunitiesResponse.getSubmittedBy())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+        final HttpResponse<Opportunities> response = client.toBlocking().exchange(request, Opportunities.class);
 
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-
-        assertEquals("User is unauthorized to do this operation", error);
+        assertEquals(opportunitiesResponse, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
 
     }
 
@@ -415,15 +440,35 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    void deleteTeamByMember() {
+    void testdeleteOpportunitiesByTeamByMember() {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", opportunitiesResponse.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
-        final HttpResponse<Set<Opportunities>> response = client.toBlocking().exchange(request, Argument.setOf(Opportunities.class));
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", opportunitiesResponse.getId())).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals("User is unauthorized to do this operation", error);
+    }
+
+    @Test
+    void testdeleteOpportunitiesIfAdmin() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", opportunitiesResponse.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+
+        final HttpResponse<Boolean> response = client.toBlocking().exchange(request, Boolean.class);
 
         assertEquals(HttpStatus.OK,response.getStatus());
+
     }
 
 }
