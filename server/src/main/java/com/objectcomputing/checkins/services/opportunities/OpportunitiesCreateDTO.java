@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public class OpportunitiesCreateDTO {
 
     @NotNull
-    @Schema(required = true, description = "description of internal feelings")
+    @Schema(required = true, description = "name of the opportunity")
     private String name;
 
     @NotNull
-    @Schema(required = true, description = "description of external feelings")
+    @Schema(required = true, description = "description of the opportunity")
     private String description;
 
     @NotNull

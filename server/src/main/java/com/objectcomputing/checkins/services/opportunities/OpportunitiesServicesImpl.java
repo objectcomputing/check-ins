@@ -32,15 +32,13 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
 
     @Override
     public Opportunities save(Opportunities opportunitiesResponse) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Opportunities opportunitiesResponseRet = null;
         if(opportunitiesResponse!=null){
             final UUID memberId = opportunitiesResponse.getSubmittedBy();
             LocalDate surSubDate = opportunitiesResponse.getSubmittedOn();
             if(opportunitiesResponse.getId()!=null){
                 throw new BadArgException(String.format("Found unexpected id for opportunities %s", opportunitiesResponse.getId()));
-            } else if(!memberRepo.findById(memberId).isPresent()){
+            } else if(memberRepo.findById(memberId).isEmpty()){
                 throw new BadArgException(String.format("Member %s doesn't exists", memberId));
             } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
                 throw new BadArgException(String.format("Invalid date for opportunities submission date %s",memberId));
@@ -51,8 +49,6 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     }
 
     public Set<Opportunities> readAll() {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         return opportunitiesResponseRepo.findAll();
     }
 
@@ -65,9 +61,9 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
             final UUID id = opportunitiesResponse.getId();
             final UUID memberId = opportunitiesResponse.getSubmittedBy();
             LocalDate surSubDate = opportunitiesResponse.getSubmittedOn();
-            if(id==null||!opportunitiesResponseRepo.findById(id).isPresent()){
+            if(id==null||opportunitiesResponseRepo.findById(id).isEmpty()){
                 throw new BadArgException(String.format("Unable to find opportunities record with id %s", opportunitiesResponse.getId()));
-            }else if(!memberRepo.findById(memberId).isPresent()){
+            }else if(memberRepo.findById(memberId).isEmpty()){
                 throw new BadArgException(String.format("Member %s doesn't exist", memberId));
             } else if(memberId==null) {
                 throw new BadArgException(String.format("Invalid opportunities %s", opportunitiesResponse));
@@ -89,15 +85,13 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
 
     @Override
     public Set<Opportunities> findByFields(String name, String description) {
-        final boolean isAdmin = currentUserServices.isAdmin();
-        permissionsValidation.validatePermissions(!isAdmin, "User is unauthorized to do this operation");
         Set<Opportunities> opportunitiesResponse = new HashSet<>();
         opportunitiesResponseRepo.findAll().forEach(opportunitiesResponse::add);
         if(name!=null){
             opportunitiesResponse.addAll(opportunitiesResponseRepo.findByName(name));
         }
         else if(description!=null){
-            opportunitiesResponse.retainAll(opportunitiesResponseRepo.findByDescription(description));
+            opportunitiesResponse.addAll(opportunitiesResponseRepo.findByDescription(description));
         }
         return opportunitiesResponse;
     }

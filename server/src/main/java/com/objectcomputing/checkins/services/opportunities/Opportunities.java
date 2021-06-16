@@ -25,7 +25,7 @@ public class Opportunities {
     @Column(name="id")
     @AutoPopulated
     @TypeDef(type=DataType.STRING)
-    @Schema(description = "the id of the opportunities", required = true)
+    @Schema(description = "the id of the opportunity", required = true)
     private UUID id;
 
     @Column(name="name")
@@ -34,7 +34,7 @@ public class Opportunities {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of Name", required = true)
+    @Schema(description = "Name of the opportunity", required = true)
     private String name;
 
     @Column(name="description")
@@ -43,7 +43,7 @@ public class Opportunities {
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
     @NotNull
-    @Schema(description = "description of Description", required = true)
+    @Schema(description = "description of the opportunity", required = true)
     private String description;
 
     @Column(name="url")
@@ -77,19 +77,19 @@ public class Opportunities {
     @Schema(description = "whether the opportunity is pending", required = true)
     private Boolean pending;
 
-    public Opportunities(UUID id, String url, LocalDate expiresOn, LocalDate submittedOn, UUID submittedBy, String name, String description, Boolean pending) {
+    public Opportunities(UUID id, String name, String description, String url, LocalDate expiresOn, LocalDate submittedOn, UUID submittedBy, Boolean pending) {
         this.id = id;
+        this.name = name;
+        this.description = description;
         this.url = url;
         this.expiresOn = expiresOn;
         this.submittedOn = submittedOn;
         this.submittedBy = submittedBy;
-        this.name = name;
-        this.description = description;
         this.pending = pending;
     }
 
-    public Opportunities(String url, LocalDate expiresOn, LocalDate submittedOn, UUID submittedBy, String name, String description, Boolean pending) {
-        this(null, url, expiresOn, submittedOn, submittedBy, name, description, pending);
+    public Opportunities(String name, String description, String url, LocalDate expiresOn, LocalDate submittedOn, UUID submittedBy, Boolean pending) {
+        this(null, name, description, url, expiresOn, submittedOn, submittedBy, pending);
     }
 
     public UUID getId() {

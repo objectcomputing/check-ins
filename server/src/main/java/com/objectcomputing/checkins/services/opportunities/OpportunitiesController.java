@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.opportunities;
 
+import com.objectcomputing.checkins.services.survey.Survey;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -44,11 +45,11 @@ public class OpportunitiesController {
     }
 
     /**
-     * Find opportunities by Name, Team Member or Date Range.
+     * Find opportunities by Name or Description.
      *
-     * @param name
-     * @param description
-     * @return
+     * @param name {@link String}
+     * @param description {@link String}
+     * @return {@link Set < Opportunities > list of opportunities}
      */
     @Get("/{?name,description}")
     public Single<HttpResponse<Set<Opportunities>>> findOpportunities(@Nullable String name,
@@ -66,7 +67,7 @@ public class OpportunitiesController {
     }
 
     /**
-     * Create and save a new Opportunities.
+     * Create and save a new Opportunity.
      *
      * @param opportunitiesResponse, {@link OpportunitiesCreateDTO}
      * @return {@link HttpResponse<Opportunities>}
@@ -75,7 +76,7 @@ public class OpportunitiesController {
     @Post()
     public Single<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<OpportunitiesCreateDTO> request) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(), opportunitiesResponse.getSubmittedOn(), opportunitiesResponse.getSubmittedBy(), opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getPending())))
+        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(), opportunitiesResponse.getSubmittedOn(), opportunitiesResponse.getSubmittedBy(), opportunitiesResponse.getPending())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(opportunities -> {return (HttpResponse<Opportunities>) HttpResponse
                         .created(opportunities)
@@ -84,7 +85,7 @@ public class OpportunitiesController {
     }
 
     /**
-     * Update a Opportunities
+     * Update an Opportunity
      *
      * @param opportunitiesResponse, {@link Opportunities}
      * @return {@link HttpResponse<Opportunities>}
@@ -103,7 +104,7 @@ public class OpportunitiesController {
     }
 
     /**
-     * Delete A opportunities
+     * Delete an opportunity
      *
      * @param id, id of {@link Opportunities} to delete
      */
