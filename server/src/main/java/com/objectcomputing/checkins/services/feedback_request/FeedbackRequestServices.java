@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface FeedbackRequestServices {
@@ -12,7 +12,5 @@ public interface FeedbackRequestServices {
 
     FeedbackRequest getById(UUID id);
 
-    List<FeedbackRequest> findByRequesteeId (UUID requesteeId);
-
-    List<FeedbackRequest> findByCreatorId (UUID creatorId);
+    Set<FeedbackRequest> findByValue(UUID creatorId);
 }

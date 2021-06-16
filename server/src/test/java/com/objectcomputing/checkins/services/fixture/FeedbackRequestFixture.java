@@ -5,18 +5,17 @@ import java.time.LocalDate;
 
 import java.util.UUID;
 
-//      this.id = id;
-//              this.creatorId = creatorId;
-//              this.requesteeId = requesteeId;
-//              this.templateId = templateId;
-//              this.sendDate = sendDate;
-//              this.dueDate = dueDate;
-//              this.status = status;\
 public interface FeedbackRequestFixture extends RepositoryFixture {
 
-    default FeedbackRequest createFeedbackRequest(MemberProfile memberProfile, MemberProfile memberProfileForPDL) {
+    /**
+     * Creates a sample feedback request
+     * @param creator The {@link MemberProfile} of the creator of the feedback request
+     * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @return The saved {@link FeedbackRequest}
+     */
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), memberProfileForPDL.getId(), memberProfile.getId(), UUID.randomUUID(), testDate, null, "pending"));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), requestee.getId(), creator.getId(), UUID.randomUUID(), testDate, null, "pending"));
     }
 
 }

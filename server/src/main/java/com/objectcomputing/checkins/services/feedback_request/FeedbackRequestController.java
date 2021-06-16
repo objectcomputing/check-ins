@@ -11,12 +11,15 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/requests")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -77,6 +80,22 @@ public class FeedbackRequestController {
                         .ok(fromEntity(savedFeedbackRequest))
                         .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
+    }
+    /**
+     * Get feedback request by creator's ID
+     *
+     * @param creatorId {@link UUID} ID of member profile who created the feedback request
+     * @return {@link Set <FeedbackResponseDTO>} Set of feedback requests that were made by certain creator
+     */
+    @Get("/{?creatorId}")
+    public Single<HttpResponse<Set<FeedbackRequestResponseDTO>>> findByValue(@Nullable UUID creatorId) {
+        return Single.fromCallable(() -> feedbackReqServices.findByValue(creatorId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackReqs -> {
+                    Set<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
+                            .map(this::fromEntity).collect(Collectors.toSet());
+                    return (HttpResponse<Set<FeedbackRequestResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {

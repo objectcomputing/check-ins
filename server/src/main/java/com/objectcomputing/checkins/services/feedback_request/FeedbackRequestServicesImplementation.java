@@ -3,17 +3,20 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.RoleServices;
 
 import javax.inject.Singleton;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -118,18 +121,24 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         }
 
         return feedbackReq.get();
-
-
     }
 
-    @Override
-    public List<FeedbackRequest> findByRequesteeId(UUID requesteeId) {
-        return null;
-    }
 
     @Override
-    public List<FeedbackRequest> findByCreatorId(UUID creatorId) {
-        return null;
+    public Set<FeedbackRequest> findByValue(UUID creatorId) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        UUID currentUserId = currentUser.getId();
+        boolean isAdmin = currentUserServices.isAdmin();
+        Set<FeedbackRequest> feedbackReqSet= new HashSet<>();
+        if (currentUserId != null) {
+            if (currentUserId.equals(creatorId)) {
+                feedbackReqSet.addAll(feedbackReqRepository.findByCreatorId(Util.nullSafeUUIDToString(creatorId)));
+            } else {
+            throw new PermissionException("You are not authorized to do this operation");
+            }
+        }
+
+        return feedbackReqSet;
     }
 
     private boolean getIsPermitted(@NotNull UUID requesteeId) {

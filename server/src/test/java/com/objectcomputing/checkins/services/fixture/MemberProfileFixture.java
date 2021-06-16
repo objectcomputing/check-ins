@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import net.bytebuddy.asm.Advice;
 
+import java.lang.reflect.Member;
 import java.time.LocalDate;
 
 public interface MemberProfileFixture extends RepositoryFixture {
@@ -15,7 +16,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
 
-    default MemberProfile createAnotherDefaultMemberProfile() {
+    default MemberProfile createASecondDefaultMemberProfile() {
         return getMemberProfileRepository().save(new MemberProfile("Jim", null, "Jimson",
                 null, "Comedic Relief", null, "New York, New York",
                 "jimj@objectcomputing.com", "mr-jim-employee", LocalDate.now(),
@@ -31,6 +32,22 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
+    default MemberProfile createASecondDefaultMemberProfileForPdl(MemberProfile memberProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Sluggo PDL", null, "Simpson",
+                null, "Bully Relief PDL", memberProfile.getId(), "New York, New York",
+                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
+                LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
+                memberProfile.getId(), null,null));
+    }
+
+    default MemberProfile createAThirdDefaultMemberProfile(MemberProfile memberProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Jane", null, "Doe",
+                null, "Comedic Relief", memberProfile.getId(), "New York, New York",
+                "janed@objectcomputing.com", "ms-jane-doe", LocalDate.now(),
+                "is a clay figurine clown star of a parody of children's clay animation shows",
+                null, null, null));
+    }
+
     // this user is not connected to other users in the system
     default MemberProfile createAnUnrelatedUser() {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
@@ -38,14 +55,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 "nobody@objectcomputing.com", "mr-bill-employee-unrelated",
                 LocalDate.now(), "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null,null));
-    }
-
-    default MemberProfile createASecondDefaultMemberProfileForPdl(MemberProfile memberProfile) {
-        return getMemberProfileRepository().save(new MemberProfile("Sluggo PDL", null, "Simpson",
-                null, "Bully Relief PDL", memberProfile.getId(), "New York, New York",
-                "sluggopdl@objectcomputing.com", "sluggo-employee-pdl",
-                LocalDate.now(), "is the bully in a clay figurine clown star of a parody of children's clay animation shows",
-                memberProfile.getId(), null,null));
     }
 
     default MemberProfile createAPastTerminatedMemberProfile() {
