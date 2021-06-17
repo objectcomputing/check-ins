@@ -29,7 +29,6 @@ const SkillSlider = ({
   lastUsedDate,
   onDelete,
   onUpdate,
-  index,
   key,
 }) => {
   let [currCheck, setCurrCheck] = useState(!lastUsedDate);
@@ -46,12 +45,12 @@ const SkillSlider = ({
   const updateLevel = (e, value) => setSkillLevel(value);
 
   const updateSkillLevel = debounce((event, value) => {
-    onUpdate(lastUsed, value, index);
+    onUpdate(lastUsed, value, id);
   }, 1500);
 
   const updateLastUsed = debounce((value) => {
     setLastUsed(value);
-    onUpdate(value, skillLevel, index);
+    onUpdate(value, skillLevel, id);
   }, 1500);
 
   const formatDate = (date) => {
