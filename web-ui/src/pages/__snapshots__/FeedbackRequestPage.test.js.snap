@@ -228,152 +228,300 @@ Array [
         className="card-container"
       >
         <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          className="MuiPaper-root MuiCard-root feedback-template-card makeStyles-root-2 MuiPaper-elevation1 MuiPaper-rounded"
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-5"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >
             <div
               className="card-content"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Ad Hoc
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Send a single question
-                  </div>
-                </div>
+              <div
+                className="templateName"
+              >
+                Ad Hoc
               </div>
               <div
-                className="creator-wrapper"
+                className="description-and-creator"
               >
-                Created by:
                 <div
-                  className="creator"
+                  className="description"
                 >
-                  Admin
+                  Send a single question
+                </div>
+                <div
+                  className="creator-wrapper"
+                >
+                  Created by:
+                  <div
+                    className="creator"
+                  >
+                    Admin
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          className="MuiPaper-root MuiCard-root feedback-template-card makeStyles-root-2 MuiPaper-elevation1 MuiPaper-rounded"
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-5"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >
             <div
               className="card-content"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Survey 1
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Make a survey of a few questions
-                  </div>
-                </div>
+              <div
+                className="templateName"
+              >
+                Ad Hoc
               </div>
               <div
-                className="creator-wrapper"
+                className="description-and-creator"
               >
-                Created by:
                 <div
-                  className="creator"
+                  className="description"
                 >
-                  Admin
+                  Make a survey of a few questions
+                </div>
+                <div
+                  className="creator-wrapper"
+                >
+                  Created by:
+                  <div
+                    className="creator"
+                  >
+                    Admin
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          className="MuiPaper-root MuiCard-root feedback-template-card makeStyles-root-2 MuiPaper-elevation1 MuiPaper-rounded"
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-5"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >
             <div
               className="card-content"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Feedback Survey 2
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Another type of survey
-                  </div>
-                </div>
+              <div
+                className="templateName"
+              >
+                Ad Hoc
               </div>
               <div
-                className="creator-wrapper"
+                className="description-and-creator"
               >
-                Created by:
                 <div
-                  className="creator"
+                  className="description"
                 >
-                  Jane Doe
+                  Another type of survey
+                </div>
+                <div
+                  className="creator-wrapper"
+                >
+                  Created by:
+                  <div
+                    className="creator"
+                  >
+                    Jane Doe
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          className="MuiPaper-root MuiCard-root feedback-template-card makeStyles-root-2 MuiPaper-elevation1 MuiPaper-rounded"
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-5"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >
             <div
               className="card-content"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Custom Template
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    A very very very very very very very very very very very very very very very very very ver...
-                  </div>
-                </div>
+              <div
+                className="templateName"
+              >
+                Ad Hoc
               </div>
               <div
-                className="creator-wrapper"
+                className="description-and-creator"
               >
-                Created by:
                 <div
-                  className="creator"
+                  className="description"
                 >
-                  Bob Smith
+                  A very very very very very very very very very very very very very very very very very very very very very very very very very very long description
+                </div>
+                <div
+                  className="creator-wrapper"
+                >
+                  Created by:
+                  <div
+                    className="creator"
+                  >
+                    Bob Smith
+                  </div>
                 </div>
               </div>
             </div>
