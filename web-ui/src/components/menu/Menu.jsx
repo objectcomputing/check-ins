@@ -184,7 +184,7 @@ function Menu() {
             </ListItem>
           </Link>
           <Link style={linkStyle}>
-            <ListItem button className={classes.nested}>
+            <ListItem button className={classes.nested} to={"/home"}>
               <ListItemText classes={{primary:classes.ListItemText}} primary="VIEW" />
             </ListItem>
           </Link>
