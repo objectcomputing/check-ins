@@ -69,6 +69,14 @@ public class MemberProfileCreateDTO {
     @Schema(description = "Birth date of employee", nullable = true)
     private LocalDate birthDay;
 
+    @Nullable
+    @Schema(description = "The employee termination was voluntary", nullable = true)
+    private Boolean voluntary;
+
+    @Nullable
+    @Schema(description = "The employee is excluded from retention reports", nullable = true)
+    private Boolean excluded;
+
     @NotBlank
     public String getFirstName() {
         return firstName;
@@ -187,6 +195,26 @@ public class MemberProfileCreateDTO {
 
     public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
 
+    @Nullable
+    public Boolean getVoluntary() {
+        return voluntary;
+    }
+
+    public void setVoluntary(@Nullable Boolean voluntary) {
+        this.voluntary = voluntary;
+    }
+
+    @Nullable
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(@Nullable Boolean excluded) {
+        this.excluded = excluded;
+    }
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -205,13 +233,16 @@ public class MemberProfileCreateDTO {
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
                 Objects.equals(terminationDate, that.terminationDate) &&
-                Objects.equals(birthDay, that.birthDay);
+                Objects.equals(birthDay, that.birthDay) &&
+                Objects.equals(voluntary, that.voluntary) &&
+                Objects.equals(excluded, that.excluded);
 
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay,
+                voluntary, excluded);
     }
 }
