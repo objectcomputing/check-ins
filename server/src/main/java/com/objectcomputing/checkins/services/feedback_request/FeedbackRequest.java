@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -59,8 +60,7 @@ public class FeedbackRequest {
     @Schema(description = "Completion status of request", required = true)
     private String status;
 
-    public FeedbackRequest(
-                           @NotNull UUID creatorId,
+    public FeedbackRequest(@NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
@@ -81,8 +81,7 @@ public class FeedbackRequest {
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status
-                           ) {
+                           @NotNull String status) {
         this.id = id;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -90,7 +89,14 @@ public class FeedbackRequest {
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
+    }
 
+    public FeedbackRequest(@Nullable UUID id,
+                           @Nullable LocalDate dueDate,
+                           @NotNull String status) {
+        this.id = id;
+        this.dueDate = dueDate;
+        this.status = status;
     }
 
     public UUID getId() {

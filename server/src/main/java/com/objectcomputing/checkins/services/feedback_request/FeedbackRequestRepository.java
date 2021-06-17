@@ -17,4 +17,6 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
     <S extends FeedbackRequest> S save(@Valid @NotNull @Nonnull S entity);
 
     List<FeedbackRequest> findByCreatorId(@NotNull UUID creatorId);
+
+
 }

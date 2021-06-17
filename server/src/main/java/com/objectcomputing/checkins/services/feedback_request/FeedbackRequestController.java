@@ -29,7 +29,6 @@ public class FeedbackRequestController {
     private final FeedbackRequestServices feedbackReqServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService executorService;
-    private final CurrentUserServices currentUserServices;
 
     public FeedbackRequestController(FeedbackRequestServices feedbackReqServices,
                                      EventLoopGroup eventLoopGroup,
@@ -38,7 +37,6 @@ public class FeedbackRequestController {
         this.feedbackReqServices = feedbackReqServices;
         this.eventLoopGroup = eventLoopGroup;
         this.executorService = executorService;
-        this.currentUserServices = currentUserServices;
     }
 
     /**
@@ -53,7 +51,24 @@ public class FeedbackRequestController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedbackRequest -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
                         .created(fromEntity(savedFeedbackRequest))
-                        .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
+                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedbackRequest.getId()))))
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
+     * Update a feedback request
+     *
+     * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
+     * @return {@link FeedbackRequestResponseDTO}
+     */
+    @Put()
+    public Single<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
+        return Single.fromCallable(() -> feedbackReqServices.update(fromDTO(requestBody)))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(savedFeedback -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create("/feedback_request/" + savedFeedback.getId())))
+                        .body(fromEntity(savedFeedback)))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -118,5 +133,9 @@ public class FeedbackRequestController {
 
     private FeedbackRequest fromDTO(FeedbackRequestCreateDTO dto) {
         return new FeedbackRequest(dto.getCreatorId(), dto.getRequesteeId(), dto.getTemplateId(), dto.getSendDate(), dto.getDueDate(), dto.getStatus());
+    }
+
+    private FeedbackRequest fromDTO(FeedbackRequestUpdateDTO dto) {
+        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus());
     }
 }
