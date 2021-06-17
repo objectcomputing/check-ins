@@ -104,22 +104,18 @@ function Menu() {
     setReportsOpen(!reportsOpen);
   };
 
-  const toggleDirectory = (dNum) => {
-    switch(dNum) {
-      case 0:
-        setDirectoryOpen(!directoryOpen);
-        break;
-      case 1:
-        setFDirectoryOpen(!fDirectoryOpen);
-        break;
-      default:
-        setDirectoryOpen(!directoryOpen);
-    }
+  const toggleDirectory = () => {
+    setDirectoryOpen(!directoryOpen);
+  };
+
+  const toggleFDirectory = () => {
+    setFDirectoryOpen(!fDirectoryOpen);
   };
 
   const closeSubMenus = () => {
     setReportsOpen(false);
     setDirectoryOpen(false);
+    setFDirectoryOpen(false);
   };
 
   const linkStyle = { textDecoration: "none", color: "white" };
@@ -148,7 +144,7 @@ function Menu() {
       </Button>
       <br />
       <Button
-        onClick={toggleDirectory(0)}
+        onClick={toggleDirectory}
         size="large"
         style={{ color: "white", width: "100%" }}
       >
@@ -175,13 +171,13 @@ function Menu() {
         </List>
       </Collapse>
       <Button
-        onClick={toggleDirectory(1)}
+        onClick={toggleFDirectory}
         size="large"
         style={{ color: "white", width: "100%" }}
       >
         Feedback
       </Button>
-      <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+      <Collapse in={fDirectoryOpen} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <Link style={linkStyle} to="/feedback/request">
             <ListItem button className={classes.nested}>
