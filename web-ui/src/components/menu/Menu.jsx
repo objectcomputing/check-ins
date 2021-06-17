@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -63,31 +63,8 @@ const useStyles = makeStyles((theme) => ({
   },
   ListItemText : {
     fontSize: "0.9rem",
-  },
-  listStyle: {
-    textDecoration: "none", color: "white",
-  },
-  listItem: {
-    textAlign: 'center'
-  },
-  subListItem: {
-    fontSize: "0.9rem",
   }
 }));
-
-const isDirectoryOpen = (loc) => {
-  if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
-    return true;
-  }
-  return false;
-}
-
-const isReportsOpen = (loc) => {
-  if (loc === "/checkins-reports" || loc === "/skills-reports") {
-    return true;
-  }
-  return false;
-}
 
 function Menu() {
   const { state } = useContext(AppContext);
@@ -103,10 +80,6 @@ function Menu() {
   const [reportsOpen, setReportsOpen] = useState(false);
   const [directoryOpen, setDirectoryOpen] = useState(false);
   const [fDirectoryOpen, setFDirectoryOpen] = useState(false);
-  const location = useLocation();
-  const history = useHistory();
-  const [reportsOpen, setReportsOpen] = useState(isReportsOpen(location.pathname));
-  const [directoryOpen, setDirectoryOpen] = useState(isDirectoryOpen(location.pathname));
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -119,6 +92,7 @@ function Menu() {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
+
     prevOpen.current = open;
   }, [open]);
 
@@ -141,41 +115,9 @@ function Menu() {
   const closeSubMenus = () => {
     setReportsOpen(false);
     setDirectoryOpen(false);
-    setFDirectoryOpen(false);
   };
 
-  const isLinkSelected = (path) => {
-    // /checkins route is special case as additional info is added to url
-    if (path === "/checkins" && location.pathname.includes(`${path}/`)) return true;
-    return location.pathname === path ? true : false;
-  }
-
-  const createLinkJsx = (path, name, isSubLink) => {
-    return (
-      <ListItem
-        key={path}
-        className={isSubLink? `${classes.listItem} ${classes.nested}` : classes.listItem}
-        button
-        onClick={isSubLink?
-          () => history.push(path):
-          () => {
-            history.push(path)
-            closeSubMenus()
-          }
-        }
-        selected={isLinkSelected(path)}
-      >
-        <ListItemText classes={isSubLink? {primary: classes.subListItem} : null} primary={name} />
-      </ListItem>
-    )
-  }
-
-  const createListJsx = (listArr, isSublink) => {
-    return listArr.map(listItem => {
-      const [path, name] = listItem;
-      return createLinkJsx(path, name, isSublink);
-    })
-  }
+  const linkStyle = { textDecoration: "none", color: "white" };
 
   const drawer = (
     <div>
@@ -187,16 +129,19 @@ function Menu() {
           style={{ width: "50%" }}
         />
       </div>
-
-      <List component="nav" className={classes.listStyle}>
-        {createListJsx(
-          [
-            ["/home", "HOME",],
-            ["/checkins", "CHECK-INS",]
-          ],
-          false)
-        }
-      </List>
+      <br />
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/home">
+          Home
+        </Link>
+      </Button>
+      <br />
+      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
+        <Link style={linkStyle} to="/checkins">
+          Check-ins
+        </Link>
+      </Button>
+      <br />
       <Button
         onClick={toggleDirectory}
         size="large"
@@ -206,15 +151,6 @@ function Menu() {
       </Button>
       <br />
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-        <List className={classes.listStyle} component="nav" disablePadding>
-          {createListJsx(
-            [
-              ["/guilds", "GUILDS"],
-              ["/people", "PEOPLE"],
-              ["/teams", "TEAMS"]
-            ],
-              true)
-          }
         <List component="div" disablePadding>
           <Link style={linkStyle} to="/guilds">
             <ListItem button className={classes.nested}>
@@ -263,21 +199,33 @@ function Menu() {
           >
             Reports
           </Button>
-          <List className={classes.listStyle} component="nav" disablePadding>
-            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-                {createListJsx(
-                  [
-                    ["/checkins-reports", "CHECK-INS"],
-                    ["/skills-reports", "SKILLS"],
-                    ["/team-skills-reports", "TEAM SKILLS"],
-                  ],
-                  true)
-                }
-            </Collapse>
-            {createLinkJsx("/edit-skills", "SKILLS", false)}
-          </List>
-
+          <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link style={linkStyle} to="/checkins-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText classes={{primary: classes.ListItemText}} primary="CHECKINS" />
+                </ListItem>
+              </Link>
+              <Link style={linkStyle} to="/skills-reports">
+                <ListItem button className={classes.nested}>
+                  <ListItemText classes={{primary: classes.ListItemText}} primary="SKILLS" />
+                </ListItem>
+              </Link>
+            </List>
+          <Link style={linkStyle} to="/team-skills-reports">
+            <ListItem button className={classes.nested}>
+              <ListItemText primary="TEAM SKILLS" />
+            </ListItem>
+          </Link>
+          </Collapse>
         </div>
+      )}
+      {isAdmin && (
+        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
+          <Link style={linkStyle} to="/edit-skills">
+            Skills
+          </Link>
+        </Button>
       )}
     </div>
   );
@@ -303,26 +251,22 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-
-          <Avatar
-            onClick={() => history.push(`/profile/${id}`)}
-            src={getAvatarURL(workEmail)}
-            style={{
-              position: "absolute",
-              cursor: "pointer",
-              right: "5px",
-              top: "10px",
-              textDecoration: "none"
-            }}
-          />
-
+          <Link style={{ textDecoration: "none" }} to={`/profile/${id}`}>
+            <Avatar
+              src={getAvatarURL(workEmail)}
+              style={{
+                position: "absolute",
+                right: "5px",
+                top: "10px",
+              }}
+            />
+          </Link>
         </div>
       </AppBar>
       <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
-            disablePortal
             anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}
