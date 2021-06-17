@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -17,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
@@ -66,6 +68,22 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
         dto.setStartDate(LocalDate.now());
         dto.setEndDate(null);
+        dto.setFrequency("WEEKLY");
+
+        HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
+            client.toBlocking().exchange(HttpRequest.POST("", dto)
+                    .basicAuth(MEMBER_ROLE, MEMBER_ROLE));
+        });
+
+        assertNotNull(thrown.getResponse());
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+    }
+
+    @Test
+    public void testPOSTEndDateBeforeStartDateReturns400() {
+        RetentionReportRequestDTO dto = new RetentionReportRequestDTO();
+        dto.setStartDate(LocalDate.now());
+        dto.setEndDate(LocalDate.now().minusMonths(1));
         dto.setFrequency("WEEKLY");
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class, () -> {
