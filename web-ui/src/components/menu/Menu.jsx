@@ -79,7 +79,7 @@ function Menu() {
   const [open, setOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
   const [directoryOpen, setDirectoryOpen] = useState(false);
-  const [fDirectoryOpen, setFDirectoryOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
@@ -108,8 +108,8 @@ function Menu() {
     setDirectoryOpen(!directoryOpen);
   };
 
-  const toggleFDirectory = () => {
-    setFDirectoryOpen(!fDirectoryOpen);
+  const toggleFeedback = () => {
+    setFeedbackOpen(!feedbackOpen);
   };
 
   const closeSubMenus = () => {
@@ -170,20 +170,20 @@ function Menu() {
         </List>
       </Collapse>
       <Button
-        onClick={toggleFDirectory}
+        onClick={toggleFeedback}
         size="large"
         style={{ color: "white", width: "100%" }}
       >
         Feedback
       </Button>
-      <Collapse in={fDirectoryOpen} timeout="auto" unmountOnExit>
+      <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <Link style={linkStyle} to="/feedback/request">
             <ListItem button className={classes.nested}>
               <ListItemText classes={{primary:classes.ListItemText}} primary="REQUEST" />
             </ListItem>
           </Link>
-          <Link style={linkStyle}to={"/home"}>
+          <Link style={linkStyle} to="/home">
             <ListItem button className={classes.nested}>
               <ListItemText classes={{primary:classes.ListItemText}} primary="VIEW" />
             </ListItem>
