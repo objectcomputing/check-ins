@@ -53,9 +53,6 @@ function App() {
                   </Header>
                   <GuildsPage />
                 </Route>
-                <Route path="/feedback/request">
-                  <FeedbackRequestPage />
-                </Route>
                 <Route path="/home">
                   <Header />
                   <ProfilePage />
