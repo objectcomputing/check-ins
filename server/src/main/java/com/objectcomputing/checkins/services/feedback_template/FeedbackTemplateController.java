@@ -117,25 +117,22 @@ public class FeedbackTemplateController {
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
-//    /**
-//     * Get feedback templates by title
-//     *
-//     * @param title {@link String} Title of feedback template
-//     * @return {@link List< FeedbackTemplateResponseDTO >} List of feedback templates that match the input parameters
-//     */
-//    @Get("/searchtemplates/{?title}")
-//    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> getByValues(@Nullable String title) {
-//        return Single.fromCallable(() -> feedbackTemplateServices.getByValues(title))
-//                .observeOn(Schedulers.from(eventLoopGroup))
-//                .map(feedbackTemplates -> {
-//                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
-//                            .map(this::fromEntity).collect(Collectors.toList());
-//                    return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
-//                }).subscribeOn(Schedulers.from(executorService));
-//    }
-
-
-
+    /**
+     * Get feedback templates by title
+     *
+     * @param title {@link String} Title of feedback template
+     * @return {@link List< FeedbackTemplateResponseDTO >} List of feedback templates that match the input parameters
+     */
+    @Get("/searchtemplates/{?title}")
+    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> getByValues(@Nullable String title) {
+        return Single.fromCallable(() -> feedbackTemplateServices.getByValues(title))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackTemplates -> {
+                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
+    }
 
     private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate feedbackTemplate) {
         FeedbackTemplateResponseDTO dto = new FeedbackTemplateResponseDTO();
