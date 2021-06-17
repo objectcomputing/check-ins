@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
@@ -36,6 +37,10 @@ public interface RepositoryFixture {
 
     default TagRepository getTagRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);
+    }
+
+    default FeedbackTemplateRepository getFeedbackTemplateRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackTemplateRepository.class);
     }
 
     default EntityTagRepository getEntityTagRepository() {

@@ -21,22 +21,28 @@ public class FeedbackTemplateResponseDTO {
     private String title;
 
     @Nullable
-    @Schema(description = "description of the feedback template", required = false)
+    @Schema(description = "description of the feedback template")
     private String description;
 
     @NotNull
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 
+    @NotNull
+    @Schema(description = "whether or not the template is visible only to the person who made it", required=true)
+    private Boolean isPrivate;
+
     public void setId(UUID id) {
         this.id = id;
     }
     public UUID getId() {
-        return this.id;
+        return id;
     }
     public void setTitle(String title) {
         this.title = title;
     }
+    public void setIsPrivate(Boolean isPrivate) { this.isPrivate = isPrivate; }
+    public Boolean getIsPrivate() { return isPrivate; }
 
     public void setDescription(String description) {
         this.description = description;
@@ -57,6 +63,5 @@ public class FeedbackTemplateResponseDTO {
     public UUID getCreatedBy() {
         return createdBy;
     }
-
 
 }

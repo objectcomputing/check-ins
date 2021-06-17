@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedback_template")
+@Table(name = "feedback_templates")
 public class FeedbackTemplate {
 
     @Id
@@ -45,44 +45,53 @@ public class FeedbackTemplate {
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID createdBy;
 
-    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy ) {
+    @Column(name = "isPrivate")
+    @NotNull
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether this feedback template is visible only to its creator", required = true)
+    private Boolean isPrivate;
+
+    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean isPrivate) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.isPrivate = isPrivate;
     }
 
-    public FeedbackTemplate(@NotNull UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy ) {
+    public FeedbackTemplate(@Nullable UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean isPrivate) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.isPrivate = isPrivate;
     }
 
-
-
-    public void setId(UUID id) {
+    public FeedbackTemplate(@Nullable UUID id,
+                    @NotNull String title,
+                    @Nullable String description,
+                    @NotNull Boolean isPrivate
+    ) {
         this.id = id;
-    }
-
-    public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setDescription(@Nullable String description) {
+        this.isPrivate = isPrivate;
         this.description = description;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
     }
 
     public UUID getId() {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Nullable
@@ -90,35 +99,48 @@ public class FeedbackTemplate {
         return description;
     }
 
+    public void setDescription(@Nullable String description) {
+        this.description = description;
+    }
+
     public UUID getCreatedBy() {
         return createdBy;
     }
-    @Override
-    public String toString() {
-        return "FeedbackTemplate{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", createdBy=" + createdBy +
-                '}';
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
     }
 
+    public Boolean getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(Boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackTemplate that = (FeedbackTemplate) o;
-        return id.equals(that.id) && title.equals(that.title) && Objects.equals(description, that.description) && createdBy.equals(that.createdBy);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(createdBy, that.createdBy) && Objects.equals(isPrivate, that.isPrivate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, createdBy);
+        return Objects.hash(id, title, description, createdBy, isPrivate);
     }
 
-
-
-
-
+    @Override
+    public String
+    toString() {
+        return "FeedbackTemplate{" +
+                "id=" + id +
+                ", title='" + title +
+                ", description='" + description +
+                ", createdBy=" + createdBy +
+                ", isPrivate=" + isPrivate +
+                '}';
+    }
 }

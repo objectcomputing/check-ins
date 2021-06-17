@@ -21,15 +21,16 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
 
     @Query(value = "SELECT * " +
             "FROM feedback_template " +
-            "WHERE (:title IS NULL OR title = :title OR title LIKE '%:title%') " +
-            "OR (:description IS NULL OR description = :description OR description LIKE '%:description%') "
+            "WHERE (:title IS NULL OR title = :title OR title LIKE '%:title%') "
             , nativeQuery = true)
-    List<FeedbackTemplate> searchByValues(@Nullable String title, @Nullable String description);
+    List<FeedbackTemplate> searchByValues(@Nullable String title);
 
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
 
     Optional<FeedbackTemplate> findById(UUID id);
+
+    List<FeedbackTemplate> findByCreatedBy(UUID createdBy);
 
 
 }

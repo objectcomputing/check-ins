@@ -9,13 +9,15 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate save(FeedbackTemplate feedbackTemplate);
 
-    Feedback update(FeedbackTemplate feedbackTemplate);
+    FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
 
     Boolean delete(UUID id);
 
-    Feedback getById(UUID id);
+    FeedbackTemplate getById(UUID id);
 
-    List<FeedbackTemplate> getByValues(String title, String description);
+    List<FeedbackTemplate> findByCreatedBy(UUID createdBy);
+
+    List<FeedbackTemplate> getByValues(String title);
 
 
 }
