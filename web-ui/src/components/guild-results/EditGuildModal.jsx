@@ -28,11 +28,11 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
     ) {
       setGuild({
         ...editedGuild,
-        guildMembers: [...new Set(editedGuild?.guildMembers?.filter(member => member.lead === false && member.memberid !== currentUser.id)),
+        guildMembers: [...new Set(editedGuild?.guildMembers?.filter(member => member.lead === false && member.memberId !== currentUser.id)),
           {
             name: `${currentUser.firstName} ${currentUser.lastName}`,
-            memberid: currentUser.id,
-            guildid: editedGuild.id,
+            memberId: currentUser.id,
+            guildId: editedGuild.id,
             lead: true,
           },
         ],
@@ -56,15 +56,15 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
         ? editedGuild.guildMembers.filter((guildMember) => !guildMember.lead)
         : [];
     newValue = newValue.map((newLead) => ({
-      id: newLead.memberid ? newLead.id : undefined,
+      id: newLead.memberId ? newLead.id : undefined,
       name: newLead.name,
-      memberid: newLead.memberid ? newLead.memberid : newLead.id,
-      guildid: editedGuild.id,
+      memberId: newLead.memberId ? newLead.memberId : newLead.id,
+      guildId: editedGuild.id,
       lead: true,
     }));
     newValue.forEach((newLead) => {
       extantMembers = extantMembers.filter(
-        (member) => member.memberid !== newLead.memberid
+        (member) => member.memberId !== newLead.memberId
       );
     });
     extantMembers = [...new Set(extantMembers)];
@@ -81,15 +81,15 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
         ? editedGuild.guildMembers.filter((guildMember) => guildMember.lead)
         : [];
     newValue = newValue.map((newMember) => ({
-      id: newMember.memberid ? newMember.id : undefined,
+      id: newMember.memberId ? newMember.id : undefined,
       name: newMember.name,
-      memberid: newMember.memberid ? newMember.memberid : newMember.id,
-      guildid: editedGuild.id,
+      memberId: newMember.memberId ? newMember.memberId : newMember.id,
+      guildId: editedGuild.id,
       lead: false,
     }));
     newValue.forEach((newMember) => {
       extantLeads = extantLeads.filter(
-        (lead) => lead.memberid !== newMember.memberid
+        (lead) => lead.memberId !== newMember.memberId
       );
     });
     extantLeads = [...new Set(extantLeads)];

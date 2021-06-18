@@ -114,11 +114,11 @@ public class GuildUpdateDTO {
 
         @NotNull
         @Schema(description = "Member who is on this guild")
-        private UUID memberid;
+        private UUID memberId;
 
-        public GuildMemberUpdateDTO(UUID id, UUID memberid, Boolean lead) {
+        public GuildMemberUpdateDTO(UUID id, UUID memberId, Boolean lead) {
             this.id = id;
-            this.memberid = memberid;
+            this.memberId = memberId;
             this.lead = lead;
         }
 
@@ -138,12 +138,12 @@ public class GuildUpdateDTO {
             this.lead = lead;
         }
 
-        public UUID getMemberid() {
-            return memberid;
+        public UUID getMemberId() {
+            return memberId;
         }
 
-        public void setMemberid(UUID memberid) {
-            this.memberid = memberid;
+        public void setMemberId(UUID memberid) {
+            this.memberId = memberid;
         }
     }
 }

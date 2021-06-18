@@ -15,15 +15,15 @@ public class GuildMemberCreateDTO {
 
     @NotNull
     @Schema(description = "Guild to which the member belongs")
-    private UUID guildid;
+    private UUID guildId;
 
     @NotNull
     @Schema(description = "Member who is on this guild")
-    private UUID memberid;
+    private UUID memberId;
 
-    public GuildMemberCreateDTO(UUID guildid, UUID memberid, Boolean lead) {
-        this.guildid = guildid;
-        this.memberid = memberid;
+    public GuildMemberCreateDTO(UUID guildId, UUID memberId, Boolean lead) {
+        this.guildId = guildId;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
@@ -36,18 +36,18 @@ public class GuildMemberCreateDTO {
     }
 
     public UUID getGuildid() {
-        return guildid;
+        return guildId;
     }
 
     public void setGuildid(UUID guildmid) {
-        this.guildid = guildid;
+        this.guildId = guildId;
     }
 
     public UUID getMemberid() {
-        return memberid;
+        return memberId;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setMemberid(UUID memberId) {
+        this.memberId = memberId;
     }
 }
