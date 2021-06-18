@@ -54,8 +54,9 @@ exports[`<Menu /> renders correctly 1`] = `
       aria-haspopup="true"
       onClick={[Function]}
     >
-      <div
+      <a
         className="MuiAvatar-root MuiAvatar-circle"
+        href="/profile/undefined"
         onClick={[Function]}
         style={
           Object {
@@ -71,7 +72,7 @@ exports[`<Menu /> renders correctly 1`] = `
           className="MuiAvatar-img"
           src="http://localhost:8080/services/member-profiles/member-photos/test%40tester.com"
         />
-      </div>
+      </a>
     </div>
   </header>
   <nav
@@ -143,9 +144,10 @@ exports[`<Menu /> renders correctly 1`] = `
             <nav
               className="MuiList-root makeStyles-listStyle-9 MuiList-padding"
             >
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 MuiListItem-gutters MuiListItem-button"
+                href="/home"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -170,10 +172,11 @@ exports[`<Menu /> renders correctly 1`] = `
                     HOME
                   </span>
                 </div>
-              </div>
-              <div
+              </a>
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 MuiListItem-gutters MuiListItem-button"
+                href="/checkins"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -198,7 +201,7 @@ exports[`<Menu /> renders correctly 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-              </div>
+              </a>
             </nav>
             <button
               className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSizeLarge MuiButton-sizeLarge"
@@ -247,9 +250,10 @@ exports[`<Menu /> renders correctly 1`] = `
                   <nav
                     className="MuiList-root makeStyles-listStyle-9"
                   >
-                    <div
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button Mui-selected"
+                      href="/guilds"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -274,10 +278,11 @@ exports[`<Menu /> renders correctly 1`] = `
                           GUILDS
                         </span>
                       </div>
-                    </div>
-                    <div
+                    </a>
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button"
+                      href="/people"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -302,10 +307,11 @@ exports[`<Menu /> renders correctly 1`] = `
                           PEOPLE
                         </span>
                       </div>
-                    </div>
-                    <div
+                    </a>
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button"
+                      href="/teams"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -330,7 +336,7 @@ exports[`<Menu /> renders correctly 1`] = `
                           TEAMS
                         </span>
                       </div>
-                    </div>
+                    </a>
                   </nav>
                 </div>
               </div>
@@ -375,9 +381,10 @@ exports[`<Menu /> renders correctly 1`] = `
             <nav
               className="MuiList-root makeStyles-listStyle-9 MuiList-padding"
             >
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 MuiListItem-gutters MuiListItem-button"
+                href="/home"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -402,10 +409,11 @@ exports[`<Menu /> renders correctly 1`] = `
                     HOME
                   </span>
                 </div>
-              </div>
-              <div
+              </a>
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 MuiListItem-gutters MuiListItem-button"
+                href="/checkins"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -430,7 +438,7 @@ exports[`<Menu /> renders correctly 1`] = `
                     CHECK-INS
                   </span>
                 </div>
-              </div>
+              </a>
             </nav>
             <button
               className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textSizeLarge MuiButton-sizeLarge"
@@ -479,9 +487,10 @@ exports[`<Menu /> renders correctly 1`] = `
                   <nav
                     className="MuiList-root makeStyles-listStyle-9"
                   >
-                    <div
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button Mui-selected"
+                      href="/guilds"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -506,10 +515,11 @@ exports[`<Menu /> renders correctly 1`] = `
                           GUILDS
                         </span>
                       </div>
-                    </div>
-                    <div
+                    </a>
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button"
+                      href="/people"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -534,10 +544,11 @@ exports[`<Menu /> renders correctly 1`] = `
                           PEOPLE
                         </span>
                       </div>
-                    </div>
-                    <div
+                    </a>
+                    <a
                       aria-disabled={false}
                       className="MuiButtonBase-root MuiListItem-root makeStyles-listItem-10 makeStyles-nested-7 MuiListItem-gutters MuiListItem-button"
+                      href="/teams"
                       onBlur={[Function]}
                       onClick={[Function]}
                       onDragLeave={[Function]}
@@ -562,7 +573,7 @@ exports[`<Menu /> renders correctly 1`] = `
                           TEAMS
                         </span>
                       </div>
-                    </div>
+                    </a>
                   </nav>
                 </div>
               </div>
