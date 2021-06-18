@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -75,16 +75,22 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isDirectoryOpen = (loc) => {
-  if (loc === "/guilds" || loc === "/people" || loc === "/teams") {
-    return true;
-  }
-  return false;
-}
 
-const isReportsOpen = (loc) => {
-  if (loc === "/checkins-reports" || loc === "/skills-reports") {
-    return true;
+const directoryLinks = [
+  ["/guilds", "GUILDS"], 
+  ["/people", "PEOPLE"], 
+  ["/teams", "TEAMS"]
+]
+
+const reportsLinks = [
+  ["/checkins-reports", "CHECK-INS"], 
+  ["/skills-reports", "SKILLS"],
+  ["/team-skills-reports", "TEAM SKILLS"]
+]
+
+const isCollapsibleListOpen = (linksArr, loc) => {
+  for (let i = 0; i < linksArr.length; i++){
+    if (linksArr[i][0] === loc) return true;
   }
   return false;
 }
@@ -101,14 +107,17 @@ function Menu() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const history = useHistory();
-  const [reportsOpen, setReportsOpen] = useState(isReportsOpen(location.pathname));
-  const [directoryOpen, setDirectoryOpen] = useState(isDirectoryOpen(location.pathname));
+  const [directoryOpen, setDirectoryOpen] = useState(
+    isCollapsibleListOpen(directoryLinks, location.pathname)
+    );
+  const [reportsOpen, setReportsOpen] = useState(
+    isCollapsibleListOpen(reportsLinks, location.pathname)
+    );
   const anchorRef = useRef(null);
-
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
@@ -146,12 +155,13 @@ function Menu() {
     return (
       <ListItem
         key={path}
+        component={Link}
+        to={path}
         className={isSubLink? `${classes.listItem} ${classes.nested}` : classes.listItem}
         button
         onClick={isSubLink? 
-          () => history.push(path): 
+          undefined: 
           () => {
-            history.push(path)
             closeSubMenus()
           }
         }
@@ -168,6 +178,7 @@ function Menu() {
       return createLinkJsx(path, name, isSublink);
     })
   }
+
 
   const drawer = (
     <div>
@@ -198,14 +209,7 @@ function Menu() {
       </Button>
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
         <List className={classes.listStyle} component="nav" disablePadding>
-          {createListJsx(
-            [
-              ["/guilds", "GUILDS"], 
-              ["/people", "PEOPLE"], 
-              ["/teams", "TEAMS"]
-            ], 
-              true)
-          }
+          {createListJsx(directoryLinks, true)}
         </List>
       </Collapse>
       {isAdmin && (
@@ -219,14 +223,7 @@ function Menu() {
           </Button>
           <List className={classes.listStyle} component="nav" disablePadding>
             <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-                {createListJsx(
-                  [
-                    ["/checkins-reports", "CHECK-INS"], 
-                    ["/skills-reports", "SKILLS"],
-                    ["/team-skills-reports", "TEAM SKILLS"],
-                  ], 
-                  true)
-                }
+                {createListJsx(reportsLinks, true)}
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
           </List>
@@ -259,7 +256,8 @@ function Menu() {
         >
 
           <Avatar
-            onClick={() => history.push(`/profile/${id}`)}
+            component={Link}
+            to={`/profile/${id}`}
             src={getAvatarURL(workEmail)}
             style={{
               position: "absolute",
