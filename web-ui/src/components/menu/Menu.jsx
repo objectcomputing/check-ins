@@ -75,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
 const directoryLinks = [
   ["/guilds", "GUILDS"],
   ["/people", "PEOPLE"],
@@ -86,6 +85,11 @@ const reportsLinks = [
   ["/checkins-reports", "CHECK-INS"],
   ["/skills-reports", "SKILLS"],
   ["/team-skills-reports", "TEAM SKILLS"]
+]
+
+const feedbackLinks = [
+  ["/feedback/request", "REQUEST"],
+  ["", "VIEW"],
 ]
 
 const isCollapsibleListOpen = (linksArr, loc) => {
@@ -102,6 +106,8 @@ function Menu() {
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+  const isPDL =
+    userProfile && userProfile.role && userProfile.role.includes("PDL");
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -113,6 +119,9 @@ function Menu() {
   const [reportsOpen, setReportsOpen] = useState(
     isCollapsibleListOpen(reportsLinks, location.pathname)
     );
+  const [feedbackOpen, setFeedbackOpen] = useState(
+    isCollapsibleListOpen(feedbackLinks, location.pathname)
+  );
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -148,6 +157,7 @@ function Menu() {
   const closeSubMenus = () => {
     setReportsOpen(false);
     setDirectoryOpen(false);
+    setFeedbackOpen(false);
   };
 
   const isLinkSelected = (path) => {
@@ -217,6 +227,22 @@ function Menu() {
           {createListJsx(directoryLinks, true)}
         </List>
       </Collapse>
+      {(isAdmin || isPDL) && (
+        <React.Fragment>
+          <Button
+            onClick={toggleFeedback}
+            size="large"
+            style={{color: "white", width: "100%"}}
+          >
+            Feedback
+          </Button>
+          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+            <List className={classes.listStyle} component="nav" disablePadding>
+              {createListJsx(feedbackLinks, true)}
+            </List>
+          </Collapse>
+        </React.Fragment>
+      )}
       {isAdmin && (
         <div>
           <Button
