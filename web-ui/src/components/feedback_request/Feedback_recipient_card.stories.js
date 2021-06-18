@@ -1,6 +1,7 @@
 import FeedbackRecipientCard from "./Feedback_recipient_card";
-import React from "react";
-import {AppContextProvider} from "../../context/AppContext";
+import React, {useContext, useEffect} from "react";
+import {AppContext, AppContextProvider} from "../../context/AppContext";
+import {UPDATE_MEMBER_PROFILES} from "../../context/actions";
 
 export default {
   title: 'FeedbackReqs/FeedbackRecipientCard',
@@ -10,16 +11,32 @@ export default {
   }]
 };
 
-const Template = (args) => <FeedbackRecipientCard{...args} />;
+const profile =  {
+  id: "12342345678",
+  pdlID: 123,
+  workEmail: "kimberlinm@objectcomputing.com",
+  name: "Bob Jones",
+  title: "Software Engineer",
+}
+
+const SetProfiles = ({profiles}) => {
+  const { dispatch } = useContext(AppContext);
+  useEffect(() => {
+    dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
+  }, [profiles, dispatch]);
+  return "";
+}
+
+const Template = (args) => (
+  <React.Fragment>
+    <SetProfiles profiles={args.profiles} />
+    <FeedbackRecipientCard{...args} />
+  </React.Fragment>
+);
 
 export const DefaultUser = Template.bind({});
 DefaultUser.args = {
-  name: "Slim Jim",
+  profileId: profile.id,
   reason: "Recommended for being a local opossum",
-}
-
-export const OtherUser = Template.bind({});
-OtherUser.args = {
-  name: "Guy Fieri Barbeque Sauce",
-  reason: "Recommended for being the best barbeque sauce",
-}
+  profiles:[profile]
+};
