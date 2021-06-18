@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.guild;
 
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -27,7 +28,8 @@ public class GuildUpdateDTO {
     private String description;
 
     @Schema(description = "members of this guild")
-    private List<GuildMemberResponseDTO> guildMembers;
+    private List<GuildMemberUpdateDTO> guildMembers;
+
 
     public GuildUpdateDTO(UUID id, String name, @Nullable String description) {
         this.id = id;
@@ -67,11 +69,11 @@ public class GuildUpdateDTO {
         return Objects.hash(id, name, description);
     }
 
-    public List<GuildMemberResponseDTO> getGuildMembers() {
+    public List<GuildMemberUpdateDTO> getGuildMembers() {
         return guildMembers;
     }
 
-    public void setGuildMembers(List<GuildMemberResponseDTO> guildMembers) {
+    public void setGuildMembers(List<GuildMemberUpdateDTO> guildMembers) {
         this.guildMembers = guildMembers;
     }
 
