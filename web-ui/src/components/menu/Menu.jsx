@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -63,8 +63,37 @@ const useStyles = makeStyles((theme) => ({
   },
   ListItemText : {
     fontSize: "0.9rem",
+  },
+  listStyle: {
+    textDecoration: "none", color: "white", 
+  },
+  listItem: {
+    textAlign: 'center'
+  },
+  subListItem: {
+    fontSize: "0.9rem",
   }
 }));
+
+
+const directoryLinks = [
+  ["/guilds", "GUILDS"], 
+  ["/people", "PEOPLE"], 
+  ["/teams", "TEAMS"]
+]
+
+const reportsLinks = [
+  ["/checkins-reports", "CHECK-INS"], 
+  ["/skills-reports", "SKILLS"],
+  ["/team-skills-reports", "TEAM SKILLS"]
+]
+
+const isCollapsibleListOpen = (linksArr, loc) => {
+  for (let i = 0; i < linksArr.length; i++){
+    if (linksArr[i][0] === loc) return true;
+  }
+  return false;
+}
 
 function Menu() {
   const { state } = useContext(AppContext);
@@ -77,13 +106,18 @@ function Menu() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [reportsOpen, setReportsOpen] = useState(false);
-  const [directoryOpen, setDirectoryOpen] = useState(false);
+  const location = useLocation();
+  const [directoryOpen, setDirectoryOpen] = useState(
+    isCollapsibleListOpen(directoryLinks, location.pathname)
+    );
+  const [reportsOpen, setReportsOpen] = useState(
+    isCollapsibleListOpen(reportsLinks, location.pathname)
+    );
   const anchorRef = useRef(null);
-
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = useRef(open);
@@ -91,7 +125,6 @@ function Menu() {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -112,7 +145,40 @@ function Menu() {
     setDirectoryOpen(false);
   };
 
-  const linkStyle = { textDecoration: "none", color: "white" };
+  const isLinkSelected = (path) => {
+    // /checkins route is special case as additional info is added to url
+    if (path === "/checkins" && location.pathname.includes(`${path}/`)) return true;
+    return location.pathname === path ? true : false;
+  }
+
+  const createLinkJsx = (path, name, isSubLink) => {
+    return (
+      <ListItem
+        key={path}
+        component={Link}
+        to={path}
+        className={isSubLink? `${classes.listItem} ${classes.nested}` : classes.listItem}
+        button
+        onClick={isSubLink? 
+          undefined: 
+          () => {
+            closeSubMenus()
+          }
+        }
+        selected={isLinkSelected(path)}
+      >
+        <ListItemText classes={isSubLink? {primary: classes.subListItem} : null} primary={name} />
+      </ListItem>
+    )
+  }
+
+  const createListJsx = (listArr, isSublink) => {
+    return listArr.map(listItem => {
+      const [path, name] = listItem;
+      return createLinkJsx(path, name, isSublink);
+    })
+  }
+
 
   const drawer = (
     <div>
@@ -124,19 +190,16 @@ function Menu() {
           style={{ width: "50%" }}
         />
       </div>
-      <br />
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/home">
-          Home
-        </Link>
-      </Button>
-      <br />
-      <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/checkins">
-          Check-ins
-        </Link>
-      </Button>
-      <br />
+      
+      <List component="nav" className={classes.listStyle}>
+        {createListJsx(
+          [
+            ["/home", "HOME",], 
+            ["/checkins", "CHECK-INS",]
+          ], 
+          false)
+        }
+      </List>
       <Button
         onClick={toggleDirectory}
         size="large"
@@ -145,22 +208,8 @@ function Menu() {
         Directory
       </Button>
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link style={linkStyle} to="/guilds">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary:classes.ListItemText}} primary="GUILDS" />
-            </ListItem>
-          </Link>
-          <Link style={linkStyle} to="/directory">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary:classes.ListItemText}} primary="PEOPLE" />
-            </ListItem>
-          </Link>
-          <Link style={linkStyle} to="/teams">
-            <ListItem button className={classes.nested}>
-              <ListItemText classes={{primary: classes.ListItemText}} primary="TEAMS" />
-            </ListItem>
-          </Link>
+        <List className={classes.listStyle} component="nav" disablePadding>
+          {createListJsx(directoryLinks, true)}
         </List>
       </Collapse>
       {isAdmin && (
@@ -172,37 +221,18 @@ function Menu() {
           >
             Reports
           </Button>
-          <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <Link style={linkStyle} to="/checkins-reports">
-                <ListItem button className={classes.nested}>
-                  <ListItemText classes={{primary: classes.ListItemText}} primary="CHECKINS" />
-                </ListItem>
-              </Link>
-              <Link style={linkStyle} to="/skills-reports">
-                <ListItem button className={classes.nested}>
-                  <ListItemText classes={{primary: classes.ListItemText}} primary="SKILLS" />
-                </ListItem>
-              </Link>
-            </List>
-          <Link style={linkStyle} to="/team-skills-reports">
-            <ListItem button className={classes.nested}>
-              <ListItemText primary="TEAM SKILLS" />
-            </ListItem>
-          </Link>
-          </Collapse>
+          <List className={classes.listStyle} component="nav" disablePadding>
+            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(reportsLinks, true)}
+            </Collapse>
+            {createLinkJsx("/edit-skills", "SKILLS", false)}
+          </List>
+
         </div>
-      )}
-      {isAdmin && (
-        <Button onClick={closeSubMenus} size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/edit-skills">
-            Skills
-          </Link>
-        </Button>
       )}
     </div>
   );
-
+  
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />
@@ -224,22 +254,27 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Link style={{ textDecoration: "none" }} to={`/profile/${id}`}>
-            <Avatar
-              src={getAvatarURL(workEmail)}
-              style={{
-                position: "absolute",
-                right: "5px",
-                top: "10px",
-              }}
-            />
-          </Link>
+
+          <Avatar
+            component={Link}
+            to={`/profile/${id}`}
+            src={getAvatarURL(workEmail)}
+            style={{
+              position: "absolute",
+              cursor: "pointer",
+              right: "5px",
+              top: "10px",
+              textDecoration: "none"
+            }}
+          />
+
         </div>
       </AppBar>
       <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
+            disablePortal
             anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}

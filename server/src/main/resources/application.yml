@@ -75,6 +75,8 @@ check-ins:
       scopes:
         scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
+    feedback:
+      max-suggestions: 6
 ---
 flyway:
   enabled: enabled

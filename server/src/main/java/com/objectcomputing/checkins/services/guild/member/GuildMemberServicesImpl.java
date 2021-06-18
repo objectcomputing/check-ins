@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -25,12 +26,18 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     private final GuildMemberRepository guildMemberRepo;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
+    private final GuildMemberHistoryRepository guildMemberHistoryRepository;
 
-    public GuildMemberServicesImpl(GuildRepository guildRepo, GuildMemberRepository guildMemberRepo, MemberProfileRepository memberRepo, CurrentUserServices currentUserServices) {
+    public GuildMemberServicesImpl(GuildRepository guildRepo,
+                                   GuildMemberRepository guildMemberRepo,
+                                   MemberProfileRepository memberRepo,
+                                   CurrentUserServices currentUserServices,
+                                   GuildMemberHistoryRepository guildMemberHistoryRepository) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
+        this.guildMemberHistoryRepository=guildMemberHistoryRepository;
     }
 
     public GuildMember save(@Valid @NotNull GuildMember guildMember) {
@@ -55,8 +62,9 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
-
-        return guildMemberRepo.save(guildMember);
+        GuildMember guildMemberSaved = guildMemberRepo.save(guildMember);
+        guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Added", LocalDateTime.now()));
+        return guildMemberSaved;
     }
 
     public GuildMember read(@NotNull UUID id) {
@@ -87,8 +95,9 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         } else if (!isAdmin && guildLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
-
-        return guildMemberRepo.update(guildMember);
+        GuildMember guildMemberUpdate = guildMemberRepo.update(guildMember);
+        guildMemberHistoryRepository.save(buildGuildMemberHistory(guildId,memberId,"Updated", LocalDateTime.now()));
+        return guildMemberUpdate;
     }
 
     public Set<GuildMember> findByFields(@Nullable UUID guildid, @Nullable UUID memberid, @Nullable Boolean lead) {
@@ -124,5 +133,11 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         } else {
             throw new NotFoundException(String.format("Unable to locate guildMember with id %s", id));
         }
+        guildMemberHistoryRepository.save(buildGuildMemberHistory(guildMember.getGuildid(),guildMember.getMemberid(),"Deleted", LocalDateTime.now()));
+
+    }
+
+    private static GuildMemberHistory buildGuildMemberHistory(UUID guildId, UUID memberId, String change, LocalDateTime date) {
+        return new GuildMemberHistory(guildId,memberId,change,date);
     }
 }

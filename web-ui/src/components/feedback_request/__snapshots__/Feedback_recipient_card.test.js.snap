@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the recipient card 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-root-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="BrandCardHeader-root-8"
+  >
+    <div
+      className="BrandCardHeader-header-9"
+    >
+      <div
+        className="MuiAvatar-root MuiAvatar-circle BrandCardHeader-avatar-10"
+      >
+        <img
+          alt="brand logo"
+          className="MuiAvatar-img"
+          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+        />
+      </div>
+    </div>
+    <hr
+      className="BrandCardHeader-divider-11"
+    />
+  </div>
+  <div
+    className="MuiCardContent-root makeStyles-cardContent-2"
+  >
+    <p
+      className="MuiTypography-root makeStyles-pos-7 MuiTypography-body1 MuiTypography-colorTextSecondary"
+      id="name"
+      name="name"
+    />
+    <h6
+      className="MuiTypography-root MuiTypography-subtitle1"
+      id="title"
+      name="title"
+    />
+  </div>
+</div>
+`;

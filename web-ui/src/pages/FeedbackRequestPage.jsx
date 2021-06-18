@@ -9,8 +9,8 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
-import FeedbackRequestConfirmation from "../components/feedback_request_confirmation/FeedbackRequestConfirmation";
 import AdHoc from "../components/ad-hoc/AdHoc"
+
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles({
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date", "Done!"];
+  return ["Select template", "Select recipients", "Set due date"];
 }
 
 function getTemplates() {
@@ -53,14 +53,14 @@ function getTemplates() {
 }
 
 const FeedbackRequestPage = () => {
-
   const steps = getSteps();
   const classes = useStyles();
-  const urlStep = useLocation();
-  const query = queryString.parse(urlStep?.search).step?.toString();
-  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
-  let activeStep = urlStep?.search ? parseInt(query) : 1;
+  const location = useLocation();
+  const query = queryString.parse(location?.search).step?.toString();
+  let activeStep = location?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
+  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+
 
   const handlePreviewOpen = (selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
@@ -85,15 +85,7 @@ const FeedbackRequestPage = () => {
        />
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
-
         <div>
-          {activeStep === steps.length ? (
-            <div>
-              <Typography>
-                All steps completed!
-              </Typography>
-            </div>
-          ) : (
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
@@ -107,7 +99,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={`?step=${activeStep + 1}`}>
+                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
@@ -116,7 +108,6 @@ const FeedbackRequestPage = () => {
                 </Button>
               </Link>
             </div>
-          )}
         </div>
       </div>
       <Stepper activeStep={activeStep - 1} className={classes.root}>
@@ -143,7 +134,7 @@ const FeedbackRequestPage = () => {
           </div>
         }
         {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 4 && <FeedbackRequestConfirmation />}
+
       </div>
     </div>
   );

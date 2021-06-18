@@ -526,4 +526,61 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
+
+    @Test
+    void testGuildMemberHistoryWhenAGuildMemberIsSavedByAdmin() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        GuildMember guildMember = response.body();
+
+        final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
+
+        assertEquals(entries.get(0).getChange(),"Added");
+    }
+
+    @Test
+    void testGuildMemberHistoryWhenUpdateGuildMemberByGuildLead() {
+        Guild guild = createDefaultGuild();
+
+        // Create a guild lead and add him to the guild
+        MemberProfile memberProfileOfGuildLead = createADefaultMemberProfile();
+        createLeadGuildMember(guild, memberProfileOfGuildLead);
+
+        // Create a member and add him to guild
+        MemberProfile memberProfileOfUser = createAnUnrelatedUser();
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfileOfUser);
+
+        // Update member
+        GuildMemberUpdateDTO guildMemberUpdateDTO = new GuildMemberUpdateDTO(guildMember.getId(), guildMember.getGuildid(), guildMember.getMemberid(), true);
+        final MutableHttpRequest<GuildMemberUpdateDTO> request = HttpRequest.PUT("", guildMemberUpdateDTO).basicAuth(memberProfileOfGuildLead.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
+
+        assertEquals(entries.get(0).getChange(),"Updated");
+    }
+
+    @Test
+    void testGuildMemberHistoryWhenDeletingGuildMemberAsAdmin() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        final List<GuildMemberHistory> entries = (List<GuildMemberHistory>) getGuildMemberHistoryRepository().findAll();
+
+        assertEquals(entries.get(0).getChange(),"Deleted");
+    }
+
+
 }

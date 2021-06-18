@@ -9,21 +9,20 @@ import TeamsPage from "./pages/TeamsPage";
 import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import CheckinsReportPage from "./pages/CheckinsReportPage";
-import DirectoryPage from "./pages/DirectoryPage";
+import PeoplePage from "./pages/PeoplePage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
-import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import FeedbackRequestPage from "./pages/FeedbackRequestPage";
+import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import { AppContextProvider } from "./context/AppContext";
-
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
-
 import GroupIcon from "@material-ui/icons/Group";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
 import "./App.css";
+import FeedbackRequestConfirmation from "./components/feedback_request_confirmation/FeedbackRequestConfirmation";
 
 const customHistory = createBrowserHistory();
 
@@ -49,14 +48,14 @@ function App() {
                   </Header>
                   <TeamsPage />
                 </Route>
-                <Route path="/feedback/request">
-                  <FeedbackRequestPage/>
-                </Route>
                 <Route path="/guilds">
                   <Header title="Guilds">
                     <GroupIcon fontSize="large" />
                   </Header>
                   <GuildsPage />
+                </Route>
+                <Route exact path="/feedback/request/confirmation">
+                  <FeedbackRequestConfirmation />
                 </Route>
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
@@ -65,9 +64,9 @@ function App() {
                   <Header />
                   <ProfilePage />
                 </Route>
-                <Route path="/directory">
-                  <Header title="Member Directory" />
-                  <DirectoryPage />
+                <Route path="/people">
+                  <Header title="People" />
+                  <PeoplePage />
                 </Route>
                 <Route path="/checkins/:memberId?/:checkinId?">
                   <Header title="Check-ins" />
@@ -93,6 +92,11 @@ function App() {
                   <Header title="Team Skill Reports" />
                   <TeamSkillReportPage />
                 </Route>
+                <Route path="/feedback/request">
+                  <Header title="feedback" />
+                  <FeedbackRequestPage />
+                </Route>
+
                 <Route path="/">
                   <Header />
                   <ProfilePage />
