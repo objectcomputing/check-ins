@@ -10,10 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
@@ -91,7 +88,8 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                     //add new members to the guild
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
-                        if(!existingGuildMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberId()).findFirst().isPresent()) {
+                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberid().equals(updatedMember.getMemberId())).findFirst();
+                        if(!first.isPresent()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         } else {
@@ -101,7 +99,7 @@ public class GuildServicesImpl implements GuildServices {
 
                     //delete any removed members from guild
                     existingGuildMembers.stream().forEach((existingMember) -> {
-                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId() == existingMember.getMemberid()).findFirst().isPresent()) {
+                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
                         }
                     });
@@ -160,7 +158,7 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     private GuildMember fromMemberDTO(GuildUpdateDTO.GuildMemberUpdateDTO memberDTO, UUID guildId) {
-        return new GuildMember(guildId, memberDTO.getMemberId(), memberDTO.getLead());
+        return new GuildMember(memberDTO.getId(), guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
     private GuildResponseDTO fromEntity(Guild entity) {

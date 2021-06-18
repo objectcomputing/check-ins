@@ -242,6 +242,27 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     }
 
     @Test
+    void testUpdateGuildWithExistingMembers() {
+        Guild guildEntity = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultGuildMember(guildEntity, memberProfile);
+        String newName = "New Name";
+        guildEntity.setName(newName);
+
+        GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
+
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(memberProfile,true);
+        requestBody.setGuildMembers(Collections.singletonList(newMember));
+
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
+
+        assertEntityDTOEqual(guildEntity, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildEntity.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
     void testUpdateGuildNullName() {
         Guild guildEntity = createDefaultGuild();
 
