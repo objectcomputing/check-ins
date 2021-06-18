@@ -47,13 +47,13 @@ public class GuildServicesImpl implements GuildServices {
                 throw new BadArgException(String.format("Guild with name %s already exists", guildDTO.getName()));
             } else {
                 if (guildDTO.getGuildMembers() == null ||
-                        guildDTO.getGuildMembers().stream().noneMatch(GuildMemberResponseDTO::isLead)) {
+                        guildDTO.getGuildMembers().stream().noneMatch(GuildCreateDTO.GuildMemberCreateDTO::getLead)) {
                     throw new BadArgException("Guild must include at least one guild lead");
                 }
                 newGuildEntity = guildsRepo.save(fromDTO(guildDTO));
-                for (GuildMemberResponseDTO memberDTO : guildDTO.getGuildMembers()) {
-                    MemberProfile existingMember = memberProfileServices.findByName(memberDTO.getFirstName(), memberDTO.getLastName());
-                    newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId(), existingMember)), existingMember));
+                for (GuildCreateDTO.GuildMemberCreateDTO memberDTO : guildDTO.getGuildMembers()) {
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
+                    newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId())), existingMember));
                 }
             }
         }
@@ -149,6 +149,10 @@ public class GuildServicesImpl implements GuildServices {
             return null;
         }
         return new Guild(dto.getId(), dto.getName(), dto.getDescription());
+    }
+
+    private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
+        return new GuildMember(null, guildId, memberDTO.getMemberid(), memberDTO.getLead());
     }
 
     private GuildMember fromMemberDTO(GuildMemberResponseDTO memberDTO, UUID guildId, MemberProfile savedMember) {

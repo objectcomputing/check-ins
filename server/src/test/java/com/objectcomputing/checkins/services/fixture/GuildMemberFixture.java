@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.guild.Guild;
+import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
@@ -19,9 +20,8 @@ public interface GuildMemberFixture extends RepositoryFixture{
         return dtoFromEntity(createDefaultGuildMember(guildEntity, memberProfile), memberProfile);
     }
 
-    default GuildMemberResponseDTO createDefaultGuildMemberDto(MemberProfile memberProfile, Boolean lead) {
-        return new GuildMemberResponseDTO(null, memberProfile.getFirstName(), memberProfile.getLastName(),
-                memberProfile.getId(), lead);
+    default GuildCreateDTO.GuildMemberCreateDTO createDefaultGuildMemberDto(MemberProfile memberProfile, Boolean lead) {
+        return new GuildCreateDTO.GuildMemberCreateDTO(memberProfile.getId(), lead);
     }
 
     default GuildMemberResponseDTO dtoFromEntity(GuildMember memberEntity, MemberProfile memberProfile) {
