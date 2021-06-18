@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -10,7 +10,7 @@ import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import FeedbackRequestConfirmation from "../components/feedback_request_confirmation/FeedbackRequestConfirmation";
-
+import AdHoc from "../components/ad-hoc/AdHoc"
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles({
@@ -23,14 +23,53 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date", "Done!"];
 }
 
+function getTemplates() {
+  return [
+    {
+      title: "Ad Hoc",
+      isAdHoc: true,
+      description: "Ask a single question.",
+      creator: "Admin"
+    },
+    {
+      title: "Survey 1",
+      isAdHoc: false,
+      description: "Make a survey with a few questions",
+      creator: "Admin"
+    },
+    {
+      title: "Feedback Survey 2",
+      isAdHoc: false,
+      description: "Another type of survey",
+      creator: "Jane Doe"
+    },
+    {
+      title: "Custom Template",
+      isAdHoc: false,
+      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
+      creator: "Bob Smith"
+    },
+  ];
+}
+
 const FeedbackRequestPage = () => {
 
   const steps = getSteps();
   const classes = useStyles();
   const urlStep = useLocation();
   const query = queryString.parse(urlStep?.search).step?.toString();
+  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
   let activeStep = urlStep?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
+
+  const handlePreviewOpen = (selectedTemplate) => {
+    setPreview({open: true, selectedTemplate: selectedTemplate});
+  }
+
+  const handlePreviewClose = (selectedTemplate) => {
+    setPreview({open: false, selectedTemplate: selectedTemplate});
+  }
+
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
     return (
       <Redirect to="/feedback/request?step=1"/>
@@ -39,8 +78,14 @@ const FeedbackRequestPage = () => {
 
   return (
     <div className="feedback-request-page">
+      <AdHoc
+        template={preview.selectedTemplate}
+        open={preview.open}
+        onClose={handlePreviewClose}
+       />
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+
         <div>
           {activeStep === steps.length ? (
             <div>
@@ -86,28 +131,15 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-step-content">
-        {activeStep === 1 &&
+          {activeStep === 1 && <AdHoc /> &&
           <div className="card-container">
-            <TemplateCard
-              title="Ad Hoc"
-              description="Send a single question"
-              creator="Admin"
-            />
-            <TemplateCard
-              title="Survey 1"
-              description="Make a survey of a few questions"
-              creator="Admin"
-            />
-            <TemplateCard
-              title="Feedback Survey 2"
-              description="Another type of survey"
-              creator="Jane Doe"
-            />
-            <TemplateCard
-              title="Custom Template"
-              description="A very very very very very very very very very very very very very very very very very very very very very very very very very very long description"
-              creator="Bob Smith"
-            />
+            {getTemplates().map((template) => (
+              <TemplateCard
+                title={template.title}
+                creator={template.creator}
+                description={template.description}
+                onClick={() => handlePreviewOpen(template)}/>
+            ))}
           </div>
         }
         {activeStep === 2 && <FeedbackRecipientSelector />}

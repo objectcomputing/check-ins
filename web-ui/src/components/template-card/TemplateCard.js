@@ -8,10 +8,14 @@ import "./TemplateCard.css"
 const propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
-    creator: PropTypes.string.isRequired
+    creator: PropTypes.string.isRequired,
+    isAdHoc: PropTypes.bool
 }
 
 const cutText = (text, maxCharacters) => {
+    if (!text) {
+        text = "";
+    }
     let shortenedText = text;
     if (text.length > maxCharacters) {
         shortenedText = `${text.substring(0, maxCharacters)}...`;
@@ -20,8 +24,9 @@ const cutText = (text, maxCharacters) => {
 }
 
 const TemplateCard = (props) => {
+
     return (
-        <Card className = 'feedback-template-card'>
+        <Card onClick={props.onClick} className='feedback-template-card'>
             <CardContent>
                 <div className='card-content'>
                     <div>
