@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -207,7 +207,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberResponseDTO newMember = createDefaultGuildMemberDto(guildEntity, memberProfile);
+        GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildEntity, memberProfile,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
@@ -229,7 +229,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberResponseDTO newMember = createDefaultGuildMemberDto(guildEntity, memberProfile);
+        GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildEntity, memberProfile,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 

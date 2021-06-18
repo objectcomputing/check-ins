@@ -4,13 +4,16 @@ import MemberSummaryCard from "../components/member-directory/MemberSummaryCard"
 import { createMember } from "../api/member";
 import { AppContext } from "../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../context/actions";
-import { selectNormalizedMembers, selectNormalizedMembersAdmin } from "../context/selectors";
+import {
+  selectNormalizedMembers,
+  selectNormalizedMembersAdmin,
+} from "../context/selectors";
 
 import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 
-import "./DirectoryPage.css";
+import "./PeoplePage.css";
 import MemberModal from "../components/member-directory/MemberModal";
 
 const useStyles = makeStyles({
@@ -30,7 +33,7 @@ const useStyles = makeStyles({
   },
 });
 
-const DirectoryPage = () => {
+const PeoplePage = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, userProfile } = state;
 
@@ -40,10 +43,11 @@ const DirectoryPage = () => {
   const [searchText, setSearchText] = useState("");
 
   const isAdmin =
-      userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
-  const normalizedMembers = isAdmin ? selectNormalizedMembersAdmin(state, searchText) :
-        selectNormalizedMembers(state, searchText);
+  const normalizedMembers = isAdmin
+    ? selectNormalizedMembersAdmin(state, searchText)
+    : selectNormalizedMembers(state, searchText);
 
   const handleOpen = () => setOpen(true);
 
@@ -60,7 +64,7 @@ const DirectoryPage = () => {
   });
 
   return (
-    <div className="directory-page">
+    <div className="people-page">
       <Grid container spacing={3}>
         <Grid item xs={12} className={classes.search}>
           <TextField
@@ -118,4 +122,4 @@ const DirectoryPage = () => {
   );
 };
 
-export default DirectoryPage;
+export default PeoplePage;

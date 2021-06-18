@@ -9,7 +9,7 @@ import TeamsPage from "./pages/TeamsPage";
 import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import CheckinsReportPage from "./pages/CheckinsReportPage";
-import DirectoryPage from "./pages/DirectoryPage";
+import PeoplePage from "./pages/PeoplePage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
@@ -64,9 +64,9 @@ function App() {
                   <Header />
                   <ProfilePage />
                 </Route>
-                <Route path="/directory">
-                  <Header title="Member Directory" />
-                  <DirectoryPage />
+                <Route path="/people">
+                  <Header title="People" />
+                  <PeoplePage />
                 </Route>
                 <Route path="/checkins/:memberId?/:checkinId?">
                   <Header title="Check-ins" />

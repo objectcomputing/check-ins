@@ -5,36 +5,38 @@ exports[`renders the recipient card 1`] = `
   className="MuiPaper-root MuiCard-root makeStyles-root-1 MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
-    className="MuiCardContent-root makeStyles-cardContent-2"
+    className="BrandCardHeader-root-8"
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle avatar"
-      id="avatar-pic"
-      name="avatar-pic"
+      className="BrandCardHeader-header-9"
     >
-      <img
-        className="MuiAvatar-img"
-        src="../../../public/default_profile.jpg"
-      />
+      <div
+        className="MuiAvatar-root MuiAvatar-circle BrandCardHeader-avatar-10"
+      >
+        <img
+          alt="brand logo"
+          className="MuiAvatar-img"
+          src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+        />
+      </div>
     </div>
+    <hr
+      className="BrandCardHeader-divider-11"
+    />
+  </div>
+  <div
+    className="MuiCardContent-root makeStyles-cardContent-2"
+  >
     <p
       className="MuiTypography-root makeStyles-pos-7 MuiTypography-body1 MuiTypography-colorTextSecondary"
       id="name"
       name="name"
-    >
-      Slim Jim
-    </p>
-    <hr
-      className="MuiDivider-root makeStyles-divider-4 MuiDivider-middle"
     />
-    <p
-      className="MuiTypography-root makeStyles-recommendationText-3 MuiTypography-body1"
-      id="rec_reason"
-      name="rec_reason"
-    >
-      Recommended for being a local opossum
-      <br />
-    </p>
+    <h6
+      className="MuiTypography-root MuiTypography-subtitle1"
+      id="title"
+      name="title"
+    />
   </div>
 </div>
 `;
