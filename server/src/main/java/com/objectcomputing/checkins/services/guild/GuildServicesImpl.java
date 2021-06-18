@@ -52,7 +52,7 @@ public class GuildServicesImpl implements GuildServices {
                 }
                 newGuildEntity = guildsRepo.save(fromDTO(guildDTO));
                 for (GuildCreateDTO.GuildMemberCreateDTO memberDTO : guildDTO.getGuildMembers()) {
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
                     newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId())), existingMember));
                 }
             }
@@ -91,8 +91,8 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                     //add new members to the guild
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
-                        if(!existingGuildMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberid()).findFirst().isPresent()) {
-                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberid());
+                        if(!existingGuildMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberId()).findFirst().isPresent()) {
+                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         } else {
                             guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId()));
@@ -101,7 +101,7 @@ public class GuildServicesImpl implements GuildServices {
 
                     //delete any removed members from guild
                     existingGuildMembers.stream().forEach((existingMember) -> {
-                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberid() == existingMember.getMemberid()).findFirst().isPresent()) {
+                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId() == existingMember.getMemberid()).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
                         }
                     });
@@ -152,7 +152,7 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
-        return new GuildMember(null, guildId, memberDTO.getMemberid(), memberDTO.getLead());
+        return new GuildMember(null, guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
     private GuildMember fromMemberDTO(GuildMemberResponseDTO memberDTO, UUID guildId, MemberProfile savedMember) {
@@ -160,7 +160,7 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     private GuildMember fromMemberDTO(GuildUpdateDTO.GuildMemberUpdateDTO memberDTO, UUID guildId) {
-        return new GuildMember(guildId, memberDTO.getMemberid(), memberDTO.getLead());
+        return new GuildMember(guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
     private GuildResponseDTO fromEntity(Guild entity) {
