@@ -105,9 +105,13 @@ public class FeedbackTemplateController {
                 .subscribeOn(Schedulers.from(executorService));
     }
 
+    @Get("/?createdBy,title")
+    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title) {
+        return Single.fromCallable(() -> feedbackTemplateServices.find)
+    }
+
     @Get("/{?createdBy}")
     public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByCreatedBy(@Nullable UUID createdBy) {
-        LOG.info("creator after GET: {}", createdBy);
         return Single.fromCallable(() -> feedbackTemplateServices.findByCreatedBy(createdBy))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplates -> {

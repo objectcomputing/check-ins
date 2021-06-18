@@ -19,5 +19,6 @@ public interface FeedbackTemplateServices {
 
     List<FeedbackTemplate> getByValues(String title);
 
+    List<FeedbackTemplate> findByFields(UUID createdBy, String title);
 
 }

@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
     }
-
-
 
     @Override
     public FeedbackTemplate save(FeedbackTemplate feedbackTemplate) {
@@ -124,7 +123,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     public List<FeedbackTemplate> getByValues(String title) {
         final ArrayList<FeedbackTemplate> result = new ArrayList<>(feedbackTemplateRepository.searchByValues(title));
 
-
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final ArrayList<FeedbackTemplate> toRemove = new ArrayList<>();
 
@@ -136,6 +134,34 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         result.removeAll(toRemove);
 
         return result;
+    }
+
+    @Override
+    public List<FeedbackTemplate> findByFields(UUID createdBy, String title) {
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean isAdmin = currentUserServices.isAdmin();
+        List<FeedbackTemplate> result = new ArrayList<>();
+          final ArrayList<FeedbackTemplate> toRemove = new ArrayList<>();
+        if (title != null && createdBy == null) {
+            result = feedbackTemplateRepository.findByTitle(title);
+            for (FeedbackTemplate feedbackTemplate : result) {
+                if (feedbackTemplate.getIsPrivate() && !currentUserId.equals(feedbackTemplate.getCreatedBy())) {
+                    toRemove.add(feedbackTemplate);
+                }
+            }
+           
+        } else if (createdBy != null && title == null) {
+            result = feedbackTemplateRepository.findByCreatedBy(createdBy);
+            for (FeedbackTemplate feedbackTemplate : result) {
+                if (feedbackTemplate.getIsPrivate() && !currentUserId.equals(feedbackTemplate.getCreatedBy())) {
+                    toRemove.add(feedbackTemplate);
+                }
+            }
+
+        }
+        result.removeAll(toRemove);
+        return result;
+
     }
 
     public Boolean isPermitted() {

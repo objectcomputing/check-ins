@@ -23,14 +23,15 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
             "FROM feedback_template " +
             "WHERE (:title IS NULL OR title = :title OR title LIKE '%:title%') "
             , nativeQuery = true)
-    List<FeedbackTemplate> searchByValues(@Nullable String title);
+    List<FeedbackTemplate> findByTitle(@NotNull String title);
+
+    List<FeedbackTemplate> findByCreatedBy(@NotNull UUID createdBy);
+
+    List<FeedbackTemplate> search(@Nullable String createdBy, @Nullable String title);
 
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
 
     Optional<FeedbackTemplate> findById(UUID id);
-
-    List<FeedbackTemplate> findByCreatedBy(UUID createdBy);
-
 
 }
