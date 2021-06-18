@@ -22,10 +22,6 @@ public class FeedbackTemplateUpdateDTO {
     @Schema(description = "the updated description of the feedback template")
     private String description;
 
-    @NotNull
-    @Schema(description = "whether the feedback template is public or private", required = true)
-    private Boolean isPrivate;
-
 
     public void setTitle(String title) {
         this.title = title;
@@ -37,10 +33,6 @@ public class FeedbackTemplateUpdateDTO {
         this.description = description;
     }
 
-    public void setIsPrivate(Boolean isPrivate) {
-        this.isPrivate = isPrivate;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -49,8 +41,5 @@ public class FeedbackTemplateUpdateDTO {
         return description;
     }
 
-    public Boolean getIsPrivate() {
-        return isPrivate;
-    }
 
 }

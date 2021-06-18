@@ -25,9 +25,6 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 
-    @NotNull
-    @Schema(description = "whether this feedback template is visible only to its creator", required = true)
-    private Boolean isPrivate;
 
     public void setTitle(String title) {
         this.title = title;
@@ -41,9 +38,6 @@ public class FeedbackTemplateCreateDTO {
         this.createdBy = createdBy;
     }
 
-    public void setIsPrivate(Boolean isPrivate) {
-        this.isPrivate = isPrivate;
-    }
 
     public String getTitle() {
         return title;
@@ -57,7 +51,4 @@ public class FeedbackTemplateCreateDTO {
         return createdBy;
     }
 
-    public Boolean getIsPrivate() {
-        return isPrivate;
-    }
 }

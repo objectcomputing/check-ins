@@ -27,6 +27,7 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
 
     List<FeedbackTemplate> findByCreatedBy(@NotNull UUID createdBy);
 
+    @Query(value = "")
     List<FeedbackTemplate> search(@Nullable String createdBy, @Nullable String title);
 
     @Override

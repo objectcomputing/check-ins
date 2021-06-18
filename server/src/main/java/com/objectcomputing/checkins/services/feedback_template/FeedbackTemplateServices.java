@@ -15,10 +15,6 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate getById(UUID id);
 
-    List<FeedbackTemplate> findByCreatedBy(UUID createdBy);
-
-    List<FeedbackTemplate> getByValues(String title);
-
     List<FeedbackTemplate> findByFields(UUID createdBy, String title);
 
 }

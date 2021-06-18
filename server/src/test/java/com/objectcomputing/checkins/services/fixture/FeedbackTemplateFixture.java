@@ -7,10 +7,10 @@ import java.util.UUID;
 public interface FeedbackTemplateFixture extends RepositoryFixture{
 
     default FeedbackTemplate createFeedbackTemplate(UUID createdBy) {
-        return new FeedbackTemplate("Fake Title", "Fake Title Description amazing feedback template", createdBy, false);
+        return new FeedbackTemplate("Fake Title", "Fake Title Description amazing feedback template", createdBy);
     }
 
-    default FeedbackTemplate createPrivateFeedbackTemplate(UUID createdBy) {
-        return new FeedbackTemplate( "Fake Title Private", "Fake Title Private Description amazing feedback template", createdBy, true);
+    default FeedbackTemplate createAnotherFeedbackTemplate(UUID createdBy) {
+        return new FeedbackTemplate( "Fake Title 2", "Fake Title Private Description amazing feedback template 2", createdBy);
     }
 }
