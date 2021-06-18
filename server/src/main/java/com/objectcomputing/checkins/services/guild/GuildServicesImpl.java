@@ -83,7 +83,7 @@ public class GuildServicesImpl implements GuildServices {
             if (guildDTO != null) {
                 if (guildDTO.getId() != null && guildsRepo.findById(guildDTO.getId()).isPresent()) {
                     if (guildDTO.getGuildMembers() == null ||
-                            guildDTO.getGuildMembers().stream().noneMatch(GuildMemberUpdateDTO::getLead)) {
+                            guildDTO.getGuildMembers().stream().noneMatch(GuildUpdateDTO.GuildMemberUpdateDTO::getLead)) {
                         throw new BadArgException("Guild must include at least one guild lead");
                     }
 
@@ -93,9 +93,9 @@ public class GuildServicesImpl implements GuildServices {
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
                         if(!existingGuildMembers.stream().filter((existing) -> existing.getMemberid() == updatedMember.getMemberid()).findFirst().isPresent()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberid());
-                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember)), existingMember));
+                            newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         } else {
-                            guildMemberServices.update(fromMemberDTO(updatedMember));
+                            guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId()));
                         }
                     });
 
@@ -159,8 +159,8 @@ public class GuildServicesImpl implements GuildServices {
         return new GuildMember(memberDTO.getId() == null ? null : memberDTO.getId(), guildId, savedMember.getId(), memberDTO.isLead());
     }
 
-    private GuildMember fromMemberDTO(GuildMemberUpdateDTO memberDTO) {
-        return new GuildMember(memberDTO.getGuildid(), memberDTO.getMemberid(), memberDTO.getLead());
+    private GuildMember fromMemberDTO(GuildUpdateDTO.GuildMemberUpdateDTO memberDTO, UUID guildId) {
+        return new GuildMember(guildId, memberDTO.getMemberid(), memberDTO.getLead());
     }
 
     private GuildResponseDTO fromEntity(Guild entity) {

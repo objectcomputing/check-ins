@@ -70,6 +70,7 @@ public class GuildCreateDTO {
         this.description = description;
     }
 
+    @Introspected
     public static class GuildMemberCreateDTO {
 
         @Schema(description = "whether member is lead or not represented by true or false respectively",

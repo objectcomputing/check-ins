@@ -207,7 +207,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildEntity, memberProfile,true);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(memberProfile,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
@@ -229,7 +229,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildEntity, memberProfile,true);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(memberProfile,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 

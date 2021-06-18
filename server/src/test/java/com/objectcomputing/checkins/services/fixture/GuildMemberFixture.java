@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
+import com.objectcomputing.checkins.services.guild.GuildUpdateDTO;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
@@ -29,7 +30,7 @@ public interface GuildMemberFixture extends RepositoryFixture{
                 memberProfile.getId(), memberEntity.isLead());
     }
 
-    default GuildMemberUpdateDTO updateDefaultGuildMemberDto(Guild guildEntity, MemberProfile memberProfile, boolean leead){
-        return new GuildMemberUpdateDTO(null,guildEntity.getId(),memberProfile.getId(),true);
+    default GuildUpdateDTO.GuildMemberUpdateDTO updateDefaultGuildMemberDto(MemberProfile memberProfile, boolean lead){
+        return new GuildUpdateDTO.GuildMemberUpdateDTO(null,memberProfile.getId(),lead);
     }
 }
