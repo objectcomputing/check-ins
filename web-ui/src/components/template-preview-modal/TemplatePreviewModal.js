@@ -62,7 +62,7 @@ const TemplatePreviewModal = ({ open, onClose, template }) => {
             </Typography>
             <Link className="ad-hoc-next-button" onClick={onClose} to={'/feedback/request/?step=2'}>
               <Button color="inherit">
-                Next
+                {template.isAdHoc ? "Create" : "Select"}
               </Button>
             </Link>
           </Toolbar>

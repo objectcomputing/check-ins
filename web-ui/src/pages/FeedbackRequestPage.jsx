@@ -15,17 +15,17 @@ import TemplatePreviewModal from "../components/template-preview-modal/TemplateP
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 1000,
+    backgroundColor: "transparent"
   },
   appBar: {
-    position: 'relative',
+    position: "relative",
   },
   media: {
     height: 0,
   },
   expand: {
     justifyContent: "right",
-    transition: theme.transitions.create('transform', {
+    transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
   },
@@ -80,7 +80,7 @@ const FeedbackRequestPage = () => {
   const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-  const handlePreviewOpen = (selectedTemplate) => {
+  const handlePreviewOpen = (event, selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 
@@ -88,8 +88,12 @@ const FeedbackRequestPage = () => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
-  const selectTemplate = (template) => {
-    console.log(template);
+  const onCardClick = (template) => {
+    if (template.isAdHoc) {
+      setPreview({open: true, selectedTemplate: template});
+    } else {
+      console.log(`Selected ${template.title}`);
+    }
   }
 
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
@@ -157,13 +161,12 @@ const FeedbackRequestPage = () => {
                 isAdHoc={template.isAdHoc}
                 questions={template.questions}
                 expanded={preview.open}
-                onClick={() => handlePreviewOpen(template)}
-                onCardClick={() => selectTemplate(template)}/>
+                onClick={(e) => handlePreviewOpen(e, template)}
+                onCardClick={() => onCardClick(template)}/>
             ))}
           </div>
         }
         {activeStep === 2 && <FeedbackRecipientSelector />}
-
       </div>
     </div>
   );

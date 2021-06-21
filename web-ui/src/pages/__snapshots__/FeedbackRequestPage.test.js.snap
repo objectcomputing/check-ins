@@ -6,7 +6,6 @@ Array [
   <div
     className="feedback-request-page"
   >
-    <div />
     <div
       className="header-container"
     >
@@ -233,77 +232,33 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="MuiCardActions-root"
-          >
-            <button
-              aria-expanded={false}
-              aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
-            >
-              <span
-                className="MuiIconButton-label"
-              >
-                <svg
-                  aria-hidden={true}
-                  className="MuiSvgIcon-root"
-                  focusable="false"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
-                  />
-                </svg>
-              </span>
-            </button>
-          </div>
+            className="MuiCardActions-root card-actions"
+          />
           <div
-            className="MuiCardContent-root"
+            className="MuiCardContent-root card-content"
           >
             <div
-              className="card-content"
+              className="template-details"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Ad Hoc
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Ask a single question.
-                  </div>
-                </div>
-              </div>
-              <div
-                className="creator-wrapper"
+              <h3
+                className="template-name"
               >
-                Created by:
-                <div
-                  className="creator"
-                >
-                  Admin
-                </div>
-              </div>
+                Ad Hoc
+              </h3>
+              <p
+                className="description"
+              >
+                Ask a single question.
+              </p>
             </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Admin
+              </b>
+            </p>
           </div>
         </div>
         <div
@@ -311,12 +266,12 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="MuiCardActions-root"
+            className="MuiCardActions-root card-actions"
           >
             <button
               aria-expanded={false}
               aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-9"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -343,45 +298,37 @@ Array [
                   viewBox="0 0 24 24"
                 >
                   <path
-                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                   />
                 </svg>
               </span>
             </button>
           </div>
           <div
-            className="MuiCardContent-root"
+            className="MuiCardContent-root card-content"
           >
             <div
-              className="card-content"
+              className="template-details"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Survey 1
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Make a survey with a few questions
-                  </div>
-                </div>
-              </div>
-              <div
-                className="creator-wrapper"
+              <h3
+                className="template-name"
               >
-                Created by:
-                <div
-                  className="creator"
-                >
-                  Admin
-                </div>
-              </div>
+                Survey 1
+              </h3>
+              <p
+                className="description"
+              >
+                Make a survey with a few questions
+              </p>
             </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Admin
+              </b>
+            </p>
           </div>
         </div>
         <div
@@ -389,12 +336,12 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="MuiCardActions-root"
+            className="MuiCardActions-root card-actions"
           >
             <button
               aria-expanded={false}
               aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-9"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -421,45 +368,37 @@ Array [
                   viewBox="0 0 24 24"
                 >
                   <path
-                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                   />
                 </svg>
               </span>
             </button>
           </div>
           <div
-            className="MuiCardContent-root"
+            className="MuiCardContent-root card-content"
           >
             <div
-              className="card-content"
+              className="template-details"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Feedback Survey 2
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    Another type of survey
-                  </div>
-                </div>
-              </div>
-              <div
-                className="creator-wrapper"
+              <h3
+                className="template-name"
               >
-                Created by:
-                <div
-                  className="creator"
-                >
-                  Jane Doe
-                </div>
-              </div>
+                Feedback Survey 2
+              </h3>
+              <p
+                className="description"
+              >
+                Another type of survey
+              </p>
             </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Jane Doe
+              </b>
+            </p>
           </div>
         </div>
         <div
@@ -467,12 +406,12 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="MuiCardActions-root"
+            className="MuiCardActions-root card-actions"
           >
             <button
               aria-expanded={false}
               aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-9"
               disabled={false}
               onBlur={[Function]}
               onClick={[Function]}
@@ -499,45 +438,37 @@ Array [
                   viewBox="0 0 24 24"
                 >
                   <path
-                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                   />
                 </svg>
               </span>
             </button>
           </div>
           <div
-            className="MuiCardContent-root"
+            className="MuiCardContent-root card-content"
           >
             <div
-              className="card-content"
+              className="template-details"
             >
-              <div>
-                <div
-                  className="template-name"
-                >
-                  Custom Template
-                </div>
-                <div
-                  className="description-and-creator"
-                >
-                  <div
-                    className="description"
-                  >
-                    A very very very very very very very very very very very very very very very very very ver...
-                  </div>
-                </div>
-              </div>
-              <div
-                className="creator-wrapper"
+              <h3
+                className="template-name"
               >
-                Created by:
-                <div
-                  className="creator"
-                >
-                  Bob Smith
-                </div>
-              </div>
+                Custom Template
+              </h3>
+              <p
+                className="description"
+              >
+                A very very very very very very very very very very very very very very very very very ver...
+              </p>
             </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Bob Smith
+              </b>
+            </p>
           </div>
         </div>
       </div>

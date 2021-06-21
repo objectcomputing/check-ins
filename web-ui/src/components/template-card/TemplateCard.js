@@ -1,5 +1,5 @@
 import "./TemplateCard.css";
-import React, {useState} from "react";
+import React from "react";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,17 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
 import PropTypes from "prop-types";
-import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import "./TemplateCard.css"
@@ -68,19 +58,25 @@ const TemplateCard = (props) => {
 
     const classes = useStyles();
 
+    const handleClick = (e) => {
+        e.stopPropagation();
+        props.onClick(e);
+    }
+
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>
             <CardActions className="card-actions" disableSpacing>
                 {!props.isAdHoc &&
-                <IconButton className={clsx(classes.expand, {
+                <IconButton
+                  className={clsx(classes.expand, {
                     [classes.expandOpen]: props.expanded,
-                })}
-                            onClick={props.onClick}
-                            aria-expanded={props.expanded}
-                            aria-label="show more">
-                    <VisibilityIcon>
-                        {!props.expanded ? <Fullscreen/> : <FullscreenExit/>}
-                    </VisibilityIcon>
+                  })}
+                  onClick={(e) => handleClick(e)}
+                  aria-expanded={props.expanded}
+                  aria-label="show more">
+                <VisibilityIcon>
+                    {!props.expanded ? <Fullscreen/> : <FullscreenExit/>}
+                </VisibilityIcon>
                 </IconButton>
                 }
             </CardActions>
