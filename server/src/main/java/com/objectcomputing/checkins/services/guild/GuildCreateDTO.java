@@ -79,10 +79,10 @@ public class GuildCreateDTO {
 
         @NotNull
         @Schema(description = "Member who is on this guild")
-        private UUID memberid;
+        private UUID memberId;
 
-        public GuildMemberCreateDTO(UUID memberid, Boolean lead) {
-            this.memberid = memberid;
+        public GuildMemberCreateDTO(UUID memberId, Boolean lead) {
+            this.memberId = memberId;
             this.lead = lead;
         }
 
@@ -94,12 +94,12 @@ public class GuildCreateDTO {
             this.lead = lead;
         }
 
-        public UUID getMemberid() {
-            return memberid;
+        public UUID getMemberId() {
+            return memberId;
         }
 
-        public void setMemberid(UUID memberid) {
-            this.memberid = memberid;
+        public void setMemberId(UUID memberId) {
+            this.memberId = memberId;
         }
     }
 }

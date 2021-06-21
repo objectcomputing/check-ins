@@ -7,6 +7,7 @@ import io.micronaut.data.repository.CrudRepository;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
@@ -21,21 +22,22 @@ public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
 
     List<TeamMember> findByLead(Boolean aBoolean);
 
-    Optional<TeamMember> findByTeamidAndMemberid(@NotNull UUID teamMemberid, @NotNull UUID memberId);
+    Optional<TeamMember> findByTeamIdAndMemberId(@NotNull UUID teamMemberId, @NotNull UUID memberId);
 
-    TeamMember save(@NotNull TeamMember entity);
+    @Override
+    <S extends TeamMember> S save(@Valid @NotNull S entity);
 
     @Query("DELETE " +
             "FROM team_member tm_ " +
-            "WHERE teamid = :id ")
+            "WHERE teamId = :id ")
     void deleteByTeamId(@NotNull String id);
 
     void deleteByMemberid(@NotNull @Nonnull UUID id);
 
     @Query("SELECT * " +
             "FROM team_member tm_ " +
-            "WHERE (:teamId IS NULL OR tm_.teamid = :teamId) " +
-            "AND (:memberid IS NULL OR tm_.memberid = :memberid) " +
+            "WHERE (:teamId IS NULL OR tm_.teamId = :teamId) " +
+            "AND (:memberId IS NULL OR tm_.memberId = :memberId) " +
             "AND (:lead IS NULL OR tm_.lead = :lead) ")
     List<TeamMember> search(@Nullable String teamId, @Nullable String memberid, @Nullable Boolean lead);
 }

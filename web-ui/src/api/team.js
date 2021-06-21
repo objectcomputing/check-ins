@@ -77,7 +77,7 @@ export const createTeam = async (team, cookie) => {
   });
 };
 
-export const addTeamMember = async (member, isLead, teamid, cookie) => {
+export const addTeamMember = async (member, isLead, teamId, cookie) => {
   return resolve({
     method: "post",
     url: teamMemberUrl,

@@ -178,7 +178,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
         TeamMember teamMemberEntity = createDefaultTeamMember(teamEntity, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", teamMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", teamMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(TeamResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(teamEntity), response.body());
@@ -194,7 +194,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         TeamMember teamMemberEntity = createDefaultTeamMember(teamEntity, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", teamEntity.getName(),
-                teamMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                teamMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<TeamResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(TeamResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(teamEntity), response.body());

@@ -75,8 +75,11 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
+        LOG.info("No exceptions!");
         TeamMember newTeamMember = teamMemberRepo.save(teamMember);
+        LOG.info("New team member: {}", newTeamMember);
         memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "Added", LocalDateTime.now()));
+        LOG.info("Saved to repository");
         return newTeamMember;
     }
 
@@ -89,8 +92,8 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         boolean isAdmin = currentUserServices.isAdmin();
 
         final UUID id = teamMember.getId();
-        final UUID teamId = teamMember.getTeamid();
-        final UUID memberId = teamMember.getMemberid();
+        final UUID teamId = teamMember.getTeamId();
+        final UUID memberId = teamMember.getMemberId();
         Optional<Team> team = teamRepo.findById(teamId);
 
         if (team.isEmpty()) {
@@ -104,9 +107,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isEmpty()) {
+        } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -166,16 +169,16 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        List<TeamMember> teamMembers = teamMemberRepo.findByTeamid(id);
+        List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
             List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
             } else {
                 teamMembers.forEach(member -> {
                     teamMemberRepo.deleteById(member.getId());
-                    memberHistoryRepository.save(buildMemberHistory(member.getTeamid(), member.getMemberid(), "Team Deleted", LocalDateTime.now()));
+                    memberHistoryRepository.save(buildMemberHistory(member.getTeamId(), member.getMemberId(), "Team Deleted", LocalDateTime.now()));
                 });
             }
         } else {

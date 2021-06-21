@@ -100,4 +100,48 @@ public class TeamUpdateDTO {
     public void setDescription(@Nullable String description) {
         this.description = description;
     }
+
+    @Introspected
+    public static class TeamMemberUpdateDTO {
+        @Schema(description = "ID of the entity to update")
+        private UUID id;
+
+        @Schema(description = "whether member is lead or not represented by true or false respectively",
+                nullable = true)
+        private Boolean lead;
+
+        @NotNull
+        @Schema(description = "Member who is on this team")
+        private UUID memberId;
+
+        public TeamMemberUpdateDTO(UUID id, UUID teamId, UUID memberId, Boolean lead) {
+            this.id = id;
+            this.memberId = memberId;
+            this.lead = lead;
+        }
+
+        public UUID getId() {
+            return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
+
+        public Boolean getLead() {
+            return lead;
+        }
+
+        public void setLead(Boolean lead) {
+            this.lead = lead;
+        }
+
+        public UUID getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(UUID memberId) {
+            this.memberId = memberId;
+        }
+    }
 }

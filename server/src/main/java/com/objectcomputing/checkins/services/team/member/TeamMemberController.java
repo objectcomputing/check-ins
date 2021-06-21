@@ -53,7 +53,7 @@ public class TeamMemberController {
      */
     @Put()
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<TeamMember> request) {
-        TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), teamMember.getLead()));
+        TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getLead()));
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(

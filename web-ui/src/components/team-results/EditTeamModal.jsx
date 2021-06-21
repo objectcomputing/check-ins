@@ -29,7 +29,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         ...editedTeam,
         teamMembers: [
           {
-            memberid: currentUser.id,
+            memberId: currentUser.id,
             name: `${currentUser.firstName} ${currentUser.lastName}`,
             firstName: currentUser.firstName,
             lastName: currentUser.lastName,
@@ -58,7 +58,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     newValue.forEach((lead) => (lead.lead = true));
     newValue.forEach((newLead) => {
       extantMembers = extantMembers.filter(
-        (member) => member.memberid !== newLead.id && member.id !== newLead.id
+        (member) => member.memberId !== newLead.id && member.id !== newLead.id
       );
     });
     extantMembers = [...new Set(extantMembers)];
@@ -77,7 +77,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     newValue.forEach((teamMember) => (teamMember.lead = false));
     newValue.forEach((newMember) => {
       extantLeads = extantLeads.filter(
-        (lead) => lead.memberid !== newMember.id && lead.id !== newMember.id
+        (lead) => lead.memberId !== newMember.id && lead.id !== newMember.id
       );
     });
     extantLeads = [...new Set(extantLeads)];

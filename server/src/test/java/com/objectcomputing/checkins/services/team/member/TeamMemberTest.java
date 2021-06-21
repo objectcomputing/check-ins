@@ -40,8 +40,8 @@ class TeamMemberTest {
         final boolean lead = true;
         TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
         assertEquals(id, teamMember.getId());
-        assertEquals(teamId, teamMember.getTeamid());
-        assertEquals(memberId, teamMember.getMemberid());
+        assertEquals(teamId, teamMember.getTeamId());
+        assertEquals(memberId, teamMember.getMemberId());
         assertEquals(teamMember.isLead(), lead);
 
         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);

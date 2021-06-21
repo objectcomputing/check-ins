@@ -70,7 +70,7 @@ const TeamSummaryCard = ({ team, index }) => {
   const isTeamLead =
     leads === null
       ? false
-      : leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
+      : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
 
   const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
