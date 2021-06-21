@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import CardActions from '@material-ui/core/CardActions';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
+import PropTypes from "prop-types";
 import Dialog from '@material-ui/core/Dialog';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
@@ -18,6 +19,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+
+import "./TemplateCard.css"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,17 +43,14 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "right",
     }
 }));
-import "./TemplateCard.css"
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     creator: PropTypes.string.isRequired,
-    isAdHoc: PropTypes.bool
+    isAdHoc: PropTypes.bool,
+    onClick: PropTypes.func,
+    onCardClick: PropTypes.func
 }
 
 const cutText = (text, maxCharacters) => {
@@ -64,59 +65,37 @@ const cutText = (text, maxCharacters) => {
 }
 
 const TemplateCard = (props) => {
+
+    const classes = useStyles();
+
     return (
-        <Card onClick={props.onClick} className='feedback-template-card'>
-            <CardContent>
-                <div className='card-content'>
-                    <div>
-                        <div className='template-name'>
-                            {cutText(props.title, 20)}
-                        </div>
-                        <div className='description-and-creator'>
-                            <div className='description'>
-                                {cutText(props.description, 90)}
-                            </div>
-                        </div>
-                    </div>
-                    <div className='creator-wrapper'>
-                        Created by:
-                        <div className='creator'>
-                            {props.creator}
-                        </div>
-                    </div>
-               </div>
+        <Card onClick={props.onCardClick} className='feedback-template-card'>
+            <CardActions className="card-actions" disableSpacing>
+                {!props.isAdHoc &&
+                <IconButton className={clsx(classes.expand, {
+                    [classes.expandOpen]: props.expanded,
+                })}
+                            onClick={props.onClick}
+                            aria-expanded={props.expanded}
+                            aria-label="show more">
+                    <VisibilityIcon>
+                        {!props.expanded ? <Fullscreen/> : <FullscreenExit/>}
+                    </VisibilityIcon>
+                </IconButton>
+                }
+            </CardActions>
+            <CardContent className="card-content">
+                <div className="template-details">
+                    <h3 className="template-name">{cutText(props.title, 20)}</h3>
+                    <p className="description">{cutText(props.description, 90)}</p>
+                </div>
+                <p className="creator">Created by: <b>{props.creator}</b></p>
             </CardContent>
-            <Dialog fullScreen open={expanded} onClose={handleExpandClick} TransitionComponent={Transition}>
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleExpandClick} aria-label="close">
-                            <CloseIcon/>
-                        </IconButton>
-                        <div className={classes.title}>
-                            <Typography variant="h6">
-                                {templateName}
-                            </Typography>
-                            <Typography variant="subtitle2">
-                                {description}
-                            </Typography>
-                        </div>
-                    </Toolbar>
-                </AppBar>
-                <List>
-                    {questions.map((question, index) => (
-                        <React.Fragment>
-                            <ListItem button>
-                                <ListItemText primary={`Question ${index + 1}`} secondary={question}/>
-                            </ListItem>
-                            <Divider/>
-                        </React.Fragment>
-                    ))}
-                </List>
-            </Dialog>
         </Card>
     );
 
 };
 
+TemplateCard.propTypes = propTypes;
 
 export default TemplateCard;

@@ -221,54 +221,6 @@ Array [
           </span>
         </span>
       </div>
-      <div
-        className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
-      >
-        <span
-          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
-        />
-      </div>
-      <div
-        className="MuiStep-root MuiStep-horizontal"
-      >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
-        >
-          <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="12"
-              />
-              <text
-                className="MuiStepIcon-text"
-                textAnchor="middle"
-                x="12"
-                y="16"
-              >
-                4
-              </text>
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
-          >
-            <span
-              className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
-            >
-              Done!
-            </span>
-          </span>
-        </span>
-      </div>
     </div>
     <div
       className="current-step-content"
@@ -280,6 +232,45 @@ Array [
           className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
           onClick={[Function]}
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >
@@ -320,6 +311,45 @@ Array [
           onClick={[Function]}
         >
           <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div
             className="MuiCardContent-root"
           >
             <div
@@ -359,6 +389,45 @@ Array [
           onClick={[Function]}
         >
           <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div
             className="MuiCardContent-root"
           >
             <div
@@ -397,6 +466,45 @@ Array [
           className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
           onClick={[Function]}
         >
+          <div
+            className="MuiCardActions-root"
+          >
+            <button
+              aria-expanded={false}
+              aria-label="show more"
+              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-10"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={0}
+              type="button"
+            >
+              <span
+                className="MuiIconButton-label"
+              >
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
           <div
             className="MuiCardContent-root"
           >

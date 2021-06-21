@@ -9,15 +9,30 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
-import AdHoc from "../components/ad-hoc/AdHoc"
 
 import "./FeedbackRequestPage.css";
+import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    background: "transparent"
+    maxWidth: 1000,
   },
-});
+  appBar: {
+    position: 'relative',
+  },
+  media: {
+    height: 0,
+  },
+  expand: {
+    justifyContent: "right",
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    justifyContent: "right",
+  }
+}));
 
 function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
@@ -29,25 +44,29 @@ function getTemplates() {
       title: "Ad Hoc",
       isAdHoc: true,
       description: "Ask a single question.",
-      creator: "Admin"
+      creator: "Admin",
+      questions: []
     },
     {
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
-      creator: "Admin"
+      creator: "Admin",
+      questions: []
     },
     {
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
-      creator: "Jane Doe"
+      creator: "Jane Doe",
+      questions: [],
     },
     {
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith"
+      creator: "Bob Smith",
+      questions: []
     },
   ];
 }
@@ -61,13 +80,16 @@ const FeedbackRequestPage = () => {
   const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-
   const handlePreviewOpen = (selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
+  }
+
+  const selectTemplate = (template) => {
+    console.log(template);
   }
 
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
@@ -78,11 +100,14 @@ const FeedbackRequestPage = () => {
 
   return (
     <div className="feedback-request-page">
-      <AdHoc
-        template={preview.selectedTemplate}
-        open={preview.open}
-        onClose={handlePreviewClose}
-       />
+      {preview.selectedTemplate &&
+        <TemplatePreviewModal
+          template={preview.selectedTemplate}
+          open={preview.open}
+          onClose={handlePreviewClose}
+        />
+      }
+
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
         <div>
@@ -122,14 +147,18 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-step-content">
-          {activeStep === 1 && <AdHoc /> &&
+          {activeStep === 1 && <TemplatePreviewModal/> &&
           <div className="card-container">
             {getTemplates().map((template) => (
               <TemplateCard
                 title={template.title}
                 creator={template.creator}
                 description={template.description}
-                onClick={() => handlePreviewOpen(template)}/>
+                isAdHoc={template.isAdHoc}
+                questions={template.questions}
+                expanded={preview.open}
+                onClick={() => handlePreviewOpen(template)}
+                onCardClick={() => selectTemplate(template)}/>
             ))}
           </div>
         }

@@ -1,48 +1,44 @@
 .feedback-template-card {
   cursor: pointer;
   width: 300px;
-  height: 250px;
+  max-height: 300px;
   padding: 15px;
   margin: 20px;
   box-shadow: #282c34;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
-.feedback-template-card .card-content{
-    margin-left:  auto;
-    margin-right:  auto;
+.card-actions {
+    height: 40px;
+    padding-bottom: 0;
+}
+
+.feedback-template-card .card-content {
+    display: grid;
+    grid-template-rows: 200px 30px;
+    padding-top: 0;
+}
+
+.feedback-template-card .template-details {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding-bottom: 10px;
+    margin-bottom: 0px;
 }
 
 .feedback-template-card .template-name {
   font-weight: bold;
-  text-align: center;
-  margin: auto;
   font-size: 30px;
-  overflow: hidden;
   max-height: 90px;
+    padding-bottom: 0;
+    margin: 10px 0 10px 0;
 }
-.feedback-template-card .description-and-creator{
-    display: flex;
-    padding: 0;
-    flex-direction: column;
-}
-.feedback-template-card .description{
-    text-align: center;
-    min-height: 60px;
-    max-height: 120px;
-    max-width: 200px;
+
+.feedback-template-card .description {
     color: gray;
 }
-.feedback-template-card .creator-wrapper{
-    display: flex;
-    padding-top: 20px;
-    margin-left:  auto;
-    margin-right:  auto;
-}
-.feedback-template-card .creator{
-    font-weight: bold;
-    text-align: center;
-    margin-left: 2px;
-    flex-direction: row;
 
+.feedback-template-card .creator {
+    text-align: left;
 }

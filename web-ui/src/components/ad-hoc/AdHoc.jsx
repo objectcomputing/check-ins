@@ -12,6 +12,10 @@ import { TextField } from "@material-ui/core";
 import { Link } from 'react-router-dom';
 
 import "./AdHoc.css";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +84,16 @@ const AdHoc = ({ open, onClose, template }) => {
           }}
         />
       :
-        <div><p>I'm a question :) </p></div>
+        <List>
+          {template.questions && template.questions.map((question, index) => (
+            <React.Fragment>
+              <ListItem button>
+                <ListItemText primary={`Question ${index + 1}`} secondary={question}/>
+              </ListItem>
+              <Divider/>
+            </React.Fragment>
+          ))}
+        </List>
       }
     </Dialog>
   </div>
