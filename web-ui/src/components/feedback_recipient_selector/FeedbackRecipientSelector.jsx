@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -7,7 +7,7 @@ import Search from "@material-ui/icons/Search";
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
-import {selectCurrentMembers} from "../../context/selectors";
+import {selectCsrfToken} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
 

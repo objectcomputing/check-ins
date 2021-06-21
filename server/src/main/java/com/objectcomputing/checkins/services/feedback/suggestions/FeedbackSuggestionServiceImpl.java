@@ -8,6 +8,8 @@ import com.objectcomputing.checkins.services.team.member.TeamMember;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
 import io.micronaut.context.annotation.Property;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
     private final CurrentUserServices currentUserServices;
     private final TeamMemberServices teamMemberServices;
     private final Integer maxSuggestions;
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackSuggestionsService.class);
 
     public FeedbackSuggestionServiceImpl(MemberProfileServices memberProfileServices,
                                          CurrentUserServices currentUserServices,
@@ -40,6 +43,9 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
         MemberProfile suggestFor = memberProfileServices.getById(id);
+        LOG.info("PINEAPPLE");
+        LOG.info(id.toString());
+
 
         if (currentUserId == null) {
             throw new PermissionException("You are not authorized to do this operation");
