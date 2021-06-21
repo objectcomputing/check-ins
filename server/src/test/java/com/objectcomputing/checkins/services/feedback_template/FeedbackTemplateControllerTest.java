@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -43,6 +44,11 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         return feedbackTemplate;
     }
 
+    FeedbackTemplate saveAThirdDefaultFeedbackTemplate(UUID createdBy) {
+        FeedbackTemplate feedbackTemplate = createAThirdFeedbackTemplate(createdBy);
+        getFeedbackTemplateRepository().save(feedbackTemplate);
+        return feedbackTemplate;
+    }
 
     FeedbackTemplateCreateDTO createDTO(FeedbackTemplate feedbackTemplate) {
         FeedbackTemplateCreateDTO dto = new FeedbackTemplateCreateDTO();
@@ -90,7 +96,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertContentEqualsEntity(feedbackTemplate, response.getBody().get());
     }
 
-
     @Test
     void testPostDenied() {
         MemberProfile memberOne = createADefaultMemberProfile();
@@ -103,6 +108,32 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertNull(body);
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
         assertEquals("Unauthorized", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateByAdmin() {
+        final MemberProfile admin = createADefaultMemberProfile();
+        createDefaultAdminRole(admin);
+
+        // Template created by non-admin
+        final MemberProfile memberOne = createASecondMemberProfile();
+        FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+
+         final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
+
+         // Update by an admin
+         updateDTO.setId(template.getId());
+         updateDTO.setTitle("An Updated Title");
+         updateDTO.setDescription("An updated description");
+
+        HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.getBody().get().getCreatedBy());
+        assertEquals(response.getBody().get().getCreatedBy(), memberOne.getId());
+        assertContentEqualsEntity(updateDTO, response.getBody().get());
     }
 
     @Test
@@ -217,13 +248,13 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    void testGetCreatedByAuthorized() {
+    void testGetByCreatedByAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberOne.getId());
         UUID createdBy = template.getCreatedBy();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?=%s", createdBy))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", createdBy))
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
@@ -236,11 +267,104 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    void testGetCreatedByUnauthorized() {
+    void testGetByCreatedByUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final MemberProfile memberTwo = createASecondMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?=%s", template.getCreatedBy()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", template.getCreatedBy()))
+                .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
+        assertNotNull(body);
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+    }
+
+    @Test
+    void testGetByTitleAuthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberOne.getId());
+        String title = template.getTitle();
+        final String st = title.replaceAll("\\s+","+");
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?title=%s", st))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.body());
+        assertEquals(response.body().size(), 2);
+        assertContentEqualsEntity(template, response.body().get(0));
+        assertContentEqualsEntity(templateTwo, response.body().get(1));
+    }
+
+    @Test
+    void testGetByTitleUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile memberTwo = createASecondMemberProfile();
+        final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", template.getCreatedBy()))
+                .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
+        assertNotNull(body);
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+
+    }
+
+    @Test
+    void testGetByTitleAndCreatedByAuthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile memberTwo = createASecondMemberProfile();
+        final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberTwo.getId());
+        final FeedbackTemplate templateThree = saveAThirdDefaultFeedbackTemplate(memberOne.getId());
+        String title = templateThree.getTitle();
+        final String st = title.replaceAll("\\s+","+");
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s&title=%s&", memberOne.getId(), st))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.body());
+        assertEquals(response.body().size(), 1);
+        assertContentEqualsEntity(template, response.body().get(0));
+//        assertContentEqualsEntity(templateTwo, response.body().get(1));
+    }
+
+    @Test
+    void testGetByTitleMultipleAndCreatedByAuthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile memberTwo = createASecondMemberProfile();
+        final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberTwo.getId());
+        String title = template.getTitle();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s&title=%s",memberOne.getId(), title))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.body());
+        assertEquals(response.body().size(), 2);
+        assertContentEqualsEntity(template, response.body().get(0));
+       assertContentEqualsEntity(templateTwo, response.body().get(1));
+    }
+
+
+    @Test
+    void testGetByTitleAndCreatedByUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile memberTwo = createASecondMemberProfile();
+        final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s&title=%s", memberOne.getId(), template.getTitle()))
                 .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));

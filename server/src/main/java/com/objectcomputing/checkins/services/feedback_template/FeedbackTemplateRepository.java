@@ -20,18 +20,25 @@ import java.util.UUID;
 public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTemplate, UUID> {
 
     @Query(value = "SELECT * " +
-            "FROM feedback_template " +
+            "FROM feedback_templates " +
             "WHERE (:title IS NULL OR title = :title OR title LIKE '%:title%') "
             , nativeQuery = true)
     List<FeedbackTemplate> findByTitle(@NotNull String title);
 
     List<FeedbackTemplate> findByCreatedBy(@NotNull UUID createdBy);
 
-    @Query(value = "")
+    @Query(value = "SELECT *" +
+            "FROM feedback_templates " +
+            "WHERE (:createdBy IS NULL OR createdBy = :createdBy) " +
+            "AND (:title IS NULL OR title = :title OR title LIKE '%:title%')"
+            , nativeQuery = true)
     List<FeedbackTemplate> search(@Nullable String createdBy, @Nullable String title);
 
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
+
+    @Override
+    <S extends FeedbackTemplate> S update(@Valid @NotNull @NonNull S entity);
 
     Optional<FeedbackTemplate> findById(UUID id);
 

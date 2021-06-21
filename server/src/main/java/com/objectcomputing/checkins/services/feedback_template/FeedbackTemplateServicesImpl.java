@@ -57,13 +57,17 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
         if (feedbackTemplate.getId() != null) {
             updatedFeedbackTemplate = getById(feedbackTemplate.getId());
+            LOG.info("Updated template : {} ", updatedFeedbackTemplate.toString());
+            LOG.info("Original template: {} ", feedbackTemplate.toString());
         } else {
             throw new BadArgException("Feedback template does not exist. Cannot update");
         }
+        feedbackTemplate.setCreatedBy(updatedFeedbackTemplate.getCreatedBy());
+        LOG.info("Original template: updated: {} ", feedbackTemplate.toString());
         if (!updateIsPermitted(feedbackTemplate.getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
-        feedbackTemplate.setCreatedBy(updatedFeedbackTemplate.getCreatedBy());
+
         return feedbackTemplateRepository.update(feedbackTemplate);
     }
 
@@ -102,7 +106,9 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
     @Override
     public List<FeedbackTemplate> findByFields(@Nullable UUID createdBy, @Nullable String title) {
-
+        LOG.info("Find by field (crratedby): {}", createdBy);
+        LOG.info("Find by field (title): {}", getIsPermitted());
+        LOG.info(currentUserServices.getCurrentUser().getId().toString());
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -121,6 +127,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     public boolean updateIsPermitted(UUID createdBy) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isAdmin = currentUserServices.isAdmin();
+        LOG.info("permit: {}, {}, {}", isAdmin, currentUserId, createdBy);
         return isAdmin || currentUserId.equals(createdBy);
     }
 

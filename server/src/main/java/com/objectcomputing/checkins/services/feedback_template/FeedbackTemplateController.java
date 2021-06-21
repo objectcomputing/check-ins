@@ -113,13 +113,14 @@ public class FeedbackTemplateController {
      */
     @Get("/?createdBy,title")
     public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title) {
-            return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title))
-                    .observeOn(Schedulers.from(eventLoopGroup))
-                    .map(feedbackTemplates -> {
-                        List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
-                                .map(this::fromEntity).collect(Collectors.toList());
-                        return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
-                    }).subscribeOn(Schedulers.from(executorService));
+        LOG.info("In controller: {}, {}", createdBy, title);
+        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackTemplates -> {
+                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate feedbackTemplate) {
