@@ -9,7 +9,6 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
-
 import "./FeedbackRequestPage.css";
 import {getFeedbackSuggestion} from "../api/feedback";
 import {AppContext} from "../context/AppContext";

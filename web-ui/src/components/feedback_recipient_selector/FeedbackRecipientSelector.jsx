@@ -23,13 +23,37 @@ const useStyles = makeStyles({
 });
 
 const FeedbackRecipientSelector = () => {
-  const classes = useStyles();
-  const {state} = useContext(AppContext);
-  const profiles = selectCurrentMembers(state);
-  const history = useHistory();
-  const location = useLocation();
-  const parsed = queryString.parse(location?.search);
-  let from = parsed.from;
+    const { state } = useContext(AppContext);
+    const csrf = selectCsrfToken(state);
+    const userProfile = selectCurrentUser(state);
+    const {id} = userProfile;
+    const classes = useStyles();
+    const history = useHistory();
+    const location = useLocation();
+    const parsed = queryString.parse(location?.search);
+    let from = parsed.from;
+    const [profiles, setProfiles] = useState([]);
+
+    useEffect(() => {
+        async function getSuggestions() {
+            if (id === undefined || id === null) {
+                return;
+            }
+            let res = await getFeedbackSuggestion(id, csrf);
+            if (res && res.payload) {
+                console.log(res.payload);
+                return res.payload.data && !res.error
+                    ? res.payload.data
+                    : undefined;
+            }
+            return null;
+        }
+        if (csrf) {
+            getSuggestions().then((res) => {
+                setProfiles(res);
+            });
+        }
+    },[id]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) from = from ? [from] : [];
@@ -56,9 +80,16 @@ const FeedbackRecipientSelector = () => {
         }}
       />
       <div className="card-container">
-        {profiles && profiles.map((profile) => (
-          <FeedbackRecipientCard profileId={profile.id} reason={undefined} selected={from && from.includes(profile.id)} onClick ={() => cardClickHandler(profile.id)}/>
-        ))}
+        {profiles ?
+            profiles.map((profile) => (
+                <FeedbackRecipientCard
+                    key={profile.profileId}
+                    profileId={profile.profileId}
+                    reason={profile.reason}
+                    selected={from && from.includes(profile.profileId)}
+                    onClick={() => cardClickHandler(profile.profileId)}/>
+            )) :
+            <p> Can't get suggestions, please come back later :( </p>}
       </div>
     </div>
   )

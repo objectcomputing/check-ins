@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         maxWidth: 1000,
     },
-    appBar: {
+    appB: {
         position: 'relative',
     },
     media: {
