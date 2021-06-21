@@ -114,7 +114,6 @@ const FeedbackRequestPage = () => {
             />
           </div>
         }
-
         {activeStep === 2 && <FeedbackRecipientSelector />}
 
 

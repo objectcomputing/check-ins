@@ -10,6 +10,8 @@ import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
+import {getFeedbackSuggestion} from "../../api/feedback";
+import { selectCurrentUser } from "../../context/selectors";
 
 const useStyles = makeStyles({
   root: {
