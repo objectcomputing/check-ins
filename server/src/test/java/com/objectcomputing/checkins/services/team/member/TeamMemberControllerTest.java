@@ -369,8 +369,8 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("teamMember.memberid: must not be null", errorList.get(0));
-        assertEquals("teamMember.teamid: must not be null", errorList.get(1));
+        assertEquals("teamMember.memberId: must not be null", errorList.get(0));
+        assertEquals("teamMember.teamId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }

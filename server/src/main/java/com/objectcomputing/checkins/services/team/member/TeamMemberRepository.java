@@ -16,9 +16,9 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
 
-    List<TeamMember> findByTeamid(UUID teamid);
+    List<TeamMember> findByTeamId(UUID teamId);
 
-    List<TeamMember> findByMemberid(UUID uuid);
+    List<TeamMember> findByMemberId(UUID uuid);
 
     List<TeamMember> findByLead(Boolean aBoolean);
 
@@ -32,12 +32,12 @@ public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
             "WHERE teamId = :id ")
     void deleteByTeamId(@NotNull String id);
 
-    void deleteByMemberid(@NotNull @Nonnull UUID id);
+    void deleteByMemberId(@NotNull @Nonnull UUID id);
 
     @Query("SELECT * " +
             "FROM team_member tm_ " +
             "WHERE (:teamId IS NULL OR tm_.teamId = :teamId) " +
             "AND (:memberId IS NULL OR tm_.memberId = :memberId) " +
             "AND (:lead IS NULL OR tm_.lead = :lead) ")
-    List<TeamMember> search(@Nullable String teamId, @Nullable String memberid, @Nullable Boolean lead);
+    List<TeamMember> search(@Nullable String teamId, @Nullable String memberId, @Nullable Boolean lead);
 }

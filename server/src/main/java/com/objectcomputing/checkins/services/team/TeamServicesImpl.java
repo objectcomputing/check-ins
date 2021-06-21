@@ -43,12 +43,12 @@ public class TeamServicesImpl implements TeamServices {
                 throw new BadArgException(String.format("Team with name %s already exists", teamDTO.getName()));
             } else {
                 if (teamDTO.getTeamMembers() == null ||
-                        teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMember::getLead)) {
+                        teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMemberCreateDTO::getLead)) {
                     throw new BadArgException("Team must include at least one team lead");
                 }
                 newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
-                for (TeamCreateDTO.TeamMember memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
+                for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
                     newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
                 }
             }
@@ -63,7 +63,7 @@ public class TeamServicesImpl implements TeamServices {
                 .findByFields(teamId, null, null)
                 .stream()
                 .map(teamMember ->
-                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberid()))).collect(Collectors.toList());
+                        fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
         return fromEntity(teamsRepo.findById(teamId)
                 .orElseThrow(() -> new NotFoundException("No such team found")));
     }
@@ -155,6 +155,10 @@ public class TeamServicesImpl implements TeamServices {
 
     private TeamMember fromMemberDTO(TeamMemberResponseDTO memberDTO, UUID teamId, MemberProfile savedMember) {
         return new TeamMember(memberDTO.getId() == null ? null : memberDTO.getId(), teamId, savedMember.getId(), memberDTO.isLead());
+    }
+
+    private TeamMember fromMemberDTO(TeamUpdateDTO.TeamMemberUpdateDTO memberDTO, UUID teamId) {
+        return new TeamMember(memberDTO.getId(), teamId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
     private TeamResponseDTO fromEntity(Team entity) {

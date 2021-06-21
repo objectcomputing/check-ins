@@ -27,8 +27,8 @@ class TeamMemberTest {
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
         TeamMember teamMember = new TeamMember(teamId, memberId, lead);
-        assertEquals(teamId, teamMember.getTeamid());
-        assertEquals(memberId, teamMember.getMemberid());
+        assertEquals(teamId, teamMember.getTeamId());
+        assertEquals(memberId, teamMember.getMemberId());
         assertEquals(lead, teamMember.isLead());
     }
 
@@ -57,8 +57,8 @@ class TeamMemberTest {
         final boolean lead = true;
         TeamMember teamMember = new TeamMember(id, teamId, memberId, lead);
 
-        teamMember.setTeamid(null);
-        teamMember.setMemberid(null);
+        teamMember.setTeamId(null);
+        teamMember.setMemberId(null);
 
         Set<ConstraintViolation<TeamMember>> violations = validator.validate(teamMember);
         assertEquals(2, violations.size());

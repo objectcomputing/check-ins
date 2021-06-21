@@ -26,13 +26,13 @@ public class TeamMember {
     private UUID id;
 
     @NotNull
-    @Column(name = "teamid")
+    @Column(name = "teamId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the team this entry is associated with", required = true)
     private UUID teamId;
 
     @NotNull
-    @Column(name = "memberid")
+    @Column(name = "memberId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberId;
@@ -92,8 +92,8 @@ public class TeamMember {
         if (o == null || getClass() != o.getClass()) return false;
         TeamMember that = (TeamMember) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(teamid, that.teamid) &&
-                Objects.equals(memberid, that.memberid) &&
+                Objects.equals(teamId, that.teamId) &&
+                Objects.equals(memberId, that.memberId) &&
                 Objects.equals(lead, that.lead);
     }
 
@@ -106,8 +106,8 @@ public class TeamMember {
     public String toString() {
         return "TeamMember{" +
                 "id=" + id +
-                ", teamid=" + teamid +
-                ", memberid=" + memberid +
+                ", teamid=" + teamId +
+                ", memberid=" + memberId +
                 ", lead=" + isLead() +
                 '}';
     }

@@ -55,9 +55,12 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        final UUID teamId = teamMember.getTeamid();
-        final UUID memberId = teamMember.getMemberid();
+        final UUID teamId = teamMember.getTeamId();
+        LOG.info("Team id: {}", teamId);
+        final UUID memberId = teamMember.getMemberId();
+        LOG.info("Member id: {}", memberId);
         Optional<Team> team = teamRepo.findById(teamId);
+        LOG.info("Team object: {}", team.isPresent());
         if (team.isEmpty()) {
             throw new BadArgException(String.format("Team %s doesn't exist", teamId));
         }
@@ -68,10 +71,10 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
+        } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
         }
-        else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -127,15 +130,15 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         return updated;
     }
 
-    public Set<TeamMember> findByFields(@Nullable UUID teamid, @Nullable UUID memberid, @Nullable Boolean lead) {
+    public Set<TeamMember> findByFields(@Nullable UUID teamId, @Nullable UUID memberId, @Nullable Boolean lead) {
         Set<TeamMember> teamMembers = new HashSet<>();
         teamMemberRepo.findAll().forEach(teamMembers::add);
 
-        if (teamid != null) {
-            teamMembers.retainAll(teamMemberRepo.findByTeamid(teamid));
+        if (teamId != null) {
+            teamMembers.retainAll(teamMemberRepo.findByTeamId(teamId));
         }
-        if (memberid != null) {
-            teamMembers.retainAll(teamMemberRepo.findByMemberid(memberid));
+        if (memberId != null) {
+            teamMembers.retainAll(teamMemberRepo.findByMemberId(memberId));
         }
         if (lead != null) {
             teamMembers.retainAll(teamMemberRepo.findByLead(lead));
@@ -150,9 +153,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         TeamMember teamMember = teamMemberRepo.findById(id).orElse(null);
         if (teamMember != null) {
-            Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamid(), null, true);
+            Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamId(), null, true);
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
             } else {
                 teamMemberRepo.deleteById(id);
@@ -162,7 +165,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         }
 
         teamMemberRepo.delete(teamMember);
-        memberHistoryRepository.save(buildMemberHistory(teamMember.getTeamid(), teamMember.getMemberid(), "Deleted", LocalDateTime.now()));
+        memberHistoryRepository.save(buildMemberHistory(teamMember.getTeamId(), teamMember.getMemberId(), "Deleted", LocalDateTime.now()));
     }
 
     public void deleteByTeam(@NotNull UUID id) {
