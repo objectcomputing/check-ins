@@ -16,8 +16,7 @@ const Template = (args) => {
 const kudosData = {
   kudosTo: {
     name: "John Doe",
-    // change back to image later
-    imageUrl: "http://localhost:8080/services/member-profiles/member-photos/kimberlinm%40objectcomputing.com",
+    imageUrl: image,
   },
   content:"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
   kudosFrom: {

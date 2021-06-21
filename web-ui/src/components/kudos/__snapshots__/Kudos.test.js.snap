@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-dimensions-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiBox-root MuiBox-root-8"
+  >
+    <div
+      className="MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circle makeStyles-large-3"
+        >
+          <img
+            className="MuiAvatar-img"
+            src="logo.svg"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiCardHeader-content"
+      >
+        <p
+          className="MuiTypography-root makeStyles-title-4 MuiTypography-body1"
+        >
+          Kudos to John Doe 🎉
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <p
+      className="MuiTypography-root MuiTypography-body1"
+    >
+      <span
+        className="MuiBox-root MuiBox-root-9"
+      >
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+      </span>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-dimensions-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiBox-root MuiBox-root-5"
+  >
+    <div
+      className="MuiCardHeader-root"
+    >
+      <div
+        className="MuiCardHeader-avatar"
+      >
+        <div
+          className="MuiAvatar-root MuiAvatar-circle makeStyles-large-3"
+        >
+          <img
+            className="MuiAvatar-img"
+            src="logo.svg"
+          />
+        </div>
+      </div>
+      <div
+        className="MuiCardHeader-content"
+      >
+        <p
+          className="MuiTypography-root makeStyles-title-4 MuiTypography-body1"
+        >
+          Kudos to John Doe 🎉
+        </p>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root"
+  >
+    <p
+      className="MuiTypography-root MuiTypography-body1"
+    >
+      <span
+        className="MuiBox-root MuiBox-root-6"
+      >
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+      </span>
+    </p>
+    <div
+      className="MuiBox-root MuiBox-root-7"
+    >
+      <h6
+        className="MuiTypography-root MuiTypography-subtitle2"
+      >
+        Jane Doe - Senior Software Engineer
+      </h6>
+      <div
+        className="MuiAvatar-root MuiAvatar-circle makeStyles-small-2"
+      >
+        <img
+          className="MuiAvatar-img"
+          src="logo.svg"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
