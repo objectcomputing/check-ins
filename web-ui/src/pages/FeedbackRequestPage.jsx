@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -139,7 +139,7 @@ const FeedbackRequestPage = () => {
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
                 to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
                 <Button
-                  disabled={activeStep > getSteps().length}
+                  disabled={activeStep > getSteps().length || (activeStep === 2 && isEmpty())}
                   variant="contained"
                   color="primary">
                   {activeStep === steps.length ? "Submit" : "Next"}
