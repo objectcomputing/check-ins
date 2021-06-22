@@ -38,6 +38,15 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
+function isEmpty() {
+  if(window.location.href.indexOf("?from=") > -1 && (window.location.href.indexOf("step=") > -1)) {
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
 function getTemplates() {
   return [
     {
