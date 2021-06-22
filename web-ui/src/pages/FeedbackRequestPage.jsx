@@ -84,9 +84,16 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
-  const query = queryString.parse(location?.search).step?.toString();
-  let activeStep = location?.search ? parseInt(query) : 1;
-  const numbersOnly = /^\d+$/.test(query);
+  const query = queryString.parse(location?.search);
+
+  const stepQuery = query.step?.toString();
+  const templateQuery = query.template?.toString();
+  const fromQuery = query.from?.toString();
+  const sendQuery = query.send?.toString();
+  const dueQuery = query.due?.toString();
+
+  let activeStep = location?.search ? parseInt(stepQuery) : 1;
+
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -105,7 +112,69 @@ const FeedbackRequestPage = () => {
     }
   }
 
-  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+  const stepIsValid = () => {
+    switch (activeStep) {
+      case 1:
+        if (templateQuery) {
+          // TODO: API call to check if template in URL exists
+          return true;
+        } else {
+          return false;
+        }
+        break;
+      case 2:
+        if (templateQuery && fromQuery) {
+          // TODO: API call to check if template and recipient in URL exists
+          return true;
+        } else {
+          return false;
+        }
+        break;
+      case 3:
+        if (templateQuery && fromQuery && sendQuery && dueQuery) {
+          return true;
+        } else {
+          return false;
+        }
+        break;
+      default:
+        return false;
+    }
+  }
+
+  const urlIsValid = () => {
+    const numbersOnly = /^\d+$/.test(query);
+
+    // Check that the current step is valid
+    if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+      return false;
+    }
+
+    const fromQuery = queryString.parse(location?.search).from?.toString();
+
+    switch (activeStep) {
+      case 1:
+        if (fromQuery) {
+          return false;
+        }
+        break;
+      case 2:
+        break;
+      case 3:
+        if (fromQuery) {
+          let fromList = fromQuery.split(",");
+          if (fromList.length < 1) {
+            return false;
+          }
+        }
+        break;
+      default:
+    }
+
+    return true;
+  }
+
+  if (!urlIsValid()) {
     return (
       <Redirect to="/feedback/request?step=1"/>
     );
