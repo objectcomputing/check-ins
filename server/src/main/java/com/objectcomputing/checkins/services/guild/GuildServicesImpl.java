@@ -52,7 +52,7 @@ public class GuildServicesImpl implements GuildServices {
                 }
                 newGuildEntity = guildsRepo.save(fromDTO(guildDTO));
                 for (GuildCreateDTO.GuildMemberCreateDTO memberDTO : guildDTO.getGuildMembers()) {
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberid());
+                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
                     newMembers.add(fromMemberEntity(guildMemberRepo.save(fromMemberDTO(memberDTO, newGuildEntity.getId())), existingMember));
                 }
             }
@@ -152,7 +152,7 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     private GuildMember fromMemberDTO(GuildCreateDTO.GuildMemberCreateDTO memberDTO, UUID guildId) {
-        return new GuildMember(null, guildId, memberDTO.getMemberid(), memberDTO.getLead());
+        return new GuildMember(null, guildId, memberDTO.getMemberId(), memberDTO.getLead());
     }
 
     private GuildMember fromMemberDTO(GuildMemberResponseDTO memberDTO, UUID guildId, MemberProfile savedMember) {

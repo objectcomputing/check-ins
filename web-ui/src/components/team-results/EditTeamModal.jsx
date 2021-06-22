@@ -88,6 +88,61 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     });
   };
 
+  const onTeamMembersChangeV2 = (event, newValue) => {
+    let extantLeads = editedTeam && editedTeam.teamMembers ?
+      editedTeam.teamMembers.filter((teamMember) => teamMember.lead) : [];
+
+    console.log(newValue);
+
+    newValue = newValue.map((teamMember) => {
+      let updatedMember = {
+        name: teamMember.name,
+        firstName: teamMember.firstName,
+        lastName: teamMember.lastName,
+        lead: false
+      };
+
+      // TODO: Error when adding someone, saving, NOT refreshing, and then adding someone else
+
+      if (("id" in teamMember) && !("memberId" in teamMember)) {
+        // Members with neither an id nor memberId are new members
+        console.log(`New member being added: ${teamMember.name}`);
+        updatedMember.memberId = teamMember.id;
+        delete teamMember.id;
+      } else if (!("id" in teamMember) && ("memberId" in teamMember)) {
+        // Members with a memberId but no id have been added but not saved yet
+        console.log(`Member added but not saved: ${teamMember.name}`);
+        updatedMember.memberId = teamMember.memberId;
+      } else if (("id" in teamMember) && ("memberId" in teamMember)) {
+        // Members with both an id and memberId have already been saved as team members
+        console.log(`Member already saved: ${teamMember.name}`);
+        updatedMember.memberId = teamMember.memberId;
+        updatedMember.id = teamMember.id;
+      } else {
+        console.error("Neither memberId nor id exist");
+      }
+
+      return updatedMember;
+    });
+
+    newValue.forEach((newMember) => {
+      extantLeads = extantLeads.filter(
+        (lead) => lead.memberId !== newMember.memberId && lead.memberId !== newMember.memberId
+      );
+    });
+
+    extantLeads = [...new Set(extantLeads)];
+    newValue = [...new Set(newValue)];
+
+    console.log(`New team:`);
+    console.log([...extantLeads, ...newValue]);
+
+    setTeam({
+      ...editedTeam,
+      teamMembers: [...extantLeads, ...newValue]
+    });
+  }
+
   const readyToEdit = (team) => {
     let numLeads = 0;
     if (team && team.teamMembers) {
@@ -154,7 +209,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
               ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
               : []
           }
-          onChange={onTeamMembersChange}
+          onChange={onTeamMembersChangeV2}
           getOptionLabel={(option) => option.name}
           getOptionSelected={(option, value) =>
             value ? value.id === option.id : false

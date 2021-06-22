@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.team;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -34,7 +33,6 @@ public class TeamServicesImpl implements TeamServices {
         this.memberProfileServices = memberProfileServices;
     }
 
-
     public TeamResponseDTO save(TeamCreateDTO teamDTO) {
         Team newTeamEntity = null;
         List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
@@ -46,17 +44,18 @@ public class TeamServicesImpl implements TeamServices {
                         teamDTO.getTeamMembers().stream().noneMatch(TeamCreateDTO.TeamMemberCreateDTO::getLead)) {
                     throw new BadArgException("Team must include at least one team lead");
                 }
-                newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
-                for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
-                    MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
-                    newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
-                }
             }
         }
 
-        return fromEntity(newTeamEntity, newMembers);
-    }
+        newTeamEntity = teamsRepo.save(fromDTO(teamDTO));
+        for (TeamCreateDTO.TeamMemberCreateDTO memberDTO : teamDTO.getTeamMembers()) {
+            MemberProfile existingMember = memberProfileServices.getById(memberDTO.getMemberId());
+            newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(memberDTO, newTeamEntity.getId())), existingMember));
+        }
 
+        return fromEntity(newTeamEntity, newMembers);
+
+    }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
         List<TeamMemberResponseDTO> teamMembers = teamMemberServices

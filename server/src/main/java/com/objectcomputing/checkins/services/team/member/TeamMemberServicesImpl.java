@@ -54,13 +54,10 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     public TeamMember save(@Valid @NotNull TeamMember teamMember) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-
         final UUID teamId = teamMember.getTeamId();
-        LOG.info("Team id: {}", teamId);
+       
         final UUID memberId = teamMember.getMemberId();
-        LOG.info("Member id: {}", memberId);
         Optional<Team> team = teamRepo.findById(teamId);
-        LOG.info("Team object: {}", team.isPresent());
         if (team.isEmpty()) {
             throw new BadArgException(String.format("Team %s doesn't exist", teamId));
         }
@@ -78,11 +75,8 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
-        LOG.info("No exceptions!");
         TeamMember newTeamMember = teamMemberRepo.save(teamMember);
-        LOG.info("New team member: {}", newTeamMember);
         memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "Added", LocalDateTime.now()));
-        LOG.info("Saved to repository");
         return newTeamMember;
     }
 
