@@ -93,7 +93,9 @@ public class GuildServicesImpl implements GuildServices {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         } else {
-                            guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId()));
+                            ;
+                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+                            newMembers.add(fromMemberEntity(guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         }
                     });
 

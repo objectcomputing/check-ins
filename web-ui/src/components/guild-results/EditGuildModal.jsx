@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 
 import { AppContext } from "../../context/AppContext";
 import {
@@ -18,6 +18,11 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const [editedGuild, setGuild] = useState(guild);
   const [guildMemberOptions, setGuildMemberOptions] = useState([]);
   const currentMembers = selectCurrentMembers(state);
+  const guildMembers = guild?.guildMembers;
+
+  const findExistingMember = useCallback((member) => guildMembers?.find((current) => current.memberId === member.memberId), [guildMembers]);
+
+  useEffect(() => { if(open && guild.id !== editedGuild.id) setGuild(guild); }, [open, guild, editedGuild]);
 
   useEffect(() => {
     if (
@@ -30,6 +35,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
         ...editedGuild,
         guildMembers: [...new Set(editedGuild?.guildMembers?.filter(member => member.lead === false && member.memberId !== currentUser.id)),
           {
+            id: findExistingMember({memberId: currentUser.id})?.id,
             name: `${currentUser.firstName} ${currentUser.lastName}`,
             memberId: currentUser.id,
             guildId: editedGuild.id,
@@ -38,7 +44,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
         ],
       });
     }
-  }, [editedGuild, currentUser]);
+  }, [editedGuild, currentUser, findExistingMember]);
 
   useEffect(() => {
     if (!editedGuild || !editedGuild.guildMembers || !currentMembers) return;
@@ -71,7 +77,14 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
     newValue = [...new Set(newValue)];
     setGuild({
       ...editedGuild,
-      guildMembers: [...extantMembers, ...newValue],
+      guildMembers: [...extantMembers, ...newValue].map((member) => {
+        const existing = findExistingMember(member);
+        if(existing) {
+            return {...member, id: existing.id};
+        } else {
+            return member;
+        }
+      }),
     });
   };
 
@@ -96,7 +109,14 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
     newValue = [...new Set(newValue)];
     setGuild({
       ...editedGuild,
-      guildMembers: [...extantLeads, ...newValue],
+      guildMembers: [...extantLeads, ...newValue].map((member) => {
+        const existing = findExistingMember(member);
+        if(existing) {
+            return {...member, id: existing.id};
+        } else {
+            return member;
+        }
+      }),
     });
   };
 
@@ -111,7 +131,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
 
   const close = () => {
     onClose();
-    setGuild(guild);
+    setGuild({});
   };
 
   return (
@@ -192,6 +212,7 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
             disabled={!readyToEdit(editedGuild)}
             onClick={() => {
               onSave(editedGuild);
+              close();
             }}
             color="primary"
           >

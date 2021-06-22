@@ -138,12 +138,11 @@ const GuildSummaryCard = ({guild, index}) => {
                                : null;
                   if(data) {
                     const copy = [...guilds];
-                    copy[index] = editedGuild;
+                    copy[index] = data;
                     dispatch({
                         type: UPDATE_GUILDS,
                         payload: copy,
                     });
-                    handleClose();
                   }
                 }}
                 headerText='Edit Your Guild'
