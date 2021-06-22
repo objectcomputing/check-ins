@@ -32,6 +32,8 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
   };
 
   const LinkSection = ({ checkin, member }) => {
+    const now = new Date();
+    let checkinDate = new Date(getCheckinDate(checkin));
     let dateString = new Date(getCheckinDate(checkin)).toString();
     dateString = dateString.split(" ").slice(0, 5).join(" ");
     return (
@@ -43,7 +45,13 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
           <Typography>{dateString}</Typography>
           <Chip
             color={checkin.completed ? "secondary" : "primary"}
-            label={checkin.completed ? "Closed" : "Open"}
+            label={
+              checkin.completed
+                ? "Closed"
+                : checkinDate > now
+                ? "Planned"
+                : "Open"
+            }
           />
         </div>
       </Link>
