@@ -19,6 +19,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const [editedTeam, setTeam] = useState(team);
   const [teamMemberOptions, setTeamMemberOptions] = useState([]);
 
+  // Sets the current user as the lead when creating a new team
   useEffect(() => {
     if (
       currentUser?.id &&
@@ -40,108 +41,69 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
     }
   }, [editedTeam, currentUser]);
 
+  // Sets the options for team members
   useEffect(() => {
     if (!editedTeam || !editedTeam.teamMembers || !currentMembers) return;
+
+    let memberOptions = currentMembers.map((member) => {
+      return {
+        memberId: member.id,
+        name: member.name,
+        firstName: member.firstName,
+        lastName: member.lastName
+      }
+    });
+
     let teamMemberNames = editedTeam.teamMembers.map(
       (teamMember) => teamMember.name
     );
-    setTeamMemberOptions(
-      currentMembers.filter((member) => !teamMemberNames.includes(member.name))
-    );
+    memberOptions = memberOptions.filter((member) => !teamMemberNames.includes(member.name));
+    setTeamMemberOptions(memberOptions);
   }, [currentMembers, editedTeam]);
 
-  const onLeadsChange = (event, newValue) => {
+  const onLeadsChange = (event, leads) => {
     let extantMembers =
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
         : [];
-    newValue.forEach((lead) => (lead.lead = true));
-    newValue.forEach((newLead) => {
+    leads.forEach((lead) => (lead.lead = true));
+    leads.forEach((lead) => {
       extantMembers = extantMembers.filter(
-        (member) => member.memberId !== newLead.id && member.id !== newLead.id
+        (member) => member.memberId !== lead.memberId
       );
     });
+
     extantMembers = [...new Set(extantMembers)];
-    newValue = [...new Set(newValue)];
+    leads = [...new Set(leads)];
+
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantMembers, ...newValue],
+      teamMembers: [...extantMembers, ...leads],
     });
   };
 
-  const onTeamMembersChange = (event, newValue) => {
+  const onTeamMembersChange = (event, regularMembers) => {
+
     let extantLeads =
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
-    newValue.forEach((teamMember) => (teamMember.lead = false));
-    newValue.forEach((newMember) => {
+
+    regularMembers.forEach((teamMember) => (teamMember.lead = false));
+    regularMembers.forEach((teamMember) => {
       extantLeads = extantLeads.filter(
-        (lead) => lead.memberId !== newMember.id && lead.id !== newMember.id
+        (lead) => lead.memberId !== teamMember.memberId
       );
     });
+
     extantLeads = [...new Set(extantLeads)];
-    newValue = [...new Set(newValue)];
+    regularMembers = [...new Set(regularMembers)];
+
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantLeads, ...newValue],
+      teamMembers: [...extantLeads, ...regularMembers],
     });
   };
-
-  const onTeamMembersChangeV2 = (event, newValue) => {
-    let extantLeads = editedTeam && editedTeam.teamMembers ?
-      editedTeam.teamMembers.filter((teamMember) => teamMember.lead) : [];
-
-    console.log(newValue);
-
-    newValue = newValue.map((teamMember) => {
-      let updatedMember = {
-        name: teamMember.name,
-        firstName: teamMember.firstName,
-        lastName: teamMember.lastName,
-        lead: false
-      };
-
-      // TODO: Error when adding someone, saving, NOT refreshing, and then adding someone else
-
-      if (("id" in teamMember) && !("memberId" in teamMember)) {
-        // Members with neither an id nor memberId are new members
-        console.log(`New member being added: ${teamMember.name}`);
-        updatedMember.memberId = teamMember.id;
-        delete teamMember.id;
-      } else if (!("id" in teamMember) && ("memberId" in teamMember)) {
-        // Members with a memberId but no id have been added but not saved yet
-        console.log(`Member added but not saved: ${teamMember.name}`);
-        updatedMember.memberId = teamMember.memberId;
-      } else if (("id" in teamMember) && ("memberId" in teamMember)) {
-        // Members with both an id and memberId have already been saved as team members
-        console.log(`Member already saved: ${teamMember.name}`);
-        updatedMember.memberId = teamMember.memberId;
-        updatedMember.id = teamMember.id;
-      } else {
-        console.error("Neither memberId nor id exist");
-      }
-
-      return updatedMember;
-    });
-
-    newValue.forEach((newMember) => {
-      extantLeads = extantLeads.filter(
-        (lead) => lead.memberId !== newMember.memberId && lead.memberId !== newMember.memberId
-      );
-    });
-
-    extantLeads = [...new Set(extantLeads)];
-    newValue = [...new Set(newValue)];
-
-    console.log(`New team:`);
-    console.log([...extantLeads, ...newValue]);
-
-    setTeam({
-      ...editedTeam,
-      teamMembers: [...extantLeads, ...newValue]
-    });
-  }
 
   const readyToEdit = (team) => {
     let numLeads = 0;
@@ -183,6 +145,9 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         <Autocomplete
           id="teamLeadSelect"
           multiple
+          getOptionSelected={(option, value) => {
+            return value ? value.memberId === option.memberId : false;
+          }}
           options={teamMemberOptions}
           required
           value={
@@ -191,7 +156,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
               : []
           }
           onChange={onLeadsChange}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(member) => member.name}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -203,17 +168,18 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         />
         <Autocomplete
           multiple
+          getOptionSelected={(option, value) => {
+            return value ? value.memberId === option.memberId : false;
+          }}
           options={teamMemberOptions}
           value={
             editedTeam.teamMembers
               ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
               : []
           }
-          onChange={onTeamMembersChangeV2}
-          getOptionLabel={(option) => option.name}
-          getOptionSelected={(option, value) =>
-            value ? value.id === option.id : false
-          }
+          filterSelectedOptions
+          onChange={onTeamMembersChange}
+          getOptionLabel={(member) => member.name}
           renderInput={(params) => (
             <TextField
               {...params}

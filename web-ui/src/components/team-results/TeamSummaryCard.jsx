@@ -178,14 +178,24 @@ const TeamSummaryCard = ({ team, index }) => {
         open={open}
         onClose={handleClose}
         onSave={async (editedTeam) => {
-          let res = await updateTeam(editedTeam, csrf);
-          let data =
+          const res = await updateTeam(editedTeam, csrf);
+          const data =
             res.payload && res.payload.data && !res.error
               ? res.payload.data
               : null;
           if (data) {
+            if (data.teamMembers) {
+              for (let savedMember of data.teamMembers) {
+                let memberIndex = editedTeam.teamMembers.findIndex((member) => {
+                  return savedMember.memberId === member.memberId;
+                });
+                editedTeam.teamMembers[memberIndex] = savedMember;
+              }
+            }
+
             const copy = [...teams];
             copy[index] = editedTeam;
+
             dispatch({
               type: UPDATE_TEAMS,
               payload: copy,

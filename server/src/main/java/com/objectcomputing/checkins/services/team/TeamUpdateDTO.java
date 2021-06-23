@@ -114,8 +114,13 @@ public class TeamUpdateDTO {
         @Schema(description = "Member who is on this team")
         private UUID memberId;
 
+        @NotNull
+        @Schema(description = "Team to which the member belongs")
+        private UUID teamId;
+
         public TeamMemberUpdateDTO(UUID id, UUID teamId, UUID memberId, Boolean lead) {
             this.id = id;
+            this.teamId = teamId;
             this.memberId = memberId;
             this.lead = lead;
         }
@@ -142,6 +147,14 @@ public class TeamUpdateDTO {
 
         public void setMemberId(UUID memberId) {
             this.memberId = memberId;
+        }
+
+        public UUID getTeamId() {
+            return teamId;
+        }
+
+        public void setTeamId(UUID teamId) {
+            this.teamId = teamId;
         }
     }
 }

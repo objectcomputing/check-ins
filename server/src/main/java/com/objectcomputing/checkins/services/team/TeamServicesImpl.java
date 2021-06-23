@@ -3,10 +3,13 @@ package com.objectcomputing.checkins.services.team;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.logging.RequestLoggingInterceptor;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.member.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -22,6 +25,8 @@ public class TeamServicesImpl implements TeamServices {
     private final TeamMemberServices teamMemberServices;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+
+    private final Logger LOG = LoggerFactory.getLogger(TeamServicesImpl.class);
 
     public TeamServicesImpl(TeamRepository teamsRepo,
                             TeamMemberServices teamMemberServices,
@@ -67,6 +72,7 @@ public class TeamServicesImpl implements TeamServices {
                 .orElseThrow(() -> new NotFoundException("No such team found")));
     }
 
+    // TODO: Error when replacing the lead of an existing team
     public TeamResponseDTO update(TeamUpdateDTO teamDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
