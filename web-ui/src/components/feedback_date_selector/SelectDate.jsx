@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useCallback} from "react";
 
 import {
   DatePicker,
@@ -20,24 +20,27 @@ pickerContain: {
 
 const SelectDate = (props) =>{
   const classes = useStyles();
+  const {sendDateProp, dueDateProp, handleQueryChange} = props
   const [sendDateQuery, setSendDateQuery] = useState(props.sendDateProp)
   const [dueDateQuery, setDueDateQuery] = useState(props.dueDateProp)
 
+//populates due and send date in url with appropriate default values on
+//appropriate step
+  useCallback(() => {
+    handleQueryChange("dueDate",dueDateProp)
+    handleQueryChange("sendDate", sendDateProp)
+    console.log("please don't kill yourself")
+  }, [sendDateProp, dueDateProp, handleQueryChange],);
 
-  useEffect(() => {
-    props.handleQueryChange("dueDate", dueDateQuery)
-    props.handleQueryChange("sendDate", sendDateQuery)
-
-  },[])
-
+//populates url with user's changes if they change default values
 const handleDueDateChange = (date) => {
   setDueDateQuery(date.toString());
-  props.handleQueryChange("dueDate", date.toString())
+  handleQueryChange("dueDate", date.toString())
 };
 
 const handleSendDateChange = (date) => {
   setSendDateQuery(date.toString());
-  props.handleQueryChange("sendDate", date.toString())
+  handleQueryChange("sendDate", date.toString())
 
 
 };
