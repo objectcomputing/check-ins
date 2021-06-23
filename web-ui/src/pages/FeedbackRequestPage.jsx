@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -36,15 +36,6 @@ const useStyles = makeStyles((theme) => ({
 
 function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
-}
-
-function isEmpty() {
-  if(window.location.href.indexOf("?from=") > -1 && (window.location.href.indexOf("step=") > -1)) {
-    return false;
-  }
-  else {
-    return true;
-  }
 }
 
 function getTemplates() {
@@ -92,17 +83,23 @@ const FeedbackRequestPage = () => {
   const sendQuery = query.send?.toString();
   const dueQuery = query.due?.toString();
 
-  let activeStep = location?.search ? parseInt(stepQuery) : 1;
+  const getStep = useCallback(() => {
+    if(!stepQuery || stepQuery < 2 || !Number.isInteger(stepQuery))
+      return 1;
+    else return parseInt(stepQuery);
+  },[stepQuery]);
+
+  let activeStep = getStep();
 
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
-  }
+  };
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
-  }
+  };
 
   const onCardClick = (template) => {
     if (template.isAdHoc) {
@@ -111,6 +108,34 @@ const FeedbackRequestPage = () => {
       console.log(`Selected ${template.title}`);
     }
   }
+
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
+
+  const hasFrom = useCallback(() => {
+    return !!fromQuery;
+  }, [fromQuery])
+
+  const isValidDate = useCallback((dateString) => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }, []);
+
+  const hasSend = useCallback(() => {
+    return (sendQuery && isValidDate(sendQuery))
+  }, [sendQuery, isValidDate])
+
+  const hasDue = useCallback(() => {
+    return (dueQuery && isValidDate(dueQuery))
+  }, [dueQuery, isValidDate])
+
+  const canProceed = useCallback(() => {
+    if(getStep() === 1) {
+      return !!templateQuery; //return a boolean
+    }
+    return true;
+  }, [getStep]);
 
   const stepIsValid = useCallback(() => {
     switch (activeStep) {
@@ -191,7 +216,7 @@ const FeedbackRequestPage = () => {
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
                 to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
                 <Button
-                  disabled={activeStep > getSteps().length || (activeStep === 2 && isEmpty())}
+                  disabled={activeStep > getSteps().length || (activeStep === 2 && canProceed())}
                   variant="contained"
                   color="primary">
                   {activeStep === steps.length ? "Submit" : "Next"}
