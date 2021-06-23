@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 
 import { AppContext } from "../../context/AppContext";
 import {
@@ -18,47 +18,52 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
   const [teamMemberOptions, setTeamMemberOptions] = useState([]);
+  const teamMembers = team?.teamMembers;
 
-  // Sets the current user as the lead when creating a new team
+  const findExistingMember = useCallback((member) => teamMembers?.find((current) => {
+    return current.memberId === member.memberId;
+  }), [teamMembers]);
+
+  useEffect(() => {
+    if (open && team.id !== editedTeam.id) setTeam(team);
+  }, [open, team, editedTeam]);
+
   useEffect(() => {
     if (
       currentUser?.id &&
       (editedTeam.teamMembers === undefined ||
-        editedTeam.teamMembers.length === 0)
+        editedTeam.teamMembers.length === 0 ||
+        editedTeam.teamMembers.filter(member => member.lead === true).length === 0)
     ) {
+      let teamMembers = [{
+        id: findExistingMember({memberId: currentUser.id})?.id,
+        memberId: currentUser.id,
+        name: `${currentUser.firstName} ${currentUser.lastName}`,
+        teamId: editedTeam.id,
+        lead: true
+      }];
+      // Keep current members if all leads are removed
+      if (editedTeam && editedTeam.teamMembers) {
+        const extantMembers = editedTeam.teamMembers.filter(member => member.lead === false);
+        teamMembers = teamMembers.concat(extantMembers);
+      }
+
       setTeam({
         ...editedTeam,
-        teamMembers: [
-          {
-            memberId: currentUser.id,
-            name: `${currentUser.firstName} ${currentUser.lastName}`,
-            firstName: currentUser.firstName,
-            lastName: currentUser.lastName,
-            lead: true,
-          },
-        ],
+        teamMembers: teamMembers
       });
     }
-  }, [editedTeam, currentUser]);
+  }, [editedTeam, currentUser, findExistingMember]);
 
   // Sets the options for team members
   useEffect(() => {
     if (!editedTeam || !editedTeam.teamMembers || !currentMembers) return;
-
-    let memberOptions = currentMembers.map((member) => {
-      return {
-        memberId: member.id,
-        name: member.name,
-        firstName: member.firstName,
-        lastName: member.lastName
-      }
-    });
-
     let teamMemberNames = editedTeam.teamMembers.map(
       (teamMember) => teamMember.name
     );
-    memberOptions = memberOptions.filter((member) => !teamMemberNames.includes(member.name));
-    setTeamMemberOptions(memberOptions);
+    setTeamMemberOptions(
+      currentMembers.filter((member) => !teamMemberNames.includes(member.name))
+    );
   }, [currentMembers, editedTeam]);
 
   const onLeadsChange = (event, leads) => {
@@ -66,7 +71,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
         : [];
-    leads.forEach((lead) => (lead.lead = true));
+    leads = leads.map((lead) => ({
+      id: lead.memberId ? lead.id : undefined,
+      name: lead.name,
+      memberId: lead.memberId ? lead.memberId : lead.id,
+      teamId: editedTeam.id,
+      lead: true
+    }));
+
     leads.forEach((lead) => {
       extantMembers = extantMembers.filter(
         (member) => member.memberId !== lead.memberId
@@ -78,18 +90,31 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
 
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantMembers, ...leads],
+      teamMembers: [...extantMembers, ...leads].map((member) => {
+        const existing = findExistingMember(member)
+        if(existing) {
+          return {...member, id: existing.id}
+        } else {
+          return member;
+        }
+      }),
     });
   };
 
   const onTeamMembersChange = (event, regularMembers) => {
-
     let extantLeads =
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
 
-    regularMembers.forEach((teamMember) => (teamMember.lead = false));
+    regularMembers = regularMembers.map((member) => ({
+      id: member.memberId ? member.id : undefined,
+      name: member.name,
+      memberId: member.memberId ? member.memberId : member.id,
+      teamId: editedTeam.id,
+      lead: false
+    }));
+
     regularMembers.forEach((teamMember) => {
       extantLeads = extantLeads.filter(
         (lead) => lead.memberId !== teamMember.memberId
@@ -101,7 +126,15 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
 
     setTeam({
       ...editedTeam,
-      teamMembers: [...extantLeads, ...regularMembers],
+      teamMembers: [...extantLeads, ...regularMembers].map((member) =>{
+        const existing = findExistingMember(member);
+        if (existing) {
+          return {...member, id: existing.id};
+        }
+        else {
+          return member;
+        }
+      })
     });
   };
 
@@ -116,7 +149,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
 
   const close = () => {
     onClose();
-    setTeam(team);
+    setTeam({});
   };
 
   return (
@@ -177,7 +210,6 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
               ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
               : []
           }
-          filterSelectedOptions
           onChange={onTeamMembersChange}
           getOptionLabel={(member) => member.name}
           renderInput={(params) => (
@@ -197,6 +229,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
             disabled={!readyToEdit(editedTeam)}
             onClick={() => {
               onSave(editedTeam);
+              close();
             }}
             color="primary"
           >

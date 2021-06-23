@@ -184,23 +184,12 @@ const TeamSummaryCard = ({ team, index }) => {
               ? res.payload.data
               : null;
           if (data) {
-            if (data.teamMembers) {
-              for (let savedMember of data.teamMembers) {
-                let memberIndex = editedTeam.teamMembers.findIndex((member) => {
-                  return savedMember.memberId === member.memberId;
-                });
-                editedTeam.teamMembers[memberIndex] = savedMember;
-              }
-            }
-
             const copy = [...teams];
-            copy[index] = editedTeam;
-
+            copy[index] = data;
             dispatch({
               type: UPDATE_TEAMS,
               payload: copy,
             });
-            handleClose();
           }
         }}
         headerText="Edit Your Team"

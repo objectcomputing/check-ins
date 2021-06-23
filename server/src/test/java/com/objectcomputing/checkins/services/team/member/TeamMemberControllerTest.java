@@ -580,7 +580,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         actualEntries.sort(Comparator.comparing(MemberHistory::getDate));
         MemberHistory last = actualEntries.get(actualEntries.size() - 1);
 
-        assertEquals("updated", last.getChange());
+        assertEquals("Updated", last.getChange());
 
         TeamMember result = response.body();
         assertNotNull(result);
