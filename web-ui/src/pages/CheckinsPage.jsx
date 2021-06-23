@@ -41,8 +41,10 @@ const CheckinsPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const memberProfile = selectCurrentUser(state);
+  
   const currentUserId = memberProfile?.id;
   const mostRecent = selectMostRecentCheckin(state, memberId);
+
   const selectedProfile = selectProfile(state, memberId);
 
   useEffect(() => {
@@ -82,6 +84,7 @@ const CheckinsPage = () => {
   };
 
   const handleCreate = async () => {
+    if (!memberProfile.pdlId) return;
     const newId = await createNewCheckin(selectedProfile, dispatch, csrf);
     if (newId) history.push(`/checkins/${memberId}/${newId}`);
   };
