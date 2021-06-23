@@ -55,7 +55,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
         final UUID teamId = teamMember.getTeamId();
-       
+
         final UUID memberId = teamMember.getMemberId();
         Optional<Team> team = teamRepo.findById(teamId);
         if (team.isEmpty()) {
@@ -70,8 +70,7 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        }
-        else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -85,43 +84,79 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     }
 
     public TeamMember update(@NotNull @Valid TeamMember teamMember) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        boolean isAdmin = currentUserServices.isAdmin();
-
-        final UUID id = teamMember.getId();
-        final UUID teamId = teamMember.getTeamId();
-        final UUID memberId = teamMember.getMemberId();
-        Optional<Team> team = teamRepo.findById(teamId);
-
-        if (team.isEmpty()) {
-            throw new BadArgException(String.format("Team %s doesn't exist", teamId));
-        }
-
-        Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
-
-        Optional<TeamMember> originalTeamMember = teamMemberRepo.findById(id);
-        if (id == null || originalTeamMember.isEmpty()) {
-            throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
-            throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-            throw new BadArgException("You are not authorized to perform this operation");
-        }
-
-        TeamMember updated = teamMemberRepo.update(teamMember);
-
         try {
-            String originalTeamMemberString = objectMapper.writeValueAsString(originalTeamMember.get());
-            String newTeamMemberString = objectMapper.writeValueAsString(teamMember);
-            String update = String.format("from %s to %s", originalTeamMemberString, newTeamMemberString);
-            memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "updated", LocalDateTime.now()));
-        } catch (JsonProcessingException e) {
-            //Log info on error here...include new team member id and team id in log message
-            LOG.error("Error occurred while updating member profile. teamId = %s , memberId = %s", teamId, memberId, e);
+            MemberProfile currentUser = currentUserServices.getCurrentUser();
+            boolean isAdmin = currentUserServices.isAdmin();
+
+            final UUID id = teamMember.getId();
+            final UUID teamId = teamMember.getTeamId();
+            final UUID memberId = teamMember.getMemberId();
+
+            Optional<Team> team = teamRepo.findById(teamId);
+            LOG.info("We have a team probably: {} ", team);
+            LOG.info("The id of the TeamMember entity: {}", id);
+            LOG.info("current working on member :{}", memberId);
+
+            if (team.isEmpty()) {
+                throw new BadArgException(String.format("Team %s doesn't exist", teamId));
+            }
+
+            Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
+
+            LOG.info("Got here at least :/");
+            Optional<TeamMember> originalTeamMember = null;
+            if (id != null) {
+                originalTeamMember = teamMemberRepo.findById(id);
+            }
+
+            LOG.info("Team member find by id : {}", originalTeamMember);
+            LOG.info("Member services find by id : {}", memberRepo.findById(memberId));
+            LOG.info("stream team leads just because : {} ", teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId())));
+//            if (id == null || originalTeamMember.isEmpty()) {
+//                throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
+//            } else
+            if (memberRepo.findById(memberId).isEmpty()) {
+                throw new BadArgException(String.format("Member %s doesn't exist", memberId));
+            } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
+                throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
+            } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+                throw new BadArgException("You are not authorized to perform this operation");
+            }
+
+            LOG.info("Made it to teamMemberRepo update");
+            TeamMember updated = teamMemberRepo.update(teamMember);
+
+            try {
+                LOG.info("made it to inner try block");
+                String originalTeamMemberString = null;
+                String updatedTeamMemberString;
+                if (originalTeamMember != null) {
+                    originalTeamMemberString = objectMapper.writeValueAsString(originalTeamMember.get());
+                }
+                String newTeamMemberString = objectMapper.writeValueAsString(teamMember);
+                String update = String.format("from %s to %s", originalTeamMemberString, newTeamMemberString);
+                memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "updated", LocalDateTime.now()));
+            } catch (JsonProcessingException e) {
+                LOG.info("made it to the processing exception here");
+                //Log info on error here...include new team member id and team id in log message
+                LOG.error("Error occurred while updating member profile. teamId = %s , memberId = %s", teamId, memberId, e);
+            } catch(Exception e ) {
+                LOG.info("made it to generic exception catch in innner try block");
+                LOG.info(e.getMessage());
+            }
+            return updated;
+
+
+        } catch (Error e) {
+            LOG.info("Team members errored out");
+            LOG.info(e.getMessage());
+
+        } catch (Exception e) {
+            LOG.info("Team members exceptioned out");
+            LOG.info(e.getMessage());
+
         }
-        return updated;
+        return null;
     }
 
     public Set<TeamMember> findByFields(@Nullable UUID teamId, @Nullable UUID memberId, @Nullable Boolean lead) {

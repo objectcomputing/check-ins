@@ -83,11 +83,14 @@ public class TeamServicesImpl implements TeamServices {
             TeamResponseDTO updated = null;
             List<TeamMemberResponseDTO> newMembers = new ArrayList<>();
             if (teamDTO != null) {
+                LOG.info("team dto not null");
+                LOG.info("Team dto find by id res: {} ", teamsRepo.findById(teamDTO.getId()));
                 if (teamDTO.getId() != null && teamsRepo.findById(teamDTO.getId()).isPresent()) {
                     if (teamDTO.getTeamMembers() == null ||
                             teamDTO.getTeamMembers().stream().noneMatch(TeamUpdateDTO.TeamMemberUpdateDTO::getLead)) {
                         throw new BadArgException("Team must include at least one team lead");
                     }
+
 
                     Team newTeamEntity = teamsRepo.update(fromDTO(teamDTO));
 
@@ -95,17 +98,18 @@ public class TeamServicesImpl implements TeamServices {
                     //add any new members & updates
                     teamDTO.getTeamMembers().stream().forEach((updatedMember) -> {
                         Optional<TeamMember> first = existingTeamMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
-                        if(!first.isPresent()) {
+                        if (!first.isPresent()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+
                             newMembers.add(fromMemberEntity(teamMemberServices.save(fromMemberDTO(updatedMember, newTeamEntity.getId())), existingMember));
                         } else {
-                            teamMemberServices.update(fromMemberDTO(updatedMember,newTeamEntity.getId()));
+                            teamMemberServices.update(fromMemberDTO(updatedMember, newTeamEntity.getId()));
                         }
                     });
 
                     //delete any removed members
                     existingTeamMembers.stream().forEach((existingMember) -> {
-                        if(!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
+                        if (!teamDTO.getTeamMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             teamMemberServices.delete(existingMember.getId());
                         }
                     });

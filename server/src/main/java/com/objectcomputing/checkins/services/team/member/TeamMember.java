@@ -106,8 +106,8 @@ public class TeamMember {
     public String toString() {
         return "TeamMember{" +
                 "id=" + id +
-                ", teamid=" + teamId +
-                ", memberid=" + memberId +
+                ", teamId=" + teamId +
+                ", memberId=" + memberId +
                 ", lead=" + isLead() +
                 '}';
     }
