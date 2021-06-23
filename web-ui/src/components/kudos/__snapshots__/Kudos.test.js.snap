@@ -2,10 +2,10 @@
 
 exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root makeStyles-dimensions-1 MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiPaper-root MuiCard-root makeStyles-display-1 MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
-    className="MuiBox-root MuiBox-root-8"
+    className="MuiBox-root MuiBox-root-7"
   >
     <div
       className="MuiCardHeader-root"
@@ -25,11 +25,11 @@ exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
       <div
         className="MuiCardHeader-content"
       >
-        <p
-          className="MuiTypography-root makeStyles-title-4 MuiTypography-body1"
+        <h2
+          className="MuiTypography-root MuiTypography-h5"
         >
           Kudos to John Doe 🎉
-        </p>
+        </h2>
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@ exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
       className="MuiTypography-root MuiTypography-body1"
     >
       <span
-        className="MuiBox-root MuiBox-root-9"
+        className="MuiBox-root MuiBox-root-8"
       >
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
       </span>
@@ -51,10 +51,10 @@ exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
 
 exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
 <div
-  className="MuiPaper-root MuiCard-root makeStyles-dimensions-1 MuiPaper-elevation1 MuiPaper-rounded"
+  className="MuiPaper-root MuiCard-root makeStyles-display-1 MuiPaper-elevation1 MuiPaper-rounded"
 >
   <div
-    className="MuiBox-root MuiBox-root-5"
+    className="MuiBox-root MuiBox-root-4"
   >
     <div
       className="MuiCardHeader-root"
@@ -74,11 +74,11 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       <div
         className="MuiCardHeader-content"
       >
-        <p
-          className="MuiTypography-root makeStyles-title-4 MuiTypography-body1"
+        <h2
+          className="MuiTypography-root MuiTypography-h5"
         >
           Kudos to John Doe 🎉
-        </p>
+        </h2>
       </div>
     </div>
   </div>
@@ -89,13 +89,13 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
       className="MuiTypography-root MuiTypography-body1"
     >
       <span
-        className="MuiBox-root MuiBox-root-6"
+        className="MuiBox-root MuiBox-root-5"
       >
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
       </span>
     </p>
     <div
-      className="MuiBox-root MuiBox-root-7"
+      className="MuiBox-root MuiBox-root-6"
     >
       <h6
         className="MuiTypography-root MuiTypography-subtitle2"

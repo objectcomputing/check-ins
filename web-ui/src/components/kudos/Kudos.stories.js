@@ -1,5 +1,3 @@
-// Button.stories.js | Button.stories.jsx
-
 import React from 'react';
 import image from '../../logo.svg';
 import Kudos from './Kudos';
@@ -7,6 +5,13 @@ import Kudos from './Kudos';
 export default {
   component: Kudos,
   title: 'Check Ins/Kudos',
+  decorators: [
+    (Kudos) => (
+      <div style={{width:"375px", height:"400px",}}>
+        <Kudos />
+      </div>
+    )
+  ]
 }
 
 const Template = (args) => {
@@ -37,13 +42,6 @@ KudosConfidential.args = {
   ...kudosData,
   kudosFrom: undefined,
 };
-
-export const KudosWithWrapperDiv = Template.bind({});
-KudosWithWrapperDiv.args = {
-  ...kudosData
-}
-KudosWithWrapperDiv.decorators = [(KudosWithWrapperDiv) => <div style={{width:"400px", height:"400px",}}><KudosWithWrapperDiv/></div>];
-
 
 
 

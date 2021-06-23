@@ -3,9 +3,7 @@ import React from 'react'
 import AvatarComponent from '../avatar/Avatar'
 
 const useStyles = makeStyles((theme) => ({
-  dimensions: {
-    width: '100%',
-    height: '100%',
+  display: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-around"
@@ -18,32 +16,26 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(8),
     height: theme.spacing(8),
-    margin: theme.spacing(1),
-  },
-  title: {
-    fontSize: 32,
   },
 }));
 
 export default function Kudos({kudosTo, kudosFrom, content}) {
   const classes = useStyles();
   return (
-    <Card classes={{root: classes.dimensions}}>
+    <Card classes={{root: classes.display}}>
       <Box display="flex" justifyContent="center">
         <CardHeader
           avatar={
             <AvatarComponent className={classes.large} imageUrl={kudosTo.imageUrl} />
           }
-          // title={`Kudos to ${kudosTo.name}`}
           disableTypography
           title={
-            <Typography className={classes.title}>
+            <Typography variant="h5" component="h2">
               {`Kudos to ${kudosTo.name} 🎉`}
             </Typography>
           }
         />
       </Box>
-
       <CardContent>
       <Typography>
         <Box component={'span'} textAlign="center">
