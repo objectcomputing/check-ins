@@ -21,7 +21,7 @@ Array [
         <div>
           <a
             className="no-underline-link disabled-link"
-            href="/feedback/request?step=0"
+            href="/feedback/request/?step=0"
             onClick={[Function]}
           >
             <button
@@ -50,7 +50,7 @@ Array [
           </a>
           <a
             className="no-underline-link "
-            href="/feedback/request?step=2"
+            href="/feedback/request/?step=2"
             onClick={[Function]}
           >
             <button
