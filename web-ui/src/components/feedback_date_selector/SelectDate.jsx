@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+
 import {
   DatePicker,
 } from '@material-ui/pickers';
@@ -17,21 +18,33 @@ pickerContain: {
  }
 });
 
-const SelectDate = () =>{
- const classes = useStyles();
-const [dueDate, setDueDate] = React.useState(null);
-const [sendDate, setSendDate] = React.useState(new Date());
+const SelectDate = (props) =>{
+  const classes = useStyles();
+  const [sendDateQuery, setSendDateQuery] = useState(props.sendDateProp)
+  const [dueDateQuery, setDueDateQuery] = useState(props.dueDateProp)
+
+
+  useEffect(() => {
+    props.handleQueryChange("dueDate", dueDateQuery)
+    props.handleQueryChange("sendDate", sendDateQuery)
+
+  },[])
 
 const handleDueDateChange = (date) => {
-  setDueDate(date);
+  setDueDateQuery(date.toString());
+  props.handleQueryChange("dueDate", date.toString())
 };
 
 const handleSendDateChange = (date) => {
-  setSendDate(date);
+  setSendDateQuery(date.toString());
+  props.handleQueryChange("sendDate", date.toString())
+
+
 };
 
 return (
-<React.Fragment className={classes.root}>
+<React.Fragment>
+  <div className = {classes.root}>
   <div className={classes.pickerContain}>
        <DatePicker
        className= {classes.picker}
@@ -40,7 +53,7 @@ return (
                margin="normal"
                id="set-send-date"
                label="Send Date:"
-               value={sendDate}
+                value={sendDateQuery}
                onChange={handleSendDateChange}
                KeyboardButtonProps={{
                  'aria-label': 'change date',
@@ -54,12 +67,13 @@ return (
                 id="set-due-date"
                 label="Due Date:"
                 emptyLabel="No due date"
-                value={dueDate}
+                value={dueDateQuery}
                 onChange={handleDueDateChange}
                 KeyboardButtonProps={{
                    'aria-label': 'change date',
                 }}
              />
+             </div>
              </div>
 </React.Fragment>
 
