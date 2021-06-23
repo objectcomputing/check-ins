@@ -114,8 +114,8 @@ const ProfilePage = () => {
       newVal[index].guildMembers = [
         ...new Set(newVal[index].guildMembers),
         {
-          memberid: userProfile.id,
-          guildid: newVal[index].id,
+          memberId: userProfile.id,
+          guildId: newVal[index].id,
           name: `${userProfile.firstName} ${userProfile.lastName}`,
           lead: false,
         },
