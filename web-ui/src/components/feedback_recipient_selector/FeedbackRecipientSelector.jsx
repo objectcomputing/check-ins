@@ -52,7 +52,7 @@ const FeedbackRecipientSelector = () => {
                 setProfiles(res);
             });
         }
-    },[id]);
+    },[id,csrf]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) from = from ? [from] : [];
