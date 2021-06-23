@@ -41,7 +41,6 @@ const FeedbackRecipientSelector = () => {
             }
             let res = await getFeedbackSuggestion(id, csrf);
             if (res && res.payload) {
-                console.log(res.payload);
                 return res.payload.data && !res.error
                     ? res.payload.data
                     : undefined;

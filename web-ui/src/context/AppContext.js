@@ -10,7 +10,6 @@ import {
   UPDATE_MEMBER_PROFILES,
   UPDATE_SKILLS,
   UPDATE_TEAMS,
-  UPDATE_FEEEDBACK_SUGGESTIONS,
 } from "./actions";
 import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";

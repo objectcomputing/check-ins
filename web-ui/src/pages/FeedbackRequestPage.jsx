@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -10,10 +10,7 @@ import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import "./FeedbackRequestPage.css";
-import {getFeedbackSuggestion} from "../api/feedback";
-import {AppContext} from "../context/AppContext";
-import {selectCsrfToken} from "../context/selectors";
-import { selectCurrentUser } from "../context/selectors";
+
 
 
 const useStyles = makeStyles({
@@ -28,17 +25,12 @@ function getSteps() {
 
 const FeedbackRequestPage = () => {
 
-    const { state } = useContext(AppContext);
-    const csrf = selectCsrfToken(state);
-    const userProfile = selectCurrentUser(state);
-    const {id} = userProfile;
     const steps = getSteps();
     const classes = useStyles();
     const location = useLocation();
     const query = queryString.parse(location?.search).step?.toString();
     let activeStep = location?.search ? parseInt(query) : 1;
     const numbersOnly = /^\d+$/.test(query);
-    let suggestions = [];
 
 
 
