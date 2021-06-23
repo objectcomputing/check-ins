@@ -41,6 +41,7 @@ function getSteps() {
 function getTemplates() {
   return [
     {
+      id: 123,
       title: "Ad Hoc",
       isAdHoc: true,
       description: "Ask a single question.",
@@ -48,6 +49,7 @@ function getTemplates() {
       questions: []
     },
     {
+      id: 124,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -55,6 +57,7 @@ function getTemplates() {
       questions: []
     },
     {
+      id: 125,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -62,6 +65,7 @@ function getTemplates() {
       questions: [],
     },
     {
+      id: 126,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -148,39 +152,7 @@ const FeedbackRequestPage = () => {
       default:
         return false;
     }
-  }, [activeStep]);
-
-  const urlIsValid = () => {
-    const numbersOnly = /^\d+$/.test(query);
-
-    // Check that the current step is valid
-    if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
-      return false;
-    }
-
-    const fromQuery = queryString.parse(location?.search).from?.toString();
-
-    switch (activeStep) {
-      case 1:
-        if (fromQuery) {
-          return false;
-        }
-        break;
-      case 2:
-        break;
-      case 3:
-        if (fromQuery) {
-          let fromList = fromQuery.split(",");
-          if (fromList.length < 1) {
-            return false;
-          }
-        }
-        break;
-      default:
-    }
-
-    return true;
-  }
+  }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
   if (!urlIsValid()) {
     return (
@@ -212,16 +184,11 @@ const FeedbackRequestPage = () => {
                 </Button>
               </Link>
 
-              <Link
-                className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
-                <Button
-                  disabled={activeStep > getSteps().length || (activeStep === 2 && canProceed())}
-                  variant="contained"
-                  color="primary">
-                  {activeStep === steps.length ? "Submit" : "Next"}
-                </Button>
-              </Link>
+              <Button component={Link}
+                      onClick={onNextClick}
+                      variant="contained" disabled={!canProceed()} color="primary">
+                {activeStep === steps.length ? "Submit" : "Next"}
+              </Button>
             </div>
         </div>
       </div>
