@@ -39,7 +39,7 @@ public class GuildMemberCreateDTO {
         return guildId;
     }
 
-    public void setGuildid(UUID guildmid) {
+    public void setGuildid(UUID guildId) {
         this.guildId = guildId;
     }
 
