@@ -30,7 +30,7 @@ public interface GuildMemberFixture extends RepositoryFixture{
                 memberProfile.getId(), memberEntity.isLead());
     }
 
-    default GuildUpdateDTO.GuildMemberUpdateDTO updateDefaultGuildMemberDto(MemberProfile memberProfile, boolean lead){
-        return new GuildUpdateDTO.GuildMemberUpdateDTO(null,memberProfile.getId(),lead);
+    default GuildUpdateDTO.GuildMemberUpdateDTO updateDefaultGuildMemberDto(GuildMember guildMember, boolean lead ){
+        return new GuildUpdateDTO.GuildMemberUpdateDTO(guildMember.getId(),guildMember.getMemberid(),lead);
     }
 }
