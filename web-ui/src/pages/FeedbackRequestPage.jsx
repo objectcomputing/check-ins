@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import {Link, useLocation, Redirect, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -79,6 +79,7 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
+  const history = useHistory();
   const query = queryString.parse(location?.search);
 
   const stepQuery = query.step?.toString();
@@ -88,12 +89,12 @@ const FeedbackRequestPage = () => {
   const dueQuery = query.due?.toString();
 
   const getStep = useCallback(() => {
-    if(!stepQuery || stepQuery < 2 || !Number.isInteger(stepQuery))
+    if(!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
       return 1;
     else return parseInt(stepQuery);
   },[stepQuery]);
 
-  let activeStep = getStep();
+  const activeStep = getStep();
 
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
@@ -135,20 +136,38 @@ const FeedbackRequestPage = () => {
   }, [dueQuery, isValidDate])
 
   const canProceed = useCallback(() => {
-    if(getStep() === 1) {
-      return !!templateQuery; //return a boolean
+    switch(activeStep) {
+      case 1:
+        return hasTemplate();
+      case 2:
+        return hasTemplate() && hasFrom();
+      case 3:
+        return hasTemplate() && hasFrom() && hasDue();
+      default:
+        return false;
     }
-    return true;
-  }, [getStep]);
+  }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
-  const stepIsValid = useCallback(() => {
+  const handleSubmit = () => {};
+
+  const onNextClick = useCallback(() => {
+    if(!canProceed()) return;
+    if(activeStep === steps.length) handleSubmit();
+    query.step = activeStep+1;
+    history.push({...location, search: queryString.stringify(query)});
+  },[canProceed, activeStep, steps.length, query, location, history, queryString]);
+
+  const urlIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
-        return hasTemplate;
+        return true;
       case 2:
-        return hasTemplate && hasFrom;
+        return hasTemplate();
       case 3:
-        return hasTemplate && hasFrom && hasDue;
+        console.log(`hasTemplate() && hasFrom(): ${hasTemplate() && hasFrom()}`);
+        return hasTemplate() && hasFrom();
+      case 4:
+        return hasTemplate() && hasFrom() && hasDue();
       default:
         return false;
     }
@@ -156,7 +175,7 @@ const FeedbackRequestPage = () => {
 
   if (!urlIsValid()) {
     return (
-      <Redirect to="/feedback/request?step=1"/>
+      <Redirect to="/feedback/request/"/>
     );
   }
 
@@ -223,6 +242,6 @@ const FeedbackRequestPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default FeedbackRequestPage;

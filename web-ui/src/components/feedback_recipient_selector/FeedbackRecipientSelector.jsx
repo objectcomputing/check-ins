@@ -30,11 +30,13 @@ const FeedbackRecipientSelector = () => {
   let from = parsed.from;
 
   const cardClickHandler = (id) => {
-    if(!Array.isArray(from)) from = from ? [from] : [];
+    if(!Array.isArray(from)) {
+        from = from ? [from] : [];
+    }
     if(from.includes(id)) {
       from.splice(from.indexOf(id), 1);
     }
-    else from[from.length] = id;
+    else from.push(id);
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});

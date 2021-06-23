@@ -60,7 +60,7 @@ const TemplatePreviewModal = ({ open, onClose, template }) => {
             <Typography variant="h6" className={classes.title}>
               {template ? template.title : "No Title"}
             </Typography>
-            <Link className="ad-hoc-next-button" onClick={onClose} to={'/feedback/request/?step=2'}>
+            <Link className="ad-hoc-next-button" onClick={onClose} to={`/feedback/request/?step=2&template=${template.id}`}>
               <Button color="inherit">
                 {template.isAdHoc ? "Create" : "Select"}
               </Button>
