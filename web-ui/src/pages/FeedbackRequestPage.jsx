@@ -112,35 +112,18 @@ const FeedbackRequestPage = () => {
     }
   }
 
-  const stepIsValid = () => {
+  const stepIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
-        if (templateQuery) {
-          // TODO: API call to check if template in URL exists
-          return true;
-        } else {
-          return false;
-        }
-        break;
+        return hasTemplate;
       case 2:
-        if (templateQuery && fromQuery) {
-          // TODO: API call to check if template and recipient in URL exists
-          return true;
-        } else {
-          return false;
-        }
-        break;
+        return hasTemplate && hasFrom;
       case 3:
-        if (templateQuery && fromQuery && sendQuery && dueQuery) {
-          return true;
-        } else {
-          return false;
-        }
-        break;
+        return hasTemplate && hasFrom && hasDue;
       default:
         return false;
     }
-  }
+  }, [activeStep]);
 
   const urlIsValid = () => {
     const numbersOnly = /^\d+$/.test(query);
