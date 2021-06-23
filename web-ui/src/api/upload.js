@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const fileUrl = "/services/file";
+const fileUrl = "/services/files";
 
 export const getFiles = async (checkinId, cookie) => {
   return resolve({

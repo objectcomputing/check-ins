@@ -22,10 +22,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/agenda-item")
+@Controller("/services/agenda-items")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "agenda-item")
+@Tag(name = "agenda-items")
 public class AgendaItemController {
 
     private final AgendaItemServices agendaItemServices;

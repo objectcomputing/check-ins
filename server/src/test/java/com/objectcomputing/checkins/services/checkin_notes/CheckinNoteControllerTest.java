@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CheckinNoteControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, CheckInNoteFixture, RoleFixture {
 
     @Inject
-    @Client("/services/checkin-note")
+    @Client("/services/checkin-notes")
     HttpClient client;
 
     @Test

@@ -24,10 +24,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/member-skill")
+@Controller("/services/member-skills")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "member-skill")
+@Tag(name = "member-skills")
 public class MemberSkillController {
 
     private final MemberSkillServices memberSkillsService;

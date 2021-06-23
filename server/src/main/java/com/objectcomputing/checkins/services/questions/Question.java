@@ -5,6 +5,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,6 +18,11 @@ import java.util.UUID;
 @Entity
 @Table(name ="questions")
 public class Question {
+
+    public Question(@NotBlank String text, @Nullable UUID categoryId) {
+        this.text = text;
+        this.categoryId = categoryId;
+    }
 
     public Question(@NotBlank String text) {
         this.text = text;
@@ -37,6 +43,12 @@ public class Question {
     @Schema(description = "text of the question being asked", required = true)
     private String text;
 
+    @Nullable
+    @Column(name="categoryId")
+    @TypeDef(type= DataType.STRING)
+    @Schema(description = "id of the category this question is associated with")
+    private UUID categoryId;
+
     public UUID getId() {
         return id;
     }
@@ -53,25 +65,35 @@ public class Question {
         this.text = text;
     }
 
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Question)) return false;
         Question question = (Question) o;
         return Objects.equals(id, question.id) &&
-                Objects.equals(text, question.text);
+                Objects.equals(text, question.text) &&
+                Objects.equals(categoryId, question.categoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, text);
+        return Objects.hash(id, text, categoryId);
     }
 
     @Override
     public String toString() {
-        return "Question {" +
-                "id='" + id + '\'' +
-                "text='" + text + '\'' +
+        return "Question{" +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                ", categoryId=" + categoryId +
                 '}';
     }
 

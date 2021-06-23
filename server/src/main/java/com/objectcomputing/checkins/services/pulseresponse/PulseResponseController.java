@@ -34,11 +34,11 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.micronaut.scheduling.TaskExecutors;
 
-@Controller("/services/pulse-response")
+@Controller("/services/pulse-responses")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name="pulse-response")
+@Tag(name="pulse-responses")
 
 public class PulseResponseController {
 

@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiGrid-root profile-page MuiGrid-container"
+>
+  <div
+    className="MuiGrid-root left MuiGrid-item MuiGrid-grid-md-4"
+  >
+    <div
+      className="profile-details"
+    >
+      <h3>
+        No member details found
+      </h3>
+    </div>
+  </div>
+  <div
+    className="MuiGrid-root right MuiGrid-item MuiGrid-grid-md-7"
+  >
+    <div
+      className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+    >
+      <div
+        className="MuiCardHeader-root"
+      >
+        <div
+          className="MuiCardHeader-content"
+        >
+          <h1
+            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+          >
+            Skills
+          </h1>
+        </div>
+      </div>
+      <div
+        className="MuiCardContent-root"
+      >
+        <div
+          className="profile-skills"
+        >
+          <div
+            className="profile-skills"
+          >
+            <h3>
+              No skills found
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+    >
+      <div
+        className="MuiCardHeader-root"
+      >
+        <div
+          className="MuiCardHeader-content"
+        >
+          <h1
+            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+          >
+            Teams
+          </h1>
+        </div>
+      </div>
+      <div
+        className="MuiCardContent-root"
+      >
+        <div
+          className="profile-teams"
+        >
+          <div
+            className="profile-teams"
+          >
+            <h3>
+              No teams found
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+    >
+      <div
+        className="MuiCardHeader-root"
+      >
+        <div
+          className="MuiCardHeader-content"
+        >
+          <h1
+            className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+          >
+            Guilds
+          </h1>
+        </div>
+      </div>
+      <div
+        className="MuiCardContent-root"
+      >
+        <div
+          className="profile-guilds"
+        >
+          <div
+            className="profile-guilds"
+          >
+            <h3>
+              No guilds found
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

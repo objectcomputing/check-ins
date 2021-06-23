@@ -32,10 +32,6 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "suffix of the employee")
     private String suffix;
 
-    @NotBlank
-    @Schema(description = "full name of the employee")
-    private String name;
-
     @Nullable
     @Schema(description = "employee's title at the company")
     private String title ;
@@ -71,6 +67,10 @@ public class MemberProfileUpdateDTO {
     @Nullable
     @Schema(description = "employee's date of termination", nullable = true)
     private LocalDate terminationDate;
+
+    @Nullable
+    @Schema(description = "Birth date of employee", nullable = true)
+    private LocalDate birthDay;
 
     public UUID getId() {
         return id;
@@ -114,15 +114,6 @@ public class MemberProfileUpdateDTO {
 
     public void setSuffix(@Nullable String suffix) {
         this.suffix = suffix;
-    }
-
-    @NotBlank
-    public String getName() {
-        return name;
-    }
-
-    public void setName(@NotBlank String name) {
-        this.name = name;
     }
 
     @Nullable
@@ -204,4 +195,10 @@ public class MemberProfileUpdateDTO {
     public void setTerminationDate(LocalDate terminationDate) {
         this.terminationDate = terminationDate;
     }
+
+    @Nullable
+    public LocalDate getBirthDay() { return birthDay; }
+
+    public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
+
 }

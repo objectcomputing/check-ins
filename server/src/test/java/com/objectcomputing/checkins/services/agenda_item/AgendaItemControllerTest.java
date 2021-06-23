@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AgendaItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, AgendaItemFixture, RoleFixture {
 
     @Inject
-    @Client("/services/agenda-item")
+    @Client("/services/agenda-items")
     HttpClient client;
 
     @Test

@@ -23,10 +23,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/team")
+@Controller("/services/teams")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "team")
+@Tag(name = "teams")
 public class TeamController {
 
     private final TeamServices teamService;

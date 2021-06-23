@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller("/services/member-profile/current")
+@Controller("/services/member-profiles/current")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "current user")
 public class CurrentUserController {
@@ -61,7 +61,7 @@ public class CurrentUserController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/services/member-profile/" + uuid);
+        return URI.create("/services/member-profiles/" + uuid);
     }
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {

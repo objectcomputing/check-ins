@@ -8,23 +8,38 @@ import java.util.UUID;
 
 @Introspected
 public class GuildMemberCreateDTO {
-    @NotNull
-    @Schema(description = "id of the guild this entry is associated with", required = true)
-    private UUID guildid;
-
-    @NotNull
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
     private Boolean lead;
 
+    @NotNull
+    @Schema(description = "Guild to which the member belongs")
+    private UUID guildid;
+
+    @NotNull
+    @Schema(description = "Member who is on this guild")
+    private UUID memberid;
+
+    public GuildMemberCreateDTO(UUID guildid, UUID memberid, Boolean lead) {
+        this.guildid = guildid;
+        this.memberid = memberid;
+        this.lead = lead;
+    }
+
+    public Boolean getLead() {
+        return lead;
+    }
+
+    public void setLead(Boolean lead) {
+        this.lead = lead;
+    }
+
     public UUID getGuildid() {
         return guildid;
     }
 
-    public void setGuildid(UUID guildid) {
+    public void setGuildid(UUID guildmid) {
         this.guildid = guildid;
     }
 
@@ -34,13 +49,5 @@ public class GuildMemberCreateDTO {
 
     public void setMemberid(UUID memberid) {
         this.memberid = memberid;
-    }
-
-    public Boolean isLead() {
-        return lead;
-    }
-
-    public void setLead(Boolean lead) {
-        this.lead = lead;
     }
 }

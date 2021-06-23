@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 public class FileControllerTest {
 
     @Inject
-    @Client("/services/file")
+    @Client("/services/files")
     private HttpClient client;
 
     private static File testFile;

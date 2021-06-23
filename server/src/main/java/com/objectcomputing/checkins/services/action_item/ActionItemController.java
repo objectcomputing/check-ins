@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Controller("/services/action-item")
+@Controller("/services/action-items")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "action-item")
+@Tag(name = "action-items")
 public class ActionItemController {
 
     private ActionItemServices actionItemServices;

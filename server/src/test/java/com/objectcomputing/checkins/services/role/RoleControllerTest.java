@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
-    @Client("/services/role")
+    @Client("/services/roles")
     HttpClient client;
 
     @Test

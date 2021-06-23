@@ -23,10 +23,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/entity_tag")
+@Controller("/services/entity-tags")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Produces(MediaType.APPLICATION_JSON)
-@io.swagger.v3.oas.annotations.tags.Tag(name = "entity_tag")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "entity-tags")
 
 public class EntityTagController {
 

@@ -1,18 +1,22 @@
 import React, { useEffect, useReducer, useMemo } from "react";
 import { reducer, initialState } from "./reducer";
-import { getCheckins } from "./thunks";
+import { getCheckins, getAllCheckinsForAdmin } from "./thunks";
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
+  SET_ROLES,
+  UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_SKILLS,
-  SET_ROLES,
+  UPDATE_TEAMS,
 } from "./actions";
 import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
+import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
+import { getAllTeams } from "../api/team";
 import axios from "axios";
 
 const AppContext = React.createContext();
@@ -42,6 +46,44 @@ const AppContextProvider = (props) => {
     };
     getCsrf();
   }, [csrf]);
+
+  useEffect(() => {
+    async function getGuilds() {
+      let res = await getAllGuilds(csrf);
+      let data =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_GUILDS, payload: data });
+      }
+    }
+    if (csrf) {
+      getGuilds();
+    }
+  }, [csrf]);
+
+  useEffect(() => {
+    async function getTeams() {
+      let res = await getAllTeams(csrf);
+      let data =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_TEAMS, payload: data });
+      }
+    }
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, dispatch]);
 
   useEffect(() => {
     const updateUserProfile = async () => {
@@ -92,8 +134,20 @@ const AppContextProvider = (props) => {
   }, [csrf]);
 
   useEffect(() => {
-    if (id && csrf) {
-      getCheckins(id, pdlId, dispatch, csrf);
+    async function getAllTheCheckins() {
+      let res = await getCurrentUser(csrf);
+      let profile =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
+      if (profile && profile.role.includes("ADMIN") && id && csrf) {
+        getAllCheckinsForAdmin(dispatch, csrf);
+      } else if (id && csrf) {
+        getCheckins(id, pdlId, dispatch, csrf);
+      }
+    }
+    if (csrf) {
+      getAllTheCheckins();
     }
   }, [csrf, pdlId, id]);
 
@@ -118,24 +172,24 @@ const AppContextProvider = (props) => {
   }, [csrf]);
 
   useEffect(() => {
-      const getRoles = async () => {
-        const res = await getAllRoles(csrf);
-        const data =
-          res &&
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-            ? res.payload.data
-            : null;
-        if (data && data.length > 0) {
-          dispatch({ type: SET_ROLES, payload: data });
-        }
-      };
-      if (csrf) {
-        getRoles();
+    const getRoles = async () => {
+      const res = await getAllRoles(csrf);
+      const data =
+        res &&
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data && data.length > 0) {
+        dispatch({ type: SET_ROLES, payload: data });
       }
-    }, [csrf]);
+    };
+    if (csrf) {
+      getRoles();
+    }
+  }, [csrf]);
 
   const value = useMemo(() => {
     return { state, dispatch };

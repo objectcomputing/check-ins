@@ -127,6 +127,11 @@ public class MemberProfile {
     @Nullable
     private LocalDate terminationDate;
 
+    @Column(name="birthDate")
+    @Schema(description = "employee's birthdate")
+    @Nullable
+    private LocalDate birthDate;
+
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
                          @NotBlank String lastName,
@@ -139,9 +144,10 @@ public class MemberProfile {
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
-                         @Nullable LocalDate terminationDate) {
+                         @Nullable LocalDate terminationDate,
+                         @Nullable LocalDate birthDate) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
     }
 
     public MemberProfile(UUID id,
@@ -157,7 +163,8 @@ public class MemberProfile {
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
-                         @Nullable LocalDate terminationDate) {
+                         @Nullable LocalDate terminationDate,
+                         @Nullable LocalDate birthDate) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -172,6 +179,7 @@ public class MemberProfile {
         this.bioText = bioText;
         this.supervisorid = supervisorid;
         this.terminationDate = terminationDate;
+        this.birthDate=birthDate;
     }
 
     public MemberProfile() {
@@ -291,6 +299,15 @@ public class MemberProfile {
         this.terminationDate = terminationDate;
     }
 
+    @Nullable
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(@Nullable LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -309,13 +326,14 @@ public class MemberProfile {
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
-                Objects.equals(terminationDate, that.terminationDate);
+                Objects.equals(terminationDate, that.terminationDate) &&
+                Objects.equals(birthDate, that.birthDate);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
     }
 
     @Override
@@ -332,6 +350,7 @@ public class MemberProfile {
                 ", bioText='" + bioText + '\'' +
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
+                ", birthDate=" + birthDate +
                 '}';
     }
 }

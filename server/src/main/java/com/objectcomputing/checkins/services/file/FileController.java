@@ -26,8 +26,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Validated
-@Controller("/services/file")
-@Tag(name = "file")
+@Controller("/services/files")
+@Tag(name = "files")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class FileController {
 
