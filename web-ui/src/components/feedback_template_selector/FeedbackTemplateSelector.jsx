@@ -1,8 +1,7 @@
 import React, {useState} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
-import {useHistory, useLocation} from "react-router-dom";
-import queryString from "query-string";
+import PropTypes from "prop-types";
 
 function getTemplates() {
   return [
@@ -41,14 +40,21 @@ function getTemplates() {
   ];
 }
 
-const FeedbackTemplateSelector = () => {
+const propTypes = {
+  query: PropTypes.string,
+  changeQuery: PropTypes.func
+}
+
+const FeedbackTemplateSelector = (props) => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
-  const history = useHistory();
-  const location = useLocation();
-  const parsed = queryString.parse(location?.search);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
+  }
+
+  const handlePreviewSubmit = (selectedTemplate) => {
+    props.changeQuery("template", selectedTemplate.id);
+    setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
   const handlePreviewClose = (selectedTemplate) => {
@@ -59,9 +65,7 @@ const FeedbackTemplateSelector = () => {
     if (template.isAdHoc) {
       setPreview({open: true, selectedTemplate: template});
     } else {
-      console.log(`Selected ${template.title}`);
-      parsed.template = template.id;
-      history.push({...location, search: queryString.stringify(parsed)});
+      props.changeQuery("template", template.id);
     }
   }
 
@@ -71,7 +75,8 @@ const FeedbackTemplateSelector = () => {
       <TemplatePreviewModal
         template={preview.selectedTemplate}
         open={preview.open}
-        onClose={handlePreviewClose}
+        onSubmit={() => handlePreviewSubmit(preview.selectedTemplate)}
+        onClose={() => handlePreviewClose(preview.selectedTemplate)}
       />
       }
       <div className="card-container">
@@ -90,5 +95,7 @@ const FeedbackTemplateSelector = () => {
     </React.Fragment>
   );
 }
+
+FeedbackTemplateSelector.propTypes = propTypes;
 
 export default FeedbackTemplateSelector;

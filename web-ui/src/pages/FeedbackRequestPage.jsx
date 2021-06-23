@@ -5,14 +5,12 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import {Link, useLocation, Redirect, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
-import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,29 +42,37 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
+  const history = useHistory();
 
   const query = queryString.parse(location?.search);
 
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
-  // const fromQuery = query.from?.toString();
-  // const sendQuery = query.send?.toString();
-  // const dueQuery = query.due?.toString();
 
   let activeStep = location?.search ? parseInt(stepQuery) : 1;
   const numbersOnly = /^\d+$/.test(stepQuery);
 
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
     return (
-      <Redirect to="/feedback/request?step=1"/>
+      <Redirect to="/feedback/request/?step=1"/>
     );
   }
 
-  const getFeedbackArgs = () => {
-    let args = "";
-    if (templateQuery) args = `${args}&${templateQuery}`;
+  const getFeedbackArgs = (step) => {
+    const nextQuery = {
+      ...query,
+      step: step
+    }
 
-    return args;
+    return `/feedback/request/?${queryString.stringify(nextQuery)}`;
+  }
+
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
   }
 
   return (
@@ -77,7 +83,7 @@ const FeedbackRequestPage = () => {
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?step=${activeStep - 1}${getFeedbackArgs()}`}
+                to={getFeedbackArgs(activeStep - 1)}
               >
                 <Button
                   disabled={activeStep <= 1}>
@@ -87,7 +93,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}${getFeedbackArgs()}`}>
+                to={activeStep === 3 ? `/feedback/request/confirmation` : getFeedbackArgs(activeStep + 1)}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
@@ -110,7 +116,7 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector/> }
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate />}
       </div>
