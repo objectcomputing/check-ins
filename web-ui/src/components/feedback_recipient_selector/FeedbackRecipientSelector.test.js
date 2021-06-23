@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
+import React from "react";
 import FeedbackRecipientSelector from "./FeedbackRecipientSelector";
-import {AppContext, AppContextProvider} from "../../context/AppContext";
+import {AppContextProvider} from "../../context/AppContext";
 import {BrowserRouter} from "react-router-dom";
 
 it("renders the component", () => {

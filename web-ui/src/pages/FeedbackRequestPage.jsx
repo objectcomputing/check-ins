@@ -9,6 +9,7 @@ import { Link, useLocation, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
+import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
@@ -111,6 +112,7 @@ const FeedbackRequestPage = () => {
       <div className="current-step-content">
         {activeStep === 1 && <FeedbackTemplateSelector/> }
         {activeStep === 2 && <FeedbackRecipientSelector />}
+        {activeStep === 3 && <SelectDate />}
       </div>
     </div>
   );
