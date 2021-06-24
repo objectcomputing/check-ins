@@ -15,6 +15,10 @@ public class FeedbackRequestCreateDTO {
     private UUID creatorId;
 
     @NotNull
+    @Schema(description = "id of the person who was requested to give feedback", required = true)
+    private UUID recipientId;
+
+    @NotNull
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
@@ -30,8 +34,16 @@ public class FeedbackRequestCreateDTO {
     private LocalDate dueDate;
 
     @NotNull
-    @Schema(description = "Completion status of request", required = true)
+    @Schema(description = "completion status of request", required = true)
     private String status;
+
+    @Nullable
+    @Schema(description = "date the recipient submitted feedback for the request")
+    private LocalDate submitDate;
+
+    @Nullable
+    @Schema(description = "sentiment of the recipient's feedback")
+    private Double sentiment;
 
     public UUID getCreatorId() {
         return creatorId;
@@ -39,6 +51,14 @@ public class FeedbackRequestCreateDTO {
 
     public void setCreatorId(UUID creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public UUID getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(UUID recipientId) {
+        this.recipientId = recipientId;
     }
 
     public UUID getRequesteeId() {
@@ -80,6 +100,24 @@ public class FeedbackRequestCreateDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Nullable
+    public LocalDate getSubmitDate() {
+        return submitDate;
+    }
+
+    public void setSubmitDate(@Nullable LocalDate submitDate) {
+        this.submitDate = submitDate;
+    }
+
+    @Nullable
+    public Double getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(@Nullable Double sentiment) {
+        this.sentiment = sentiment;
     }
 }
 

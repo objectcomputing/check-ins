@@ -19,6 +19,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "feedback_requests")
 public class FeedbackRequest {
+
     @Id
     @Column(name = "id")
     @AutoPopulated
@@ -35,7 +36,7 @@ public class FeedbackRequest {
     @Column(name = "recipientId")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the person who was requested to give feedback")
+    @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
     @Column(name = "requesteeId")
@@ -63,7 +64,7 @@ public class FeedbackRequest {
     @Column(name = "status")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "Completion status of request", required = true)
+    @Schema(description = "completion status of request", required = true)
     private String status;
 
     @Column(name = "submitDate")
