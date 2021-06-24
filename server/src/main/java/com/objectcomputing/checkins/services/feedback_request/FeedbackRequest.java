@@ -32,6 +32,12 @@ public class FeedbackRequest {
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
+    @Column(name = "recipientId")
+    @NotNull
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the person who was requested to give feedback")
+    private UUID recipientId;
+
     @Column(name = "requesteeId")
     @NotNull
     @TypeDef(type = DataType.STRING)
@@ -46,12 +52,12 @@ public class FeedbackRequest {
 
     @Column(name="sendDate")
     @NotNull
-    @Schema(description = "date request was sent")
+    @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
 
     @Column(name="dueDate")
     @Nullable
-    @Schema(description = "date request is due (may be nullable)")
+    @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
     @Column(name = "status")
@@ -60,35 +66,58 @@ public class FeedbackRequest {
     @Schema(description = "Completion status of request", required = true)
     private String status;
 
+    @Column(name = "submitDate")
+    @Nullable
+    @Schema(description = "date the recipient submitted feedback for the request")
+    private LocalDate submitDate;
+
+    @Column(name = "sentiment")
+    @Nullable
+    @TypeDef(type = DataType.DOUBLE)
+    @Schema(description = "sentiment of the recipient's feedback")
+    private Double sentiment;
+
     public FeedbackRequest(@NotNull UUID creatorId,
+                           @NotNull UUID recipientId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status) {
+                           @NotNull String status,
+                           @Nullable LocalDate submitDate,
+                           @Nullable Double sentiment) {
         this.id = null;
         this.creatorId = creatorId;
+        this.recipientId = recipientId;
         this.requesteeId = requesteeId;
         this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
+        this.submitDate = submitDate;
+        this.sentiment = sentiment;
     }
 
     public FeedbackRequest(@Nullable UUID id,
                            @NotNull UUID creatorId,
+                           @NotNull UUID recipientId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status) {
+                           @NotNull String status,
+                           @Nullable LocalDate submitDate,
+                           @Nullable Double sentiment) {
         this.id = id;
         this.creatorId = creatorId;
+        this.recipientId = recipientId;
         this.requesteeId = requesteeId;
         this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
+        this.submitDate = submitDate;
+        this.sentiment = sentiment;
     }
 
     public FeedbackRequest(@Nullable UUID id,
@@ -98,6 +127,8 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
     }
+
+    public FeedbackRequest() {}
 
     public UUID getId() {
         return id;
@@ -113,6 +144,14 @@ public class FeedbackRequest {
 
     public void setCreatorId(UUID creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public UUID getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(UUID recipientId) {
+        this.recipientId = recipientId;
     }
 
     public UUID getRequesteeId() {
@@ -156,17 +195,44 @@ public class FeedbackRequest {
         this.status = status;
     }
 
+    @Nullable
+    public LocalDate getSubmitDate() {
+        return submitDate;
+    }
+
+    public void setSubmitDate(@Nullable LocalDate submitDate) {
+        this.submitDate = submitDate;
+    }
+
+    @Nullable
+    public Double getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(@Nullable Double sentiment) {
+        this.sentiment = sentiment;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackRequest that = (FeedbackRequest) o;
-        return Objects.equals(id, that.id) && Objects.equals(creatorId, that.creatorId) && Objects.equals(requesteeId, that.requesteeId) && Objects.equals(templateId, that.templateId) && Objects.equals(sendDate, that.sendDate) && Objects.equals(dueDate, that.dueDate) && Objects.equals(status, that.status);
+        return Objects.equals(id, that.id)
+                && Objects.equals(creatorId, that.creatorId)
+                && Objects.equals(requesteeId, that.requesteeId)
+                && Objects.equals(recipientId, that.recipientId)
+                && Objects.equals(templateId, that.templateId)
+                && Objects.equals(sendDate, that.sendDate)
+                && Objects.equals(dueDate, that.dueDate)
+                && Objects.equals(status, that.status)
+                && Objects.equals(submitDate, that.submitDate)
+                && Objects.equals(sentiment, that.sentiment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, requesteeId, templateId, sendDate, dueDate, status);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, templateId, sendDate, dueDate, status, submitDate, sentiment);
     }
 
     @Override
@@ -174,11 +240,14 @@ public class FeedbackRequest {
         return "FeedbackRequest{" +
                 "id=" + id +
                 ", creatorId=" + creatorId +
+                ", recipientId=" + recipientId +
                 ", requesteeId=" + requesteeId +
                 ", templateId=" + templateId +
                 ", sendDate=" + sendDate +
                 ", dueDate=" + dueDate +
-                ", status='" + status + '\'' +
+                ", status='" + status +
+                ", submitDate='" + submitDate +
+                ", sentiment='" + sentiment + '\'' +
                 '}';
     }
 }
