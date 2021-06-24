@@ -16,12 +16,20 @@ public class FeedbackRequestUpdateDTO {
     private UUID id;
 
     @Nullable
-    @Schema(description = "date request is due (may be nullable)")
+    @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
     @NotNull
     @Schema(description = "Completion status of request", required = true)
     private String status;
+
+    @Nullable
+    @Schema(description = "date the recipient submitted feedback for the request")
+    private LocalDate submitDate;
+
+    @Nullable
+    @Schema(description = "sentiment of the recipient's feedback")
+    private Double sentiment;
 
     public UUID getId() {
         return id;
@@ -46,5 +54,23 @@ public class FeedbackRequestUpdateDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Nullable
+    public LocalDate getSubmitDate() {
+        return submitDate;
+    }
+
+    public void setSubmitDate(@Nullable LocalDate submitDate) {
+        this.submitDate = submitDate;
+    }
+
+    @Nullable
+    public Double getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(@Nullable Double sentiment) {
+        this.sentiment = sentiment;
     }
 }
