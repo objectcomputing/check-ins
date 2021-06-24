@@ -14,9 +14,25 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
      * @param requestee The {@link MemberProfile} of the requestee of the feedback request
      * @return The saved {@link FeedbackRequest}
      */
-    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile recipient, MemberProfile requestee) {
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), creator.getId(), recipient.getId(), requestee.getId(), UUID.randomUUID(), testDate, null, "pending", null, null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), UUID.randomUUID(), testDate, null, "pending", null, null));
+    }
+
+    default MemberProfile createADefaultRecipient() {
+        return getMemberProfileRepository().save(new MemberProfile("Ron", null, "Swanson",
+                null, "Parks Director", null, "Pawnee, Indiana",
+                "ron@objectcomputing.com", "mr-ron-swanson",
+                LocalDate.now(), "enjoys woodworking, breakfast meats, and saxophone jazz",
+                null, null,null));
+    }
+
+    default MemberProfile createASecondDefaultRecipient() {
+        return getMemberProfileRepository().save(new MemberProfile("Leslie", null, "Knope",
+                null, "Parks Deputy Director", null, "Pawnee, Indiana",
+                "leslie@objectcomputing.com", "ms-leslie-knope",
+                LocalDate.now(), "proud member of numerous action committees",
+                null, null, null));
     }
 
 }

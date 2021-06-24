@@ -32,8 +32,7 @@ public class FeedbackRequestController {
 
     public FeedbackRequestController(FeedbackRequestServices feedbackReqServices,
                                      EventLoopGroup eventLoopGroup,
-                                     @Named(TaskExecutors.IO) ExecutorService executorService,
-                                     CurrentUserServices currentUserServices) {
+                                     @Named(TaskExecutors.IO) ExecutorService executorService) {
         this.feedbackReqServices = feedbackReqServices;
         this.eventLoopGroup = eventLoopGroup;
         this.executorService = executorService;

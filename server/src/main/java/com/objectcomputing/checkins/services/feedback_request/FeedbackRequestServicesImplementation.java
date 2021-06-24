@@ -94,7 +94,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new NotFoundException("No feedback request with id " + id);
         }
 
-        if (!createIsPermitted(feedbackReq.get().getCreatorId())) {
+        if (!createIsPermitted(feedbackReq.get().getRequesteeId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -135,24 +135,29 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         return feedbackReqList;
     }
 
-    private boolean getIsPermitted(@NotNull UUID requesteeId) {
-        return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId() == requesteeId;
-    }
-
     private boolean createIsPermitted(@NotNull UUID requesteeId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        LOG.info("current user id{}:", currentUserId);
+        LOG.info("current requestee id:{}", requesteeId);
+        LOG.info("current requestee user profile: {}", memberProfileServices.getById(requesteeId));
 
         if (currentUserServices.isAdmin()) {
+            LOG.info("current user is big kahuna admin");
             return true;
         }
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
         if (currentUserId.equals(requesteePDL)) {
+            LOG.info("current user id equals requestee pdl");
             return true;
         }
         //TODO: Can a person's supervisor send a feedback request?
-
+        LOG.info("current user is just a nobody lol");
         return false;
+    }
+
+    private boolean getIsPermitted(@NotNull UUID requesteeId) {
+        return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId() == requesteeId;
     }
 }
