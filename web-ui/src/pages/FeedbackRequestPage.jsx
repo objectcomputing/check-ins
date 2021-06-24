@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -78,7 +78,7 @@ const FeedbackRequestPage = () => {
   const location = useLocation();
   const query = queryString.parse(location?.search).step?.toString();
   let activeStep = location?.search ? parseInt(query) : 1;
-  const numbersOnly = /^\d+$/.test(query);
+  // const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -96,12 +96,12 @@ const FeedbackRequestPage = () => {
       console.log(`Selected ${template.title}`);
     }
   }
-
-  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
-    return (
-      <Redirect to="/feedback/request?step=1"/>
-    );
-  }
+ //TODO make the work
+  // if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+  //   return (
+  //     <Redirect to="/feedback/request?step=1"/>
+  //   );
+  // }
 
   return (
     <div className="feedback-request-page">
