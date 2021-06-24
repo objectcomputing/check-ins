@@ -47,6 +47,8 @@ dependencies {
 
     compile "commons-io:commons-io:2.8.0"
     compile 'org.apache.commons:commons-csv:1.8'
+    compileOnly("org.graalvm.nativeimage:svm")
+
 
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
