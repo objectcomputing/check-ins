@@ -9,7 +9,8 @@ public class MemberProfileTestUtil {
 
     public static MemberProfileCreateDTO mkCreateMemberProfileDTO() {
         MemberProfileCreateDTO dto = new MemberProfileCreateDTO();
-        dto.setName("TestName");
+        dto.setFirstName("TestFirstName");
+        dto.setLastName("TestLastName");
         dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
@@ -22,7 +23,8 @@ public class MemberProfileTestUtil {
     public static MemberProfileUpdateDTO mkUpdateMemberProfileDTO() {
         MemberProfileUpdateDTO dto = new MemberProfileUpdateDTO();
         dto.setId(UUID.fromString("e134d349-cf02-4a58-b9d3-42cc48375628"));
-        dto.setName("TestName");
+        dto.setFirstName("TestFirstName");
+        dto.setLastName("TestLastName");
         dto.setTitle("TestRole");
         dto.setLocation("TestLocation");
         dto.setWorkEmail("TestEmail");
@@ -33,7 +35,10 @@ public class MemberProfileTestUtil {
     }
 
     public static MemberProfile mkMemberProfile(String seed) {
-        return new MemberProfile("TestName" + seed,
+        return new MemberProfile("TestFirstName" + seed,
+                null,
+                "TestLastName" + seed,
+                null,
                 "TestRole" + seed,
                 null,
                 "TestLocation" + seed,
@@ -42,7 +47,7 @@ public class MemberProfileTestUtil {
                 LocalDate.of(2019, 1, 1),
                 "TestBio" + seed,
                 null,
-                null);
+                null,null);
     }
 
     public static MemberProfile mkMemberProfile() {
@@ -50,7 +55,10 @@ public class MemberProfileTestUtil {
     }
 
     public static void assertProfilesEqual(MemberProfile entity, MemberProfileResponseDTO dto) {
-        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
@@ -64,7 +72,10 @@ public class MemberProfileTestUtil {
 
     public static void assertProfilesEqual(MemberProfileUpdateDTO entity, MemberProfileResponseDTO dto) {
         assertEquals(entity.getId(), dto.getId());
-        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());
@@ -77,7 +88,10 @@ public class MemberProfileTestUtil {
     }
 
     public static void assertProfilesEqual(MemberProfileCreateDTO entity, MemberProfileResponseDTO dto) {
-        assertEquals(entity.getName(), dto.getName());
+        assertEquals(entity.getFirstName(), dto.getFirstName());
+        assertEquals(entity.getMiddleName(), dto.getMiddleName());
+        assertEquals(entity.getLastName(), dto.getLastName());
+        assertEquals(entity.getSuffix(), dto.getSuffix());
         assertEquals(entity.getTitle(), dto.getTitle());
         assertEquals(entity.getPdlId(), dto.getPdlId());
         assertEquals(entity.getLocation(), dto.getLocation());

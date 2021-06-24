@@ -12,10 +12,10 @@ import { act } from "react-dom/test-utils";
 window.snackDispatch = jest.fn();
 
 const server = setupServer(
-  rest.get('http://localhost:8080/services/member-profile/current', (req, res, ctx) => {
+  rest.get('http://localhost:8080/services/member-profiles/current', (req, res, ctx) => {
     return res(ctx.json({ id: "12345", name: "Test User" }));
   }),
-  rest.get('http://localhost:8080/services/team/member', (req, res, ctx) => {
+  rest.get('http://localhost:8080/services/teams/members', (req, res, ctx) => {
     return res(ctx.json([{ id: "12345", name: "Test User" }]));
   })
 );
@@ -27,8 +27,8 @@ afterAll(() => server.close());
 const testTeam = {
     name: "Test Team",
     description: "A team used for testing.",
-    teamLeads: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}],
-    teamMembers: [{id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
+    teamLeads: [{id:123, name:"Team Leader", lastName:"Leader"}, {id:124, name: "Other Leader", lastName:"OLeader"}],
+    teamMembers: [{id:125, name:"Team Member", lastName:"Member"}, {id:126, name: "Other Member", lastName:"OMember"}]
 };
 
 const emptyTeam = {
@@ -61,7 +61,7 @@ const initialState = {
         "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
     },
     index: 0,
-    memberProfiles: [{id:123, name:"Team Leader"}, {id:124, name: "Other Leader"}, {id:125, name:"Team Member"}, {id:126, name: "Other Member"}]
+    memberProfiles: [{id:123, name:"Team Leader", lastName: "Leader"}, {id:124, name: "Other Leader", lastName: "OLeader"}, {id:125, name:"Team Member", lastName: "Member"}, {id:126, name: "Other Member", lastName: "OMember"}]
   }
 }
 

@@ -1,7 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 
 import { AppContext } from "../../context/AppContext";
-import { selectMemberProfiles, selectCurrentUser } from "../../context/selectors";
+import {
+  selectCurrentUser,
+  selectCurrentMembers,
+} from "../../context/selectors";
 
 import { Button } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
@@ -11,68 +14,146 @@ import "./EditTeamModal.css";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
   const { state } = useContext(AppContext);
-  const memberProfiles = selectMemberProfiles(state);
+  const currentMembers = selectCurrentMembers(state);
   const currentUser = selectCurrentUser(state);
   const [editedTeam, setTeam] = useState(team);
-  const teamMemberOptions = memberProfiles;
+  const [teamMemberOptions, setTeamMemberOptions] = useState([]);
+  const teamMembers = team?.teamMembers;
+
+  const findExistingMember = useCallback((member) => teamMembers?.find((current) => {
+    return current.memberId === member.memberId;
+  }), [teamMembers]);
 
   useEffect(() => {
-    if(currentUser?.id && (editedTeam.teamMembers === undefined || editedTeam.teamMembers.length === 0)) {
+    if (open && team.id !== editedTeam.id) setTeam(team);
+  }, [open, team, editedTeam]);
+
+  useEffect(() => {
+    if (
+      currentUser?.id &&
+      (editedTeam.teamMembers === undefined ||
+        editedTeam.teamMembers.length === 0 ||
+        editedTeam.teamMembers.filter(member => member.lead === true).length === 0)
+    ) {
+      let teamMembers = [{
+        id: findExistingMember({memberId: currentUser.id})?.id,
+        memberId: currentUser.id,
+        name: `${currentUser.firstName} ${currentUser.lastName}`,
+        teamId: editedTeam.id,
+        lead: true
+      }];
+      // Keep current members if all leads are removed
+      if (editedTeam && editedTeam.teamMembers) {
+        const extantMembers = editedTeam.teamMembers.filter(member => member.lead === false);
+        teamMembers = teamMembers.concat(extantMembers);
+      }
+
       setTeam({
         ...editedTeam,
-        teamMembers:[{memberid: currentUser.id, name: currentUser.name, lead: true}]
+        teamMembers: teamMembers
       });
     }
-  }, [editedTeam, currentUser]);
+  }, [editedTeam, currentUser, findExistingMember]);
 
-  const onLeadsChange = (event, newValue) => {
+  // Sets the options for team members
+  useEffect(() => {
+    if (!editedTeam || !editedTeam.teamMembers || !currentMembers) return;
+    let teamMemberNames = editedTeam.teamMembers.map(
+      (teamMember) => teamMember.name
+    );
+    setTeamMemberOptions(
+      currentMembers.filter((member) => !teamMemberNames.includes(member.name))
+    );
+  }, [currentMembers, editedTeam]);
+
+  const onLeadsChange = (event, leads) => {
     let extantMembers =
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => !teamMember.lead)
         : [];
-    newValue.forEach((lead) => (lead.lead = true));
-    newValue.forEach((newLead) => {
-        extantMembers = extantMembers.filter(member => member.memberid !== newLead.id && member.id !== newLead.id)
+    leads = leads.map((lead) => ({
+      id: lead.memberId ? lead.id : undefined,
+      name: lead.name,
+      memberId: lead.memberId ? lead.memberId : lead.id,
+      teamId: editedTeam.id,
+      lead: true
+    }));
+
+    leads.forEach((lead) => {
+      extantMembers = extantMembers.filter(
+        (member) => member.memberId !== lead.memberId
+      );
     });
+
     extantMembers = [...new Set(extantMembers)];
-    newValue = [...new Set(newValue)];
+    leads = [...new Set(leads)];
+
     setTeam({
       ...editedTeam,
-        teamMembers: [...extantMembers, ...newValue],
+      teamMembers: [...extantMembers, ...leads].map((member) => {
+        const existing = findExistingMember(member)
+        if(existing) {
+          return {...member, id: existing.id}
+        } else {
+          return member;
+        }
+      }),
     });
   };
 
-  const onTeamMembersChange = (event, newValue) => {
+  const onTeamMembersChange = (event, regularMembers) => {
     let extantLeads =
       editedTeam && editedTeam.teamMembers
         ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
         : [];
-    newValue.forEach((teamMember) => (teamMember.lead = false));
-    newValue.forEach((newMember) => {
-      extantLeads = extantLeads.filter(lead => lead.memberid !== newMember.id && lead.id !== newMember.id)
+
+    regularMembers = regularMembers.map((member) => ({
+      id: member.memberId ? member.id : undefined,
+      name: member.name,
+      memberId: member.memberId ? member.memberId : member.id,
+      teamId: editedTeam.id,
+      lead: false
+    }));
+
+    regularMembers.forEach((teamMember) => {
+      extantLeads = extantLeads.filter(
+        (lead) => lead.memberId !== teamMember.memberId
+      );
     });
+
     extantLeads = [...new Set(extantLeads)];
-    newValue = [...new Set(newValue)];
+    regularMembers = [...new Set(regularMembers)];
+
     setTeam({
       ...editedTeam,
-         teamMembers: [...extantLeads, ...newValue],
+      teamMembers: [...extantLeads, ...regularMembers].map((member) =>{
+        const existing = findExistingMember(member);
+        if (existing) {
+          return {...member, id: existing.id};
+        }
+        else {
+          return member;
+        }
+      })
     });
   };
 
   const readyToEdit = (team) => {
     let numLeads = 0;
     if (team && team.teamMembers) {
-      numLeads = team.teamMembers.filter((teamMember) => teamMember.lead).length;
+      numLeads = team.teamMembers.filter((teamMember) => teamMember.lead)
+        .length;
     }
     return team.name && numLeads > 0;
   };
 
+  const close = () => {
+    onClose();
+    setTeam({});
+  };
+
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="edit-team-modal-title"
-    >
+    <Modal open={open} onClose={close} aria-labelledby="edit-team-modal-title">
       <div className="EditTeamModal">
         <h2>{headerText}</h2>
         <TextField
@@ -97,14 +178,18 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         <Autocomplete
           id="teamLeadSelect"
           multiple
+          getOptionSelected={(option, value) => {
+            return value ? value.memberId === option.memberId : false;
+          }}
           options={teamMemberOptions}
+          required
           value={
             editedTeam.teamMembers
               ? editedTeam.teamMembers.filter((teamMember) => teamMember.lead)
               : []
           }
           onChange={onLeadsChange}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(member) => member.name}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -116,6 +201,9 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         />
         <Autocomplete
           multiple
+          getOptionSelected={(option, value) => {
+            return value ? value.memberId === option.memberId : false;
+          }}
           options={teamMemberOptions}
           value={
             editedTeam.teamMembers
@@ -123,10 +211,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
               : []
           }
           onChange={onTeamMembersChange}
-          getOptionLabel={(option) => option.name}
-          getOptionSelected={(option, value) =>
-            value ? value.id === option.id : false
-          }
+          getOptionLabel={(member) => member.name}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -137,13 +222,14 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
           )}
         />
         <div className="EditTeamModal-actions fullWidth">
-          <Button onClick={onClose} color="secondary">
+          <Button onClick={close} color="secondary">
             Cancel
           </Button>
           <Button
             disabled={!readyToEdit(editedTeam)}
             onClick={() => {
               onSave(editedTeam);
+              close();
             }}
             color="primary"
           >

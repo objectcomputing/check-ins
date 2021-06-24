@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileServicesImpl;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -46,7 +45,7 @@ public class CurrentUserServicesImplTest {
 
         when(memberProfileRepo.findByWorkEmail(expected.getWorkEmail())).thenReturn(java.util.Optional.of(expected));
 
-        MemberProfile actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
+        MemberProfile actual = testObject.findOrSaveUser(expected.getFirstName(), expected.getLastName(), expected.getWorkEmail());
 
         assertEquals(expected, actual);
     }
@@ -62,7 +61,7 @@ public class CurrentUserServicesImplTest {
         when(memberProfileRepo.save(any())).thenReturn(expected);
         when(roleServices.save(mockRole)).thenReturn(mockRole);
 
-        MemberProfile actual = testObject.findOrSaveUser(expected.getName(), expected.getWorkEmail());
+        MemberProfile actual = testObject.findOrSaveUser(expected.getFirstName(), expected.getLastName(), expected.getWorkEmail());
 
         assertEquals(expected, actual);
         verify(roleServices, times(1)).save(any(Role.class));

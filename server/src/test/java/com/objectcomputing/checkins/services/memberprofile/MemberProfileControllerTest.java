@@ -14,7 +14,6 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.hateoas.Resource;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -22,16 +21,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,7 +34,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         SkillFixture, MemberSkillFixture, TeamFixture, TeamMemberFixture, RoleFixture {
 
     @Inject
-    @Client("/services/member-profile")
+    @Client("/services/member-profiles")
     private HttpClient client;
 
     /*
@@ -84,7 +79,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     }
 
     @Test
-    public void testDeleteTerminatesUserIfCheckinDataExists() {
+    public void testDeleteThrowsExceptionIfCheckinDataExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -93,26 +88,18 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberSkillExists() {
+    public void testDeleteThrowsExceptionIfMemberSkillExists() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -123,26 +110,18 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberIsPartOfATeam() {
+    public void testDeleteThrowsExceptionIfMemberIsPartOfATeam() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
@@ -153,64 +132,34 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfileOfMember)),
+                responseException.getMessage()
+        );
     }
 
     @Test
-    public void testDeleteTerminatesUserIfMemberHasPDLRole() {
+    public void testDeleteThrowsExceptionIfMemberHasPDLRole() {
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
-        MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         createDefaultRole(RoleType.PDL, memberProfileOfPDL);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfPDL.getId().toString())
                 .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 
-        final HttpResponse<?> response = client.toBlocking().exchange(request);
-        assertEquals(HttpStatus.OK, response.getStatus());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
 
-        // Ensure profile is terminated and not deleted
-        final HttpRequest<Object> requestForAssertingTermination = HttpRequest.
-                GET(String.format("/%s", memberProfileOfPDL.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForAssertingTermination = client.toBlocking().exchange(requestForAssertingTermination, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForAssertingTermination.getStatus());
-        assertNotNull(responseForAssertingTermination.body());
-        MemberProfile result = responseForAssertingTermination.body();
-        assertNotNull(result);
-        assertNotNull(result.getTerminationDate());
-        assertEquals(LocalDate.now(), result.getTerminationDate());
-        Assertions.assertNull(result.getPdlId());
-
-        // Ensure PDL record is updated for people under the terminated user
-        final HttpRequest<Object> requestForTestingPDLRecord = HttpRequest.GET(String.format("/%s", memberProfileOfMember.getId()))
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-
-        final HttpResponse<MemberProfile> responseForTestingPDLRecord = client.toBlocking().exchange(requestForTestingPDLRecord, MemberProfile.class);
-
-        assertEquals(HttpStatus.OK, responseForTestingPDLRecord.getStatus());
-        assertNotNull(responseForTestingPDLRecord.body());
-        MemberProfile memberProfileOfEmployee = responseForTestingPDLRecord.body();
-        assertNotNull(memberProfileOfEmployee);
-        Assertions.assertNull(result.getPdlId());
-        assertNull(memberProfileOfEmployee.getTerminationDate());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(
+                String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfileOfPDL)),
+                responseException.getMessage()
+        );
     }
 
     @Test
@@ -238,7 +187,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         assertEquals(request.getPath(), href);
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-        assertEquals("No member profile for id", error);
+        assertEquals("No member profile for id " + memberProfileOfMember.getId(), error);
     }
 
     @Test
@@ -269,7 +218,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
         final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
 
@@ -308,7 +257,8 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     void testFindByMemberName() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", encodeValue(memberProfile.getName()))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?firstName=%s", encodeValue(memberProfile.getFirstName())))
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<MemberProfile>> response = client.toBlocking().exchange(request, Argument.setOf(MemberProfile.class));
 
         assertEquals(Set.of(memberProfile), response.body());
@@ -362,7 +312,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(dto.getName(), response.body().getName());
+        assertEquals(MemberProfileUtils.getFullName(dto), MemberProfileUtils.getFullName(response.body()));
         assertEquals(String.format("%s/%s", request.getPath(), response.body().getId()), "/services" + response.getHeaders().get("location"));
     }
 
@@ -392,7 +342,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(4, errors.size());
+        assertEquals(6, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
@@ -426,23 +376,23 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Test
     public void testPUTUpdateMemberProfile() {
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        memberProfile.setStartDate(LocalDate.of(2019, 1, 01));
+        MemberProfileUpdateDTO profileUpdateDTO = mkUpdateMemberProfileDTO();
 
-        final HttpRequest<MemberProfile> request = HttpRequest.PUT("/", memberProfile)
+        final HttpRequest<MemberProfileUpdateDTO> request = HttpRequest.PUT("/", profileUpdateDTO)
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
-        final HttpResponse<MemberProfile> response = client.toBlocking().exchange(request, MemberProfile.class);
+        final HttpResponse<MemberProfileResponseDTO> response = client.toBlocking().exchange(request, MemberProfileResponseDTO.class);
 
-        assertEquals(memberProfile, response.body());
+        assertProfilesEqual(profileUpdateDTO, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), memberProfile.getId()), "/services" + response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), profileUpdateDTO.getId()), "/services" + response.getHeaders().get("location"));
     }
 
     @Test
     public void testPUTUpdateNonexistentMemberProfile() {
 
         MemberProfileCreateDTO memberProfileCreateDTO = new MemberProfileCreateDTO();
-        memberProfileCreateDTO.setName("reincarnation");
+        memberProfileCreateDTO.setFirstName("reincarnation");
+        memberProfileCreateDTO.setLastName("gentleman");
 
         final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.
                 PUT("/", memberProfileCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
@@ -478,32 +428,29 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertNotNull(response.body());
         assertProfilesEqual(requestBody, response.body());
-        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+        assertEquals("/member-profiles/" + response.body().getId(), response.header("location"));
     }
 
-    // POST - Nullable MemberProfile name
+    // POST - NotBlank MemberProfile first name (and last name)
     @Test
     public void testPostWithNullName() {
 
         MemberProfileCreateDTO requestBody = mkCreateMemberProfileDTO();
-        requestBody.setName(null);
+        requestBody.setFirstName(null);
 
-        final HttpResponse<MemberProfileResponseDTO> response = client
-                .toBlocking()
-                .exchange(HttpRequest.POST("", requestBody)
-                        .basicAuth(MEMBER_ROLE, MEMBER_ROLE), MemberProfileResponseDTO.class);
+        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.POST("", requestBody)
+                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertNotNull(response.body());
-        assertProfilesEqual(requestBody, response.body());
-        assertEquals("/member-profile/" + response.body().getId(), response.header("location"));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 
     // Find By id - when no user data exists for PUT
     @Test
     public void testPutValidationFailures() {
 
-        final HttpRequest<MemberProfileCreateDTO> request = HttpRequest.PUT("", new MemberProfileCreateDTO())
+        final HttpRequest<MemberProfileUpdateDTO> request = HttpRequest.PUT("", new MemberProfileUpdateDTO())
                 .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -511,7 +458,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         JsonNode body = thrown.getResponse().getBody(JsonNode.class).orElse(null);
         JsonNode errors = Objects.requireNonNull(body).get(Resource.EMBEDDED).get("errors");
 
-        assertEquals(2, errors.size());
+        assertEquals(4, errors.size());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
 
@@ -541,4 +488,67 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals("memberProfile.id: must not be null", thrown.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
     }
+
+    @Test
+    public void testMemberProfileWithNullTerminationDate() {
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        final HttpResponse<List < MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithUpcomingTerminationDate() {
+        MemberProfile memberProfile = createAFutureTerminatedMemberProfile();
+
+        final HttpResponse<List < MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDate() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(0, response.body().size());
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDateReturnsWhenTerminatedTrue() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(ADMIN_ROLE, ADMIN_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.body().size());
+        assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
+    }
+
+    @Test
+    public void testMemberProfileWithPreviousTerminationDateReturnsNothingIfNotAdmin() {
+        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
+
+        final HttpResponse<List <MemberProfileResponseDTO >> response = client
+                .toBlocking()
+                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(0, response.body().size());
+    }
+
 }

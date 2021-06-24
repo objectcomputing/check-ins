@@ -5,6 +5,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +13,15 @@ import java.util.Objects;
 @Introspected
 public class CurrentUserDTO {
 
-    @Nullable
+    @NotBlank
+    @Schema(description = "first name of the user")
+    private String firstName;
+
+    @NotBlank
+    @Schema(description = "last name of the user")
+    private String lastName;
+
+    @NotBlank
     @Schema(description = "full name of the user")
     private String name;
 
@@ -28,12 +37,30 @@ public class CurrentUserDTO {
     @Schema(implementation = MemberProfile.class, required = true)
     private MemberProfile memberProfile;
 
-    @Nullable
+    @NotBlank
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(@NotBlank String firstName) {
+        this.firstName = firstName;
+    }
+
+    @NotBlank
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank String lastName) {
+        this.lastName = lastName;
+    }
+
+    @NotBlank
     public String getName() {
         return name;
     }
 
-    public void setName(@Nullable String name) {
+    public void setName(@NotBlank String name) {
         this.name = name;
     }
 
@@ -68,7 +95,8 @@ public class CurrentUserDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrentUserDTO that = (CurrentUserDTO) o;
-        return name.equals(that.name) &&
+        return firstName.equals(that.firstName) &&
+                lastName.equals(that.lastName) &&
                 Objects.equals(role, that.role) &&
                 Objects.equals(imageUrl, that.imageUrl) &&
                 memberProfile.equals(that.memberProfile);
@@ -76,6 +104,6 @@ public class CurrentUserDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, role, imageUrl, memberProfile);
+        return Objects.hash(firstName, lastName, role, imageUrl, memberProfile);
     }
 }

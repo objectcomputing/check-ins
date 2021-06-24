@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -27,13 +28,41 @@ public class MemberProfile {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
-    @Nullable
-    @Column(name = "name")
+    @NotBlank
+    @Column(name = "firstName")
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(name::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(firstName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )    @Schema(description = "full name of the employee")
-    private String name;
+    )
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
+    @Nullable
+    @Column(name = "middleName")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(middleName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotBlank
+    @Column(name = "lastName")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Column(name = "suffix")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(suffix::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "suffix of the employee")
+    private String suffix;
 
     @Column(name="title")
     @ColumnTransformer(
@@ -65,7 +94,7 @@ public class MemberProfile {
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Column(name="employeeId")
@@ -98,7 +127,15 @@ public class MemberProfile {
     @Nullable
     private LocalDate terminationDate;
 
-    public MemberProfile(@Nullable String name,
+    @Column(name="birthDate")
+    @Schema(description = "employee's birthdate")
+    @Nullable
+    private LocalDate birthDate;
+
+    public MemberProfile(@NotBlank String firstName,
+                         @Nullable String middleName,
+                         @NotBlank String lastName,
+                         @Nullable String suffix,
                          @Nullable String title,
                          @Nullable UUID pdlId,
                          @Nullable String location,
@@ -107,12 +144,17 @@ public class MemberProfile {
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
-                         @Nullable LocalDate terminationDate) {
-        this(null, name, title, pdlId, location, workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
+                         @Nullable LocalDate terminationDate,
+                         @Nullable LocalDate birthDate) {
+        this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
     }
 
     public MemberProfile(UUID id,
-                         @Nullable String name,
+                         @NotBlank String firstName,
+                         @Nullable String middleName,
+                         @NotBlank String lastName,
+                         @Nullable String suffix,
                          @Nullable String title,
                          @Nullable UUID pdlId,
                          @Nullable String location,
@@ -121,9 +163,13 @@ public class MemberProfile {
                          @Nullable LocalDate startDate,
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
-                         @Nullable LocalDate terminationDate) {
+                         @Nullable LocalDate terminationDate,
+                         @Nullable LocalDate birthDate) {
         this.id = id;
-        this.name = name;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.suffix = suffix;
         this.title = title;
         this.pdlId = pdlId;
         this.location = location;
@@ -133,6 +179,7 @@ public class MemberProfile {
         this.bioText = bioText;
         this.supervisorid = supervisorid;
         this.terminationDate = terminationDate;
+        this.birthDate=birthDate;
     }
 
     public MemberProfile() {
@@ -146,12 +193,36 @@ public class MemberProfile {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String getTitle() {
@@ -228,13 +299,25 @@ public class MemberProfile {
         this.terminationDate = terminationDate;
     }
 
+    @Nullable
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(@Nullable LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MemberProfile that = (MemberProfile) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(middleName, that.middleName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(suffix, that.suffix) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
@@ -243,19 +326,21 @@ public class MemberProfile {
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
-                Objects.equals(terminationDate, that.terminationDate);
+                Objects.equals(terminationDate, that.terminationDate) &&
+                Objects.equals(birthDate, that.birthDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, title, pdlId, location, workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
+        return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
     }
 
     @Override
     public String toString() {
         return "MemberProfile{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + MemberProfileUtils.getFullName(this) + '\'' +
                 ", title='" + title + '\'' +
                 ", pdlId=" + pdlId +
                 ", location='" + location + '\'' +
@@ -265,6 +350,7 @@ public class MemberProfile {
                 ", bioText='" + bioText + '\'' +
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
+                ", birthDate=" + birthDate +
                 '}';
     }
 }

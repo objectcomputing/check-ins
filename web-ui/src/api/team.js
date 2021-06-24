@@ -1,7 +1,7 @@
 import { resolve } from "./api.js";
 
-const teamUrl = `/services/team`;
-const teamMemberUrl = `/services/team/member`;
+const teamUrl = `/services/teams`;
+const teamMemberUrl = `/services/teams/members`;
 
 export const getAllTeamMembers = async (cookie) => {
   return resolve({
@@ -17,7 +17,7 @@ export const getMembersByTeam = async (id, cookie) => {
     url: teamMemberUrl,
     responseType: "json",
     params: {
-      teamid: id,
+      teamId: id,
     },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },
@@ -35,12 +35,24 @@ export const updateTeam = async (team, cookie) => {
   });
 };
 
+export const getTeamByMember = async (id, cookie) => {
+  return resolve({
+    url: teamUrl,
+    responseType: "json",
+    params: {
+      memberId: id,
+    },
+    withCredentials: true,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getTeamsByMember = async (id, cookie) => {
   return resolve({
     url: teamMemberUrl,
     responseType: "json",
     params: {
-      memberid: id,
+      memberId: id,
     },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },
@@ -65,12 +77,12 @@ export const createTeam = async (team, cookie) => {
   });
 };
 
-export const addTeamMember = async (member, isLead, teamid, cookie) => {
+export const addTeamMember = async (member, isLead, teamId, cookie) => {
   return resolve({
     method: "post",
     url: teamMemberUrl,
     responseType: "json",
-    data: { memberid: member.id, lead: isLead, teamid: teamid },
+    data: { memberId: member.id, lead: isLead, teamId: teamId },
     headers: { "X-CSRF-Header": cookie },
   });
 };

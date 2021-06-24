@@ -1,7 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
-
-import { getAllPDLs, getMember } from "../../api/member";
+import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
+import {
+  selectOrderedPdls,
+  selectOrderedMemberFirstName,
+  selectCurrentMembers,
+} from "../../context/selectors";
 
 import { Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -10,42 +13,33 @@ import {
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import { format } from "date-fns";
 import { Button } from "@material-ui/core";
 
 import "./MemberModal.css";
 
 const MemberModal = ({ member = {}, open, onSave, onClose }) => {
   const { state } = useContext(AppContext);
-  const { csrf, memberProfiles } = state;
+  const memberProfiles = selectCurrentMembers(state);
   const [editedMember, setMember] = useState(member);
-  const [pdls, setPdls] = useState([]);
-
-  const getPdls = async () => {
-    let res = await getAllPDLs(csrf);
-    let promises = res.payload.data.map((member) => getMember(member.memberid, csrf));
-    const results = await Promise.all(promises);
-    const pdlArray = results.map((res) => res.payload.data);
-    setPdls(pdlArray);
-  };
-
+  const sortedPdls = selectOrderedPdls(state);
+  const sortedMembers = selectOrderedMemberFirstName(state);
   const onSupervisorChange = (event, newValue) => {
     setMember({
       ...editedMember,
-        supervisorid: newValue ? newValue.id : "",
-      });
-   };
+      supervisorid: newValue ? newValue.id : "",
+    });
+  };
 
-  useEffect(() => {
-    if (open && csrf) {
-      getPdls();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, csrf]);
-
-  if(!editedMember.startDate) {
+  if (!editedMember.startDate) {
     setMember({ ...editedMember, startDate: new Date() });
   }
-  const date = new Date(editedMember.startDate);
+
+  const terminationDate =
+    editedMember && editedMember.terminationDate
+      ? new Date(editedMember.terminationDate)
+      : null;
+  const startDate = new Date(editedMember.startDate);
 
   const onPdlChange = (event, newValue) => {
     setMember({
@@ -58,14 +52,46 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     <Modal open={open} onClose={onClose}>
       <div className="member-modal">
         <TextField
-            id="member-name-input"
-            label="Name"
-            required
-            className="halfWidth"
-            placeholder="Full Name"
-            value={editedMember.name ? editedMember.name : ""}
-            onChange={(e) =>
-                setMember({ ...editedMember, name: e.target.value })}
+          id="member-name-input"
+          label="First Name"
+          required
+          className="halfWidth"
+          placeholder="First Name"
+          value={editedMember.firstName ? editedMember.firstName : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, firstName: e.target.value })
+          }
+        />
+        <TextField
+          id="member-name-input"
+          label="Middle Name"
+          className="halfWidth"
+          placeholder="Middle Name"
+          value={editedMember.middleName ? editedMember.middleName : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, middleName: e.target.value })
+          }
+        />
+        <TextField
+          id="member-name-input"
+          label="Last Name"
+          required
+          className="halfWidth"
+          placeholder="Last Name"
+          value={editedMember.lastName ? editedMember.lastName : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, lastName: e.target.value })
+          }
+        />
+        <TextField
+          id="member-name-input"
+          label="Suffix"
+          className="halfWidth"
+          placeholder="Suffix"
+          value={editedMember.suffix ? editedMember.suffix : ""}
+          onChange={(e) =>
+            setMember({ ...editedMember, suffix: e.target.value })
+          }
         />
         <TextField
           id="member-email-input"
@@ -112,22 +138,33 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }
         />
         <Autocomplete
-          options={["", ...pdls]}
-          value={pdls.find((pdl) => pdl.id === editedMember.pdlId) || ""}
+          options={sortedPdls && ["", ...sortedPdls]}
+          value={
+            (sortedPdls &&
+              sortedPdls.find((pdl) => pdl?.id === editedMember.pdlId)) ||
+            ""
+          }
           onChange={onPdlChange}
           getOptionLabel={(option) => option.name || ""}
           renderInput={(params) => (
             <TextField
               {...params}
               className="fullWidth"
-              label="PDLs"
+              label="PDL"
               placeholder="Change PDL"
             />
           )}
         />
         <Autocomplete
-          options={["", ...memberProfiles]}
-          value={memberProfiles.find((memberProfile) => memberProfile.id === editedMember.supervisorid) || ""}
+          options={sortedMembers && ["", ...memberProfiles]}
+          value={
+            (sortedMembers &&
+              sortedMembers.find(
+                (memberProfile) =>
+                  memberProfile.id === editedMember.supervisorid
+              )) ||
+            ""
+          }
           onChange={onSupervisorChange}
           getOptionLabel={(option) => option.name || ""}
           renderInput={(params) => (
@@ -142,13 +179,28 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             margin="normal"
-            id="member-datepicker-dialog"
+            id="start-datepicker-dialog"
             required
             label="Start Date"
             format="MM/dd/yyyy"
-            value={date}
+            value={startDate}
             onChange={(e) => {
               setMember({ ...editedMember, startDate: e });
+            }}
+            KeyboardButtonProps={{
+              "aria-label": "Change Date",
+            }}
+          />
+          <KeyboardDatePicker
+            margin="normal"
+            id="termination-datepicker-dialog"
+            label="Termination Date"
+            clearable
+            format="MM/dd/yyyy"
+            value={terminationDate}
+            placeholder={format(new Date(), "MM/dd/yyy")}
+            onChange={(date) => {
+              setMember({ ...editedMember, terminationDate: date });
             }}
             KeyboardButtonProps={{
               "aria-label": "Change Date",

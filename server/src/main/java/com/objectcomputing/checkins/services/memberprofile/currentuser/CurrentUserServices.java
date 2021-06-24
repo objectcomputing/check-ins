@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.role.RoleType;
 
 public interface CurrentUserServices {
 
-    MemberProfile findOrSaveUser(String name, String workEmail);
+    MemberProfile findOrSaveUser(String firstName, String lastName, String workEmail);
 
     boolean hasRole(RoleType role);
 

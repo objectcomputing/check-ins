@@ -13,9 +13,21 @@ import java.util.UUID;
 @Introspected
 public class MemberProfileCreateDTO {
 
+    @NotBlank
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
     @Nullable
-    @Schema(description = "full name of the employee")
-    private String name;
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotBlank
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Schema(description = "suffix of the employee")
+    private String suffix;
 
     @NotBlank
     @Schema(description = "employee's title at the company", required = true)
@@ -30,7 +42,7 @@ public class MemberProfileCreateDTO {
     private String location;
 
     @NotBlank
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Nullable
@@ -54,12 +66,43 @@ public class MemberProfileCreateDTO {
     private LocalDate terminationDate;
 
     @Nullable
-    public String getName() {
-        return name;
+    @Schema(description = "Birth date of employee", nullable = true)
+    private LocalDate birthDay;
+
+    @NotBlank
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(@Nullable String name) {
-        this.name = name;
+    public void setFirstName(@NotBlank String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Nullable
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(@Nullable String middleName) {
+        this.middleName = middleName;
+    }
+
+    @NotBlank
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(@Nullable String suffix) {
+        this.suffix = suffix;
     }
 
     public String getTitle() {
@@ -139,12 +182,20 @@ public class MemberProfileCreateDTO {
         this.terminationDate = terminationDate;
     }
 
+    @Nullable
+    public LocalDate getBirthDay() { return birthDay; }
+
+    public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MemberProfileCreateDTO that = (MemberProfileCreateDTO) o;
-        return Objects.equals(name, that.name) &&
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(middleName, that.middleName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(suffix, that.suffix) &&
                 Objects.equals(title, that.title) &&
                 Objects.equals(pdlId, that.pdlId) &&
                 Objects.equals(location, that.location) &&
@@ -153,11 +204,14 @@ public class MemberProfileCreateDTO {
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
-                Objects.equals(terminationDate, that.terminationDate);
+                Objects.equals(terminationDate, that.terminationDate) &&
+                Objects.equals(birthDay, that.birthDay);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, title, pdlId, location, workEmail, employeeId, startDate, bioText, supervisorid, terminationDate);
+        return Objects.hash(firstName, middleName, lastName, suffix, title, pdlId, location,
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate, birthDay);
     }
 }

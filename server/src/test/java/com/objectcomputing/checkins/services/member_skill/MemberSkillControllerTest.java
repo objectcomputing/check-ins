@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MemberSkillControllerTest extends TestContainersSuite implements MemberProfileFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
-    @Client("/services/member-skill")
+    @Client("/services/member-skills")
     HttpClient client;
 
 

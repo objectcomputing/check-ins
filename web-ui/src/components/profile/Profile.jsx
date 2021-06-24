@@ -41,13 +41,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Profile = ({memberId}) => {
+const Profile = ({memberId, pdlId}) => {
   const classes = useStyles();
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const userProfile = selectProfileMap(state)[memberId];
 
-  const { workEmail, name, title, location, supervisorid, pdlId } = userProfile ? userProfile : {};
+  const { workEmail, name, title, location, supervisorid } = userProfile ? userProfile : {};
 
   const [pdl, setPDL] = useState();
   const [supervisor, setSupervisor] = useState();

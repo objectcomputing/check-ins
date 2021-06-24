@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.team;
 
 import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -27,7 +28,7 @@ public class TeamUpdateDTO {
     private String description;
 
     @Schema(description = "members of this team")
-    private List<TeamMemberResponseDTO> teamMembers;
+    private List<TeamMemberUpdateDTO> teamMembers;
 
     public TeamUpdateDTO(UUID id, String name, @Nullable String description) {
         this.id = id;
@@ -67,11 +68,11 @@ public class TeamUpdateDTO {
         return Objects.hash(id, name, description);
     }
 
-    public List<TeamMemberResponseDTO> getTeamMembers() {
+    public List<TeamMemberUpdateDTO> getTeamMembers() {
         return teamMembers;
     }
 
-    public void setTeamMembers(List<TeamMemberResponseDTO> teamMembers) {
+    public void setTeamMembers(List<TeamMemberUpdateDTO> teamMembers) {
         this.teamMembers = teamMembers;
     }
 
@@ -98,5 +99,62 @@ public class TeamUpdateDTO {
 
     public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    @Introspected
+    public static class TeamMemberUpdateDTO {
+        @Schema(description = "ID of the entity to update")
+        private UUID id;
+
+        @Schema(description = "whether member is lead or not represented by true or false respectively",
+                nullable = true)
+        private Boolean lead;
+
+        @NotNull
+        @Schema(description = "Member who is on this team")
+        private UUID memberId;
+
+        @NotNull
+        @Schema(description = "Team to which the member belongs")
+        private UUID teamId;
+
+        public TeamMemberUpdateDTO(UUID id, UUID teamId, UUID memberId, Boolean lead) {
+            this.id = id;
+            this.teamId = teamId;
+            this.memberId = memberId;
+            this.lead = lead;
+        }
+
+        public UUID getId() {
+            return id;
+        }
+
+        public void setId(UUID id) {
+            this.id = id;
+        }
+
+        public Boolean getLead() {
+            return lead;
+        }
+
+        public void setLead(Boolean lead) {
+            this.lead = lead;
+        }
+
+        public UUID getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(UUID memberId) {
+            this.memberId = memberId;
+        }
+
+        public UUID getTeamId() {
+            return teamId;
+        }
+
+        public void setTeamId(UUID teamId) {
+            this.teamId = teamId;
+        }
     }
 }

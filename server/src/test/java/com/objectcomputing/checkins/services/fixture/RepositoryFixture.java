@@ -5,23 +5,35 @@ import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository;
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
+import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
 import com.objectcomputing.checkins.services.tags.TagRepository;
 import com.objectcomputing.checkins.services.team.TeamRepository;
+import com.objectcomputing.checkins.services.team.member.MemberHistoryRepository;
 import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
+import com.objectcomputing.checkins.services.survey.SurveyRepository;
+import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
+
 
 public interface RepositoryFixture {
     EmbeddedServer getEmbeddedServer();
+
+    default MemberHistoryRepository getMemberHistoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberHistoryRepository.class);
+    }
 
     default TagRepository getTagRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);
@@ -94,4 +106,27 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(GuildMemberRepository.class);
     }
 
+    default FeedbackRepository getFeedbackRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackRepository.class);
+    }
+
+    default QuestionCategoryRepository getQuestionCategoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(QuestionCategoryRepository.class);
+    }
+        
+    default SurveyRepository getSurveyRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SurveyRepository.class);
+    }
+
+    default EmployeeHoursRepository getEmployeeHoursRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(EmployeeHoursRepository.class);
+    }
+
+     default SettingsRepository getSettingsRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(SettingsRepository.class);
+    }
+
+    default GuildMemberHistoryRepository getGuildMemberHistoryRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(GuildMemberHistoryRepository.class);
+    }
 }

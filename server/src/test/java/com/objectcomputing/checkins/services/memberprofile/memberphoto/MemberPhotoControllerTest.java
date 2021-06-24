@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class MemberPhotoControllerTest {
 
     @Inject
-    @Client("/services/member-profile/member-photo")
+    @Client("/services/member-profiles/member-photos")
     private HttpClient client;
 
     @Inject

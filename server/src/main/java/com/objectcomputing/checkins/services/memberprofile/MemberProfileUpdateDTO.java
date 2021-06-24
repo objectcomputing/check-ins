@@ -16,9 +16,21 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "id of the member profile this entry is associated with", required = true)
     private UUID id;
 
+    @NotBlank
+    @Schema(description = "first name of the employee")
+    private String firstName;
+
     @Nullable
-    @Schema(description = "full name of the employee")
-    private String name;
+    @Schema(description = "middle name of the employee")
+    private String middleName;
+
+    @NotBlank
+    @Schema(description = "last name of the employee")
+    private String lastName;
+
+    @Nullable
+    @Schema(description = "suffix of the employee")
+    private String suffix;
 
     @Nullable
     @Schema(description = "employee's title at the company")
@@ -33,7 +45,7 @@ public class MemberProfileUpdateDTO {
     private String location;
 
     @NotBlank
-    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjctComputing.com", required = true)
+    @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
     @Nullable
@@ -56,6 +68,10 @@ public class MemberProfileUpdateDTO {
     @Schema(description = "employee's date of termination", nullable = true)
     private LocalDate terminationDate;
 
+    @Nullable
+    @Schema(description = "Birth date of employee", nullable = true)
+    private LocalDate birthDay;
+
     public UUID getId() {
         return id;
     }
@@ -64,13 +80,40 @@ public class MemberProfileUpdateDTO {
         this.id = id;
     }
 
-    @Nullable
-    public String getName() {
-        return name;
+    @NotBlank
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(@Nullable String name) {
-        this.name = name;
+    public void setFirstName(@NotBlank String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Nullable
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(@Nullable String middleName) {
+        this.middleName = middleName;
+    }
+
+    @NotBlank
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(@Nullable String suffix) {
+        this.suffix = suffix;
     }
 
     @Nullable
@@ -152,4 +195,10 @@ public class MemberProfileUpdateDTO {
     public void setTerminationDate(LocalDate terminationDate) {
         this.terminationDate = terminationDate;
     }
+
+    @Nullable
+    public LocalDate getBirthDay() { return birthDay; }
+
+    public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
+
 }

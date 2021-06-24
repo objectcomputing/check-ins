@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`has billable hours 1`] = `
+<div
+  className="makeStyles-root-1"
+>
+  <div
+    className="MuiBox-root MuiBox-root-2"
+  >
+    <div
+      className="MuiBox-root MuiBox-root-3"
+    >
+      <div
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={50}
+        className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-determinate"
+        role="progressbar"
+      >
+        <div
+          className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Determinate"
+          style={
+            Object {
+              "transform": "translateX(-50%)",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+  <p
+    className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-alignRight"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
+  >
+    Contribution Hours: 
+    925
+     - Target Hours: 
+    1850
+     - PTO Hours: 
+    0
+  </p>
+</div>
+`;
+
+exports[`has no billable hours 1`] = `
+<div
+  className="makeStyles-root-1"
+>
+  <div
+    className="MuiBox-root MuiBox-root-4"
+  >
+    <div
+      className="MuiBox-root MuiBox-root-5"
+    >
+      <div
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={50}
+        className="MuiLinearProgress-root MuiLinearProgress-colorPrimary MuiLinearProgress-determinate"
+        role="progressbar"
+      >
+        <div
+          className="MuiLinearProgress-bar MuiLinearProgress-barColorPrimary MuiLinearProgress-bar1Determinate"
+          style={
+            Object {
+              "transform": "translateX(-50%)",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+  <p
+    className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-alignRight"
+    style={
+      Object {
+        "display": "block",
+      }
+    }
+  >
+    Contribution Hours: 
+    925
+     - Target Hours: 
+    1850
+     - PTO Hours: 
+    0
+  </p>
+</div>
+`;

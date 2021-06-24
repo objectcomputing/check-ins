@@ -10,7 +10,6 @@ import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.utils.SecurityService;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -31,14 +30,13 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
     }
 
     @Override
-    public MemberProfile findOrSaveUser(@Nullable String name, @NotNull String workEmail) {
-
+    public MemberProfile findOrSaveUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
         Optional<MemberProfile> userProfile = memberProfileRepo.findByWorkEmail(workEmail);
         if (userProfile.isPresent()) {
             return userProfile.get();
         }
 
-        return saveNewUser(name, workEmail);
+        return saveNewUser(firstName, lastName, workEmail);
     }
 
     @Override
@@ -63,14 +61,14 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         throw new NotFoundException("No active members in the system");
     }
 
-    private MemberProfile saveNewUser(@Nullable String name, @NotNull String workEmail) {
+    private MemberProfile saveNewUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
         MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
-        if (emailProfile != null && emailProfile.getId() != null) {
+        if (emailProfile != null) {
             throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
         }
 
-        MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(name, "", null,
-                "", workEmail, "", null, "", null, null));
+        MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
+                "", workEmail, "", null, "", null, null, null));
 
         roleServices.save(new Role(RoleType.MEMBER, createdMember.getId()));
 

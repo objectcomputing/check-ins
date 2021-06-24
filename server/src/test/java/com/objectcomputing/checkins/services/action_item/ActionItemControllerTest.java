@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, ActionItemFixture {
 
     @Inject
-    @Client("/services/action-item")
+    @Client("/services/action-items")
     HttpClient client;
 
     @Test
@@ -174,7 +174,8 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
 
         ActionItemCreateDTO actionItemCreateDTO = new ActionItemCreateDTO();
         actionItemCreateDTO.setCheckinid(checkIn.getId());
-        actionItemCreateDTO.setCreatedbyid(UUID.randomUUID());
+        final UUID memberId = UUID.randomUUID();
+        actionItemCreateDTO.setCreatedbyid(memberId);
         actionItemCreateDTO.setDescription("test");
 
         final HttpRequest<ActionItemCreateDTO> request = HttpRequest.POST("", actionItemCreateDTO).basicAuth(memberProfileForPDL.getWorkEmail(), PDL_ROLE);
@@ -185,7 +186,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("No member profile for id", error);
+        assertEquals("No member profile for id " + memberId, error);
 
     }
 
@@ -727,7 +728,8 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfPDL, memberProfileOfMember);
 
         ActionItem actionItem = createADefaultActionItem(checkIn, memberProfileOfPDL);
-        actionItem.setCreatedbyid(UUID.randomUUID());
+        final UUID memberId = UUID.randomUUID();
+        actionItem.setCreatedbyid(memberId);
 
         final HttpRequest<ActionItem> request = HttpRequest.PUT("", actionItem)
                 .basicAuth(memberProfileOfMember.getWorkEmail(), PDL_ROLE);
@@ -739,7 +741,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals("No member profile for id", error);
+        assertEquals("No member profile for id " + memberId, error);
 
     }
 

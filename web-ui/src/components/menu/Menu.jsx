@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
 
@@ -10,9 +10,13 @@ import {
   Avatar,
   Button,
   CssBaseline,
+  Collapse,
   Drawer,
   Hidden,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
   Toolbar,
 } from "@material-ui/core";
 
@@ -53,12 +57,48 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+    textAlign: "center",
+  },
+  ListItemText : {
+    fontSize: "0.9rem",
+  },
+  listStyle: {
+    textDecoration: "none", color: "white", 
+  },
+  listItem: {
+    textAlign: 'center'
+  },
+  subListItem: {
+    fontSize: "0.9rem",
+  }
 }));
+
+
+const directoryLinks = [
+  ["/guilds", "GUILDS"], 
+  ["/people", "PEOPLE"], 
+  ["/teams", "TEAMS"]
+]
+
+const reportsLinks = [
+  ["/checkins-reports", "CHECK-INS"], 
+  ["/skills-reports", "SKILLS"],
+  ["/team-skills-reports", "TEAM SKILLS"]
+]
+
+const isCollapsibleListOpen = (linksArr, loc) => {
+  for (let i = 0; i < linksArr.length; i++){
+    if (linksArr[i][0] === loc) return true;
+  }
+  return false;
+}
 
 function Menu() {
   const { state } = useContext(AppContext);
   const { userProfile } = state;
-  const { workEmail } =
+  const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
@@ -66,19 +106,25 @@ function Menu() {
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const anchorRef = React.useRef(null);
-
+  const location = useLocation();
+  const [directoryOpen, setDirectoryOpen] = useState(
+    isCollapsibleListOpen(directoryLinks, location.pathname)
+    );
+  const [reportsOpen, setReportsOpen] = useState(
+    isCollapsibleListOpen(reportsLinks, location.pathname)
+    );
+  const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
+
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
+  const prevOpen = useRef(open);
+  useEffect(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -86,7 +132,53 @@ function Menu() {
     setMobileOpen(!mobileOpen);
   };
 
-  const linkStyle = { textDecoration: "none", color: "white" };
+  const toggleReports = () => {
+    setReportsOpen(!reportsOpen);
+  };
+
+  const toggleDirectory = () => {
+    setDirectoryOpen(!directoryOpen);
+  };
+
+  const closeSubMenus = () => {
+    setReportsOpen(false);
+    setDirectoryOpen(false);
+  };
+
+  const isLinkSelected = (path) => {
+    // /checkins route is special case as additional info is added to url
+    if (path === "/checkins" && location.pathname.includes(`${path}/`)) return true;
+    return location.pathname === path ? true : false;
+  }
+
+  const createLinkJsx = (path, name, isSubLink) => {
+    return (
+      <ListItem
+        key={path}
+        component={Link}
+        to={path}
+        className={isSubLink? `${classes.listItem} ${classes.nested}` : classes.listItem}
+        button
+        onClick={isSubLink? 
+          undefined: 
+          () => {
+            closeSubMenus()
+          }
+        }
+        selected={isLinkSelected(path)}
+      >
+        <ListItemText classes={isSubLink? {primary: classes.subListItem} : null} primary={name} />
+      </ListItem>
+    )
+  }
+
+  const createListJsx = (listArr, isSublink) => {
+    return listArr.map(listItem => {
+      const [path, name] = listItem;
+      return createLinkJsx(path, name, isSublink);
+    })
+  }
+
 
   const drawer = (
     <div>
@@ -98,50 +190,49 @@ function Menu() {
           style={{ width: "50%" }}
         />
       </div>
-      <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/">
-          Home
-        </Link>
-      </Button>
-      <br />
+      
+      <List component="nav" className={classes.listStyle}>
+        {createListJsx(
+          [
+            ["/home", "HOME",], 
+            ["/checkins", "CHECK-INS",]
+          ], 
+          false)
+        }
+      </List>
       <Button
+        onClick={toggleDirectory}
         size="large"
-        style={{ width: "100%" }}
+        style={{ color: "white", width: "100%" }}
       >
-        <Link style={linkStyle} to="/checkins">
-          Check-ins
-        </Link>
+        Directory
       </Button>
-      <br />
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/directory">
-          Directory
-        </Link>
-      </Button>
-      <br />
+      <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+        <List className={classes.listStyle} component="nav" disablePadding>
+          {createListJsx(directoryLinks, true)}
+        </List>
+      </Collapse>
       {isAdmin && (
-        <Button size="large" style={{ width: "100%" }}>
-          <Link style={linkStyle} to="/pending-skills">
-            Pending Skills
-          </Link>
-        </Button>
+        <div>
+          <Button
+            onClick={toggleReports}
+            size="large"
+            style={{ color: "white", width: "100%" }}
+          >
+            Reports
+          </Button>
+          <List className={classes.listStyle} component="nav" disablePadding>
+            <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
+                {createListJsx(reportsLinks, true)}
+            </Collapse>
+            {createLinkJsx("/edit-skills", "SKILLS", false)}
+          </List>
+
+        </div>
       )}
-      <Button size="large" style={{ width: "100%" }}>
-        <Link style={linkStyle} to="/teams">
-          Teams
-        </Link>
-      </Button>
-      {/* {isAdmin && (
-        <Button>
-          <Link style={linkStyle} to="/admin">
-            Edit PDLs
-          </Link>
-        </Button>
-      )} */}
     </div>
   );
-
+  
   return (
     <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
       <CssBaseline />
@@ -163,22 +254,27 @@ function Menu() {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-        <Link style={{ textDecoration: "none" }} to="/profile">
+
           <Avatar
+            component={Link}
+            to={`/profile/${id}`}
             src={getAvatarURL(workEmail)}
             style={{
               position: "absolute",
+              cursor: "pointer",
               right: "5px",
               top: "10px",
+              textDecoration: "none"
             }}
-           />
-         </Link>
+          />
+
         </div>
       </AppBar>
-      <nav className={classes.drawer} >
+      <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
+            disablePortal
             anchor={theme.direction === "rtl" ? "right" : "left"}
             open={mobileOpen}
             onClose={handleDrawerToggle}

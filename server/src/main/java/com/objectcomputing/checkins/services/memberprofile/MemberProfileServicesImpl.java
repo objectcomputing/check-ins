@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -51,19 +52,28 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     public MemberProfile getById(@NotNull UUID id) {
         Optional<MemberProfile> memberProfile = memberProfileRepository.findById(id);
         if (memberProfile.isEmpty()) {
-            throw new NotFoundException("No member profile for id");
+            throw new NotFoundException("No member profile for id " + id);
         }
         return memberProfile.get();
     }
 
     @Override
-    public Set<MemberProfile> findByValues(@Nullable String name,
+    public Set<MemberProfile> findByValues(@Nullable String firstName,
+                                           @Nullable String lastName,
                                            @Nullable String title,
                                            @Nullable UUID pdlId,
                                            @Nullable String workEmail,
-                                           @Nullable UUID supervisorId) {
-        return new HashSet<>(memberProfileRepository.search(name, title, nullSafeUUIDToString(pdlId),
-                workEmail, nullSafeUUIDToString(supervisorId)));
+                                           @Nullable UUID supervisorId,
+                                           @Nullable Boolean terminated) {
+        HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
+                nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
+        if (!currentUserServices.isAdmin()) {
+            return memberProfiles.stream()
+                    .filter(member -> member.getTerminationDate() == null || member.getTerminationDate().isAfter(LocalDate.now()))
+                    .collect(Collectors.toSet());
+        }
+
+        return memberProfiles;
     }
 
     @Override
@@ -95,40 +105,38 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
         } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since Checkin record(s) exist", memberProfile.getName());
+            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since MemberSkill record(s) exist", memberProfile.getName());
+            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            LOG.info("User %s cannot be deleted since TeamMember record(s) exist", memberProfile.getName());
+            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
         } else if (!userRoles.isEmpty()) {
-            LOG.info("User %s cannot be deleted since user has PDL role", memberProfile.getName());
-        } else {
-            // delete the user
-            memberProfileRepository.deleteById(id);
-            return true;
+            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
         }
 
-        // Terminate the user if user is not deleted
         // Update PDL ID for all associated members before termination
-        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, nullSafeUUIDToString(id), null, null);
+        List<MemberProfile> pdlFor = memberProfileRepository.search(null, null, null,
+                null, null, nullSafeUUIDToString(id), null, null, null);
         for (MemberProfile member : pdlFor) {
             member.setPdlId(null);
             memberProfileRepository.update(member);
         }
-
-        // Terminate user
-        memberProfile.setTerminationDate(LocalDate.now());
-        memberProfile.setPdlId(null);
-        memberProfileRepository.update(memberProfile);
+        memberProfileRepository.deleteById(id);
         return true;
     }
 
     @Override
-    public MemberProfile findByName(@NotNull String name) {
-        List<MemberProfile> searchResult = memberProfileRepository.search(name, null, null, null, null);
+    public MemberProfile findByName(@NotNull String firstName, @NotNull String lastName) {
+        List<MemberProfile> searchResult = memberProfileRepository.search(firstName, null, lastName,
+                null, null, null, null, null, null);
         if (searchResult.size() != 1) {
             throw new BadArgException("Expected exactly 1 result. Found " + searchResult.size());
         }
         return searchResult.get(0);
+    }
+
+    @Override
+    public List<MemberProfile> findAll() {
+        return memberProfileRepository.findAll();
     }
 }

@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Controller("/services/member-profile/current")
+@Controller("/services/member-profiles/current")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "current user")
 public class CurrentUserController {
@@ -44,11 +45,14 @@ public class CurrentUserController {
         }
 
         String workEmail = authentication.getAttributes().get("email").toString();
-        String name = authentication.getAttributes().get("name").toString();
         String imageUrl = authentication.getAttributes().get("picture") != null ? authentication.getAttributes().get("picture").toString() : "";
+        String name = authentication.getAttributes().get("name").toString().trim();
+        String firstName = name.substring(0, name.indexOf(' '));
+        String lastName = name.substring(name.indexOf(' ') + 1).trim();
 
-        MemberProfile user = currentUserServices.findOrSaveUser(name, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getId()).stream().map(role -> role.getRole().toString()).collect(Collectors.toList());
+        MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
+        List<String> roles = roleRepository.findByMemberid(user.getId()).stream()
+                .map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()
@@ -57,12 +61,14 @@ public class CurrentUserController {
     }
 
     protected URI location(UUID uuid) {
-        return URI.create("/services/member-profile/" + uuid);
+        return URI.create("/services/member-profiles/" + uuid);
     }
 
     private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
-        dto.setName(entity.getName());
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
+        dto.setName(MemberProfileUtils.getFullName(entity));
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

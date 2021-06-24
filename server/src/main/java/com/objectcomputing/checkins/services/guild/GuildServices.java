@@ -4,13 +4,13 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface GuildServices {
-    Guild read(UUID uuid);
+    GuildResponseDTO read(UUID id);
 
-    Guild save(Guild g);
+    GuildResponseDTO save(GuildCreateDTO g);
 
-    Guild update(Guild g);
+    GuildResponseDTO update(GuildUpdateDTO g);
 
-    Boolean delete(UUID uuid);
+    Set<GuildResponseDTO> findByFields(String name, UUID memberid);
 
-    Set<Guild> findByFields(String name, UUID memberid);
+    boolean delete(UUID id);
 }

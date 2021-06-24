@@ -1,0 +1,464 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  style={
+    Object {
+      "padding": 12,
+    }
+  }
+>
+  <div
+    className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3"
+  >
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-9"
+    >
+      <div
+        className="makeStyles-flexRow-5"
+      >
+        <div
+          className="makeStyles-profileInfo-3"
+        >
+          <div>
+            <div
+              className="makeStyles-header-6"
+            >
+              <div
+                className="makeStyles-title-7"
+              >
+                <h2
+                  className="MuiTypography-root MuiTypography-h5"
+                />
+                <h3
+                  className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+                />
+              </div>
+            </div>
+            <p
+              className="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
+            >
+              <a
+                href="mailto:undefined"
+                rel="noopener noreferrer"
+                target="_blank"
+              />
+              <br />
+              Location: 
+              <br />
+              Supervisor: 
+              <br />
+              PDL: 
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        className="makeStyles-navigate-1"
+      >
+        <div>
+          <div>
+            <div
+              className="date-picker"
+            >
+              <button
+                aria-label="Previous Check-in\`"
+                className="MuiButtonBase-root MuiIconButton-root Mui-disabled Mui-disabled"
+                disabled={true}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={-1}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden={true}
+                    className="MuiSvgIcon-root arrow disabled"
+                    focusable="false"
+                    style={
+                      Object {
+                        "fontSize": "1.2em",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                    />
+                  </svg>
+                </span>
+              </button>
+              <div
+                className="MuiFormControl-root MuiTextField-root"
+                format="MMMM dd, yyyy @hh:mm aaaa"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                style={
+                  Object {
+                    "width": "18em",
+                  }
+                }
+              >
+                <label
+                  className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+                  data-shrink={false}
+                >
+                  Check-In Date
+                </label>
+                <div
+                  className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+                  onClick={[Function]}
+                >
+                  <input
+                    aria-invalid={false}
+                    autoFocus={false}
+                    className="MuiInputBase-input MuiInput-input"
+                    disabled={false}
+                    onAnimationStart={[Function]}
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onFocus={[Function]}
+                    readOnly={true}
+                    required={false}
+                    type="text"
+                    value="October 21, 2020 @12:00 a.m."
+                  />
+                </div>
+                
+              </div>
+              <button
+                aria-label="Next Check-in\`"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden={true}
+                    className="MuiSvgIcon-root arrow enabled"
+                    focusable="false"
+                    style={
+                      Object {
+                        "fontSize": "1.2em",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"
+                    />
+                  </svg>
+                </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-text makeStyles-addButton-2"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            <span
+              className="MuiButton-startIcon MuiButton-iconSizeMedium"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                />
+              </svg>
+            </span>
+            Create Check-In
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-3"
+    >
+      <div
+        className="right-sidebar"
+      >
+        <div
+          className="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          <div
+            className="MuiCardHeader-root"
+          >
+            <div
+              className="MuiCardHeader-avatar"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"
+                />
+              </svg>
+            </div>
+            <div
+              className="MuiCardHeader-content"
+            >
+              <span
+                className="MuiTypography-root MuiCardHeader-title MuiTypography-body2 MuiTypography-displayBlock"
+              >
+                Team Member Resources
+              </span>
+            </div>
+          </div>
+          <ul
+            className="MuiList-root MuiList-dense MuiList-padding"
+          >
+            <a
+              aria-disabled={false}
+              className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+              href="/pdfs/Expectations_Discussion_Guide_for_Team_Members.pdf"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              role="button"
+              tabIndex={0}
+              target="_blank"
+            >
+              <li
+                className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+                disabled={false}
+              >
+                <div
+                  className="MuiListItemText-root MuiListItemText-dense"
+                >
+                  <span
+                    className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                  >
+                    Expectations Discussion Guide for Team Members
+                  </span>
+                </div>
+              </li>
+              <span
+                className="MuiTouchRipple-root"
+              />
+            </a>
+            <a
+              aria-disabled={false}
+              className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+              href="/pdfs/Expectations_Worksheet.pdf"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              role="button"
+              tabIndex={0}
+              target="_blank"
+            >
+              <li
+                className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+                disabled={false}
+              >
+                <div
+                  className="MuiListItemText-root MuiListItemText-dense"
+                >
+                  <span
+                    className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                  >
+                    Expectations Worksheet
+                  </span>
+                </div>
+              </li>
+              <span
+                className="MuiTouchRipple-root"
+              />
+            </a>
+            <a
+              aria-disabled={false}
+              className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+              href="/pdfs/Feedback_Discussion_Guide_for_Team_Members.pdf"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              role="button"
+              tabIndex={0}
+              target="_blank"
+            >
+              <li
+                className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+                disabled={false}
+              >
+                <div
+                  className="MuiListItemText-root MuiListItemText-dense"
+                >
+                  <span
+                    className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                  >
+                    Feedback Discussion Guide for Team Members
+                  </span>
+                </div>
+              </li>
+              <span
+                className="MuiTouchRipple-root"
+              />
+            </a>
+            <a
+              aria-disabled={false}
+              className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+              href="/pdfs/Development_Discussion_Guide_for_Team_Members.pdf"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              role="button"
+              tabIndex={0}
+              target="_blank"
+            >
+              <li
+                className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+                disabled={false}
+              >
+                <div
+                  className="MuiListItemText-root MuiListItemText-dense"
+                >
+                  <span
+                    className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                  >
+                    Development Discussion Guide for Team Members
+                  </span>
+                </div>
+              </li>
+              <span
+                className="MuiTouchRipple-root"
+              />
+            </a>
+            <a
+              aria-disabled={false}
+              className="MuiButtonBase-root MuiListItem-root MuiListItem-dense MuiListItem-gutters MuiListItem-button"
+              href="/pdfs/Individual_Development_Plan.pdf"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              role="button"
+              tabIndex={0}
+              target="_blank"
+            >
+              <li
+                className="MuiListItem-root MuiListItem-dense MuiListItem-gutters"
+                disabled={false}
+              >
+                <div
+                  className="MuiListItemText-root MuiListItemText-dense"
+                >
+                  <span
+                    className="MuiTypography-root MuiListItemText-primary MuiTypography-body2 MuiTypography-displayBlock"
+                  >
+                    Individual Development Plan
+                  </span>
+                </div>
+              </li>
+              <span
+                className="MuiTouchRipple-root"
+              />
+            </a>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

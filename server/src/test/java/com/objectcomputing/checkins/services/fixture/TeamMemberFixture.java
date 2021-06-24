@@ -1,9 +1,14 @@
 package com.objectcomputing.checkins.services.fixture;
 
+import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.team.Team;
+import com.objectcomputing.checkins.services.team.TeamCreateDTO;
+import com.objectcomputing.checkins.services.team.TeamUpdateDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMember;
+import com.objectcomputing.checkins.services.team.member.TeamMemberCreateDTO;
 import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
+import com.objectcomputing.checkins.services.team.member.TeamMemberUpdateDTO;
 
 
 public interface TeamMemberFixture extends RepositoryFixture{
@@ -15,15 +20,20 @@ public interface TeamMemberFixture extends RepositoryFixture{
         return getTeamMemberRepository().save(new TeamMember(null, teamEntity.getId(), memberProfile.getId(), true));
     }
 
-    default TeamMemberResponseDTO createDefaultTeamMemberDto(Team teamEntity, MemberProfile memberProfile) {
-        return dtoFromEntity(createDefaultTeamMember(teamEntity, memberProfile), memberProfile);
+    default TeamCreateDTO.TeamMemberCreateDTO createDefaultTeamMemberDto(MemberProfile memberProfile, Boolean lead) {
+        return new TeamCreateDTO.TeamMemberCreateDTO(memberProfile.getId(), lead);
     }
 
-    default TeamMemberResponseDTO createDefaultTeamMemberDto(MemberProfile memberProfile, Boolean lead) {
-        return new TeamMemberResponseDTO(null, memberProfile.getName(), memberProfile.getId(), lead);
+    default TeamUpdateDTO.TeamMemberUpdateDTO updateDefaultTeamMemberDto(Team entity, MemberProfile memberProfile, Boolean lead) {
+        return new TeamUpdateDTO.TeamMemberUpdateDTO(null, entity.getId(), memberProfile.getId(), lead);
+    }
+
+    default TeamMemberCreateDTO createDefaultTeamMemberDto(Team teamEntity, MemberProfile memberProfile, Boolean lead) {
+        return new TeamMemberCreateDTO(teamEntity.getId(), memberProfile.getId(), true);
     }
 
     default TeamMemberResponseDTO dtoFromEntity(TeamMember memberEntity, MemberProfile memberProfile) {
-        return new TeamMemberResponseDTO(memberEntity.getId(), memberProfile.getName(), memberProfile.getId(), memberEntity.isLead());
+        return new TeamMemberResponseDTO(memberEntity.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
+                memberProfile.getId(), memberEntity.isLead());
     }
 }

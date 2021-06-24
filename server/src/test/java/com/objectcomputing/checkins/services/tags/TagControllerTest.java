@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TagControllerTest extends TestContainersSuite implements TagFixture {
 
     @Inject
-    @Client("/services/tag")
+    @Client("/services/tags")
     HttpClient client;
 
     @Test
