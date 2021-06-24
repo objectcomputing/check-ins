@@ -33,17 +33,17 @@ public class FeedbackRequest {
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @Column(name = "recipientId")
-    @NotNull
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the person who was requested to give feedback", required = true)
-    private UUID recipientId;
-
     @Column(name = "requesteeId")
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
+
+    @Column(name = "recipientId")
+    @NotNull
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the person who was requested to give feedback", required = true)
+    private UUID recipientId;
 
     @Column(name = "templateId")
     @NotNull
@@ -79,8 +79,8 @@ public class FeedbackRequest {
     private Double sentiment;
 
     public FeedbackRequest(@NotNull UUID creatorId,
-                           @NotNull UUID recipientId,
                            @NotNull UUID requesteeId,
+                           @NotNull UUID recipientId,
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
@@ -89,8 +89,8 @@ public class FeedbackRequest {
                            @Nullable Double sentiment) {
         this.id = null;
         this.creatorId = creatorId;
-        this.recipientId = recipientId;
         this.requesteeId = requesteeId;
+        this.recipientId = recipientId;
         this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
@@ -101,8 +101,8 @@ public class FeedbackRequest {
 
     public FeedbackRequest(@Nullable UUID id,
                            @NotNull UUID creatorId,
-                           @NotNull UUID recipientId,
                            @NotNull UUID requesteeId,
+                           @NotNull UUID recipientId,
                            @NotNull UUID templateId,
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
@@ -111,8 +111,8 @@ public class FeedbackRequest {
                            @Nullable Double sentiment) {
         this.id = id;
         this.creatorId = creatorId;
-        this.recipientId = recipientId;
         this.requesteeId = requesteeId;
+        this.recipientId = recipientId;
         this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
@@ -123,10 +123,14 @@ public class FeedbackRequest {
 
     public FeedbackRequest(@Nullable UUID id,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status) {
+                           @NotNull String status,
+                           @Nullable LocalDate submitDate,
+                           @Nullable Double sentiment) {
         this.id = id;
         this.dueDate = dueDate;
         this.status = status;
+        this.submitDate = submitDate;
+        this.sentiment = sentiment;
     }
 
     public FeedbackRequest() {}
@@ -147,20 +151,20 @@ public class FeedbackRequest {
         this.creatorId = creatorId;
     }
 
-    public UUID getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(UUID recipientId) {
-        this.recipientId = recipientId;
-    }
-
     public UUID getRequesteeId() {
         return requesteeId;
     }
 
     public void setRequesteeId(UUID requesteeId) {
         this.requesteeId = requesteeId;
+    }
+
+    public UUID getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(UUID recipientId) {
+        this.recipientId = recipientId;
     }
 
     public UUID getTemplateId() {

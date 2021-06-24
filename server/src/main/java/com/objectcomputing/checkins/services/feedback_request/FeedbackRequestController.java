@@ -121,21 +121,33 @@ public class FeedbackRequestController {
     private FeedbackRequestResponseDTO fromEntity(FeedbackRequest feedbackRequest) {
         FeedbackRequestResponseDTO dto = new FeedbackRequestResponseDTO();
         dto.setId(feedbackRequest.getId());
-        dto.setRequesteeId(feedbackRequest.getRequesteeId());
         dto.setCreatorId(feedbackRequest.getCreatorId());
+        dto.setRequesteeId(feedbackRequest.getRequesteeId());
+        dto.setRecipientId(feedbackRequest.getRecipientId());
         dto.setTemplateId(feedbackRequest.getTemplateId());
         dto.setSendDate(feedbackRequest.getSendDate());
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
+        dto.setSubmitDate(feedbackRequest.getSubmitDate());
+        dto.setSentiment(feedbackRequest.getSentiment());
 
         return dto;
     }
 
     private FeedbackRequest fromDTO(FeedbackRequestCreateDTO dto) {
-        return new FeedbackRequest(dto.getCreatorId(), dto.getRequesteeId(), dto.getTemplateId(), dto.getSendDate(), dto.getDueDate(), dto.getStatus());
+        return new FeedbackRequest(
+                dto.getCreatorId(),
+                dto.getRequesteeId(),
+                dto.getRecipientId(),
+                dto.getTemplateId(),
+                dto.getSendDate(),
+                dto.getDueDate(),
+                dto.getStatus(),
+                dto.getSubmitDate(),
+                dto.getSentiment());
     }
 
     private FeedbackRequest fromDTO(FeedbackRequestUpdateDTO dto) {
-        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus());
+        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus(), dto.getSubmitDate(), dto.getSentiment());
     }
 }

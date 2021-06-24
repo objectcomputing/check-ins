@@ -27,14 +27,33 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         this.memberProfileServices = memberProfileServices;
     }
 
-    @Override
-    public FeedbackRequest save(FeedbackRequest feedbackRequest) {
+    private void validateMembers(FeedbackRequest feedbackRequest) {
+        if (feedbackRequest == null) {
+            throw new BadArgException("Cannot validate members; feedback request does not exist");
+        }
+
         try {
             memberProfileServices.getById(feedbackRequest.getCreatorId());
+        } catch (NotFoundException e) {
+            throw new BadArgException("The creator ID is invalid");
+        }
+
+        try {
+            memberProfileServices.getById(feedbackRequest.getRecipientId());
+        } catch (NotFoundException e) {
+            throw new BadArgException("The recipient ID is invalid");
+        }
+
+        try {
             memberProfileServices.getById(feedbackRequest.getRequesteeId());
         } catch (NotFoundException e) {
-            throw new BadArgException("Either the creator id or the requestee id is invalid");
+            throw new BadArgException("The requestee ID is invalid");
         }
+    }
+
+    @Override
+    public FeedbackRequest save(FeedbackRequest feedbackRequest) {
+        validateMembers(feedbackRequest);
         if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }

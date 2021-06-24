@@ -15,12 +15,12 @@ public class FeedbackRequestCreateDTO {
     private UUID creatorId;
 
     @NotNull
-    @Schema(description = "id of the person who was requested to give feedback", required = true)
-    private UUID recipientId;
-
-    @NotNull
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
+
+    @NotNull
+    @Schema(description = "id of the person who was requested to give feedback", required = true)
+    private UUID recipientId;
 
     @NotNull
     @Schema(description = "id of the template attached to request", required = true)
@@ -53,20 +53,20 @@ public class FeedbackRequestCreateDTO {
         this.creatorId = creatorId;
     }
 
-    public UUID getRecipientId() {
-        return recipientId;
-    }
-
-    public void setRecipientId(UUID recipientId) {
-        this.recipientId = recipientId;
-    }
-
     public UUID getRequesteeId() {
         return requesteeId;
     }
 
     public void setRequesteeId(UUID requesteeId) {
         this.requesteeId = requesteeId;
+    }
+
+    public UUID getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(UUID recipientId) {
+        this.recipientId = recipientId;
     }
 
     public UUID getTemplateId() {
