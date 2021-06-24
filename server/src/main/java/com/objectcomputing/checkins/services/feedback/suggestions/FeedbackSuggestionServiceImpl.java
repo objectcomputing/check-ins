@@ -46,11 +46,11 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         }
 
         List<FeedbackSuggestionDTO> suggestions = new LinkedList<FeedbackSuggestionDTO>();
-        if(!suggestFor.getSupervisorid().equals(null) && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
+        if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("Supervisor of requestee", suggestFor.getSupervisorid()));
         }
 
-        if(!suggestFor.getPdlId().equals(null) && !suggestFor.getPdlId().equals(currentUser.getId())) {
+        if(suggestFor.getPdlId() != null && !suggestFor.getPdlId().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("PDL of requestee", suggestFor.getPdlId()));
         }
 
