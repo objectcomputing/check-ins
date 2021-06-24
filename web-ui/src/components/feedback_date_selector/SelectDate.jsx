@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useState, useEffect, useRef} from "react";
 
 import {
   DatePicker,
@@ -20,17 +20,24 @@ pickerContain: {
 
 const SelectDate = (props) =>{
   const classes = useStyles();
+  let hasPushedQuery = useRef(false)
   const {sendDateProp, dueDateProp, handleQueryChange} = props
   const [sendDateQuery, setSendDateQuery] = useState(props.sendDateProp)
   const [dueDateQuery, setDueDateQuery] = useState(props.dueDateProp)
 
 //populates due and send date in url with appropriate default values on
-//appropriate step
-  useCallback(() => {
-    handleQueryChange("dueDate",dueDateProp)
-    handleQueryChange("sendDate", sendDateProp)
-    console.log("please don't kill yourself")
-  }, [sendDateProp, dueDateProp, handleQueryChange],);
+//appropriate step--looks weird due to es linter use dependency warnings i had to fix
+  useEffect(() => {
+    function sendInitialURLQuery() {
+      handleQueryChange("dueDate",dueDateProp)
+      handleQueryChange("sendDate", sendDateProp)
+    }
+    if (!hasPushedQuery.current) {
+      hasPushedQuery.current = true;
+      sendInitialURLQuery();
+    }
+
+  }, [dueDateProp, handleQueryChange, sendDateProp]);
 
 //populates url with user's changes if they change default values
 const handleDueDateChange = (date) => {
