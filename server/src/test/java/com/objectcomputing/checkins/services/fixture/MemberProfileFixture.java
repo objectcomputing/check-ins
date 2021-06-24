@@ -24,6 +24,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null, null));
     }
 
+
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Bill PDL", null, "Johnson",
                 null, "Comedic Relief PDL", memberProfile.getId(), "New York, New York",
@@ -40,11 +41,11 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
-    default MemberProfile createAThirdDefaultMemberProfile(MemberProfile memberProfile) {
-        return getMemberProfileRepository().save(new MemberProfile("Jane", null, "Doe",
-                null, "Comedic Relief", memberProfile.getId(), "New York, New York",
-                "janed@objectcomputing.com", "ms-jane-doe", LocalDate.now(),
-                "is a clay figurine clown star of a parody of children's clay animation shows",
+    default MemberProfile createAThirdDefaultMemberProfileForPdl(MemberProfile memberProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Godzilla", null, "Godzilla",
+                null, "local kaiju", memberProfile.getId(), "Tokyo, Japan",
+                "godzilla@objectcomputing.com", "godzilla", LocalDate.now(),
+                "is a destroyer of words",
                 null, null, null));
     }
 
