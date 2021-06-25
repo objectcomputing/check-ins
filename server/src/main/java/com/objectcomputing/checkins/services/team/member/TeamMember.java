@@ -26,16 +26,16 @@ public class TeamMember {
     private UUID id;
 
     @NotNull
-    @Column(name = "teamid")
+    @Column(name = "teamId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the team this entry is associated with", required = true)
-    private UUID teamid;
+    private UUID teamId;
 
     @NotNull
-    @Column(name = "memberid")
+    @Column(name = "memberId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
+    private UUID memberId;
 
     @Nullable
     @Column(name = "lead")
@@ -43,14 +43,14 @@ public class TeamMember {
             nullable = true)
     private Boolean lead;
 
-    public TeamMember(UUID teamid, UUID memberid, Boolean lead) {
-        this(null, teamid, memberid, lead);
+    public TeamMember(UUID teamId, UUID memberId, Boolean lead) {
+        this(null, teamId, memberId, lead);
     }
 
-    public TeamMember(UUID id, UUID teamid, UUID memberid, Boolean lead) {
+    public TeamMember(UUID id, UUID teamId, UUID memberId, Boolean lead) {
         this.id = id;
-        this.teamid = teamid;
-        this.memberid = memberid;
+        this.teamId = teamId;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
@@ -62,20 +62,20 @@ public class TeamMember {
         this.id = id;
     }
 
-    public UUID getTeamid() {
-        return teamid;
+    public UUID getTeamId() {
+        return teamId;
     }
 
-    public void setTeamid(UUID teamid) {
-        this.teamid = teamid;
+    public void setTeamId(UUID teamId) {
+        this.teamId = teamId;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getMemberId() {
+        return memberId;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
     }
 
     public boolean isLead() {
@@ -92,22 +92,22 @@ public class TeamMember {
         if (o == null || getClass() != o.getClass()) return false;
         TeamMember that = (TeamMember) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(teamid, that.teamid) &&
-                Objects.equals(memberid, that.memberid) &&
+                Objects.equals(teamId, that.teamId) &&
+                Objects.equals(memberId, that.memberId) &&
                 Objects.equals(lead, that.lead);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, teamid, memberid, lead);
+        return Objects.hash(id, teamId, memberId, lead);
     }
 
     @Override
     public String toString() {
         return "TeamMember{" +
                 "id=" + id +
-                ", teamid=" + teamid +
-                ", memberid=" + memberid +
+                ", teamId=" + teamId +
+                ", memberId=" + memberId +
                 ", lead=" + isLead() +
                 '}';
     }

@@ -15,15 +15,15 @@ public class TeamMemberCreateDTO {
 
     @NotNull
     @Schema(description = "Team to which the member belongs")
-    private UUID teamid;
+    private UUID teamId;
 
     @NotNull
     @Schema(description = "Member who is on this team")
-    private UUID memberid;
+    private UUID memberId;
 
-    public TeamMemberCreateDTO(UUID teamid, UUID memberid, Boolean lead) {
-        this.teamid = teamid;
-        this.memberid = memberid;
+    public TeamMemberCreateDTO(UUID teamId, UUID memberId, Boolean lead) {
+        this.teamId = teamId;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
@@ -35,19 +35,19 @@ public class TeamMemberCreateDTO {
         this.lead = lead;
     }
 
-    public UUID getTeamid() {
-        return teamid;
+    public UUID getTeamId() {
+        return teamId;
     }
 
-    public void setTeamid(UUID teamid) {
-        this.teamid = teamid;
+    public void setTeamId(UUID teamId) {
+        this.teamId = teamId;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getMemberId() {
+        return memberId;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
     }
 }

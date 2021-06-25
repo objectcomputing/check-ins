@@ -2,8 +2,8 @@ package com.objectcomputing.checkins.services.team;
 
 import com.objectcomputing.checkins.services.team.member.TeamMemberResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.annotation.Introspected;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Introspected
 public class TeamResponseDTO {
     @NotNull
     private UUID id;

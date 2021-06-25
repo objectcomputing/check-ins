@@ -12,7 +12,7 @@ const guilds = [
     id: "3fa4-5717-4562-b3fc-2c963f66afa6",
     name: "stuff",
     description: "",
-    guildMembers: [{memberid: "3fa4-5717-4562-b3fc-2c963f66afa9",
+    guildMembers: [{memberId: "3fa4-5717-4562-b3fc-2c963f66afa9",
        name: "testname", lead: true}]
   },
 ];

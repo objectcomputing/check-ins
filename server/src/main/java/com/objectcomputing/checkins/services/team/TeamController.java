@@ -77,14 +77,13 @@ public class TeamController {
      * Find team(s) given a combination of the following parameters
      *
      * @param name,     name of the team
-     * @param memberid, {@link UUID} of the member you wish to inquire in to which teams they are a part of
-     * @return {@link List< TeamResponseDTO > list of teams}, return all teams when no parameters filled in else
+     * @param memberId, {@link UUID} of the member you wish to inquire in to which teams they are a part of
+     * @return {@link List<TeamResponseDTO> list of teams}, return all teams when no parameters filled in else
      * return all teams that match all of the filled in params
      */
-
-    @Get("/{?name,memberid}")
-    public Single<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberid) {
-        return Single.fromCallable(() -> teamService.findByFields(name, memberid))
+    @Get("/{?name,memberId}")
+    public Single<HttpResponse<Set<TeamResponseDTO>>> findTeams(@Nullable String name, @Nullable UUID memberId) {
+        return Single.fromCallable(() -> teamService.findByFields(name, memberId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(teams -> (HttpResponse<Set<TeamResponseDTO>>) HttpResponse.ok(teams))
                 .subscribeOn(Schedulers.from(ioExecutorService));
@@ -94,7 +93,7 @@ public class TeamController {
      * Update team.
      *
      * @param team, {@link TeamUpdateDTO}
-     * @return {@link HttpResponse< TeamResponseDTO >}
+     * @return {@link HttpResponse<TeamResponseDTO>}
      */
     @Put()
     public Single<HttpResponse<TeamResponseDTO>> update(@Body @Valid TeamUpdateDTO team, HttpRequest<TeamUpdateDTO> request) {
