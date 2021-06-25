@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -13,6 +13,8 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
+import {AppContext} from "../context/AppContext";
+import {getMember} from "../api/member";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -73,11 +75,16 @@ function getTemplates() {
 }
 
 const FeedbackRequestPage = () => {
+  const { state } = useContext(AppContext);
+  const { csrf, userProfile } = state;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
   const query = queryString.parse(location?.search).step?.toString();
-  let activeStep = location?.search ? parseInt(query) : 1;
+  const { search } = useLocation();
+  const values = queryString.parse(search);
+  const requesteeId = values.for;
+  let activeStep = location?.search ? parseInt(query) : 2;
   // const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
@@ -96,12 +103,28 @@ const FeedbackRequestPage = () => {
       console.log(`Selected ${template.title}`);
     }
   }
- //TODO make the work
-  // if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
-  //   return (
-  //     <Redirect to="/feedback/request?step=1"/>
-  //   );
-  // }
+
+  const [requestee, setRequestee] = useState();
+  useEffect(() => {
+    async function getMemberProfile() {
+      if (requesteeId) {
+        let res = await getMember(requesteeId, csrf);
+        let requesteeProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setRequestee(requesteeProfile);
+      }
+    }
+    if (csrf) {
+      getMemberProfile();
+    }
+  }, [csrf, requesteeId]);
+
+
+   if (activeStep < 1 || activeStep > steps.length) {
+      // return (
+      //   <Redirect to="/feedback/request?step=1"/>
+      // );
+   }
 
   return (
     <div className="feedback-request-page">
@@ -119,7 +142,7 @@ const FeedbackRequestPage = () => {
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?step=${activeStep - 1}`}
+                to={`?for=${requesteeId}&step=${activeStep - 1}`}
               >
                 <Button
                   disabled={activeStep <= 1}>
@@ -129,7 +152,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
+                to={activeStep===3 ?`/feedback/request/confirmation` : `?for=${requesteeId}&step=${activeStep + 1}`}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
