@@ -17,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Member;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -68,12 +65,6 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
                                            @Nullable Boolean terminated) {
         HashSet<MemberProfile> memberProfiles = new HashSet<>(memberProfileRepository.search(firstName, null, lastName, null, title,
                 nullSafeUUIDToString(pdlId), workEmail, nullSafeUUIDToString(supervisorId), terminated));
-        if (currentUserServices.isAdmin()) {
-            List<MemberProfile> terminatedMembers = memberProfileRepository.findTerminated();
-            if (terminatedMembers.size() > 0) {
-                memberProfiles.addAll(terminatedMembers);
-            }
-        }
 
         return memberProfiles;
     }
