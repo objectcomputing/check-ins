@@ -6,6 +6,8 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -18,6 +20,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImplementation.class);
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
@@ -67,24 +70,37 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     @Override
     public FeedbackRequest update(FeedbackRequest feedbackRequest) {
+        //only creator can update due date--only field they can update without making new request
+        //status has to be updated with any permissions--fired on submission from any recipient
+        //submit date can be updated only when the recipient is logged in--fired on submission from any recipient
+        //TODO: should overdue status be made part of backend, or should it be something calculated only on front end from
+        //dueDate and the current date?
         FeedbackRequest updatedFeedback = null;
         if (feedbackRequest.getId() != null) {
             updatedFeedback = getById(feedbackRequest.getId());
         }
         if (updatedFeedback != null) {
+            LOG.info("updated feedback object: {}", updatedFeedback.toString());
+            LOG.info("feedback request passed into function: {}", feedbackRequest.toString());
             try {
                 memberProfileServices.getById(updatedFeedback.getCreatorId());
                 memberProfileServices.getById(updatedFeedback.getRequesteeId());
             } catch (NotFoundException e) {
                 throw new BadArgException("Either the creator id or the requestee id is invalid");
             }
+            UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-            if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
-                throw new PermissionException("You are not authorized to do this operation");
+            if (currentUserId.equals(updatedFeedback.getCreatorId()) && feedbackRequest.getDueDate()!=null) {
+                return feedbackReqRepository.updateDueDate(feedbackRequest.getDueDate(), updatedFeedback.getId());
             }
+
+            if (currentUserId.equals(updatedFeedback.getRecipientId())) {
+                return feedbackReqRepository.updateStatusAndSubmitDate(feedbackRequest.getSubmitDate(), feedbackRequest.getStatus(), updatedFeedback.getId());
+            }
+
         }
 
-        return feedbackReqRepository.update(feedbackRequest);
+        return null;
     }
 
     @Override

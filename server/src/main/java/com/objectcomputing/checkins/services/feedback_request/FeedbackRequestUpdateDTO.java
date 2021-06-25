@@ -19,7 +19,7 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
-    @NotNull
+    @Nullable
     @Schema(description = "Completion status of request", required = true)
     private String status;
 

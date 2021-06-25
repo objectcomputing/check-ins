@@ -2,6 +2,8 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
+import com.objectcomputing.checkins.services.feedback.FeedbackUpdateDTO;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
@@ -424,5 +426,24 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         assertUnauthorized(responseException);
     }
+
+    @Test
+    void testUpdateStatus() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackRequest feedbackReq = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        getFeedbackRequestRepository().save(feedbackReq);
+        final FeedbackRequestUpdateDTO dto = new FeedbackRequestUpdateDTO();
+        dto.setId(feedbackReq.getId());
+        dto.setDueDate(LocalDate.now());
+        HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+    }
+
+
 
 }

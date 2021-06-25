@@ -72,6 +72,7 @@ public class FeedbackRequest {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
+    //TODO: Shouldnt this sentiment be directly attached to the answer, not the request?
     @Column(name = "sentiment")
     @Nullable
     @TypeDef(type = DataType.DOUBLE)
