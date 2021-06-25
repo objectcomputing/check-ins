@@ -129,6 +129,7 @@ public interface RepositoryFixture {
 
     default OpportunitiesRepository getOpportunitiesRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(OpportunitiesRepository.class);
+    }
 
     default GuildMemberHistoryRepository getGuildMemberHistoryRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(GuildMemberHistoryRepository.class);
