@@ -30,7 +30,7 @@ flyway:
   datasources:
     default:
       locations:
-        - "classpath:db/common"
+        - "classpath:db/migration"
       placeholder-replacement: true
       placeholders:
         aeskey: BOGUS_TEST_KEY
