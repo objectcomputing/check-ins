@@ -15,6 +15,7 @@ import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
+import {getFeedbackSuggestion} from "../api/feedback";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "right",
   }
 }));
+
 
 function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
@@ -76,14 +78,15 @@ function getTemplates() {
 
 const FeedbackRequestPage = () => {
   const { state } = useContext(AppContext);
-  const { csrf, userProfile } = state;
+  const { csrf} = state;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
   const query = queryString.parse(location?.search).step?.toString();
   const { search } = useLocation();
   const values = queryString.parse(search);
-  const requesteeId = values.for;
+  const [requestee, setRequestee] = useState();
+  const id = values.for;
   let activeStep = location?.search ? parseInt(query) : 2;
   // const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
@@ -104,20 +107,42 @@ const FeedbackRequestPage = () => {
     }
   }
 
-  const [requestee, setRequestee] = useState();
+
   useEffect(() => {
     async function getMemberProfile() {
-      if (requesteeId) {
-        let res = await getMember(requesteeId, csrf);
+      if (id) {
+        let res = await getMember(id, csrf);
         let requesteeProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile);
+        setRequestee(requesteeProfile ? requesteeProfile.name : "");
       }
     }
     if (csrf) {
       getMemberProfile();
     }
-  }, [csrf, requesteeId]);
+  }, [csrf, id]);
+
+  useEffect( () => {
+    async function getSuggestions() {
+      if (id === undefined || id === null) {
+        return;
+      }
+      let res = await getFeedbackSuggestion(id, csrf);
+      if (res && res.payload) {
+        console.log(res)
+        return res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
+      }
+      return null;
+    }
+    if (csrf) {
+      getSuggestions().then((res) => {
+        console.log(res);
+      });
+    }
+  },[id,csrf]);
+
 
 
    if (activeStep < 1 || activeStep > steps.length) {
@@ -137,12 +162,12 @@ const FeedbackRequestPage = () => {
       }
 
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+        <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?for=${requesteeId}&step=${activeStep - 1}`}
+                to={`?for=${id}&step=${activeStep - 1}`}
               >
                 <Button
                   disabled={activeStep <= 1}>
@@ -152,7 +177,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?for=${requesteeId}&step=${activeStep + 1}`}>
+                to={activeStep===3 ?`/feedback/request/confirmation` : `?for=${id}&step=${activeStep + 1}`}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
