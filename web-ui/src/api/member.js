@@ -10,6 +10,17 @@ export const getAllMembers = async (cookie) => {
   });
 };
 
+export const getTerminatedMembers = async (cookie) => {
+  return resolve({
+    url: memberProfileUrl,
+    responseType: "json",
+    params: {
+      terminated: true,
+    },
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getAllRoles = async (cookie) => {
   return resolve({
     url: "services/roles",
