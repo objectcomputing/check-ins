@@ -10,7 +10,7 @@ export const getAllMembers = async (cookie) => {
   });
 };
 
-export const getTerminatedMembers = async (cookie) => {
+export const getAllTerminatedMembers = async (cookie) => {
   return resolve({
     url: memberProfileUrl,
     responseType: "json",

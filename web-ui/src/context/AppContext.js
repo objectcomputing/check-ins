@@ -12,7 +12,7 @@ import {
   UPDATE_SKILLS,
   UPDATE_TEAMS,
 } from "./actions";
-import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
+import { getCurrentUser, getAllMembers, getAllRoles, getAllTerminatedMembers } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
@@ -132,7 +132,7 @@ const AppContextProvider = (props) => {
       }
     }
     async function getTerminatedMembers() {
-      let res = await getTerminatedMembers(csrf);
+      let res = await getAllTerminatedMembers(csrf);
       let profiles =
         res.payload && res.payload.data && !res.error
           ? res.payload.data
