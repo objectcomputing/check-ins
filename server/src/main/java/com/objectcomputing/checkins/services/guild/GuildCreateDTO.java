@@ -1,13 +1,14 @@
 package com.objectcomputing.checkins.services.guild;
 
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Introspected
 public class GuildCreateDTO {
@@ -20,7 +21,7 @@ public class GuildCreateDTO {
     private String description;
 
     @Schema(description = "members of this guild")
-    private List<GuildMemberResponseDTO> guildMembers;
+    private List<GuildMemberCreateDTO> guildMembers;
 
     public GuildCreateDTO(String name, @Nullable String description) {
         this.name = name;
@@ -44,11 +45,11 @@ public class GuildCreateDTO {
         return Objects.hash(name, description);
     }
 
-    public List<GuildMemberResponseDTO> getGuildMembers() {
+    public List<GuildMemberCreateDTO> getGuildMembers() {
         return guildMembers;
     }
 
-    public void setGuildMembers(List<GuildMemberResponseDTO> guildMembers) {
+    public void setGuildMembers(List<GuildMemberCreateDTO> guildMembers) {
         this.guildMembers = guildMembers;
     }
 
@@ -67,5 +68,38 @@ public class GuildCreateDTO {
 
     public void setDescription(@Nullable String description) {
         this.description = description;
+    }
+
+    @Introspected
+    public static class GuildMemberCreateDTO {
+
+        @Schema(description = "whether member is lead or not represented by true or false respectively",
+                nullable = true)
+        private Boolean lead;
+
+        @NotNull
+        @Schema(description = "Member who is on this guild")
+        private UUID memberId;
+
+        public GuildMemberCreateDTO(UUID memberId, Boolean lead) {
+            this.memberId = memberId;
+            this.lead = lead;
+        }
+
+        public Boolean getLead() {
+            return lead;
+        }
+
+        public void setLead(Boolean lead) {
+            this.lead = lead;
+        }
+
+        public UUID getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(UUID memberId) {
+            this.memberId = memberId;
+        }
     }
 }
