@@ -458,4 +458,35 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
     }
 
+    @Test
+    void testCreateAdHocTemplateAuthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate adHocTemplate = new FeedbackTemplate("Ad Hoc", "Ask a quick, single question", memberOne.getId(), false);
+        getFeedbackTemplateRepository().save(adHocTemplate);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?onlyActive=%s", true))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.body());
+        assertEquals(0, response.body().size());
+    }
+
+    @Test
+    void testCreateAdHocTemplateUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate adHocTemplate = new FeedbackTemplate("Ad Hoc", "Ask a quick, single question", memberOne.getId(), false);
+        FeedbackTemplateCreateDTO dto = createDTO(adHocTemplate);
+
+        final HttpRequest<?> request = HttpRequest.POST("", dto);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        final JsonNode body = exception.getResponse().getBody(JsonNode.class).orElse(null);
+        assertNull(body);
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+        assertEquals("Unauthorized", exception.getMessage());
+    }
+
 }

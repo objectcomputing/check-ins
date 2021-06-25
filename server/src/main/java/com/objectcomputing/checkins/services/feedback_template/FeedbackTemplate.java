@@ -62,8 +62,8 @@ public class FeedbackTemplate {
         this.active = true;
     }
 
-    public FeedbackTemplate(@Nullable UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
-        this.id = id;
+    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
+        this.id = null;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
