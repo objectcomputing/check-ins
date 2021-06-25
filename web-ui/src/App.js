@@ -5,14 +5,16 @@ import { createBrowserHistory } from "history";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
+import HomePage from "./pages/HomePage";
 import TeamsPage from "./pages/TeamsPage";
 import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
 import CheckinsReportPage from "./pages/CheckinsReportPage";
-import DirectoryPage from "./pages/DirectoryPage";
+import PeoplePage from "./pages/PeoplePage";
 import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
+import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -54,11 +56,11 @@ function App() {
                 </Route>
                 <Route path="/home">
                   <Header />
-                  <ProfilePage />
+                  <HomePage />
                 </Route>
-                <Route path="/directory">
-                  <Header title="Member Directory" />
-                  <DirectoryPage />
+                <Route path="/people">
+                  <Header title="People" />
+                  <PeoplePage />
                 </Route>
                 <Route path="/checkins/:memberId?/:checkinId?">
                   <Header title="Check-ins" />
@@ -79,6 +81,10 @@ function App() {
                 <Route path="/skills-reports">
                   <Header title="Skill Reports" />
                   <SkillReportPage />
+                </Route>
+                <Route path="/team-skills-reports">
+                  <Header title="Team Skill Reports" />
+                  <TeamSkillReportPage />
                 </Route>
                 <Route path="/">
                   <Header />

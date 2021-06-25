@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -205,9 +205,10 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdatePermissionDenied() {
         Guild guildEntity = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberResponseDTO newMember = createDefaultGuildMemberDto(guildEntity, memberProfile);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
@@ -227,10 +228,32 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     void testUpdateGuildSuccess() {
         Guild guildEntity = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        GuildMemberResponseDTO newMember = createDefaultGuildMemberDto(guildEntity, memberProfile);
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
         newMember.setLead(true);
+        requestBody.setGuildMembers(Collections.singletonList(newMember));
+
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
+
+        assertEntityDTOEqual(guildEntity, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), guildEntity.getId()), response.getHeaders().get("location"));
+    }
+
+    @Test
+    void testUpdateGuildWithExistingMembers() {
+        Guild guildEntity = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
+        String newName = "New Name";
+        guildEntity.setName(newName);
+
+        GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
+
+        GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
         final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
