@@ -11,10 +11,10 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
 
-    Boolean delete(UUID id);
+    FeedbackTemplate delete(UUID id);
 
     FeedbackTemplate getById(UUID id);
 
-    List<FeedbackTemplate> findByFields(UUID createdBy, String title);
+    List<FeedbackTemplate> findByFields(UUID createdBy, String title, Boolean onlyActive);
 
 }

@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import io.micronaut.context.annotation.Type;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.annotation.Where;
 import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+//@Where("@.active = true")
 @Table(name = "feedback_templates")
 public class FeedbackTemplate {
 
@@ -45,28 +48,40 @@ public class FeedbackTemplate {
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID createdBy;
 
+    @Column(name = "active")
+    @NotBlank
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether the template can still be used", required = true)
+    private Boolean active;
+
     public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.active = true;
     }
 
-    public FeedbackTemplate(@Nullable UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy) {
+    public FeedbackTemplate(@Nullable UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.active = active;
     }
 
     public FeedbackTemplate(@Nullable UUID id,
                     @NotNull String title,
-                    @Nullable String description
+                    @Nullable String description,
+                    @NotNull Boolean active
     ) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.active = active;
     }
+
+    public FeedbackTemplate() {}
 
     public UUID getId() {
         return id;
@@ -101,17 +116,29 @@ public class FeedbackTemplate {
         this.createdBy = createdBy;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackTemplate that = (FeedbackTemplate) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(createdBy, that.createdBy);
+        return Objects.equals(id, that.id)
+                && Objects.equals(title, that.title)
+                && Objects.equals(description, that.description)
+                && Objects.equals(createdBy, that.createdBy)
+                && Objects.equals(active, that.active);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, createdBy);
+        return Objects.hash(id, title, description, createdBy, active);
     }
 
     @Override
@@ -122,6 +149,7 @@ public class FeedbackTemplate {
                 ", title='" + title +
                 ", description='" + description +
                 ", createdBy=" + createdBy +
+                ", active=" + active+
                 '}';
     }
 }

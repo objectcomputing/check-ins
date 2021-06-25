@@ -17,4 +17,7 @@ public interface FeedbackTemplateFixture extends RepositoryFixture{
     default FeedbackTemplate createAThirdFeedbackTemplate(UUID createdBy) {
         return new FeedbackTemplate( "Something completely different", "Fake Title Private Description amazing feedback template 3", createdBy);
     }
+
+
+
 }

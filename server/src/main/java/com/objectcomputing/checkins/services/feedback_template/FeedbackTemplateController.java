@@ -9,8 +9,6 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.stream.Collectors;
 
@@ -31,7 +29,6 @@ public class FeedbackTemplateController {
     private final FeedbackTemplateServices feedbackTemplateServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService executorService;
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateServices.class);
 
     public FeedbackTemplateController(FeedbackTemplateServices feedbackTemplateServices,
                                       EventLoopGroup eventLoopGroup,
@@ -80,13 +77,16 @@ public class FeedbackTemplateController {
      * @param id {@link UUID} ID of the feedback template being deleted
      * @return {@link FeedbackTemplateResponseDTO}
      */
-//    @Delete("/{id}")
-//    public Single<HttpResponse> delete(@NotNull UUID id) {
-//        return Single.fromCallable(() -> feedbackTemplateServices.delete(id))
-//                .observeOn(Schedulers.from(eventLoopGroup))
-//                .map(successFlag -> (HttpResponse) HttpResponse.ok())
-//                .subscribeOn(Schedulers.from(executorService));
-//    }
+    @Delete("/{id}")
+    public Single<HttpResponse<FeedbackTemplateResponseDTO>> delete(@NotNull UUID id) {
+        return Single.fromCallable(() -> feedbackTemplateServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(savedFeedbackTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
+                        .ok()
+                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedFeedbackTemplate.getId())))
+                        .body(fromEntity(savedFeedbackTemplate)))
+                .subscribeOn(Schedulers.from(executorService));
+    }
 
     /**
      * Get feedback template by ID
@@ -105,16 +105,16 @@ public class FeedbackTemplateController {
     }
 
     /**
-     * Get feedback templates by title or by the creator id
+     * Get feedback templates by title or by the creator id, filter by active status
      *
      * @param title {@link String} Title of feedback template
      * @param createdBy {@link UUID} UUID of creator
+     * @param onlyActive {@link Boolean} whether the template has been soft deleted or not
      * @return {@link List<FeedbackTemplateResponseDTO>} List of feedback templates that match the input parameters
      */
-    @Get("/?createdBy,title")
-    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title) {
-        LOG.info("In controller: {}, {}", createdBy, title);
-        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title))
+    @Get("/{?createdBy,title,onlyActive}")
+    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
+        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title, onlyActive))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplates -> {
                     List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
@@ -129,6 +129,7 @@ public class FeedbackTemplateController {
         dto.setTitle(feedbackTemplate.getTitle());
         dto.setDescription(feedbackTemplate.getDescription());
         dto.setCreatedBy(feedbackTemplate.getCreatedBy());
+        dto.setActive(feedbackTemplate.getActive());
         return dto;
     }
 
@@ -137,7 +138,7 @@ public class FeedbackTemplateController {
     }
 
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
-        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription());
+        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getActive());
     }
 
 }

@@ -6,8 +6,6 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -23,7 +21,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private final FeedbackTemplateRepository feedbackTemplateRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateServices.class);
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
                                         MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
@@ -57,13 +54,10 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
         if (feedbackTemplate.getId() != null) {
             updatedFeedbackTemplate = getById(feedbackTemplate.getId());
-            LOG.info("Updated template : {} ", updatedFeedbackTemplate.toString());
-            LOG.info("Original template: {} ", feedbackTemplate.toString());
         } else {
             throw new BadArgException("Feedback template does not exist. Cannot update");
         }
         feedbackTemplate.setCreatedBy(updatedFeedbackTemplate.getCreatedBy());
-        LOG.info("Original template: updated: {} ", feedbackTemplate.toString());
         if (!updateIsPermitted(feedbackTemplate.getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -72,21 +66,22 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public Boolean delete(@NotNull UUID id) {
-        return null;
-//        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
-//        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-//        if (!feedbackTemplate.isPresent()) {
-//            throw new NotFoundException("No feedback template with id " + id);
-//        }
-//
-//        UUID creatorId = feedbackTemplate.get().getCreatedBy();
-//        if (!currentUserId.equals(creatorId)) {
-//            throw new PermissionException("You are not authorized to do this operation");
-//        }
-//
-//        feedbackTemplateRepository.deleteById(id);
-//        return true;
+    public FeedbackTemplate delete(@NotNull UUID id) {
+        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
+        final String idString = Util.nullSafeUUIDToString(id);
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (!feedbackTemplate.isPresent()) {
+            throw new NotFoundException("No feedback template with id " + id);
+        }
+
+        UUID creatorId = feedbackTemplate.get().getCreatedBy();
+        if (!currentUserId.equals(creatorId)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        feedbackTemplateRepository.softDeleteById(id);
+
+        return feedbackTemplate.get();
     }
 
     @Override
@@ -105,18 +100,41 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
 
     @Override
-    public List<FeedbackTemplate> findByFields(@Nullable UUID createdBy, @Nullable String title) {
-        LOG.info("Find by field (crratedby): {}", createdBy);
-        LOG.info("Find by field (title): {}", getIsPermitted());
-        LOG.info(currentUserServices.getCurrentUser().getId().toString());
+    public List<FeedbackTemplate> findByFields(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        List<FeedbackTemplate> queryResults = feedbackTemplateRepository.search(Util.nullSafeUUIDToString(createdBy), title);
-        final List<FeedbackTemplate> result = new ArrayList<>(queryResults);
+        List<FeedbackTemplate> templateList = new ArrayList<>();
 
-        return result;
+        // Filters only active templates by default
+        if (onlyActive != null && onlyActive) {
+            templateList.addAll(feedbackTemplateRepository.findByActive(true));
+            if (title != null) {
+                templateList.retainAll(findByTitleLike(title));
+            }
+            if (createdBy != null) {
+                templateList.retainAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
+            }
+        } else {
+            if (title != null) {
+                templateList.addAll(findByTitleLike(title));
+                if (createdBy != null) {
+                    templateList.retainAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
+                }
+            } else if (createdBy != null) {
+                templateList.addAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
+            } else {
+                feedbackTemplateRepository.findAll().forEach(templateList::add);
+            }
+        }
+
+        return templateList;
+    }
+
+    protected List<FeedbackTemplate> findByTitleLike(String title) {
+        String wildcard = "%" + title + "%";
+        return feedbackTemplateRepository.findByTitleLike(wildcard);
     }
 
     public boolean createIsPermitted() {
@@ -127,7 +145,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     public boolean updateIsPermitted(UUID createdBy) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isAdmin = currentUserServices.isAdmin();
-        LOG.info("permit: {}, {}, {}", isAdmin, currentUserId, createdBy);
         return isAdmin || currentUserId.equals(createdBy);
     }
 

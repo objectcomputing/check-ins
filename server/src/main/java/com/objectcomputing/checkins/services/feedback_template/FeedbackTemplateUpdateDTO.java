@@ -22,13 +22,18 @@ public class FeedbackTemplateUpdateDTO {
     @Schema(description = "the updated description of the feedback template")
     private String description;
 
+    @NotNull
+    @Schema(description = "whether the template can still be used", required = true)
+    private Boolean active;
 
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void setId(UUID id) {this.id = id;}
+
     public UUID getId(){ return id; }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -41,5 +46,11 @@ public class FeedbackTemplateUpdateDTO {
         return description;
     }
 
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
+    public Boolean getActive() {
+        return active;
+    }
 }

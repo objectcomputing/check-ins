@@ -25,6 +25,10 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 
+    @NotNull
+    @Schema(description = "whether the template can still be used", required = true)
+    private Boolean active;
+
 
     public void setTitle(String title) {
         this.title = title;
@@ -38,6 +42,9 @@ public class FeedbackTemplateCreateDTO {
         this.createdBy = createdBy;
     }
 
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
     public String getTitle() {
         return title;
@@ -51,4 +58,7 @@ public class FeedbackTemplateCreateDTO {
         return createdBy;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
 }

@@ -28,6 +28,10 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 
+    @NotNull
+    @Schema(description = "template is active", required=true)
+    private Boolean active;
+
 
     public void setId(UUID id) {
         this.id = id;
@@ -38,6 +42,7 @@ public class FeedbackTemplateResponseDTO {
     public void setTitle(String title) {
         this.title = title;
     }
+    public void setActive(Boolean active){this.active = active;}
 
     public void setDescription(String description) {
         this.description = description;
@@ -50,6 +55,8 @@ public class FeedbackTemplateResponseDTO {
     public String getTitle() {
         return title;
     }
+
+    public Boolean getActive() {return active;}
 
     public String getDescription() {
         return description;
