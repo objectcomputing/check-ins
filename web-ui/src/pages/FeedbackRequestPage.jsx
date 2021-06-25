@@ -1,11 +1,11 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Link, useLocation, Redirect, useHistory} from 'react-router-dom';
+import {Link, useLocation, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -86,7 +86,6 @@ const FeedbackRequestPage = () => {
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
-  const sendQuery = query.send?.toString();
   const dueQuery = query.due?.toString();
 
   const getStep = useCallback(() => {
@@ -100,6 +99,7 @@ const FeedbackRequestPage = () => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
+    event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
   };
 
@@ -108,11 +108,7 @@ const FeedbackRequestPage = () => {
   };
 
   const onCardClick = (template) => {
-    if (template.isAdHoc) {
-      setPreview({open: true, selectedTemplate: template});
-    } else {
-      console.log(`Selected ${template.title}`);
-    }
+    history.push(`/feedback/request/?template=${template.id}`);
   }
 
   const hasTemplate = useCallback(() => {
@@ -128,13 +124,9 @@ const FeedbackRequestPage = () => {
     return !isNaN(timestamp);
   }, []);
 
-  const hasSend = useCallback(() => {
-    return (sendQuery && isValidDate(sendQuery))
-  }, [sendQuery, isValidDate])
-
   const hasDue = useCallback(() => {
     return (dueQuery && isValidDate(dueQuery))
-  }, [dueQuery, isValidDate])
+  }, [dueQuery, isValidDate]);
 
   const canProceed = useCallback(() => {
     switch(activeStep) {
@@ -156,7 +148,7 @@ const FeedbackRequestPage = () => {
     if(activeStep === steps.length) handleSubmit();
     query.step = activeStep+1;
     history.push({...location, search: queryString.stringify(query)});
-  },[canProceed, activeStep, steps.length, query, location, history, queryString]);
+  },[canProceed, activeStep, steps.length, query, location, history]);
 
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
@@ -165,7 +157,6 @@ const FeedbackRequestPage = () => {
       case 2:
         return hasTemplate();
       case 3:
-        console.log(`hasTemplate() && hasFrom(): ${hasTemplate() && hasFrom()}`);
         return hasTemplate() && hasFrom();
       case 4:
         return hasTemplate() && hasFrom() && hasDue();
@@ -176,7 +167,7 @@ const FeedbackRequestPage = () => {
 
   if (!urlIsValid()) {
     return (
-      <Redirect to="/feedback/request/"/>
+        history.push("/feedback/request/")
     );
   }
 
@@ -204,8 +195,7 @@ const FeedbackRequestPage = () => {
                 </Button>
               </Link>
 
-              <Button component={Link}
-                      onClick={onNextClick}
+              <Button onClick={onNextClick}
                       variant="contained" disabled={!canProceed()} color="primary">
                 {activeStep === steps.length ? "Submit" : "Next"}
               </Button>
@@ -228,12 +218,13 @@ const FeedbackRequestPage = () => {
           <div className="card-container">
             {getTemplates().map((template) => (
               <TemplateCard
+                key={`template-card-${template.id}`}
                 title={template.title}
                 creator={template.creator}
                 description={template.description}
                 isAdHoc={template.isAdHoc}
                 questions={template.questions}
-                expanded={preview.open}
+                selected={templateQuery && templateQuery.includes(template.id)}
                 onClick={(e) => handlePreviewOpen(e, template)}
                 onCardClick={() => onCardClick(template)}/>
             ))}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Link } from 'react-router-dom';
 
 import {TextField} from "@material-ui/core";
 import List from "@material-ui/core/List";
@@ -60,11 +58,6 @@ const TemplatePreviewModal = ({ open, onClose, template }) => {
             <Typography variant="h6" className={classes.title}>
               {template ? template.title : "No Title"}
             </Typography>
-            <Link className="ad-hoc-next-button" onClick={onClose} to={`/feedback/request/?step=2&template=${template.id}`}>
-              <Button color="inherit">
-                {template.isAdHoc ? "Create" : "Select"}
-              </Button>
-            </Link>
           </Toolbar>
         </AppBar>
 
