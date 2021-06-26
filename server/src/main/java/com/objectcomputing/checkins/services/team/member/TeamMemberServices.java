@@ -13,7 +13,7 @@ public interface TeamMemberServices {
 
     void delete(UUID id);
 
-    Set<TeamMember> findByFields(UUID teamid, UUID memberid, Boolean lead);
+    Set<TeamMember> findByFields(UUID teamId, UUID memberId, Boolean lead);
 
     void deleteByTeam(UUID id);
 }

@@ -57,7 +57,7 @@ const GuildSummaryCard = ({guild, index}) => {
     const isGuildLead =
         leads === null
             ? false
-            : leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
+            : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
 
     const handleOpen = () => setOpen(true);
 
@@ -138,12 +138,11 @@ const GuildSummaryCard = ({guild, index}) => {
                                : null;
                   if(data) {
                     const copy = [...guilds];
-                    copy[index] = editedGuild;
+                    copy[index] = data;
                     dispatch({
                         type: UPDATE_GUILDS,
                         payload: copy,
                     });
-                    handleClose();
                   }
                 }}
                 headerText='Edit Your Guild'
