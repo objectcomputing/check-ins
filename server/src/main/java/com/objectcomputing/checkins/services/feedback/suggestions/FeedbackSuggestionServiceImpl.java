@@ -46,7 +46,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        List<FeedbackSuggestionDTO> suggestions = new LinkedList<FeedbackSuggestionDTO>();
+        List<FeedbackSuggestionDTO> suggestions = new LinkedList<>();
         if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("Supervisor of requestee", suggestFor.getSupervisorid()));
         }
@@ -58,11 +58,11 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         Set<TeamMember> teamMemberships = teamMemberServices.findByFields(null, id, null);
 
         for(TeamMember currentMembership: teamMemberships){
-            Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamid(), null, null);
+            Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
             Set<TeamMember> leads = teamMembers.stream().filter((member)-> member.isLead()).collect(Collectors.toSet());
             for(TeamMember lead: leads) {
-                if(suggestions.size() < maxSuggestions && !lead.getMemberid().equals(id) && !lead.getMemberid().equals(currentUserId)) {
-                    suggestions.add(new FeedbackSuggestionDTO("Team lead for requestee", lead.getMemberid()));
+                if(suggestions.size() < maxSuggestions && !lead.getMemberId().equals(id) && !lead.getMemberId().equals(currentUserId)) {
+                    suggestions.add(new FeedbackSuggestionDTO("Team lead for requestee", lead.getMemberId()));
                 }
             }
 
@@ -70,11 +70,11 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
         }
 
         for(TeamMember currentMembership: teamMemberships){
-            Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamid(), null, null);
+            Set<TeamMember> teamMembers = teamMemberServices.findByFields(currentMembership.getTeamId(), null, null);
             teamMembers = teamMembers.stream().filter((member)-> !member.isLead()).collect(Collectors.toSet());
             for(TeamMember teamMember: teamMembers) {
-                if(suggestions.size() < maxSuggestions && !teamMember.getMemberid().equals(id) && !teamMember.getMemberid().equals(currentUserId)) {
-                    suggestions.add(new FeedbackSuggestionDTO("Team member for requestee", teamMember.getMemberid()));
+                if(suggestions.size() < maxSuggestions && !teamMember.getMemberId().equals(id) && !teamMember.getMemberId().equals(currentUserId)) {
+                    suggestions.add(new FeedbackSuggestionDTO("Team member for requestee", teamMember.getMemberId()));
                 }
             }
 
