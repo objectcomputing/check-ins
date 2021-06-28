@@ -13,6 +13,7 @@ import {
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
+  UPDATE_TERMINATED_MEMBERS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
@@ -31,6 +32,7 @@ export const initialState = {
   csrf: undefined,
   index: 0,
   memberProfiles: [],
+  terminatedMembers: [],
   memberSkills: [],
   skills: [],
   teams: [],
@@ -117,6 +119,9 @@ export const reducer = (state, action) => {
       break;
     case UPDATE_MEMBER_PROFILES:
       state.memberProfiles = action.payload;
+      break;
+    case UPDATE_TERMINATED_MEMBERS:
+      state.terminatedMembers = action.payload;
       break;
     case UPDATE_TEAM_MEMBERS:
       state.teamMembers

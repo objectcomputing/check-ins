@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.team.member.*;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,13 +57,20 @@ public class TeamServicesImpl implements TeamServices {
     }
 
     public TeamResponseDTO read(@NotNull UUID teamId) {
+        Team foundTeam = teamsRepo.findById(teamId)
+                .orElseThrow(() -> new NotFoundException("No such team found"));
+
         List<TeamMemberResponseDTO> teamMembers = teamMemberServices
                 .findByFields(teamId, null, null)
                 .stream()
+                .filter(teamMember -> {
+                    LocalDate terminationDate = memberProfileServices.getById(teamMember.getMemberId()).getTerminationDate();
+                    return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+                })
                 .map(teamMember ->
                         fromMemberEntity(teamMember, memberProfileServices.getById(teamMember.getMemberId()))).collect(Collectors.toList());
-        return fromEntity(teamsRepo.findById(teamId)
-                .orElseThrow(() -> new NotFoundException("No such team found")));
+
+        return fromEntity(foundTeam, teamMembers);
     }
 
     public TeamResponseDTO update(TeamUpdateDTO teamDTO) {
@@ -119,7 +127,11 @@ public class TeamServicesImpl implements TeamServices {
         Set<TeamResponseDTO> foundTeams = teamsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (TeamResponseDTO foundTeam : foundTeams) {
-            Set<TeamMember> foundMembers = teamMemberServices.findByFields(foundTeam.getId(), null, null);
+            Set<TeamMember> foundMembers = teamMemberServices.findByFields(foundTeam.getId(), null, null).stream().filter(teamMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(teamMember.getMemberId()).getTerminationDate();
+                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+            }).collect(Collectors.toSet());
+
             for (TeamMember foundMember : foundMembers) {
                 foundTeam.getTeamMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
             }

@@ -35,7 +35,7 @@ const CheckinsReportPage = () => {
       pdl.members =
         pdl.members &&
         pdl.members.filter((member) =>
-          member.name.toLowerCase().includes(searchText.toLowerCase())
+          member?.name?.toLowerCase().includes(searchText.toLowerCase())
         );
       return pdl.members.length > 0;
     });

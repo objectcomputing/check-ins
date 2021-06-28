@@ -51,7 +51,9 @@ public interface MemberProfileRepository extends CrudRepository<MemberProfile, U
             "AND (:title IS NULL OR PGP_SYM_DECRYPT(cast(mp.title as bytea), '${aes.key}') = :title) " +
             "AND (:pdlId IS NULL OR mp.pdlId = :pdlId) " +
             "AND (:workEmail IS NULL OR PGP_SYM_DECRYPT(cast(mp.workEmail as bytea), '${aes.key}') = :workEmail) " +
-            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) ", nativeQuery = true )
+            "AND (:supervisorId IS NULL OR mp.supervisorId = :supervisorId) " +
+            "AND (((:terminated IS FALSE OR :terminated IS NULL) AND (mp.terminationdate IS NULL OR mp.terminationdate >= CURRENT_DATE)) " +
+            "OR (:terminated IS TRUE AND mp.terminationdate < CURRENT_DATE))", nativeQuery = true )
     List<MemberProfile> search(@Nullable String firstName, @Nullable String middleName, @Nullable String lastName,
                                @Nullable String suffix, @Nullable String title, @Nullable String pdlId,
                                @Nullable String workEmail, @Nullable String supervisorId, @Nullable Boolean terminated);
