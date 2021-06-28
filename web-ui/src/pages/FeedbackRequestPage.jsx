@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -72,13 +72,22 @@ function getTemplates() {
   ];
 }
 
+let todayDate = new Date()
 const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
-  const query = queryString.parse(location?.search).step?.toString();
-  let activeStep = location?.search ? parseInt(query) : 1;
-  const numbersOnly = /^\d+$/.test(query);
+  const history = useHistory();
+
+  const query = queryString.parse(location?.search);
+
+  const stepQuery = query.step?.toString();
+
+  let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
+  let dueDate = query?.dueDate ? query.dueDate: null
+  let activeStep = location?.search ? parseInt(stepQuery) : 1;
+  const numbersOnly = /^\d+$/.test(stepQuery);
+
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -87,6 +96,23 @@ const FeedbackRequestPage = () => {
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
+  }
+
+  const getFeedbackArgs = (step) => {
+    const nextQuery = {
+      ...query,
+      step: step
+    }
+
+    return `/feedback/request/?${queryString.stringify(nextQuery)}`;
+  }
+
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
   }
 
   const onCardClick = (template) => {
@@ -119,7 +145,7 @@ const FeedbackRequestPage = () => {
             <div>
               <Link
                 className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?step=${activeStep - 1}`}
+                to={getFeedbackArgs(activeStep - 1)}
               >
                 <Button
                   disabled={activeStep <= 1}>
@@ -129,7 +155,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
+                to={activeStep===3 ?`/feedback/request/confirmation` : getFeedbackArgs(activeStep + 1)}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
@@ -168,7 +194,7 @@ const FeedbackRequestPage = () => {
           </div>
         }
         {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
+        {activeStep === 3 && <SelectDate handleQueryChange={handleQueryChange} sendDateProp = {sendDate} dueDateProp = {dueDate} />}
       </div>
     </div>
   );
