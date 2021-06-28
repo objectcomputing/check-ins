@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -16,6 +17,7 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -106,9 +108,9 @@ public class FeedbackRequestController {
      * @param creatorId {@link UUID} ID of member profile who created the feedback request
      * @return {@link List<FeedbackResponseDTO>} List of feedback requests that were made by certain creator
      */
-    @Get("/{?creatorId,requesteeId,templateId}")
-    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID templateId) {
-        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, templateId))
+    @Get("/{?creatorId,requesteeId,templateId,oldestDate}")
+    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID templateId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
+        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, templateId, oldestDate))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()

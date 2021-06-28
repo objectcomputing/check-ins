@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDate;
 
 public interface FeedbackRequestServices {
     FeedbackRequest save(FeedbackRequest feedbackRequest);
@@ -12,5 +13,5 @@ public interface FeedbackRequestServices {
 
     FeedbackRequest getById(UUID id);
 
-    List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId);
+    List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate);
 }

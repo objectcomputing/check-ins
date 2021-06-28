@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.*;
 
 
@@ -73,40 +74,42 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         //only creator can update due date--only field they can update without making new request
         //status has to be updated with any permissions--fired on submission from any recipient
         //submit date can be updated only when the recipient is logged in--fired on submission from any recipient
-        //TODO: should overdue status be made part of backend, or should it be something calculated only on front end from
-        //dueDate and the current date?
-        FeedbackRequest updatedFeedback = null;
+        FeedbackRequest originalFeedback = null;
         if (feedbackRequest.getId() != null) {
-            updatedFeedback = getById(feedbackRequest.getId());
+            originalFeedback = getById(feedbackRequest.getId());
         }
-        if (updatedFeedback != null) {
-            LOG.info("updated feedback object: {}", updatedFeedback.toString());
-            LOG.info("feedback request passed into function: {}", feedbackRequest.toString());
-            try {
-                memberProfileServices.getById(updatedFeedback.getCreatorId());
-                memberProfileServices.getById(updatedFeedback.getRequesteeId());
-            } catch (NotFoundException e) {
-                throw new BadArgException("Either the creator id or the requestee id is invalid");
-            }
-            UUID currentUserId = currentUserServices.getCurrentUser().getId();
-
-            if (currentUserId.equals(updatedFeedback.getCreatorId()) && feedbackRequest.getDueDate()!=null) {
-                    LOG.info("going to update due date");
-                    LOG.info(feedbackRequest.getId().toString());
-                    LOG.info(feedbackRequest.getDueDate().toString());
-                    FeedbackRequest response = feedbackReqRepository.updateDueDate(feedbackRequest.getId(), feedbackRequest.getDueDate());
-                    LOG.info(response.toString());
-                    return feedbackReqRepository.findById(feedbackRequest.getId()).get();
-
-            }
-            if (currentUserId.equals(updatedFeedback.getRecipientId())) {
-                feedbackReqRepository.update(feedbackRequest.getId(),feedbackRequest.getStatus(), feedbackRequest.getSubmitDate());
-                return feedbackReqRepository.findById(feedbackRequest.getId()).get();
-            }
+        if (originalFeedback == null) {
+            throw new BadArgException("Cannot update feedback request that does not exist");
         }
-        throw new PermissionException("You are not authorized to do any updates");
 
-    }
+        validateMembers(originalFeedback);
+
+        feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
+        feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
+        feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
+        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
+        feedbackRequest.setSendDate(originalFeedback.getSendDate());
+
+        boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
+        boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
+        boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
+
+        if (statusUpdateAttempted && !updateStatusIsPermitted(feedbackRequest)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+        if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(feedbackRequest)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        FeedbackRequest response = feedbackReqRepository.update(feedbackRequest);
+        LOG.info(response.toString());
+        return response;
+
+}
+
 
     @Override
     public Boolean delete(UUID id) {
@@ -139,21 +142,18 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         return feedbackReq.get();
     }
 
-
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
+
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByCreatorId(creatorId));
-                if (requesteeId != null && templateId !=null) {
-                    feedbackReqList.retainAll(feedbackReqRepository.findByRequesteeIdAndTemplateId(requesteeId, templateId));
-                }
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(creatorId, requesteeId, templateId, oldestDate));
             } else {
-            throw new PermissionException("You are not authorized to do this operation");
+                throw new PermissionException("You are not authorized to do this operation");
             }
 
         }
@@ -179,5 +179,25 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
         return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
+    }
+
+    private boolean updateStatusIsPermitted(FeedbackRequest feedbackRequest) {
+        boolean isAdmin = currentUserServices.isAdmin();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        return isAdmin
+                || currentUserId.equals(feedbackRequest.getRecipientId())
+                || currentUserId.equals(feedbackRequest.getCreatorId());
+    }
+
+    private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
+        boolean isAdmin = currentUserServices.isAdmin();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        return isAdmin || currentUserId.equals(feedbackRequest.getCreatorId());
+    }
+
+    private boolean updateSubmitDateIsPermitted(FeedbackRequest feedbackRequest) {
+        boolean isAdmin = currentUserServices.isAdmin();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        return isAdmin || currentUserId.equals(feedbackRequest.getRecipientId());
     }
 }
