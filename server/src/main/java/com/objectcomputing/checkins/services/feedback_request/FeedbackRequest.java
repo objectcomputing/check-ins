@@ -73,11 +73,6 @@ public class FeedbackRequest {
     private LocalDate submitDate;
 
     //TODO: Shouldnt this sentiment be directly attached to the answer, not the request?
-    @Column(name = "sentiment")
-    @Nullable
-    @TypeDef(type = DataType.DOUBLE)
-    @Schema(description = "sentiment of the recipient's feedback")
-    private Double sentiment;
 
     public FeedbackRequest(@NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
@@ -86,8 +81,7 @@ public class FeedbackRequest {
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
-                           @Nullable LocalDate submitDate,
-                           @Nullable Double sentiment) {
+                           @Nullable LocalDate submitDate) {
         this.id = null;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -97,7 +91,6 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
-        this.sentiment = sentiment;
     }
 
     public FeedbackRequest(@Nullable UUID id,
@@ -108,8 +101,7 @@ public class FeedbackRequest {
                            @Nullable LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
-                           @Nullable LocalDate submitDate,
-                           @Nullable Double sentiment) {
+                           @Nullable LocalDate submitDate) {
         this.id = id;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
@@ -119,19 +111,17 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
-        this.sentiment = sentiment;
     }
 
     public FeedbackRequest(@Nullable UUID id,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
-                           @Nullable LocalDate submitDate,
-                           @Nullable Double sentiment) {
+                           @Nullable LocalDate submitDate) {
         this.id = id;
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
-        this.sentiment = sentiment;
+
     }
 
     public FeedbackRequest() {}
@@ -210,14 +200,6 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    @Nullable
-    public Double getSentiment() {
-        return sentiment;
-    }
-
-    public void setSentiment(@Nullable Double sentiment) {
-        this.sentiment = sentiment;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -232,13 +214,12 @@ public class FeedbackRequest {
                 && Objects.equals(sendDate, that.sendDate)
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
-                && Objects.equals(submitDate, that.submitDate)
-                && Objects.equals(sentiment, that.sentiment);
+                && Objects.equals(submitDate, that.submitDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, templateId, sendDate, dueDate, status, submitDate, sentiment);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, templateId, sendDate, dueDate, status, submitDate);
     }
 
     @Override
@@ -253,7 +234,6 @@ public class FeedbackRequest {
                 ", dueDate=" + dueDate +
                 ", status='" + status +
                 ", submitDate='" + submitDate +
-                ", sentiment='" + sentiment + '\'' +
                 '}';
     }
 }

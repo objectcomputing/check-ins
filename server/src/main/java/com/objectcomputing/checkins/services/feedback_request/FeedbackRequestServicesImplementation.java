@@ -91,16 +91,21 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
             if (currentUserId.equals(updatedFeedback.getCreatorId()) && feedbackRequest.getDueDate()!=null) {
-                return feedbackReqRepository.updateDueDate(feedbackRequest.getDueDate(), updatedFeedback.getId());
-            }
+                    LOG.info("going to update due date");
+                    LOG.info(feedbackRequest.getId().toString());
+                    LOG.info(feedbackRequest.getDueDate().toString());
+                    FeedbackRequest response = feedbackReqRepository.updateDueDate(feedbackRequest.getId(), feedbackRequest.getDueDate());
+                    LOG.info(response.toString());
+                    return feedbackReqRepository.findById(feedbackRequest.getId()).get();
 
+            }
             if (currentUserId.equals(updatedFeedback.getRecipientId())) {
-                return feedbackReqRepository.updateStatusAndSubmitDate(feedbackRequest.getSubmitDate(), feedbackRequest.getStatus(), updatedFeedback.getId());
+                feedbackReqRepository.update(feedbackRequest.getId(),feedbackRequest.getStatus(), feedbackRequest.getSubmitDate());
+                return feedbackReqRepository.findById(feedbackRequest.getId()).get();
             }
-
         }
+        throw new PermissionException("You are not authorized to do any updates");
 
-        return null;
     }
 
     @Override
@@ -136,17 +141,21 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
 
     @Override
-    public List<FeedbackRequest> findByValue(UUID creatorId) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId)) {
+            if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
                 feedbackReqList.addAll(feedbackReqRepository.findByCreatorId(creatorId));
+                if (requesteeId != null && templateId !=null) {
+                    feedbackReqList.retainAll(feedbackReqRepository.findByRequesteeIdAndTemplateId(requesteeId, templateId));
+                }
             } else {
             throw new PermissionException("You are not authorized to do this operation");
             }
+
         }
 
         return feedbackReqList;

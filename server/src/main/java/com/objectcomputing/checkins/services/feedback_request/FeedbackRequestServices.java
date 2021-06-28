@@ -12,5 +12,5 @@ public interface FeedbackRequestServices {
 
     FeedbackRequest getById(UUID id);
 
-    List<FeedbackRequest> findByValue(UUID creatorId);
+    List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId);
 }

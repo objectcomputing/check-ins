@@ -9,7 +9,8 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import java.util.List;
+
+import java.util.*;
 
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
@@ -24,9 +25,6 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -94,7 +92,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         dto.setStatus("pending");
         dto.setRecipientId(recipient.getId());
         dto.setDueDate(null);
-        dto.setSentiment(null);
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -121,7 +118,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         dto.setTemplateId(UUID.randomUUID());
         dto.setStatus("pending");
         dto.setDueDate(null);
-        dto.setSentiment(null);
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -150,7 +146,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         dto.setTemplateId(UUID.randomUUID());
         dto.setStatus("pending");
         dto.setDueDate(null);
-        dto.setSentiment(null);
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -177,7 +172,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         dto.setTemplateId(UUID.randomUUID());
         dto.setStatus("pending");
         dto.setDueDate(null);
-        dto.setSentiment(null);
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -370,6 +364,89 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testGetByCreatorTemplateRequesteeIdPermitted() {
+        //create two employee-PDL relationships
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
+        MemberProfile recipientOne = createADefaultRecipient();
+        MemberProfile recipientTwo = createASecondDefaultRecipient();
+
+        //create two sample feedback requests by the same PDL
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne);
+        FeedbackRequest feedbackReqTwo = createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo);
+
+        //search for feedback requests by a specific creator, requestee, and template
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&templateId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId(), feedbackReq.getTemplateId()))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testGetByCreatorTemplateRequesteeIdNotPermitted() {
+        //create two employee-PDL relationships
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
+        MemberProfile recipientOne = createADefaultRecipient();
+        MemberProfile recipientTwo = createASecondDefaultRecipient();
+
+        //create two sample feedback requests by the same PDL
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne);
+        FeedbackRequest feedbackReqTwo = createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo);
+
+        //search for feedback requests by a specific creator, requestee, and template
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&templateId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId(), feedbackReq.getTemplateId()))
+                .basicAuth(recipientOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
+
+    }
+
+
+    @Test
+    void testGetByCreatorTemplateRequesteeIdMultiplePermitted() {
+        //create two employee-PDL relationships
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
+        MemberProfile recipientOne = createADefaultRecipient();
+        MemberProfile recipientTwo = createASecondDefaultRecipient();
+
+        UUID identicalTemplateId = UUID.randomUUID();
+        LocalDate now = LocalDate.now();
+        //create two sample feedback requests by the same PDL and same requestee
+        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), identicalTemplateId, now, null, "pending", null);
+
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), identicalTemplateId, now, null, "pending", null);
+        getFeedbackRequestRepository().save(feedbackReq);
+        getFeedbackRequestRepository().save(feedbackReqTwo);
+
+        //search for feedback requests by a specific creator, requestee, and template
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&templateId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId(), feedbackReq.getTemplateId()))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+
+    @Test
     void testDeleteFeedbackRequestByMember() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -428,20 +505,43 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testUpdateStatus() {
+    void testUpdateDueDateAuthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        getFeedbackRequestRepository().save(feedbackReq);
         final FeedbackRequestUpdateDTO dto = new FeedbackRequestUpdateDTO();
+        LocalDate newDueDate = LocalDate.now();
         dto.setId(feedbackReq.getId());
-        dto.setDueDate(LocalDate.now());
+        dto.setDueDate(newDueDate);
+        feedbackReq.setDueDate(newDueDate);
+
         HttpRequest<?> request = HttpRequest.PUT("", dto)
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatus());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(feedbackReq, response.getBody().get());
+    }
+    @Test
+    void testUpdateDueDateUnauthorized() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile randomMember = createAnUnrelatedUser();
+        MemberProfile recipient = createADefaultRecipient();
+
+        FeedbackRequest feedbackReq = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        final FeedbackRequestUpdateDTO dto = new FeedbackRequestUpdateDTO();
+        LocalDate newDueDate = LocalDate.now();
+        dto.setId(feedbackReq.getId());
+        dto.setDueDate(newDueDate);
+        feedbackReq.setDueDate(newDueDate);
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
     }
 
 

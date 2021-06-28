@@ -27,10 +27,6 @@ public class FeedbackRequestUpdateDTO {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
-    @Nullable
-    @Schema(description = "sentiment of the recipient's feedback")
-    private Double sentiment;
-
     public UUID getId() {
         return id;
     }
@@ -65,12 +61,4 @@ public class FeedbackRequestUpdateDTO {
         this.submitDate = submitDate;
     }
 
-    @Nullable
-    public Double getSentiment() {
-        return sentiment;
-    }
-
-    public void setSentiment(@Nullable Double sentiment) {
-        this.sentiment = sentiment;
-    }
 }

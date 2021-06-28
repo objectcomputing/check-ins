@@ -106,9 +106,9 @@ public class FeedbackRequestController {
      * @param creatorId {@link UUID} ID of member profile who created the feedback request
      * @return {@link List<FeedbackResponseDTO>} List of feedback requests that were made by certain creator
      */
-    @Get("/{?creatorId}")
-    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValue(@Nullable UUID creatorId) {
-        return Single.fromCallable(() -> feedbackReqServices.findByValue(creatorId))
+    @Get("/{?creatorId,requesteeId,templateId}")
+    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID templateId) {
+        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, templateId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
@@ -128,7 +128,6 @@ public class FeedbackRequestController {
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
         dto.setSubmitDate(feedbackRequest.getSubmitDate());
-        dto.setSentiment(feedbackRequest.getSentiment());
 
         return dto;
     }
@@ -142,11 +141,10 @@ public class FeedbackRequestController {
                 dto.getSendDate(),
                 dto.getDueDate(),
                 dto.getStatus(),
-                dto.getSubmitDate(),
-                dto.getSentiment());
+                dto.getSubmitDate());
     }
 
     private FeedbackRequest fromDTO(FeedbackRequestUpdateDTO dto) {
-        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus(), dto.getSubmitDate(), dto.getSentiment());
+        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus(), dto.getSubmitDate());
     }
 }
