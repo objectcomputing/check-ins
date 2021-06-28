@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;

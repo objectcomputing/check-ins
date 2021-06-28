@@ -44,10 +44,11 @@ public class FeedbackRequestUpdateDTO {
         this.dueDate = dueDate;
     }
 
+    @Nullable
     public String getStatus() {
         return status;
     }
-
+    @Nullable
     public void setStatus(String status) {
         this.status = status;
     }

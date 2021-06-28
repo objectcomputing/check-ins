@@ -6,8 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -21,7 +20,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestServicesImplementation.class);
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
@@ -104,9 +102,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        FeedbackRequest response = feedbackReqRepository.update(feedbackRequest);
-        LOG.info(response.toString());
-        return response;
+        return feedbackReqRepository.update(feedbackRequest);
 
 }
 
@@ -151,7 +147,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(creatorId, requesteeId, templateId, oldestDate));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(templateId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }

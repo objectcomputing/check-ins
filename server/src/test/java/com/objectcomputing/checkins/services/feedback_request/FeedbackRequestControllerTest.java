@@ -384,6 +384,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+        assertEquals(1, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -439,12 +440,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+        assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
-    void testGetLastThreeMonths() {
+    void testGetLastThreeMonthsByCreator() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -467,18 +470,20 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         getFeedbackRequestRepository().save(feedbackReqTwo);
         getFeedbackRequestRepository().save(feedbackReqThree);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?oldestDate=%s&creatorId=%s", oldestDate, pdlMemberProfile.getId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&oldestDate=%s", pdlMemberProfile.getId(), oldestDate))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
+
     @Test
-    void testGetAllTime() {
+    void testGetLastThreeMonthsByCreatorRequesteeTemplateId() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -489,7 +494,80 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         UUID identicalTemplateId = UUID.randomUUID();
         LocalDate now = LocalDate.now();
-        LocalDate oldestDate = null;
+        LocalDate oldestDate = now.minusMonths(3);
+        LocalDate withinLastFewMonths = now.minusMonths(2);
+        LocalDate outOfRange = now.minusMonths(10);
+
+        // create sample feedback requests with different send dates
+        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), identicalTemplateId, now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), UUID.randomUUID(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), identicalTemplateId, outOfRange, null, "pending", null);
+        getFeedbackRequestRepository().save(feedbackReq);
+        getFeedbackRequestRepository().save(feedbackReqTwo);
+        getFeedbackRequestRepository().save(feedbackReqThree);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&templateId=%s&oldestDate=%s", pdlMemberProfile.getId(), memberOne.getId(), identicalTemplateId, oldestDate))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertEquals(1, response.getBody().get().size());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testGetLastThreeMonthsByRequesteeId() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        MemberProfile recipientOne = createADefaultRecipient();
+        MemberProfile recipientTwo = createASecondDefaultRecipient();
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfile);
+
+        UUID identicalTemplateId = UUID.randomUUID();
+        LocalDate now = LocalDate.now();
+        LocalDate oldestDate = now.minusMonths(3);
+        LocalDate withinLastFewMonths = now.minusMonths(2);
+        LocalDate outOfRange = now.minusMonths(10);
+
+        // create sample feedback requests with different send dates
+        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), identicalTemplateId, now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberTwo.getId(), recipientTwo.getId(), UUID.randomUUID(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), identicalTemplateId, withinLastFewMonths, null, "pending", null);
+        getFeedbackRequestRepository().save(feedbackReq);
+        getFeedbackRequestRepository().save(feedbackReqTwo);
+        getFeedbackRequestRepository().save(feedbackReqThree);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s&oldestDate=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId(), oldestDate))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertEquals(2, response.getBody().get().size());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReqThree, response.getBody().get().get(1));
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testGetEveryAllTimeAdmin() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(pdlMemberProfile);
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        MemberProfile recipientOne = createADefaultRecipient();
+        MemberProfile recipientTwo = createASecondDefaultRecipient();
+
+        UUID identicalTemplateId = UUID.randomUUID();
+        LocalDate now = LocalDate.now();
+        LocalDate oldestDate = LocalDate.of(2010, 10, 10);
         LocalDate withinLastFewMonths = now.minusMonths(2);
         LocalDate outOfRange = now.minusMonths(10);
 
@@ -502,10 +580,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         getFeedbackRequestRepository().save(feedbackReqThree);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?oldestDate=%s", oldestDate))
-                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(3, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
         assertResponseEqualsEntity(feedbackReqThree, response.getBody().get().get(2));
