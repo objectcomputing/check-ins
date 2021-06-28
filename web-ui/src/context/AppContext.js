@@ -145,7 +145,7 @@ const AppContextProvider = (props) => {
 
     if (csrf && userProfile) {
       getMemberProfiles();
-      if (userProfile.role.includes("ADMIN")) {
+      if (userProfile.role?.includes("ADMIN")) {
         getTerminatedMembers();
       }
     }
@@ -153,7 +153,7 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     function getAllTheCheckins() {
-      if (userProfile && userProfile.role.includes("ADMIN") && id && csrf) {
+      if (userProfile && userProfile.role?.includes("ADMIN") && id && csrf) {
         getAllCheckinsForAdmin(dispatch, csrf);
       } else if (id && csrf) {
         getCheckins(id, pdlId, dispatch, csrf);
