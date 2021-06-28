@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,13 +60,20 @@ public class GuildServicesImpl implements GuildServices {
     }
 
     public GuildResponseDTO read(@NotNull UUID guildId) {
+        Guild foundGuild = guildsRepo.findById(guildId)
+                .orElseThrow(() -> new NotFoundException("No such guild found"));
+
         List<GuildMemberResponseDTO> guildMembers = guildMemberRepo
                 .findByGuildid(guildId)
                 .stream()
+                .filter(guildMember -> {
+                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+                    return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+                })
                 .map(guildMember ->
                         fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberid()))).collect(Collectors.toList());
-        return fromEntity(guildsRepo.findById(guildId)
-                .orElseThrow(() -> new NotFoundException("No such guild found")));
+
+        return fromEntity(foundGuild, guildMembers);
     }
 
     public GuildResponseDTO update(GuildUpdateDTO guildDTO) {
@@ -123,7 +131,11 @@ public class GuildServicesImpl implements GuildServices {
         Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
-            List<GuildMember> foundMembers = guildMemberRepo.findByGuildid(foundGuild.getId());
+            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildid(foundGuild.getId()).stream().filter(guildMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+            }).collect(Collectors.toSet());
+
             for (GuildMember foundMember : foundMembers) {
                 foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberid())));
             }
