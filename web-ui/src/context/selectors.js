@@ -102,7 +102,7 @@ export const selectPendingSkills = createSelector(selectSkills, (skills) =>
 );
 
 export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
-  roles?.filter((role) => role.role.includes("PDL"))
+  roles?.filter((role) => role.role?.includes("PDL"))
 );
 
 export const selectMappedPdls = createSelector(
