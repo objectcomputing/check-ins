@@ -8,9 +8,4 @@ export const getFeedbackSuggestion = async (id, cookie) => {
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
-    return resolve({
-        url: `${feedbackSuggestionURL}/${id}`,
-        responseType: "json",
-        headers: { "X-CSRF-Header": cookie }
-    });
 };
