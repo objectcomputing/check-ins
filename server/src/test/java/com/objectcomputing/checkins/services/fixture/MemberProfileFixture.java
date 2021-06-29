@@ -14,12 +14,12 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
 
-    default MemberProfile createASecondDefaultMemberProfile() {
-        return getMemberProfileRepository().save(new MemberProfile("Jim", null, "Jimson",
-                null, "Comedic Relief", null, "New York, New York",
-                "jimj@objectcomputing.com", "mr-jim-employee", LocalDate.now(),
-                "is a clay figurine clown star of a parody of children's clay animation shows",
-                null, null, null));
+    default MemberProfile createASecondMemberProfile() {
+        return getMemberProfileRepository().save(new MemberProfile("Slim", null, "Jim",
+                null, "Office Opossum", null, "New York, New York",
+                "slimjim@objectcomputing.com", "slim-jim-employee", LocalDate.now(),
+                "A Virginia opossum, one of North America's only marsupials",
+                null, null,null));
     }
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
@@ -38,14 +38,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
-    default MemberProfile createAThirdDefaultMemberProfileForPdl(MemberProfile memberProfile) {
-        return getMemberProfileRepository().save(new MemberProfile("Godzilla", null, "Godzilla",
-                null, "local kaiju", memberProfile.getId(), "Tokyo, Japan",
-                "godzilla@objectcomputing.com", "godzilla", LocalDate.now(),
-                "is a destroyer of words",
-                null, null, null));
-    }
-
     default MemberProfile createADefaultSupervisor() {
         return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
                 null, "Supervisor Man", null, "New York, New York",
@@ -53,7 +45,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 LocalDate.now(), "is such like a bro dude, you know?",
                 null, null,null));
     }
-
     default MemberProfile createASupervisedAndPDLUser(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Char",
                 null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
@@ -61,7 +52,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 LocalDate.now(), "Needs a lot of supervision due to building being ultra flammable",
                 supervisorProfile.getId(), null,null));
     }
-
     // this user is not connected to other users in the system
     default MemberProfile createAnUnrelatedUser() {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
