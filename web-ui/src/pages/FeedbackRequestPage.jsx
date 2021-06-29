@@ -43,7 +43,6 @@ function getSteps() {
 function getTemplates() {
    return [
     {
-      key: "1",
       title: "Ad Hoc",
       isAdHoc: true,
       description: "Ask a single question.",
@@ -51,7 +50,6 @@ function getTemplates() {
       questions: []
     },
     {
-      key: "2",
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -59,7 +57,6 @@ function getTemplates() {
       questions: []
     },
     {
-      key: "3",
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -67,7 +64,6 @@ function getTemplates() {
       questions: [],
     },
     {
-      key: "4",
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
