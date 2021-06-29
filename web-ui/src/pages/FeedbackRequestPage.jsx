@@ -13,6 +13,7 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
+import {TextField} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,8 +41,9 @@ function getSteps() {
 }
 
 function getTemplates() {
-  return [
+   return [
     {
+      key: "1",
       title: "Ad Hoc",
       isAdHoc: true,
       description: "Ask a single question.",
@@ -49,6 +51,7 @@ function getTemplates() {
       questions: []
     },
     {
+      key: "2",
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -56,6 +59,7 @@ function getTemplates() {
       questions: []
     },
     {
+      key: "3",
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -63,6 +67,7 @@ function getTemplates() {
       questions: [],
     },
     {
+      key: "4",
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -70,9 +75,11 @@ function getTemplates() {
       questions: []
     },
   ];
+
 }
 
 const FeedbackRequestPage = () => {
+  const allTemplates = getTemplates();
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -80,6 +87,14 @@ const FeedbackRequestPage = () => {
   let activeStep = location?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const [searchText, setSearchText] = useState(null);
+  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+
+  useEffect(() => {
+
+    getFilteredTemplates();
+
+  }, [searchText])
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
@@ -99,78 +114,110 @@ const FeedbackRequestPage = () => {
 
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
     return (
-      <Redirect to="/feedback/request?step=1"/>
+        <Redirect to="/feedback/request?step=1"/>
     );
+  }
+  const getFilteredTemplates = () => {
+    setFilteredTemplates(setFilteredTemplates => []);
+    if (searchText !== null) {
+      for (const template of allTemplates) {
+        let searchTextString = searchText.toString().toLowerCase();
+        let title = template.title.toLowerCase();
+        let description = template.description.toLowerCase();
+        if (title.includes(searchTextString) || description.includes(searchTextString)) {
+          setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
+
+        }
+      }
+      return filteredTemplates;
+    } else {
+      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
+      console.log("else")
+      return "no matching templates"
+    }
+
+
   }
 
   return (
-    <div className="feedback-request-page">
-      {preview.selectedTemplate &&
+      <div className="feedback-request-page">
+        {preview.selectedTemplate &&
         <TemplatePreviewModal
-          template={preview.selectedTemplate}
-          open={preview.open}
-          onClose={handlePreviewClose}
+            template={preview.selectedTemplate}
+            open={preview.open}
+            onClose={handlePreviewClose}
         />
-      }
+        }
 
-      <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
-        <div>
+        <div className="header-container">
+          <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+          <div>
             <div>
               <Link
-                className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?step=${activeStep - 1}`}
+                  className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
+                  to={`?step=${activeStep - 1}`}
               >
                 <Button
-                  disabled={activeStep <= 1}>
+                    disabled={activeStep <= 1}>
                   Back
                 </Button>
               </Link>
 
               <Link
-                className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
+                  className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
+                  to={activeStep === 3 ? `/feedback/request/confirmation` : `?step=${activeStep + 1}`}>
                 <Button
-                  disabled={activeStep > getSteps().length}
-                  variant="contained"
-                  color="primary">
+                    disabled={activeStep > getSteps().length}
+                    variant="contained"
+                    color="primary">
                   {activeStep === steps.length ? "Submit" : "Next"}
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+        <Stepper activeStep={activeStep - 1} className={classes.root}>
+          {steps.map((label) => {
+            const stepProps = {};
+            const labelProps = {};
+            return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps} key={label}>{label}</StepLabel>
+                </Step>
+            );
+          })}
+        </Stepper>
+
+        <div className="current-step-content">
+          {activeStep === 1 && <TemplatePreviewModal/> &&
+          <div className="search-bar">
+            <TextField
+                label="Search Templates..."
+                placeholder="Template 1"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+            />
+            <div className="card-container">
+              {filteredTemplates.map((template) => (
+                  <TemplateCard
+                      title={template.title}
+                      creator={template.creator}
+                      description={template.description}
+                      isAdHoc={template.isAdHoc}
+                      questions={template.questions}
+                      expanded={preview.open}
+                      onClick={(e) => handlePreviewOpen(e, template)}
+                      onCardClick={() => onCardClick(template)}/>
+              ))}
+            </div>
+          </div>
+          }
+          {activeStep === 2 && <FeedbackRecipientSelector/>}
+          {activeStep === 3 && <SelectDate/>}
         </div>
       </div>
-      <Stepper activeStep={activeStep - 1} className={classes.root}>
-        {steps.map((label) => {
-          const stepProps = {};
-          const labelProps = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps} key={label}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div className="current-step-content">
-          {activeStep === 1 && <TemplatePreviewModal/> &&
-          <div className="card-container">
-            {getTemplates().map((template) => (
-              <TemplateCard
-                title={template.title}
-                creator={template.creator}
-                description={template.description}
-                isAdHoc={template.isAdHoc}
-                questions={template.questions}
-                expanded={preview.open}
-                onClick={(e) => handlePreviewOpen(e, template)}
-                onCardClick={() => onCardClick(template)}/>
-            ))}
-          </div>
-        }
-        {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
-      </div>
-    </div>
   );
 }
 
