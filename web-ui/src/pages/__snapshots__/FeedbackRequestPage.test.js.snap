@@ -18,7 +18,7 @@ Array [
       <div>
         <div>
           <a
-            className="no-underline-link "
+            className="no-underline-link disabled-link"
             href="/?for=undefined&step=1"
             onClick={[Function]}
           >

@@ -15,6 +15,7 @@ export const ADD_GUILD = "@@check-ins/add_guild";
 export const UPDATE_CHECKIN = "@@check-ins/update_checkin";
 export const UPDATE_CHECKINS = "@@check-ins/update_checkins";
 export const UPDATE_MEMBER_PROFILES = "@@check-ins/update_member_profiles";
+export const UPDATE_TERMINATED_MEMBERS = "@@check-ins/update_terminated_members";
 export const UPDATE_MEMBER_SKILLS = "@@check-ins/update_member_skills";
 export const UPDATE_SKILL = "@@check-ins/update_skill";
 export const UPDATE_SKILLS = "@@check-ins/update_skills";

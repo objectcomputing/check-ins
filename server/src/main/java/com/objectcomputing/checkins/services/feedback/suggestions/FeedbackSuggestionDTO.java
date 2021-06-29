@@ -1,17 +1,22 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
+import com.sun.istack.Nullable;
+
 import java.util.Objects;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 public class FeedbackSuggestionDTO {
 
-    @NotNull
+    @Nullable
     private String reason;
-    @NotNull
+    @Nullable
     private UUID profileId;
 
-    public FeedbackSuggestionDTO() { }
+    public FeedbackSuggestionDTO() {
+        this.reason = null;
+        this.profileId = null;
+    }
 
     public FeedbackSuggestionDTO(String reason, UUID profileId) {
         this.reason = reason;
