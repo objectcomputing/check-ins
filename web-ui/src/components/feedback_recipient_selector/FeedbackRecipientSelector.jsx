@@ -1,65 +1,119 @@
-import React, {useContext} from "react";
+import React, { useContext, useState } from "react";
+
+import Feedback_recipient_card from "../components/feedback_request/Feedback_recipient_card";
+import { createMember } from "../api/member";
+import { AppContext } from "../context/AppContext";
+import { UPDATE_MEMBER_PROFILES } from "../context/actions";
+import {
+  selectNormalizedMembers,
+  selectNormalizedMembersAdmin,
+} from "../context/selectors";
+
+import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Search from "@material-ui/icons/Search";
+import PersonIcon from "@material-ui/icons/Person";
 
 import "./FeedbackRecipientSelector.css";
-import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
-import {AppContext} from "../../context/AppContext";
-import {selectCurrentMembers} from "../../context/selectors";
-import {useHistory, useLocation} from "react-router-dom";
-import queryString from "query-string";
+import MemberModal from "../components/member-directory/MemberModal";
 
 const useStyles = makeStyles({
-  root: {
-    color: "gray"
+  search: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  textField: {
-    width: "40ch"
-  }
+  searchInput: {
+    width: "20em",
+  },
+  members: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    width: "100%",
+  },
 });
 
 const FeedbackRecipientSelector = () => {
+  const { state, dispatch } = useContext(AppContext);
+  const { csrf, memberProfiles, userProfile } = state;
+
   const classes = useStyles();
-  const {state} = useContext(AppContext);
-  const profiles = selectCurrentMembers(state);
-  const history = useHistory();
-  const location = useLocation();
-  const parsed = queryString.parse(location?.search);
-  let from = parsed.from;
 
-  const cardClickHandler = (id) => {
-    if(!Array.isArray(from)) from = from ? [from] : [];
-    if(from.includes(id)) {
-      from.splice(from.indexOf(id), 1);
-    }
-    else from[from.length] = id;
+  const [open, setOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-    parsed.from = from;
-    history.push({...location, search: queryString.stringify(parsed)});
-  }
+  const isAdmin =
+    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+
+  const normalizedMembers = isAdmin
+    ? selectNormalizedMembersAdmin(state, searchText)
+    : selectNormalizedMembers(state, searchText);
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
+
+  const createMemberCards = normalizedMembers.map((member, index) => {
+    return (
+      <Feedback_recipient_card
+        key={`${member.name}-${member.id}`}
+        index={index}
+        member={member}
+      />
+    );
+  });
 
   return (
-    <div className="feedback-recipient-selector">
-      <TextField
-        className={classes.textField}
-        placeholder="Search..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment className={classes.root} position="start">
-              <Search />
-            </InputAdornment>
-          ),
-        }}
-      />
-      <div className="card-container">
-        {profiles && profiles.map((profile) => (
-          <FeedbackRecipientCard profileId={profile.id} reason={undefined} selected={from && from.includes(profile.id)} onClick ={() => cardClickHandler(profile.id)}/>
-        ))}
-      </div>
-    </div>
-  )
-}
+    <div className="FeedbackRecipientSelector">
+      <Grid container spacing={3}>
+        <Grid item xs={12} className={classes.search}>
+          <TextField
+            className={classes.searchInput}
+            label="Select employees..."
+            placeholder="Member Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+          />
+              <MemberModal
+                open={open}
+                onClose={handleClose}
+                onSave={async (member) => {
+                  if (
+                    member.location &&
+                    member.firstName &&
+                    member.lastName &&
+                    member.startDate &&
+                    member.title &&
+                    member.workEmail &&
+                    csrf
+                  ) {
+                    let res = await createMember(member, csrf);
 
-export default FeedbackRecipientSelector;
+                    let data =
+                      res.payload && res.payload.data && !res.error
+                        ? res.payload.data
+                        : null;
+                    if (data) {
+                      dispatch({
+                        type: UPDATE_MEMBER_PROFILES,
+                        payload: [...memberProfiles, data],
+                      });
+                    }
+                    handleClose();
+                  }
+                }}
+              />
+            </div>
+          )}
+        </Grid>
+        <Grid item className={classes.members}>
+          {createMemberCards}
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
+
+export default ;
