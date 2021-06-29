@@ -5,6 +5,7 @@ import { createBrowserHistory } from "history";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
+import HomePage from "./pages/HomePage";
 import TeamsPage from "./pages/TeamsPage";
 import GuildsPage from "./pages/GuildsPage";
 import CheckinsPage from "./pages/CheckinsPage";
@@ -57,12 +58,9 @@ function App() {
                 <Route exact path="/feedback/request/confirmation">
                   <FeedbackRequestConfirmation />
                 </Route>
-                <Route path="/feedback/request">
-                  <FeedbackRequestPage />
-                </Route>
                 <Route path="/home">
                   <Header />
-                  <ProfilePage />
+                  <HomePage />
                 </Route>
                 <Route path="/people">
                   <Header title="People" />

@@ -20,7 +20,7 @@ targetCompatibility = "11"
 sourceCompatibility = "11"
 archivesBaseName = "check-ins-server"
 
-version "0.1"
+version "0.4"
 group "com.objectcomputing.checkins"
 
 repositories {

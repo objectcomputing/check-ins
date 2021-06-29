@@ -10,7 +10,7 @@ public interface TeamServices {
 
     TeamResponseDTO update(TeamUpdateDTO g);
 
-    Set<TeamResponseDTO> findByFields(String name, UUID memberid);
+    Set<TeamResponseDTO> findByFields(String name, UUID memberId);
 
     boolean delete(UUID id);
 }

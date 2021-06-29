@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
+
 import {
   DatePicker,
 } from '@material-ui/pickers';
@@ -17,21 +18,43 @@ pickerContain: {
  }
 });
 
-const SelectDate = () =>{
- const classes = useStyles();
-const [dueDate, setDueDate] = React.useState(null);
-const [sendDate, setSendDate] = React.useState(new Date());
+const SelectDate = (props) =>{
+  const classes = useStyles();
+  let hasPushedQuery = useRef(false)
+  const {sendDateProp, dueDateProp, handleQueryChange} = props
+  const [sendDateQuery, setSendDateQuery] = useState(props.sendDateProp)
+  const [dueDateQuery, setDueDateQuery] = useState(props.dueDateProp)
 
+//populates due and send date in url with appropriate default values on
+//appropriate step--looks weird due to es linter use dependency warnings i had to fix
+  useEffect(() => {
+    function sendInitialURLQuery() {
+      handleQueryChange("dueDate",dueDateProp)
+      handleQueryChange("sendDate", sendDateProp)
+    }
+    if (!hasPushedQuery.current) {
+      hasPushedQuery.current = true;
+      sendInitialURLQuery();
+    }
+
+  }, [dueDateProp, handleQueryChange, sendDateProp]);
+
+//populates url with user's changes if they change default values
 const handleDueDateChange = (date) => {
-  setDueDate(date);
+  setDueDateQuery(date.toString());
+  handleQueryChange("dueDate", date.toString())
 };
 
 const handleSendDateChange = (date) => {
-  setSendDate(date);
+  setSendDateQuery(date.toString());
+  handleQueryChange("sendDate", date.toString())
+
+
 };
 
 return (
-<React.Fragment className={classes.root}>
+<React.Fragment>
+  <div className = {classes.root}>
   <div className={classes.pickerContain}>
        <DatePicker
        className= {classes.picker}
@@ -40,7 +63,7 @@ return (
                margin="normal"
                id="set-send-date"
                label="Send Date:"
-               value={sendDate}
+                value={sendDateQuery}
                onChange={handleSendDateChange}
                KeyboardButtonProps={{
                  'aria-label': 'change date',
@@ -54,12 +77,13 @@ return (
                 id="set-due-date"
                 label="Due Date:"
                 emptyLabel="No due date"
-                value={dueDate}
+                value={dueDateQuery}
                 onChange={handleDueDateChange}
                 KeyboardButtonProps={{
                    'aria-label': 'change date',
                 }}
              />
+             </div>
              </div>
 </React.Fragment>
 

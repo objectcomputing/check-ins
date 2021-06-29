@@ -37,8 +37,8 @@ public class TeamMemberController {
     @Post()
     public HttpResponse<TeamMember> createMembers(@Body @Valid TeamMemberCreateDTO teamMember,
                                                   HttpRequest<TeamMemberResponseDTO> request) {
-        TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamid(),
-                teamMember.getMemberid(), teamMember.getLead()));
+        TeamMember newTeamMember = teamMemberServices.save(new TeamMember(teamMember.getTeamId(),
+                teamMember.getMemberId(), teamMember.getLead()));
         return HttpResponse
                 .created(newTeamMember)
                 .headers(headers -> headers.location(
@@ -53,7 +53,7 @@ public class TeamMemberController {
      */
     @Put()
     public HttpResponse<?> updateMembers(@Body @Valid TeamMemberUpdateDTO teamMember, HttpRequest<TeamMember> request) {
-        TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamid(), teamMember.getMemberid(), teamMember.getLead()));
+        TeamMember updatedTeamMember = teamMemberServices.update(new TeamMember(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), teamMember.getLead()));
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(
@@ -76,16 +76,16 @@ public class TeamMemberController {
     /**
      * Find team members that match all filled in parameters, return all results when given no params
      *
-     * @param teamid   {@link UUID} of team
-     * @param memberid {@link UUID} of member
+     * @param teamId   {@link UUID} of team
+     * @param memberId {@link UUID} of member
      * @param lead,    is lead of the team
      * @return {@link List < Team > list of teams}
      */
-    @Get("/{?teamid,memberid,lead}")
-    public Set<TeamMember> findTeamMembers(@Nullable UUID teamid,
-                                           @Nullable UUID memberid,
+    @Get("/{?teamId,memberId,lead}")
+    public Set<TeamMember> findTeamMembers(@Nullable UUID teamId,
+                                           @Nullable UUID memberId,
                                            @Nullable Boolean lead) {
-        return teamMemberServices.findByFields(teamid, memberid, lead);
+        return teamMemberServices.findByFields(teamId, memberId, lead);
     }
 
     /**

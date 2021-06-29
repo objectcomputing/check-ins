@@ -5,13 +5,13 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Link, useLocation, Redirect, useHistory} from 'react-router-dom';
+import {Link, useLocation, useHistory, Redirect} from 'react-router-dom';
 import queryString from 'query-string';
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +38,7 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
+let todayDate = new Date();
 const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
@@ -49,14 +50,10 @@ const FeedbackRequestPage = () => {
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
 
+  let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
+  let dueDate = query?.dueDate ? query.dueDate: null
   let activeStep = location?.search ? parseInt(stepQuery) : 1;
   const numbersOnly = /^\d+$/.test(stepQuery);
-
-  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
-    return (
-      <Redirect to="/feedback/request/?step=1"/>
-    );
-  }
 
   const getFeedbackArgs = (step) => {
     const nextQuery = {
@@ -73,6 +70,12 @@ const FeedbackRequestPage = () => {
       [key]: value
     }
     history.push({...location, search: queryString.stringify(newQuery)});
+  }
+
+  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+    return (
+      <Redirect to="/feedback/request?step=1"/>
+    );
   }
 
   return (
@@ -118,7 +121,7 @@ const FeedbackRequestPage = () => {
       <div className="current-step-content">
         {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
         {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
+        {activeStep === 3 && <SelectDate handleQueryChange={handleQueryChange} sendDateProp = {sendDate} dueDateProp = {dueDate} />}
       </div>
     </div>
   );
