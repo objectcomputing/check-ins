@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -7,9 +7,11 @@ import Search from "@material-ui/icons/Search";
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
-import {selectCurrentMembers} from "../../context/selectors";
+import {selectCsrfToken} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
+import {getFeedbackSuggestion} from "../../api/feedback";
+import { selectCurrentUser } from "../../context/selectors";
 
 const useStyles = makeStyles({
   root: {
@@ -21,13 +23,36 @@ const useStyles = makeStyles({
 });
 
 const FeedbackRecipientSelector = () => {
-  const classes = useStyles();
-  const {state} = useContext(AppContext);
-  const profiles = selectCurrentMembers(state);
-  const history = useHistory();
-  const location = useLocation();
-  const parsed = queryString.parse(location?.search);
-  let from = parsed.from;
+    const { state } = useContext(AppContext);
+    const csrf = selectCsrfToken(state);
+    const userProfile = selectCurrentUser(state);
+    const {id} = userProfile;
+    const classes = useStyles();
+    const history = useHistory();
+    const location = useLocation();
+    const parsed = queryString.parse(location?.search);
+    let from = parsed.from;
+    const [profiles, setProfiles] = useState([]);
+
+    useEffect(() => {
+        async function getSuggestions() {
+            if (id === undefined || id === null) {
+                return;
+            }
+            let res = await getFeedbackSuggestion(id, csrf);
+            if (res && res.payload) {
+                return res.payload.data && !res.error
+                    ? res.payload.data
+                    : undefined;
+            }
+            return null;
+        }
+        if (csrf) {
+            getSuggestions().then((res) => {
+                setProfiles(res);
+            });
+        }
+    },[id,csrf]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) from = from ? [from] : [];
@@ -54,9 +79,16 @@ const FeedbackRecipientSelector = () => {
         }}
       />
       <div className="card-container">
-        {profiles && profiles.map((profile) => (
-          <FeedbackRecipientCard profileId={profile.id} reason={undefined} selected={from && from.includes(profile.id)} onClick ={() => cardClickHandler(profile.id)}/>
-        ))}
+        {profiles ?
+            profiles.map((profile) => (
+                <FeedbackRecipientCard
+                    key={profile.profileId}
+                    profileId={profile.profileId}
+                    reason={profile.reason}
+                    selected={from && from.includes(profile.profileId)}
+                    onClick={() => cardClickHandler(profile.profileId)}/>
+            )) :
+            <p> Can't get suggestions, please come back later :( </p>}
       </div>
     </div>
   )

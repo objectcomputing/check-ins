@@ -25,6 +25,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
     private final TeamMemberServices teamMemberServices;
     private final Integer maxSuggestions;
 
+
     public FeedbackSuggestionServiceImpl(MemberProfileServices memberProfileServices,
                                          CurrentUserServices currentUserServices,
                                          TeamMemberServices teamMemberServices,
@@ -45,7 +46,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        List<FeedbackSuggestionDTO> suggestions = new LinkedList<FeedbackSuggestionDTO>();
+        List<FeedbackSuggestionDTO> suggestions = new LinkedList<>();
         if(suggestFor.getSupervisorid() != null && !suggestFor.getSupervisorid().equals(currentUser.getId())) {
             suggestions.add(new FeedbackSuggestionDTO("Supervisor of requestee", suggestFor.getSupervisorid()));
         }
