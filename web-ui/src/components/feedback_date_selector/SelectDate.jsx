@@ -1,4 +1,6 @@
 import React, {useCallback} from "react";
+import React, {useState, useEffect, useRef} from "react";
+
 import {
   DatePicker,
 } from '@material-ui/pickers';
@@ -41,7 +43,7 @@ const SelectDate = () =>{
     },[location, history, query]);
 
     return (
-    <React.Fragment className={classes.root}>
+    <React.Fragment>
       <div className={classes.pickerContain}>
            <DatePicker
            className= {classes.picker}
