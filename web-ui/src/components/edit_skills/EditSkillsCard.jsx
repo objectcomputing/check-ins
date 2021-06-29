@@ -130,8 +130,8 @@ const EditSkillsCard = ({ skill }) => {
   const chip = (position) => {
     return (
       <Chip
-        avatar={<Avatar src={getAvatarURL(position.workEmail)}></Avatar>}
-        label={position.name}
+        avatar={<Avatar src={getAvatarURL(position?.workEmail)}></Avatar>}
+        label={position?.name}
       ></Chip>
     );
   };
