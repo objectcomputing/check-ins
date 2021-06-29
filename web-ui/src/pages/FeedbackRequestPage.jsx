@@ -10,7 +10,6 @@ import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 
 import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
@@ -93,7 +92,7 @@ const FeedbackRequestPage = () => {
   let dueDate = query?.dueDate ? query.dueDate: null
   const [requestee, setRequestee] = useState();
   const id = values.for;
-  let activeStep = location?.search ? parseInt(query) : 2;
+  let activeStep = location?.search ? parseInt(stepQuery) : 2;
   const numbersOnly = /^\d+$/.test(stepQuery);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
