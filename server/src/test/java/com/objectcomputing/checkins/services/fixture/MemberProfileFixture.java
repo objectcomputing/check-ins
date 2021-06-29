@@ -14,7 +14,7 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
 
-    default MemberProfile createASecondMemberProfile() {
+    default MemberProfile createASecondDefaultMemberProfile() {
         return getMemberProfileRepository().save(new MemberProfile("Slim", null, "Jim",
                 null, "Office Opossum", null, "New York, New York",
                 "slimjim@objectcomputing.com", "slim-jim-employee", LocalDate.now(),

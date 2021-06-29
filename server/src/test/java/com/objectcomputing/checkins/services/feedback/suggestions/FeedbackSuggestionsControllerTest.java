@@ -134,7 +134,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createDefaultRole(RoleType.ADMIN, supervisor);
         MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
-        MemberProfile teamMemberofRequestee = createASecondMemberProfile();
+        MemberProfile teamMemberofRequestee = createASecondDefaultMemberProfile();
         createLeadTeamMember(team, requesteeTeamLead);
         createDefaultTeamMember(team, requestee);
         createDefaultTeamMember(team, teamMemberofRequestee);
