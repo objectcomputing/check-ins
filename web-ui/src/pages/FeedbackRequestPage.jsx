@@ -87,8 +87,10 @@ const FeedbackRequestPage = () => {
   let activeStep = location?.search ? parseInt(query) : 1;
   const numbersOnly = /^\d+$/.test(query);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
-  const [searchText, setSearchText] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+
+
 
   useEffect(() => {
 
@@ -118,22 +120,26 @@ const FeedbackRequestPage = () => {
     );
   }
   const getFilteredTemplates = () => {
+    console.log(searchText)
     setFilteredTemplates(setFilteredTemplates => []);
-    if (searchText !== null) {
+    if (searchText !== "") {
       for (const template of allTemplates) {
         let searchTextString = searchText.toString().toLowerCase();
         let title = template.title.toLowerCase();
         let description = template.description.toLowerCase();
         if (title.includes(searchTextString) || description.includes(searchTextString)) {
           setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
-
         }
       }
-      return filteredTemplates;
+
+      if(filteredTemplates.length === 0){
+
+      }
+      else{
+        return filteredTemplates;
+      }
     } else {
       setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
-      console.log("else")
-      return "no matching templates"
     }
 
 
@@ -200,8 +206,11 @@ const FeedbackRequestPage = () => {
                 }}
             />
             <div className="card-container">
-              {filteredTemplates.map((template) => (
-                  <TemplateCard
+              {
+                (filteredTemplates.length === 0)
+                    ? <h2>No matching templates</h2>
+                    : filteredTemplates.map((template) => (
+                      <TemplateCard
                       title={template.title}
                       creator={template.creator}
                       description={template.description}
@@ -210,7 +219,8 @@ const FeedbackRequestPage = () => {
                       expanded={preview.open}
                       onClick={(e) => handlePreviewOpen(e, template)}
                       onCardClick={() => onCardClick(template)}/>
-              ))}
+                ))
+              }
             </div>
           </div>
           }
