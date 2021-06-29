@@ -11,12 +11,30 @@ import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+        width: '100%',
+        padding: 0,
+      },
+  },
+  requestHeader: {
+  marginLeft: "2%",
+
+  },
+  stepContainer: {
+  display: "flexbox",
+  justifyContent: "center",
+  alignItems: "center",
+  alignContent: "center",
+     ['@media (max-width:767px) and (min-width: 320px)']: { // eslint-disable-line no-useless-computed-key
+          width: '100%',
+        },
   },
   appBar: {
     position: "relative",
@@ -33,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     justifyContent: "right",
   }
+
 }));
 
 function getSteps() {
@@ -140,7 +159,7 @@ const FeedbackRequestPage = () => {
       }
 
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+        <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>John Doe</b></Typography>
         <div>
             <div>
               <Link
@@ -166,6 +185,7 @@ const FeedbackRequestPage = () => {
             </div>
         </div>
       </div>
+      <div className={classes.stepContainer}>
       <Stepper activeStep={activeStep - 1} className={classes.root}>
         {steps.map((label) => {
           const stepProps = {};
@@ -177,6 +197,7 @@ const FeedbackRequestPage = () => {
           );
         })}
       </Stepper>
+      </div>
       <div className="current-step-content">
           {activeStep === 1 && <TemplatePreviewModal/> &&
           <div className="card-container">
