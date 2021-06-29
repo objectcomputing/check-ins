@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Link, useLocation, useHistory, Redirect} from 'react-router-dom';
+import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -71,7 +71,7 @@ const FeedbackRequestPage = () => {
     }
     history.push({...location, search: queryString.stringify(newQuery)});
   }
-
+  
   if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
     return (
       <Redirect to="/feedback/request?step=1"/>
