@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="directory-page"
+  className="people-page"
 >
   <div
     className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3"

@@ -1,5 +1,6 @@
 .feedback-request-page {
     margin: 4rem 2rem 2rem 2rem;
+    height: 100%;
 }
 
 .header-container {
@@ -8,4 +9,19 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.card-container {
+    margin: 1rem calc(2rem - 20px) 1rem calc(2rem - 20px);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.disabled-link {
+    pointer-events: none;
+    text-decoration: none;
+}
+.no-underline-link{
+    text-decoration: none;
 }

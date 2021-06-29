@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 
 export const selectMemberProfiles = (state) => state.memberProfiles;
+export const selectTerminatedMembers = (state) => state.terminatedMembers;
 export const selectMemberSkills = (state) => state.memberSkills;
 export const selectSkills = (state) => state.skills;
 export const selectTeamMembers = (state) => state.teamMembers;
@@ -101,14 +102,16 @@ export const selectPendingSkills = createSelector(selectSkills, (skills) =>
 );
 
 export const selectPdlRoles = createSelector(selectMemberRoles, (roles) =>
-  roles?.filter((role) => role.role.includes("PDL"))
+  roles?.filter((role) => role.role?.includes("PDL"))
 );
 
 export const selectMappedPdls = createSelector(
   selectProfileMap,
   selectPdlRoles,
   (memberProfileMap, roles) =>
-    roles?.map((role) => (role.memberid in memberProfileMap)? memberProfileMap[role.memberid]: {})
+    roles?.map((role) =>
+      role.memberid in memberProfileMap ? memberProfileMap[role.memberid] : {}
+    )
 );
 
 export const selectOrderedPdls = createSelector(
@@ -197,7 +200,7 @@ export const selectTeamMembersWithCheckinPDL = createSelector(
     pdlCheckinMap[pdlId]
       .map((checkin) => checkin.teamMemberId)
       .reduce((accu, memberId) => {
-        if (!accu.find((e) => e.id === memberId)) {
+        if (!accu.find((e) => e?.id === memberId)) {
           accu.push(profileMap[memberId]);
         }
         return accu;
@@ -261,17 +264,20 @@ export const selectNormalizedMembers = createSelector(
 
 export const selectNormalizedMembersAdmin = createSelector(
   selectMemberProfiles,
+  selectTerminatedMembers,
   (state, searchText) => searchText,
-  (memberProfiles, searchText) =>
-    memberProfiles?.filter((member) => {
-      let normName = member.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      let normSearchText = searchText
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-      return normName.toLowerCase().includes(normSearchText.toLowerCase());
-    }).sort((a, b) => a.lastName.localeCompare(b.lastName))
+  (memberProfiles, terminatedProfiles, searchText) =>
+    memberProfiles.concat(terminatedProfiles)
+      ?.filter((member) => {
+        let normName = member.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        let normSearchText = searchText
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return normName.toLowerCase().includes(normSearchText.toLowerCase());
+      })
+      .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
 export const selectNormalizedTeams = createSelector(

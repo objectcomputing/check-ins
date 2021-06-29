@@ -4,27 +4,32 @@ import { getCheckins, getAllCheckinsForAdmin } from "./thunks";
 import {
   MY_PROFILE_UPDATE,
   SET_CSRF,
+  SET_ROLES,
   UPDATE_GUILDS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
+  UPDATE_TERMINATED_MEMBERS,
   UPDATE_SKILLS,
-  SET_ROLES,
+  UPDATE_TEAMS,
 } from "./actions";
-import { getCurrentUser, getAllMembers, getAllRoles } from "../api/member";
+import { getCurrentUser, getAllMembers, getAllRoles, getAllTerminatedMembers } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
+import { getAllTeams } from "../api/team";
 import axios from "axios";
 
 const AppContext = React.createContext();
 
 const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const userProfile = state && state.userProfile ? state.userProfile : undefined;
   const memberProfile =
-    state && state.userProfile && state.userProfile.memberProfile
-      ? state.userProfile.memberProfile
-      : undefined;
+    userProfile && userProfile.memberProfile
+    ? userProfile.memberProfile
+    : undefined;
+
   const id = memberProfile ? memberProfile.id : undefined;
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
   const { csrf } = state;
@@ -63,6 +68,25 @@ const AppContextProvider = (props) => {
       getGuilds();
     }
   }, [csrf]);
+
+  useEffect(() => {
+    async function getTeams() {
+      let res = await getAllTeams(csrf);
+      let data =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        dispatch({ type: UPDATE_TEAMS, payload: data });
+      }
+    }
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, dispatch]);
 
   useEffect(() => {
     const updateUserProfile = async () => {
@@ -107,19 +131,29 @@ const AppContextProvider = (props) => {
         dispatch({ type: UPDATE_MEMBER_PROFILES, payload: profiles });
       }
     }
-    if (csrf) {
-      getMemberProfiles();
-    }
-  }, [csrf]);
-
-  useEffect(() => {
-    async function getAllTheCheckins() {
-      let res = await getCurrentUser(csrf);
-      let profile =
+    async function getTerminatedMembers() {
+      let res = await getAllTerminatedMembers(csrf);
+      let profiles =
         res.payload && res.payload.data && !res.error
           ? res.payload.data
           : undefined;
-      if (profile && profile.role.includes("ADMIN") && id && csrf) {
+
+      if (profiles) {
+        dispatch({ type: UPDATE_TERMINATED_MEMBERS, payload: profiles });
+      }
+    }
+
+    if (csrf && userProfile) {
+      getMemberProfiles();
+      if (userProfile.role?.includes("ADMIN")) {
+        getTerminatedMembers();
+      }
+    }
+  }, [csrf, userProfile]);
+
+  useEffect(() => {
+    function getAllTheCheckins() {
+      if (userProfile && userProfile.role?.includes("ADMIN") && id && csrf) {
         getAllCheckinsForAdmin(dispatch, csrf);
       } else if (id && csrf) {
         getCheckins(id, pdlId, dispatch, csrf);
@@ -128,7 +162,7 @@ const AppContextProvider = (props) => {
     if (csrf) {
       getAllTheCheckins();
     }
-  }, [csrf, pdlId, id]);
+  }, [csrf, pdlId, id, userProfile]);
 
   useEffect(() => {
     const getAllSkills = async () => {

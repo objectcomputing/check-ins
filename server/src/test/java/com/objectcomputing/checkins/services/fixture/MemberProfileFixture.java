@@ -1,9 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import net.bytebuddy.asm.Advice;
 
-import java.lang.reflect.Member;
 import java.time.LocalDate;
 
 public interface MemberProfileFixture extends RepositoryFixture {
@@ -23,7 +21,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 "is a clay figurine clown star of a parody of children's clay animation shows",
                 null, null, null));
     }
-
 
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Bill PDL", null, "Johnson",
@@ -47,6 +44,22 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 "godzilla@objectcomputing.com", "godzilla", LocalDate.now(),
                 "is a destroyer of words",
                 null, null, null));
+    }
+
+    default MemberProfile createADefaultSupervisor() {
+        return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
+                null, "Supervisor Man", null, "New York, New York",
+                "dubebro@objectcomputing.com", "dude-bro-supervisor",
+                LocalDate.now(), "is such like a bro dude, you know?",
+                null, null,null));
+    }
+
+    default MemberProfile createASupervisedAndPDLUser(MemberProfile supervisorProfile, MemberProfile pdlProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Charizard", null, "Char",
+                null, "Local fire hazard", pdlProfile.getId(), "New York, New York",
+                "charizard@objectcomputing.com", "local-kaiju",
+                LocalDate.now(), "Needs a lot of supervision due to building being ultra flammable",
+                supervisorProfile.getId(), null,null));
     }
 
     // this user is not connected to other users in the system
@@ -83,6 +96,4 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null, LocalDate.now()));
     }
 
-
 }
-

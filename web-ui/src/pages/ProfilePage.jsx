@@ -106,17 +106,27 @@ const ProfilePage = () => {
       });
       return;
     }
-    const index = newVal.length - 1;
-    const newId = newVal[index].id;
     if (newVal.length > myGuilds.length) {
+      const index = newVal.length - 1;
+      const newId = newVal[index].id;
       if (myGuilds.some((guild) => guild.id === newId)) return;
       newVal.filter((guild) => !myGuilds.includes(guild.id));
-      newVal[index].guildMembers = [...newVal[index].guildMembers, userProfile];
+      newVal[index].guildMembers = [
+        ...new Set(newVal[index].guildMembers),
+        {
+          memberId: userProfile.id,
+          guildId: newVal[index].id,
+          name: `${userProfile.firstName} ${userProfile.lastName}`,
+          lead: false,
+        },
+      ];
       let res = await updateGuild(newVal[index], csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      dispatch({ type: UPDATE_GUILD, payload: data });
-      setMyGuilds(newVal);
+      if(data) {
+        dispatch({ type: UPDATE_GUILD, payload: data });
+        setMyGuilds(newVal);
+      }
     } else {
       const guildToEdit = myGuilds.find((guild) =>
         newVal.every((newGuild) => newGuild.id !== guild.id)
@@ -124,6 +134,16 @@ const ProfilePage = () => {
       const guildMembers = guildToEdit.guildMembers.filter(
         (member) => member.memberId !== userProfile.id
       );
+      if (!guildMembers.some((member) => member.lead === true)) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Guild must have at least one lead",
+          },
+        });
+        return;
+      }
       guildToEdit.guildMembers = guildMembers;
       let res = await updateGuild(guildToEdit, csrf);
       let data =
