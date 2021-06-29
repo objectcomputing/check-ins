@@ -45,7 +45,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const TemplatePreviewModal = ({ open, onClose, template }) => {
+const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
 
   const classes = useStyles();
 
@@ -60,7 +60,7 @@ const TemplatePreviewModal = ({ open, onClose, template }) => {
             <Typography variant="h6" className={classes.title}>
               {template ? template.title : "No Title"}
             </Typography>
-            <Link className="ad-hoc-next-button" onClick={onClose} to={'/feedback/request/?step=2'}>
+            <Link className="ad-hoc-next-button" onClick={onSubmit} to={'/feedback/request/?step=2'}>
               <Button color="inherit">
                 {template.isAdHoc ? "Create" : "Select"}
               </Button>

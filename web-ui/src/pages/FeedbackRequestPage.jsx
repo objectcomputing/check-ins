@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -13,6 +13,9 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 
 import "./FeedbackRequestPage.css";
+import {AppContext} from "../context/AppContext";
+import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
+import {createFeedbackTemplate} from "../api/feedbacktemplate";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,41 +42,45 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
-function getTemplates() {
-  return [
-    {
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      creator: "Jane Doe",
-      questions: [],
-    },
-    {
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
-      questions: []
-    },
-  ];
-}
+let templates = [
+  {
+    id: 1,
+    title: "Ad Hoc",
+    isAdHoc: true,
+    description: "Ask a single question.",
+    createdBy: "Admin",
+    questions: []
+  },
+  {
+    id: 2,
+    title: "Survey 1",
+    isAdHoc: false,
+    description: "Make a survey with a few questions",
+    createdBy: "Admin",
+    questions: []
+  },
+  {
+    id: 3,
+    title: "Feedback Survey 2",
+    isAdHoc: false,
+    description: "Another type of survey",
+    createdBy: "Jane Doe",
+    questions: [],
+  },
+  {
+    id: 4,
+    title: "Custom Template",
+    isAdHoc: false,
+    description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
+    createdBy: "Bob Smith",
+    questions: []
+  }];
 
-let todayDate = new Date()
+let todayDate = new Date();
 const FeedbackRequestPage = () => {
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const currentUserId = selectCurrentUser(state);
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -96,6 +103,33 @@ const FeedbackRequestPage = () => {
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
+  }
+
+  const handlePreviewSubmit = async (submittedTemplate) => {
+    console.log(submittedTemplate);
+    if (!currentUserId || !csrf) {
+      return;
+    }
+    if (submittedTemplate && submittedTemplate.isAdHoc) {
+      let newFeedbackTemplate = {
+        title: submittedTemplate.title,
+        description: submittedTemplate.description,
+        createdBy: currentUserId,
+        active: false,
+      };
+      console.log("Creating new ad-hoc template:");
+      console.log(newFeedbackTemplate);
+      const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
+      if (!res.error && res.payload && res.payload.data) {
+        newFeedbackTemplate.id = res.payload.data.id;
+        newFeedbackTemplate.isAdHoc = true;
+        newFeedbackTemplate.questions = [];
+        console.log("Response:");
+        console.log(res.payload.data);
+        templates.push(newFeedbackTemplate);
+      }
+    }
+    setPreview({open: false, selectedTemplate: submittedTemplate});
   }
 
   const getFeedbackArgs = (step) => {
@@ -135,6 +169,7 @@ const FeedbackRequestPage = () => {
         <TemplatePreviewModal
           template={preview.selectedTemplate}
           open={preview.open}
+          onSubmit={() => handlePreviewSubmit(preview.selectedTemplate)}
           onClose={handlePreviewClose}
         />
       }
@@ -180,10 +215,10 @@ const FeedbackRequestPage = () => {
       <div className="current-step-content">
           {activeStep === 1 && <TemplatePreviewModal/> &&
           <div className="card-container">
-            {getTemplates().map((template) => (
+            {templates.map((template) => (
               <TemplateCard
                 title={template.title}
-                creator={template.creator}
+                creator={template.createdBy}
                 description={template.description}
                 isAdHoc={template.isAdHoc}
                 questions={template.questions}
