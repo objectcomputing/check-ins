@@ -214,6 +214,11 @@ INSERT INTO role(
 VALUES
     ('a0ac5d7a-4b8e-11eb-b393-b35b67f02aa6', 'ADMIN', '066b186f-1425-45de-89f2-4ddcc6ebe237');
 
+INSERT INTO role(
+    id, role, memberid)
+VALUES
+    ('a0ac5d7a-4b8e-11eb-b393-b35b67f02ab6', 'PDL', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+
 INSERT INTO team
     (id, name, description)
 VALUES

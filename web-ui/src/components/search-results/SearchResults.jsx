@@ -35,16 +35,16 @@ const SearchResults = ({ searchResults }) => {
         ) : (
           searchResults.map((member, index) => {
             return (
-              <Card className={"member-skills-card"} key={`card-${member.id}`}>
+              <Card className={"member-skills-card"} key={`card-${member?.id}`}>
                 <CardHeader
                   title={
                     <Typography variant="h5" component="h2">
-                      {getMemberProfile(member).name || ""}
+                      {getMemberProfile(member)?.name || ""}
                     </Typography>
                   }
                   subheader={
                     <Typography color="textSecondary" component="h3">
-                      {getMemberProfile(member).title || ""}
+                      {getMemberProfile(member)?.title || ""}
                     </Typography>
                   }
                   disableTypography
@@ -52,14 +52,14 @@ const SearchResults = ({ searchResults }) => {
                     <Avatar
                       className={"large"}
                       src={getAvatarURL(
-                        getMemberProfile(member).workEmail || ""
+                        getMemberProfile(member)?.workEmail || ""
                       )}
                     />
                   }
                 />
-                <ListItem key={`member-${member.id}`}>
+                <ListItem key={`member-${member?.id}`}>
                   {member.skills.map((skill, index) => {
-                    return <div key={member.id}>{chip(skill)}</div>;
+                    return <div key={member?.id}>{chip(skill)}</div>;
                   })}
                 </ListItem>
               </Card>
