@@ -10,8 +10,6 @@ import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-
 import "./FeedbackRequestPage.css";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import {TextField} from "@material-ui/core";
@@ -98,6 +96,29 @@ const FeedbackRequestPage = () => {
   const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
 
 
+  const getFilteredTemplates = () => {
+    console.log(searchText)
+    setFilteredTemplates(setFilteredTemplates => []);
+    if (searchText !== "") {
+      for (const template of allTemplates) {
+        let searchTextString = searchText.toString().toLowerCase();
+        let title = template.title.toLowerCase();
+        let description = template.description.toLowerCase();
+        if (title.includes(searchTextString) || description.includes(searchTextString)) {
+          setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
+        }
+      }
+
+      if(filteredTemplates.length === 0){
+
+      }
+      else{
+        return filteredTemplates;
+      }
+    } else {
+      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
+    }
+  }
 
   useEffect(() => {
 
@@ -143,31 +164,10 @@ const FeedbackRequestPage = () => {
         <Redirect to="/feedback/request?step=1"/>
     );
   }
-  const getFilteredTemplates = () => {
-    console.log(searchText)
-    setFilteredTemplates(setFilteredTemplates => []);
-    if (searchText !== "") {
-      for (const template of allTemplates) {
-        let searchTextString = searchText.toString().toLowerCase();
-        let title = template.title.toLowerCase();
-        let description = template.description.toLowerCase();
-        if (title.includes(searchTextString) || description.includes(searchTextString)) {
-          setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
-        }
-      }
-
-      if(filteredTemplates.length === 0){
-
-      }
-      else{
-        return filteredTemplates;
-      }
-    } else {
-      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
-    }
 
 
-  }
+
+
 
   return (
       <div className="feedback-request-page">
