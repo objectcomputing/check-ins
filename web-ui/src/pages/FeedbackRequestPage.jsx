@@ -65,15 +65,6 @@ const FeedbackRequestPage = () => {
     return `/feedback/request/?${queryString.stringify(nextQuery)}`;
   }
 
-  const getFeedbackArgs = (step) => {
-    const nextQuery = {
-      ...query,
-      step: step
-    }
-
-    return `/feedback/request/?${queryString.stringify(nextQuery)}`;
-  }
-
   const handleQueryChange = (key, value) => {
     let newQuery = {
       ...query,
