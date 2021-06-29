@@ -25,6 +25,7 @@ public class FeedbackSuggestionServiceImpl implements FeedbackSuggestionsService
     private final TeamMemberServices teamMemberServices;
     private final Integer maxSuggestions;
 
+
     public FeedbackSuggestionServiceImpl(MemberProfileServices memberProfileServices,
                                          CurrentUserServices currentUserServices,
                                          TeamMemberServices teamMemberServices,
