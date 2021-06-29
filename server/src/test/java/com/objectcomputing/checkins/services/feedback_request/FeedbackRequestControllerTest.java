@@ -1,7 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.objectcomputing.checkins.services.TestContainersSuite;;
+import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
@@ -314,9 +314,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
-
-
-
     @Test
     void testGetByCreatorIdPermittedMultipleReqs() {
         //create two employee-PDL relationships
@@ -480,7 +477,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
         assertEquals(HttpStatus.OK, response.getStatus());
     }
-
 
     @Test
     void testGetLastThreeMonthsByCreatorRequesteeTemplateId() {
@@ -663,8 +659,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
     }
-
-
 
     @Test
     void testUpdateAllFieldsUnauthorized() {

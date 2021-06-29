@@ -38,6 +38,14 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
+    default MemberProfile createAThirdDefaultMemberProfileForPdl(MemberProfile memberProfile) {
+        return getMemberProfileRepository().save(new MemberProfile("Godzilla", null, "Godzilla",
+                null, "local kaiju", memberProfile.getId(), "Tokyo, Japan",
+                "godzilla@objectcomputing.com", "godzilla", LocalDate.now(),
+                "is a destroyer of words",
+                null, null, null));
+    }
+
     default MemberProfile createADefaultSupervisor() {
         return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
                 null, "Supervisor Man", null, "New York, New York",
