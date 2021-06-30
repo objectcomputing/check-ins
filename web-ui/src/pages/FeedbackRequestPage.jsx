@@ -11,6 +11,7 @@ import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
+import MobileStepper from '@material-ui/core/MobileStepper';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import "./FeedbackRequestPage.css";
@@ -28,13 +29,12 @@ const useStyles = makeStyles((theme) => ({
 
   },
   stepContainer: {
-  display: "flexbox",
-  justifyContent: "center",
-  alignItems: "center",
-  alignContent: "center",
-     ['@media (max-width:767px) and (min-width: 320px)']: { // eslint-disable-line no-useless-computed-key
-          width: '100%',
+     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+          width: '80%',
         },
+         ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
+                 display: "none",
+                },
   },
   appBar: {
     position: "relative",
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 function getTemplates() {
