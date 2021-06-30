@@ -80,7 +80,8 @@ let todayDate = new Date();
 const FeedbackRequestPage = () => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const currentUserId = selectCurrentUser(state);
+  const currentUser = selectCurrentUser(state);
+  const currentUserId = currentUser?.id;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
