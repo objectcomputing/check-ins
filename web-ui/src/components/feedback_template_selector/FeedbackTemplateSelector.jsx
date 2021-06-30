@@ -8,7 +8,7 @@ import {Tooltip} from "@material-ui/core";
 function getTemplates() {
   return [
     {
-      id: 2,
+      id: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -16,7 +16,7 @@ function getTemplates() {
       questions: []
     },
     {
-      id: 3,
+      id: 124,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -24,7 +24,7 @@ function getTemplates() {
       questions: [],
     },
     {
-      id: 4,
+      id: 125,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -43,6 +43,7 @@ const FeedbackTemplateSelector = (props) => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
+    event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 

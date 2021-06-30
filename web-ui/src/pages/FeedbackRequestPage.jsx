@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -10,8 +10,6 @@ import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-import TemplateCard from "../components/template-card/TemplateCard"
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,43 +40,6 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
-function getTemplates() {
-  return [
-    {
-      id: 123,
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 124,
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 125,
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      creator: "Jane Doe",
-      questions: [],
-    },
-    {
-      id: 126,
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
-      questions: []
-    },
-  ];
-}
-
 const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
@@ -98,21 +59,6 @@ const FeedbackRequestPage = () => {
   },[stepQuery]);
 
   const activeStep = getStep();
-
-  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
-
-  const handlePreviewOpen = (event, selectedTemplate) => {
-    event.stopPropagation();
-    setPreview({open: true, selectedTemplate: selectedTemplate});
-  };
-
-  const handlePreviewClose = (selectedTemplate) => {
-    setPreview({open: false, selectedTemplate: selectedTemplate});
-  };
-
-  const onCardClick = (template) => {
-    history.push(`/feedback/request/?template=${template.id}`);
-  }
 
   const hasTemplate = useCallback(() => {
     return !!templateQuery;
