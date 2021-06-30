@@ -87,7 +87,7 @@ const FeedbackRequestPage = () => {
   const stepQuery = query.step?.toString();
 
   let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
-  let dueDate = query?.dueDate ? query.dueDate: null
+  let dueDate = query?.dueDate ? query.dueDate: null;
   let activeStep = location?.search ? parseInt(stepQuery) : 1;
   const numbersOnly = /^\d+$/.test(stepQuery);
 
@@ -97,7 +97,6 @@ const FeedbackRequestPage = () => {
 
 
   const getFilteredTemplates = () => {
-    console.log(searchText)
     setFilteredTemplates(setFilteredTemplates => []);
     if (searchText !== "") {
       for (const template of allTemplates) {
@@ -109,15 +108,12 @@ const FeedbackRequestPage = () => {
         }
       }
 
-      if(filteredTemplates.length === 0){
-
-      }
-      else{
+      if(filteredTemplates.length !== 0){
         return filteredTemplates;
       }
-    } else {
-      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
-    }
+      }else {
+        setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
+      }
   }
 
   useEffect(() => {
@@ -164,9 +160,6 @@ const FeedbackRequestPage = () => {
         <Redirect to="/feedback/request?step=1"/>
     );
   }
-
-
-
 
 
   return (
@@ -229,10 +222,13 @@ const FeedbackRequestPage = () => {
                   setSearchText(e.target.value);
                 }}
             />
+
             <div className="card-container">
               {
-                (filteredTemplates.length === 0)
-                    ? <h2>No matching templates</h2>
+                      (filteredTemplates.length === 0 && searchText === "")
+                          ? <h2>No templates found</h2>
+                    : (searchText && searchText.length >= 0 && filteredTemplates.length === 0)
+                          ? <h2>No matching templates</h2>
                     : filteredTemplates.map((template) => (
                       <TemplateCard
                       title={template.title}
