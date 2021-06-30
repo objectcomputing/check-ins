@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -12,11 +12,8 @@ import FeedbackRecipientSelector from "../components/feedback_recipient_selector
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 
 import "./FeedbackRequestPage.css";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
-import {getFeedbackSuggestion} from "../api/feedback";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent"
@@ -55,20 +52,27 @@ const FeedbackRequestPage = () => {
   const history = useHistory();
   const query = queryString.parse(location?.search);
   const stepQuery = query.step?.toString();
+  const templateQuery = query.template?.toString();
   let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
   let dueDate = query?.dueDate ? query.dueDate: null
   const [requestee, setRequestee] = useState();
   const id = values.for?.toString();
   let activeStep = location?.search ? parseInt(stepQuery) : 2;
-  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-  const handlePreviewOpen = (event, selectedTemplate) => {
-    setPreview({open: true, selectedTemplate: selectedTemplate});
-  }
 
-  const handlePreviewClose = (selectedTemplate) => {
-    setPreview({open: false, selectedTemplate: selectedTemplate});
-  }
+  useEffect(() => {
+    async function getMemberProfile() {
+      if (id) {
+        let res = await getMember(id, csrf);
+        let requesteeProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setRequestee(requesteeProfile ? requesteeProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getMemberProfile();
+    }
+  }, [csrf, id]);
 
   const getFeedbackArgs = (step) => {
     const nextQuery = {
@@ -88,7 +92,7 @@ const FeedbackRequestPage = () => {
     history.push({...location, search: queryString.stringify(newQuery)});
   }
   
-  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+  if (activeStep < 1 || activeStep > steps.length) {
     return (
       <Redirect to="/feedback/request/?step=1"/>
     );
