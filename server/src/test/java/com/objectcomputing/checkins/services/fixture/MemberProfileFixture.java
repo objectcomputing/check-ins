@@ -31,8 +31,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null));
     }
 
-
-
     default MemberProfile createADefaultSupervisor() {
         return getMemberProfileRepository().save(new MemberProfile("dude", null, "bro",
                 null, "Supervisor Man", null, "New York, New York",
