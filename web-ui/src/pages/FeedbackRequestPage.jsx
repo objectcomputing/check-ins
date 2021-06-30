@@ -118,6 +118,14 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
+  }
+
   if (!urlIsValid()) {
     return (
         history.push("/feedback/request/")
