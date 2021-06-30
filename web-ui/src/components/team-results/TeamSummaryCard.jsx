@@ -147,7 +147,7 @@ const TeamSummaryCard = ({ team, index }) => {
       </CardContent>
       <CardActions>
         {(isAdmin || isTeamLead) && (
-          <div>
+          <>
             <SplitButton options={options} onClick={handleAction} />
             <Dialog
               open={openDelete}
@@ -165,12 +165,12 @@ const TeamSummaryCard = ({ team, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                   Cancel
                 </Button>
-                <Button onClick={deleteATeam} color="primary" autoFocus>
+                <Button disabled onClick={deleteATeam} color="primary" autoFocus>
                   Yes
                 </Button>
               </DialogActions>
             </Dialog>
-          </div>
+          </>
         )}
       </CardActions>
       <EditTeamModal
