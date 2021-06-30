@@ -91,7 +91,7 @@ const FeedbackRequestPage = () => {
   let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
   let dueDate = query?.dueDate ? query.dueDate: null
   const [requestee, setRequestee] = useState();
-  const id = query.for?.toString();
+  const id = values.for?.toString();
   let activeStep = location?.search ? parseInt(stepQuery) : 2;
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
