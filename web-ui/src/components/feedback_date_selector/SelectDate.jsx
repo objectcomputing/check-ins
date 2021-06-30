@@ -51,6 +51,7 @@ const SelectDate = () =>{
                    id="set-send-date"
                    label="Send Date:"
                    value={sendDate}
+                   minDate={dateUtils.date()}
                    onChange={handleSendDateChange}
                    KeyboardButtonProps={{
                      'aria-label': 'change date',
@@ -65,6 +66,7 @@ const SelectDate = () =>{
                     label="Due Date:"
                     emptyLabel="No due date"
                     value={dueDate}
+                    minDate={dateUtils.date()}
                     onChange={handleDueDateChange}
                     KeyboardButtonProps={{
                        'aria-label': 'change date',

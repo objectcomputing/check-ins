@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {Link, useLocation, useHistory} from 'react-router-dom';
+import {useLocation, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
   expandOpen: {
     justifyContent: "right",
+  },
+  actionButtons: {
+    margin: "0 0 0 1em"
   }
 }));
 
@@ -150,6 +153,10 @@ const FeedbackRequestPage = () => {
     history.push({...location, search: queryString.stringify(query)});
   },[canProceed, activeStep, steps.length, query, location, history]);
 
+  const onBackClick = useCallback(() => {
+    history.goBack();
+  },[history]);
+
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
@@ -185,17 +192,11 @@ const FeedbackRequestPage = () => {
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
         <div>
             <div>
-              <Link
-                className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={`?step=${activeStep - 1}`}
-              >
-                <Button
-                  disabled={activeStep <= 1}>
-                  Back
-                </Button>
-              </Link>
-
-              <Button onClick={onNextClick}
+              <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
+                      variant="contained">
+                Back
+              </Button>
+              <Button className={classes.actionButtons} onClick={onNextClick}
                       variant="contained" disabled={!canProceed()} color="primary">
                 {activeStep === steps.length ? "Submit" : "Next"}
               </Button>
