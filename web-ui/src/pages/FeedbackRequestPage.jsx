@@ -7,7 +7,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {useLocation, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
@@ -180,6 +179,13 @@ const FeedbackRequestPage = () => {
 
   return (
     <div className="feedback-request-page">
+          {preview.selectedTemplate &&
+            <TemplatePreviewModal
+              template={preview.selectedTemplate}
+              open={preview.open}
+              onClose={handlePreviewClose}
+            />
+          }
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
         <div>
