@@ -1,252 +1,264 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders the recipient card 1`] = `
-<div
-  className="card-container"
->
+Array [
   <div
-    className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-    onClick={[Function]}
+    className="card-container"
   >
     <div
-      className="MuiCardActions-root card-actions"
+      className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+      onClick={[Function]}
+    >
+      <div
+        className="MuiCardActions-root card-actions"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="show more"
+          className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <div
+        className="MuiCardContent-root card-content"
+      >
+        <div
+          className="template-details"
+        >
+          <h3
+            className="template-name"
+          >
+            Survey 1
+          </h3>
+          <p
+            className="description"
+          >
+            Make a survey with a few questions
+          </p>
+        </div>
+        <p
+          className="creator"
+        >
+          Created by: 
+          <b>
+            Admin
+          </b>
+        </p>
+      </div>
+    </div>
+    <div
+      className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+      onClick={[Function]}
+    >
+      <div
+        className="MuiCardActions-root card-actions"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="show more"
+          className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <div
+        className="MuiCardContent-root card-content"
+      >
+        <div
+          className="template-details"
+        >
+          <h3
+            className="template-name"
+          >
+            Feedback Survey 2
+          </h3>
+          <p
+            className="description"
+          >
+            Another type of survey
+          </p>
+        </div>
+        <p
+          className="creator"
+        >
+          Created by: 
+          <b>
+            Jane Doe
+          </b>
+        </p>
+      </div>
+    </div>
+    <div
+      className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+      onClick={[Function]}
+    >
+      <div
+        className="MuiCardActions-root card-actions"
+      >
+        <button
+          aria-expanded={false}
+          aria-label="show more"
+          className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+      <div
+        className="MuiCardContent-root card-content"
+      >
+        <div
+          className="template-details"
+        >
+          <h3
+            className="template-name"
+          >
+            Custom Template
+          </h3>
+          <p
+            className="description"
+          >
+            A very very very very very very very very very very very very very very very very very ver...
+          </p>
+        </div>
+        <p
+          className="creator"
+        >
+          Created by: 
+          <b>
+            Bob Smith
+          </b>
+        </p>
+      </div>
+    </div>
+  </div>,
+  <button
+    aria-describedby={null}
+    className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+    disabled={false}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onDragLeave={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onMouseLeave={[Function]}
+    onMouseOver={[Function]}
+    onMouseUp={[Function]}
+    onTouchEnd={[Function]}
+    onTouchMove={[Function]}
+    onTouchStart={[Function]}
+    style={
+      Object {
+        "marginLeft": "30px",
+      }
+    }
+    tabIndex={0}
+    title="Ask a single question"
+    type="button"
+  >
+    <span
+      className="MuiButton-label"
+    >
+      New Ad-Hoc Template
+    </span>
+    <span
+      className="MuiTouchRipple-root"
     />
-    <div
-      className="MuiCardContent-root card-content"
-    >
-      <div
-        className="template-details"
-      >
-        <h3
-          className="template-name"
-        >
-          Ad Hoc
-        </h3>
-        <p
-          className="description"
-        >
-          Ask a single question.
-        </p>
-      </div>
-      <p
-        className="creator"
-      >
-        Created by: 
-        <b>
-          Admin
-        </b>
-      </p>
-    </div>
-  </div>
-  <div
-    className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-    onClick={[Function]}
-  >
-    <div
-      className="MuiCardActions-root card-actions"
-    >
-      <button
-        aria-expanded={false}
-        aria-label="show more"
-        className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
-        disabled={false}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onDragLeave={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
-        onTouchMove={[Function]}
-        onTouchStart={[Function]}
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="MuiIconButton-label"
-        >
-          <svg
-            aria-hidden={true}
-            className="MuiSvgIcon-root"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-            />
-          </svg>
-        </span>
-      </button>
-    </div>
-    <div
-      className="MuiCardContent-root card-content"
-    >
-      <div
-        className="template-details"
-      >
-        <h3
-          className="template-name"
-        >
-          Survey 1
-        </h3>
-        <p
-          className="description"
-        >
-          Make a survey with a few questions
-        </p>
-      </div>
-      <p
-        className="creator"
-      >
-        Created by: 
-        <b>
-          Admin
-        </b>
-      </p>
-    </div>
-  </div>
-  <div
-    className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-    onClick={[Function]}
-  >
-    <div
-      className="MuiCardActions-root card-actions"
-    >
-      <button
-        aria-expanded={false}
-        aria-label="show more"
-        className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
-        disabled={false}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onDragLeave={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
-        onTouchMove={[Function]}
-        onTouchStart={[Function]}
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="MuiIconButton-label"
-        >
-          <svg
-            aria-hidden={true}
-            className="MuiSvgIcon-root"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-            />
-          </svg>
-        </span>
-      </button>
-    </div>
-    <div
-      className="MuiCardContent-root card-content"
-    >
-      <div
-        className="template-details"
-      >
-        <h3
-          className="template-name"
-        >
-          Feedback Survey 2
-        </h3>
-        <p
-          className="description"
-        >
-          Another type of survey
-        </p>
-      </div>
-      <p
-        className="creator"
-      >
-        Created by: 
-        <b>
-          Jane Doe
-        </b>
-      </p>
-    </div>
-  </div>
-  <div
-    className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-    onClick={[Function]}
-  >
-    <div
-      className="MuiCardActions-root card-actions"
-    >
-      <button
-        aria-expanded={false}
-        aria-label="show more"
-        className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-4"
-        disabled={false}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onDragLeave={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
-        onTouchMove={[Function]}
-        onTouchStart={[Function]}
-        tabIndex={0}
-        type="button"
-      >
-        <span
-          className="MuiIconButton-label"
-        >
-          <svg
-            aria-hidden={true}
-            className="MuiSvgIcon-root"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-            />
-          </svg>
-        </span>
-      </button>
-    </div>
-    <div
-      className="MuiCardContent-root card-content"
-    >
-      <div
-        className="template-details"
-      >
-        <h3
-          className="template-name"
-        >
-          Custom Template
-        </h3>
-        <p
-          className="description"
-        >
-          A very very very very very very very very very very very very very very very very very ver...
-        </p>
-      </div>
-      <p
-        className="creator"
-      >
-        Created by: 
-        <b>
-          Bob Smith
-        </b>
-      </p>
-    </div>
-  </div>
-</div>
+  </button>,
+]
 `;
