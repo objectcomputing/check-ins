@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -91,9 +91,8 @@ const FeedbackRequestPage = () => {
   let sendDate = query?.sendDate ? query.sendDate: todayDate.toString();
   let dueDate = query?.dueDate ? query.dueDate: null
   const [requestee, setRequestee] = useState();
-  const id = values.for;
+  const id = query.for?.toString();
   let activeStep = location?.search ? parseInt(stepQuery) : 2;
-  //const numbersOnly = /^\d+$/.test(stepQuery);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -169,9 +168,9 @@ const FeedbackRequestPage = () => {
 
 
    if (activeStep < 1 || activeStep > steps.length) {
-      // return (
-      //   <Redirect to="/feedback/request?step=1"/>
-      // );
+      return (
+        <Redirect to="/feedback/request?step=1"/>
+      );
    }
 
   return (
