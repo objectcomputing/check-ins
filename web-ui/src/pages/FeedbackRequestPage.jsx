@@ -10,7 +10,6 @@ import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles((theme) => ({
