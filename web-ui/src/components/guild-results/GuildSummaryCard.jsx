@@ -4,7 +4,18 @@ import {AppContext} from "../../context/AppContext";
 import {UPDATE_GUILDS, UPDATE_TOAST} from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
 
-import {Card, CardActions, CardContent, CardHeader} from "@material-ui/core";
+import {
+    Card, 
+    CardActions, 
+    CardContent, 
+    CardHeader, 
+    Dialog, 
+    DialogContentText, 
+    DialogTitle, 
+    DialogContent, 
+    DialogActions, 
+    Button
+} from "@material-ui/core";
 import PropTypes from "prop-types";
 import {deleteGuild, updateGuild} from "../../api/guild.js";
 import SplitButton from "../split-button/SplitButton";
@@ -42,6 +53,7 @@ const GuildSummaryCard = ({guild, index}) => {
     const {state, dispatch} = useContext(AppContext);
     const {guilds, userProfile, csrf} = state;
     const [open, setOpen] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const isAdmin =
         userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
@@ -60,8 +72,10 @@ const GuildSummaryCard = ({guild, index}) => {
             : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
 
     const handleOpen = () => setOpen(true);
-
     const handleClose = () => setOpen(false);
+
+    const handleOpenDeleteConfirmation = () => setOpenDelete(true);
+    const handleCloseDeleteConfirmation = () => setOpenDelete(false);
 
     const deleteAGuild = async (id) => {
         if (id && csrf) {
@@ -88,8 +102,13 @@ const GuildSummaryCard = ({guild, index}) => {
     const options =
         isAdmin || isGuildLead ? ["Edit Guild", "Delete Guild"] : ["Edit Guild"];
 
-    const handleAction = (e, index) =>
-        index === 0 ? handleOpen() : deleteAGuild(guild.id);
+    const handleAction = (e, index) => {
+        if (index === 0) {
+            handleOpen();
+        } else if (index === 1) {
+            handleOpenDeleteConfirmation();
+        }
+    };
 
     return (
         <Card className={classes.card}>
@@ -99,7 +118,6 @@ const GuildSummaryCard = ({guild, index}) => {
               subheader: classes.title,
             }} title={guild.name} subheader={guild.description}/>
             <CardContent>
-
                 {guild.guildMembers == null ? (
                     <React.Fragment>
                     <strong>Guild Leads: </strong>None Assigned
@@ -122,10 +140,34 @@ const GuildSummaryCard = ({guild, index}) => {
                     </React.Fragment>
 
                 )}
-
             </CardContent>
             <CardActions>
-                {(isAdmin || isGuildLead) && <SplitButton options={options} onClick={handleAction}/>}
+                {(isAdmin || isGuildLead) && (
+                <>
+                    <SplitButton options={options} onClick={handleAction} />
+                    <Dialog
+                    open={openDelete}
+                    onClose={handleCloseDeleteConfirmation}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">Delete guild?</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete the guild?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseDeleteConfirmation} color="primary">
+                            Cancel
+                            </Button>
+                            <Button disabled onClick={deleteAGuild} color="primary" autoFocus>
+                            Yes
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
+                )}
             </CardActions>
             <EditGuildModal
                 guild={guild}
