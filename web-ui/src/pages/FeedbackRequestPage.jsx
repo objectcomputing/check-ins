@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useContext} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
-import TemplateCard from "../components/template-card/TemplateCard"
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 
@@ -43,40 +43,7 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
-function getTemplates() {
-  return [
-    {
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      creator: "Jane Doe",
-      questions: [],
-    },
-    {
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
-      questions: []
-    },
-  ];
-}
-
-let todayDate = new Date()
+let todayDate = new Date();
 const FeedbackRequestPage = () => {
   const { state } = useContext(AppContext);
   const { csrf} = state;
@@ -120,69 +87,15 @@ const FeedbackRequestPage = () => {
     }
     history.push({...location, search: queryString.stringify(newQuery)});
   }
-
-  const onCardClick = (template) => {
-    if (template.isAdHoc) {
-      setPreview({open: true, selectedTemplate: template});
-    } else {
-      console.log(`Selected ${template.title}`);
-    }
+  
+  if (activeStep < 1 || activeStep > steps.length || !numbersOnly) {
+    return (
+      <Redirect to="/feedback/request/?step=1"/>
+    );
   }
-
-
-  useEffect(() => {
-    async function getMemberProfile() {
-      if (id) {
-        let res = await getMember(id, csrf);
-        let requesteeProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile ? requesteeProfile.name : "");
-      }
-    }
-    if (csrf) {
-      getMemberProfile();
-    }
-  }, [csrf, id]);
-
-  useEffect( () => {
-    async function getSuggestions() {
-      if (id === undefined || id === null) {
-        return;
-      }
-      let res = await getFeedbackSuggestion(id, csrf);
-      if (res && res.payload) {
-        console.log(res)
-        return res.payload.data && !res.error
-          ? res.payload.data
-          : undefined;
-      }
-      return null;
-    }
-    if (csrf) {
-      getSuggestions().then((res) => {
-        console.log(res);
-      });
-    }
-  },[id,csrf]);
-
-
-
-   if (activeStep < 1 || activeStep > steps.length) {
-      return (
-        <Redirect to="/feedback/request?step=1"/>
-      );
-   }
 
   return (
     <div className="feedback-request-page">
-      {preview.selectedTemplate &&
-        <TemplatePreviewModal
-          template={preview.selectedTemplate}
-          open={preview.open}
-          onClose={handlePreviewClose}
-        />
-      }
-
       <div className="header-container">
         <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
@@ -199,7 +112,7 @@ const FeedbackRequestPage = () => {
 
               <Link
                 className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep===3 ?`/feedback/request/confirmation` : getFeedbackArgs(activeStep + 1)}>
+                to={activeStep === 3 ? `/feedback/request/confirmation` : getFeedbackArgs(activeStep + 1)}>
                 <Button
                   disabled={activeStep > getSteps().length}
                   variant="contained"
@@ -222,21 +135,7 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-step-content">
-          {activeStep === 1 && <TemplatePreviewModal/> &&
-          <div className="card-container">
-            {getTemplates().map((template) => (
-              <TemplateCard
-                title={template.title}
-                creator={template.creator}
-                description={template.description}
-                isAdHoc={template.isAdHoc}
-                questions={template.questions}
-                expanded={preview.open}
-                onClick={(e) => handlePreviewOpen(e, template)}
-                onCardClick={() => onCardClick(template)}/>
-            ))}
-          </div>
-        }
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate handleQueryChange={handleQueryChange} sendDateProp = {sendDate} dueDateProp = {dueDate} />}
       </div>
