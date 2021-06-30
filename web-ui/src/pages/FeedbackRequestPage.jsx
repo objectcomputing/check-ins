@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useState, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -10,6 +10,10 @@ import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
+import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
+import SelectDate from "../components/feedback_date_selector/SelectDate";
+import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
+import TemplateCard from "../components/template-card/TemplateCard"
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -118,13 +122,64 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
-  const handleQueryChange = (key, value) => {
-    let newQuery = {
-      ...query,
-      [key]: value
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
+
+  const hasFrom = useCallback(() => {
+    return !!fromQuery;
+  }, [fromQuery])
+
+  const isValidDate = useCallback((dateString) => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }, []);
+
+  const hasDue = useCallback(() => {
+    return (dueQuery && isValidDate(dueQuery))
+  }, [dueQuery, isValidDate]);
+
+  const canProceed = useCallback(() => {
+    switch(activeStep) {
+      case 1:
+        return hasTemplate();
+      case 2:
+        return hasTemplate() && hasFrom();
+      case 3:
+        return hasTemplate() && hasFrom() && hasDue();
+      default:
+        return false;
     }
     history.push({...location, search: queryString.stringify(newQuery)});
   }
+  
+  const handleSubmit = () => {};
+
+  const onNextClick = useCallback(() => {
+    if(!canProceed()) return;
+    if(activeStep === steps.length) handleSubmit();
+    query.step = activeStep+1;
+    history.push({...location, search: queryString.stringify(query)});
+  },[canProceed, activeStep, steps.length, query, location, history]);
+
+  const onBackClick = useCallback(() => {
+    history.goBack();
+  },[history]);
+
+  const urlIsValid = useCallback(() => {
+    switch (activeStep) {
+      case 1:
+        return true;
+      case 2:
+        return hasTemplate();
+      case 3:
+        return hasTemplate() && hasFrom();
+      case 4:
+        return hasTemplate() && hasFrom() && hasDue();
+      default:
+        return false;
+    }
+  }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
   if (!urlIsValid()) {
     return (
