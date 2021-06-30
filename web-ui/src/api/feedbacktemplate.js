@@ -1,6 +1,6 @@
 import { resolve } from "./api.js";
 
-const feedbackTemplateUrl = "/services/feedback-templates";
+const feedbackTemplateUrl = "/services/feedback/templates";
 
 export const createFeedbackTemplate = async (feedbackTemplate, cookie) => {
   return resolve({
