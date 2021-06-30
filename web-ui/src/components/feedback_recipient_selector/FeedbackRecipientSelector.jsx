@@ -1,20 +1,15 @@
-import React, { useContext, useState } from "react";
-
-import Feedback_recipient_card from "../components/feedback_request/Feedback_recipient_card";
-import { createMember } from "../api/member";
-import { AppContext } from "../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../context/actions";
-import {
-  selectNormalizedMembers,
-  selectNormalizedMembersAdmin,
-} from "../context/selectors";
-
-import { Button, TextField, Grid } from "@material-ui/core";
+import React, {useContext, useEffect, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import PersonIcon from "@material-ui/icons/Person";
-
 import "./FeedbackRecipientSelector.css";
-import MemberModal from "../components/member-directory/MemberModal";
+import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken, selectNormalizedMembers, selectProfile,} from "../../context/selectors";
+import {useHistory, useLocation} from "react-router-dom";
+import queryString from "query-string";
+import {getFeedbackSuggestion} from "../../api/feedback";
+import { selectCurrentUser } from "../../context/selectors";
+import {TextField, Grid } from "@material-ui/core";
+
 
 const useStyles = makeStyles({
   search: {
@@ -34,37 +29,87 @@ const useStyles = makeStyles({
 });
 
 const FeedbackRecipientSelector = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { csrf, memberProfiles, userProfile } = state;
-
+  const { state } = useContext(AppContext);
   const classes = useStyles();
-
-  const [open, setOpen] = useState(false);
+  const csrf = selectCsrfToken(state);
+  const userProfile = selectCurrentUser(state);
+  const {id} = userProfile;
+  const history = useHistory();
+  const location = useLocation();
+  const parsed = queryString.parse(location?.search);
+  let from = parsed.from;
   const [searchText, setSearchText] = useState("");
+  let setter = []
+  if (from !== undefined && from !== null) {
+    console.log("From is not undefined and from is not null")
+    console.log("From in the check " + from)
+    if (typeof from === 'string') {
+      console.log("from is string" + from)
+      console.log()
+      let profileId = from
+      const newProfile = selectProfile(state, profileId);
+      console.log("new profile " + newProfile)
+      setter.push(newProfile)
+      console.log("Setter in from is string check " + setter)
+    } else if (Array.isArray(from) ) {
+      console.log("from is array"+from)
+      setter = from
+      console.log("Setter in from is arr check " + JSON.stringify(setter))
+    }
+  }
+  const [profiles, setProfiles] = useState(setter);
 
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
-  const normalizedMembers = isAdmin
-    ? selectNormalizedMembersAdmin(state, searchText)
-    : selectNormalizedMembers(state, searchText);
+  useEffect(() => {
+    const normalizedMembers = selectNormalizedMembers(state, searchText);
+    console.log("normalized members " + JSON.stringify(normalizedMembers));
+    let selectedMembers = profiles.filter(profile => profile.selected === true)
+    console.log("selected members" + selectedMembers)
+    setProfiles(selectedMembers.concat(normalizedMembers));
 
-  const handleOpen = () => setOpen(true);
+  }, [searchText])
 
-  const handleClose = () => setOpen(false);
 
-  const createMemberCards = normalizedMembers.map((member, index) => {
-    return (
-      <Feedback_recipient_card
-        key={`${member.name}-${member.id}`}
-        index={index}
-        member={member}
-      />
-    );
-  });
+    useEffect(() => {
+        async function getSuggestions() {
+            if (id === undefined || id === null) {
+                return;
+            }
+            let res = await getFeedbackSuggestion(id, csrf);
+            if (res && res.payload) {
+                return res.payload.data && !res.error
+                    ? res.payload.data
+                    : undefined;
+            }
+            return null;
+        }
+        if (csrf) {
+            getSuggestions().then((res) => {
+              console.log(res)
+              if (res !== undefined && res !== null) {
+                for(let i = 0; i < res.length; ++i) {
+                  res[i].id = res[i].profileId
+                }
+                setProfiles(profiles.concat(res));
+              }
+            });
+        }
+    },[id,csrf]);
+
+  const cardClickHandler = (id) => {
+    if(!Array.isArray(from)) from = from ? [from] : [];
+    if(from.includes(id)) {
+      from.splice(from.indexOf(id), 1);
+    }
+    else from[from.length] = id;
+
+    parsed.from = from;
+    history.push({...location, search: queryString.stringify(parsed)});
+  }
+
 
   return (
-    <div className="FeedbackRecipientSelector">
+    <Grid className="FeedbackRecipientSelector">
       <Grid container spacing={3}>
         <Grid item xs={12} className={classes.search}>
           <TextField
@@ -76,44 +121,23 @@ const FeedbackRecipientSelector = () => {
               setSearchText(e.target.value);
             }}
           />
-              <MemberModal
-                open={open}
-                onClose={handleClose}
-                onSave={async (member) => {
-                  if (
-                    member.location &&
-                    member.firstName &&
-                    member.lastName &&
-                    member.startDate &&
-                    member.title &&
-                    member.workEmail &&
-                    csrf
-                  ) {
-                    let res = await createMember(member, csrf);
+            </Grid>
 
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
-                    if (data) {
-                      dispatch({
-                        type: UPDATE_MEMBER_PROFILES,
-                        payload: [...memberProfiles, data],
-                      });
-                    }
-                    handleClose();
-                  }
-                }}
-              />
-            </div>
-          )}
         </Grid>
-        <Grid item className={classes.members}>
-          {createMemberCards}
-        </Grid>
-      </Grid>
-    </div>
+      <div className="card-container">
+        {profiles ?
+            profiles.map((profile) => (
+                <FeedbackRecipientCard
+                    key={profile.id}
+                    profileId={profile.id}
+                    reason={profile?.reason ? profile.reason : null}
+                    selected={from && from.includes(profile.id)}
+                    onClick={() => cardClickHandler(profile.id)}/>
+            )) :
+            <p> Can't get suggestions, please come back later :( </p>}
+      </div>
+    </Grid>
   );
 };
 
-export default ;
+export default FeedbackRecipientSelector;

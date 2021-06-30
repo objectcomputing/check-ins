@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
-
+import {selectProfile} from "../../context/selectors";
 import { Card, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
-
+import {green} from "@material-ui/core/colors";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import Divider from '@material-ui/core/Divider';
 import "./Feedback_recipient_card.css";
 import {
   Box,
@@ -21,40 +23,55 @@ const useStyles = makeStyles(() => ({
   header: {
     cursor: "pointer",
   },
+  divider: {
+    backgroundColor: 'grey',
+    width: '90%',
+    marginBottom: '1em',
+    marginTop: '1em',
+  },
+  recommendationText: {
+    color: '#333333',
+    position: 'Center'
+  },
 }));
 
-const FeedbackRecipientCard = ({ member, index }) => {
+const FeedbackRecipientCard = ({ profileId, selected, reason, onClick}) => {
   const { state } = useContext(AppContext);
-  const { memberProfiles, userProfile, csrf } = state;
-  const { location, name, workEmail, title, supervisorid, pdlId, terminationDate } = member;
-  const memberId = member?.id;
-  const supervisorProfile = selectProfileMap(state)[supervisorid];
-  const pdlProfile = selectProfileMap(state)[pdlId];
+  const recipientProfile = selectProfile(state, profileId);
+  const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
+  const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
   const classes = useStyles();
 
   return (
     <Box display="flex" flexWrap="wrap">
-      <Card className={"member-card"}>
+      <CardHeader selected={selected}/>
+      <Card onClick={onClick} className={"member-card"} selected={selected}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
-          to={`/profile/${member.id}`}
+          to={`/profile/${recipientProfile?.id}`}
         >
+
           <CardHeader
             className={classes.header}
             title={
               <Typography variant="h5" component="h2" >
-                {name}
+                {recipientProfile?.name}
               </Typography>
             }
+            action={
+                selected ?
+                  <CheckCircleIcon style={{color: green[500]}}>checkmark-image</CheckCircleIcon> :
+                  null
+              }
             subheader={
               <Typography color="textSecondary" component="h3" >
-                {title}
+                {recipientProfile?.title}
               </Typography>
             }
             disableTypography
-            avatar= {!terminationDate?
-              <Avatar className={"large"} src={getAvatarURL(workEmail)} /> :
+            avatar= {!recipientProfile?.terminationDate ?
+              <Avatar className={"large"} src={getAvatarURL(recipientProfile?.workEmail)} /> :
               <Avatar className={"large"} >
                 <PriorityHighIcon />
               </Avatar>
@@ -65,20 +82,27 @@ const FeedbackRecipientCard = ({ member, index }) => {
           <Container fixed className={"info-container"}>
             <Typography variant="body2" color="textSecondary" component="p">
               <a
-                href={`mailto:${workEmail}`}
+                href={`mailto:${recipientProfile?.workEmail}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {workEmail}
+                {recipientProfile?.workEmail}
               </a>
               <br />
-              Location: {location}
+              Location: {recipientProfile?.location}
               <br />
               Supervisor: {supervisorProfile?.name}
               <br />
               PDL: {pdlProfile?.name}
               <br />
             </Typography>
+            {reason &&
+            (<div className="reason">
+              <Divider variant="middle" className={classes.divider}/>
+              <Typography id="rec_reason" name="rec_reason" component="p" className={classes.recommendationText}>
+                {reason}
+              </Typography>
+            </div>)}
           </Container>
         </CardContent>
       </Card>
