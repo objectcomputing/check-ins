@@ -17,7 +17,7 @@ const useStyles = makeStyles({
   root: {
     minWidth: '10em',
     maxWidth: '20em',
-     ['@media (max-width:767px)']: {
+     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
      marginTop: "1em",
       height: "40%",
       width: "80%",

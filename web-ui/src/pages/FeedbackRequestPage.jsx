@@ -11,9 +11,6 @@ import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-import MobileStepper from '@material-ui/core/MobileStepper';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-
 import "./FeedbackRequestPage.css";
 
 const useStyles = makeStyles((theme) => ({
