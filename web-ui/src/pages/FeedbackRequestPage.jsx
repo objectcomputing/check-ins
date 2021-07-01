@@ -216,6 +216,106 @@ const FeedbackRequestPage = () => {
         <div className="header-container">
           <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
           <div>
+
+  const getStep = useCallback(() => {
+    if(!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
+      return 1;
+    else return parseInt(stepQuery);
+  },[stepQuery]);
+
+  const activeStep = getStep();
+
+  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+
+  const handlePreviewOpen = (event, selectedTemplate) => {
+    event.stopPropagation();
+    setPreview({open: true, selectedTemplate: selectedTemplate});
+  };
+
+  const handlePreviewClose = (selectedTemplate) => {
+    setPreview({open: false, selectedTemplate: selectedTemplate});
+  };
+
+  const onCardClick = (template) => {
+    history.push(`/feedback/request/?template=${template.id}`);
+  }
+
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
+
+  const hasFrom = useCallback(() => {
+    return !!fromQuery;
+  }, [fromQuery])
+
+  const isValidDate = useCallback((dateString) => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }, []);
+
+  const hasDue = useCallback(() => {
+    return (dueQuery && isValidDate(dueQuery))
+  }, [dueQuery, isValidDate]);
+
+  const canProceed = useCallback(() => {
+    switch(activeStep) {
+      case 1:
+        return hasTemplate();
+      case 2:
+        return hasTemplate() && hasFrom();
+      case 3:
+        return hasTemplate() && hasFrom() && hasDue();
+      default:
+        return false;
+    }
+  }, [activeStep, hasTemplate, hasFrom, hasDue]);
+
+  const handleSubmit = () => {};
+
+  const onNextClick = useCallback(() => {
+    if(!canProceed()) return;
+    if(activeStep === steps.length) handleSubmit();
+    query.step = activeStep+1;
+    history.push({...location, search: queryString.stringify(query)});
+  },[canProceed, activeStep, steps.length, query, location, history]);
+
+  const onBackClick = useCallback(() => {
+    history.goBack();
+  },[history]);
+
+  const urlIsValid = useCallback(() => {
+    switch (activeStep) {
+      case 1:
+        return true;
+      case 2:
+        return hasTemplate();
+      case 3:
+        return hasTemplate() && hasFrom();
+      case 4:
+        return hasTemplate() && hasFrom() && hasDue();
+      default:
+        return false;
+    }
+  }, [activeStep, hasTemplate, hasFrom, hasDue]);
+
+  if (!urlIsValid()) {
+    return (
+        history.push("/feedback/request/")
+    );
+  }
+
+  return (
+    <div className="feedback-request-page">
+          {preview.selectedTemplate &&
+            <TemplatePreviewModal
+              template={preview.selectedTemplate}
+              open={preview.open}
+              onClose={handlePreviewClose}
+            />
+          }
+      <div className="header-container">
+        <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+        <div>
             <div>
               <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
                       variant="contained">
@@ -260,7 +360,39 @@ const FeedbackRequestPage = () => {
           {activeStep === 3 && <SelectDate/>}
         </div>
       </div>
-    );
-  };
+      <Stepper activeStep={activeStep - 1} className={classes.root}>
+        {steps.map((label) => {
+          const stepProps = {};
+          const labelProps = {};
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps} key={label}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+      <div className="current-step-content">
+          {activeStep === 1 && <TemplatePreviewModal/> &&
+          <div className="card-container">
+            {getTemplates().map((template) => (
+              <TemplateCard
+                key={`template-card-${template.id}`}
+                title={template.title}
+                creator={template.creator}
+                description={template.description}
+                isAdHoc={template.isAdHoc}
+                questions={template.questions}
+                selected={templateQuery && templateQuery.includes(template.id)}
+                onClick={(e) => handlePreviewOpen(e, template)}
+                onCardClick={() => onCardClick(template)}/>
+            ))}
+          </div>
+        }
+        {activeStep === 2 && <FeedbackRecipientSelector />}
+        {activeStep === 3 && <SelectDate />}
+      </div>
+    </div>
+  );
+};
 
   export default FeedbackRequestPage;

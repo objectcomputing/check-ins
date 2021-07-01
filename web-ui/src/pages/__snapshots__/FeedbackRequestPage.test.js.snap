@@ -17,10 +17,22 @@ Array [
       </h4>
       <div>
         <div>
-          <a
+         <a
             className="no-underline-link "
             href="/feedback/request/?step=1"
             onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
           >
             <button
               className="MuiButtonBase-root MuiButton-root MuiButton-text"
@@ -49,32 +61,36 @@ Array [
           <a
             className="no-underline-link "
             href="/feedback/request/?step=3"
-            onClick={[Function]}
-          >
-            <button
-              className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
-              disabled={false}
-              onBlur={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
+            <span
+              className="MuiButton-label"
             >
-              <span
-                className="MuiButton-label"
-              >
-                Next
-              </span>
-            </button>
-          </a>
+              Back
+            </span>
+          </button>
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 MuiButton-containedPrimary Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
+          >
+            <span
+              className="MuiButton-label"
+            >
+              Next
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -219,8 +235,87 @@ Array [
           className="MuiFormControl-root MuiTextField-root makeStyles-textField-7"
         >
           <div
-            className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedStart"
-            onClick={[Function]}
+            className="TemplateCardHeader-root-7"
+          >
+            <div
+              className="TemplateCardHeader-header-8"
+            />
+          </div>
+          <div
+            className="MuiCardContent-root card-content"
+          >
+            <div
+              className="template-details"
+            >
+              <h3
+                className="template-name"
+              >
+                Ad Hoc
+              </h3>
+              <p
+                className="description"
+              >
+                Ask a single question.
+              </p>
+            </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Admin
+              </b>
+            </p>
+          </div>
+        </div>
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          onClick={[Function]}
+        >
+          <div
+            className="TemplateCardHeader-root-7"
+          >
+            <div
+              className="TemplateCardHeader-header-8"
+            >
+              <button
+                aria-label="show more"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden={true}
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div
+            className="MuiCardContent-root card-content"
           >
             <div
               className="MuiInputAdornment-root makeStyles-root-6 MuiInputAdornment-positionStart"
@@ -236,24 +331,162 @@ Array [
                 />
               </svg>
             </div>
-            <input
-              aria-invalid={false}
-              autoFocus={false}
-              className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedStart"
-              disabled={false}
-              onAnimationStart={[Function]}
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="Search..."
-              required={false}
-              type="text"
-            />
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Admin
+              </b>
+            </p>
           </div>
         </div>
         <div
-          className="card-container"
-        />
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          onClick={[Function]}
+        >
+          <div
+            className="TemplateCardHeader-root-7"
+          >
+            <div
+              className="TemplateCardHeader-header-8"
+            >
+              <button
+                aria-label="show more"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden={true}
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div
+            className="MuiCardContent-root card-content"
+          >
+            <div
+              className="template-details"
+            >
+              <h3
+                className="template-name"
+              >
+                Feedback Survey 2
+              </h3>
+              <p
+                className="description"
+              >
+                Another type of survey
+              </p>
+            </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Jane Doe
+              </b>
+            </p>
+          </div>
+        </div>
+        <div
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          onClick={[Function]}
+        >
+          <div
+            className="TemplateCardHeader-root-7"
+          >
+            <div
+              className="TemplateCardHeader-header-8"
+            >
+              <button
+                aria-label="show more"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden={true}
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div
+            className="MuiCardContent-root card-content"
+          >
+            <div
+              className="template-details"
+            >
+              <h3
+                className="template-name"
+              >
+                Custom Template
+              </h3>
+              <p
+                className="description"
+              >
+                A very very very very very very very very very very very very very very very very very ver...
+              </p>
+            </div>
+            <p
+              className="creator"
+            >
+              Created by: 
+              <b>
+                Bob Smith
+              </b>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>,
