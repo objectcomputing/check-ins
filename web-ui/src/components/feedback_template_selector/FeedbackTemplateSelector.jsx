@@ -1,21 +1,21 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
-import {createFeedbackTemplate} from "../../api/feedbacktemplate";
+import {createFeedbackTemplate, getAllFeedbackTemplates} from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 
-function getTemplates() {
+function getFakeTemplates() {
   return [
     {
       id: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
-      creator: "Admin",
+      createdBy: "Admin",
       questions: []
     },
     {
@@ -23,7 +23,7 @@ function getTemplates() {
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
-      creator: "Jane Doe",
+      createdBy: "Jane Doe",
       questions: [],
     },
     {
@@ -31,7 +31,7 @@ function getTemplates() {
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
+      createdBy: "Bob Smith",
       questions: []
     },
   ];
@@ -40,7 +40,7 @@ function getTemplates() {
 const propTypes = {
   query: PropTypes.string,
   changeQuery: PropTypes.func
-}
+};
 
 const FeedbackTemplateSelector = (props) => {
   const { state } = useContext(AppContext);
@@ -48,17 +48,38 @@ const FeedbackTemplateSelector = (props) => {
   const currentUser = selectCurrentUser(state);
   const currentUserId = currentUser?.id;
 
-  const [templates, setTemplates] = useState(getTemplates());
+  const [templates, setTemplates] = useState([]);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+
+  const getTemplates = async (csrf) => {
+    let res = await getAllFeedbackTemplates(csrf);
+    let templateList =
+      res.payload &&
+      res.payload.data &&
+      res.payload.status === 200 &&
+      !res.error
+        ? res.payload.data
+        : null
+    if (templateList) {
+      const allTemplates = [...templateList, ...getFakeTemplates()];
+      setTemplates(allTemplates);
+    }
+  };
+
+  useEffect(() => {
+    if (csrf) {
+      getTemplates(csrf);
+    }
+  }, [csrf]);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
-  }
+  };
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
-  }
+  };
 
   const handlePreviewSubmit = async (submittedTemplate) => {
     console.log(submittedTemplate);
@@ -84,7 +105,7 @@ const FeedbackTemplateSelector = (props) => {
       }
     }
     setPreview({open: false, selectedTemplate: submittedTemplate});
-  }
+  };
 
   const onCardClick = (template) => {
     if (template.isAdHoc) {
@@ -92,16 +113,17 @@ const FeedbackTemplateSelector = (props) => {
     } else {
       props.changeQuery("template", template.id);
     }
-  }
+  };
 
   const onNewAdHocClick = () => {
     const newAdHocTemplate = {
       title: "Ad Hoc",
       description: "Ask a single question",
+      createdBy: currentUser?.name,
       isAdHoc: true,
     }
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
-  }
+  };
 
   return (
     <React.Fragment>
@@ -138,7 +160,7 @@ const FeedbackTemplateSelector = (props) => {
       </Tooltip>
     </React.Fragment>
   );
-}
+};
 
 FeedbackTemplateSelector.propTypes = propTypes;
 

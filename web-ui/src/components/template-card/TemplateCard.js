@@ -15,7 +15,7 @@ import {CardHeader} from "@material-ui/core";
 const propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
-    creator: PropTypes.string.isRequired,
+    createdBy: PropTypes.string.isRequired,
     isAdHoc: PropTypes.bool,
     onClick: PropTypes.func,
     onCardClick: PropTypes.func
@@ -80,7 +80,7 @@ const TemplateCard = (props) => {
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>
                     <p className="description">{cutText(props.description, 90)}</p>
                 </div>
-                <p className="creator">Created by: <b>{props.creator}</b></p>
+                <p className="creator">Created by: <b>{props.createdBy}</b></p>
             </CardContent>
         </Card>
     );

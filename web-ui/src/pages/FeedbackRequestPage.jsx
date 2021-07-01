@@ -40,7 +40,6 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
-let todayDate = new Date();
 const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();

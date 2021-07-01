@@ -19,3 +19,11 @@ export const getFeedbackTemplate = async (feedbackTemplateId, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const getAllFeedbackTemplates = async (cookie) => {
+  return resolve({
+    url: `${feedbackTemplateUrl}/?onlyActive=${true}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  })
+}
