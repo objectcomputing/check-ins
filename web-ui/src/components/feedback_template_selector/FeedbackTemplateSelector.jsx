@@ -15,7 +15,7 @@ function getFakeTemplates() {
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
-      createdBy: "Admin",
+      createdBy: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
       questions: []
     },
     {
@@ -23,7 +23,7 @@ function getFakeTemplates() {
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
-      createdBy: "Jane Doe",
+      createdBy: "2559a257-ae84-4076-9ed4-3820c427beeb",
       questions: [],
     },
     {
@@ -31,7 +31,7 @@ function getFakeTemplates() {
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      createdBy: "Bob Smith",
+      createdBy: "802cb1f5-a255-4236-8719-773fa53d79d9",
       questions: []
     },
   ];
@@ -140,7 +140,7 @@ const FeedbackTemplateSelector = (props) => {
           <TemplateCard
             key={template.id}
             title={template.title}
-            creator={template.creator}
+            createdBy={template.createdBy}
             description={template.description}
             isAdHoc={template.isAdHoc}
             questions={template.questions}

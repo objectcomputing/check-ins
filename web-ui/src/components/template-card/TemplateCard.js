@@ -1,5 +1,5 @@
 import "./TemplateCard.css";
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import PropTypes from "prop-types";
@@ -11,6 +11,9 @@ import {withStyles} from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import {green} from "@material-ui/core/colors";
 import {CardHeader} from "@material-ui/core";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
+import {getMember} from "../../api/member";
 
 const propTypes = {
     title: PropTypes.string.isRequired,
@@ -67,10 +70,31 @@ const TemplateCardHeader = withStyles(templateCardHeaderStyles, {
 
 const TemplateCard = (props) => {
 
+    const { state } = useContext(AppContext);
+    const csrf = selectCsrfToken(state);
+    const [creatorName, setCreatorName] = useState("");
+
     const handleClick = (e) => {
         e.stopPropagation();
         props.onClick(e);
     }
+
+    // Get name of the template creator
+    useEffect(() => {
+        async function getCreatorName() {
+            if (props.createdBy) {
+                let res = await getMember(props.createdBy, csrf);
+                let creatorProfile =
+                  res.payload && res.payload.data && !res.error
+                    ? res.payload.data
+                    : null
+                setCreatorName(creatorProfile ? creatorProfile.name : "");
+            }
+        }
+        if (csrf) {
+            getCreatorName();
+        }
+    }, [props.createdBy, csrf]);
 
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>
@@ -80,7 +104,7 @@ const TemplateCard = (props) => {
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>
                     <p className="description">{cutText(props.description, 90)}</p>
                 </div>
-                <p className="creator">Created by: <b>{props.createdBy}</b></p>
+                <p className="creator">Created by: <b>{creatorName}</b></p>
             </CardContent>
         </Card>
     );
