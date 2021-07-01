@@ -7,12 +7,11 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
-import TemplateCard from "../components/template-card/TemplateCard"
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-import {TextField} from "@material-ui/core";
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
