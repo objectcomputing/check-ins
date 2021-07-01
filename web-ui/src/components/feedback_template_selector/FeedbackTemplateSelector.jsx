@@ -1,7 +1,8 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
+import {TextField} from "@material-ui/core";
 
 function getTemplates() {
   return [
@@ -46,6 +47,7 @@ const propTypes = {
 }
 
 const FeedbackTemplateSelector = (props) => {
+  const allTemplates = getTemplates();
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -68,9 +70,50 @@ const FeedbackTemplateSelector = (props) => {
       props.changeQuery("template", template.id);
     }
   }
+  const [searchText, setSearchText] = useState("");
+  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+
+
+  const getFilteredTemplates = () => {
+    setFilteredTemplates(setFilteredTemplates => []);
+    let searchTextString = searchText.toString().toLowerCase();
+    if (searchText !== "") {
+      for (const template of allTemplates) {
+        let title = template.title.toLowerCase();
+        let description = template.description.toLowerCase();
+        if (title.includes(searchTextString) || description.includes(searchTextString)) {
+          setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
+        }
+      }
+
+      if(filteredTemplates.length !== 0){
+        return filteredTemplates;
+      }
+    }else {
+      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
+    }
+  }
+
+  useEffect(() => {
+
+    getFilteredTemplates();
+
+  }, [searchText])
+
 
   return (
     <React.Fragment>
+      <div className="search-bar">
+        <TextField
+            label="Search Templates..."
+            placeholder="Template 1"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
+        />
+      </div>
+
       {preview.selectedTemplate &&
       <TemplatePreviewModal
         template={preview.selectedTemplate}
@@ -80,19 +123,25 @@ const FeedbackTemplateSelector = (props) => {
       />
       }
       <div className="card-container">
-        {getTemplates().map((template) => (
-          <TemplateCard
-            title={template.title}
-            creator={template.creator}
-            description={template.description}
-            isAdHoc={template.isAdHoc}
-            questions={template.questions}
-            expanded={preview.open}
-            onClick={(e) => handlePreviewOpen(e, template)}
-            onCardClick={() => onCardClick(template)}/>
-        ))}
+        {
+          (filteredTemplates.length === 0 && searchText === "")
+              ? <h2>No templates found</h2>
+              : (searchText && searchText.length >= 0 && filteredTemplates.length === 0)
+              ? <h2>No matching templates</h2>
+              : filteredTemplates.map((template) => (
+                  <TemplateCard
+                      title={template.title}
+                      creator={template.creator}
+                      description={template.description}
+                      isAdHoc={template.isAdHoc}
+                      questions={template.questions}
+                      expanded={preview.open}
+                      onClick={(e) => handlePreviewOpen(e, template)}
+                      onCardClick={() => onCardClick(template)}/>
+              ))}
       </div>
     </React.Fragment>
+
   );
 }
 
