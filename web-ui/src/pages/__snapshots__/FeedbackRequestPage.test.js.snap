@@ -17,9 +17,10 @@ Array [
       </h4>
       <div>
         <div>
-         <a
-            className="no-underline-link "
-            href="/feedback/request/?step=1"
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
             onClick={[Function]}
             onDragLeave={[Function]}
             onFocus={[Function]}
@@ -34,33 +35,6 @@ Array [
             tabIndex={-1}
             type="button"
           >
-            <button
-              className="MuiButtonBase-root MuiButton-root MuiButton-text"
-              disabled={false}
-              onBlur={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
-            >
-              <span
-                className="MuiButton-label"
-              >
-                Back
-              </span>
-            </button>
-          </a>
-          <a
-            className="no-underline-link "
-            href="/feedback/request/?step=3"
             <span
               className="MuiButton-label"
             >
@@ -98,44 +72,6 @@ Array [
       className="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-root-1 MuiPaper-elevation0"
     >
       <div
-        className="MuiStep-root MuiStep-horizontal MuiStep-completed"
-      >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal"
-        >
-          <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root MuiStepIcon-completed"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm-2 17l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"
-              />
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
-          >
-            <span
-              className="MuiTypography-root MuiStepLabel-label MuiStepLabel-completed MuiTypography-body2 MuiTypography-displayBlock"
-            >
-              Select template
-            </span>
-          </span>
-        </span>
-      </div>
-      <div
-        className="MuiStepConnector-root MuiStepConnector-horizontal MuiStepConnector-active"
-      >
-        <span
-          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
-        />
-      </div>
-      <div
         className="MuiStep-root MuiStep-horizontal"
       >
         <span
@@ -161,7 +97,7 @@ Array [
                 x="12"
                 y="16"
               >
-                2
+                1
               </text>
             </svg>
           </span>
@@ -170,6 +106,54 @@ Array [
           >
             <span
               className="MuiTypography-root MuiStepLabel-label MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
+            >
+              Select template
+            </span>
+          </span>
+        </span>
+      </div>
+      <div
+        className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
+      >
+        <span
+          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+        />
+      </div>
+      <div
+        className="MuiStep-root MuiStep-horizontal"
+      >
+        <span
+          className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+        >
+          <span
+            className="MuiStepLabel-iconContainer"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root MuiStepIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="12"
+              />
+              <text
+                className="MuiStepIcon-text"
+                textAnchor="middle"
+                x="12"
+                y="16"
+              >
+                2
+              </text>
+            </svg>
+          </span>
+          <span
+            className="MuiStepLabel-labelContainer"
+          >
+            <span
+              className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
             >
               Select recipients
             </span>
@@ -229,10 +213,11 @@ Array [
       className="current-step-content"
     >
       <div
-        className="feedback-recipient-selector"
+        className="card-container"
       >
         <div
-          className="MuiFormControl-root MuiTextField-root makeStyles-textField-7"
+          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
+          onClick={[Function]}
         >
           <div
             className="TemplateCardHeader-root-7"
@@ -318,18 +303,18 @@ Array [
             className="MuiCardContent-root card-content"
           >
             <div
-              className="MuiInputAdornment-root makeStyles-root-6 MuiInputAdornment-positionStart"
+              className="template-details"
             >
-              <svg
-                aria-hidden={true}
-                className="MuiSvgIcon-root"
-                focusable="false"
-                viewBox="0 0 24 24"
+              <h3
+                className="template-name"
               >
-                <path
-                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
-                />
-              </svg>
+                Survey 1
+              </h3>
+              <p
+                className="description"
+              >
+                Make a survey with a few questions
+              </p>
             </div>
             <p
               className="creator"
