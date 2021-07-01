@@ -1,4 +1,4 @@
-import React, {useContext, useCallback} from "react";
+import React, {useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -11,9 +11,6 @@ import FeedbackTemplateSelector from "../components/feedback_template_selector/F
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
-import {AppContext} from "../context/AppContext";
-import {selectCsrfToken, selectCurrentUser} from "../context/selectors";
-import {createFeedbackTemplate} from "../api/feedbacktemplate";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,10 +42,6 @@ function getSteps() {
 
 let todayDate = new Date();
 const FeedbackRequestPage = () => {
-  const { state } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-  const currentUser = selectCurrentUser(state);
-  const currentUserId = currentUser?.id;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -99,33 +92,6 @@ const FeedbackRequestPage = () => {
   }, [activeStep, hasTemplate, hasFrom, hasDue]);
 
   const handleSubmit = () => {};
-
-  const handlePreviewSubmit = async (submittedTemplate) => {
-    console.log(submittedTemplate);
-    if (!currentUserId || !csrf) {
-      return;
-    }
-    if (submittedTemplate && submittedTemplate.isAdHoc) {
-      let newFeedbackTemplate = {
-        title: submittedTemplate.title,
-        description: submittedTemplate.description,
-        createdBy: currentUserId,
-        active: false,
-      };
-      console.log("Creating new ad-hoc template:");
-      console.log(newFeedbackTemplate);
-      const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
-      if (!res.error && res.payload && res.payload.data) {
-        newFeedbackTemplate.id = res.payload.data.id;
-        newFeedbackTemplate.isAdHoc = true;
-        newFeedbackTemplate.questions = [];
-        console.log("Response:");
-        console.log(res.payload.data);
-        templates.push(newFeedbackTemplate);
-      }
-    }
-    setPreview({open: false, selectedTemplate: submittedTemplate});
-  }
 
   const onNextClick = useCallback(() => {
     if(!canProceed()) return;

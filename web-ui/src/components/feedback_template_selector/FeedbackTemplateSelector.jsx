@@ -1,9 +1,12 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
+import {createFeedbackTemplate} from "../../api/feedbacktemplate";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 
 function getTemplates() {
   return [
@@ -40,6 +43,12 @@ const propTypes = {
 }
 
 const FeedbackTemplateSelector = (props) => {
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const currentUser = selectCurrentUser(state);
+  const currentUserId = currentUser?.id;
+
+  const [templates, setTemplates] = useState(getTemplates());
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -47,13 +56,34 @@ const FeedbackTemplateSelector = (props) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 
-  const handlePreviewSubmit = (selectedTemplate) => {
-    props.changeQuery("template", selectedTemplate.id);
+  const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
-  const handlePreviewClose = (selectedTemplate) => {
-    setPreview({open: false, selectedTemplate: selectedTemplate});
+  const handlePreviewSubmit = async (submittedTemplate) => {
+    console.log(submittedTemplate);
+    if (!currentUserId || !csrf) {
+      return;
+    }
+    if (submittedTemplate && submittedTemplate.isAdHoc) {
+      let newFeedbackTemplate = {
+        title: submittedTemplate.title,
+        description: submittedTemplate.description,
+        createdBy: currentUserId,
+        active: false,
+      };
+      console.log("Creating new ad-hoc template:");
+      console.log(newFeedbackTemplate);
+      const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
+      if (!res.error && res.payload && res.payload.data) {
+        newFeedbackTemplate.id = res.payload.data.id;
+        newFeedbackTemplate.isAdHoc = true;
+        console.log("Response:");
+        console.log(res.payload.data);
+        setTemplates([...templates, newFeedbackTemplate]);
+      }
+    }
+    setPreview({open: false, selectedTemplate: submittedTemplate});
   }
 
   const onCardClick = (template) => {
@@ -68,7 +98,6 @@ const FeedbackTemplateSelector = (props) => {
     const newAdHocTemplate = {
       title: "Ad Hoc",
       description: "Ask a single question",
-      creator: "Me",
       isAdHoc: true,
     }
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
@@ -85,7 +114,7 @@ const FeedbackTemplateSelector = (props) => {
       />
       }
       <div className="card-container">
-        {getTemplates().map((template) => (
+        {templates.map((template) => (
           <TemplateCard
             key={template.id}
             title={template.title}
