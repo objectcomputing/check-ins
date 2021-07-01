@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
@@ -28,6 +28,7 @@ const useStyles = makeStyles({
   },
 });
 
+
 const FeedbackRecipientSelector = () => {
   const { state } = useContext(AppContext);
   const classes = useStyles();
@@ -38,37 +39,59 @@ const FeedbackRecipientSelector = () => {
   const location = useLocation();
   const parsed = queryString.parse(location?.search);
   let from = parsed.from;
+  const hasRenewedFromURL = useRef(false)
+  const hasGottenSuggestions = useRef(false)
   const [searchText, setSearchText] = useState("");
-  let setter = []
-  if (from !== undefined && from !== null) {
-    console.log("From is not undefined and from is not null")
-    console.log("From in the check " + from)
-    if (typeof from === 'string') {
-      console.log("from is string" + from)
-      console.log()
-      let profileId = from
-      const newProfile = selectProfile(state, profileId);
-      console.log("new profile " + newProfile)
-      setter.push(newProfile)
-      console.log("Setter in from is string check " + setter)
-    } else if (Array.isArray(from) ) {
-      console.log("from is array"+from)
-      setter = from
-      console.log("Setter in from is arr check " + JSON.stringify(setter))
-    }
-  }
-  const [profiles, setProfiles] = useState(setter);
+  const [profiles, setProfiles] = useState([])
 
+useEffect(() => {
+console.log("Profiles")
+console.log(profiles)
+},[profiles])
+
+
+useEffect(() => {
+console.log("in from use effect")
+if (!hasRenewedFromURL.current && hasGottenSuggestions.current && from!==null && from!==undefined) {
+console.log("from changed" + from)
+let profileCopy = profiles;
+  if (typeof from === 'string') {
+           let newProfile = {id : from, selected: true}
+           if (profileCopy.filter(e => e.id !== newProfile.id).length === 0) {
+               profileCopy.push(newProfile)
+           }
+           setProfiles(profileCopy.reverse())
+
+
+  } else if (Array.isArray(from)) {
+  let profileCopy = profiles
+      for (let i = 0; i < from.length; ++i) {
+       let newProfile = {id : from[i], selected: true}
+           if (profileCopy.filter(e => e.id !== newProfile.id).length === 0) {
+               profileCopy.push(newProfile)
+             }
+      }
+     setProfiles(profileCopy.reverse())
+  }
+  hasRenewedFromURL.current = true
+}
+
+},[profiles])
 
   useEffect(() => {
-    const normalizedMembers = selectNormalizedMembers(state, searchText);
-    console.log("normalized members " + JSON.stringify(normalizedMembers));
-    let selectedMembers = profiles.filter(profile => profile.selected === true)
-    console.log("selected members" + selectedMembers)
-    setProfiles(selectedMembers.concat(normalizedMembers));
-
+  if (searchText.length !== 0  && searchText !== "") {
+      let profileCopy = profiles
+      let normalizedMembers = selectNormalizedMembers(state, searchText);
+      let selectedMembers = profiles.filter(profile => profile.selected !== true)
+      let filteredNormalizedMembers = normalizedMembers.filter((member) => {
+        return selectedMembers.some((selectedMember) => {
+          return selectedMember.id !== member.id
+        });
+      });
+      console.log("selected members" + selectedMembers)
+      setProfiles(filteredNormalizedMembers);
+  }
   }, [searchText])
-
 
     useEffect(() => {
         async function getSuggestions() {
@@ -85,15 +108,20 @@ const FeedbackRecipientSelector = () => {
         }
         if (csrf) {
             getSuggestions().then((res) => {
-              console.log(res)
+            console.log("Get suggestions complete")
+              let profileCopy = profiles
+              console.log("Res in get suggestinos " + JSON.stringify(res))
               if (res !== undefined && res !== null) {
+                 let newProfiles = []
                 for(let i = 0; i < res.length; ++i) {
-                  res[i].id = res[i].profileId
+                   res[i].id = res[i].profileId
+                   profileCopy.push(res[i])
                 }
-                setProfiles(profiles.concat(res));
+               setProfiles(profileCopy)
+               hasGottenSuggestions.current = true
               }
-            });
-        }
+           });
+      }
     },[id,csrf]);
 
   const cardClickHandler = (id) => {
@@ -105,6 +133,7 @@ const FeedbackRecipientSelector = () => {
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});
+    hasRenewedFromURL.current = false;
   }
 
 
@@ -131,7 +160,7 @@ const FeedbackRecipientSelector = () => {
                     key={profile.id}
                     profileId={profile.id}
                     reason={profile?.reason ? profile.reason : null}
-                    selected={from && from.includes(profile.id)}
+                    selected={from!== undefined && from && from.includes(profile.id)}
                     onClick={() => cardClickHandler(profile.id)}/>
             )) :
             <p> Can't get suggestions, please come back later :( </p>}
