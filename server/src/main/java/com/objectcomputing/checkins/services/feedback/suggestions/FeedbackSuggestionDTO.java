@@ -11,20 +11,20 @@ public class FeedbackSuggestionDTO {
     @Nullable
     private String reason;
     @Nullable
-    private UUID profileId;
+    private UUID id;
 
     public FeedbackSuggestionDTO() {
         this.reason = null;
-        this.profileId = null;
+        this.id = null;
     }
 
     public FeedbackSuggestionDTO(String reason, UUID profileId) {
         this.reason = reason;
-        this.profileId = profileId;
+        this.id = profileId;
     }
 
     public void setProfileId(UUID profileId) {
-        this.profileId = profileId;
+        this.id = profileId;
     }
 
     public String getReason() {
@@ -32,7 +32,7 @@ public class FeedbackSuggestionDTO {
     }
 
     public UUID getProfileId() {
-        return profileId;
+        return id;
     }
     public void setReason(String reason) {
         this.reason = reason;
@@ -43,11 +43,11 @@ public class FeedbackSuggestionDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackSuggestionDTO that = (FeedbackSuggestionDTO) o;
-        return Objects.equals(reason, that.reason) && Objects.equals(profileId, that.profileId);
+        return Objects.equals(reason, that.reason) && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reason, profileId);
+        return Objects.hash(reason, id);
     }
 }

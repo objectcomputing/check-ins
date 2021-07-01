@@ -43,53 +43,69 @@ const FeedbackRecipientSelector = () => {
   const hasGottenSuggestions = useRef(false)
   const [searchText, setSearchText] = useState("");
   const [profiles, setProfiles] = useState([])
+  const [selected, setSelected] = useState([])
 
+
+function sortBySelected(profileCopy) {
+profileCopy = profileCopy.sort(function(x,y) {
+  let isXInFrom = from.includes(x)
+  let isYInFrom = from.includes(y)
+  return (isXInFrom === isYInFrom)? 0: isXInFrom?-1:1;
+
+})
+return profileCopy;
+}
 useEffect(() => {
-console.log("Profiles")
-console.log(profiles)
-},[profiles])
-
-
-useEffect(() => {
-console.log("in from use effect")
-if (!hasRenewedFromURL.current && hasGottenSuggestions.current && from!==null && from!==undefined) {
-console.log("from changed" + from)
-let profileCopy = profiles;
+if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==undefined) {
+   let profileCopy = profiles;
   if (typeof from === 'string') {
-           let newProfile = {id : from, selected: true}
-           if (profileCopy.filter(e => e.id !== newProfile.id).length === 0) {
+           let newProfile = {profileId : from}
+           const filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+           console.log("Result of filtering" + JSON.stringify(filteredProfiles))
+           if (filteredProfiles.length === profileCopy.length) {
                profileCopy.push(newProfile)
            }
-           setProfiles(profileCopy.reverse())
+           setProfiles(profileCopy)
+           setSelected(selected => [...selected, newProfile])
 
 
   } else if (Array.isArray(from)) {
-  let profileCopy = profiles
       for (let i = 0; i < from.length; ++i) {
-       let newProfile = {id : from[i], selected: true}
-           if (profileCopy.filter(e => e.id !== newProfile.id).length === 0) {
+       let newProfile = {profileId : from[i]}
+        setSelected(selected => [...selected, newProfile])
+          let filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+          console.log(filteredProfiles)
+           if (filteredProfiles.length === profileCopy.length) {
                profileCopy.push(newProfile)
              }
       }
-     setProfiles(profileCopy.reverse())
+     let newProfiles = sortBySelected(profileCopy)
+     setProfiles(profileCopy)
   }
   hasRenewedFromURL.current = true
 }
 
-},[profiles])
+},[from])
 
   useEffect(() => {
   if (searchText.length !== 0  && searchText !== "") {
-      let profileCopy = profiles
       let normalizedMembers = selectNormalizedMembers(state, searchText);
-      let selectedMembers = profiles.filter(profile => profile.selected !== true)
-      let filteredNormalizedMembers = normalizedMembers.filter((member) => {
-        return selectedMembers.some((selectedMember) => {
-          return selectedMember.id !== member.id
+      normalizedMembers.forEach(element => element.profileId = element.id)
+      let selectedMembers=[];
+      let filteredNormalizedMembers;
+     if (from !==undefined ) {
+      let selectedMembers = profiles.filter(profile => from.includes(profile.profileId))
+      let filteredNormalizedMembers = normalizedMembers.filter(member => {
+        return !selectedMembers.some(selectedMember => {
+          return selectedMember.profileId === member.profileId
         });
       });
-      console.log("selected members" + selectedMembers)
-      setProfiles(filteredNormalizedMembers);
+            setProfiles(filteredNormalizedMembers.concat(selectedMembers));
+      } else {
+        setProfiles(normalizedMembers)
+
+      }
+
   }
   }, [searchText])
 
@@ -108,18 +124,13 @@ let profileCopy = profiles;
         }
         if (csrf) {
             getSuggestions().then((res) => {
-            console.log("Get suggestions complete")
-              let profileCopy = profiles
               console.log("Res in get suggestinos " + JSON.stringify(res))
               if (res !== undefined && res !== null) {
-                 let newProfiles = []
-                for(let i = 0; i < res.length; ++i) {
-                   res[i].id = res[i].profileId
-                   profileCopy.push(res[i])
-                }
-               setProfiles(profileCopy)
-               hasGottenSuggestions.current = true
+              let profileCopy = profiles
+                setProfiles(profileCopy.concat(res))
+                hasGottenSuggestions.current = true
               }
+
            });
       }
     },[id,csrf]);
@@ -157,11 +168,11 @@ let profileCopy = profiles;
         {profiles ?
             profiles.map((profile) => (
                 <FeedbackRecipientCard
-                    key={profile.id}
-                    profileId={profile.id}
+                    key={profile.profileId}
+                    profileId={profile.profileId}
                     reason={profile?.reason ? profile.reason : null}
-                    selected={from!== undefined && from && from.includes(profile.id)}
-                    onClick={() => cardClickHandler(profile.id)}/>
+                    selected={from!== undefined && from && from.includes(profile.profileId)}
+                    onClick={() => cardClickHandler(profile.profileId)}/>
             )) :
             <p> Can't get suggestions, please come back later :( </p>}
       </div>
