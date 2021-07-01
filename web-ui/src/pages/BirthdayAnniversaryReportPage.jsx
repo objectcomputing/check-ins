@@ -2,7 +2,10 @@ import React, { useContext, useState } from "react";
 
 // import { reportSkills } from "../api/memberskill.js";
 import { getAnniversary } from "../api/birthdayanniversary.js";
-import SearchResults from "../components/search-results/SearchResults";
+import { getBirthday } from "../api/birthdayanniversary.js";
+import SearchBirthdayResults from "../components/search-results/SearchBirthdayResults";
+import SearchAnniversaryResults from "../components/search-results/SearchAnniversaryResults";
+
 import MyResponsiveRadar from "../components/radar/Radar";
 import { UPDATE_TOAST } from "../context/actions";
 import { AppContext } from "../context/AppContext";
@@ -56,31 +59,29 @@ const BirthdayAnniversaryReportPage = () => {
   const [showAdHocTeam, setShowAdHocTeam] = useState(true);
 
   const handleSearch = async (searchMembers) => {
-//     let res = await reportSkills(searchMembers, csrf);
+//     let res = await getBirthday(searchMembers, csrf);
     let res = await getAnniversary(searchMembers, csrf);
     let memberSkillsFound;
+    console.log(searchMembers);
+    console.log(res.payload.data);
     if (res && res.payload) {
-      memberSkillsFound = res.payload.data
-      console.log(searchMembers);
-      console.log(res.payload.data);
-      console.log(res.payload.data.name);
-//         res.payload.data.teamMembers && !res.error
-//           ? res.payload.data.teamMembers
-//           : undefined;
+      memberSkillsFound =
+        res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
     }
-    setAllSearchResults(memberSkillsFound);
-//     if (memberSkillsFound && memberProfiles) {
-//       setAllSearchResults(memberSkillsFound);
-// //       setAllSearchResults([]);
-//       setSearchResults(
-//         memberSkillsFound.filter((mSkill) =>
-//           selectedMembers.some((member) => member.id === mSkill.id)
-//         )
-//       );
-//     } else {
-//       setSearchResults([]);
-//       setAllSearchResults([]);
-//     }
+    if (memberSkillsFound && memberProfiles) {
+      setAllSearchResults(memberSkillsFound);
+      console.log(allSearchResults);
+      setSearchResults(
+        memberSkillsFound.filter((mSkill) =>
+          selectedMembers.some((member) => member.id === mSkill.id)
+        )
+      );
+    } else {
+      setSearchResults([]);
+      setAllSearchResults([]);
+    }
     setShowRadar(true);
   };
 
@@ -95,33 +96,24 @@ const BirthdayAnniversaryReportPage = () => {
   }
 
   function createRequest(editedSearchRequest) {
-    let newSearchRequest = {
-      skills: skillsToSkillLevel(searchSkills),
-      members: [],
-    };
+    let newSearchRequest ="january";
     setEditedSearchRequest(newSearchRequest);
     return newSearchRequest;
   }
 
+//   function createRequest(editedSearchRequest) {
+//     let newSearchRequest = {
+//       skills: skillsToSkillLevel(searchSkills),
+//       members: [],
+//     };
+//     setEditedSearchRequest(newSearchRequest);
+//     return newSearchRequest;
+//   }
+
   function onSkillsChange(event, newValue) {
-    let skillsCopy = newValue;//newValue.sort((a, b) => a.name.localeCompare(b.name));
+    let skillsCopy = newValue;
     setSearchSkills([...skillsCopy]);
   }
-
-  const onMemberChange = (event, newValue) => {
-    setSelectedMembers(newValue);
-  };
-
-  const onTeamChange = (event, newValue) => {
-    setSelectedTeam(newValue);
-    setSelectedMembers(
-      // since teamMembers has an id and a memberId
-      newValue.teamMembers.map((member) => ({
-        ...member,
-        id: member.memberId || member.id,
-      }))
-    );
-  };
 
   const handleBirthdaySearch = () => {
     setSelectedMembers([]);
@@ -144,35 +136,6 @@ const BirthdayAnniversaryReportPage = () => {
   const skillMap = {};
 
   const selectedMembersCopy = selectedMembers.map((member) => ({ ...member }));
-//   let searchResultsCopy = searchResults.map((result) => ({ ...result }));
-//   const filteredResults = searchResultsCopy.filter((result) => {
-//     result.name = result.name.split(" ")[0];
-//     return selectedMembersCopy.some((member) => {
-//       return result.name === member.firstName;
-//     });
-//   });
-
-//   for (const result of filteredResults) {
-//     const memberName = result.name;
-//
-//     for (const skill of result.skills) {
-//       const { id } = skill;
-//
-//       const skillObj = selectSkill(state, skill.id);
-//
-//       if (skillObj) {
-//         const skillName = skillObj.name;
-//         let value = skillMap[id];
-//         if (!value) {
-//           value = { skill: skillName };
-//           skillMap[id] = value;
-//         }
-//         value[memberName] = levelMap[skill.level];
-//       } else {
-//         console.error(`No skill with id ${id} found!`);
-//       }
-//     }
-//   }
 
   const chartData = Object.values(skillMap);
 
@@ -185,21 +148,6 @@ const BirthdayAnniversaryReportPage = () => {
     }
   }
 
-  const onMonthChange = (event, newValue) => {
-//     let extantPdls = filteredPdls || [];
-//     newValue.forEach((val) => {
-//       extantPdls = extantPdls.filter((pdl) => pdl.id !== val.id);
-//     });
-//     extantPdls = [...new Set(extantPdls)];
-//     newValue = [...new Set(newValue)];
-//     if (newValue.length > 0) {
-//       setSelectedPdls(newValue);
-//       setFilteredPdls([...newValue]);
-//     } else {
-//       setSelectedPdls([]);
-//       setFilteredPdls(pdls);
-//     }
-  };
   return (
     <div className="team-skill-report-page">
       <div className="filter-section">
@@ -230,70 +178,14 @@ const BirthdayAnniversaryReportPage = () => {
         <div className="team-skill-autocomplete">
           {showAdHocTeam ? (
             <div>
-{/*               <Autocomplete */}
-{/*                 id="member" */}
-{/*                 multiple */}
-{/*                 options={memberProfiles} */}
-{/*                 value={selectedMembers || []} */}
-{/*                 onChange={onMemberChange} */}
-{/*                 getOptionSelected={(option, value) => */}
-{/*                   value ? value.id === option.id : false */}
-{/*                 } */}
-{/*                 getOptionLabel={(option) => option.name} */}
-{/*                 renderInput={(params) => ( */}
-{/*                   <TextField */}
-{/*                     {...params} */}
-{/*                     className="fullWidth" */}
-{/*                     label="Members" */}
-{/*                     placeholder="Choose members for radar chart" */}
-{/*                   /> */}
-{/*                 )} */}
-{/*               /> */}
             </div>
           ) : showExistingTeam ? (
           <div>
-{/*             <Autocomplete */}
-{/*               id="team" */}
-{/*               options={teams} */}
-{/*               value={selectedTeam || []} */}
-{/*               onChange={onTeamChange} */}
-{/*               getOptionSelected={(option, value) => */}
-{/*                 value ? value.id === option.id : false */}
-{/*               } */}
-{/*               getOptionLabel={(option) => option.name} */}
-{/*               renderInput={(params) => ( */}
-{/*                 <TextField */}
-{/*                   {...params} */}
-{/*                   className="fullWidth" */}
-{/*                   label="Team" */}
-{/*                   placeholder="Choose a team for radar chart" */}
-{/*                 /> */}
-{/*               )} */}
-{/*             /> */}
             </div>
           ) : null}
-{/*          <Autocomplete */}
-{/*            id="skillSelect" */}
-{/*            multiple */}
-{/*            options={months} */}
-{/*            value={searchSkills ? searchSkills : []} */}
-{/*            onChange={onMonthChange} */}
-{/*            getOptionLabel={(option) => option.title} */}
-{/*            renderInput={(params) => ( */}
-{/*              <TextField */}
-{/*                {...params} */}
-{/*                label="Select Month..." */}
-{/*                placeholder="Choose the month to display" */}
-{/*              /> */}
-{/*            )} */}
-{/*          /> */}
           <Autocomplete
-            id="skillSelect"
+            id="monthSelect"
             multiple
-//             options={skills.filter(
-//               (skill) =>
-//                 !searchSkills.map((sSkill) => sSkill.id).includes(skill.id)
-//             )}
             options={months}
             value={searchSkills ? searchSkills : []}
             onChange={onSkillsChange}
@@ -306,7 +198,7 @@ const BirthdayAnniversaryReportPage = () => {
                 {...params}
                 className="fullWidth"
                 label="Select a month"
-                placeholder="Choose skills for radar chart"
+                placeholder="Choose a month"
               />
             )}
           />
@@ -334,25 +226,21 @@ const BirthdayAnniversaryReportPage = () => {
       </div>
       {showRadar && (
         <div>
-{/*           <div style={{ height: "400px" }}> */}
-{/*             <MyResponsiveRadar */}
-{/*               data={chartData || []} */}
-{/*               selectedMembers={selectedMembers} */}
-{/*             /> */}
-{/*           </div> */}
-{/*           <div className="search-results"> */}
-{/*             <h2>Search Results</h2> */}
-{/*             {!searchResultsCopy.length && <h4>No Matches</h4>} */}
-{/*             <SearchResults searchResults={searchResultsCopy} /> */}
-{/*           </div> */}
           {showAdHocTeam && (
             <div className="search-results">
               <h2>All Employees With Selected Month</h2>
-              <SearchResults searchResults={allSearchResults} />
+              <SearchAnniversaryResults searchResults={allSearchResults} />
+            </div>
+          )}
+          {showExistingTeam && (
+            <div className="search-results">
+              <h2>All Employees With Selected Month</h2>
+              <SearchBirthdayResults searchResults={allSearchResults} />
             </div>
           )}
         </div>
       )}
+
     </div>
   );
 };
