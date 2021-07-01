@@ -85,8 +85,6 @@ const FeedbackRequestPage = () => {
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
-  const {search} = useLocation();
-  const values = queryString.parse(search);
   const history = useHistory();
   const query = queryString.parse(location?.search);
   const stepQuery = query.step?.toString();
@@ -94,7 +92,7 @@ const FeedbackRequestPage = () => {
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
   const [requestee, setRequestee] = useState();
-  const id = values.for?.toString();
+  const id = query.for?.toString();
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -130,8 +128,12 @@ const FeedbackRequestPage = () => {
     };
 
     const onCardClick = (template) => {
-      history.push(`/feedback/request/?template=${template.id}`);
+      history.push(`/feedback/request/for=${id}&?template=${template.id}`);
     }
+
+    const hasFor = useCallback(() => {
+      return !id;
+    }, [id])
 
     const hasTemplate = useCallback(() => {
       return !!templateQuery;
@@ -153,15 +155,15 @@ const FeedbackRequestPage = () => {
   const canProceed = useCallback(() => {
     switch(activeStep) {
       case 1:
-        return hasTemplate();
+        return hasFor() && hasTemplate();
       case 2:
-        return hasTemplate() && hasFrom();
+        return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasTemplate() && hasFrom() && hasDue();
+        return hasFor() && hasTemplate() && hasFrom() && hasDue();
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
     if (activeStep < 1 || activeStep > steps.length) {
 
@@ -186,15 +188,15 @@ const FeedbackRequestPage = () => {
         case 1:
           return true;
         case 2:
-          return hasTemplate();
+          return hasFor() && hasTemplate();
         case 3:
-          return hasTemplate() && hasFrom();
+          return hasFor() && hasTemplate() && hasFrom();
         case 4:
-          return hasTemplate() && hasFrom() && hasDue();
+          return hasFor() && hasTemplate() && hasFrom() && hasDue();
         default:
           return false;
       }
-    }, [activeStep, hasTemplate, hasFrom, hasDue]);
+    }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
     if (!urlIsValid()) {
       return (
