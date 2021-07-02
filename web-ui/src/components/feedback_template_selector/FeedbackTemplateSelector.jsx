@@ -1,11 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
 import {TextField} from "@material-ui/core";
 
-function getTemplates() {
-  return [
+const allTemplates = [
     {
       id: 1,
       title: "Ad Hoc",
@@ -39,7 +38,7 @@ function getTemplates() {
       questions: []
     },
   ];
-}
+
 
 const propTypes = {
   query: PropTypes.string,
@@ -47,8 +46,10 @@ const propTypes = {
 }
 
 const FeedbackTemplateSelector = (props) => {
-  const allTemplates = getTemplates();
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const [searchText, setSearchText] = useState("");
+  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+  const hasFetchedData = useRef(false);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     setPreview({open: true, selectedTemplate: selectedTemplate});
@@ -70,35 +71,26 @@ const FeedbackTemplateSelector = (props) => {
       props.changeQuery("template", template.id);
     }
   }
-  const [searchText, setSearchText] = useState("");
-  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
 
-
-  const getFilteredTemplates = () => {
-    setFilteredTemplates(setFilteredTemplates => []);
-    let searchTextString = searchText.toString().toLowerCase();
-    if (searchText !== "") {
-      for (const template of allTemplates) {
-        let title = template.title.toLowerCase();
-        let description = template.description.toLowerCase();
-        if (title.includes(searchTextString) || description.includes(searchTextString)) {
-          setFilteredTemplates(setFilteredTemplates => [...setFilteredTemplates, template]);
-        }
-      }
-
-      if(filteredTemplates.length !== 0){
-        return filteredTemplates;
-      }
-    }else {
-      setFilteredTemplates(setFilteredTemplates => [...allTemplates]);
-    }
-  }
 
   useEffect(() => {
 
-    getFilteredTemplates();
+    const filterTemplates = () => {
 
-  }, [searchText])
+      if (!hasFetchedData.current) {
+        if (searchText !== "") {
+          setFilteredTemplates(allTemplates.filter((template) =>
+              template.title.toLowerCase().includes(searchText.toLowerCase()) ||
+              template.description.toLowerCase().includes(searchText.toLowerCase())));
+        } else {
+          setFilteredTemplates(allTemplates)
+        }
+        hasFetchedData.current = true;
+      }
+    }
+    filterTemplates();
+
+  }, [searchText, filteredTemplates])
 
 
   return (
@@ -110,6 +102,7 @@ const FeedbackTemplateSelector = (props) => {
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
+              hasFetchedData.current = false;
             }}
         />
       </div>
