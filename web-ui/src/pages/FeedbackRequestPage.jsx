@@ -14,6 +14,7 @@ import TemplateCard from "../components/template-card/TemplateCard"
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent"
@@ -40,43 +41,6 @@ const useStyles = makeStyles((theme) => ({
 
 function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
-}
-
-function getTemplates() {
-  return [
-    {
-      id: 123,
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 124,
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 125,
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      creator: "Jane Doe",
-      questions: [],
-    },
-    {
-      id: 126,
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
-      questions: []
-    },
-  ];
 }
 
 const FeedbackRequestPage = () => {
@@ -198,6 +162,14 @@ const FeedbackRequestPage = () => {
       }
     }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
+  }
+
     if (!urlIsValid()) {
       return (
         history.push("/feedback/request/")
@@ -246,22 +218,7 @@ const FeedbackRequestPage = () => {
           })}
         </Stepper>
         <div className="current-step-content">
-          {activeStep === 1 && <TemplatePreviewModal/> &&
-          <div className="card-container">
-            {getTemplates().map((template) => (
-              <TemplateCard
-                key={`template-card-${template.id}`}
-                title={template.title}
-                creator={template.creator}
-                description={template.description}
-                isAdHoc={template.isAdHoc}
-                questions={template.questions}
-                selected={templateQuery && templateQuery.includes(template.id)}
-                onClick={(e) => handlePreviewOpen(e, template)}
-                onCardClick={() => onCardClick(template)}/>
-            ))}
-          </div>
-          }
+          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
           {activeStep === 2 && <FeedbackRecipientSelector/>}
           {activeStep === 3 && <SelectDate/>}
         </div>
