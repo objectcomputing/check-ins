@@ -5,7 +5,10 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-import {createFeedbackTemplate, getAllFeedbackTemplates} from "../../api/feedbacktemplate";
+import {
+  createFeedbackTemplate,
+  getAllFeedbackTemplates
+} from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 
@@ -54,26 +57,29 @@ const FeedbackTemplateSelector = (props) => {
   const [templates, setTemplates] = useState([]);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-  const getTemplates = async (csrf) => {
-    let res = await getAllFeedbackTemplates(csrf);
-    let templateList =
-      res.payload &&
-      res.payload.data &&
-      res.payload.status === 200 &&
-      !res.error
-        ? res.payload.data
-        : null
-    if (templateList) {
-      const allTemplates = [...templateList, ...getFakeTemplates()];
-      setTemplates(allTemplates);
-    }
-  };
-
   useEffect(() => {
-    if (csrf) {
-      getTemplates(csrf);
+    async function getTemplates(csrf) {
+      if (!currentUserId || !csrf) {
+        return [];
+      }
+      let res = await getAllFeedbackTemplates(csrf);
+      let templateList =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null
+      if (templateList) {
+        return [...templateList, ...getFakeTemplates()];
+      }
     }
-  }, [csrf]);
+    if (csrf && currentUserId) {
+      getTemplates(csrf).then((templateList) => {
+        setTemplates(templateList);
+      });
+    }
+  }, [currentUserId, csrf]);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     event.stopPropagation();
@@ -94,7 +100,7 @@ const FeedbackTemplateSelector = (props) => {
         title: submittedTemplate.title,
         description: submittedTemplate.description,
         createdBy: currentUserId,
-        active: false,
+        active: true,
       };
 
       const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
@@ -102,6 +108,7 @@ const FeedbackTemplateSelector = (props) => {
         newFeedbackTemplate.id = res.payload.data.id;
         newFeedbackTemplate.isAdHoc = true;
         setTemplates([...templates, newFeedbackTemplate]);
+        props.changeQuery("template", newFeedbackTemplate.id);
       }
     }
     setPreview({open: false, selectedTemplate: submittedTemplate});
