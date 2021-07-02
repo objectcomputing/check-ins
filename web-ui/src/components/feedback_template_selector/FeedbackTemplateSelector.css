@@ -1,0 +1,6 @@
+.feedback-ad-hoc-action-buttons {
+  margin: 20px 32px 0 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

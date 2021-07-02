@@ -4,9 +4,12 @@ import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import {createFeedbackTemplate, getAllFeedbackTemplates} from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
+
+import "./FeedbackTemplateSelector.css";
 
 function getFakeTemplates() {
   return [
@@ -93,14 +96,11 @@ const FeedbackTemplateSelector = (props) => {
         createdBy: currentUserId,
         active: false,
       };
-      console.log("Creating new ad-hoc template:");
-      console.log(newFeedbackTemplate);
+
       const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
       if (!res.error && res.payload && res.payload.data) {
         newFeedbackTemplate.id = res.payload.data.id;
         newFeedbackTemplate.isAdHoc = true;
-        console.log("Response:");
-        console.log(res.payload.data);
         setTemplates([...templates, newFeedbackTemplate]);
       }
     }
@@ -133,6 +133,17 @@ const FeedbackTemplateSelector = (props) => {
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
       />
       }
+      <div className="feedback-ad-hoc-action-buttons">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onNewAdHocClick}>
+          New Ad-Hoc Template
+        </Button>
+        <Tooltip title="An ad-hoc template allows you to ask a single question" arrow>
+          <HelpOutlineIcon style={{color: "gray", marginLeft: "10px"}}/>
+        </Tooltip>
+      </div>
       <div className="card-container">
         {templates.map((template) => (
           <TemplateCard
@@ -147,15 +158,6 @@ const FeedbackTemplateSelector = (props) => {
             onCardClick={() => onCardClick(template)}/>
         ))}
       </div>
-      <Tooltip title="Ask a single question" arrow>
-        <Button
-          style={{marginLeft: "30px"}}
-          variant="contained"
-          color="primary"
-          onClick={onNewAdHocClick}>
-          New Ad-Hoc Template
-        </Button>
-      </Tooltip>
     </React.Fragment>
   );
 };

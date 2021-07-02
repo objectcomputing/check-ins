@@ -76,18 +76,18 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {template.isAdHoc ? "New Ad-Hoc Template" : template.title}
+            {template.isAdHoc && !template.id ? "New Ad-Hoc Template" : template.title}
           </Typography>
           <Button className="ad-hoc-next-button"
                   onClick={submitPreview}
                   color="inherit">
-            {template.isAdHoc ? "Create" : "Select"}
+            {template.isAdHoc && !template.id ? "Create" : "Select"}
           </Button>
         </Toolbar>
       </AppBar>
 
       <div className="preview-modal-content">
-      {template.isAdHoc ?
+      {template.isAdHoc && !template.id ?
         <React.Fragment>
           <TextField
             id="standard-full-width"
@@ -115,7 +115,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
         <Typography>{template.description}</Typography>
       }
 
-      {template.isAdHoc ?
+      {template.isAdHoc && !template.id ?
         <TextField
           id="standard-full-width"
           label="Ask a feedback question"

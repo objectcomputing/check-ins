@@ -36,7 +36,7 @@ const cutText = (text, maxCharacters) => {
 }
 
 const templateCardHeaderStyles = ({ palette, breakpoints }) => {
-    const space = 24;
+    const space = 8;
     return {
         root: {
             minWidth: 256,
