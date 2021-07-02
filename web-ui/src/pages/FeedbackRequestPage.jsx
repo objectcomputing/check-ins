@@ -10,7 +10,6 @@ import queryString from 'query-string';
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-import TemplateCard from "../components/template-card/TemplateCard"
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
@@ -82,18 +81,9 @@ const FeedbackRequestPage = () => {
 
     const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-    const handlePreviewOpen = (event, selectedTemplate) => {
-      event.stopPropagation();
-      setPreview({open: true, selectedTemplate: selectedTemplate});
-    };
-
     const handlePreviewClose = (selectedTemplate) => {
       setPreview({open: false, selectedTemplate: selectedTemplate});
     };
-
-    const onCardClick = (template) => {
-      history.push(`/feedback/request/for=${id}&?template=${template.id}`);
-    }
 
     const hasFor = useCallback(() => {
       return !id;
