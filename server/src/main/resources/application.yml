@@ -75,6 +75,7 @@ check-ins:
       scopes:
         scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
+        scopeForChatApi: "https://www.googleapis.com/auth/chat.bot"
     feedback:
       max-suggestions: 6
 ---

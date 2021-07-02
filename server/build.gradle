@@ -8,8 +8,8 @@ plugins {
     id "java"
     id "net.ltgt.apt-eclipse" version "0.21"
     id "net.ltgt.apt-idea" version "0.21"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "application"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id("io.micronaut.application") version "1.5.3"
     id "idea"
     id "groovy"
     id "jacoco"
@@ -28,82 +28,61 @@ repositories {
     maven { url "https://jcenter.bintray.com" }
 }
 
-
-
 configurations {
     // for dependencies that are needed for development only
     developmentOnly
     publicResources
 }
 
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.objectcomputing.checkins.*")
+    }
+}
+
 dependencies {
-    implementation 'org.jetbrains:annotations:19.0.0'
-    annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    annotationProcessor "io.micronaut:micronaut-inject-java"
-    annotationProcessor "io.micronaut:micronaut-validation"
-    annotationProcessor "io.micronaut.data:micronaut-data-processor:$micronautDataVersion"
-    annotationProcessor("io.micronaut.configuration:micronaut-openapi:1.5.1")
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut.cache:micronaut-cache-ehcache")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    implementation("io.micronaut.flyway:micronaut-flyway")
+    implementation("io.micronaut.gcp:micronaut-gcp-pubsub")
+    implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.security:micronaut-security-jwt")
+    implementation("io.micronaut.security:micronaut-security-oauth2")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
+    implementation("io.swagger.core.v3:swagger-annotations")
+    implementation("javax.annotation:javax.annotation-api")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:testcontainers")
+    implementation("io.micronaut:micronaut-validation")
 
     compile "commons-io:commons-io:2.8.0"
     compile 'org.apache.commons:commons-csv:1.8'
 
-
-    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    implementation "io.micronaut:micronaut-inject"
-    implementation "io.micronaut:micronaut-validation"
-    implementation "io.micronaut:micronaut-runtime"
-    implementation "io.micronaut:micronaut-http-client"
     implementation "javax.annotation:javax.annotation-api"
     implementation "com.sun.mail:javax.mail:1.6.2"
     implementation "com.mailjet:mailjet-client:4.2.1"
-    implementation "io.micronaut:micronaut-http-server-netty"
     implementation "com.google.api-client:google-api-client:1.30.9"
     implementation "com.google.oauth-client:google-oauth-client-jetty:1.28.0"
     implementation "com.google.apis:google-api-services-drive:v3-rev20200326-1.30.9"
     implementation "com.google.apis:google-api-services-gmail:v1-rev20200203-1.30.9"
     implementation "com.google.apis:google-api-services-admin-directory:directory_v1-rev118-1.25.0"
+    implementation "com.google.apis:google-api-services-chat:v1-rev20200617-1.30.9"
+    implementation "com.google.cloud:google-cloud-pubsub:1.108.7"
     implementation "jakarta.persistence:jakarta.persistence-api:2.2.2"
-    implementation "io.micronaut.data:micronaut-data-jdbc:$micronautDataVersion", {
-        exclude group: 'io.micronaut', module: 'micronaut-jdbc'
-    }
-    implementation  'org.postgresql:postgresql:42.2.12'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.0.15'
-    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
-    implementation 'io.micronaut.flyway:micronaut-flyway'
-    implementation("io.swagger.core.v3:swagger-annotations")
-    implementation("io.micronaut.security:micronaut-security")
-    implementation "io.micronaut.security:micronaut-security-jwt:$micronautSecurityVersion"
-    implementation "io.micronaut.security:micronaut-security-oauth2:$micronautSecurityVersion"
-    implementation 'io.micronaut.views:micronaut-views-core:2.0.0'
-    implementation "io.micronaut.views:micronaut-views-thymeleaf"
-    implementation "io.micronaut.cache:micronaut-cache-core"
-    implementation "io.micronaut.cache:micronaut-cache-ehcache:$micronautEhcacheVersion"
-
-    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     runtimeOnly "org.fusesource.jansi:jansi:1.18"
-
-    testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testAnnotationProcessor "io.micronaut:micronaut-inject-java"
-    testCompile 'org.junit.jupiter:junit-jupiter-api'
-    testCompile 'org.junit.jupiter:junit-jupiter-params'
-    testCompile 'org.junit.platform:junit-platform-launcher'
-    testCompile 'org.junit.platform:junit-platform-runner'
-    testCompile group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '4.1.0'
-    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testImplementation "org.junit.jupiter:junit-jupiter-api"
-    testImplementation "io.micronaut.test:micronaut-test-junit5"
-    testImplementation "org.mockito:mockito-junit-jupiter:2.22.0"
-    testImplementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
-    testRuntime 'org.junit.jupiter:junit-jupiter-engine'
-    testImplementation(platform("org.testcontainers:testcontainers-bom:1.15.1"))
-    testCompile "org.testcontainers:testcontainers:1.15.1"
-    testCompile "org.testcontainers:junit-jupiter:1.15.1"
-    testImplementation("org.testcontainers:postgresql")
 
     publicResources project(':web-ui')
 }
