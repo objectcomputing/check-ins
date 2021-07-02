@@ -35,9 +35,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const FeedbackRecipientCard = ({ profileId, selected, reason, onClick}) => {
+const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, onClick}) => {
   const { state } = useContext(AppContext);
-  const recipientProfile = selectProfile(state, profileId);
   const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 

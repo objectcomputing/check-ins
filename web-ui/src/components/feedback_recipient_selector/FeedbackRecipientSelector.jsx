@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken, selectNormalizedMembers} from "../../context/selectors";
+import {selectProfile, selectCsrfToken, selectNormalizedMembers} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
 import {getFeedbackSuggestion} from "../../api/feedback";
@@ -39,51 +39,52 @@ const FeedbackRecipientSelector = () => {
   const location = useLocation();
   const parsed = queryString.parse(location?.search);
   let from = parsed.from;
+  const searchTextUpdated = useRef(false)
   const hasRenewedFromURL = useRef(false)
-  const hasGottenSuggestions = useRef(false)
   const [searchText, setSearchText] = useState("");
   const [profiles, setProfiles] = useState([])
 
 
-
   useEffect(() => {
-  if (searchText.length !== 0  && searchText !== "") {
-      let normalizedMembers = selectNormalizedMembers(state, searchText);
-     if (from !==undefined ) {
+  if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "") {
+    let normalizedMembers = selectNormalizedMembers(state, searchText);
+     if (from!==undefined ) {
       let selectedMembers = profiles.filter(profile => from.includes(profile.id))
       let filteredNormalizedMembers = normalizedMembers.filter(member => {
         return !selectedMembers.some(selectedMember => {
+          console.log(member.id)
           return selectedMember.id=== member.id
         });
       });
-         setProfiles(filteredNormalizedMembers.concat(selectedMembers));
+      console.log(filteredNormalizedMembers)
+      let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
+        setProfiles(newProfiles);
       } else {
         setProfiles(normalizedMembers)
 
       }
+      searchTextUpdated.current = true
 
   }
-  }, [searchText])
+  }, [searchText, profiles, from, state]) 
 
   useEffect(() => {
 function bindFromURL() {
     if (!hasRenewedFromURL.current && from!==null && from!==undefined) {
-      console.log("bind from URL")
+      let profileCopy = profiles;
       if (typeof from === 'string') {
-         let profileCopy = profiles;
                let newProfile = {id : from}
-                   profileCopy.push(newProfile)
-               setProfiles(profileCopy)
-
+                profileCopy.push(newProfile)
 
       } else if (Array.isArray(from)) {
-         let profileCopy = profiles;
           for (let i = 0; i < from.length; ++i) {
            let newProfile = {id : from[i]}
                    profileCopy.push(newProfile)
           }
-         setProfiles(profileCopy)
+          
+       
       }
+      setProfiles(profileCopy)
       hasRenewedFromURL.current = true
     }
 
@@ -100,23 +101,25 @@ async function getSuggestions() {
             }
             return null;
         }
-        if (csrf) {
+        if (csrf && (searchText === "" || searchText.length === 0)) {
             getSuggestions().then((res) => {
               bindFromURL();
               if (res !== undefined && res !== null) {
+                console.log("Current res " + JSON.stringify(res))
+                console.log("Current profiles " + JSON.stringify(profiles))
                 let filteredProfileCopy = profiles.filter(member => {
-                  console.log("res " + JSON.stringify(res))
                   return !res.some(suggestedMember => {
                     return suggestedMember.id === member.id
                   });
                 })
                 let newProfiles = filteredProfileCopy.concat(res)
-                hasGottenSuggestions.current = true
+                console.log("New profiles in res " + JSON.stringify(newProfiles))
                 setProfiles(newProfiles)
               }
            })
       }
-    },[id, csrf]); //
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[id, csrf, searchText]); 
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) from = from ? [from] : [];
@@ -142,6 +145,7 @@ async function getSuggestions() {
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
+              searchTextUpdated.current = false;
             }}
           />
             </Grid>
@@ -153,6 +157,7 @@ async function getSuggestions() {
                 <FeedbackRecipientCard
                     key={profile.id}
                     profileId={profile.id}
+                    recipientProfile = {selectProfile(state, profile.id)}
                     reason={profile?.reason ? profile.reason : null}
                     selected={from!== undefined && from && from.includes(profile.id)}
                     onClick={() => cardClickHandler(profile.id)}/>
