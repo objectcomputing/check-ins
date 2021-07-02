@@ -43,49 +43,52 @@ const FeedbackRecipientSelector = () => {
   const hasGottenSuggestions = useRef(false)
   const [searchText, setSearchText] = useState("");
   const [profiles, setProfiles] = useState([])
-  const [selected, setSelected] = useState([])
 
 
 function sortBySelected(profileCopy) {
 profileCopy = profileCopy.sort(function(x,y) {
   let isXInFrom = from.includes(x)
+  console.log("is x in from?? " + isXInFrom)
   let isYInFrom = from.includes(y)
+  console.log("is y in from?? " + isXInFrom)
   return (isXInFrom === isYInFrom)? 0: isXInFrom?-1:1;
 
 })
 return profileCopy;
 }
-useEffect(() => {
-if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==undefined) {
-   let profileCopy = profiles;
-  if (typeof from === 'string') {
-           let newProfile = {profileId : from}
-           const filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
-           console.log("Result of filtering" + JSON.stringify(filteredProfiles))
-           if (filteredProfiles.length === profileCopy.length) {
-               profileCopy.push(newProfile)
-           }
-           setProfiles(profileCopy)
-           setSelected(selected => [...selected, newProfile])
-
-
-  } else if (Array.isArray(from)) {
-      for (let i = 0; i < from.length; ++i) {
-       let newProfile = {profileId : from[i]}
-        setSelected(selected => [...selected, newProfile])
-          let filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
-          console.log(filteredProfiles)
-           if (filteredProfiles.length === profileCopy.length) {
-               profileCopy.push(newProfile)
-             }
-      }
-     let newProfiles = sortBySelected(profileCopy)
-     setProfiles(profileCopy)
-  }
-  hasRenewedFromURL.current = true
-}
-
-},[from])
+// useEffect(() => {
+// if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==undefined) {
+//   if (typeof from === 'string') {
+//      let profileCopy = profiles;
+//      console.log("profile copy before " +profileCopy)
+//            let newProfile = {profileId : from}
+//            const filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+//            console.log("Result of filtering" + JSON.stringify(filteredProfiles))
+//            if (filteredProfiles.length < 1) {
+//                profileCopy.push(newProfile)
+//            }
+//            setProfiles(profileCopy)
+//
+//
+//   } else if (Array.isArray(from)) {
+//      let profileCopy = profiles;
+//      console.log(profileCopy)
+//       for (let i = 0; i < from.length; ++i) {
+//        let newProfile = {profileId : from[i]}
+//           let filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+//           console.log(filteredProfiles)
+//            if (filteredProfiles.length < 1) {
+//            console.log("push " + JSON.stringify(newProfile) + "to the profiles ")
+//                profileCopy.push(newProfile)
+//              }
+//       }
+//      let newProfiles = sortBySelected(profileCopy)
+//      setProfiles(newProfiles)
+//   }
+//   hasRenewedFromURL.current = true
+// }
+//
+// },[profiles])
 
   useEffect(() => {
   if (searchText.length !== 0  && searchText !== "") {
@@ -100,7 +103,7 @@ if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==
           return selectedMember.profileId === member.profileId
         });
       });
-            setProfiles(filteredNormalizedMembers.concat(selectedMembers));
+         setProfiles(filteredNormalizedMembers.concat(selectedMembers));
       } else {
         setProfiles(normalizedMembers)
 
@@ -110,6 +113,39 @@ if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==
   }, [searchText])
 
     useEffect(() => {
+function bindFromURL() {
+    if (!hasRenewedFromURL.current && from!==null && from!==undefined) {
+      if (typeof from === 'string') {
+         let profileCopy = profiles;
+         console.log("profile copy before " +profileCopy)
+               let newProfile = {profileId : from}
+               const filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+               console.log("Result of filtering" + JSON.stringify(filteredProfiles))
+               if (filteredProfiles.length < 1) {
+                   profileCopy.push(newProfile)
+               }
+               setProfiles(profileCopy)
+
+
+      } else if (Array.isArray(from)) {
+         let profileCopy = profiles;
+         console.log(profileCopy)
+          for (let i = 0; i < from.length; ++i) {
+           let newProfile = {profileId : from[i]}
+              let filteredProfiles = profileCopy.filter(e => e.profileId === newProfile.profileId)
+              console.log(filteredProfiles)
+               if (filteredProfiles.length < 1) {
+               console.log("push " + JSON.stringify(newProfile) + "to the profiles ")
+                   profileCopy.push(newProfile)
+                 }
+          }
+         let newProfiles = sortBySelected(profileCopy)
+         setProfiles(newProfiles)
+      }
+      hasRenewedFromURL.current = true
+    }
+
+}
         async function getSuggestions() {
             if (id === undefined || id === null) {
                 return;
@@ -123,14 +159,23 @@ if (!hasRenewedFromURL.current && hasGottenSuggestions && from!==null && from!==
             return null;
         }
         if (csrf) {
+          hasGottenSuggestions.current = false
             getSuggestions().then((res) => {
+            let filteredProfiles=[]
               console.log("Res in get suggestinos " + JSON.stringify(res))
               if (res !== undefined && res !== null) {
               let profileCopy = profiles
-                setProfiles(profileCopy.concat(res))
+              console.log("Profile copy before in res " + JSON.stringify(profiles))
+              for (let i = 0; i < res.length; ++i ) {
+                let element = res[i]
+                filteredProfiles = profileCopy.filter(e => e.profileId !== res[i].profileId)
+                console.log("Filtered profiles in res " + JSON.stringify(filteredProfiles))
+              }
+                setProfiles(filteredProfiles.concat(res))
                 hasGottenSuggestions.current = true
               }
-
+           }).then(() => {
+           bindFromURL();
            });
       }
     },[id,csrf]);
