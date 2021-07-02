@@ -18,20 +18,20 @@ public class FeedbackSuggestionDTO {
         this.id = null;
     }
 
-    public FeedbackSuggestionDTO(String reason, UUID profileId) {
+    public FeedbackSuggestionDTO(String reason, UUID id) {
         this.reason = reason;
-        this.id = profileId;
+        this.id = id;
     }
 
-    public void setProfileId(UUID profileId) {
-        this.id = profileId;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getReason() {
         return reason;
     }
 
-    public UUID getProfileId() {
+    public UUID getId() {
         return id;
     }
     public void setReason(String reason) {
