@@ -20,7 +20,7 @@ const propTypes = {
     description: PropTypes.string,
     createdBy: PropTypes.string.isRequired,
     isAdHoc: PropTypes.bool,
-    onClick: PropTypes.func,
+    onPreviewClick: PropTypes.func,
     onCardClick: PropTypes.func
 }
 
@@ -74,9 +74,9 @@ const TemplateCard = (props) => {
     const csrf = selectCsrfToken(state);
     const [creatorName, setCreatorName] = useState("");
 
-    const handleClick = (e) => {
+    const handlePreviewClick = (e) => {
         e.stopPropagation();
-        props.onClick(e);
+        props.onPreviewClick(e);
     }
 
     // Get name of the template creator
@@ -98,7 +98,11 @@ const TemplateCard = (props) => {
 
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>
-            <CardHeader component={TemplateCardHeader} selected={props.selected} allowPreview={!props.isAdHoc} onPreview={handleClick}/>
+            <CardHeader
+              component={TemplateCardHeader}
+              selected={props.selected}
+              allowPreview
+              onPreview={handlePreviewClick}/>
             <CardContent className="card-content">
                 <div className="template-details">
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>

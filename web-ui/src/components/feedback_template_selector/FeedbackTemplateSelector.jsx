@@ -108,9 +108,7 @@ const FeedbackTemplateSelector = (props) => {
   };
 
   const onCardClick = (template) => {
-    if (template.isAdHoc) {
-      setPreview({open: true, selectedTemplate: template});
-    } else {
+    if (template && template.id) {
       props.changeQuery("template", template.id);
     }
   };
@@ -119,7 +117,7 @@ const FeedbackTemplateSelector = (props) => {
     const newAdHocTemplate = {
       title: "Ad Hoc",
       description: "Ask a single question",
-      createdBy: currentUser?.name,
+      createdBy: currentUserId,
       isAdHoc: true,
     }
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
@@ -131,7 +129,7 @@ const FeedbackTemplateSelector = (props) => {
       <TemplatePreviewModal
         template={preview.selectedTemplate}
         open={preview.open}
-        onSubmit={() => handlePreviewSubmit(preview.selectedTemplate)}
+        onSubmit={(submittedTemplate) => handlePreviewSubmit(submittedTemplate)}
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
       />
       }
@@ -145,7 +143,7 @@ const FeedbackTemplateSelector = (props) => {
             isAdHoc={template.isAdHoc}
             questions={template.questions}
             expanded={preview.open}
-            onClick={(e) => handlePreviewOpen(e, template)}
+            onPreviewClick={(e) => handlePreviewOpen(e, template)}
             onCardClick={() => onCardClick(template)}/>
         ))}
       </div>

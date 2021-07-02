@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -46,6 +46,24 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
 
   const classes = useStyles();
 
+  const [adHocTitle, setAdHocTitle] = useState(template?.title);
+  const [adHocDescription, setAdHocDescription] = useState(template?.description);
+
+  const submitPreview = () => {
+    if (!template) {
+      return;
+    }
+
+    const submittedTemplate = {...template};
+    if (template.isAdHoc) {
+      submittedTemplate.title = adHocTitle;
+      submittedTemplate.description = adHocDescription;
+    }
+    onSubmit(submittedTemplate);
+    setAdHocTitle(template?.title);
+    setAdHocDescription(template?.description);
+  };
+
   if (!template) {
     return null;
   }
@@ -60,7 +78,9 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
           <Typography variant="h6" className={classes.title}>
             {template.isAdHoc ? "New Ad-Hoc Template" : template.title}
           </Typography>
-          <Button className="ad-hoc-next-button" onClick={onSubmit} color="inherit">
+          <Button className="ad-hoc-next-button"
+                  onClick={submitPreview}
+                  color="inherit">
             {template.isAdHoc ? "Create" : "Select"}
           </Button>
         </Toolbar>
@@ -74,15 +94,22 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
             label="Title"
             placeholder="Ad Hoc"
             fullWidth
-            defaultValue={template.title}
-            margin="normal"/>
+            margin="normal"
+            value={adHocTitle}
+            onChange={(event) => {
+              setAdHocTitle(event.target.value)
+            }}/>
           <TextField
             id="standard-full-width"
             label="Description"
             placeholder="Ask a single question"
             fullWidth
-            defaultValue={template.description}
-            margin="normal"/>
+            margin="normal"
+            value={adHocDescription}
+            onChange={(event) => {
+              setAdHocDescription(event.target.value)
+
+            }}/>
         </React.Fragment>
         :
         <Typography>{template.description}</Typography>
