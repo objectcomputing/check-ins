@@ -91,7 +91,6 @@ const FeedbackTemplateSelector = (props) => {
   };
 
   const handlePreviewSubmit = async (submittedTemplate) => {
-    console.log(submittedTemplate);
     if (!currentUserId || !csrf) {
       return;
     }
