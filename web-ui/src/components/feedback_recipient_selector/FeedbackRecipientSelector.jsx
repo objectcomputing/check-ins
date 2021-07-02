@@ -116,7 +116,7 @@ async function getSuggestions() {
               }
            })
       }
-    },[id, csrf]);
+    },[id, csrf]); //
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) from = from ? [from] : [];
