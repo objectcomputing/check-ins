@@ -63,12 +63,14 @@ public class FeedbackQuestionServicesImpl implements FeedbackQuestionServices {
 
     // only the creator of the template can add questions to it
     public boolean createIsPermitted(UUID templateCreatorId) {
+        boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null && currentUserId.equals(templateCreatorId);
+        return currentUserId != null && (isAdmin || currentUserId.equals(templateCreatorId));
     }
 
     public boolean getIsPermitted() {
+        boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null;
+        return isAdmin || currentUserId != null;
     }
 }
