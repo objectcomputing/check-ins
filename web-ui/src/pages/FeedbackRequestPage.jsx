@@ -89,6 +89,7 @@ const FeedbackRequestPage = () => {
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
+  const forQuery = query.for?.toString();
 
   const getStep = useCallback(() => {
     if(!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -100,22 +101,27 @@ const FeedbackRequestPage = () => {
 
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
-  const handlePreviewOpen = (event, selectedTemplate) => {
+  const handlePreviewOpen = useCallback((event, selectedTemplate) => {
     event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
-  };
+  }, [setPreview]);
 
-  const handlePreviewClose = (selectedTemplate) => {
+  const handlePreviewClose = useCallback((selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
-  };
+  },[setPreview]);
 
-  const onCardClick = (template) => {
-    history.push(`/feedback/request/?template=${template.id}`);
-  }
+  const onCardClick = useCallback((template) => {
+    query.template = template.id;
+    history.push({...location, search: queryString.stringify(query)});
+  },[query, history, location]);
 
   const hasTemplate = useCallback(() => {
     return !!templateQuery;
   }, [templateQuery])
+
+  const hasFor = useCallback(() => {
+    return !!forQuery;
+  }, [forQuery])
 
   const hasFrom = useCallback(() => {
     return !!fromQuery;
@@ -133,15 +139,15 @@ const FeedbackRequestPage = () => {
   const canProceed = useCallback(() => {
     switch(activeStep) {
       case 1:
-        return hasTemplate();
+        return hasFor() && hasTemplate();
       case 2:
-        return hasTemplate() && hasFrom();
+        return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasTemplate() && hasFrom() && hasDue();
+        return hasFor() && hasTemplate() && hasFrom() && hasDue();
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue]);
+  }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
 
   const handleSubmit = () => {};
 
@@ -159,22 +165,20 @@ const FeedbackRequestPage = () => {
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
-        return true;
+        return hasFor();
       case 2:
-        return hasTemplate();
+        return hasFor() && hasTemplate();
       case 3:
-        return hasTemplate() && hasFrom();
+        return hasFor() && hasTemplate() && hasFrom();
       case 4:
-        return hasTemplate() && hasFrom() && hasDue();
+        return hasFor() && hasTemplate() && hasFrom() && hasDue();
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue]);
+  }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
 
   if (!urlIsValid()) {
-    return (
-        history.push("/feedback/request/")
-    );
+    history.push("/checkins");
   }
 
   return (
