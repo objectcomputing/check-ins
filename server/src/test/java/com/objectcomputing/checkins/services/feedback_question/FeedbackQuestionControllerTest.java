@@ -15,7 +15,7 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +35,12 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
         return feedbackTemplate;
     }
 
+    FeedbackQuestion saveQuestion(String question, UUID templateId) {
+        FeedbackQuestion feedbackQuestion = new FeedbackQuestion(question, templateId);
+        getFeedbackQuestionRepository().save(feedbackQuestion);
+        return feedbackQuestion;
+    }
+
     FeedbackQuestionCreateDTO createDTO(FeedbackQuestion feedbackQuestion) {
         FeedbackQuestionCreateDTO dto = new FeedbackQuestionCreateDTO();
         dto.setQuestion(feedbackQuestion.getQuestion());
@@ -49,11 +55,11 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
     @Test
     void testPostAuthorizedByTemplateCreator() {
-        MemberProfile memberOne = createADefaultMemberProfile();
-        FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
 
-        FeedbackQuestion feedbackQuestion = createFeedbackQuestion(feedbackTemplate.getId());
-        FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
+        final FeedbackQuestion feedbackQuestion = createDefaultFeedbackQuestion(feedbackTemplate.getId());
+        final FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
@@ -66,14 +72,14 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
     @Test
     void testPostAuthorizedByAdmin() {
-        MemberProfile memberOne = createADefaultMemberProfile();
-        MemberProfile admin = createASecondMemberProfile();
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile admin = createASecondMemberProfile();
         createDefaultAdminRole(admin);
 
-        FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
 
-        FeedbackQuestion feedbackQuestion = createFeedbackQuestion(feedbackTemplate.getId());
-        FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
+        final FeedbackQuestion feedbackQuestion = createDefaultFeedbackQuestion(feedbackTemplate.getId());
+        final FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -86,15 +92,74 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
     @Test
     void testPostUnauthorized() {
-        MemberProfile memberOne = createADefaultMemberProfile();
-        MemberProfile memberTwo = createASecondMemberProfile();
-        FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile memberTwo = createASecondMemberProfile();
 
-        FeedbackQuestion feedbackQuestion = createFeedbackQuestion(feedbackTemplate.getId());
-        FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
+        final FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
+
+        final FeedbackQuestion feedbackQuestion = createDefaultFeedbackQuestion(feedbackTemplate.getId());
+        final FeedbackQuestionCreateDTO dto = createDTO(feedbackQuestion);
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+    }
+
+    @Test
+    void testGetAuthorizedByAdmin() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile admin = createASecondMemberProfile();
+        createDefaultAdminRole(admin);
+
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackQuestion question1 = saveQuestion("How are you today?", template.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", question1.getId()))
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackQuestionResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertContentEqualsResponse(question1, response.getBody().get());
+    }
+
+    @Test
+    void testGetAuthorizedByTemplateCreator() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackQuestion question1 = saveQuestion("How are you today?", template.getId());
+        final FeedbackQuestion question2 = saveQuestion("How has the project been so far?", template.getId());
+
+        final HttpRequest<?> request1 = HttpRequest.GET(String.format("%s", question1.getId()))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackQuestionResponseDTO> response1 = client.toBlocking().exchange(request1, FeedbackQuestionResponseDTO.class);
+
+        final HttpRequest<?> request2 = HttpRequest.GET(String.format("%s", question2.getId()))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackQuestionResponseDTO> response2 = client.toBlocking().exchange(request2, FeedbackQuestionResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response1.getStatus());
+        assertTrue(response1.getBody().isPresent());
+        assertContentEqualsResponse(question1, response1.getBody().get());
+
+        assertEquals(HttpStatus.OK, response2.getStatus());
+        assertTrue(response2.getBody().isPresent());
+        assertContentEqualsResponse(question2, response2.getBody().get());
+    }
+
+    @Test
+    void testGetUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackQuestion question1 = saveQuestion("How are you today?", template.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", question1.getId()));
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -103,6 +168,23 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
         assertNull(body);
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
         assertEquals("Unauthorized", exception.getMessage());
+    }
+
+    @Test
+    void testGetNotFound() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackQuestion question1 = saveQuestion("How are you today?", template.getId());
+        final UUID nonExistentId = UUID.randomUUID();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", nonExistentId))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals("No feedback question with ID " + nonExistentId, exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
 
 }

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface FeedbackQuestionFixture extends RepositoryFixture {
 
-    default FeedbackQuestion createFeedbackQuestion(UUID templateId) {
+    default FeedbackQuestion createDefaultFeedbackQuestion(UUID templateId) {
         return new FeedbackQuestion("How are you doing today?", templateId);
     }
 
