@@ -17,8 +17,11 @@ const useStyles = makeStyles({
     color: "gray"
   },
   textField: {
-    width: "40ch"
-  }
+    width: "40ch",
+        ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+            width: '100%',
+      },
+  },
 });
 
 const FeedbackRecipientSelector = () => {

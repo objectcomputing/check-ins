@@ -7,6 +7,7 @@
     align-content: center;
     align-items: center;
     padding-top: 40px;
+    overflow-x: hidden;
 }
 
 .recipients-list {
