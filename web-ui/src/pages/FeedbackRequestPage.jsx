@@ -42,7 +42,6 @@ function getSteps() {
 }
 
 const FeedbackRequestPage = () => {
-  const {state} = useContext(AppContext);
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -53,7 +52,7 @@ const FeedbackRequestPage = () => {
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
   const forQuery = query.for?.toString();
-  const [requestee, setRequestee] = useState();
+  const [requestee] = useState();
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
