@@ -46,13 +46,13 @@ const FeedbackRecipientSelector = () => {
 
 
   useEffect(() => {
-  if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "") {
+  if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
     let normalizedMembers = selectNormalizedMembers(state, searchText);
      if (from!==undefined ) {
       let selectedMembers = profiles.filter(profile => from.includes(profile.id))
       let filteredNormalizedMembers = normalizedMembers.filter(member => {
         return !selectedMembers.some(selectedMember => {
-          return selectedMember.id=== member.id
+          return selectedMember.id === member.id
         });
       });
       let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
@@ -73,12 +73,17 @@ function bindFromURL() {
       let profileCopy = profiles;
       if (typeof from === 'string') {
                let newProfile = {id : from}
-                profileCopy.push(newProfile)
+        if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+          profileCopy.push(newProfile)
+        }
+
 
       } else if (Array.isArray(from)) {
           for (let i = 0; i < from.length; ++i) {
            let newProfile = {id : from[i]}
-                   profileCopy.push(newProfile)
+            if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+              profileCopy.push(newProfile)
+            }
           }
           
        
@@ -113,7 +118,6 @@ async function getSuggestions() {
                 })
                 let newProfiles = []
                 newProfiles = filteredProfileCopy.concat(res)
-                console.log("Select profile + selec
                 console.log("New profiles in res " + JSON.stringify(newProfiles))
                 setProfiles(newProfiles)
               }

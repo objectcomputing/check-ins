@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
-import {selectProfile} from "../../context/selectors";
 import { Card, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
