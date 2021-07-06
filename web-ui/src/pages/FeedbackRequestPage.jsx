@@ -13,7 +13,6 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
