@@ -136,13 +136,15 @@ const FeedbackRequestPage = () => {
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
     if (activeStep === steps.length) handleSubmit();
-    query.step = activeStep + 1;
+    query.step = `${activeStep + 1}`;
     history.push({...location, search: queryString.stringify(query)});
   }, [canProceed, activeStep, steps.length, query, location, history]);
 
   const onBackClick = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    if (activeStep === 1) return;
+    query.step = `${activeStep - 1}`;
+    history.push({...location, search: queryString.stringify(query)});
+  }, [activeStep, query, location, history]);
 
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
