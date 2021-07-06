@@ -12,7 +12,9 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
+import { createFeedbackRequest } from "../api/feedback";
 import {getMember} from "../api/member";
+import {selectCurrentUser} from "../context/selectors"
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +49,8 @@ const FeedbackRequestPage = () => {
   const {csrf} = state;
   const steps = getSteps();
   const classes = useStyles();
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
   const query = queryString.parse(location?.search);
@@ -54,6 +58,7 @@ const FeedbackRequestPage = () => {
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
+  const sendDate = query.send?.toString();
   const [requestee, setRequestee] = useState();
   const id = query.for?.toString();
 
@@ -123,7 +128,33 @@ const FeedbackRequestPage = () => {
 
     }
 
-    const handleSubmit = () => {
+    const sendFeedbackRequest = async(feedbackRequest) => {
+          if (csrf) {
+                    let res = await createFeedbackRequest(feedbackRequest, csrf);
+                    let data =
+                      res.payload && res.payload.data && !res.error
+                        ? res.payload.data
+                        : null;
+                    if (data) {
+                     console.log("Data returned by create feedback req : " + data)
+                    }
+              }
+
+    }
+
+    const handleSubmit = () =>{
+    let feedbackRequest = {}
+    if (typeof fromQuery === 'string') {
+        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: requestee, recipientId: fromQuery, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+        sendFeedbackRequest(feedbackRequest)
+    } else if (Array.isArray(fromQuery)) {
+        for (const recipient of fromQuery) {
+           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: requestee, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+           sendFeedbackRequest(feedbackRequest)
+        }
+
+    }
+
     };
 
     const onNextClick = useCallback(() => {
