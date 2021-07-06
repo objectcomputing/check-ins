@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'feedback'
-      - 'feature-965/*'
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
@@ -14,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Feedback
-      url: https://checkins-feedback.objectcomputing.com
+      url: https://checkins-feedback-tuvcfzotpq-uc.a.run.app
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node 14
