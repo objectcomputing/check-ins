@@ -70,7 +70,7 @@ const TeamSummaryCard = ({ team, index }) => {
   const isTeamLead =
     leads === null
       ? false
-      : leads.some((lead) => lead.memberid === userProfile.memberProfile.id);
+      : leads.some((lead) => lead.memberId === userProfile.memberProfile.id);
 
   const handleOpen = () => setOpen(true);
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
@@ -147,7 +147,7 @@ const TeamSummaryCard = ({ team, index }) => {
       </CardContent>
       <CardActions>
         {(isAdmin || isTeamLead) && (
-          <div>
+          <>
             <SplitButton options={options} onClick={handleAction} />
             <Dialog
               open={openDelete}
@@ -165,12 +165,12 @@ const TeamSummaryCard = ({ team, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                   Cancel
                 </Button>
-                <Button onClick={deleteATeam} color="primary" autoFocus>
+                <Button disabled onClick={deleteATeam} color="primary" autoFocus>
                   Yes
                 </Button>
               </DialogActions>
             </Dialog>
-          </div>
+          </>
         )}
       </CardActions>
       <EditTeamModal
@@ -178,19 +178,18 @@ const TeamSummaryCard = ({ team, index }) => {
         open={open}
         onClose={handleClose}
         onSave={async (editedTeam) => {
-          let res = await updateTeam(editedTeam, csrf);
-          let data =
+          const res = await updateTeam(editedTeam, csrf);
+          const data =
             res.payload && res.payload.data && !res.error
               ? res.payload.data
               : null;
           if (data) {
             const copy = [...teams];
-            copy[index] = editedTeam;
+            copy[index] = data;
             dispatch({
               type: UPDATE_TEAMS,
               payload: copy,
             });
-            handleClose();
           }
         }}
         headerText="Edit Your Team"

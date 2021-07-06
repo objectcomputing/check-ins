@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.team.member;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
@@ -10,8 +8,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.team.Team;
 import com.objectcomputing.checkins.services.team.TeamRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -29,21 +25,17 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
     private final MemberHistoryRepository memberHistoryRepository;
-    private final ObjectMapper objectMapper;
-    private static final Logger LOG = LoggerFactory.getLogger(TeamMemberServicesImpl.class);
 
     public TeamMemberServicesImpl(TeamRepository teamRepo,
                                   TeamMemberRepository teamMemberRepo,
                                   MemberProfileRepository memberRepo,
                                   CurrentUserServices currentUserServices,
-                                  MemberHistoryRepository memberHistoryRepository,
-                                  ObjectMapper objectMapper) {
+                                  MemberHistoryRepository memberHistoryRepository) {
         this.teamRepo = teamRepo;
         this.teamMemberRepo = teamMemberRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
         this.memberHistoryRepository = memberHistoryRepository;
-        this.objectMapper = objectMapper;
     }
 
     // Helper function
@@ -54,9 +46,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     public TeamMember save(@Valid @NotNull TeamMember teamMember) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
+        final UUID teamId = teamMember.getTeamId();
+        final UUID memberId = teamMember.getMemberId();
 
-        final UUID teamId = teamMember.getTeamid();
-        final UUID memberId = teamMember.getMemberid();
         Optional<Team> team = teamRepo.findById(teamId);
         if (team.isEmpty()) {
             throw new BadArgException(String.format("Team %s doesn't exist", teamId));
@@ -68,10 +60,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
             throw new BadArgException(String.format("Found unexpected id %s for team member", teamMember.getId()));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isPresent()) {
+        } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in team %s", memberId, teamId));
-        }
-        else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.size() > 0 && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
@@ -85,12 +76,13 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
     }
 
     public TeamMember update(@NotNull @Valid TeamMember teamMember) {
+
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
         final UUID id = teamMember.getId();
-        final UUID teamId = teamMember.getTeamid();
-        final UUID memberId = teamMember.getMemberid();
+        final UUID teamId = teamMember.getTeamId();
+        final UUID memberId = teamMember.getMemberId();
         Optional<Team> team = teamRepo.findById(teamId);
 
         if (team.isEmpty()) {
@@ -99,40 +91,30 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         Set<TeamMember> teamLeads = this.findByFields(teamId, null, true);
 
-        Optional<TeamMember> originalTeamMember = teamMemberRepo.findById(id);
-        if (id == null || originalTeamMember.isEmpty()) {
+        if (id == null || teamMemberRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate teamMember to update with id %s", id));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (teamMemberRepo.findByTeamidAndMemberid(teamMember.getTeamid(), teamMember.getMemberid()).isEmpty()) {
+        } else if (teamMemberRepo.findByTeamIdAndMemberId(teamMember.getTeamId(), teamMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of team %s", memberId, teamId));
-        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+        } else if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
             throw new BadArgException("You are not authorized to perform this operation");
         }
 
-        TeamMember updated = teamMemberRepo.update(teamMember);
-
-        try {
-            String originalTeamMemberString = objectMapper.writeValueAsString(originalTeamMember.get());
-            String newTeamMemberString = objectMapper.writeValueAsString(teamMember);
-            String update = String.format("from %s to %s", originalTeamMemberString, newTeamMemberString);
-            memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "updated", LocalDateTime.now()));
-        } catch (JsonProcessingException e) {
-            //Log info on error here...include new team member id and team id in log message
-            LOG.error("Error occurred while updating member profile. teamId = %s , memberId = %s", teamId, memberId, e);
-        }
-        return updated;
+        TeamMember teamMemberUpdate = teamMemberRepo.update(teamMember);
+        memberHistoryRepository.save(buildMemberHistory(teamId, memberId, "Updated", LocalDateTime.now()));
+        return teamMemberUpdate;
     }
 
-    public Set<TeamMember> findByFields(@Nullable UUID teamid, @Nullable UUID memberid, @Nullable Boolean lead) {
+    public Set<TeamMember> findByFields(@Nullable UUID teamId, @Nullable UUID memberId, @Nullable Boolean lead) {
         Set<TeamMember> teamMembers = new HashSet<>();
         teamMemberRepo.findAll().forEach(teamMembers::add);
 
-        if (teamid != null) {
-            teamMembers.retainAll(teamMemberRepo.findByTeamid(teamid));
+        if (teamId != null) {
+            teamMembers.retainAll(teamMemberRepo.findByTeamId(teamId));
         }
-        if (memberid != null) {
-            teamMembers.retainAll(teamMemberRepo.findByMemberid(memberid));
+        if (memberId != null) {
+            teamMembers.retainAll(teamMemberRepo.findByMemberId(memberId));
         }
         if (lead != null) {
             teamMembers.retainAll(teamMemberRepo.findByLead(lead));
@@ -147,9 +129,9 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
 
         TeamMember teamMember = teamMemberRepo.findById(id).orElse(null);
         if (teamMember != null) {
-            Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamid(), null, true);
+            Set<TeamMember> teamLeads = this.findByFields(teamMember.getTeamId(), null, true);
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
             } else {
                 teamMemberRepo.deleteById(id);
@@ -159,23 +141,23 @@ public class TeamMemberServicesImpl implements TeamMemberServices {
         }
 
         teamMemberRepo.delete(teamMember);
-        memberHistoryRepository.save(buildMemberHistory(teamMember.getTeamid(), teamMember.getMemberid(), "Deleted", LocalDateTime.now()));
+        memberHistoryRepository.save(buildMemberHistory(teamMember.getTeamId(), teamMember.getMemberId(), "Deleted", LocalDateTime.now()));
     }
 
     public void deleteByTeam(@NotNull UUID id) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
 
-        List<TeamMember> teamMembers = teamMemberRepo.findByTeamid(id);
+        List<TeamMember> teamMembers = teamMemberRepo.findByTeamId(id);
         if (teamMembers != null) {
             List<TeamMember> teamLeads = teamMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
 
-            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberid().equals(currentUser.getId()))) {
+            if (!isAdmin && teamLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
                 throw new PermissionException("You are not authorized to perform this operation");
             } else {
                 teamMembers.forEach(member -> {
                     teamMemberRepo.deleteById(member.getId());
-                    memberHistoryRepository.save(buildMemberHistory(member.getTeamid(), member.getMemberid(), "Team Deleted", LocalDateTime.now()));
+                    memberHistoryRepository.save(buildMemberHistory(member.getTeamId(), member.getMemberId(), "Team Deleted", LocalDateTime.now()));
                 });
             }
         } else {
