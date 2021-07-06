@@ -183,15 +183,14 @@ const FeedbackRequestPage = () => {
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
-            <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
-                    variant="contained">
-              Back
-            </Button>
-            <Button className={classes.actionButtons} onClick={onNextClick}
-                    variant="contained" disabled={!canProceed()} color="primary">
-              {activeStep === steps.length ? "Submit" : "Next"}
-            </Button>
-          </div>
+          <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
+                  variant="contained">
+            Back
+          </Button>
+          <Button className={classes.actionButtons} onClick={onNextClick}
+                  variant="contained" disabled={!canProceed()} color="primary">
+            {activeStep === steps.length ? "Submit" : "Next"}
+          </Button>
         </div>
       </div>
       <div className={classes.stepContainer}>
@@ -212,6 +211,7 @@ const FeedbackRequestPage = () => {
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate />}
       </div>
+    </div>
   );
 };
 
