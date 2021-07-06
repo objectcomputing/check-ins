@@ -115,7 +115,7 @@ const FeedbackTemplateSelector = (props) => {
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
       />
       }
-      <div className="card-container">
+      <div className="card-container"><<<<<<< feature-1084/search-templates
         {
           (filteredTemplates.length === 0 && searchText === "")
               ? <h2>No templates found</h2>
@@ -132,6 +132,7 @@ const FeedbackTemplateSelector = (props) => {
                       onClick={(e) => handlePreviewOpen(e, template)}
                       onCardClick={() => onCardClick(template)}/>
               ))}
+
       </div>
     </React.Fragment>
 
