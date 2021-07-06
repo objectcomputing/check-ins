@@ -13,8 +13,8 @@ public interface DemographicsServices {
                                    String gender,
                                    String degreeLevel,
                                    Integer industryTenure,
-                                   boolean personOfColor,
-                                   boolean veteran,
+                                   Boolean personOfColor,
+                                   Boolean veteran,
                                    Integer militaryTenure,
                                    String militaryBranch);
 
