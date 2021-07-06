@@ -131,11 +131,16 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    history.push("/feedback/request/confirmation");
+  };
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
-    if (activeStep === steps.length) handleSubmit();
+    if (activeStep === steps.length) {
+      handleSubmit();
+      return;
+    }
     query.step = activeStep + 1;
     history.push({...location, search: queryString.stringify(query)});
   }, [canProceed, activeStep, steps.length, query, location, history]);
