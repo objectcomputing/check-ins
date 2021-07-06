@@ -4,6 +4,7 @@ import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
+import "./FeedbackTemplateSelector.css"
 
 function getTemplates() {
   return [
@@ -98,15 +99,17 @@ const FeedbackTemplateSelector = (props) => {
             onCardClick={() => onCardClick(template)}/>
         ))}
       </div>
-      <Tooltip title="Ask a single question" arrow>
+      <div className= "ad-hoc-container">
+      <Tooltip title="Ask a single question" className="ad-hoc-container" arrow>
         <Button
-          style={{marginLeft: "30px"}}
           variant="contained"
           color="primary"
+          className="ad-hoc-button"
           onClick={onNewAdHocClick}>
           New Ad-Hoc Template
         </Button>
       </Tooltip>
+     </div>
     </React.Fragment>
   );
 }
