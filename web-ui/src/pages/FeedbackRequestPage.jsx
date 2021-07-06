@@ -146,17 +146,16 @@ const FeedbackRequestPage = () => {
 
     const handleSubmit = () =>{
     let feedbackRequest = {}
-    if (typeof fromQuery === 'string') {
+    if (typeof fromQuery === 'string' && fromQuery.indexOf(',') === -1) {
         feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:id, recipientId: fromQuery, templateId:"6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
         sendFeedbackRequest(feedbackRequest)
-    } else if (Array.isArray(fromQuery)) {
-        for (const recipient of fromQuery) {
+    } else if (typeof fromQuery === 'string' && fromQuery.indexOf(',') !== -1) {
+      let fromArray = fromQuery.split(',')
+        for (const recipient of fromArray) {
            feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: id, recipientId: recipient, templateId: "6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
            sendFeedbackRequest(feedbackRequest)
         }
-
-    }
-
+      }
     };
 
     const onNextClick = useCallback(() => {
