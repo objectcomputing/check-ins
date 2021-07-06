@@ -18,10 +18,30 @@ import {
   Typography,
 } from "@material-ui/core";
 
-const useStyles = makeStyles(() => ({
-  header: {
-    cursor: "pointer",
+
+const useStyles = makeStyles({
+  root: {
+    minWidth: '10em',
+    maxWidth: '20em',
+     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+     marginTop: "1em",
+      height: "40%",
+      width: "80%",
+    },
   },
+
+   header: {
+          cursor: "pointer",
+   },
+  cardContent: {
+    display: 'flex',
+    alignItems: 'center',
+    alignContent: 'center',
+    flexDirection: 'column',
+    justifyContent:'center',
+    textAlign: 'center',
+  },
+
   divider: {
     backgroundColor: 'grey',
     width: '90%',
@@ -30,9 +50,8 @@ const useStyles = makeStyles(() => ({
   },
   recommendationText: {
     color: '#333333',
-    position: 'Center'
   },
-}));
+});
 
 const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, onClick}) => {
   const { state } = useContext(AppContext);

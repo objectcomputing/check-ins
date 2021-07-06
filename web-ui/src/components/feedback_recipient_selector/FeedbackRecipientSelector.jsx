@@ -26,6 +26,12 @@ const useStyles = makeStyles({
     justifyContent: "space-evenly",
     width: "100%",
   },
+  textField: {
+    width: "40ch",
+        ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+            width: '100%',
+      },
+  },
 });
 
 
@@ -109,8 +115,6 @@ async function getSuggestions() {
             getSuggestions().then((res) => {
               bindFromURL();
               if (res !== undefined && res !== null) {
-                console.log("Current res " + JSON.stringify(res))
-                console.log("Current profiles " + JSON.stringify(profiles))
                 let filteredProfileCopy = profiles.filter(member => {
                   return !res.some(suggestedMember => {
                     return suggestedMember.id === member.id
@@ -118,7 +122,6 @@ async function getSuggestions() {
                 })
                 let newProfiles = []
                 newProfiles = filteredProfileCopy.concat(res)
-                console.log("New profiles in res " + JSON.stringify(newProfiles))
                 setProfiles(newProfiles)
               }
            })
@@ -127,11 +130,13 @@ async function getSuggestions() {
     },[id, csrf, searchText]); 
 
   const cardClickHandler = (id) => {
-    if(!Array.isArray(from)) from = from ? [from] : [];
+    if(!Array.isArray(from)) {
+        from = from ? [from] : [];
+    }
     if(from.includes(id)) {
       from.splice(from.indexOf(id), 1);
     }
-    else from[from.length] = id;
+    else from.push(id);
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});
