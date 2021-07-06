@@ -3,18 +3,12 @@ import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
 import {TextField} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import {Tooltip} from "@material-ui/core";
 
 const allTemplates = [
     {
-      id: 1,
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 2,
+      id: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -22,7 +16,7 @@ const allTemplates = [
       questions: []
     },
     {
-      id: 3,
+      id: 124,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -30,7 +24,7 @@ const allTemplates = [
       questions: [],
     },
     {
-      id: 4,
+      id: 125,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -38,7 +32,7 @@ const allTemplates = [
       questions: []
     },
   ];
-
+}
 
 const propTypes = {
   query: PropTypes.string,
@@ -52,6 +46,7 @@ const FeedbackTemplateSelector = (props) => {
   const hasFetchedData = useRef(false);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
+    event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 
@@ -70,6 +65,16 @@ const FeedbackTemplateSelector = (props) => {
     } else {
       props.changeQuery("template", template.id);
     }
+  }
+
+  const onNewAdHocClick = () => {
+    const newAdHocTemplate = {
+      title: "Ad Hoc",
+      description: "Ask a single question",
+      creator: "Me",
+      isAdHoc: true,
+    }
+    setPreview({open: true, selectedTemplate: newAdHocTemplate});
   }
 
 
@@ -132,8 +137,16 @@ const FeedbackTemplateSelector = (props) => {
                       onCardClick={() => onCardClick(template)}/>
               ))}
       </div>
+      <Tooltip title="Ask a single question" arrow>
+        <Button
+          style={{marginLeft: "30px"}}
+          variant="contained"
+          color="primary"
+          onClick={onNewAdHocClick}>
+          New Ad-Hoc Template
+        </Button>
+      </Tooltip>
     </React.Fragment>
-
   );
 }
 

@@ -257,44 +257,6 @@ Array [
           >
             <div
               className="TemplateCardHeader-header-8"
-            />
-          </div>
-          <div
-            className="MuiCardContent-root card-content"
-          >
-            <div
-              className="template-details"
-            >
-              <h3
-                className="template-name"
-              >
-                Ad Hoc
-              </h3>
-              <p
-                className="description"
-              >
-                Ask a single question.
-              </p>
-            </div>
-            <p
-              className="creator"
-            >
-              Created by: 
-              <b>
-                Admin
-              </b>
-            </p>
-          </div>
-        </div>
-        <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-          onClick={[Function]}
-        >
-          <div
-            className="TemplateCardHeader-root-7"
-          >
-            <div
-              className="TemplateCardHeader-header-8"
             >
               <button
                 aria-label="show more"
@@ -329,6 +291,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -402,6 +367,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -475,6 +443,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -506,6 +477,41 @@ Array [
           </div>
         </div>
       </div>
+      <button
+        aria-describedby={null}
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseOver={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        style={
+          Object {
+            "marginLeft": "30px",
+          }
+        }
+        tabIndex={0}
+        title="Ask a single question"
+        type="button"
+      >
+        <span
+          className="MuiButton-label"
+        >
+          New Ad-Hoc Template
+        </span>
+        <span
+          className="MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </div>,
 ]
