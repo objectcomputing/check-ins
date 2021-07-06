@@ -16,7 +16,23 @@ import {getMember} from "../api/member";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+        width: '100%',
+        padding: 0,
+      },
+  },
+  requestHeader: {
+  marginLeft: "2%",
+
+  },
+  stepContainer: {
+     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+          width: '80%',
+        },
+         ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
+                 display: "none",
+                },
   },
   appBar: {
     position: "relative",
@@ -36,10 +52,11 @@ const useStyles = makeStyles((theme) => ({
   actionButtons: {
     margin: "0 0 0 1em"
   }
+
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 const FeedbackRequestPage = () => {
@@ -165,7 +182,7 @@ const FeedbackRequestPage = () => {
   return (
     <div className="feedback-request-page">
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
+        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
           <div>
             <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
@@ -178,24 +195,26 @@ const FeedbackRequestPage = () => {
             </Button>
           </div>
         </div>
+
+      <div className= {classes.stepContainer}>
+        <Stepper activeStep={activeStep - 1} className={classes.root}>
+          {steps.map((label) => {
+            const stepProps = {};
+            const labelProps = {};
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps} key={label}>{label}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+        </div>
+        <div className="current-step-content">
+          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+          {activeStep === 2 && <FeedbackRecipientSelector/>}
+          {activeStep === 3 && <SelectDate/>}
+        </div>
       </div>
-      <Stepper activeStep={activeStep - 1} className={classes.root}>
-        {steps.map((label) => {
-          const stepProps = {};
-          const labelProps = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps} key={label}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
-        {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
-      </div>
-    </div>
   );
 };
 
