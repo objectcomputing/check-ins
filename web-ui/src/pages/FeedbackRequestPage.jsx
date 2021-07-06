@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from "react";
+import React, {useState, useContext, useEffect, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -10,9 +10,10 @@ import queryString from 'query-string';
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
-import TemplateCard from "../components/template-card/TemplateCard"
 import "./FeedbackRequestPage.css";
-
+import {AppContext} from "../context/AppContext";
+import {getMember} from "../api/member";
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent"
@@ -41,50 +42,14 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
 
-function getTemplates() {
-  return [
-    {
-      id: 123,
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 124,
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 125,
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      creator: "Jane Doe",
-      questions: [],
-    },
-    {
-      id: 126,
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      creator: "Bob Smith",
-      questions: []
-    },
-  ];
-}
-
 const FeedbackRequestPage = () => {
+  const {state} = useContext(AppContext);
+  const {csrf} = state;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
   const history = useHistory();
   const query = queryString.parse(location?.search);
-
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
@@ -92,14 +57,26 @@ const FeedbackRequestPage = () => {
   const forQuery = query.for?.toString();
 
   const getStep = useCallback(() => {
-    if(!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
+    if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
       return 1;
     else return parseInt(stepQuery);
-  },[stepQuery]);
+  }, [stepQuery]);
 
   const activeStep = getStep();
 
-  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  useEffect(() => {
+    async function getMemberProfile() {
+      if (id) {
+        let res = await getMember(id, csrf);
+        let requesteeProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setRequestee(requesteeProfile ? requesteeProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getMemberProfile();
+    }
+  }, [csrf, id]);
 
   const handlePreviewOpen = useCallback((event, selectedTemplate) => {
     event.stopPropagation();
@@ -115,9 +92,9 @@ const FeedbackRequestPage = () => {
     history.push({...location, search: queryString.stringify(query)});
   },[query, history, location]);
 
-  const hasTemplate = useCallback(() => {
-    return !!templateQuery;
-  }, [templateQuery])
+    const hasTemplate = useCallback(() => {
+      return !!templateQuery;
+    }, [templateQuery])
 
   const hasFor = useCallback(() => {
     return !!forQuery;
@@ -127,14 +104,14 @@ const FeedbackRequestPage = () => {
     return !!fromQuery;
   }, [fromQuery])
 
-  const isValidDate = useCallback((dateString) => {
-    const timestamp = Date.parse(dateString);
-    return !isNaN(timestamp);
-  }, []);
+    const isValidDate = useCallback((dateString) => {
+      const timestamp = Date.parse(dateString);
+      return !isNaN(timestamp);
+    }, []);
 
-  const hasDue = useCallback(() => {
-    return (dueQuery && isValidDate(dueQuery))
-  }, [dueQuery, isValidDate]);
+    const hasDue = useCallback(() => {
+      return (dueQuery && isValidDate(dueQuery))
+    }, [dueQuery, isValidDate]);
 
   const canProceed = useCallback(() => {
     switch(activeStep) {
@@ -149,18 +126,46 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
 
-  const handleSubmit = () => {};
+    if (activeStep < 1 || activeStep > steps.length) {
 
-  const onNextClick = useCallback(() => {
-    if(!canProceed()) return;
-    if(activeStep === steps.length) handleSubmit();
-    query.step = activeStep+1;
-    history.push({...location, search: queryString.stringify(query)});
-  },[canProceed, activeStep, steps.length, query, location, history]);
+    }
 
-  const onBackClick = useCallback(() => {
-    history.goBack();
-  },[history]);
+    const handleSubmit = () => {
+    };
+
+    const onNextClick = useCallback(() => {
+      if (!canProceed()) return;
+      if (activeStep === steps.length) handleSubmit();
+      query.step = activeStep + 1;
+      history.push({...location, search: queryString.stringify(query)});
+    }, [canProceed, activeStep, steps.length, query, location, history]);
+
+    const onBackClick = useCallback(() => {
+      history.goBack();
+    }, [history]);
+
+    const urlIsValid = useCallback(() => {
+      switch (activeStep) {
+        case 1:
+          return true;
+        case 2:
+          return hasFor() && hasTemplate();
+        case 3:
+          return hasFor() && hasTemplate() && hasFrom();
+        case 4:
+          return hasFor() && hasTemplate() && hasFrom() && hasDue();
+        default:
+          return false;
+      }
+    }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
+
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
+  }
 
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
@@ -191,7 +196,7 @@ const FeedbackRequestPage = () => {
             />
           }
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>John Doe</b></Typography>
+        <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
             <div>
               <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
@@ -203,41 +208,25 @@ const FeedbackRequestPage = () => {
                 {activeStep === steps.length ? "Submit" : "Next"}
               </Button>
             </div>
-        </div>
-      </div>
-      <Stepper activeStep={activeStep - 1} className={classes.root}>
-        {steps.map((label) => {
-          const stepProps = {};
-          const labelProps = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps} key={label}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div className="current-step-content">
-          {activeStep === 1 && <TemplatePreviewModal/> &&
-          <div className="card-container">
-            {getTemplates().map((template) => (
-              <TemplateCard
-                key={`template-card-${template.id}`}
-                title={template.title}
-                creator={template.creator}
-                description={template.description}
-                isAdHoc={template.isAdHoc}
-                questions={template.questions}
-                selected={templateQuery && templateQuery.includes(template.id)}
-                onClick={(e) => handlePreviewOpen(e, template)}
-                onCardClick={() => onCardClick(template)}/>
-            ))}
           </div>
-        }
-        {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
-      </div>
+        </div>
+        <Stepper activeStep={activeStep - 1} className={classes.root}>
+          {steps.map((label) => {
+            const stepProps = {};
+            const labelProps = {};
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps} key={label}>{label}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+        <div className="current-step-content">
+          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+          {activeStep === 2 && <FeedbackRecipientSelector/>}
+          {activeStep === 3 && <SelectDate/>}
+        </div>
     </div>
   );
 };
-
-export default FeedbackRequestPage;
+  export default FeedbackRequestPage;
