@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 const FeedbackRequestPage = () => {
