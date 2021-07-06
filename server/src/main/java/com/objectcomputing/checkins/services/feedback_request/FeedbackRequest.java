@@ -121,6 +121,7 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
+        this.creatorId = new UUID(0, 0);
     }
 
     public FeedbackRequest() {}
