@@ -215,6 +215,7 @@ const FeedbackRequestPage = () => {
           {activeStep === 3 && <SelectDate/>}
         </div>
       </div>
+    </div>
   );
 };
 
