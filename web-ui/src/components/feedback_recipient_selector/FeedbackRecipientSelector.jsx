@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Search from "@material-ui/icons/Search";
-
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
@@ -55,11 +54,13 @@ const FeedbackRecipientSelector = () => {
     },[id,csrf]);
 
   const cardClickHandler = (id) => {
-    if(!Array.isArray(from)) from = from ? [from] : [];
+    if(!Array.isArray(from)) {
+        from = from ? [from] : [];
+    }
     if(from.includes(id)) {
       from.splice(from.indexOf(id), 1);
     }
-    else from[from.length] = id;
+    else from.push(id);
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});

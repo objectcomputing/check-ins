@@ -82,6 +82,7 @@ const FeedbackTemplateSelector = (props) => {
       <div className="card-container">
         {getTemplates().map((template) => (
           <TemplateCard
+            key = {template.id}
             title={template.title}
             creator={template.creator}
             description={template.description}

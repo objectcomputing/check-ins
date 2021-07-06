@@ -2,37 +2,15 @@ import "./TemplateCard.css";
 import React from "react";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import CardActions from '@material-ui/core/CardActions';
-import Fullscreen from '@material-ui/icons/Fullscreen';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
 import PropTypes from "prop-types";
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import "./TemplateCard.css"
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        maxWidth: 1000,
-    },
-    appB: {
-        position: 'relative',
-    },
-    media: {
-        height: 0,
-    },
-    expand: {
-        justifyContent: "right",
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        justifyContent: "right",
-    }
-}));
+import {withStyles} from "@material-ui/core/styles";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import {green} from "@material-ui/core/colors";
+import {CardHeader} from "@material-ui/core";
 
 const propTypes = {
     title: PropTypes.string.isRequired,
@@ -54,9 +32,40 @@ const cutText = (text, maxCharacters) => {
     return shortenedText;
 }
 
-const TemplateCard = (props) => {
+const templateCardHeaderStyles = ({ palette, breakpoints }) => {
+    const space = 24;
+    return {
+        root: {
+            minWidth: 256,
+        },
+        header: {
+            padding: `4px ${space}px 0`,
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+    };
+};
 
-    const classes = useStyles();
+const TemplateCardHeader = withStyles(templateCardHeaderStyles, {
+    name: 'TemplateCardHeader',
+})(({ classes, selected, allowPreview = false, onPreview }) => (
+    <div className={classes.root}>
+        <div className={classes.header}>
+            {allowPreview &&
+            <IconButton
+                onClick={onPreview}
+                aria-label="show more">
+                <VisibilityIcon/>
+            </IconButton>
+            }
+            {selected && (<CheckCircleIcon style={{ color: green[500]}}>checkmark-image</CheckCircleIcon>)}
+        </div>
+    </div>
+));
+
+const TemplateCard = (props) => {
 
     const handleClick = (e) => {
         e.stopPropagation();
@@ -65,21 +74,7 @@ const TemplateCard = (props) => {
 
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>
-            <CardActions className="card-actions" disableSpacing>
-                {!props.isAdHoc &&
-                <IconButton
-                  className={clsx(classes.expand, {
-                    [classes.expandOpen]: props.expanded,
-                  })}
-                  onClick={(e) => handleClick(e)}
-                  aria-expanded={props.expanded}
-                  aria-label="show more">
-                <VisibilityIcon>
-                    {!props.expanded ? <Fullscreen/> : <FullscreenExit/>}
-                </VisibilityIcon>
-                </IconButton>
-                }
-            </CardActions>
+            <CardHeader component={TemplateCardHeader} selected={props.selected} allowPreview={!props.isAdHoc} onPreview={handleClick}/>
             <CardContent className="card-content">
                 <div className="template-details">
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>
