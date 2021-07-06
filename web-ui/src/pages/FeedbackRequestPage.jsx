@@ -113,11 +113,6 @@ const FeedbackRequestPage = () => {
   const hasFrom = useCallback(() => {
     return !!fromQuery;
   }, [fromQuery])
-
-  const isValidDate = useCallback((dateString) => {
-    const timestamp = Date.parse(dateString);
-    return !isNaN(timestamp);
-  }, []);
   
     const isValidDate = useCallback((dateString) => {
       let today = new Date();
@@ -131,7 +126,7 @@ const FeedbackRequestPage = () => {
 
     const hasSend = useCallback(() => {
       let isValidPair = false
-      if (dueQuery && dueQuery !== undefined) {
+      if(dueQuery && dueQuery !== undefined) {
         isValidPair = dueQuery >= sendQuery
       }
       return (sendQuery && isValidDate(sendQuery) && isValidPair)
@@ -149,6 +144,7 @@ const FeedbackRequestPage = () => {
         return false;
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
+
     if (activeStep < 1 || activeStep > steps.length) {
       
     }
