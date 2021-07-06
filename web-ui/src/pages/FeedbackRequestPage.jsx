@@ -14,6 +14,9 @@ import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
+import DateFnsUtils from "@date-io/date-fns";
+
+const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent"
@@ -53,7 +56,9 @@ const FeedbackRequestPage = () => {
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
-  const dueQuery = query.due?.toString();
+  const sendQuery = query.send?.toString();
+  const dueQuery = query.due?.toString()
+
   const [requestee, setRequestee] = useState();
   const id = query.for?.toString();
 
@@ -86,7 +91,7 @@ const FeedbackRequestPage = () => {
     };
 
     const hasFor = useCallback(() => {
-      return !id;
+      return !!id;
     }, [id])
 
     const hasTemplate = useCallback(() => {
@@ -98,13 +103,23 @@ const FeedbackRequestPage = () => {
     }, [fromQuery])
 
     const isValidDate = useCallback((dateString) => {
-      const timestamp = Date.parse(dateString);
-      return !isNaN(timestamp);
-    }, []);
+      let today = new Date();
+      today = dateUtils.format(today, "yyyy-MM-dd");
+      let timeStamp = Date.parse(dateString)
+      if(dateString < today)
+        return false;
+      else
+        return !isNaN(timeStamp);
+     }, []);
 
-    const hasDue = useCallback(() => {
-      return (dueQuery && isValidDate(dueQuery))
-    }, [dueQuery, isValidDate]);
+
+    const hasSend = useCallback(() => {
+      let isValidPair = false
+      if (dueQuery && dueQuery !== undefined) {
+        isValidPair = dueQuery >= sendQuery
+      }
+      return (sendQuery && isValidDate(sendQuery) && isValidPair)
+    }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
     switch(activeStep) {
@@ -113,14 +128,12 @@ const FeedbackRequestPage = () => {
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasFor() && hasTemplate() && hasFrom() && hasDue();
+        return hasFor() && hasTemplate() && hasFrom() && hasSend() && isValidDate(dueQuery);
       default:
         return false;
     }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
-
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
     if (activeStep < 1 || activeStep > steps.length) {
-
     }
 
     const handleSubmit = () => {
@@ -146,11 +159,11 @@ const FeedbackRequestPage = () => {
         case 3:
           return hasFor() && hasTemplate() && hasFrom();
         case 4:
-          return hasFor() && hasTemplate() && hasFrom() && hasDue();
+          return hasFor() && hasTemplate() && hasFrom() && hasSend();
         default:
           return false;
       }
-    }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
+    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
 
   const handleQueryChange = (key, value) => {
     let newQuery = {
@@ -160,15 +173,9 @@ const FeedbackRequestPage = () => {
     history.push({...location, search: queryString.stringify(newQuery)});
   }
 
-    if (!urlIsValid()) {
-      return (
-        history.push("/feedback/request/")
-      );
-    }
-
   if (!urlIsValid()) {
     return (
-        history.push("/feedback/request/")
+      history.push("/feedback/request/")
     );
   }
 
