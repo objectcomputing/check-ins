@@ -13,9 +13,7 @@ Array [
         className="MuiTypography-root MuiTypography-h4"
       >
         Feedback Request for 
-        <b>
-          John Doe
-        </b>
+        <b />
       </h4>
       <div>
         <div>

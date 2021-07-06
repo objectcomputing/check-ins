@@ -1,5 +1,5 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
-import {makeStyles} from "@material-ui/core/styles";
+import React, {useState, useEffect, useContext, useCallback} from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -114,8 +114,7 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
-  const handleSubmit = () => {
-  };
+  const handleSubmit = () => {};
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
@@ -192,12 +191,12 @@ const FeedbackRequestPage = () => {
         })}
       </Stepper>
       <div className="current-step-content">
-        {activeStep === 1 &&
-        <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/>}
-        {activeStep === 2 && <FeedbackRecipientSelector/>}
-        {activeStep === 3 && <SelectDate/>}
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+        {activeStep === 2 && <FeedbackRecipientSelector />}
+        {activeStep === 3 && <SelectDate />}
       </div>
     </div>
   );
 };
+
 export default FeedbackRequestPage;
