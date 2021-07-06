@@ -114,8 +114,6 @@ const FeedbackRequestPage = () => {
   const canProceed = useCallback(() => {
     switch(activeStep) {
       case 1:
-      console.log("has for " + hasFor())
-      console.log("has template " + hasTemplate())
         return hasFor() && hasTemplate();
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
@@ -137,10 +135,12 @@ const FeedbackRequestPage = () => {
                       res.payload && res.payload.data && !res.error
                         ? res.payload.data
                         : null;
-                    if (data) {
-                     console.log("Data returned by create feedback req : " + JSON.stringify(data))
-                    }
+                           if (data) {
+                             //redirect to confirmation page
+                           }
+
               }
+
 
     }
 
@@ -156,13 +156,14 @@ const FeedbackRequestPage = () => {
            sendFeedbackRequest(feedbackRequest)
         }
       }
-    };
+    }
 
     const onNextClick = useCallback(() => {
       if (!canProceed()) return;
       if (activeStep === steps.length) handleSubmit();
       query.step = activeStep + 1;
       history.push({...location, search: queryString.stringify(query)});
+     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [canProceed, activeStep, steps.length, query, location, history]);
 
     const onBackClick = useCallback(() => {
