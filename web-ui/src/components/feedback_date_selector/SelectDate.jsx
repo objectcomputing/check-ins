@@ -32,16 +32,14 @@ const SelectDate = () =>{
     const dueDate = query.due ? dateUtils.parse(query.due?.toString(), "yyyy-MM-dd"): null;
 
     useEffect(() => {
-    if (!hasPushedInitialValues.current) {
-    console.log("initial push of query to upstream")
-        query.due = dateUtils.format(dueDate, "yyyy-MM-dd");
-        query.send = dateUtils.format(sendDate, "yyyy-MM-dd");
+    if (!hasPushedInitialValues.current && sendDate !== null && sendDate!== undefined && dueDate!==undefined) {
+      query.send = dateUtils.format(sendDate, "yyyy-MM-dd");
+      if (dueDate !== null) {
+              query.due = dateUtils.format(dueDate, "yyyy-MM-dd");
+      }
         history.push({...location, search: queryString.stringify(query)});
         hasPushedInitialValues.current=true;
     }
-
-
-
     })
 
 
