@@ -164,6 +164,17 @@ const FeedbackTemplateSelector = (props) => {
             onCardClick={() => onCardClick(template)}/>
         ))}
       </div>
+      <div className= "ad-hoc-container">
+      <Tooltip title="Ask a single question" className="ad-hoc-container" arrow>
+        <Button
+          variant="contained"
+          color="primary"
+          className="ad-hoc-button"
+          onClick={onNewAdHocClick}>
+          New Ad-Hoc Template
+        </Button>
+      </Tooltip>
+     </div>
     </React.Fragment>
   );
 };
