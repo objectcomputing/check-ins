@@ -29,7 +29,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         this.memberProfileServices = memberProfileServices;
     }
 
-    private void validateMembers(FeedbackRequest feedbackRequest) {
+    private void validateParams(FeedbackRequest feedbackRequest) {
         if (feedbackRequest == null) {
             throw new BadArgException("Cannot validate members; feedback request does not exist");
         }
@@ -51,11 +51,20 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         } catch (NotFoundException e) {
             throw new BadArgException("The requestee ID is invalid");
         }
+        if (feedbackRequest.getDueDate() != null) {
+            if (feedbackRequest.getSendDate() == null) {
+                throw new BadArgException("Send date cannot be null");
+            }
+
+            if (feedbackRequest.getDueDate().isBefore(feedbackRequest.getSendDate())) {
+                throw new BadArgException("Cannot put due date before send date");
+            }
+        }
     }
 
     @Override
     public FeedbackRequest save(FeedbackRequest feedbackRequest) {
-        validateMembers(feedbackRequest);
+        validateParams(feedbackRequest);
         if (!createIsPermitted(feedbackRequest.getRequesteeId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -80,7 +89,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
-        validateMembers(originalFeedback);
+        validateParams(originalFeedback);
 
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
