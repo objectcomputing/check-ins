@@ -86,7 +86,7 @@ const FeedbackRequestPage = () => {
     };
 
     const hasFor = useCallback(() => {
-      return !id;
+      return !!id;
     }, [id])
 
     const hasTemplate = useCallback(() => {
