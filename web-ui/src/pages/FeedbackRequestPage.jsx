@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
+import React, {useState, useEffect, useContext, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -7,9 +7,9 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {useLocation, useHistory} from 'react-router-dom';
 import queryString from 'query-string';
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
-import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import {getMember} from "../api/member";
@@ -17,9 +17,26 @@ import FeedbackTemplateSelector from "../components/feedback_template_selector/F
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+        width: '100%',
+        padding: 0,
+      },
+  },
+  requestHeader: {
+  marginLeft: "2%",
+
+  },
+  stepContainer: {
+     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+          width: '80%',
+        },
+         ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
+                 display: "none",
+                },
   },
   appBar: {
     position: "relative",
@@ -39,10 +56,11 @@ const useStyles = makeStyles((theme) => ({
   actionButtons: {
     margin: "0 0 0 1em"
   }
+
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 const FeedbackRequestPage = () => {
@@ -79,29 +97,29 @@ const FeedbackRequestPage = () => {
         setRequestee(requesteeProfile ? requesteeProfile.name : "");
       }
     }
+
     if (csrf) {
       getMemberProfile();
     }
   }, [csrf, id]);
 
-    const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const hasFor = useCallback(() => {
+    return !!id;
+  }, [id])
 
-    const handlePreviewClose = (selectedTemplate) => {
-      setPreview({open: false, selectedTemplate: selectedTemplate});
-    };
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
 
-    const hasFor = useCallback(() => {
-      return !!id;
-    }, [id])
+  const hasFrom = useCallback(() => {
+    return !!fromQuery;
+  }, [fromQuery])
 
-    const hasTemplate = useCallback(() => {
-      return !!templateQuery;
-    }, [templateQuery])
-
-    const hasFrom = useCallback(() => {
-      return !!fromQuery;
-    }, [fromQuery])
-
+  const isValidDate = useCallback((dateString) => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }, []);
+  
     const isValidDate = useCallback((dateString) => {
       let today = new Date();
       today = dateUtils.format(today, "yyyy-MM-dd");
@@ -112,7 +130,6 @@ const FeedbackRequestPage = () => {
         return !isNaN(timeStamp);
      }, []);
 
-
     const hasSend = useCallback(() => {
       let isValidPair = false
       if (dueQuery && dueQuery !== undefined) {
@@ -122,7 +139,7 @@ const FeedbackRequestPage = () => {
     }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
-    switch(activeStep) {
+    switch (activeStep) {
       case 1:
         return hasFor() && hasTemplate();
       case 2:
@@ -134,8 +151,9 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
     if (activeStep < 1 || activeStep > steps.length) {
+      
     }
-
+  
     const handleSubmit = () => {
     };
 
@@ -181,28 +199,21 @@ const FeedbackRequestPage = () => {
 
   return (
     <div className="feedback-request-page">
-          {preview.selectedTemplate &&
-            <TemplatePreviewModal
-              template={preview.selectedTemplate}
-              open={preview.open}
-              onClose={handlePreviewClose}
-            />
-          }
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
+        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
-            <div>
-              <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
-                      variant="contained">
-                Back
-              </Button>
-              <Button className={classes.actionButtons} onClick={onNextClick}
-                      variant="contained" disabled={!canProceed()} color="primary">
-                {activeStep === steps.length ? "Submit" : "Next"}
-              </Button>
-            </div>
+            <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
+                    variant="contained">
+              Back
+            </Button>
+            <Button className={classes.actionButtons} onClick={onNextClick}
+                    variant="contained" disabled={!canProceed()} color="primary">
+              {activeStep === steps.length ? "Submit" : "Next"}
+            </Button>
           </div>
         </div>
+
+      <div className= {classes.stepContainer}>
         <Stepper activeStep={activeStep - 1} className={classes.root}>
           {steps.map((label) => {
             const stepProps = {};
@@ -214,12 +225,14 @@ const FeedbackRequestPage = () => {
             );
           })}
         </Stepper>
+        </div>
         <div className="current-step-content">
           {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
           {activeStep === 2 && <FeedbackRecipientSelector/>}
           {activeStep === 3 && <SelectDate/>}
         </div>
-    </div>
+      </div>
   );
 };
-  export default FeedbackRequestPage;
+
+export default FeedbackRequestPage;
