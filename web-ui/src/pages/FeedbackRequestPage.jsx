@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
+import React, {useState, useContext, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -12,7 +12,6 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import TemplatePreviewModal from "../components/template-preview-modal/TemplatePreviewModal";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
-import {getMember} from "../api/member";
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +43,6 @@ function getSteps() {
 
 const FeedbackRequestPage = () => {
   const {state} = useContext(AppContext);
-  const {csrf} = state;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -55,6 +53,7 @@ const FeedbackRequestPage = () => {
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
   const forQuery = query.for?.toString();
+  const [requestee, setRequestee] = useState();
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -64,37 +63,15 @@ const FeedbackRequestPage = () => {
 
   const activeStep = getStep();
 
-  useEffect(() => {
-    async function getMemberProfile() {
-      if (id) {
-        let res = await getMember(id, csrf);
-        let requesteeProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile ? requesteeProfile.name : "");
-      }
-    }
-    if (csrf) {
-      getMemberProfile();
-    }
-  }, [csrf, id]);
-
-  const handlePreviewOpen = useCallback((event, selectedTemplate) => {
-    event.stopPropagation();
-    setPreview({open: true, selectedTemplate: selectedTemplate});
-  }, [setPreview]);
+  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewClose = useCallback((selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
   },[setPreview]);
 
-  const onCardClick = useCallback((template) => {
-    query.template = template.id;
-    history.push({...location, search: queryString.stringify(query)});
-  },[query, history, location]);
-
-    const hasTemplate = useCallback(() => {
-      return !!templateQuery;
-    }, [templateQuery])
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
 
   const hasFor = useCallback(() => {
     return !!forQuery;
@@ -104,17 +81,17 @@ const FeedbackRequestPage = () => {
     return !!fromQuery;
   }, [fromQuery])
 
-    const isValidDate = useCallback((dateString) => {
-      const timestamp = Date.parse(dateString);
-      return !isNaN(timestamp);
-    }, []);
+  const isValidDate = useCallback((dateString) => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
+  }, []);
 
-    const hasDue = useCallback(() => {
-      return (dueQuery && isValidDate(dueQuery))
-    }, [dueQuery, isValidDate]);
+  const hasDue = useCallback(() => {
+    return (dueQuery && isValidDate(dueQuery))
+  }, [dueQuery, isValidDate]);
 
   const canProceed = useCallback(() => {
-    switch(activeStep) {
+    switch (activeStep) {
       case 1:
         return hasFor() && hasTemplate();
       case 2:
@@ -133,39 +110,16 @@ const FeedbackRequestPage = () => {
     const handleSubmit = () => {
     };
 
-    const onNextClick = useCallback(() => {
-      if (!canProceed()) return;
-      if (activeStep === steps.length) handleSubmit();
-      query.step = activeStep + 1;
-      history.push({...location, search: queryString.stringify(query)});
-    }, [canProceed, activeStep, steps.length, query, location, history]);
+  const onNextClick = useCallback(() => {
+    if (!canProceed()) return;
+    if (activeStep === steps.length) handleSubmit();
+    query.step = activeStep + 1;
+    history.push({...location, search: queryString.stringify(query)});
+  }, [canProceed, activeStep, steps.length, query, location, history]);
 
-    const onBackClick = useCallback(() => {
-      history.goBack();
-    }, [history]);
-
-    const urlIsValid = useCallback(() => {
-      switch (activeStep) {
-        case 1:
-          return true;
-        case 2:
-          return hasFor() && hasTemplate();
-        case 3:
-          return hasFor() && hasTemplate() && hasFrom();
-        case 4:
-          return hasFor() && hasTemplate() && hasFrom() && hasDue();
-        default:
-          return false;
-      }
-    }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
-
-  const handleQueryChange = (key, value) => {
-    let newQuery = {
-      ...query,
-      [key]: value
-    }
-    history.push({...location, search: queryString.stringify(newQuery)});
-  }
+  const onBackClick = useCallback(() => {
+    history.goBack();
+  }, [history]);
 
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
@@ -180,12 +134,21 @@ const FeedbackRequestPage = () => {
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
   if (!urlIsValid()) {
-    history.push("/checkins");
+    return (
+      history.push("/feedback/request/")
+    );
   }
 
+  const handleQueryChange = (key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({...location, search: queryString.stringify(newQuery)});
+  }
   return (
     <div className="feedback-request-page">
           {preview.selectedTemplate &&
@@ -196,7 +159,7 @@ const FeedbackRequestPage = () => {
             />
           }
       <div className="header-container">
-        <Typography variant="h4">Feedback Request for <b>{requestee}</b></Typography>
+        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
             <div>
               <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
