@@ -91,7 +91,7 @@ const FeedbackRequestPage = () => {
     };
 
     const hasFor = useCallback(() => {
-      return !id;
+      return !!id;
     }, [id])
 
     const hasTemplate = useCallback(() => {
@@ -114,6 +114,8 @@ const FeedbackRequestPage = () => {
   const canProceed = useCallback(() => {
     switch(activeStep) {
       case 1:
+      console.log("has for " + hasFor())
+      console.log("has template " + hasTemplate())
         return hasFor() && hasTemplate();
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
@@ -136,7 +138,7 @@ const FeedbackRequestPage = () => {
                         ? res.payload.data
                         : null;
                     if (data) {
-                     console.log("Data returned by create feedback req : " + data)
+                     console.log("Data returned by create feedback req : " + JSON.stringify(data))
                     }
               }
 
@@ -145,11 +147,11 @@ const FeedbackRequestPage = () => {
     const handleSubmit = () =>{
     let feedbackRequest = {}
     if (typeof fromQuery === 'string') {
-        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: requestee, recipientId: fromQuery, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:id, recipientId: fromQuery, templateId:"6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
         sendFeedbackRequest(feedbackRequest)
     } else if (Array.isArray(fromQuery)) {
         for (const recipient of fromQuery) {
-           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: requestee, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: id, recipientId: recipient, templateId: "6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
            sendFeedbackRequest(feedbackRequest)
         }
 
