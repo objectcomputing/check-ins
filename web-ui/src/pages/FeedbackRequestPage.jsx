@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Link, useLocation, useHistory, Redirect } from 'react-router-dom';
+import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 function getSteps() {
   return ["Select template", "Select recipients", "Set due date"];
 }
-let todayDate = new Date();
+
 const FeedbackRequestPage = () => {
   const {state} = useContext(AppContext);
   const {csrf} = state;
@@ -194,46 +194,6 @@ const FeedbackRequestPage = () => {
         {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate />}
-      </div>
-            <div>
-              <Link
-                className={`no-underline-link ${activeStep <= 1 ? 'disabled-link' : ''}`}
-                to={getFeedbackArgs(activeStep - 1)}
-              >
-                <Button
-                  disabled={activeStep <= 1}>
-                  Back
-                </Button>
-              </Link>
-
-              <Link
-                className={`no-underline-link ${activeStep > getSteps().length ? 'disabled-link no-underline-link' : ''}`}
-                to={activeStep === 3 ? `/feedback/request/confirmation` : getFeedbackArgs(activeStep + 1)}>
-                <Button
-                  disabled={activeStep > getSteps().length}
-                  variant="contained"
-                  color="primary">
-                  {activeStep === steps.length ? "Submit" : "Next"}
-                </Button>
-              </Link>
-            </div>
-        </div>
-      </div>
-      <Stepper activeStep={activeStep - 1} className={classes.root}>
-        {steps.map((label) => {
-          const stepProps = {};
-          const labelProps = {};
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps} key={label}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
-        {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate handleQueryChange={handleQueryChange} sendDateProp = {sendDate} dueDateProp = {dueDate} />}
       </div>
     </div>
   );

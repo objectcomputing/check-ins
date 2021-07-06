@@ -32,7 +32,7 @@ const allTemplates = [
       questions: []
     },
   ];
-}
+
 
 const propTypes = {
   query: PropTypes.string,
