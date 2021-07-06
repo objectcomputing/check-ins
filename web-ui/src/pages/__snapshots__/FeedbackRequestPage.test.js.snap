@@ -300,6 +300,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -373,6 +376,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -446,6 +452,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -477,6 +486,41 @@ Array [
           </div>
         </div>
       </div>
+      <button
+        aria-describedby={null}
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseOver={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        style={
+          Object {
+            "marginLeft": "30px",
+          }
+        }
+        tabIndex={0}
+        title="Ask a single question"
+        type="button"
+      >
+        <span
+          className="MuiButton-label"
+        >
+          New Ad-Hoc Template
+        </span>
+        <span
+          className="MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </div>,
 ]
