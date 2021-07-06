@@ -52,11 +52,9 @@ const FeedbackRecipientSelector = () => {
       let selectedMembers = profiles.filter(profile => from.includes(profile.id))
       let filteredNormalizedMembers = normalizedMembers.filter(member => {
         return !selectedMembers.some(selectedMember => {
-          console.log(member.id)
           return selectedMember.id=== member.id
         });
       });
-      console.log(filteredNormalizedMembers)
       let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
         setProfiles(newProfiles);
       } else {
@@ -66,7 +64,8 @@ const FeedbackRecipientSelector = () => {
       searchTextUpdated.current = true
 
   }
-  }, [searchText, profiles, from, state]) 
+  }, [searchText, profiles, from, state])
+
 
   useEffect(() => {
 function bindFromURL() {
@@ -112,7 +111,9 @@ async function getSuggestions() {
                     return suggestedMember.id === member.id
                   });
                 })
-                let newProfiles = filteredProfileCopy.concat(res)
+                let newProfiles = []
+                newProfiles = filteredProfileCopy.concat(res)
+                console.log("Select profile + selec
                 console.log("New profiles in res " + JSON.stringify(newProfiles))
                 setProfiles(newProfiles)
               }
