@@ -184,7 +184,6 @@ const FeedbackRequestPage = () => {
       <div className="header-container">
         <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
         <div>
-          <div>
             <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
                     variant="contained">
               Back
@@ -215,7 +214,6 @@ const FeedbackRequestPage = () => {
           {activeStep === 3 && <SelectDate/>}
         </div>
       </div>
-    </div>
   );
 };
 
