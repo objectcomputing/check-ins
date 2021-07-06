@@ -18,7 +18,7 @@ Array [
       <div>
         <div>
           <button
-            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 Mui-disabled Mui-disabled"
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 Mui-disabled Mui-disabled"
             disabled={true}
             onBlur={[Function]}
             onClick={[Function]}
@@ -42,7 +42,7 @@ Array [
             </span>
           </button>
           <button
-            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 MuiButton-containedPrimary Mui-disabled Mui-disabled"
+            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 MuiButton-containedPrimary Mui-disabled Mui-disabled"
             disabled={true}
             onBlur={[Function]}
             onClick={[Function]}
@@ -224,10 +224,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             />
           </div>
           <div
@@ -262,29 +262,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
-            <button
-              aria-expanded={false}
-              aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-11"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
@@ -354,29 +335,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
-            <button
-              aria-expanded={false}
-              aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-11"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
@@ -446,29 +408,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
-            <button
-              aria-expanded={false}
-              aria-label="show more"
-              className="MuiButtonBase-root MuiIconButton-root makeStyles-expand-11"
-              disabled={false}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onDragLeave={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              onMouseDown={[Function]}
-              onMouseLeave={[Function]}
-              onMouseUp={[Function]}
-              onTouchEnd={[Function]}
-              onTouchMove={[Function]}
-              onTouchStart={[Function]}
-              tabIndex={0}
-              type="button"
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
