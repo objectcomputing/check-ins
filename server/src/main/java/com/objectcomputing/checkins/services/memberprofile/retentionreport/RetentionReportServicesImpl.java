@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;
 import java.time.DayOfWeek;
@@ -13,13 +15,19 @@ import java.util.List;
 public class RetentionReportServicesImpl implements RetentionReportServices {
 
     private final MemberProfileServices memberProfileServices;
+    private final CurrentUserServices currentUserServices;
 
-    public RetentionReportServicesImpl(MemberProfileServices memberProfileServices) {
+    public RetentionReportServicesImpl(MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
         this.memberProfileServices = memberProfileServices;
+        this.currentUserServices = currentUserServices;
     }
 
     @Override
     public RetentionReportResponseDTO report(RetentionReportDTO request) {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("Requires admin privileges");
+        }
+
         RetentionReportResponseDTO response;
         List<MemberProfile> memberProfiles = memberProfileServices.findAll();
         LocalDate periodStartDate = getIntervalStartDate(request.getStartDate(), request.getFrequency());

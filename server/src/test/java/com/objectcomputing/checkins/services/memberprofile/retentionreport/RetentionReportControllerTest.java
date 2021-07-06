@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -103,7 +104,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("WEEKLY");
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -122,7 +123,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("");
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -141,7 +142,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("MoNtHlY");
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -167,7 +168,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
 
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
