@@ -13,6 +13,10 @@
   width: 100%;
 }
 
+.feedback-link {
+  cursor: pointer;
+}
+
 .info-div {
   display: block;
 }
