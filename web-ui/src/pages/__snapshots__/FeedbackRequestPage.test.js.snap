@@ -204,7 +204,7 @@ Array [
               <span
                 className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
               >
-                Set dates
+                Set due date
               </span>
             </span>
           </span>

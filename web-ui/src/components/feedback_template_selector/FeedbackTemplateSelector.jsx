@@ -48,7 +48,7 @@ const propTypes = {
   changeQuery: PropTypes.func
 };
 
-const FeedbackTemplateSelector = (props) => {
+const FeedbackTemplateSelector = ({changeQuery}) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
@@ -84,7 +84,7 @@ const FeedbackTemplateSelector = (props) => {
   const handlePreviewOpen = (event, selectedTemplate) => {
     event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
-  };
+  }
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
@@ -107,7 +107,7 @@ const FeedbackTemplateSelector = (props) => {
         newFeedbackTemplate.id = res.payload.data.id;
         newFeedbackTemplate.isAdHoc = true;
         setTemplates([...templates, newFeedbackTemplate]);
-        props.changeQuery("template", newFeedbackTemplate.id);
+        changeQuery("template", newFeedbackTemplate.id);
       }
     }
     setPreview({open: false, selectedTemplate: submittedTemplate});
@@ -115,9 +115,9 @@ const FeedbackTemplateSelector = (props) => {
 
   const onCardClick = (template) => {
     if (template && template.id) {
-      props.changeQuery("template", template.id);
+      changeQuery("template", template.id);
     }
-  };
+  }
 
   const onNewAdHocClick = () => {
     const newAdHocTemplate = {
@@ -127,7 +127,7 @@ const FeedbackTemplateSelector = (props) => {
       isAdHoc: true,
     }
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
-  };
+  }
 
   return (
     <React.Fragment>
@@ -167,7 +167,7 @@ const FeedbackTemplateSelector = (props) => {
       </div>
     </React.Fragment>
   );
-};
+}
 
 FeedbackTemplateSelector.propTypes = propTypes;
 
