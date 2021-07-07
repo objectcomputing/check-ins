@@ -15,7 +15,6 @@ import {
 } from "@material-ui/core";
 
 
-
 const SearchBirthdayAnniversaryResults = ({searchBirthdayResults, searchAnniversaryResults}) => {
 
   searchAnniversaryResults = searchAnniversaryResults.sort((a, b) => {
@@ -23,43 +22,53 @@ const SearchBirthdayAnniversaryResults = ({searchBirthdayResults, searchAnnivers
   })
   const { state } = useContext(AppContext);
   const getMemberProfile = (member) => selectProfile(state, member.userId);
+
+
+  const birthdayMap = () => {
+  return (searchBirthdayResults.length > 0 && (
+          searchBirthdayResults.map((member, index) => {
+            let profile=getMemberProfile(member);
+            return (
+              <Card className={"member-skills-card"} key={`card-${member.userId}`}>
+                <CardHeader
+                  title={
+                    <Typography variant="h5" component="h2">
+                      {getMemberProfile(member).name || ""}
+                    </Typography>
+                  }
+                  subheader={
+                    <Typography color="textSecondary" component="h3">
+
+                      {getMemberProfile(member).title || ""}
+                      <br/>
+                      Birthday: {member.birthDay || ""}
+                    </Typography>
+                  }
+                  disableTypography
+                  avatar={
+                    <Avatar
+                      className={"large"}
+                      src={getAvatarURL(
+                        getMemberProfile(member).workEmail || ""
+                      )}
+                    />
+                  }
+                />
+              </Card>
+            );
+          })
+         ))
+  }
+//   const anniversaryMap = () => {
+//
+//   }
+
+
   return (
     <div className="results-section">
       <List>
       {searchBirthdayResults.length > 0 && <h2>Birthdays</h2>}
-      { searchBirthdayResults.length > 0 && (
-        searchBirthdayResults.map((member, index) => {
-          let profile=getMemberProfile(member);
-          return (
-            <Card className={"member-skills-card"} key={`card-${member.userId}`}>
-              <CardHeader
-                title={
-                  <Typography variant="h5" component="h2">
-                    {getMemberProfile(member).name || ""}
-                  </Typography>
-                }
-                subheader={
-                  <Typography color="textSecondary" component="h3">
-
-                    {getMemberProfile(member).title || ""}
-                    <br/>
-                    Birthday: {member.birthDay || ""}
-                  </Typography>
-                }
-                disableTypography
-                avatar={
-                  <Avatar
-                    className={"large"}
-                    src={getAvatarURL(
-                      getMemberProfile(member).workEmail || ""
-                    )}
-                  />
-                }
-              />
-            </Card>
-          );
-        })
-       )}
+      {searchBirthdayResults.length > 0 && <birthdayMap/>}
         {searchAnniversaryResults.length > 0 && <h2>Anniversaries</h2>}
         { searchAnniversaryResults.length > 0 && (
           searchAnniversaryResults.map((member, index) => {
