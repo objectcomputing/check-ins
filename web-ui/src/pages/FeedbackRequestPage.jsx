@@ -81,25 +81,6 @@ const FeedbackRequestPage = () => {
 
   const activeStep = getStep();
 
-  useEffect(() => {
-    async function getMemberProfile() {
-      if (id) {
-        let res = await getMember(id, csrf);
-        let requesteeProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile ? requesteeProfile.name : "");
-      }
-    }
-
-    if (csrf) {
-      getMemberProfile();
-    }
-  }, [csrf, id]);
-
-  const hasFor = useCallback(() => {
-    return !!id;
-  }, [id])
-
   const hasTemplate = useCallback(() => {
     return !!templateQuery;
   }, [templateQuery])
@@ -151,22 +132,17 @@ const FeedbackRequestPage = () => {
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
-        console.log(JSON.stringify(query));
         return hasFor();
       case 2:
-        console.log(JSON.stringify(query));
         return hasFor() && hasTemplate();
       case 3:
-        console.log(JSON.stringify(query));
         return hasFor() && hasTemplate() && hasFrom();
       case 4:
-        console.log(JSON.stringify(query));
         return hasFor() && hasTemplate() && hasFrom() && hasDue();
       default:
-        console.log("None of the above, so false!");
         return false;
     }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue, query]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
   if (!urlIsValid()) {
       history.push("/checkins");

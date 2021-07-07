@@ -2,7 +2,7 @@
 
 exports[`renders the recipient card 1`] = `
 <div
-  className="MuiBox-root MuiBox-root-4"
+  className="MuiBox-root MuiBox-root-6"
 >
   <div
     className="MuiCardHeader-root"
@@ -25,7 +25,7 @@ exports[`renders the recipient card 1`] = `
       }
     >
       <div
-        className="MuiCardHeader-root makeStyles-header-1"
+        className="MuiCardHeader-root makeStyles-header-2"
       >
         <div
           className="MuiCardHeader-avatar"
