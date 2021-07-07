@@ -16,6 +16,7 @@ import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
 import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
+import Sandbox from "./pages/Sandbox"
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 import GroupIcon from "@material-ui/icons/Group";
@@ -93,7 +94,10 @@ function App() {
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
                 </Route>
-
+                <Route path="/sandbox"
+                >
+                  <Sandbox></Sandbox>
+                </Route>
                 <Route path="/">
                   <Header />
                   <ProfilePage />

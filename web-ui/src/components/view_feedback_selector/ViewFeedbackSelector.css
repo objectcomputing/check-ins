@@ -1,0 +1,39 @@
+.row {
+    width: 100%;
+    flex-direction: row;
+    align-items:center;
+}
+
+.two-em-top-margin {
+    margin-top: 2em;
+}
+.two-em-left-margin {
+    margin-left: 2em;
+}
+.column {
+    width: 100%;
+}
+
+.align-center {
+
+}
+.align-end {
+    justify-content: flex-end;
+}
+
+.select-container {
+    align-items: flex-end;
+    align-self: flex-end;
+    justify-content: flex-end;
+}
+
+.view-feedback-selector-container {
+    overflow-y: hidden;
+}
+
+@media screen and (max-width: 500px) {
+   .textField {
+       width: 20%
+   }
+    
+}
