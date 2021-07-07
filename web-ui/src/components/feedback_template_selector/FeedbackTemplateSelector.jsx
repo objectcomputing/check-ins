@@ -40,7 +40,7 @@ const propTypes = {
   changeQuery: PropTypes.func
 }
 
-const FeedbackTemplateSelector = (props) => {
+const FeedbackTemplateSelector = ({changeQuery}) => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
@@ -49,7 +49,7 @@ const FeedbackTemplateSelector = (props) => {
   }
 
   const handlePreviewSubmit = (selectedTemplate) => {
-    props.changeQuery("template", selectedTemplate.id);
+    changeQuery("template", selectedTemplate.id);
     setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
@@ -61,7 +61,7 @@ const FeedbackTemplateSelector = (props) => {
     if (template.isAdHoc) {
       setPreview({open: true, selectedTemplate: template});
     } else {
-      props.changeQuery("template", template.id);
+      changeQuery("template", template.id);
     }
   }
 
