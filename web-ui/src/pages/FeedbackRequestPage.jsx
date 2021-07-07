@@ -13,6 +13,8 @@ import TemplatePreviewModal from "../components/template-preview-modal/TemplateP
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
+import {selectProfile} from "../context/selectors";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent"
@@ -42,6 +44,7 @@ function getSteps() {
 }
 
 const FeedbackRequestPage = () => {
+  const {state} = useContext(AppContext);
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -52,7 +55,7 @@ const FeedbackRequestPage = () => {
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
   const forQuery = query.for?.toString();
-  const [requestee] = useState();
+  const requestee = selectProfile(state, forQuery);
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
