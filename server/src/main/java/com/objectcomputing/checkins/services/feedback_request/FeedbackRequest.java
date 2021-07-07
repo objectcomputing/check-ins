@@ -93,7 +93,7 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@Nullable UUID id,
+    public FeedbackRequest(@NotNull UUID id,
                            @NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
@@ -113,7 +113,7 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@Nullable UUID id,
+    public FeedbackRequest(@NotNull UUID id,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
