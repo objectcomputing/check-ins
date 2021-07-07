@@ -26,8 +26,8 @@ const SearchBirthdayAnniversaryResults = ({searchBirthdayResults, searchAnnivers
   return (
     <div className="results-section">
       <List>
-      <h2>Birthdays</h2>
-      { searchBirthdayResults.length > 0 &&(
+      {searchBirthdayResults.length > 0 && <h2>Birthdays</h2>}
+      { searchBirthdayResults.length > 0 && (
         searchBirthdayResults.map((member, index) => {
           let profile=getMemberProfile(member);
           return (
@@ -60,7 +60,7 @@ const SearchBirthdayAnniversaryResults = ({searchBirthdayResults, searchAnnivers
           );
         })
        )}
-       <h2>Anniversaries</h2>
+        {searchAnniversaryResults.length > 0 && <h2>Anniversaries</h2>}
         { searchAnniversaryResults.length > 0 && (
           searchAnniversaryResults.map((member, index) => {
             let profile=getMemberProfile(member);
