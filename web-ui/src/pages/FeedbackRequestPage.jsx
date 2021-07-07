@@ -85,21 +85,6 @@ const FeedbackRequestPage = () => {
 
   const activeStep = getStep();
 
-  useEffect(() => {
-    async function getMemberProfile() {
-      if (id) {
-        let res = await getMember(id, csrf);
-        let requesteeProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile ? requesteeProfile.name : "");
-      }
-    }
-
-    if (csrf) {
-      getMemberProfile();
-    }
-  }, [csrf, id]);
-
   const hasFor = useCallback(() => {
     return !!id;
   }, [id])
