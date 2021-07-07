@@ -74,7 +74,7 @@ const FeedbackRecipientSelector = () => {
     if (profiles) {
       const selected = profiles.filter((profile) => from && from.includes(profile.profileId));
       const title = (
-        <Typography variant="h4">
+        <Typography style={{fontWeight: "bold", color: "#454545", marginBottom: "1em"}} variant="h5">
           {selected.length} recipient{selected.length === 1 ? "" : "s"} selected
         </Typography>
       );

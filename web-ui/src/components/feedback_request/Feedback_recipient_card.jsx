@@ -17,12 +17,14 @@ const useStyles = makeStyles({
   root: {
     minWidth: '10em',
     maxWidth: '20em',
-     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
-     marginTop: "1em",
+    marginRight: '2em',
+    marginBottom: '2em',
+    cursor: "pointer",
+    ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+      marginTop: "1em",
       height: "40%",
       width: "80%",
     },
-
   },
   cardContent: {
     display: 'flex',
