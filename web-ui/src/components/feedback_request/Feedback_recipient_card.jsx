@@ -1,16 +1,22 @@
-import React, {useContext} from "react";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles, withStyles} from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
-import {selectProfile} from "../../context/selectors";
-import {AppContext} from "../../context/AppContext";
-import {getAvatarURL} from "../../api/api";
-import {CardHeader} from "@material-ui/core";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import { selectProfileMap } from "../../context/selectors";
+import { getAvatarURL } from "../../api/api.js";
+import { Card, CardHeader } from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import {green} from "@material-ui/core/colors";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import Divider from '@material-ui/core/Divider';
+import "./Feedback_recipient_card.css";
+import {
+  Box,
+  CardContent,
+  Container,
+  makeStyles,
+  Typography,
+} from "@material-ui/core";
 
 
 const useStyles = makeStyles({
@@ -26,6 +32,10 @@ const useStyles = makeStyles({
       width: "80%",
     },
   },
+
+   header: {
+          cursor: "pointer",
+   },
   cardContent: {
     display: 'flex',
     alignItems: 'center',
@@ -35,114 +45,90 @@ const useStyles = makeStyles({
     textAlign: 'center',
   },
 
-  recommendationText: {
-    color: "gray",
-
-  },
   divider: {
-    backgroundColor:"#3f51b5",
-    width: '100%',
+    backgroundColor: 'grey',
+    width: '90%',
     marginBottom: '1em',
+    marginTop: '1em',
   },
-
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-
-  title: {
-    fontSize: 16,
-  },
-
-  pos: {
-    marginTop: '0.3em',
-    marginBottom: '0.5em',
-    fontSize: 20,
-    color: 'black'
+  recommendationText: {
+    color: '#333333',
   },
 });
 
-const brandCardHeaderStyles = ({ palette, breakpoints }) => {
-  const space = 24;
-  return {
-    root: {
-      minWidth: 256,
-    },
-    header: {
-      padding: `4px ${space}px 0`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    avatar: {
-      width: 48,
-      height: 48,
-      transform: 'translateY(50%)',
-      '& > img': {
-        margin: 0,
-        backgroundColor: palette.common.white,
-      },
-      [breakpoints.up('sm')]: {
-        width: 60,
-        height: 60,
-      },
-    },
-    divider: {
-      backgroundColor: palette.grey[200],
-      marginBottom: 24 - 1, // minus 1 due to divider height
-      [breakpoints.up('sm')]: {
-        marginBottom: 30 - 1, // minus 1 due to divider height
-      },
-    },
-    extra: {
-      textTransform: 'uppercase',
-      fontSize: 14,
-      color: palette.grey[500],
-      letterSpacing: '1px',
-    },
-  };
-};
+const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, onClick}) => {
+  const { state } = useContext(AppContext);
+  const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
+  const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
 
-const BrandCardHeader = withStyles(brandCardHeaderStyles, {
-  name: 'BrandCardHeader',
-})(({ classes, image, selected }) => (
-  <div className={classes.root}>
-    <div className={classes.header}>
-      <Avatar alt={'brand logo'} className={classes.avatar} src={image} />
-      {selected && (<CheckCircleIcon style={{ color: green[500]}}>checkmark-image</CheckCircleIcon>)}
-    </div>
-    <hr className={classes.divider} />
-  </div>
-));
-
-const FeedbackRecipientCard = ({profileId, reason, selected=false, onClick}) => {
   const classes = useStyles();
-  const {state} = useContext(AppContext);
-  const recipientProfile = selectProfile(state, profileId);
 
   return (
-    <Card className={classes.root} onClick={onClick}>
-      <CardHeader component={BrandCardHeader} image={getAvatarURL(recipientProfile?.workEmail)} selected={selected}/>
-      <CardContent className={classes.cardContent}>
-        <Typography id="name" name="name" className={classes.pos} color="textSecondary">
-          {recipientProfile?.name}
-        </Typography>
-        <Typography id="title" name="title" variant="subtitle1">
-          {recipientProfile?.title}
-        </Typography>
-        {reason &&
-        (<React.Fragment>
-          <Divider variant="middle" className={classes.divider}/>
-          <Typography id="rec_reason" name="rec_reason" component="p" className={classes.recommendationText}>
-            {reason}
-          </Typography>
-        </React.Fragment>)}
-      </CardContent>
-    </Card>
+    <Box display="flex" flexWrap="wrap">
+      <CardHeader selected={selected}/>
+      <Card onClick={onClick} className={"member-card"} selected={selected}>
+        <Link
+          style={{ color: "black", textDecoration: "none" }}
+          to={`/profile/${recipientProfile?.id}`}
+        >
+
+          <CardHeader
+            className={classes.header}
+            title={
+              <Typography variant="h5" component="h2" >
+                {recipientProfile?.name}
+              </Typography>
+            }
+            action={
+                selected ?
+                  <CheckCircleIcon style={{color: green[500]}}>checkmark-image</CheckCircleIcon> :
+                  null
+              }
+            subheader={
+              <Typography color="textSecondary" component="h3" >
+                {recipientProfile?.title}
+              </Typography>
+            }
+            disableTypography
+            avatar= {!recipientProfile?.terminationDate ?
+              <Avatar className={"large"} src={getAvatarURL(recipientProfile?.workEmail)} /> :
+              <Avatar className={"large"} >
+                <PriorityHighIcon />
+              </Avatar>
+            }
+          />
+        </Link>
+        <CardContent>
+          <Container fixed className={"info-container"}>
+            <Typography variant="body2" color="textSecondary" component="p">
+              <a
+                href={`mailto:${recipientProfile?.workEmail}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {recipientProfile?.workEmail}
+              </a>
+              <br />
+              Location: {recipientProfile?.location}
+              <br />
+              Supervisor: {supervisorProfile?.name}
+              <br />
+              PDL: {pdlProfile?.name}
+              <br />
+            </Typography>
+            {reason &&
+            (<div className="reason">
+              <Divider variant="middle" className={classes.divider}/>
+              <Typography id="rec_reason" name="rec_reason" component="p" className={classes.recommendationText}>
+                {reason}
+              </Typography>
+            </div>)}
+          </Container>
+        </CardContent>
+      </Card>
+    </Box>
   );
-}
+};
+
 export default FeedbackRecipientCard;
-
-
 

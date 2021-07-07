@@ -1,21 +1,31 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Search from "@material-ui/icons/Search";
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken} from "../../context/selectors";
+import {selectProfile, selectCsrfToken, selectNormalizedMembers} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
 import {getFeedbackSuggestion} from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
 import Typography from "@material-ui/core/Typography";
+import {TextField, Grid } from "@material-ui/core";
+
 
 const useStyles = makeStyles({
-  root: {
-    color: "gray"
+  search: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  searchInput: {
+    width: "20em",
+  },
+  members: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    width: "100%",
   },
   textField: {
     width: "40ch",
@@ -26,19 +36,70 @@ const useStyles = makeStyles({
 });
 
 const FeedbackRecipientSelector = () => {
-    const { state } = useContext(AppContext);
-    const csrf = selectCsrfToken(state);
-    const userProfile = selectCurrentUser(state);
-    const {id} = userProfile;
-    const classes = useStyles();
-    const history = useHistory();
-    const location = useLocation();
-    const parsed = queryString.parse(location?.search);
-    let from = parsed.from;
-    const [profiles, setProfiles] = useState([]);
+  const { state } = useContext(AppContext);
+  const classes = useStyles();
+  const csrf = selectCsrfToken(state);
+  const userProfile = selectCurrentUser(state);
+  const {id} = userProfile;
+  const history = useHistory();
+  const location = useLocation();
+  const parsed = queryString.parse(location?.search);
+  let from = parsed.from;
+  const searchTextUpdated = useRef(false)
+  const hasRenewedFromURL = useRef(false)
+  const [searchText, setSearchText] = useState("");
+  const [profiles, setProfiles] = useState([])
 
-    useEffect(() => {
-        async function getSuggestions() {
+
+  useEffect(() => {
+  if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
+    let normalizedMembers = selectNormalizedMembers(state, searchText);
+     if (from!==undefined ) {
+      let selectedMembers = profiles.filter(profile => from.includes(profile.id))
+      let filteredNormalizedMembers = normalizedMembers.filter(member => {
+        return !selectedMembers.some(selectedMember => {
+          return selectedMember.id === member.id
+        });
+      });
+      let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
+        setProfiles(newProfiles);
+      } else {
+        setProfiles(normalizedMembers)
+
+      }
+      searchTextUpdated.current = true
+
+  }
+  }, [searchText, profiles, from, state])
+
+
+  useEffect(() => {
+function bindFromURL() {
+    if (!hasRenewedFromURL.current && from!==null && from!==undefined) {
+      let profileCopy = profiles;
+      if (typeof from === 'string') {
+               let newProfile = {id : from}
+        if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+          profileCopy.push(newProfile)
+        }
+
+
+      } else if (Array.isArray(from)) {
+          for (let i = 0; i < from.length; ++i) {
+           let newProfile = {id : from[i]}
+            if (profiles.filter(member => member.id === newProfile.id).length === 0) {
+              profileCopy.push(newProfile)
+            }
+          }
+
+
+      }
+      setProfiles(profileCopy)
+      hasRenewedFromURL.current = true
+    }
+
+}
+async function getSuggestions() {
             if (id === undefined || id === null) {
                 return;
             }
@@ -50,12 +111,23 @@ const FeedbackRecipientSelector = () => {
             }
             return null;
         }
-        if (csrf) {
+        if (csrf && (searchText === "" || searchText.length === 0)) {
             getSuggestions().then((res) => {
-                setProfiles(res);
-            });
-        }
-    },[id, csrf]);
+              bindFromURL();
+              if (res !== undefined && res !== null) {
+                let filteredProfileCopy = profiles.filter(member => {
+                  return !res.some(suggestedMember => {
+                    return suggestedMember.id === member.id
+                  });
+                })
+                let newProfiles = []
+                newProfiles = filteredProfileCopy.concat(res)
+                setProfiles(newProfiles)
+              }
+           })
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[id, csrf, searchText]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) {
@@ -68,6 +140,7 @@ const FeedbackRecipientSelector = () => {
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});
+    hasRenewedFromURL.current = false;
   }
 
   const getSelectedCards = () => {
@@ -107,36 +180,38 @@ const FeedbackRecipientSelector = () => {
   }
 
   return (
-    <div className="feedback-recipient-selector">
-      <TextField
-        className={classes.textField}
-        placeholder="Search..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment className={classes.root} position="start">
-              <Search />
-            </InputAdornment>
-          ),
-        }}
-      />
+    <Grid className="feedback-recipient-selector">
+      <Grid container spacing={3}>
+        <Grid item xs={12} className={classes.search}>
+          <TextField
+            className={classes.searchInput}
+            label="Select employees..."
+            placeholder="Member Name"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              searchTextUpdated.current = false;
+            }}
+          />
+        </Grid>
+      </Grid>
       <div className="selected-recipients-container">
         {getSelectedCards()}
       </div>
       <div className="selectable-recipients-container">
         {profiles ?
-          <div className="recipient-card-container">
-            {profiles.filter((profile) => !from || !from.includes(profile.profileId)).map((profile) => (
-              <FeedbackRecipientCard
-                key={profile.profileId}
-                profileId={profile.profileId}
-                reason={profile.reason}
-                onClick={() => cardClickHandler(profile.profileId)}/>
-            ))}
-          </div> :
-          <p>Can't get suggestions, please come back later :(</p>}
+            profiles.map((profile) => (
+                <FeedbackRecipientCard
+                    key={profile.id}
+                    profileId={profile.id}
+                    recipientProfile = {selectProfile(state, profile.id)}
+                    reason={profile?.reason ? profile.reason : null}
+                    onClick={() => cardClickHandler(profile.id)}/>
+            )) :
+            <p> Can't get suggestions, please come back later :( </p>}
       </div>
-    </div>
-  )
-}
+    </Grid>
+  );
+};
 
 export default FeedbackRecipientSelector;
