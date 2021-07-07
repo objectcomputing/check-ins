@@ -10,203 +10,205 @@ Array [
       className="header-container"
     >
       <h4
-        className="MuiTypography-root MuiTypography-h4"
+        className="MuiTypography-root makeStyles-requestHeader-2 MuiTypography-h4"
       >
         Feedback Request for 
         <b />
       </h4>
       <div>
-        <div>
-          <button
-            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 Mui-disabled Mui-disabled"
-            disabled={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onDragLeave={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseLeave={[Function]}
-            onMouseUp={[Function]}
-            onTouchEnd={[Function]}
-            onTouchMove={[Function]}
-            onTouchStart={[Function]}
-            tabIndex={-1}
-            type="button"
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 Mui-disabled Mui-disabled"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={-1}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
           >
-            <span
-              className="MuiButton-label"
-            >
-              Back
-            </span>
-          </button>
-          <button
-            className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-6 MuiButton-containedPrimary Mui-disabled Mui-disabled"
-            disabled={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onDragLeave={[Function]}
-            onFocus={[Function]}
-            onKeyDown={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseLeave={[Function]}
-            onMouseUp={[Function]}
-            onTouchEnd={[Function]}
-            onTouchMove={[Function]}
-            onTouchStart={[Function]}
-            tabIndex={-1}
-            type="button"
+            Back
+          </span>
+        </button>
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 MuiButton-containedPrimary Mui-disabled Mui-disabled"
+          disabled={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={-1}
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
           >
-            <span
-              className="MuiButton-label"
-            >
-              Next
-            </span>
-          </button>
-        </div>
+            Next
+          </span>
+        </button>
       </div>
     </div>
     <div
-      className="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-root-1 MuiPaper-elevation0"
+      className="makeStyles-stepContainer-3"
     >
       <div
-        className="MuiStep-root MuiStep-horizontal"
+        className="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-root-1 MuiPaper-elevation0"
       >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal"
+        <div
+          className="MuiStep-root MuiStep-horizontal"
         >
           <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root MuiStepIcon-active"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="12"
-              />
-              <text
-                className="MuiStepIcon-text"
-                textAnchor="middle"
-                x="12"
-                y="16"
-              >
-                1
-              </text>
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
+            className="MuiStepLabel-root MuiStepLabel-horizontal"
           >
             <span
-              className="MuiTypography-root MuiStepLabel-label MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
+              className="MuiStepLabel-iconContainer"
             >
-              Select template
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiStepIcon-root MuiStepIcon-active"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="12"
+                />
+                <text
+                  className="MuiStepIcon-text"
+                  textAnchor="middle"
+                  x="12"
+                  y="16"
+                >
+                  1
+                </text>
+              </svg>
+            </span>
+            <span
+              className="MuiStepLabel-labelContainer"
+            >
+              <span
+                className="MuiTypography-root MuiStepLabel-label MuiStepLabel-active MuiTypography-body2 MuiTypography-displayBlock"
+              >
+                Select template
+              </span>
             </span>
           </span>
-        </span>
-      </div>
-      <div
-        className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
-      >
-        <span
-          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
-        />
-      </div>
-      <div
-        className="MuiStep-root MuiStep-horizontal"
-      >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+        </div>
+        <div
+          className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
         >
           <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="12"
-              />
-              <text
-                className="MuiStepIcon-text"
-                textAnchor="middle"
-                x="12"
-                y="16"
-              >
-                2
-              </text>
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
-          >
-            <span
-              className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
-            >
-              Select recipients
-            </span>
-          </span>
-        </span>
-      </div>
-      <div
-        className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
-      >
-        <span
-          className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
-        />
-      </div>
-      <div
-        className="MuiStep-root MuiStep-horizontal"
-      >
-        <span
-          className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+            className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+          />
+        </div>
+        <div
+          className="MuiStep-root MuiStep-horizontal"
         >
           <span
-            className="MuiStepLabel-iconContainer"
-          >
-            <svg
-              aria-hidden={true}
-              className="MuiSvgIcon-root MuiStepIcon-root"
-              focusable="false"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="12"
-              />
-              <text
-                className="MuiStepIcon-text"
-                textAnchor="middle"
-                x="12"
-                y="16"
-              >
-                3
-              </text>
-            </svg>
-          </span>
-          <span
-            className="MuiStepLabel-labelContainer"
+            className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
           >
             <span
-              className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+              className="MuiStepLabel-iconContainer"
             >
-              Set due date
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiStepIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="12"
+                />
+                <text
+                  className="MuiStepIcon-text"
+                  textAnchor="middle"
+                  x="12"
+                  y="16"
+                >
+                  2
+                </text>
+              </svg>
+            </span>
+            <span
+              className="MuiStepLabel-labelContainer"
+            >
+              <span
+                className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+              >
+                Select recipients
+              </span>
             </span>
           </span>
-        </span>
+        </div>
+        <div
+          className="MuiStepConnector-root MuiStepConnector-horizontal Mui-disabled"
+        >
+          <span
+            className="MuiStepConnector-line MuiStepConnector-lineHorizontal"
+          />
+        </div>
+        <div
+          className="MuiStep-root MuiStep-horizontal"
+        >
+          <span
+            className="MuiStepLabel-root MuiStepLabel-horizontal Mui-disabled"
+          >
+            <span
+              className="MuiStepLabel-iconContainer"
+            >
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiStepIcon-root"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="12"
+                />
+                <text
+                  className="MuiStepIcon-text"
+                  textAnchor="middle"
+                  x="12"
+                  y="16"
+                >
+                  3
+                </text>
+              </svg>
+            </span>
+            <span
+              className="MuiStepLabel-labelContainer"
+            >
+              <span
+                className="MuiTypography-root MuiStepLabel-label MuiTypography-body2 MuiTypography-displayBlock"
+              >
+                Set due date
+              </span>
+            </span>
+          </span>
+        </div>
       </div>
     </div>
     <div
@@ -220,48 +222,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
             <div
-              className="TemplateCardHeader-header-8"
-            />
-          </div>
-          <div
-            className="MuiCardContent-root card-content"
-          >
-            <div
-              className="template-details"
-            >
-              <h3
-                className="template-name"
-              >
-                Ad Hoc
-              </h3>
-              <p
-                className="description"
-              >
-                Ask a single question.
-              </p>
-            </div>
-            <p
-              className="creator"
-            >
-              Created by: 
-              <b>
-                Admin
-              </b>
-            </p>
-          </div>
-        </div>
-        <div
-          className="MuiPaper-root MuiCard-root feedback-template-card MuiPaper-elevation1 MuiPaper-rounded"
-          onClick={[Function]}
-        >
-          <div
-            className="TemplateCardHeader-root-7"
-          >
-            <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
@@ -296,6 +260,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -331,10 +298,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
@@ -369,6 +336,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -404,10 +374,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-7"
+            className="TemplateCardHeader-root-9"
           >
             <div
-              className="TemplateCardHeader-header-8"
+              className="TemplateCardHeader-header-10"
             >
               <button
                 aria-label="show more"
@@ -442,6 +412,9 @@ Array [
                     />
                   </svg>
                 </span>
+                <span
+                  className="MuiTouchRipple-root"
+                />
               </button>
             </div>
           </div>
@@ -472,6 +445,40 @@ Array [
             </p>
           </div>
         </div>
+      </div>
+      <div
+        className="ad-hoc-container"
+      >
+        <button
+          aria-describedby={null}
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained ad-hoc-container ad-hoc-button MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseOver={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          title="Ask a single question"
+          type="button"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            New Ad-Hoc Template
+          </span>
+          <span
+            className="MuiTouchRipple-root"
+          />
+        </button>
       </div>
     </div>
   </div>,

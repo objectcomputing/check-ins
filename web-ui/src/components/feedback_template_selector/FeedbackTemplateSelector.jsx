@@ -2,19 +2,14 @@ import React, {useState} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
+import {Tooltip} from "@material-ui/core";
+import "./FeedbackTemplateSelector.css"
 
 function getTemplates() {
   return [
     {
-      id: 1,
-      title: "Ad Hoc",
-      isAdHoc: true,
-      description: "Ask a single question.",
-      creator: "Admin",
-      questions: []
-    },
-    {
-      id: 2,
+      id: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -22,7 +17,7 @@ function getTemplates() {
       questions: []
     },
     {
-      id: 3,
+      id: 124,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -30,7 +25,7 @@ function getTemplates() {
       questions: [],
     },
     {
-      id: 4,
+      id: 125,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -45,15 +40,16 @@ const propTypes = {
   changeQuery: PropTypes.func
 }
 
-const FeedbackTemplateSelector = (props) => {
+const FeedbackTemplateSelector = ({changeQuery}) => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
 
   const handlePreviewOpen = (event, selectedTemplate) => {
+    event.stopPropagation();
     setPreview({open: true, selectedTemplate: selectedTemplate});
   }
 
   const handlePreviewSubmit = (selectedTemplate) => {
-    props.changeQuery("template", selectedTemplate.id);
+    changeQuery("template", selectedTemplate.id);
     setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
@@ -65,8 +61,18 @@ const FeedbackTemplateSelector = (props) => {
     if (template.isAdHoc) {
       setPreview({open: true, selectedTemplate: template});
     } else {
-      props.changeQuery("template", template.id);
+      changeQuery("template", template.id);
     }
+  }
+
+  const onNewAdHocClick = () => {
+    const newAdHocTemplate = {
+      title: "Ad Hoc",
+      description: "Ask a single question",
+      creator: "Me",
+      isAdHoc: true,
+    }
+    setPreview({open: true, selectedTemplate: newAdHocTemplate});
   }
 
   return (
@@ -82,7 +88,7 @@ const FeedbackTemplateSelector = (props) => {
       <div className="card-container">
         {getTemplates().map((template) => (
           <TemplateCard
-            key = {template.id}
+            key={template.id}
             title={template.title}
             creator={template.creator}
             description={template.description}
@@ -93,6 +99,17 @@ const FeedbackTemplateSelector = (props) => {
             onCardClick={() => onCardClick(template)}/>
         ))}
       </div>
+      <div className= "ad-hoc-container">
+      <Tooltip title="Ask a single question" className="ad-hoc-container" arrow>
+        <Button
+          variant="contained"
+          color="primary"
+          className="ad-hoc-button"
+          onClick={onNewAdHocClick}>
+          New Ad-Hoc Template
+        </Button>
+      </Tooltip>
+     </div>
     </React.Fragment>
   );
 }
