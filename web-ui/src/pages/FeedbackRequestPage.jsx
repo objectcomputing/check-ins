@@ -141,7 +141,7 @@ const FeedbackRequestPage = () => {
       default:
         return false;
     }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue, query]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
   if (!urlIsValid()) {
       history.push("/checkins");
