@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {useHistory, Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import { getMembersByPDL } from "../../api/member";
 import { getCheckinByMemberId } from "../../api/checkins";
 import { AppContext } from "../../context/AppContext";
@@ -69,12 +69,12 @@ const Personnel = () => {
 
 // Create feedback request link
 const createFeedbackRequestLink = (memberId) => (
-    <Link onClick={(e) => {
-          e.stopPropagation()
+    <span className="feedback-link" onClick={(e) => {
+          e.stopPropagation();
           history.push(`/feedback/request?for=${memberId}`);
         }}>
       Request Feedback
-    </Link>);
+    </span>);
 
   // Create entry of member and their last checkin
   function createEntry(person, lastCheckin, keyInput) {
