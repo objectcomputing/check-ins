@@ -52,82 +52,74 @@ const FeedbackRecipientSelector = () => {
 
 
   useEffect(() => {
-  if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
-    let normalizedMembers = selectNormalizedMembers(state, searchText);
-     if (from!==undefined ) {
-      let selectedMembers = profiles.filter(profile => from.includes(profile.id))
-      let filteredNormalizedMembers = normalizedMembers.filter(member => {
-        return !selectedMembers.some(selectedMember => {
-          return selectedMember.id === member.id
+    if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
+      let normalizedMembers = selectNormalizedMembers(state, searchText);
+      if (from !== undefined) {
+        let selectedMembers = profiles.filter(profile => from.includes(profile.id));
+        let filteredNormalizedMembers = normalizedMembers.filter(member => {
+          return !selectedMembers.some(selectedMember => {
+            return selectedMember.id === member.id
+          });
         });
-      });
-      let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
+        let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
         setProfiles(newProfiles);
       } else {
         setProfiles(normalizedMembers)
-
       }
       searchTextUpdated.current = true
-
-  }
+    }
   }, [searchText, profiles, from, state])
 
-
   useEffect(() => {
-function bindFromURL() {
-    if (!hasRenewedFromURL.current && from!==null && from!==undefined) {
-      let profileCopy = profiles;
-      if (typeof from === 'string') {
-               let newProfile = {id : from}
+    function bindFromURL() {
+      if (!hasRenewedFromURL.current && from !== null && from !== undefined) {
+        let profileCopy = profiles;
+        if (typeof from === 'string') {
+          let newProfile = {id : from}
         if (profiles.filter(member => member.id === newProfile.id).length === 0) {
           profileCopy.push(newProfile)
         }
-
-
       } else if (Array.isArray(from)) {
           for (let i = 0; i < from.length; ++i) {
-           let newProfile = {id : from[i]}
+           let newProfile = {id: from[i]}
             if (profiles.filter(member => member.id === newProfile.id).length === 0) {
               profileCopy.push(newProfile)
             }
           }
-
-
       }
       setProfiles(profileCopy)
       hasRenewedFromURL.current = true
+    }}
+
+    async function getSuggestions() {
+      if (id === undefined || id === null) {
+        return;
+      }
+      let res = await getFeedbackSuggestion(id, csrf);
+      if (res && res.payload) {
+        return res.payload.data && !res.error
+          ? res.payload.data
+          : undefined;
+      }
+      return null;
     }
 
-}
-async function getSuggestions() {
-            if (id === undefined || id === null) {
-                return;
-            }
-            let res = await getFeedbackSuggestion(id, csrf);
-            if (res && res.payload) {
-                return res.payload.data && !res.error
-                    ? res.payload.data
-                    : undefined;
-            }
-            return null;
+    if (csrf && (searchText === "" || searchText.length === 0)) {
+      getSuggestions().then((res) => {
+        bindFromURL();
+        if (res !== undefined && res !== null) {
+          let filteredProfileCopy = profiles.filter(member => {
+            return !res.some(suggestedMember => {
+              return suggestedMember.id === member.id
+            });
+          })
+          let newProfiles = []
+          newProfiles = filteredProfileCopy.concat(res)
+          setProfiles(newProfiles)
         }
-        if (csrf && (searchText === "" || searchText.length === 0)) {
-            getSuggestions().then((res) => {
-              bindFromURL();
-              if (res !== undefined && res !== null) {
-                let filteredProfileCopy = profiles.filter(member => {
-                  return !res.some(suggestedMember => {
-                    return suggestedMember.id === member.id
-                  });
-                })
-                let newProfiles = []
-                newProfiles = filteredProfileCopy.concat(res)
-                setProfiles(newProfiles)
-              }
-           })
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[id, csrf, searchText]);
+      })
+    }// eslint-disable-next-line react-hooks/exhaustive-deps
+  },[id, csrf, searchText]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) {
@@ -145,6 +137,7 @@ async function getSuggestions() {
 
   const getSelectedCards = () => {
     if (profiles) {
+      // Get all the selected templates
       const selected = profiles.filter((profile) => from && from.includes(profile.profileId));
       const title = (
         <Typography style={{fontWeight: "bold", color: "#454545", marginBottom: "1em"}} variant="h5">
@@ -152,6 +145,7 @@ async function getSuggestions() {
         </Typography>
       );
 
+      // If there are no recipients selected, show a message
       if (selected.length === 0) {
         return (
           <React.Fragment>
@@ -161,17 +155,18 @@ async function getSuggestions() {
         );
       }
 
+      // If there are any selected recipients, display them
       return (
         <React.Fragment>
           {title}
           <div className="recipient-card-container">
             {selected.map((profile) => (
               <FeedbackRecipientCard
-                key={profile.profileId}
-                profileId={profile.profileId}
+                key={profile.id}
+                profileId={profile.id}
                 reason={profile.reason}
                 selected
-                onClick={() => cardClickHandler(profile.profileId)}/>
+                onClick={() => cardClickHandler(profile.id)}/>
             ))}
           </div>
         </React.Fragment>
@@ -185,7 +180,7 @@ async function getSuggestions() {
         <Grid item xs={12} className={classes.search}>
           <TextField
             className={classes.searchInput}
-            label="Select employees..."
+            label="Search employees..."
             placeholder="Member Name"
             value={searchText}
             onChange={(e) => {
@@ -200,15 +195,15 @@ async function getSuggestions() {
       </div>
       <div className="selectable-recipients-container">
         {profiles ?
-            profiles.map((profile) => (
-                <FeedbackRecipientCard
-                    key={profile.id}
-                    profileId={profile.id}
-                    recipientProfile = {selectProfile(state, profile.id)}
-                    reason={profile?.reason ? profile.reason : null}
-                    onClick={() => cardClickHandler(profile.id)}/>
-            )) :
-            <p> Can't get suggestions, please come back later :( </p>}
+          profiles.map((profile) => (
+            <FeedbackRecipientCard
+              key={profile.id}
+              profileId={profile.id}
+              recipientProfile = {selectProfile(state, profile.id)}
+              reason={profile?.reason ? profile.reason : null}
+              onClick={() => cardClickHandler(profile.id)}/>
+          )) :
+          <p> Can't get suggestions, please come back later :( </p>}
       </div>
     </Grid>
   );
