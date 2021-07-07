@@ -132,6 +132,16 @@ public class MemberProfile {
     @Nullable
     private LocalDate birthDate;
 
+    @Column(name="voluntary", columnDefinition = "boolean default false")
+    @Schema(description = "termination was voluntary")
+    @Nullable
+    private Boolean voluntary;
+
+    @Column(name="excluded", columnDefinition = "boolean default false")
+    @Schema(description = "employee is excluded from retention reports")
+    @Nullable
+    private Boolean excluded;
+
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
                          @NotBlank String lastName,
@@ -145,9 +155,11 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate,
-                         @Nullable LocalDate birthDate) {
+                         @Nullable LocalDate birthDate,
+                         @Nullable Boolean voluntary,
+                         @Nullable Boolean excluded) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded);
     }
 
     public MemberProfile(UUID id,
@@ -164,7 +176,9 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate,
-                         @Nullable LocalDate birthDate) {
+                         @Nullable LocalDate birthDate,
+                         @Nullable Boolean voluntary,
+                         @Nullable Boolean excluded) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -179,7 +193,9 @@ public class MemberProfile {
         this.bioText = bioText;
         this.supervisorid = supervisorid;
         this.terminationDate = terminationDate;
-        this.birthDate=birthDate;
+        this.birthDate = birthDate;
+        this.voluntary = voluntary;
+        this.excluded = excluded;
     }
 
     public MemberProfile() {
@@ -308,6 +324,24 @@ public class MemberProfile {
         this.birthDate = birthDate;
     }
 
+    @Nullable
+    public Boolean getVoluntary() {
+        return voluntary;
+    }
+
+    public void setVoluntary(@Nullable Boolean voluntary) {
+        this.voluntary = voluntary;
+    }
+
+    @Nullable
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(@Nullable Boolean excluded) {
+        this.excluded = excluded;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -327,13 +361,16 @@ public class MemberProfile {
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
                 Objects.equals(terminationDate, that.terminationDate) &&
-                Objects.equals(birthDate, that.birthDate);
+                Objects.equals(birthDate, that.birthDate) &&
+                Objects.equals(voluntary, that.voluntary) &&
+                Objects.equals(excluded, that.excluded);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate,
+                voluntary, excluded);
     }
 
     @Override
@@ -351,6 +388,8 @@ public class MemberProfile {
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
                 ", birthDate=" + birthDate +
+                ", voluntary=" + voluntary +
+                ", excluded=" + excluded +
                 '}';
     }
 }
