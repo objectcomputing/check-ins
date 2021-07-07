@@ -11,6 +11,7 @@ import {useHistory, useLocation} from "react-router-dom";
 import queryString from "query-string";
 import {getFeedbackSuggestion} from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles({
   root: {
@@ -54,7 +55,7 @@ const FeedbackRecipientSelector = () => {
                 setProfiles(res);
             });
         }
-    },[id,csrf]);
+    },[id, csrf]);
 
   const cardClickHandler = (id) => {
     if(!Array.isArray(from)) {
@@ -67,6 +68,42 @@ const FeedbackRecipientSelector = () => {
 
     parsed.from = from;
     history.push({...location, search: queryString.stringify(parsed)});
+  }
+
+  const getSelectedCards = () => {
+    if (profiles) {
+      const selected = profiles.filter((profile) => from && from.includes(profile.profileId));
+      const title = (
+        <Typography variant="h4">
+          {selected.length} recipient{selected.length === 1 ? "" : "s"} selected
+        </Typography>
+      );
+
+      if (selected.length === 0) {
+        return (
+          <React.Fragment>
+            {title}
+            <p>Click on recipients to request feedback from them</p>
+          </React.Fragment>
+        );
+      }
+
+      return (
+        <React.Fragment>
+          {title}
+          <div className="recipient-card-container">
+            {selected.map((profile) => (
+              <FeedbackRecipientCard
+                key={profile.profileId}
+                profileId={profile.profileId}
+                reason={profile.reason}
+                selected
+                onClick={() => cardClickHandler(profile.profileId)}/>
+            ))}
+          </div>
+        </React.Fragment>
+      );
+    }
   }
 
   return (
@@ -82,17 +119,21 @@ const FeedbackRecipientSelector = () => {
           ),
         }}
       />
-      <div className="card-container">
+      <div className="selected-recipients-container">
+        {getSelectedCards()}
+      </div>
+      <div className="selectable-recipients-container">
         {profiles ?
-            profiles.map((profile) => (
-                <FeedbackRecipientCard
-                    key={profile.profileId}
-                    profileId={profile.profileId}
-                    reason={profile.reason}
-                    selected={from && from.includes(profile.profileId)}
-                    onClick={() => cardClickHandler(profile.profileId)}/>
-            )) :
-            <p> Can't get suggestions, please come back later :( </p>}
+          <div className="recipient-card-container">
+            {profiles.filter((profile) => !from || !from.includes(profile.profileId)).map((profile) => (
+              <FeedbackRecipientCard
+                key={profile.profileId}
+                profileId={profile.profileId}
+                reason={profile.reason}
+                onClick={() => cardClickHandler(profile.profileId)}/>
+            ))}
+          </div> :
+          <p>Can't get suggestions, please come back later :(</p>}
       </div>
     </div>
   )
