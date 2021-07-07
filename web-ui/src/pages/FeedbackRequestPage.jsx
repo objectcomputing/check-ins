@@ -141,7 +141,8 @@ const handleSubmit = () =>{
     if (activeStep === steps.length) handleSubmit();
     query.step = activeStep + 1;
     history.push({...location, search: queryString.stringify(query)});
-  }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
+
+  }, [canProceed, activeStep, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
     history.goBack();
