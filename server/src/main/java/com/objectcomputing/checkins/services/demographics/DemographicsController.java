@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.demographics;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.services.settings.SettingsUpdateDTO;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -76,8 +78,8 @@ public class DemographicsController {
                                                                             @Nullable String gender,
                                                                             @Nullable String degreeLevel,
                                                                             @Nullable Integer industryTenure,
-                                                                            @Nullable boolean personOfColor,
-                                                                            @Nullable boolean veteran,
+                                                                            @Nullable Boolean personOfColor,
+                                                                            @Nullable Boolean veteran,
                                                                             @Nullable Integer militaryTenure,
                                                                             @Nullable String militaryBranch) {
         return Single.fromCallable(() -> demographicsServices.findByValues(memberId, gender, degreeLevel, industryTenure, personOfColor, veteran, militaryTenure, militaryBranch))
@@ -115,7 +117,8 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} The updated demographics
      */
     @Put()
-    public Single<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics) {
+    public Single<HttpResponse<DemographicsResponseDTO>> update(@Body @Valid DemographicsUpdateDTO demographics,
+                                                                HttpRequest<DemographicsUpdateDTO> request) {
 
         return Single.fromCallable(() -> demographicsServices.updateDemographics(fromDTO(demographics)))
                 .observeOn(Schedulers.from(eventLoopGroup))
@@ -123,7 +126,7 @@ public class DemographicsController {
                     DemographicsResponseDTO updatedDemographics = fromEntity(savedDemographics);
                     return (HttpResponse<DemographicsResponseDTO>) HttpResponse
                             .ok()
-                            .headers(headers -> headers.location(location(updatedDemographics.getId())))
+                            .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), updatedDemographics.getId()))))
                             .body(updatedDemographics);
                 })
                 .subscribeOn(Schedulers.from(ioExecutorService));
@@ -149,13 +152,13 @@ public class DemographicsController {
 
     private Demographics fromDTO(DemographicsCreateDTO dto) {
         return new Demographics(dto.getMemberId(), dto.getGender(), dto.getDegreeLevel(),
-                dto.getIndustryTenure(), dto.isPersonOfColor(), dto.isVeteran(),
+                dto.getIndustryTenure(), dto.getPersonOfColor(), dto.getVeteran(),
                 dto.getMilitaryTenure(), dto.getMilitaryBranch());
     }
 
     private Demographics fromDTO(DemographicsUpdateDTO dto) {
         return new Demographics(dto.getId(), dto.getMemberId(), dto.getGender(), dto.getDegreeLevel(),
-                dto.getIndustryTenure(), dto.isPersonOfColor(), dto.isVeteran(),
+                dto.getIndustryTenure(), dto.getPersonOfColor(), dto.getVeteran(),
                 dto.getMilitaryTenure(), dto.getMilitaryBranch());
     }
 
@@ -168,8 +171,8 @@ public class DemographicsController {
         dto.setIndustryTenure(entity.getIndustryTenure());
         dto.setMemberId(entity.getMemberId());
         dto.setMilitaryTenure(entity.getMilitaryTenure());
-        dto.setPersonOfColor(entity.isPersonOfColor());
-        dto.setVeteran(entity.isVeteran());
+        dto.setPersonOfColor(entity.getPersonOfColor());
+        dto.setVeteran(entity.getVeteran());
         return dto;
     }
 
