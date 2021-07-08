@@ -28,7 +28,14 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public Demographics getById(UUID id) {
-        return demographicsRepository.findById(id).orElse(null);
+        Demographics demographics = demographicsRepository.findById(id).orElse(null);
+
+        if (!currentUserServices.isAdmin() &&
+                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+            throw new PermissionException("You are not authorized to access this Demographics");
+        }
+
+        return demographics;
     }
 
     @Override
@@ -40,6 +47,10 @@ public class DemographicsServicesImpl implements DemographicsServices{
                                           @Nullable Boolean veteran,
                                           @Nullable Integer militaryTenure,
                                           @Nullable String militaryBranch) {
+
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("Requires admin privileges");
+        }
 
         List<Demographics> result  = new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
                 gender,
@@ -55,6 +66,11 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public Demographics updateDemographics(Demographics demographics) {
+        if (!currentUserServices.isAdmin() &&
+                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+            throw new PermissionException("You are not authorized to update this demographic");
+        }
+
         Demographics newDemographics;
         if (demographics.getId() != null && demographicsRepository.findById(demographics.getId()).isPresent()) {
             newDemographics = demographicsRepository.update(demographics);
@@ -67,6 +83,11 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public Demographics saveDemographics(@NotNull Demographics demographics) {
+        if (!currentUserServices.isAdmin() &&
+                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+            throw new PermissionException("You are not authorized to create this Demographic");
+        }
+
         Demographics demographicsRet;
 
         if (demographics.getMemberId() == null) {
@@ -85,6 +106,10 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public List<Demographics> findAll() {
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("Requires admin privileges");
+        }
+
         return demographicsRepository.findAll();
     }
 

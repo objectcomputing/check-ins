@@ -186,7 +186,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
         updatedDemographics.setMemberId(demographicToUpdate.getMemberId());
 
         final HttpRequest<DemographicsUpdateDTO> request = HttpRequest.
-                PUT("/", updatedDemographics).basicAuth(lucy.getWorkEmail(), ADMIN_ROLE);
+                PUT("/", updatedDemographics).basicAuth(lucy.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
