@@ -17,7 +17,7 @@ delete from member_profile;
 INSERT INTO member_profile
     (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-    ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('Gina','${aeskey}'), PGP_SYM_ENCRYPT('Bremehr','${aeskey}'), PGP_SYM_ENCRYPT('COO','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bremehrg@objectcomputing.com','${aeskey}'), '12312345', '2012-09-20', PGP_SYM_ENCRYPT('Epitome of Strong Woman','${aeskey}'), null, '1988-09-01');
+    ('01b7d769-9fa2-43ff-95c7-f3b950a27bf9', PGP_SYM_ENCRYPT('Gina','${aeskey}'), PGP_SYM_ENCRYPT('Bremehr','${aeskey}'), PGP_SYM_ENCRYPT('COO','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('bremehrg@objectcomputing.com','${aeskey}'), '12312345', '2012-09-20', PGP_SYM_ENCRYPT('Epitome of Strong Woman','${aeskey}'), null, '1988-09-21');
 
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -27,7 +27,7 @@ VALUES
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-    ('802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('John','${aeskey}'), PGP_SYM_ENCRYPT('Meyerin','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('meyerinj@objectcomputing.com','${aeskey}'), '12312347', '2012-09-02', PGP_SYM_ENCRYPT('Outstanding Engineer','${aeskey}'), null, '1988-09-10');
+    ('802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('John','${aeskey}'), PGP_SYM_ENCRYPT('Meyerin','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2559a257-ae84-4076-9ed4-3820c427beeb', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('meyerinj@objectcomputing.com','${aeskey}'), '12312347', '2012-09-02', PGP_SYM_ENCRYPT('Outstanding Engineer','${aeskey}'), null, '1988-09-30');
 
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -37,7 +37,7 @@ VALUES
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-    ('8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('Holly','${aeskey}'), PGP_SYM_ENCRYPT('Williams','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('williamsh@objectcomputing.com','${aeskey}'), '12312349', '2012-09-11', PGP_SYM_ENCRYPT('Software Engineer Remarkable','${aeskey}'), null, '1988-09-20');
+    ('8fa673c0-ca19-4271-b759-41cb9db2e83a', PGP_SYM_ENCRYPT('Holly','${aeskey}'), PGP_SYM_ENCRYPT('Williams','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '802cb1f5-a255-4236-8719-773fa53d79d9', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('williamsh@objectcomputing.com','${aeskey}'), '12312349', '2012-09-11', PGP_SYM_ENCRYPT('Software Engineer Remarkable','${aeskey}'), null, '1988-09-2');
 
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
@@ -47,7 +47,7 @@ VALUES
 INSERT INTO member_profile
     (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
 VALUES
-    ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('Mark','${aeskey}'), PGP_SYM_ENCRYPT('Volkmann','${aeskey}'), PGP_SYM_ENCRYPT('Partner and Distinguished Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('volkmannm@objectcomputing.com','${aeskey}'), '12312343', '2012-09-15', PGP_SYM_ENCRYPT('Software Engineer Spectacular','${aeskey}'), null, '1988-09-23');
+    ('2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('Mark','${aeskey}'), PGP_SYM_ENCRYPT('Volkmann','${aeskey}'), PGP_SYM_ENCRYPT('Partner and Distinguished Engineer','${aeskey}'), PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('volkmannm@objectcomputing.com','${aeskey}'), '12312343', '2012-09-15', PGP_SYM_ENCRYPT('Software Engineer Spectacular','${aeskey}'), null, '1988-09-01');
 
 INSERT INTO member_profile
     (id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)

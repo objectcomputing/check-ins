@@ -18,8 +18,15 @@ const SearchBirthdayAnniversaryResults = ({
   searchAnniversaryResults,
 }) => {
   searchAnniversaryResults = searchAnniversaryResults.sort((a, b) => {
-    return a.anniversary.localeCompare(b.anniversary);
+    return a.tenure - b.tenure;
   });
+
+  searchBirthdayResults = searchBirthdayResults.sort((a, b) => {
+    const aday=a.birthDay.split('/').pop();
+    const bday=b.birthDay.split('/').pop();
+    return parseInt(aday) - (parseInt(bday));
+  });
+
   const { state } = useContext(AppContext);
   const getMemberProfile = (member) => selectProfile(state, member.userId);
 
@@ -56,7 +63,7 @@ const SearchBirthdayAnniversaryResults = ({
   };
 
   const AnniversaryMap = () => {
-    if (searchBirthdayResults.length > 0) {
+    if (searchAnniversaryResults.length > 0) {
       return (
         searchAnniversaryResults.length > 0 &&
         searchAnniversaryResults.map((member, index) => {

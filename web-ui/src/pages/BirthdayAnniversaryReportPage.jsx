@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
 
@@ -14,9 +14,7 @@ import SearchBirthdayAnniversaryResults from "../components/search-results/Searc
 import { selectCsrfToken } from "../context/selectors";
 
 const months = [
-  {
-    month: "January",
-  },
+  { month: "January" },
   { month: "February" },
   { month: "March" },
   { month: "April" },
@@ -84,7 +82,7 @@ const BirthdayAnniversaryReportPage = () => {
 
   return (
     <div>
-      <div className="filter-pdls-and-members">
+      <div className="select-month">
         <Autocomplete
           id="monthSelect"
           options={months}
