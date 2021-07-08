@@ -1,23 +1,43 @@
 
-.two-em-top-margin {
-    margin-top: 2em;
-}
-.two-em-left-margin {
-    margin-left: 2em;
-}
-
 .person-name {
     color: black;
 }
-.red-text{
-    color: red;
+
+.response-link {
+    color: rgb(42, 55, 172);
+    text-decoration: none;
+    font-size: 1rem;
+
 }
+.has-padding-top {
+    padding-top: 1em;
+}
+.response-link:hover {
+    background-color: lightgray ;
+}
+.red-text{
+    color: rgb(207, 120, 20);
+}
+
+.person-divider {
+    min-width: 100%;
+    color: rgb(231, 230, 227);
+}
+.dark-gray-text {
+    color: rgb(85, 83, 83);
+}
+.person-row {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
 
 .MuiCardHeader-action {
     margin:0;
     margin-top: 0;
     margin-right: 0;
-    margin-top: 2em;
+    margin-top: 1em;
+    padding-top: 1em;
 }
 
 .no-wrap {
@@ -29,13 +49,7 @@
     align-self: center;
     align-content: center;
 }
-.person-collapse-info {
-   padding-right: 34.7em;
-}
 
-.person-collapse-avatar {
-    padding-right: 1em;
-}
 
 .align-end {
     text-align: right;
@@ -48,76 +62,23 @@
     margin-top: 3em;
     width: 100%;
 }
-.card-info-container {
-    margin-top: 2em,
-}
-
 .MuiFormControl-root {
     width: 20%;
     margin-right: 2em;
 }
 
-@media screen and (min-width: 501px) and (max-width: 769px) {
 
-    .input-row {
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-    .person-collapse-info {
-        padding-right: 17em;
-    }
+@media screen and (max-width: 769px) {
+
     .card-info-container {
         margin-left: 2.5em;
         text-align:right;
+    }
+    .response-link {
+        font-size: 0.7rem;
     }
    
       
   }
-@media screen and (min-width: 362px) and (max-width: 500px) {
 
-  .input-row {
-      padding-left: 5%;
-      padding-right: 5%;
-  }
-  .person-collapse-info {
-      padding-right: 25%;
-  }
-  .card-info-container {
-      margin-left: 2.5em;
-      text-align:right;
-  }
- 
     
-}
-@media screen and (min-width: 321px) and (max-width: 361px) {
-
-    .input-row {
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-    .person-collapse-info {
-        padding-right: 4.7rem;
-    }
-    .card-info-container {
-        margin-left: 2.5em;
-        text-align:right;
-    }
-   
-      
-  }
-  
-
-@media screen and (max-width: 320px) {
-    .input-row {
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-    .person-collapse-info {
-        padding-right: 3em;
-    }
-    .card-info-container {
-        margin-left: 2.5em;
-        text-align:right;
-    }
-    
-}
