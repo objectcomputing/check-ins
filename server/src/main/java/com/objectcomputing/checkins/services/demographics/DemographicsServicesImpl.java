@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.demographics;
 
 import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -9,10 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
@@ -34,7 +32,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
     }
 
     @Override
-    public Set<Demographics> findByValues(@Nullable UUID memberId,
+    public List<Demographics> findByValues(@Nullable UUID memberId,
                                           @Nullable String gender,
                                           @Nullable String degreeLevel,
                                           @Nullable Integer industryTenure,
@@ -42,7 +40,8 @@ public class DemographicsServicesImpl implements DemographicsServices{
                                           @Nullable Boolean veteran,
                                           @Nullable Integer militaryTenure,
                                           @Nullable String militaryBranch) {
-        return new HashSet<>(demographicsRepository.search(nullSafeUUIDToString(memberId),
+
+        List<Demographics> result  = new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
                 gender,
                 degreeLevel,
                 industryTenure,
@@ -50,6 +49,8 @@ public class DemographicsServicesImpl implements DemographicsServices{
                 veteran,
                 militaryTenure,
                 militaryBranch));
+
+        return result;
     }
 
     @Override
@@ -65,21 +66,21 @@ public class DemographicsServicesImpl implements DemographicsServices{
     }
 
     @Override
-    public Demographics saveDemographics(Demographics demographics) {
+    public Demographics saveDemographics(@NotNull Demographics demographics) {
         Demographics demographicsRet = null;
-        if (demographics != null) {
-            if (demographics.getMemberId() == null) {
-                throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
-            } else if (memberProfileServices.getById(demographics.getId()) == null) {
-                throw new BadArgException(String.format("Member Profile %s doesn't exist", demographics.getId()));
-            } else if (demographics.getId() != null) {
-                throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
-            }
 
-            demographicsRet = demographicsRepository.save(demographics);
+        if (demographics.getMemberId() == null) {
+            throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
+        } else if (memberProfileServices.getById(demographics.getMemberId()) == null) {
+            throw new BadArgException(String.format("Member Profile %s doesn't exist", demographics.getMemberId()));
+        } else if (demographics.getId() != null) {
+            throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
         }
 
-        return demographicsRet;
+            demographicsRet = demographicsRepository.save(demographics);
+
+
+        return (demographicsRet != null ? demographicsRet : new Demographics());
     }
 
     @Override
@@ -92,6 +93,11 @@ public class DemographicsServicesImpl implements DemographicsServices{
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("Requires admin privileges");
         }
+
+        if (demographicsRepository.findById(id).isEmpty()) {
+            throw new NotFoundException(String.format("Demographic id %s was not found", id));
+        }
+
         demographicsRepository.deleteById(id);
         return true;
     }

@@ -9,7 +9,7 @@ public interface DemographicsServices {
 
     Demographics getById(UUID id);
 
-    Set<Demographics> findByValues(UUID memberId,
+    List<Demographics> findByValues(UUID memberId,
                                    String gender,
                                    String degreeLevel,
                                    Integer industryTenure,
