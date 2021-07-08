@@ -2,6 +2,7 @@ import React from "react";
 import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
+import AdminPage from "./pages/AdminPage";
 import Menu from "./components/menu/Menu";
 import Header from "./components/header/Header";
 import ProfilePage from "./pages/ProfilePage";
@@ -42,6 +43,12 @@ function App() {
               className="App"
             >
               <Switch>
+                <Route path="/admin">
+                  <Header title="Admin">
+                    <GroupIcon fontSize="large" />
+                  </Header>
+                  <AdminPage />
+                </Route>
                 <Route path="/teams">
                   <Header title="Teams">
                     <GroupIcon fontSize="large" />
