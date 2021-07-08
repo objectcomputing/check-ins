@@ -30,3 +30,16 @@
 .select-month > * {
   width: 15%;
 }
+
+.member-birthday-anniversary-card {
+  max-height: 20rem;
+  width: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.results-section {
+    align-items: center;
+    justify-content: space-between;
+}

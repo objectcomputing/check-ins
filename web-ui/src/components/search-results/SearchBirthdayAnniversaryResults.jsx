@@ -37,7 +37,7 @@ const SearchBirthdayAnniversaryResults = ({
     if (searchBirthdayResults.length > 0) {
       return searchBirthdayResults.map((member, index) => {
         return (
-          <Card className={"member-skills-card"} key={`card-${member.userId}`}>
+          <Card className={"member-birthday-anniversary-card"} key={`card-${member.userId}`}>
             <CardHeader
               title={
                 <Typography variant="h5" component="h2">
@@ -72,7 +72,7 @@ const SearchBirthdayAnniversaryResults = ({
         searchAnniversaryResults.map((member, index) => {
           return (
             <Card
-              className={"member-skills-card"}
+              className={"member-birthday-anniversary-card"}
               key={`card-${member.userId}`}
             >
               <CardHeader
