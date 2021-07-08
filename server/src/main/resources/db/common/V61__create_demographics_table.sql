@@ -5,9 +5,9 @@ CREATE TABLE demographics (
     memberId varchar REFERENCES member_profile(id),
     gender varchar,
     degreeLevel varchar,
-    industryTenure integer,
-    personOfColor boolean,
-    veteran boolean,
-    militaryTenure integer,
+    industryTenure Integer,
+    personOfColor BOOLEAN,
+    veteran BOOLEAN,
+    militaryTenure Integer,
     militaryBranch varchar
 );
