@@ -13,8 +13,19 @@ import java.util.UUID;
 public interface DemographicsRepository extends CrudRepository<Demographics, UUID> {
     List<Demographics> findAll();
 
-    @Query(value = "", nativeQuery = true)
-    List<Demographics> search(@Nullable String memberId,
+    @Query(value = "SELECT id, " +
+            "memberId, gender, degreeLevel, industryTenure, personOfColor, " +
+            "veteran, militaryTenure, militaryBranch " +
+            "FROM demographics " +
+            "WHERE (:memberId IS NULL OR memberId = :memberId) " +
+            "AND (:gender IS NULL OR gender = :gender) " +
+            "AND (:degreeLevel IS NULL OR degreeLevel = :degreeLevel) " +
+            "AND (:industryTenure IS NULL OR industryTenure = :industryTenure) " +
+            "AND (:personOfColor IS NULL OR personOfColor = :personOfColor) " +
+            "AND (:veteran IS NULL OR veteran = :veteran) " +
+            "AND (:militaryTenure IS NULL OR militaryTenure = :militaryTenure) " +
+            "AND (:militaryBranch IS NULL OR militaryBranch = :militaryBranch) ", nativeQuery = true)
+    List<Demographics> searchByValues(@Nullable String memberId,
                               @Nullable String gender,
                               @Nullable String degreeLevel,
                               @Nullable Integer industryTenure,
