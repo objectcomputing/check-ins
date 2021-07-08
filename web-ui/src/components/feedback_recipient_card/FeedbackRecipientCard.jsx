@@ -9,7 +9,7 @@ import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import {green} from "@material-ui/core/colors";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Divider from '@material-ui/core/Divider';
-import "./Feedback_recipient_card.css";
+import "./FeedbackRecipientCard.css";
 import {
   Box,
   CardContent,
@@ -32,9 +32,8 @@ const useStyles = makeStyles({
       width: "80%",
     },
   },
-
    header: {
-          cursor: "pointer",
+    cursor: "pointer",
    },
   cardContent: {
     display: 'flex',
@@ -44,7 +43,6 @@ const useStyles = makeStyles({
     justifyContent:'center',
     textAlign: 'center',
   },
-
   divider: {
     backgroundColor: 'grey',
     width: '90%',
@@ -66,7 +64,7 @@ const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, 
   return (
     <Box display="flex" flexWrap="wrap">
       <CardHeader selected={selected}/>
-      <Card onClick={onClick} className={"member-card"} selected={selected}>
+      <Card onClick={onClick} className="member-card" selected={selected}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
           to={`/profile/${recipientProfile?.id}`}

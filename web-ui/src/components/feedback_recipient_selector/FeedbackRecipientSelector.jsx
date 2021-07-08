@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import "./FeedbackRecipientSelector.css";
-import FeedbackRecipientCard from "../feedback_request/Feedback_recipient_card";
+import FeedbackRecipientCard from "../feedback_recipient_card/FeedbackRecipientCard";
 import {AppContext} from "../../context/AppContext";
 import {selectProfile, selectCsrfToken, selectNormalizedMembers} from "../../context/selectors";
 import {useHistory, useLocation} from "react-router-dom";
@@ -9,7 +9,8 @@ import queryString from "query-string";
 import {getFeedbackSuggestion} from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
 import Typography from "@material-ui/core/Typography";
-import {TextField, Grid } from "@material-ui/core";
+import {TextField, Grid, InputAdornment} from "@material-ui/core";
+import {Search} from "@material-ui/icons";
 
 
 const useStyles = makeStyles({
@@ -20,6 +21,9 @@ const useStyles = makeStyles({
   },
   searchInput: {
     width: "20em",
+  },
+  searchInputIcon: {
+    color: "gray",
   },
   members: {
     display: "flex",
@@ -138,7 +142,7 @@ const FeedbackRecipientSelector = () => {
   const getSelectedCards = () => {
     if (profiles) {
       // Get all the selected templates
-      const selected = profiles.filter((profile) => from && from.includes(profile.profileId));
+      const selected = profiles.filter((profile) => from && from.includes(profile.id));
       const title = (
         <Typography style={{fontWeight: "bold", color: "#454545", marginBottom: "1em"}} variant="h5">
           {selected.length} recipient{selected.length === 1 ? "" : "s"} selected
@@ -164,6 +168,7 @@ const FeedbackRecipientSelector = () => {
               <FeedbackRecipientCard
                 key={profile.id}
                 profileId={profile.id}
+                recipientProfile={selectProfile(state, profile.id)}
                 reason={profile.reason}
                 selected
                 onClick={() => cardClickHandler(profile.id)}/>
@@ -187,6 +192,13 @@ const FeedbackRecipientSelector = () => {
               setSearchText(e.target.value);
               searchTextUpdated.current = false;
             }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment className={classes.searchInputIcon} position="start">
+                  <Search/>
+                </InputAdornment>
+              )
+            }}
           />
         </Grid>
       </Grid>
@@ -195,7 +207,7 @@ const FeedbackRecipientSelector = () => {
       </div>
       <div className="selectable-recipients-container">
         {profiles ?
-          profiles.map((profile) => (
+          profiles.filter((profile) => !from || !from.includes(profile.id)).map((profile) => (
             <FeedbackRecipientCard
               key={profile.id}
               profileId={profile.id}
@@ -203,7 +215,7 @@ const FeedbackRecipientSelector = () => {
               reason={profile?.reason ? profile.reason : null}
               onClick={() => cardClickHandler(profile.id)}/>
           )) :
-          <p> Can't get suggestions, please come back later :( </p>}
+          <p>Can't get suggestions, please come back later :(</p>}
       </div>
     </Grid>
   );
