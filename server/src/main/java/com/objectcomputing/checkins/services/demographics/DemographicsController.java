@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.demographics;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.settings.SettingsUpdateDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -31,15 +30,13 @@ public class DemographicsController {
 
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService ioExecutorService;
-    private final CurrentUserServices currentUserServices;
     private final DemographicsServices demographicsServices;
 
     public DemographicsController(EventLoopGroup eventLoopGroup,
                                   ExecutorService ioExecutorService,
-                                  CurrentUserServices currentUserServices, DemographicsServices demographicsServices) {
+                                  DemographicsServices demographicsServices) {
         this.eventLoopGroup = eventLoopGroup;
         this.ioExecutorService = ioExecutorService;
-        this.currentUserServices = currentUserServices;
         this.demographicsServices = demographicsServices;
     }
 
@@ -100,13 +97,18 @@ public class DemographicsController {
      * @return {@link DemographicsResponseDTO} The created demographics
      */
     @Post()
-    public Single<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics) {
+    public Single<HttpResponse<DemographicsResponseDTO>> save(@Body @Valid DemographicsCreateDTO demographics,
+                                                              HttpRequest<DemographicsCreateDTO> request) {
 
         return Single.fromCallable(() -> demographicsServices.saveDemographics(fromDTO(demographics)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedDemographics -> (HttpResponse<DemographicsResponseDTO>) HttpResponse
-                        .created(fromEntity(savedDemographics))
-                        .headers(headers -> headers.location(location(savedDemographics.getId()))))
+                .map(savedDemographics -> {
+                        DemographicsResponseDTO savedDemographicsResponse = fromEntity(savedDemographics);
+                        return (HttpResponse<DemographicsResponseDTO>) HttpResponse
+                                .created(savedDemographicsResponse)
+                                .headers(headers -> headers.location(URI.create(String.format("%s/%s", request.getPath(), savedDemographicsResponse.getId()))))
+                                .body(savedDemographicsResponse);
+                })
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 
