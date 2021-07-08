@@ -23,7 +23,7 @@ const AdminPage = () => {
     setRoles(false);
     setUsers(true);
   };
-
+  // uncommment lines when components are ready
   return (
     <div>
       <div className="container">
@@ -32,13 +32,22 @@ const AdminPage = () => {
               {users && <Users/>} */}
       </div>
       <div className="bottom-nav">
-        <Button className="button" onClick={handlePermissions}>
+        <Button
+          //   className={permissions ? "button-selected" : "button"}
+          onClick={handlePermissions}
+        >
           <h3>Permissions</h3>
         </Button>
-        <Button className="button" onClick={handleRoles}>
+        <Button
+          //   className={roles ? "button-selected" : "button"}
+          onClick={handleRoles}
+        >
           <h3>Roles</h3>
         </Button>
-        <Button className="button" onClick={handleUsers}>
+        <Button
+          //   className={users ? "button-selected" : "button"}
+          onClick={handleUsers}
+        >
           <h3>Users</h3>
         </Button>
       </div>

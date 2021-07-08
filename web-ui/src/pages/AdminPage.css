@@ -12,6 +12,13 @@
   width: 33.3%;
 }
 
+.bottom-nav .button-selected {
+  background-color: darkgray;
+  border: 1px solid black;
+  height: 75px;
+  width: 33.3%;
+}
+
 @media (max-width: 750px) {
   .bottom-nav {
     width: 100%;
