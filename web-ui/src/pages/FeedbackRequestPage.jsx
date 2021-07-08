@@ -22,10 +22,6 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
-  requestHeader: {
-    marginLeft: "2%",
-
-  },
   stepContainer: {
     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       width: '80%',
