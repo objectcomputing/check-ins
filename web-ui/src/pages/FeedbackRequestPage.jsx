@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {useLocation, useHistory} from 'react-router-dom';
+import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
