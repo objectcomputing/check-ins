@@ -9,7 +9,7 @@
     height: 50%;
     min-height: 380px;
     margin-top: 2em;
-    padding: 20px 26px 20px 26px;
+    padding: 20px 0 20px 26px;
     border-radius: 20px;
     border: 1px dashed gray;
 }
@@ -33,4 +33,9 @@
     flex-wrap: wrap;
 }
 
+@media(min-width: 321px) and (max-width: 767px) {
+    .selected-recipients-container {
+        padding: 10px 0 10px 16px;
+    }
+}
 

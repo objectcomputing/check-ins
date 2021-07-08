@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
@@ -32,9 +31,9 @@ const useStyles = makeStyles({
       width: "80%",
     },
   },
-   header: {
+  header: {
     cursor: "pointer",
-   },
+  },
   cardContent: {
     display: 'flex',
     alignItems: 'center',
@@ -54,7 +53,7 @@ const useStyles = makeStyles({
   },
 });
 
-const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, onClick}) => {
+const FeedbackRecipientCard = ({ recipientProfile, selected, reason, onClick}) => {
   const { state } = useContext(AppContext);
   const supervisorProfile = selectProfileMap(state)[recipientProfile?.supervisorid];
   const pdlProfile = selectProfileMap(state)[recipientProfile?.pdlId];
@@ -63,41 +62,34 @@ const FeedbackRecipientCard = ({ profileId, recipientProfile, selected, reason, 
 
   return (
     <Box display="flex" flexWrap="wrap">
-      <CardHeader selected={selected}/>
       <Card onClick={onClick} className="member-card" selected={selected}>
-        <Link
-          style={{ color: "black", textDecoration: "none" }}
-          to={`/profile/${recipientProfile?.id}`}
-        >
-
-          <CardHeader
-            className={classes.header}
-            title={
-              <Typography variant="h5" component="h2" >
-                {recipientProfile?.name}
-              </Typography>
-            }
-            action={
-                selected ?
-                  <CheckCircleIcon style={{color: green[500]}}>checkmark-image</CheckCircleIcon> :
-                  null
-              }
-            subheader={
-              <Typography color="textSecondary" component="h3" >
-                {recipientProfile?.title}
-              </Typography>
-            }
-            disableTypography
-            avatar= {!recipientProfile?.terminationDate ?
-              <Avatar className={"large"} src={getAvatarURL(recipientProfile?.workEmail)} /> :
-              <Avatar className={"large"} >
-                <PriorityHighIcon />
-              </Avatar>
-            }
-          />
-        </Link>
+        <CardHeader
+          className={classes.header}
+          title={
+            <Typography variant="h5" component="h2">
+              {recipientProfile?.name}
+            </Typography>
+          }
+          action={
+            selected ?
+              <CheckCircleIcon style={{color: green[500]}}>checkmark-image</CheckCircleIcon> :
+              null
+          }
+          subheader={
+            <Typography color="textSecondary" component="h3">
+              {recipientProfile?.title}
+            </Typography>
+          }
+          disableTypography
+          avatar= {!recipientProfile?.terminationDate ?
+            <Avatar className="large" src={getAvatarURL(recipientProfile?.workEmail)} /> :
+            <Avatar className="large">
+              <PriorityHighIcon />
+            </Avatar>
+          }
+        />
         <CardContent>
-          <Container fixed className={"info-container"}>
+          <Container fixed className= "info-container">
             <Typography variant="body2" color="textSecondary" component="p">
               <a
                 href={`mailto:${recipientProfile?.workEmail}`}

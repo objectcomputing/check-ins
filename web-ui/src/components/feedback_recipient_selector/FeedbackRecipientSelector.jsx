@@ -79,7 +79,7 @@ const FeedbackRecipientSelector = () => {
       if (!hasRenewedFromURL.current && from !== null && from !== undefined) {
         let profileCopy = profiles;
         if (typeof from === 'string') {
-          let newProfile = {id : from}
+          let newProfile = {id: from}
         if (profiles.filter(member => member.id === newProfile.id).length === 0) {
           profileCopy.push(newProfile)
         }
@@ -117,8 +117,7 @@ const FeedbackRecipientSelector = () => {
               return suggestedMember.id === member.id
             });
           })
-          let newProfiles = []
-          newProfiles = filteredProfileCopy.concat(res)
+          let newProfiles = filteredProfileCopy.concat(res)
           setProfiles(newProfiles)
         }
       })
@@ -154,7 +153,7 @@ const FeedbackRecipientSelector = () => {
         return (
           <React.Fragment>
             {title}
-            <p>Click on recipients to request feedback from them</p>
+            <p style={{color: "gray"}}>Click on recipients to request feedback from them</p>
           </React.Fragment>
         );
       }
@@ -207,14 +206,15 @@ const FeedbackRecipientSelector = () => {
       </div>
       <div className="selectable-recipients-container">
         {profiles ?
-          profiles.filter((profile) => !from || !from.includes(profile.id)).map((profile) => (
-            <FeedbackRecipientCard
-              key={profile.id}
-              profileId={profile.id}
-              recipientProfile = {selectProfile(state, profile.id)}
-              reason={profile?.reason ? profile.reason : null}
-              onClick={() => cardClickHandler(profile.id)}/>
-          )) :
+          <div className="recipient-card-container">
+            {profiles.filter((profile) => !from || !from.includes(profile.id)).map((profile) => (
+              <FeedbackRecipientCard
+                key={profile.id}
+                recipientProfile = {selectProfile(state, profile.id)}
+                reason={profile?.reason ? profile.reason : null}
+                onClick={() => cardClickHandler(profile.id)}/>
+            ))}
+          </div> :
           <p>Can't get suggestions, please come back later :(</p>}
       </div>
     </Grid>
