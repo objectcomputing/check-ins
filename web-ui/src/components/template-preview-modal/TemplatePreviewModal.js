@@ -90,7 +90,6 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
       {template.isAdHoc && !template.id ?
         <React.Fragment>
           <TextField
-            id="standard-full-width"
             label="Title"
             placeholder="Ad Hoc"
             fullWidth
@@ -100,7 +99,6 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
               setAdHocTitle(event.target.value)
             }}/>
           <TextField
-            id="standard-full-width"
             label="Description"
             placeholder="Ask a single question"
             fullWidth
@@ -117,7 +115,6 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
 
       {template.isAdHoc && !template.id ?
         <TextField
-          id="standard-full-width"
           label="Ask a feedback question"
           placeholder="How is your day going?"
           fullWidth

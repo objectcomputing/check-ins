@@ -2,7 +2,7 @@ import React, {useState, useContext, useEffect, useRef} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
-import {TextField} from "@material-ui/core";
+import {InputAdornment, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
@@ -14,6 +14,7 @@ import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 
 import "./FeedbackTemplateSelector.css";
+import {Search} from "@material-ui/icons";
 
 const allTemplates = [
   {
@@ -152,17 +153,6 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
 
   return (
     <React.Fragment>
-      <div className="search-bar">
-        <TextField
-            label="Search Templates..."
-            placeholder="Template 1"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              hasFetchedData.current = false;
-            }}
-        />
-      </div>
       {preview.selectedTemplate &&
       <TemplatePreviewModal
         template={preview.selectedTemplate}
@@ -171,17 +161,34 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
       />
       }
-      <div className="feedback-ad-hoc-action-buttons">
-        <Button
-          className="ad-hoc-button"
-          variant="contained"
-          color="primary"
-          onClick={onNewAdHocClick}>
-          New Ad-Hoc Template
-        </Button>
-        <Tooltip title="An ad-hoc template allows you to ask a single question" arrow>
-          <HelpOutlineIcon style={{color: "gray", marginLeft: "10px"}}/>
-        </Tooltip>
+      <div className="feedback-template-actions">
+        <TextField
+          className="feedback-template-search"
+          label="Search Templates..."
+          placeholder="Template 1"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            hasFetchedData.current = false;
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment style={{color: "gray"}} position="end">
+                <Search/>
+              </InputAdornment>
+            )
+          }}/>
+        <div className="ad-hoc-button">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onNewAdHocClick}>
+            New Ad-Hoc Template
+          </Button>
+          <Tooltip title="An ad-hoc template allows you to ask a single question" arrow>
+            <HelpOutlineIcon style={{color: "gray", marginLeft: "10px"}}/>
+          </Tooltip>
+        </div>
       </div>
       <div className="card-container">
         {(!filteredTemplates && !searchText)
