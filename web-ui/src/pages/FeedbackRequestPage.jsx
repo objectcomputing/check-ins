@@ -179,9 +179,6 @@ const handleSubmit = () =>{
 
     }
 
-
-
-  
   if (!urlIsValid()) {
       history.push("/checkins");
   }
