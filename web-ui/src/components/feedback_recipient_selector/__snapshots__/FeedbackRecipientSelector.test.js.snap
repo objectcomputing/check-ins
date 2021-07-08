@@ -2,7 +2,7 @@
 
 exports[`renders the component 1`] = `
 <div
-  className="MuiGrid-root FeedbackRecipientSelector"
+  className="MuiGrid-root feedback-recipient-selector"
 >
   <div
     className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3"
@@ -14,19 +14,33 @@ exports[`renders the component 1`] = `
         className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-2"
       >
         <label
-          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
-          data-shrink={false}
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink"
+          data-shrink={true}
         >
-          Select employees...
+          Search employees...
         </label>
         <div
-          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedStart"
           onClick={[Function]}
         >
+          <div
+            className="MuiInputAdornment-root makeStyles-searchInputIcon-3 MuiInputAdornment-positionStart"
+          >
+            <svg
+              aria-hidden={true}
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              />
+            </svg>
+          </div>
           <input
             aria-invalid={false}
             autoFocus={false}
-            className="MuiInputBase-input MuiInput-input"
+            className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedStart"
             disabled={false}
             onAnimationStart={[Function]}
             onBlur={[Function]}
@@ -59,7 +73,13 @@ exports[`renders the component 1`] = `
       s
        selected
     </h5>
-    <p>
+    <p
+      style={
+        Object {
+          "color": "gray",
+        }
+      }
+    >
       Click on recipients to request feedback from them
     </p>
   </div>
