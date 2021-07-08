@@ -67,7 +67,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
 
     @Override
     public Demographics saveDemographics(@NotNull Demographics demographics) {
-        Demographics demographicsRet = null;
+        Demographics demographicsRet;
 
         if (demographics.getMemberId() == null) {
             throw new BadArgException(String.format("Invalid member id %s", demographics.getId()));
@@ -77,10 +77,10 @@ public class DemographicsServicesImpl implements DemographicsServices{
             throw new AlreadyExistsException(String.format("Demographics %s already exists", demographics.getId()));
         }
 
-            demographicsRet = demographicsRepository.save(demographics);
+        demographicsRet = demographicsRepository.save(demographics);
 
 
-        return (demographicsRet != null ? demographicsRet : new Demographics());
+        return demographicsRet;
     }
 
     @Override
