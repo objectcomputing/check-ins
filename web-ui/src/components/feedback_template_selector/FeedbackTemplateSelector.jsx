@@ -8,7 +8,7 @@ import {Tooltip} from "@material-ui/core";
 
 const allTemplates = [
     {
-      id: 123,
+      key: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -16,7 +16,7 @@ const allTemplates = [
       questions: []
     },
     {
-      id: 124,
+      key: 124,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -24,7 +24,7 @@ const allTemplates = [
       questions: [],
     },
     {
-      id: 125,
+      key: 125,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
@@ -121,12 +121,13 @@ const FeedbackTemplateSelector = (props) => {
       }
       <div className="card-container">
         {
-          (filteredTemplates.length === 0 && searchText === "")
+          (!filteredTemplates && !searchText)
               ? <h2>No templates found</h2>
-              : (searchText && searchText.length >= 0 && filteredTemplates.length === 0)
+              : (!searchText && !filteredTemplates)
               ? <h2>No matching templates</h2>
               : filteredTemplates.map((template) => (
                   <TemplateCard
+                      key={template.key}
                       title={template.title}
                       creator={template.creator}
                       description={template.description}
