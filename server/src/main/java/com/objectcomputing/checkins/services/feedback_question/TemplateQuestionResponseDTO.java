@@ -7,7 +7,11 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackQuestionCreateDTO {
+public class TemplateQuestionResponseDTO {
+
+    @NotNull
+    @Schema(description = "unique id of the feedback question", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "text of the question to receive feedback on", required = true)
@@ -16,6 +20,19 @@ public class FeedbackQuestionCreateDTO {
     @NotNull
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
+
+    @NotNull
+    @Schema(description = "order of question in template", required = true)
+    private Integer orderNum;
+
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getQuestion() {
         return question;
@@ -32,4 +49,13 @@ public class FeedbackQuestionCreateDTO {
     public void setTemplateId(UUID templateId) {
         this.templateId = templateId;
     }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
 }

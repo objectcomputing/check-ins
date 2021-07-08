@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.UUID;
 
-public class FeedbackQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackQuestionFixture, RoleFixture {
+public class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, FeedbackQuestionFixture, RoleFixture {
 
     @Inject
     @Client("/services/feedback/questions")
@@ -48,7 +48,7 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
         return dto;
     }
 
-    void assertContentEqualsResponse(FeedbackQuestion content, FeedbackQuestionResponseDTO dto) {
+    void assertContentEqualsResponse(FeedbackQuestion content, TemplateQuestionResponseDTO dto) {
         assertEquals(content.getQuestion(), dto.getQuestion());
         assertEquals(content.getTemplateId(), dto.getTemplateId());
     }
@@ -63,7 +63,7 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackQuestionResponseDTO.class);
+        final HttpResponse<TemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, TemplateQuestionResponseDTO.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -83,7 +83,7 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<FeedbackQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackQuestionResponseDTO.class);
+        final HttpResponse<TemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, TemplateQuestionResponseDTO.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -120,7 +120,7 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", question1.getId()))
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<FeedbackQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackQuestionResponseDTO.class);
+        final HttpResponse<TemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, TemplateQuestionResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -137,11 +137,11 @@ public class FeedbackQuestionControllerTest extends TestContainersSuite implemen
 
         final HttpRequest<?> request1 = HttpRequest.GET(String.format("%s", question1.getId()))
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackQuestionResponseDTO> response1 = client.toBlocking().exchange(request1, FeedbackQuestionResponseDTO.class);
+        final HttpResponse<TemplateQuestionResponseDTO> response1 = client.toBlocking().exchange(request1, TemplateQuestionResponseDTO.class);
 
         final HttpRequest<?> request2 = HttpRequest.GET(String.format("%s", question2.getId()))
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackQuestionResponseDTO> response2 = client.toBlocking().exchange(request2, FeedbackQuestionResponseDTO.class);
+        final HttpResponse<TemplateQuestionResponseDTO> response2 = client.toBlocking().exchange(request2, TemplateQuestionResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response1.getStatus());
         assertTrue(response1.getBody().isPresent());

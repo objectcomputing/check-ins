@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedback_questions")
-public class FeedbackQuestion {
+@Table(name = "template_questions")
+public class TemplateQuestion {
 
     @Id
     @Column(name = "id")
@@ -35,14 +35,20 @@ public class FeedbackQuestion {
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
-    public FeedbackQuestion(@NotNull String question,
-                            @NotNull UUID templateId) {
+    @Column(name = "orderNum")
+    @TypeDef(type = DataType.INTEGER)
+    @Schema(description = "order of question in template", required = true)
+    private Integer orderNum;
+
+    public TemplateQuestion(@NotNull String question,
+                            @NotNull UUID templateId, @NotNull Integer orderNum) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;
+        this.orderNum = orderNum;
     }
 
-    public FeedbackQuestion() {}
+    public TemplateQuestion() {}
 
     public UUID getId() {
         return id;
@@ -67,4 +73,12 @@ public class FeedbackQuestion {
     public void setTemplateId(UUID templateId) {
         this.templateId = templateId;
     }
+
+    public Integer getOrderNum() { return orderNum; }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+
 }
