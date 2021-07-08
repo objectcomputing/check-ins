@@ -14,22 +14,25 @@ import {
 } from "@material-ui/core";
 
 const SearchBirthdayAnniversaryResults = ({
+  hasSearched,
   searchBirthdayResults,
   searchAnniversaryResults,
+  anniversary,
+  birthday
 }) => {
   searchAnniversaryResults = searchAnniversaryResults.sort((a, b) => {
     return a.tenure - b.tenure;
   });
 
   searchBirthdayResults = searchBirthdayResults.sort((a, b) => {
-    const aday=a.birthDay.split('/').pop();
-    const bday=b.birthDay.split('/').pop();
-    return parseInt(aday) - (parseInt(bday));
+    const adate=new Date(a.birthDay);
+    const bdate=new Date(b.birthDay);
+    return adate - bdate;
   });
 
   const { state } = useContext(AppContext);
   const getMemberProfile = (member) => selectProfile(state, member.userId);
-
+  console.log(hasSearched);
   const BirthdayMap = () => {
     if (searchBirthdayResults.length > 0) {
       return searchBirthdayResults.map((member, index) => {
@@ -105,12 +108,22 @@ const SearchBirthdayAnniversaryResults = ({
   return (
     <div className="results-section">
       <List>
+        {searchBirthdayResults.length === 0 && hasSearched && birthday && (
+          <Card>
+            <CardHeader title="No Birthdays found for the selected month" />
+          </Card>
+        )}
         {searchBirthdayResults.length > 0 && (
           <Card>
             <CardHeader title="Birthdays" />
             <Container fixed>
               <BirthdayMap />
             </Container>
+          </Card>
+        )}
+        {searchAnniversaryResults.length === 0 && hasSearched && anniversary && (
+          <Card>
+            <CardHeader title="No Anniversaries found for the selected month" />
           </Card>
         )}
         {searchAnniversaryResults.length > 0 && (

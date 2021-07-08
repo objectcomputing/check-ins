@@ -37,6 +37,7 @@ const BirthdayAnniversaryReportPage = () => {
   const [searchAnniversaryResults, setSearchAnniversaryResults] = useState([]);
   const currentMonth = new Date().getMonth();
   const [selectedMonth, setSelectedMonth] = useState(months[currentMonth]);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleBirthday = () => {
     setBirthday(!birthday);
@@ -74,6 +75,7 @@ const BirthdayAnniversaryReportPage = () => {
       setSearchBirthdayResults(birthdayResults.payload.data);
       setSearchAnniversaryResults(anniversaryResults.payload.data);
     }
+    setHasSearched(true);
   };
 
   function onMonthChange(event, newValue) {
@@ -143,8 +145,10 @@ const BirthdayAnniversaryReportPage = () => {
       <div>
         {
           <div className="search-results">
-            <h2>Birthdays and Anniversaries</h2>
             <SearchBirthdayAnniversaryResults
+              hasSearched={hasSearched}
+              birthday={birthday}
+              anniversary={anniversary}
               searchBirthdayResults={searchBirthdayResults}
               searchAnniversaryResults={searchAnniversaryResults}
             />

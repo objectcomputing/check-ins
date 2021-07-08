@@ -2,6 +2,10 @@
   margin-left: 12px;
 }
 
+.checkbox-row {
+  margin-top: 0;
+}
+
 .checkbox-row label {
   margin-left: 0.5rem;
 }
