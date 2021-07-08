@@ -31,7 +31,7 @@ const allTemplates = [
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
       creator: "Bob Smith",
       questions: []
-    },
+    }
   ];
 
 
@@ -122,7 +122,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
       }
       <div className="card-container">
         {
-          (!filteredTemplates.length && searchText)
+          (!filteredTemplates.length && !searchText)
               ? <h2>No templates found</h2>
               : (searchText && !filteredTemplates.length)
               ? <h2>No matching templates</h2>
