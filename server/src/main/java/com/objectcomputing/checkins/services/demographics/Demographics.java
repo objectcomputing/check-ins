@@ -6,6 +6,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -29,43 +30,53 @@ public class Demographics {
     @Schema(description = "the userId of the employee", required = true)
     private UUID memberId;
 
+    @Nullable
     @Column(name="gender")
     @Schema(description = "the gender of the employee")
     private String gender;
 
+    @Nullable
     @Column(name="degreeLevel")
     @Schema(description = "the degree level of the employee")
     private String degreeLevel;
 
+    @Nullable
     @Column(name="industryTenure")
     @Schema(description = "the industry tenure of the employee")
     private Integer industryTenure;
 
+    @Nullable
     @Column(name="personOfColor")
     @Schema(description = "whether the employee is a person of color")
-    private boolean personOfColor = false;
+    private Boolean personOfColor = false;
 
+    @Nullable
     @Column(name="veteran")
     @Schema(description = "whether the employee is a veteran")
-    private boolean veteran = false;
+    private Boolean veteran = false;
 
+    @Nullable
     @Column(name="militaryTenure")
     @Schema(description = "the military tenure of the employee")
     private Integer militaryTenure;
 
+    @Nullable
     @Column(name="militaryBranch")
     @Schema(description = "the military branch of the employee")
     private String militaryBranch;
 
-    public Demographics(UUID id,
+    public Demographics() {
+    }
+
+    public Demographics(@Nullable UUID id,
                         @NotNull UUID memberId,
-                        String gender,
-                        String degreeLevel,
-                        Integer industryTenure,
-                        boolean personOfColor,
-                        boolean veteran,
-                        Integer militaryTenure,
-                        String militaryBranch) {
+                        @Nullable String gender,
+                        @Nullable String degreeLevel,
+                        @Nullable Integer industryTenure,
+                        @Nullable Boolean personOfColor,
+                        @Nullable Boolean veteran,
+                        @Nullable Integer militaryTenure,
+                        @Nullable String militaryBranch) {
         this.id = id;
         this.memberId = memberId;
         this.gender = gender;
@@ -78,13 +89,13 @@ public class Demographics {
     }
 
     public Demographics(@NotNull UUID memberId,
-                        String gender,
-                        String degreeLevel,
-                        int industryTenure,
-                        boolean personOfColor,
-                        boolean veteran,
-                        int militaryTenure,
-                        String militaryBranch) {
+                        @Nullable String gender,
+                        @Nullable String degreeLevel,
+                        @Nullable Integer industryTenure,
+                        @Nullable Boolean personOfColor,
+                        @Nullable Boolean veteran,
+                        @Nullable Integer militaryTenure,
+                        @Nullable String militaryBranch) {
         this.memberId = memberId;
         this.gender = gender;
         this.degreeLevel = degreeLevel;
@@ -111,59 +122,66 @@ public class Demographics {
         this.memberId = memberId;
     }
 
+    @Nullable
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(@Nullable String gender) {
         this.gender = gender;
     }
 
+    @Nullable
     public String getDegreeLevel() {
         return degreeLevel;
     }
 
-    public void setDegreeLevel(String degreeLevel) {
+    public void setDegreeLevel(@Nullable String degreeLevel) {
         this.degreeLevel = degreeLevel;
     }
 
+    @Nullable
     public Integer getIndustryTenure() {
         return industryTenure;
     }
 
-    public void setIndustryTenure(Integer industryTenure) {
+    public void setIndustryTenure(@Nullable Integer industryTenure) {
         this.industryTenure = industryTenure;
     }
 
-    public boolean isPersonOfColor() {
+    @Nullable
+    public Boolean getPersonOfColor() {
         return personOfColor;
     }
 
-    public void setPersonOfColor(boolean personOfColor) {
+    public void setPersonOfColor(@Nullable Boolean personOfColor) {
         this.personOfColor = personOfColor;
     }
 
-    public boolean isVeteran() {
+    @Nullable
+    public Boolean getVeteran() {
         return veteran;
     }
 
-    public void setVeteran(boolean veteran) {
+    public void setVeteran(@Nullable Boolean veteran) {
         this.veteran = veteran;
     }
 
+    @Nullable
     public Integer getMilitaryTenure() {
         return militaryTenure;
     }
 
-    public void setMilitaryTenure(Integer militaryTenure) {
+    public void setMilitaryTenure(@Nullable Integer militaryTenure) {
         this.militaryTenure = militaryTenure;
     }
 
+    @Nullable
     public String getMilitaryBranch() {
         return militaryBranch;
     }
 
-    public void setMilitaryBranch(String militaryBranch) {
+    public void setMilitaryBranch(@Nullable String militaryBranch) {
         this.militaryBranch = militaryBranch;
     }
 

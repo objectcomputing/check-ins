@@ -22,15 +22,19 @@ public class DemographicsCreateDTO {
     @Schema(description = "the degree level of the employee")
     private String degreeLevel;
 
+    @Nullable
     @Schema(description = "the industry tenure of the employee")
     private Integer industryTenure;
 
+    @Nullable
     @Schema(description = "whether the employee is a person of color")
-    private boolean personOfColor = false;
+    private Boolean personOfColor = false;
 
+    @Nullable
     @Schema(description = "whether the employee is a veteran")
-    private boolean veteran = false;
+    private Boolean veteran = false;
 
+    @Nullable
     @Schema(description = "the military tenure of the employee")
     private Integer militaryTenure;
 
@@ -64,35 +68,39 @@ public class DemographicsCreateDTO {
         this.degreeLevel = degreeLevel;
     }
 
+    @Nullable
     public Integer getIndustryTenure() {
         return industryTenure;
     }
 
-    public void setIndustryTenure(Integer industryTenure) {
+    public void setIndustryTenure(@Nullable Integer industryTenure) {
         this.industryTenure = industryTenure;
     }
 
-    public boolean isPersonOfColor() {
+    @Nullable
+    public Boolean getPersonOfColor() {
         return personOfColor;
     }
 
-    public void setPersonOfColor(boolean personOfColor) {
+    public void setPersonOfColor(@Nullable Boolean personOfColor) {
         this.personOfColor = personOfColor;
     }
 
-    public boolean isVeteran() {
+    @Nullable
+    public Boolean getVeteran() {
         return veteran;
     }
 
-    public void setVeteran(boolean veteran) {
+    public void setVeteran(@Nullable Boolean veteran) {
         this.veteran = veteran;
     }
 
+    @Nullable
     public Integer getMilitaryTenure() {
         return militaryTenure;
     }
 
-    public void setMilitaryTenure(Integer militaryTenure) {
+    public void setMilitaryTenure(@Nullable Integer militaryTenure) {
         this.militaryTenure = militaryTenure;
     }
 

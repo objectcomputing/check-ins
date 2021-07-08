@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.demographics;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -17,24 +18,31 @@ public class DemographicsUpdateDTO {
     @Schema(description = "the userId of the employee", required = true)
     private UUID memberId;
 
+    @Nullable
     @Schema(description = "the gender of the employee")
     private String gender;
 
+    @Nullable
     @Schema(description = "the degree level of the employee")
     private String degreeLevel;
 
+    @Nullable
     @Schema(description = "the industry tenure of the employee")
     private Integer industryTenure;
 
+    @Nullable
     @Schema(description = "whether the employee is a person of color")
-    private boolean personOfColor = false;
+    private Boolean personOfColor = false;
 
+    @Nullable
     @Schema(description = "whether the employee is a veteran")
-    private boolean veteran = false;
+    private Boolean veteran = false;
 
+    @Nullable
     @Schema(description = "the military tenure of the employee")
     private Integer militaryTenure;
 
+    @Nullable
     @Schema(description = "the military branch of the employee")
     private String militaryBranch;
 
@@ -54,59 +62,66 @@ public class DemographicsUpdateDTO {
         this.memberId = memberId;
     }
 
+    @Nullable
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(@Nullable String gender) {
         this.gender = gender;
     }
 
+    @Nullable
     public String getDegreeLevel() {
         return degreeLevel;
     }
 
-    public void setDegreeLevel(String degreeLevel) {
+    public void setDegreeLevel(@Nullable String degreeLevel) {
         this.degreeLevel = degreeLevel;
     }
 
+    @Nullable
     public Integer getIndustryTenure() {
         return industryTenure;
     }
 
-    public void setIndustryTenure(Integer industryTenure) {
+    public void setIndustryTenure(@Nullable Integer industryTenure) {
         this.industryTenure = industryTenure;
     }
 
-    public boolean isPersonOfColor() {
+    @Nullable
+    public Boolean getPersonOfColor() {
         return personOfColor;
     }
 
-    public void setPersonOfColor(boolean personOfColor) {
+    public void setPersonOfColor(@Nullable Boolean personOfColor) {
         this.personOfColor = personOfColor;
     }
 
-    public boolean isVeteran() {
+    @Nullable
+    public Boolean getVeteran() {
         return veteran;
     }
 
-    public void setVeteran(boolean veteran) {
+    public void setVeteran(@Nullable Boolean veteran) {
         this.veteran = veteran;
     }
 
+    @Nullable
     public Integer getMilitaryTenure() {
         return militaryTenure;
     }
 
-    public void setMilitaryTenure(Integer militaryTenure) {
+    public void setMilitaryTenure(@Nullable Integer militaryTenure) {
         this.militaryTenure = militaryTenure;
     }
 
+    @Nullable
     public String getMilitaryBranch() {
         return militaryBranch;
     }
 
-    public void setMilitaryBranch(String militaryBranch) {
+    public void setMilitaryBranch(@Nullable String militaryBranch) {
         this.militaryBranch = militaryBranch;
     }
 }
