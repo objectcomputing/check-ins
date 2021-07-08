@@ -131,9 +131,9 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     history.push("/feedback/request/confirmation");
-  };
+  }, [history]);
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
@@ -143,7 +143,7 @@ const FeedbackRequestPage = () => {
     }
     query.step = activeStep + 1;
     history.push({...location, search: queryString.stringify(query)});
-  }, [canProceed, activeStep, steps.length, query, location, history]);
+  }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
 
   const onBackClick = useCallback(() => {
     history.goBack();
