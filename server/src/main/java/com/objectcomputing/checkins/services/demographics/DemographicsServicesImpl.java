@@ -31,7 +31,8 @@ public class DemographicsServicesImpl implements DemographicsServices{
         Demographics demographics = demographicsRepository.findById(id).orElse(null);
 
         if (!currentUserServices.isAdmin() &&
-                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+                (demographics!= null && demographics.getMemberId() != null &&
+                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
             throw new PermissionException("You are not authorized to access this Demographics");
         }
 
@@ -52,7 +53,7 @@ public class DemographicsServicesImpl implements DemographicsServices{
             throw new PermissionException("Requires admin privileges");
         }
 
-        List<Demographics> result  = new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
+        return new ArrayList<>(demographicsRepository.searchByValues(nullSafeUUIDToString(memberId),
                 gender,
                 degreeLevel,
                 industryTenure,
@@ -60,14 +61,13 @@ public class DemographicsServicesImpl implements DemographicsServices{
                 veteran,
                 militaryTenure,
                 militaryBranch));
-
-        return result;
     }
 
     @Override
     public Demographics updateDemographics(Demographics demographics) {
         if (!currentUserServices.isAdmin() &&
-                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+                (demographics.getMemberId() != null &&
+                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
             throw new PermissionException("You are not authorized to update this demographic");
         }
 
@@ -84,7 +84,8 @@ public class DemographicsServicesImpl implements DemographicsServices{
     @Override
     public Demographics saveDemographics(@NotNull Demographics demographics) {
         if (!currentUserServices.isAdmin() &&
-                !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId())) {
+                (demographics.getMemberId() != null &&
+                        !demographics.getMemberId().equals(currentUserServices.getCurrentUser().getId()))) {
             throw new PermissionException("You are not authorized to create this Demographic");
         }
 
