@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -72,8 +71,6 @@ public class FeedbackRequest {
     @Nullable
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
-
-    //TODO: Shouldnt this sentiment be directly attached to the answer, not the request?
 
     public FeedbackRequest(@NotNull UUID creatorId,
                            @NotNull UUID requesteeId,

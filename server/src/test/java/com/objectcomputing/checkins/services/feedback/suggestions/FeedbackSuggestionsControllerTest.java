@@ -36,7 +36,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
     void assertContentEqualsEntity(FeedbackSuggestionDTO ideal, FeedbackSuggestionDTO actualResponse) {
         assertEquals(ideal.getReason(), actualResponse.getReason());
-        assertEquals(ideal.getProfileId(), actualResponse.getProfileId());
+        assertEquals(ideal.getId(), actualResponse.getId());
     }
     @Test
     void testGetRecsIfPdl() {

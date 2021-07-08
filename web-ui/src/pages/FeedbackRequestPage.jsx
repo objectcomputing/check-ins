@@ -5,7 +5,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {useLocation, useHistory} from 'react-router-dom';
+import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -21,10 +21,6 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
       padding: 0,
     },
-  },
-  requestHeader: {
-    marginLeft: "2%",
-
   },
   stepContainer: {
     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key

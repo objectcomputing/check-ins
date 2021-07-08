@@ -1,7 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useState, useContext, useEffect, useRef} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
+import {TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
@@ -14,34 +15,32 @@ import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 
 import "./FeedbackTemplateSelector.css";
 
-function getFakeTemplates() {
-  return [
-    {
-      id: 123,
-      title: "Survey 1",
-      isAdHoc: false,
-      description: "Make a survey with a few questions",
-      createdBy: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
-      questions: []
-    },
-    {
-      id: 124,
-      title: "Feedback Survey 2",
-      isAdHoc: false,
-      description: "Another type of survey",
-      createdBy: "2559a257-ae84-4076-9ed4-3820c427beeb",
-      questions: [],
-    },
-    {
-      id: 125,
-      title: "Custom Template",
-      isAdHoc: false,
-      description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-      createdBy: "802cb1f5-a255-4236-8719-773fa53d79d9",
-      questions: []
-    },
-  ];
-}
+const allTemplates = [
+  {
+    id: 123,
+    title: "Survey 1",
+    isAdHoc: false,
+    description: "Make a survey with a few questions",
+    createdBy: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
+    questions: []
+  },
+  {
+    id: 124,
+    title: "Feedback Survey 2",
+    isAdHoc: false,
+    description: "Another type of survey",
+    createdBy: "2559a257-ae84-4076-9ed4-3820c427beeb",
+    questions: [],
+  },
+  {
+    id: 125,
+    title: "Custom Template",
+    isAdHoc: false,
+    description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
+    createdBy: "802cb1f5-a255-4236-8719-773fa53d79d9",
+    questions: []
+  },
+];
 
 const propTypes = {
   query: PropTypes.string,
@@ -56,6 +55,9 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
 
   const [templates, setTemplates] = useState([]);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const [searchText, setSearchText] = useState("");
+  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+  const hasFetchedData = useRef(false);
 
   useEffect(() => {
     async function getTemplates(csrf) {
@@ -71,7 +73,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
           ? res.payload.data
           : null
       if (templateList) {
-        return [...templateList, ...getFakeTemplates()];
+        return [...templateList, ...allTemplates];
       }
     }
     if (csrf && currentUserId) {
@@ -129,8 +131,38 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
   }
 
+  useEffect(() => {
+    const filterTemplates = () => {
+
+      if (!hasFetchedData.current) {
+        if (searchText !== "") {
+          setFilteredTemplates(allTemplates.filter((template) =>
+              template.title.toLowerCase().includes(searchText.toLowerCase()) ||
+              template.description.toLowerCase().includes(searchText.toLowerCase())));
+        } else {
+          setFilteredTemplates(allTemplates)
+        }
+        hasFetchedData.current = true;
+      }
+    }
+    filterTemplates();
+
+  }, [searchText, filteredTemplates])
+
+
   return (
     <React.Fragment>
+      <div className="search-bar">
+        <TextField
+            label="Search Templates..."
+            placeholder="Template 1"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              hasFetchedData.current = false;
+            }}
+        />
+      </div>
       {preview.selectedTemplate &&
       <TemplatePreviewModal
         template={preview.selectedTemplate}
@@ -152,18 +184,22 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         </Tooltip>
       </div>
       <div className="card-container">
-        {templates.map((template) => (
-          <TemplateCard
-            key={template.id}
-            title={template.title}
-            createdBy={template.createdBy}
-            description={template.description}
-            isAdHoc={template.isAdHoc}
-            questions={template.questions}
-            expanded={preview.open}
-            onPreviewClick={(e) => handlePreviewOpen(e, template)}
-            onCardClick={() => onCardClick(template)}/>
-        ))}
+        {(!filteredTemplates && !searchText)
+          ? <h2>No templates found</h2>
+          : (!searchText && !filteredTemplates)
+            ? <h2>No matching templates</h2>
+            : filteredTemplates.map((template) => (
+              <TemplateCard
+                key={template.id}
+                  title={template.title}
+                  createdBy={template.createdBy}
+                  description={template.description}
+                  isAdHoc={template.isAdHoc}
+                  questions={template.questions}
+                  expanded={preview.open}
+                  onClick={(e) => handlePreviewOpen(e, template)}
+                  onCardClick={() => onCardClick(template)}/>
+              ))}
       </div>
     </React.Fragment>
   );
