@@ -33,19 +33,19 @@ const AdminPage = () => {
       </div>
       <div className="bottom-nav">
         <Button
-          //   className={permissions ? "button-selected" : "button"}
+          className={permissions ? "button-selected" : "button"}
           onClick={handlePermissions}
         >
           <h3>Permissions</h3>
         </Button>
         <Button
-          //   className={roles ? "button-selected" : "button"}
+          className={roles ? "button-selected" : "button"}
           onClick={handleRoles}
         >
           <h3>Roles</h3>
         </Button>
         <Button
-          //   className={users ? "button-selected" : "button"}
+          className={users ? "button-selected" : "button"}
           onClick={handleUsers}
         >
           <h3>Users</h3>
