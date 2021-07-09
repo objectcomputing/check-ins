@@ -1,15 +1,15 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
+import {TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
 import "./FeedbackTemplateSelector.css"
 
-function getTemplates() {
-  return [
+const allTemplates = [
     {
-      id: 123,
+      key: 123,
       title: "Survey 1",
       isAdHoc: false,
       description: "Make a survey with a few questions",
@@ -17,7 +17,7 @@ function getTemplates() {
       questions: []
     },
     {
-      id: 124,
+      key: 124,
       title: "Feedback Survey 2",
       isAdHoc: false,
       description: "Another type of survey",
@@ -25,23 +25,26 @@ function getTemplates() {
       questions: [],
     },
     {
-      id: 125,
+      key: 125,
       title: "Custom Template",
       isAdHoc: false,
       description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
       creator: "Bob Smith",
       questions: []
-    },
+    }
   ];
-}
+
 
 const propTypes = {
   query: PropTypes.string,
   changeQuery: PropTypes.func
 }
 
-const FeedbackTemplateSelector = (props) => {
+const FeedbackTemplateSelector = ({changeQuery}) => {
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const [searchText, setSearchText] = useState("");
+  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
+  const hasFetchedData = useRef(false);
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     event.stopPropagation();
@@ -49,7 +52,7 @@ const FeedbackTemplateSelector = (props) => {
   }
 
   const handlePreviewSubmit = (selectedTemplate) => {
-    props.changeQuery("template", selectedTemplate.id);
+    changeQuery("template", selectedTemplate.id);
     setPreview({open: false, selectedTemplate: selectedTemplate});
   }
 
@@ -61,7 +64,7 @@ const FeedbackTemplateSelector = (props) => {
     if (template.isAdHoc) {
       setPreview({open: true, selectedTemplate: template});
     } else {
-      props.changeQuery("template", template.id);
+      changeQuery("template", template.id);
     }
   }
 
@@ -75,8 +78,40 @@ const FeedbackTemplateSelector = (props) => {
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
   }
 
+
+  useEffect(() => {
+    const filterTemplates = () => {
+
+      if (!hasFetchedData.current) {
+        if (searchText !== "") {
+          setFilteredTemplates(allTemplates.filter((template) =>
+              template.title.toLowerCase().includes(searchText.toLowerCase()) ||
+              template.description.toLowerCase().includes(searchText.toLowerCase())));
+        } else {
+          setFilteredTemplates(allTemplates)
+        }
+        hasFetchedData.current = true;
+      }
+    }
+    filterTemplates();
+
+  }, [searchText, filteredTemplates])
+
+
   return (
     <React.Fragment>
+      <div className="search-bar">
+        <TextField
+            label="Search Templates..."
+            placeholder="Template 1"
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              hasFetchedData.current = false;
+            }}
+        />
+      </div>
+
       {preview.selectedTemplate &&
       <TemplatePreviewModal
         template={preview.selectedTemplate}
@@ -86,18 +121,23 @@ const FeedbackTemplateSelector = (props) => {
       />
       }
       <div className="card-container">
-        {getTemplates().map((template) => (
-          <TemplateCard
-            key={template.id}
-            title={template.title}
-            creator={template.creator}
-            description={template.description}
-            isAdHoc={template.isAdHoc}
-            questions={template.questions}
-            expanded={preview.open}
-            onClick={(e) => handlePreviewOpen(e, template)}
-            onCardClick={() => onCardClick(template)}/>
-        ))}
+        {
+          (!filteredTemplates.length && !searchText)
+              ? <h2>No templates found</h2>
+              : (searchText && !filteredTemplates.length)
+              ? <h2>No matching templates</h2>
+              : filteredTemplates.map((template) => (
+                  <TemplateCard
+                      key={template.key}
+                      title={template.title}
+                      creator={template.creator}
+                      description={template.description}
+                      isAdHoc={template.isAdHoc}
+                      questions={template.questions}
+                      expanded={preview.open}
+                      onClick={(e) => handlePreviewOpen(e, template)}
+                      onCardClick={() => onCardClick(template)}/>
+              ))}
       </div>
       <div className= "ad-hoc-container">
       <Tooltip title="Ask a single question" className="ad-hoc-container" arrow>

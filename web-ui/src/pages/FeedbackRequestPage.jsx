@@ -1,38 +1,35 @@
-import React, {useState, useEffect, useContext, useCallback} from "react";
+import React, {useContext, useCallback} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import {useLocation, useHistory} from 'react-router-dom';
+import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
-import {getMember} from "../api/member";
+import {selectProfile} from "../context/selectors";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent",
     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
-        width: '100%',
-        padding: 0,
-      },
-  },
-  requestHeader: {
-  marginLeft: "2%",
-
+      width: '100%',
+      padding: 0,
+    },
   },
   stepContainer: {
-     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
-          width: '80%',
-        },
-         ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
-                 display: "none",
-                },
+    ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
+      width: '80%',
+    },
+    ['@media max-width(320px)']: { // eslint-disable-line no-useless-computed-key
+      display: "none",
+    },
+    backgroundColor: "transparent"
   },
   appBar: {
     position: "relative",
@@ -52,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
   actionButtons: {
     margin: "0 0 0 1em"
   }
-
 }));
 
 function getSteps() {
@@ -61,7 +57,6 @@ function getSteps() {
 
 const FeedbackRequestPage = () => {
   const {state} = useContext(AppContext);
-  const {csrf} = state;
   const steps = getSteps();
   const classes = useStyles();
   const location = useLocation();
@@ -71,8 +66,8 @@ const FeedbackRequestPage = () => {
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
   const dueQuery = query.due?.toString();
-  const [requestee, setRequestee] = useState();
-  const id = query.for?.toString();
+  const forQuery = query.for?.toString();
+  const requestee = selectProfile(state, forQuery);
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -82,28 +77,13 @@ const FeedbackRequestPage = () => {
 
   const activeStep = getStep();
 
-  useEffect(() => {
-    async function getMemberProfile() {
-      if (id) {
-        let res = await getMember(id, csrf);
-        let requesteeProfile =
-          res.payload.data && !res.error ? res.payload.data : undefined;
-        setRequestee(requesteeProfile ? requesteeProfile.name : "");
-      }
-    }
-
-    if (csrf) {
-      getMemberProfile();
-    }
-  }, [csrf, id]);
-
-  const hasFor = useCallback(() => {
-    return !id;
-  }, [id])
-
   const hasTemplate = useCallback(() => {
     return !!templateQuery;
   }, [templateQuery])
+
+  const hasFor = useCallback(() => {
+    return !!forQuery;
+  }, [forQuery])
 
   const hasFrom = useCallback(() => {
     return !!fromQuery;
@@ -131,14 +111,19 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = useCallback(() => {
+    history.push("/feedback/request/confirmation");
+  }, [history]);
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
-    if (activeStep === steps.length) handleSubmit();
+    if (activeStep === steps.length) {
+      handleSubmit();
+      return;
+    }
     query.step = `${activeStep + 1}`;
     history.push({...location, search: queryString.stringify(query)});
-  }, [canProceed, activeStep, steps.length, query, location, history]);
+  }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
 
   const onBackClick = useCallback(() => {
     if (activeStep === 1) return;
@@ -149,7 +134,7 @@ const FeedbackRequestPage = () => {
   const urlIsValid = useCallback(() => {
     switch (activeStep) {
       case 1:
-        return true;
+        return hasFor();
       case 2:
         return hasFor() && hasTemplate();
       case 3:
@@ -161,12 +146,6 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
-  if (!urlIsValid()) {
-    return (
-      history.push("/feedback/request/")
-    );
-  }
-
   const handleQueryChange = (key, value) => {
     let newQuery = {
       ...query,
@@ -176,27 +155,24 @@ const FeedbackRequestPage = () => {
   }
 
   if (!urlIsValid()) {
-    return (
-      history.push("/feedback/request/")
-    );
+    history.push("/checkins");
   }
 
   return (
     <div className="feedback-request-page">
       <div className="header-container">
-        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee}</b></Typography>
+        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
-            <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
-                    variant="contained">
-              Back
-            </Button>
-            <Button className={classes.actionButtons} onClick={onNextClick}
-                    variant="contained" disabled={!canProceed()} color="primary">
-              {activeStep === steps.length ? "Submit" : "Next"}
-            </Button>
-          </div>
+          <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
+                  variant="contained">
+            Back
+          </Button>
+          <Button className={classes.actionButtons} onClick={onNextClick}
+                  variant="contained" disabled={!canProceed()} color="primary">
+            {activeStep === steps.length ? "Submit" : "Next"}
+          </Button>
         </div>
-
+      </div>
       <div className= {classes.stepContainer}>
         <Stepper activeStep={activeStep - 1} className={classes.root}>
           {steps.map((label) => {
@@ -209,13 +185,13 @@ const FeedbackRequestPage = () => {
             );
           })}
         </Stepper>
-        </div>
-        <div className="current-step-content">
-          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
-          {activeStep === 2 && <FeedbackRecipientSelector/>}
-          {activeStep === 3 && <SelectDate/>}
-        </div>
       </div>
+      <div className="current-step-content">
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+        {activeStep === 2 && <FeedbackRecipientSelector/>}
+        {activeStep === 3 && <SelectDate/>}
+      </div>
+    </div>
   );
 };
 
