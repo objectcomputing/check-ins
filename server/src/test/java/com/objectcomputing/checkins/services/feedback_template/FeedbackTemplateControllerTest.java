@@ -136,7 +136,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         createDefaultAdminRole(admin);
 
         // Template created by non-admin
-        final MemberProfile memberOne = createASecondMemberProfile();
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
 
         final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
@@ -183,7 +183,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateByNonCreator() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
 
@@ -207,7 +207,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateOnNonexistentId() {
          final MemberProfile memberOne = createADefaultMemberProfile();
-         final MemberProfile memberTwo = createASecondMemberProfile();
+         final MemberProfile memberTwo = createASecondDefaultMemberProfile();
          final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
 
          final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
@@ -231,7 +231,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testGetPublicTemplateById() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", template.getId()))
                 .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
@@ -280,7 +280,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testGetByCreatedByUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", template.getCreatedBy()));
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -347,7 +347,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testGetByTitleAndCreatedByAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberTwo.getId());
         final FeedbackTemplate templateThree = saveAThirdDefaultFeedbackTemplate(memberOne.getId());
@@ -367,7 +367,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testGetBySimilarTitleAndCreatedByAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberTwo.getId());
         String title = template.getTitle();
@@ -386,7 +386,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testGetByTitleAndCreatedByUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s&title=%s", memberOne.getId(), encodeValue(template.getTitle())));
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -399,7 +399,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteValidAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", template.getId())).basicAuth(memberOne.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request);
@@ -415,7 +415,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteValidAuthorizedMultiple() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final FeedbackTemplate templateTwo = saveDefaultFeedbackTemplate(memberTwo.getId());
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", template.getId())).basicAuth(memberOne.getWorkEmail(), MEMBER_ROLE);
@@ -436,7 +436,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteInvalidAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", UUID.randomUUID())).basicAuth(memberOne.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -448,7 +448,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteValidUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", template.getId())).basicAuth(memberTwo.getWorkEmail(), MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,

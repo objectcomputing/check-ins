@@ -1,4 +1,4 @@
-import FeedbackRecipientCard from "./Feedback_recipient_card";
+import FeedbackRecipientCard from "./FeedbackRecipientCard";
 import React, {useContext, useEffect} from "react";
 import {AppContext, AppContextProvider} from "../../context/AppContext";
 import {UPDATE_MEMBER_PROFILES} from "../../context/actions";

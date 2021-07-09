@@ -79,7 +79,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testPostAuthorizedByAdmin() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile admin = createASecondMemberProfile();
+        final MemberProfile admin = createASecondDefaultMemberProfile();
         createDefaultAdminRole(admin);
 
         final FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
@@ -99,7 +99,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testPostUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
 
         final FeedbackTemplate feedbackTemplate = saveDefaultFeedbackTemplate(memberOne.getId());
 
@@ -118,7 +118,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testGetByIdAuthorizedByAdmin() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile admin = createASecondMemberProfile();
+        final MemberProfile admin = createASecondDefaultMemberProfile();
         createDefaultAdminRole(admin);
 
         final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
@@ -218,7 +218,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateQuestionAndOrderNotAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
         final TemplateQuestion question1 = saveQuestion("How are you today?", template.getId(), 1);
         final TemplateQuestionUpdateDTO updateDTO = new TemplateQuestionUpdateDTO();
@@ -314,7 +314,7 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteQuestionUnauthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondMemberProfile();
+        final MemberProfile memberTwo =createASecondDefaultMemberProfile();
         final FeedbackTemplate template =saveDefaultFeedbackTemplate(memberOne.getId());
         final TemplateQuestion question1 = saveQuestion("How are you today?", template.getId(), 1);
         final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", question1.getId())).basicAuth(memberTwo.getWorkEmail(), MEMBER_ROLE);

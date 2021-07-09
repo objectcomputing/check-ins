@@ -6,7 +6,6 @@ import { AppContext } from "../../context/AppContext";
 import { UPDATE_CHECKINS } from "../../context/actions";
 import { selectCurrentUserId, selectMostRecentCheckin, selectCsrfToken } from "../../context/selectors";
 import Card from '@material-ui/core/Card';
-import Link from '@material-ui/core/Link';
 import CardHeader from '@material-ui/core/CardHeader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -69,7 +68,13 @@ const Personnel = () => {
   }, [csrf, personnel, dispatch]);
 
 // Create feedback request link
-const createFeedbackRequestLink = (memberId) => (<Link to={`/feedback/request?for=${memberId}`}>Request Feedback</Link>);
+const createFeedbackRequestLink = (memberId) => (
+    <span className="feedback-link" onClick={(e) => {
+          e.stopPropagation();
+          history.push(`/feedback/request?for=${memberId}`);
+        }}>
+      Request Feedback
+    </span>);
 
   // Create entry of member and their last checkin
   function createEntry(person, lastCheckin, keyInput) {
@@ -85,15 +90,16 @@ const createFeedbackRequestLink = (memberId) => (<Link to={`/feedback/request?fo
     }
 
     return (
-      <ListItem key={key} button
-          onClick={() => {
-            history.push(`/checkins/${person?.id}`);
-          }}
+      <ListItem key={key}
+
       >
         <ListItemAvatar>
           <Avatar
             alt={name}
             src={getAvatarURL(workEmail)}
+            onClick={() => {
+              history.push(`/checkins/${person?.id}`);
+            }}
           />
         </ListItemAvatar>
         <ListItemText primary={name} secondary={createFeedbackRequestLink(person.id)}/>

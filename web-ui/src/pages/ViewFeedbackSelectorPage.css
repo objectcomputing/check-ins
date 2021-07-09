@@ -1,0 +1,21 @@
+.input-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    margin-top: 3em;
+    width: 100%;
+}
+.MuiFormControl-root {
+    width: 20%;
+    margin-right: 2em;
+}
+
+
+@media screen and (max-width: 769px) {
+
+    .input-row {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+}
