@@ -130,9 +130,6 @@ const FeedbackRequestPage = () => {
     if (activeStep < 1 || activeStep > steps.length) {
       
     }
-  
-    const handleSubmit = () => {
-    };
 
     const onNextClick = useCallback(() => {
       if (!canProceed()) return;
