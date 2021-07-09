@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import {
   DatePicker,
 } from '@material-ui/pickers';
@@ -25,10 +25,23 @@ const SelectDate = () =>{
     const classes = useStyles();
     const location = useLocation();
     const history = useHistory();
+    const hasPushedInitialValues = useRef(false);
     const query = queryString.parse(location?.search);
+    let todayDate = new Date();
+    const sendDate = query.send ? dateUtils.parse(query.send?.toString(), "yyyy-MM-dd"): todayDate ;
+    const dueDate = query.due ? dateUtils.parse(query.due?.toString(), "yyyy-MM-dd"): null;
 
-    const sendDate = query.send && dateUtils.parse(query.send?.toString(), "yyyy-MM-dd");
-    const dueDate = query.due && dateUtils.parse(query.due?.toString(), "yyyy-MM-dd");
+    useEffect(() => {
+    if (!hasPushedInitialValues.current && sendDate !== null && sendDate!== undefined && dueDate!==undefined) {
+      query.send = dateUtils.format(sendDate, "yyyy-MM-dd");
+      if (dueDate !== null) {
+              query.due = dateUtils.format(dueDate, "yyyy-MM-dd");
+      }
+        history.push({...location, search: queryString.stringify(query)});
+        hasPushedInitialValues.current=true;
+    }
+    })
+
 
     const handleDueDateChange = useCallback((date) => {
         query.due = dateUtils.format(date, "yyyy-MM-dd");
@@ -39,6 +52,8 @@ const SelectDate = () =>{
          query.send = dateUtils.format(date, "yyyy-MM-dd");
         history.push({...location, search: queryString.stringify(query)});
     },[location, history, query]);
+
+
 
     return (
     <React.Fragment>
@@ -66,7 +81,6 @@ const SelectDate = () =>{
                     label="Due Date:"
                     emptyLabel="No due date"
                     value={dueDate}
-                    minDate={dateUtils.date()}
                     onChange={handleDueDateChange}
                     KeyboardButtonProps={{
                        'aria-label': 'change date',
