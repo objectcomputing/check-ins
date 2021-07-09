@@ -91,7 +91,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
 
   const handlePreviewClose = (selectedTemplate) => {
     setPreview({open: false, selectedTemplate: selectedTemplate});
-  };
+  }
 
   const handlePreviewSubmit = async (submittedTemplate) => {
     if (!currentUserId || !csrf) {
@@ -114,7 +114,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
       }
     }
     setPreview({open: false, selectedTemplate: submittedTemplate});
-  };
+  }
 
   const onCardClick = (template) => {
     if (template && template.id) {
@@ -191,21 +191,21 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         </div>
       </div>
       <div className="card-container">
-        {(!filteredTemplates && !searchText)
-          ? <h2>No templates found</h2>
-          : (!searchText && !filteredTemplates)
-            ? <h2>No matching templates</h2>
-            : filteredTemplates.map((template) => (
-              <TemplateCard
-                key={template.id}
-                  title={template.title}
-                  createdBy={template.createdBy}
-                  description={template.description}
-                  isAdHoc={template.isAdHoc}
-                  questions={template.questions}
-                  expanded={preview.open}
-                  onClick={(e) => handlePreviewOpen(e, template)}
-                  onCardClick={() => onCardClick(template)}/>
+        {(!filteredTemplates.length && !searchText)
+              ? <h2>No templates found</h2>
+              : (searchText && !filteredTemplates.length)
+              ? <h2>No matching templates</h2>
+              : filteredTemplates.map((template) => (
+                  <TemplateCard
+                      key={template.id}
+                      title={template.title}
+                      createdBy={template.createdBy}
+                      description={template.description}
+                      isAdHoc={template.isAdHoc}
+                      questions={template.questions}
+                      expanded={preview.open}
+                      onClick={(e) => handlePreviewOpen(e, template)}
+                      onCardClick={() => onCardClick(template)}/>
               ))}
       </div>
     </React.Fragment>
