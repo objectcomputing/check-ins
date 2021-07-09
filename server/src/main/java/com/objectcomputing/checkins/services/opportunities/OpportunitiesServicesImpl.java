@@ -8,9 +8,7 @@ import com.objectcomputing.checkins.services.validate.PermissionsValidation;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class OpportunitiesServicesImpl implements OpportunitiesService {
@@ -84,15 +82,8 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     }
 
     @Override
-    public Set<Opportunities> findByFields(String name, String description) {
-        Set<Opportunities> opportunitiesResponse = new HashSet<>();
-        opportunitiesResponseRepo.findAll().forEach(opportunitiesResponse::add);
-        if(name!=null){
-            opportunitiesResponse.addAll(opportunitiesResponseRepo.findByName(name));
-        }
-        else if(description!=null){
-            opportunitiesResponse.addAll(opportunitiesResponseRepo.findByDescription(description));
-        }
+    public ArrayList<Opportunities> findByFields(String name, String description) {
+        final ArrayList<Opportunities> opportunitiesResponse = new ArrayList<>(opportunitiesResponseRepo.searchByValues(name,description));
         return opportunitiesResponse;
     }
 }

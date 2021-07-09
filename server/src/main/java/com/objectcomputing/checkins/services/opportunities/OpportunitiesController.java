@@ -18,10 +18,9 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 
 @Controller("/services/opportunities")
@@ -52,17 +51,12 @@ public class OpportunitiesController {
      * @return {@link Set < Opportunities > list of opportunities}
      */
     @Get("/{?name,description}")
-    public Single<HttpResponse<Set<Opportunities>>> findOpportunities(@Nullable String name,
-                                                         @Nullable String description) {
-        return Single.fromCallable(() -> {
-            if (name!=null || description!=null) {
-                return opportunitiesResponseServices.findByFields(name, description);
-            } else {
-                return opportunitiesResponseServices.readAll();
-            }
-        })
+    public Single<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
+                                                                       @Nullable String description) {
+        return Single.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(opportunities -> (HttpResponse<Set<Opportunities>>) HttpResponse.ok(opportunities))
+                .map(opportunities -> { List<Opportunities>  oppur = opportunities.stream().collect(Collectors.toList());
+                   return (HttpResponse<List<Opportunities>>) HttpResponse.ok(oppur);})
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 

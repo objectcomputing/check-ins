@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.opportunities;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Set;
 
@@ -13,6 +14,6 @@ public interface OpportunitiesService {
 
     void delete(UUID id);
 
-    Set<Opportunities> findByFields(String name, String description);
+    ArrayList<Opportunities> findByFields(String name, String description);
 
 }
