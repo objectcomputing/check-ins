@@ -1,16 +1,17 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class TemplateQuestionCreateDTO {
+public class TemplateQuestionResponseDTO {
+
+    @NotNull
+    @Schema(description = "unique id of the feedback question", required = true)
+    private UUID id;
 
     @NotNull
     @Schema(description = "text of the question to receive feedback on", required = true)
@@ -23,6 +24,15 @@ public class TemplateQuestionCreateDTO {
     @NotNull
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
+
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getQuestion() {
         return question;
@@ -47,6 +57,5 @@ public class TemplateQuestionCreateDTO {
     public void setOrderNum(Integer orderNum) {
         this.orderNum = orderNum;
     }
-
 
 }

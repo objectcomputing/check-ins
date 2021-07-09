@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -40,6 +40,16 @@ public class TemplateQuestion {
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
 
+    @Override
+    public String toString() {
+        return "TemplateQuestion{" +
+                "id=" + id +
+                ", question='" + question + '\'' +
+                ", templateId=" + templateId +
+                ", orderNum=" + orderNum +
+                '}';
+    }
+
     public TemplateQuestion(@NotNull String question,
                             @NotNull UUID templateId, @NotNull Integer orderNum) {
         this.id = null;
@@ -47,6 +57,8 @@ public class TemplateQuestion {
         this.templateId = templateId;
         this.orderNum = orderNum;
     }
+
+
 
     public TemplateQuestion() {}
 

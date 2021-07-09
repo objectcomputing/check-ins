@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class TemplateQuestionUpdateDTO {
+public class TemplateQuestionCreateDTO {
 
     @NotNull
     @Schema(description = "text of the question to receive feedback on", required = true)
@@ -44,4 +44,6 @@ public class TemplateQuestionUpdateDTO {
     public void setOrderNum(Integer orderNum) {
         this.orderNum = orderNum;
     }
+
+
 }

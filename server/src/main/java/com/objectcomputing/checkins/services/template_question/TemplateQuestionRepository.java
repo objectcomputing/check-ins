@@ -1,7 +1,5 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
-import com.mailjet.client.resource.Template;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

@@ -1,8 +1,5 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateResponseDTO;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateUpdateDTO;
-import com.objectcomputing.checkins.services.question_category.QuestionCategory;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -13,11 +10,14 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/questions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -102,6 +102,17 @@ public class TemplateQuestionController {
                 .subscribeOn(Schedulers.from(executorService));
     }
 
+    @Get("/{?templateId}")
+    public Single<HttpResponse<List<TemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
+        return Single.fromCallable(() -> templateQuestionServices.findByFields(templateId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackTemplateQuestions -> {
+                    List<TemplateQuestionResponseDTO> dtoList = feedbackTemplateQuestions.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<TemplateQuestionResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
+    }
+
 
 
     // TODO: Create endpoint for getting all questions for a given template ID and feedback request ID
@@ -120,6 +131,10 @@ public class TemplateQuestionController {
     }
 
     private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
-        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getOrderNum());
+        TemplateQuestion newQuestion = new TemplateQuestion();
+        newQuestion.setId(dto.getId());
+        newQuestion.setQuestion(dto.getQuestion());
+        newQuestion.setOrderNum(dto.getOrderNum());
+        return newQuestion;
     }
 }

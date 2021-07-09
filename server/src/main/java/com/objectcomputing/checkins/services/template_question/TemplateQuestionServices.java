@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
 
 import java.util.List;

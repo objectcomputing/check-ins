@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_question;
+package com.objectcomputing.checkins.services.template_question;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
@@ -8,8 +8,11 @@ import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateS
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     private final TemplateQuestionRepository templateQuestionRepository;
     private final CurrentUserServices currentUserServices;
     private final FeedbackTemplateServices feedbackTemplateServices;
+    private static final Logger LOG = LoggerFactory.getLogger(TemplateQuestionServicesImpl.class);
 
     public TemplateQuestionServicesImpl(TemplateQuestionRepository templateQuestionRepository,
                                         CurrentUserServices currentUserServices,
@@ -34,37 +38,45 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public TemplateQuestion update(TemplateQuestion templateQuestion) {
         FeedbackTemplate feedbackTemplate;
+        TemplateQuestion oldTemplateQuestion = null;
+
+        LOG.info("Template question {}:", templateQuestion);
+        if (templateQuestion.getId() != null) {
+             oldTemplateQuestion = getById(templateQuestion.getId());
+             LOG.info("Old template question: {} " + oldTemplateQuestion.toString());
+                if (oldTemplateQuestion == null) {
+                    throw new NotFoundException("Question with that ID not found");
+                }
+
+        } else {
+            throw new BadArgException("Question ID does not exist");
+        }
+
+        templateQuestion.setTemplateId(oldTemplateQuestion.getTemplateId());
+
         try {
             feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.getTemplateId());
         } catch (NotFoundException e) {
-            throw new BadArgException("Template ID does not exist");
+            throw new NotFoundException("Template ID does not exist");
         }
         if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
-        if (templateQuestion.getId() != null) {
-            TemplateQuestion oldTemplate = getById(templateQuestion.getId());
-            templateQuestion.setId(oldTemplate.getId());
-            return templateQuestionRepository.update(templateQuestion);
-        }
-    else {
-        throw new BadArgException("Question does not exist. Cannot update");
-    }
+        return templateQuestionRepository.update(templateQuestion);
+
     }
 
     @Override
     public Boolean delete(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        final String idString = Util.nullSafeUUIDToString(id);
+        if (templateQuestion.isEmpty() || templateQuestion.get() == null) {
+            throw new NotFoundException("Question with that ID does not exist");
+        }
         FeedbackTemplate feedbackTemplate;
         try {
             feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.get().getTemplateId());
         } catch (NotFoundException e) {
-            throw new BadArgException("Template ID does not exist");
-        }
-
-        if (!templateQuestion.isPresent()) {
-            throw new NotFoundException("No template question with id " + id);
+            throw new NotFoundException("Template ID does not exist");
         }
 
         if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
@@ -81,7 +93,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         try {
             feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.getTemplateId());
         } catch (NotFoundException e) {
-            throw new BadArgException("Template ID does not exist");
+            throw new NotFoundException("Template ID does not exist");
         }
 
         if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
@@ -107,6 +119,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
         return templateQuestion.get();
     }
+
 
     @Override
     public List<TemplateQuestion> findByFields(UUID templateId) {
