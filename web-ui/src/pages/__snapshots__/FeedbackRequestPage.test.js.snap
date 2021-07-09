@@ -10,14 +10,14 @@ Array [
       className="header-container"
     >
       <h4
-        className="MuiTypography-root makeStyles-requestHeader-2 MuiTypography-h4"
+        className="MuiTypography-root MuiTypography-h4"
       >
         Feedback Request for 
         <b />
       </h4>
       <div>
         <button
-          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 Mui-disabled Mui-disabled"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-7 Mui-disabled Mui-disabled"
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -41,7 +41,7 @@ Array [
           </span>
         </button>
         <button
-          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-8 MuiButton-containedPrimary Mui-disabled Mui-disabled"
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-actionButtons-7 MuiButton-containedPrimary Mui-disabled Mui-disabled"
           disabled={true}
           onBlur={[Function]}
           onClick={[Function]}
@@ -67,7 +67,7 @@ Array [
       </div>
     </div>
     <div
-      className="makeStyles-stepContainer-3"
+      className="makeStyles-stepContainer-2"
     >
       <div
         className="MuiPaper-root MuiStepper-root MuiStepper-horizontal makeStyles-root-1 MuiPaper-elevation0"
@@ -215,6 +215,39 @@ Array [
       className="current-step-content"
     >
       <div
+        className="search-bar"
+      >
+        <div
+          className="MuiFormControl-root MuiTextField-root"
+        >
+          <label
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+            data-shrink={false}
+          >
+            Search Templates...
+          </label>
+          <div
+            className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+            onClick={[Function]}
+          >
+            <input
+              aria-invalid={false}
+              autoFocus={false}
+              className="MuiInputBase-input MuiInput-input"
+              disabled={false}
+              onAnimationStart={[Function]}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              placeholder="Template 1"
+              required={false}
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+      <div
         className="card-container"
       >
         <div
@@ -222,10 +255,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-9"
+            className="TemplateCardHeader-root-8"
           >
             <div
-              className="TemplateCardHeader-header-10"
+              className="TemplateCardHeader-header-9"
             >
               <button
                 aria-label="show more"
@@ -298,10 +331,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-9"
+            className="TemplateCardHeader-root-8"
           >
             <div
-              className="TemplateCardHeader-header-10"
+              className="TemplateCardHeader-header-9"
             >
               <button
                 aria-label="show more"
@@ -374,10 +407,10 @@ Array [
           onClick={[Function]}
         >
           <div
-            className="TemplateCardHeader-root-9"
+            className="TemplateCardHeader-root-8"
           >
             <div
-              className="TemplateCardHeader-header-10"
+              className="TemplateCardHeader-header-9"
             >
               <button
                 aria-label="show more"
