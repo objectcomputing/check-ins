@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useRef} from "react";
+import React, {useState, useContext, useEffect, useCallback, useRef} from "react";
 import TemplateCard from "../template-card/TemplateCard";
 import TemplatePreviewModal from "../template-preview-modal/TemplatePreviewModal";
 import PropTypes from "prop-types";
@@ -57,9 +57,9 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
   const [templates, setTemplates] = useState([]);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
   const [searchText, setSearchText] = useState("");
-  const [filteredTemplates, setFilteredTemplates] = useState(allTemplates);
-  const hasFetchedData = useRef(false);
+  const templatesFetched = useRef(false);
 
+  // Gets all templates when the component mounts
   useEffect(() => {
     async function getTemplates(csrf) {
       if (!currentUserId || !csrf) {
@@ -74,6 +74,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
           ? res.payload.data
           : null
       if (templateList) {
+        templatesFetched.current = true;
         return [...templateList, ...allTemplates];
       }
     }
@@ -116,11 +117,11 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
     setPreview({open: false, selectedTemplate: submittedTemplate});
   }
 
-  const onCardClick = (template) => {
+  const onCardClick = useCallback((template) => {
     if (template && template.id) {
       changeQuery("template", template.id);
     }
-  }
+  }, [changeQuery]);
 
   const onNewAdHocClick = () => {
     const newAdHocTemplate = {
@@ -132,23 +133,40 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
     setPreview({open: true, selectedTemplate: newAdHocTemplate});
   }
 
-  useEffect(() => {
-    const filterTemplates = () => {
+  const getFilteredTemplates = useCallback(() => {
+    if (templates === undefined) {
+      return null;
+    } else if (templatesFetched.current && templates.length === 0) {
+      return <h2 style={{marginLeft: "20px"}}>No templates found</h2>;
+    }
 
-      if (!hasFetchedData.current) {
-        if (searchText !== "") {
-          setFilteredTemplates(allTemplates.filter((template) =>
-              template.title.toLowerCase().includes(searchText.toLowerCase()) ||
-              template.description.toLowerCase().includes(searchText.toLowerCase())));
-        } else {
-          setFilteredTemplates(allTemplates)
-        }
-        hasFetchedData.current = true;
+    let templatesToDisplay = templates;
+    if (searchText) {
+      const filtered = templates.filter((template) =>
+        template.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        template.description.toLowerCase().includes(searchText.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        return <h2 style={{marginLeft: "20px"}}>No matching templates</h2>;
+      } else {
+        templatesToDisplay = filtered;
       }
     }
-    filterTemplates();
 
-  }, [searchText, filteredTemplates])
+    return templatesToDisplay.map((template) => (
+      <TemplateCard
+        key={template.id}
+        title={template.title}
+        createdBy={template.createdBy}
+        description={template.description}
+        isAdHoc={template.isAdHoc}
+        questions={template.questions}
+        expanded={preview.open}
+        onPreviewClick={(e) => handlePreviewOpen(e, template)}
+        onCardClick={() => onCardClick(template)}/>
+    ))
+  }, [templates, searchText, onCardClick, preview.open]);
 
 
   return (
@@ -169,7 +187,6 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
           value={searchText}
           onChange={(e) => {
             setSearchText(e.target.value);
-            hasFetchedData.current = false;
           }}
           InputProps={{
             endAdornment: (
@@ -191,22 +208,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         </div>
       </div>
       <div className="card-container">
-        {(!filteredTemplates.length && !searchText)
-              ? <h2>No templates found</h2>
-              : (searchText && !filteredTemplates.length)
-              ? <h2>No matching templates</h2>
-              : filteredTemplates.map((template) => (
-                  <TemplateCard
-                      key={template.id}
-                      title={template.title}
-                      createdBy={template.createdBy}
-                      description={template.description}
-                      isAdHoc={template.isAdHoc}
-                      questions={template.questions}
-                      expanded={preview.open}
-                      onClick={(e) => handlePreviewOpen(e, template)}
-                      onCardClick={() => onCardClick(template)}/>
-              ))}
+        {getFilteredTemplates()}
       </div>
     </React.Fragment>
   );
