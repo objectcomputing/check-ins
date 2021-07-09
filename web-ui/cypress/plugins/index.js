@@ -9,8 +9,6 @@
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
 
-const injectDevServer = require("@cypress/react/plugins/react-scripts");
-
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -18,6 +16,4 @@ const injectDevServer = require("@cypress/react/plugins/react-scripts");
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
-  injectDevServer(on, config);
-  return config;
 }
