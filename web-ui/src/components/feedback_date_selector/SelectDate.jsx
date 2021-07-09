@@ -66,7 +66,8 @@ const SelectDate = () =>{
                     label="Due Date:"
                     emptyLabel="No due date"
                     value={dueDate}
-                    minDate={dateUtils.date()}
+                    minDate={sendDate}
+                    minDateMessage={'Date should not be before send Date'}
                     onChange={handleDueDateChange}
                     KeyboardButtonProps={{
                        'aria-label': 'change date',

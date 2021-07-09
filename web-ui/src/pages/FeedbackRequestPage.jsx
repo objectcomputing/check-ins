@@ -68,8 +68,7 @@ const FeedbackRequestPage = () => {
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
   const sendQuery = query.send?.toString();
-  const dueQuery = query.due?.toString()
-  const id = query.for?.toString();
+  const dueQuery = query.due?.toString();
   const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
 
@@ -82,8 +81,8 @@ const FeedbackRequestPage = () => {
   const activeStep = getStep();
 
   const hasFor = useCallback(() => {
-    return !!id;
-  }, [id])
+    return !!forQuery;
+  }, [forQuery])
 
   const hasTemplate = useCallback(() => {
     return !!templateQuery;
@@ -105,7 +104,7 @@ const FeedbackRequestPage = () => {
 
     const hasSend = useCallback(() => {
       let isValidPair = false
-      if(dueQuery && dueQuery !== undefined) {
+      if(dueQuery) {
         isValidPair = dueQuery >= sendQuery
       }
       return (sendQuery && isValidDate(sendQuery) && isValidPair)
@@ -126,10 +125,6 @@ const FeedbackRequestPage = () => {
   const handleSubmit = useCallback(() => {
     history.push("/feedback/request/confirmation");
   }, [history]);
-
-    if (activeStep < 1 || activeStep > steps.length) {
-      
-    }
 
     const onNextClick = useCallback(() => {
       if (!canProceed()) return;
