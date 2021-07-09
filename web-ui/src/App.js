@@ -92,7 +92,6 @@ function App() {
                   <TeamSkillReportPage />
                 </Route>
                 <Route path="/feedback/request">
-                  <Header title="Feedback" />
                   <FeedbackRequestPage />
                 </Route>
                 <Route path="/feedback/submit">
