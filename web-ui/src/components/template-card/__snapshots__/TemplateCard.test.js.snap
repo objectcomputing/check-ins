@@ -68,7 +68,7 @@ exports[`renders correctly 1`] = `
     >
       Created by: 
       <b>
-        Admin
+        
       </b>
     </p>
   </div>

@@ -134,7 +134,7 @@ public class FeedbackTemplateController {
     }
 
     private FeedbackTemplate fromDTO(FeedbackTemplateCreateDTO dto) {
-        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatedBy());
+        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getActive());
     }
 
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
