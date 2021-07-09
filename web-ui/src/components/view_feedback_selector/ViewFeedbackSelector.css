@@ -1,0 +1,84 @@
+
+.person-name {
+    color: black;
+}
+
+.response-link {
+    color: rgb(42, 55, 172);
+    text-decoration: none;
+    font-size: 1rem;
+
+}
+.has-padding-top {
+    padding-top: 1em;
+}
+.response-link:hover {
+    background-color: lightgray ;
+}
+.red-text{
+    color: rgb(207, 120, 20);
+}
+
+.person-divider {
+    min-width: 100%;
+    color: rgb(231, 230, 227);
+}
+.dark-gray-text {
+    color: rgb(85, 83, 83);
+}
+.person-row {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+
+.MuiCardHeader-action {
+    margin:0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    padding-top: 1em;
+}
+
+.no-wrap {
+    flex-wrap: nowrap;
+}
+.align-center {
+    text-align: center;
+    justify-content: center;
+    align-self: center;
+    align-content: center;
+}
+
+
+.align-end {
+    text-align: right;
+}
+.input-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+    margin-top: 3em;
+    width: 100%;
+}
+.MuiFormControl-root {
+    width: 20%;
+    margin-right: 2em;
+}
+
+
+@media screen and (max-width: 769px) {
+
+    .card-info-container {
+        margin-left: 2.5em;
+        text-align:right;
+    }
+    .response-link {
+        font-size: 0.7rem;
+    }
+   
+      
+  }
+
+    
