@@ -136,7 +136,7 @@ const FeedbackRequestPage = () => {
       if (activeStep === steps.length) handleSubmit();
       query.step = activeStep + 1;
       history.push({...location, search: queryString.stringify(query)});
-    }, [canProceed, activeStep, steps.length, query, location, history]);
+    }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
 
     const onBackClick = useCallback(() => {
       history.goBack();
