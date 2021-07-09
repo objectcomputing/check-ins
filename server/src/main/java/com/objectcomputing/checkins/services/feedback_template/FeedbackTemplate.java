@@ -70,7 +70,7 @@ public class FeedbackTemplate {
         this.active = active;
     }
 
-    public FeedbackTemplate(@Nullable UUID id,
+    public FeedbackTemplate(@NotNull UUID id,
                     @NotNull String title,
                     @Nullable String description,
                     @NotNull Boolean active

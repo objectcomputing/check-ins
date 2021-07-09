@@ -7,11 +7,11 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import {selectProfile} from "../context/selectors";
 
 const useStyles = makeStyles((theme) => ({
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 const FeedbackRequestPage = () => {
@@ -109,7 +109,7 @@ const FeedbackRequestPage = () => {
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
 
   const handleSubmit = useCallback(() => {
     history.push("/feedback/request/confirmation");
@@ -158,7 +158,7 @@ const FeedbackRequestPage = () => {
   return (
     <div className="feedback-request-page">
       <div className="header-container">
-        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
+        <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
           <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
                   variant="contained">
@@ -170,7 +170,7 @@ const FeedbackRequestPage = () => {
           </Button>
         </div>
       </div>
-      <div className= {classes.stepContainer}>
+      <div className={classes.stepContainer}>
         <Stepper activeStep={activeStep - 1} className={classes.root}>
           {steps.map((label) => {
             const stepProps = {};
@@ -182,13 +182,14 @@ const FeedbackRequestPage = () => {
             );
           })}
         </Stepper>
+        </div>
+        <div className="current-step-content">
+          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+          {activeStep === 2 && <FeedbackRecipientSelector/>}
+          {activeStep === 3 && <SelectDate/>}
+        </div>
       </div>
-      <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
-        {activeStep === 2 && <FeedbackRecipientSelector/>}
-        {activeStep === 3 && <SelectDate/>}
-      </div>
-    </div>
   );
 };
+
 export default FeedbackRequestPage;
