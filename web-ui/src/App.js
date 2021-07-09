@@ -15,6 +15,7 @@ import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
 import FeedbackRequestPage from "./pages/FeedbackRequestPage";
+import FeedbackSubmitPage from "./pages/FeedbackSubmitPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
@@ -93,6 +94,9 @@ function App() {
                 <Route path="/feedback/request">
                   <Header title="Feedback" />
                   <FeedbackRequestPage />
+                </Route>
+                <Route path="/feedback/submit">
+                  <FeedbackSubmitPage />
                 </Route>
 
                 <Route path="/">

@@ -76,7 +76,7 @@ public class FeedbackRequest {
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
                            @NotNull UUID templateId,
-                           @Nullable LocalDate sendDate,
+                           @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
@@ -96,7 +96,7 @@ public class FeedbackRequest {
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
                            @NotNull UUID templateId,
-                           @Nullable LocalDate sendDate,
+                           @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
