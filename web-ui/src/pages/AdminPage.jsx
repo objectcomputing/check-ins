@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import Roles from "../components/admin/Roles";
 import { Button } from "@material-ui/core";
 
 import "./AdminPage.css";
 
 const AdminPage = () => {
   const [permissions, setPermissions] = useState(false);
-  const [roles, setRoles] = useState(false);
-  const [users, setUsers] = useState(true);
+  const [roles, setRoles] = useState(true);
+  const [users, setUsers] = useState(false);
 
   const handlePermissions = () => {
     setPermissions(true);
@@ -27,9 +28,7 @@ const AdminPage = () => {
   return (
     <div>
       <div className="container">
-        {/* {permissions && <Permissions/>}
-              {roles && <Roles/> }
-              {users && <Users/>} */}
+        {permissions ? <div /> : roles ? <Roles /> : users && <div />}
       </div>
       <div className="bottom-nav">
         <Button
