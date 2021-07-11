@@ -91,24 +91,24 @@ const FeedbackRequestPage = () => {
   const hasFrom = useCallback(() => {
     return !!fromQuery;
   }, [fromQuery])
-  
-    const isValidDate = useCallback((dateString) => {
-      let today = new Date();
-      today = dateUtils.format(today, "yyyy-MM-dd");
-      let timeStamp = Date.parse(dateString)
-      if(dateString < today)
-        return false;
-      else
-        return !isNaN(timeStamp);
-     }, []);
 
-    const hasSend = useCallback(() => {
-      let isValidPair = false
-      if(dueQuery) {
-        isValidPair = dueQuery >= sendQuery
-      }
-      return (sendQuery && isValidDate(sendQuery) && isValidPair)
-    }, [sendQuery, isValidDate, dueQuery]);
+  const isValidDate = useCallback((dateString) => {
+    let today = new Date();
+    today = dateUtils.format(today, "yyyy-MM-dd");
+    let timeStamp = Date.parse(dateString)
+    if(dateString < today)
+      return false;
+    else
+      return !isNaN(timeStamp);
+   }, []);
+
+  const hasSend = useCallback(() => {
+    let isValidPair = false
+    if(dueQuery) {
+      isValidPair = dueQuery >= sendQuery
+    }
+    return (sendQuery && isValidDate(sendQuery) && isValidPair)
+  }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
     switch (activeStep) {
@@ -122,26 +122,31 @@ const FeedbackRequestPage = () => {
         return false;
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
-  
+
   const handleSubmit = useCallback(() => {
     history.push("/feedback/request/confirmation");
   }, [history]);
 
-    const onNextClick = useCallback(() => {
-      if (!canProceed()) return;
-      if (activeStep === steps.length) handleSubmit();
-      query.step = activeStep + 1;
-      history.push({...location, search: queryString.stringify(query)});
-    }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
+  const onNextClick = useCallback(() => {
+    if (!canProceed()) return;
+    if (activeStep === steps.length) {
+      handleSubmit();
+      return;
+    }
+    query.step = `${activeStep + 1}`;
+    history.push({...location, search: queryString.stringify(query)});
+  }, [canProceed, activeStep, steps.length, query, location, history, handleSubmit]);
 
-    const onBackClick = useCallback(() => {
-      history.goBack();
-    }, [history]);
+  const onBackClick = useCallback(() => {
+    if (activeStep === 1) return;
+    query.step = `${activeStep - 1}`;
+    history.push({...location, search: queryString.stringify(query)});
+  }, [activeStep, query, location, history]);
 
     const urlIsValid = useCallback(() => {
       switch (activeStep) {
         case 1:
-          return true;
+          return hasFor();
         case 2:
           return hasFor() && hasTemplate();
         case 3:
@@ -153,9 +158,6 @@ const FeedbackRequestPage = () => {
       }
     }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
 
-  if (!urlIsValid()) {
-      history.push("/checkins");
-  }
   const handleQueryChange = (key, value) => {
     let newQuery = {
       ...query,
@@ -163,6 +165,11 @@ const FeedbackRequestPage = () => {
     }
     history.push({...location, search: queryString.stringify(newQuery)});
   }
+
+  if (!urlIsValid()) {
+    history.push("/checkins");
+  }
+
   return (
     <div className="feedback-request-page">
       <div className="header-container">
@@ -190,13 +197,13 @@ const FeedbackRequestPage = () => {
             );
           })}
         </Stepper>
-        </div>
-        <div className="current-step-content">
-          {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
-          {activeStep === 2 && <FeedbackRecipientSelector/>}
-          {activeStep === 3 && <SelectDate/>}
-        </div>
       </div>
+      <div className="current-step-content">
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery}/> }
+        {activeStep === 2 && <FeedbackRecipientSelector/>}
+        {activeStep === 3 && <SelectDate/>}
+      </div>
+    </div>
   );
 };
 
