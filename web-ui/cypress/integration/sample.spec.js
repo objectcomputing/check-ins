@@ -7,6 +7,7 @@ describe("make a feedback request", () => {
 
   it("navigates to the homepage", () => {
     cy.visit("localhost:3000");
-    cy.contains("Location");
+    cy.contains("CHECK-INS");
+    cy.get("a[href*='/checkins']").click();
   });
 });
