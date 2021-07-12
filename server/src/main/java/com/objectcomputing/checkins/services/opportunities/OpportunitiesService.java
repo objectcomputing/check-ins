@@ -6,8 +6,6 @@ import java.util.Set;
 
 public interface OpportunitiesService {
 
-    Set<Opportunities> readAll();
-
     Opportunities save(Opportunities opportunitiesResponse);
 
     Opportunities update(Opportunities opportunitiesResponse);

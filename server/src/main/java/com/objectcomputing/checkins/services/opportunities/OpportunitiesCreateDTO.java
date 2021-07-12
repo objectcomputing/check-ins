@@ -32,7 +32,7 @@ public class OpportunitiesCreateDTO {
     private LocalDate submittedOn;
 
     @NotNull
-    @Schema(required = true, description = "id of the associated member")
+    @Schema(required = true, description = "id of the submittedBy member")
     private UUID submittedBy;
 
     @NotNull

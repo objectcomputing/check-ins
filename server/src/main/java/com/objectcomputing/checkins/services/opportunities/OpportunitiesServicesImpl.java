@@ -47,10 +47,6 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
         return opportunitiesResponseRet ;
     }
 
-    public Set<Opportunities> readAll() {
-        return opportunitiesResponseRepo.findAll();
-    }
-
     @Override
     public Opportunities update(Opportunities opportunitiesResponse) {
         final boolean isAdmin = currentUserServices.isAdmin();
