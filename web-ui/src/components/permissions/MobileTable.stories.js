@@ -1,18 +1,14 @@
 import React from 'react';
 import { allPermissions, roles, handleChange } from './sample-data';
-import PermissionsTableComponent from './DesktopTable';
 import PermissionsTableMobile from './MobileTable';
-import Permissions from './Permissions';
 
 
 export default {
-  component: PermissionsTableComponent,
-  title: 'Check Ins/PermissionsTable',
+  component: PermissionsTableMobile,
+  title: 'Check Ins/PermissionsTable(Mobile)',
 }
 
-const Template = (args) => {
-  return <PermissionsTableComponent {...args} />;
-}
+
 
 const MobileTemplate = (args) => {
   return (
@@ -28,14 +24,7 @@ const tableProps = {
   handleChange: handleChange,
 }
 
-export const PermissionsTableOnDesktop = Template.bind({});
-PermissionsTableOnDesktop.args = {
-  ...tableProps
-};
-
 export const PermissionTableOnMobile = MobileTemplate.bind({});
 PermissionTableOnMobile.args = {
   ...tableProps
 }
-
-
