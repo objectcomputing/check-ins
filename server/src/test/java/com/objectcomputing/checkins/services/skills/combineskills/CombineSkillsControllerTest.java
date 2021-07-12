@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -290,19 +292,15 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         assertEquals(returnedSkill.getName(), response.body().getName());
         assertEquals(String.format("%s/%s", request.getPath(), returnedSkill.getId()), response.getHeaders().get("location"));
 
-            final MutableHttpRequest<Object> memberSkillRequest = HttpRequest.GET(String.format("/%s", memberSkill1.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> memberSkillClient.toBlocking().exchange(memberSkillRequest, Map.class));
+        MutableHttpRequest<Object> memberSkillRequest = HttpRequest.GET(String.format("/?skillid=%s", skill1.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        HttpResponse<Set<MemberSkill>> skillAssignments =  memberSkillClient.toBlocking().exchange(memberSkillRequest, Argument.setOf(MemberSkill.class));
+        Set<MemberSkill> memberSkillSet = skillAssignments.body();
+        assertEquals(Set.of(), memberSkillSet);
 
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
-
-        final MutableHttpRequest<Object> memberSkillRequest2 = HttpRequest.GET(String.format("/%s", memberSkill2.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
-        responseException = assertThrows(HttpClientResponseException.class,
-                () -> memberSkillClient.toBlocking().exchange(memberSkillRequest2, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+        memberSkillRequest = HttpRequest.GET(String.format("/?skillid=%s", skill2.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        skillAssignments =  memberSkillClient.toBlocking().exchange(memberSkillRequest, Argument.setOf(MemberSkill.class));
+        memberSkillSet = skillAssignments.body();
+        assertEquals(Set.of(), memberSkillSet);
 
     }
 
