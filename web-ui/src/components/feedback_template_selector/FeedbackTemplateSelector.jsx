@@ -95,10 +95,17 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
   }
 
   const handlePreviewSubmit = async (submittedTemplate) => {
+    console.log("handler")
+    console.log(submittedTemplate)
     if (!currentUserId || !csrf) {
+      console.log("retruning?")
       return;
     }
+    console.log(submittedTemplate)
+    console.log("submitted template")
+    console.log(submittedTemplate.isAdHoc + "is adhoc")
     if (submittedTemplate && submittedTemplate.isAdHoc) {
+      console.log("adhoc??")
       let newFeedbackTemplate = {
         title: submittedTemplate.title,
         description: submittedTemplate.description,
@@ -108,12 +115,17 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
 
       const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
       if (!res.error && res.payload && res.payload.data) {
+        console.log("here")
         newFeedbackTemplate.id = res.payload.data.id;
         newFeedbackTemplate.isAdHoc = true;
         setTemplates([...templates, newFeedbackTemplate]);
         changeQuery("template", newFeedbackTemplate.id);
       }
     }
+    else if (submittedTemplate) {
+      changeQuery("template", submittedTemplate.id);
+    }
+
     setPreview({open: false, selectedTemplate: submittedTemplate});
   }
 
