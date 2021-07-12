@@ -36,7 +36,7 @@ public class FeedbackRequestQuestion {
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(content::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(questionContent::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
     @Schema(description = "The question asked to the recipient", required = true)
@@ -46,7 +46,7 @@ public class FeedbackRequestQuestion {
     @Nullable
     @TypeDef(type = DataType.STRING)
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(content::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(answerContent::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
     @Schema(description = "The answer to the question", required = false)

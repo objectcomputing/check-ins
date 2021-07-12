@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 
-@Controller("/services/feedback/requests/questions")
+@Controller("/services/feedback/request_questions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "feedback request question")
 public class FeedbackRequestQuestionController {
@@ -121,6 +121,7 @@ public class FeedbackRequestQuestionController {
     private FeedbackRequestQuestionResponseDTO fromEntity(FeedbackRequestQuestion savedQuestion) {
         FeedbackRequestQuestionResponseDTO dto = new FeedbackRequestQuestionResponseDTO();
         dto.setId(savedQuestion.getId());
+        dto.setRequestId(savedQuestion.getRequestId());
         dto.setQuestionContent(savedQuestion.getQuestionContent());
         dto.setAnswerContent(savedQuestion.getAnswerContent());
         dto.setOrderNum(savedQuestion.getOrderNum());

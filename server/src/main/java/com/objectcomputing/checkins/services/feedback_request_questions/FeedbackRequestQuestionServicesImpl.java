@@ -64,26 +64,29 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
 
     @Override
     public FeedbackRequestQuestion update(FeedbackRequestQuestion feedbackRequestQuestion) {
-        Optional<FeedbackRequestQuestion> oldQuestion;
-        if (feedbackRequestQuestion.getId() != null) {
-            oldQuestion = feedbackReqQuestionRepo.findById(feedbackRequestQuestion.getId());
-            if (oldQuestion.isEmpty()) {
-                throw new NotFoundException("Could not find question with that ID");
+            FeedbackRequestQuestion oldQuestion;
+            if (feedbackRequestQuestion.getId() != null) {
+                oldQuestion = getById(feedbackRequestQuestion.getId());
+                if (oldQuestion == null) {
+                    throw new NotFoundException("Could not find question with that ID");
+                }
+                feedbackRequestQuestion.setRequestId(oldQuestion.getRequestId());
+                feedbackRequestQuestion.setQuestionContent(oldQuestion.getQuestionContent());
+                feedbackRequestQuestion.setOrderNum(oldQuestion.getOrderNum());
             }
-            feedbackRequestQuestion.setRequestId(oldQuestion.get().getRequestId());
-            feedbackRequestQuestion.setQuestionContent(oldQuestion.get().getQuestionContent());
-            feedbackRequestQuestion.setOrderNum(oldQuestion.get().getOrderNum());
-        }
-        FeedbackRequest request = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
-        if (request == null) {
-            throw new NotFoundException("Request for question does not exist");
-        }
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (!currentUserId.equals(request.getRecipientId()) || currentUserServices.isAdmin()) {
-            throw new PermissionException("You are not authorized to do this operation");
 
-        }
-        return feedbackReqQuestionRepo.update(feedbackRequestQuestion);
+            FeedbackRequest request = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
+            if (request == null) {
+                throw new NotFoundException("Request for question does not exist");
+            }
+            UUID currentUserId = currentUserServices.getCurrentUser().getId();
+            if (currentUserId.equals(request.getRecipientId()) ||  currentUserServices.isAdmin()) {
+                return feedbackReqQuestionRepo.update(feedbackRequestQuestion);
+
+            } else {
+                throw new PermissionException("You are not authorized to do this operation");
+            }
+
 
 
     }
@@ -111,7 +114,7 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
     public FeedbackRequestQuestion getById(UUID id) {
         final Optional<FeedbackRequestQuestion> feedbackReqQuestion = feedbackReqQuestionRepo.findById(id);
         MemberProfile currentUser = currentUserServices.getCurrentUser();
-        FeedbackRequest feedbackRequest;
+        FeedbackRequest feedbackRequest = null;
         if (feedbackReqQuestion.isEmpty()) {
             throw new NotFoundException("No feedback request question with id " + id);
         }
@@ -120,11 +123,12 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
             throw new NotFoundException("Attached request for question not found");
         }
 
-        if (!currentUser.getId().equals(feedbackRequest.getRecipientId()) || !currentUser.getId().equals(feedbackRequest.getCreatorId()) || currentUserServices.isAdmin()) {
+        if (currentUser.getId().equals(feedbackRequest.getRecipientId()) || currentUser.getId().equals(feedbackRequest.getCreatorId()) || currentUserServices.isAdmin()) {
+            return feedbackReqQuestion.get();
+
+        } else{
             throw new PermissionException("You are not authorized to do this operation");
         }
-
-        return feedbackReqQuestion.get();
     }
 
     @Override
