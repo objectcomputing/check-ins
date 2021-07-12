@@ -85,7 +85,8 @@ const directoryLinks = [
 const reportsLinks = [
   ["/checkins-reports", "CHECK-INS"], 
   ["/skills-reports", "SKILLS"],
-  ["/team-skills-reports", "TEAM SKILLS"]
+  ["/team-skills-reports", "TEAM SKILLS"],
+  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
 ]
 
 const isCollapsibleListOpen = (linksArr, loc) => {
