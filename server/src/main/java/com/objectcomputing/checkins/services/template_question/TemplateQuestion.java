@@ -5,6 +5,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,7 +37,7 @@ public class TemplateQuestion {
     private UUID templateId;
 
     @Column(name = "orderNum")
-    @NotNull
+    @Nullable
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
@@ -52,7 +53,7 @@ public class TemplateQuestion {
     }
 
     public TemplateQuestion(@NotNull String question,
-                            @NotNull UUID templateId, @NotNull Integer orderNum) {
+                            @NotNull UUID templateId, @Nullable Integer orderNum) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;

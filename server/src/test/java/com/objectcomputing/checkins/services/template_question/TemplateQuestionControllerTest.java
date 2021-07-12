@@ -30,7 +30,7 @@ import java.util.*;
 public class TemplateQuestionControllerTest extends TestContainersSuite implements MemberProfileFixture, FeedbackTemplateFixture, TemplateQuestionFixture, RoleFixture {
 
     @Inject
-    @Client("/services/feedback/questions")
+    @Client("/services/feedback/template_questions")
     HttpClient client;
 
     FeedbackTemplate saveDefaultFeedbackTemplate(UUID createdBy) {
