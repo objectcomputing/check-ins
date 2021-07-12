@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request_questions;
 
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 

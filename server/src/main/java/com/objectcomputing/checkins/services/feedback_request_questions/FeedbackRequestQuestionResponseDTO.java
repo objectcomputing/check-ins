@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_request_questions;
 
-import com.sun.istack.Nullable;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;

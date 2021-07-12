@@ -7,8 +7,6 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
     private final FeedbackRequestServices feedbackReqServices;
     private final FeedbackRequestQuestionRepository feedbackReqQuestionRepo;
     private final CurrentUserServices currentUserServices;
-    private static final Logger LOG = LoggerFactory.getLogger(FeedbackRequestQuestionServicesImpl.class);
 
     public FeedbackRequestQuestionServicesImpl(FeedbackRequestServices feedbackReqServices,
                                            FeedbackRequestQuestionRepository feedbackReqQuestionRepo,
@@ -44,13 +41,8 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
         }
         UUID creatorId = feedbackRequest.getCreatorId();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        LOG.info("creatorid:{}", creatorId);
-        LOG.info("current user id:{}", currentUserId);
         if (creatorId != null) {
             if (!creatorId.equals(currentUserId) && !currentUserServices.isAdmin()) {
-                LOG.info("Creator id equals current user {} ", !creatorId.equals(currentUserServices.getCurrentUser()));
-                LOG.info("current user is admin {}", !currentUserServices.isAdmin());
-                LOG.info("{}",!creatorId.equals(currentUserServices.getCurrentUser().getId()) || !currentUserServices.isAdmin());
                 throw new PermissionException("You are not authorized to do this operation ");
             }
         }
@@ -141,10 +133,12 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
         }
         UUID creatorId = feedbackRequest.getCreatorId();
         UUID recipientId = feedbackRequest.getRecipientId();
-        if (!currentUser.getId().equals(creatorId) || !currentUser.getId().equals(recipientId)) {
+        if (currentUser.getId().equals(creatorId) || currentUser.getId().equals(recipientId) || currentUserServices.isAdmin() ) {
+            feedbackRequestQuestionList.addAll(feedbackReqQuestionRepo.findByRequestId(Util.nullSafeUUIDToString(requestId)));
+            return feedbackRequestQuestionList;
+
+        } else {
             throw new PermissionException("You are not authorized to do this operation");
         }
-        feedbackRequestQuestionList.addAll(feedbackReqQuestionRepo.findByRequestId(Util.nullSafeUUIDToString(requestId)));
-        return feedbackRequestQuestionList;
     }
 }
