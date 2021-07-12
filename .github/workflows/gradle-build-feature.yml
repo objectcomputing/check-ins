@@ -43,3 +43,14 @@ jobs:
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        with:
+          build: yarn build
+          start: yarn start
+
+
