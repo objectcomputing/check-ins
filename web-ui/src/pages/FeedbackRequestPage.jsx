@@ -7,15 +7,16 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {useLocation, useHistory } from 'react-router-dom';
 import queryString from 'query-string';
+import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
-import {selectCurrentUser} from "../context/selectors"
-import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
-import {selectProfile, selectCsrfToken} from "../context/selectors";
+import {selectProfile, selectCsrfToken, selectCurrentUser} from "../context/selectors";
+import DateFnsUtils from "@date-io/date-fns";
 
+const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "transparent",
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Select template", "Select recipients", "Set due date"];
+  return ["Select template", "Select recipients", "Set dates"];
 }
 
 const FeedbackRequestPage = () => {
@@ -69,6 +70,7 @@ const FeedbackRequestPage = () => {
   const stepQuery = query.step?.toString();
   const templateQuery = query.template?.toString();
   const fromQuery = query.from?.toString();
+  const sendQuery = query.send?.toString();
   const dueQuery = query.due?.toString();
   const sendDate = query.send?.toString();
   const forQuery = query.for?.toString();
@@ -83,13 +85,13 @@ const FeedbackRequestPage = () => {
 
   const activeStep = getStep();
 
-  const hasTemplate = useCallback(() => {
-    return !!templateQuery;
-  }, [templateQuery])
-
   const hasFor = useCallback(() => {
     return !!forQuery;
   }, [forQuery])
+
+  const hasTemplate = useCallback(() => {
+    return !!templateQuery;
+  }, [templateQuery])
 
   const hasFrom = useCallback(() => {
     return !!fromQuery;
@@ -97,13 +99,22 @@ const FeedbackRequestPage = () => {
 
 
   const isValidDate = useCallback((dateString) => {
-    const timestamp = Date.parse(dateString);
-    return !isNaN(timestamp);
-  }, []);
+    let today = new Date();
+    today = dateUtils.format(today, "yyyy-MM-dd");
+    let timeStamp = Date.parse(dateString)
+    if(dateString < today)
+      return false;
+    else
+      return !isNaN(timeStamp);
+   }, []);
 
-  const hasDue = useCallback(() => {
-    return (dueQuery && isValidDate(dueQuery))
-  }, [dueQuery, isValidDate]);
+  const hasSend = useCallback(() => {
+    let isValidPair = false
+    if(dueQuery) {
+      isValidPair = dueQuery >= sendQuery
+    }
+    return (sendQuery && isValidDate(sendQuery) && isValidPair)
+  }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
     switch (activeStep) {
@@ -112,11 +123,11 @@ const FeedbackRequestPage = () => {
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasFor() && hasTemplate() && hasFrom() && hasDue();
+        return hasFor() && hasTemplate() && hasFrom() && hasSend() && isValidDate(dueQuery);
       default:
         return false;
     }
-  }, [activeStep, hasTemplate, hasFrom, hasDue, hasFor]);
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
 
 const handleSubmit = () =>{
     let feedbackRequest = {}
@@ -138,29 +149,16 @@ const handleSubmit = () =>{
       handleSubmit();
       return;
     }
-    query.step = activeStep + 1;
+    query.step = `${activeStep + 1}`;
     history.push({...location, search: queryString.stringify(query)});
 
   }, [canProceed, activeStep, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
-    history.goBack();
-  }, [history]);
-
-  const urlIsValid = useCallback(() => {
-    switch (activeStep) {
-      case 1:
-        return hasFor();
-      case 2:
-        return hasFor() && hasTemplate();
-      case 3:
-        return hasFor() && hasTemplate() && hasFrom();
-      case 4:
-        return hasFor() && hasTemplate() && hasFrom() && hasDue();
-      default:
-        return false;
-    }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasDue]);
+    if (activeStep === 1) return;
+    query.step = `${activeStep - 1}`;
+    history.push({...location, search: queryString.stringify(query)});
+  }, [activeStep, query, location, history]);
 
     const sendFeedbackRequest = async(feedbackRequest) => {
           if (csrf) {
@@ -170,7 +168,7 @@ const handleSubmit = () =>{
                         ? res.payload.data
                         : null;
                            if (data) {
-                             //redirect to confirmation page
+                            history.push("/feedback/request/confirmation");
                            }
 
               }
@@ -178,9 +176,20 @@ const handleSubmit = () =>{
 
     }
 
-  if (!urlIsValid()) {
-      history.push("/checkins");
-  }
+    const urlIsValid = useCallback(() => {
+      switch (activeStep) {
+        case 1:
+          return hasFor();
+        case 2:
+          return hasFor() && hasTemplate();
+        case 3:
+          return hasFor() && hasTemplate() && hasFrom();
+        case 4:
+          return hasFor() && hasTemplate() && hasFrom() && hasSend();
+        default:
+          return false;
+      }
+    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
 
   const handleQueryChange = (key, value) => {
     let newQuery = {
@@ -189,10 +198,15 @@ const handleSubmit = () =>{
     }
     history.push({...location, search: queryString.stringify(newQuery)});
   }
+
+  if (!urlIsValid()) {
+    history.push("/checkins");
+  }
+
   return (
     <div className="feedback-request-page">
       <div className="header-container">
-        <Typography className= {classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
+        <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
           <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
                   variant="contained">
@@ -204,7 +218,7 @@ const handleSubmit = () =>{
           </Button>
         </div>
       </div>
-      <div className= {classes.stepContainer}>
+      <div className={classes.stepContainer}>
         <Stepper activeStep={activeStep - 1} className={classes.root}>
           {steps.map((label) => {
             const stepProps = {};
@@ -225,4 +239,5 @@ const handleSubmit = () =>{
     </div>
   );
 };
+
 export default FeedbackRequestPage;

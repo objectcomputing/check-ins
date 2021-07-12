@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -46,6 +46,24 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
 
   const classes = useStyles();
 
+  const [adHocTitle, setAdHocTitle] = useState(template?.title);
+  const [adHocDescription, setAdHocDescription] = useState(template?.description);
+
+  const submitPreview = () => {
+    if (!template) {
+      return;
+    }
+
+    const submittedTemplate = {...template};
+    if (template.isAdHoc) {
+      submittedTemplate.title = adHocTitle;
+      submittedTemplate.description = adHocDescription;
+    }
+    onSubmit(submittedTemplate);
+    setAdHocTitle(template?.title);
+    setAdHocDescription(template?.description);
+  };
+
   if (!template) {
     return null;
   }
@@ -58,39 +76,45 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {template.isAdHoc ? "New Ad-Hoc Template" : template.title}
+            {template.isAdHoc && !template.id ? "New Ad-Hoc Template" : template.title}
           </Typography>
-          <Button className="ad-hoc-next-button" onClick={onSubmit} color="inherit">
-            {template.isAdHoc ? "Create" : "Select"}
+          <Button className="ad-hoc-next-button"
+                  onClick={submitPreview}
+                  color="inherit">
+            {template.isAdHoc && !template.id ? "Create" : "Select"}
           </Button>
         </Toolbar>
       </AppBar>
 
       <div className="preview-modal-content">
-      {template.isAdHoc ?
+      {template.isAdHoc && !template.id ?
         <React.Fragment>
           <TextField
-            id="standard-full-width"
             label="Title"
             placeholder="Ad Hoc"
             fullWidth
-            defaultValue={template.title}
-            margin="normal"/>
+            margin="normal"
+            value={adHocTitle}
+            onChange={(event) => {
+              setAdHocTitle(event.target.value)
+            }}/>
           <TextField
-            id="standard-full-width"
             label="Description"
             placeholder="Ask a single question"
             fullWidth
-            defaultValue={template.description}
-            margin="normal"/>
+            margin="normal"
+            value={adHocDescription}
+            onChange={(event) => {
+              setAdHocDescription(event.target.value)
+
+            }}/>
         </React.Fragment>
         :
         <Typography>{template.description}</Typography>
       }
 
-      {template.isAdHoc ?
+      {template.isAdHoc && !template.id ?
         <TextField
-          id="standard-full-width"
           label="Ask a feedback question"
           placeholder="How is your day going?"
           fullWidth
