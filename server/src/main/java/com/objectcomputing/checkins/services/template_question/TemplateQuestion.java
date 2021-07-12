@@ -36,6 +36,7 @@ public class TemplateQuestion {
     private UUID templateId;
 
     @Column(name = "orderNum")
+    @NotNull
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;

@@ -24,7 +24,6 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     private final TemplateQuestionRepository templateQuestionRepository;
     private final CurrentUserServices currentUserServices;
     private final FeedbackTemplateServices feedbackTemplateServices;
-    private static final Logger LOG = LoggerFactory.getLogger(TemplateQuestionServicesImpl.class);
 
     public TemplateQuestionServicesImpl(TemplateQuestionRepository templateQuestionRepository,
                                         CurrentUserServices currentUserServices,
@@ -40,10 +39,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         FeedbackTemplate feedbackTemplate;
         TemplateQuestion oldTemplateQuestion = null;
 
-        LOG.info("Template question {}:", templateQuestion);
         if (templateQuestion.getId() != null) {
              oldTemplateQuestion = getById(templateQuestion.getId());
-             LOG.info("Old template question: {} " + oldTemplateQuestion.toString());
                 if (oldTemplateQuestion == null) {
                     throw new NotFoundException("Question with that ID not found");
                 }
