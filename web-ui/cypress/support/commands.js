@@ -23,3 +23,24 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+const authUrl = "http://localhost:8080/oauth/login/google";
+
+Cypress.Commands.add("loginByCsrf", (email, role) => {
+  cy.request(authUrl)
+    .its("headers")
+    .then((headers) => {
+      const csrf = headers["x-csrf-token"];
+      cy.request({
+        method: "POST",
+        url: authUrl,
+        failOnStatusCode: false,
+        form: true,
+        body: {
+          email,
+          role,
+          _csrf: csrf
+        }
+      });
+    });
+});
