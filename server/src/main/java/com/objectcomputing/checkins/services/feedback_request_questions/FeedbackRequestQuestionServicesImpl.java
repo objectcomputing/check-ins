@@ -30,7 +30,7 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
 
     @Override
     public FeedbackRequestQuestion save(FeedbackRequestQuestion feedbackRequestQuestion) {
-        FeedbackRequest feedbackRequest = null;
+        FeedbackRequest feedbackRequest;
         if (feedbackRequestQuestion.getRequestId() != null) {
             try {
                 feedbackRequest = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
