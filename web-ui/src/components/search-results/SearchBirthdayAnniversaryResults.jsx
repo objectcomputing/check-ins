@@ -32,7 +32,6 @@ const SearchBirthdayAnniversaryResults = ({
 
   const { state } = useContext(AppContext);
   const getMemberProfile = (member) => selectProfile(state, member.userId);
-  console.log(hasSearched);
   const BirthdayMap = () => {
     if (searchBirthdayResults.length > 0) {
       return searchBirthdayResults.map((member, index) => {
