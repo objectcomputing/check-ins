@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
+import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 
 @Singleton
 public class OpportunitiesServicesImpl implements OpportunitiesService {
@@ -82,8 +83,8 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     }
 
     @Override
-    public ArrayList<Opportunities> findByFields(String name, String description) {
-        final ArrayList<Opportunities> opportunitiesResponse = new ArrayList<>(opportunitiesResponseRepo.searchByValues(name,description));
+    public ArrayList<Opportunities> findByFields(String name, String description,UUID submittedBy) {
+        final ArrayList<Opportunities> opportunitiesResponse = new ArrayList<>(opportunitiesResponseRepo.searchByValues(name, description, nullSafeUUIDToString(submittedBy)));
         return opportunitiesResponse;
     }
 }

@@ -14,6 +14,6 @@ public interface OpportunitiesService {
 
     void delete(UUID id);
 
-    ArrayList<Opportunities> findByFields(String name, String description);
+    ArrayList<Opportunities> findByFields(String name, String description, UUID submittedBy);
 
 }

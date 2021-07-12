@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.opportunities;
 
-import com.objectcomputing.checkins.services.survey.Survey;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -44,19 +43,20 @@ public class OpportunitiesController {
     }
 
     /**
-     * Find opportunities by Name or Description.
+     * Find opportunities by Name or Description or submittedBy.
      *
      * @param name {@link String}
      * @param description {@link String}
+     * @param submittedBy {@link UUID} of member
      * @return {@link Set < Opportunities > list of opportunities}
      */
-    @Get("/{?name,description}")
+    @Get("/{?name,description,submittedBy}")
     public Single<HttpResponse<List<Opportunities>>> findOpportunities(@Nullable String name,
-                                                                       @Nullable String description) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description))
+                                                                       @Nullable String description,@Nullable UUID submittedBy) {
+        return Single.fromCallable(() -> opportunitiesResponseServices.findByFields(name, description, submittedBy))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(opportunities -> { List<Opportunities>  oppur = opportunities.stream().collect(Collectors.toList());
-                   return (HttpResponse<List<Opportunities>>) HttpResponse.ok(oppur);})
+                .map(opportunities -> { List<Opportunities>  opportunity = opportunities.stream().collect(Collectors.toList());
+                   return (HttpResponse<List<Opportunities>>) HttpResponse.ok(opportunity);})
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 

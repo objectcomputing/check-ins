@@ -20,12 +20,13 @@ public interface OpportunitiesRepository extends CrudRepository<Opportunities, U
             "PGP_SYM_DECRYPT(cast(name as bytea),'${aes.key}') as name, " +
             "PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description, " +
             "PGP_SYM_DECRYPT(cast(url as bytea),'${aes.key}') as url, " +
-            "expiresOn, submittedOn, submittedBy,pending " +
+            "expiresOn, submittedOn, submittedBy, pending " +
             "FROM opportunities op " +
             "WHERE (:name IS NULL OR PGP_SYM_DECRYPT(cast(op.name as bytea),'${aes.key}') = :name) " +
-            "AND (:description IS NULL OR PGP_SYM_DECRYPT(cast(op.description as bytea),'${aes.key}') = :description) ", nativeQuery = true)
+            "AND (:description IS NULL OR PGP_SYM_DECRYPT(cast(op.description as bytea),'${aes.key}') = :description) " +
+            "AND (:submittedBy IS NULL OR op.submittedBy = :submittedBy)", nativeQuery = true)
     List<Opportunities> searchByValues( @Nullable String name,
-                                   @Nullable String description
-                                  );
+                                   @Nullable String description,
+                                  @Nullable String submittedBy);
 
 }
