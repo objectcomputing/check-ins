@@ -124,7 +124,13 @@ const FeedbackRequestPage = () => {
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
 
   const handleSubmit = useCallback(() => {
-    history.push("/feedback/request/confirmation");
+    const newLocation = {
+      pathname : "/feedback/request/confirmation",
+    }
+    query.sendQuery = sendQuery
+    query.from = fromQuery
+    console.log("query on feedback request page "+ JSON.stringify(query))
+    history.push({...newLocation, search: queryString.stringify(query)})
   }, [history]);
 
   const onNextClick = useCallback(() => {
