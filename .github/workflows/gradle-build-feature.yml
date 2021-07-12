@@ -47,10 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Change directory into web-ui
-        run: cd web-ui
       - name: Cypress Run
         uses: cypress-io/github-action@v2
         with:
-          build: yarn build
-          start: yarn start
+          build: cd web-ui && yarn build
+          start: cd web-ui && yarn start
