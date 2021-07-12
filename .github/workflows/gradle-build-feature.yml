@@ -51,5 +51,5 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           project: ./web-ui
-          build: cd web-ui && yarn build
-          start: cd web-ui && yarn start
+          build: yarn build
+          start: yarn start
