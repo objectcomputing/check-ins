@@ -50,6 +50,6 @@ jobs:
       - name: Cypress Run
         uses: cypress-io/github-action@v2
         with:
-          project: ./web-ui
+          working-directory: web-ui
           build: yarn build
           start: yarn start
