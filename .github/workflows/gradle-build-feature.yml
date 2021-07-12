@@ -49,10 +49,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Cypress Run
         uses: cypress-io/github-action@v2
+        run: |
+          cd ./web-ui
         with:
-          build: |
-            cd ./web-ui
-            yarn build
-          start: |
-            cd ./web-ui
-            yarn start
+          build: yarn build
+          start: yarn start
