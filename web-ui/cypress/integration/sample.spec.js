@@ -38,5 +38,7 @@ describe("make a feedback request", () => {
     cy.url().should("include", "due=");
 
     cy.contains("Submit").click();
+    cy.contains("Feedback scheduled for today");
+    cy.url().should("include", "/feedback/request/confirmation");
   });
 });
