@@ -1,5 +1,5 @@
 import React from "react";
-import FeedbackRecipientCard from "./Feedback_recipient_card";
+import FeedbackRecipientCard from "./FeedbackRecipientCard";
 import {AppContextProvider} from "../../context/AppContext";
 import {BrowserRouter} from "react-router-dom";
 

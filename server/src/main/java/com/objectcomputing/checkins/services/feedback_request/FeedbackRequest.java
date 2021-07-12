@@ -62,7 +62,7 @@ public class FeedbackRequest {
     private LocalDate dueDate;
 
     @Column(name = "status")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "completion status of request", required = true)
     private String status;
@@ -76,7 +76,7 @@ public class FeedbackRequest {
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
                            @NotNull UUID templateId,
-                           @Nullable LocalDate sendDate,
+                           @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
@@ -91,12 +91,12 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@Nullable UUID id,
+    public FeedbackRequest(@NotNull UUID id,
                            @NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
                            @NotNull UUID templateId,
-                           @Nullable LocalDate sendDate,
+                           @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
@@ -111,7 +111,7 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@Nullable UUID id,
+    public FeedbackRequest(@NotNull UUID id,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
                            @Nullable LocalDate submitDate) {
@@ -119,7 +119,6 @@ public class FeedbackRequest {
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
-
     }
 
     public FeedbackRequest() {}
