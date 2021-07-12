@@ -30,15 +30,15 @@ public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuest
 
     @Override
     public FeedbackRequestQuestion save(FeedbackRequestQuestion feedbackRequestQuestion) {
-        FeedbackRequest feedbackRequest;
-        if (feedbackRequestQuestion.getRequestId() != null) {
-            try {
-                feedbackRequest = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
-            } catch (NotFoundException e) {
+
+        if (feedbackRequestQuestion.getRequestId() == null) {
+            throw new NotFoundException("Request ID is null");
+        }
+            FeedbackRequest feedbackRequest = null;
+            feedbackRequest = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
+            if (feedbackRequest == null) {
                 throw new NotFoundException("Request does not exist");
             }
-
-        }
         UUID creatorId = feedbackRequest.getCreatorId();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         if (creatorId != null) {

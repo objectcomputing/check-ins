@@ -3,9 +3,6 @@ package com.objectcomputing.checkins.services.feedback_request_questions;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestCreateDTO;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestUpdateDTO;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -17,16 +14,11 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
-
 import javax.inject.Inject;
-import java.lang.reflect.Member;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
