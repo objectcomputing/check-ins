@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.question_category;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.QuestionCategoryFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -25,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class QuestionCategoryControllerTest extends TestContainersSuite implements QuestionCategoryFixture {
+public class QuestionCategoryControllerTest extends TestContainersSuite implements QuestionCategoryFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/question-categories")
@@ -109,11 +112,13 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
 
     @Test
     public void testPUTSuccessfulUpdate() {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
         final HttpRequest<QuestionCategory> request = HttpRequest.
-                PUT("/", questionCategory).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                PUT("/", questionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request, QuestionCategory.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -174,11 +179,14 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     @Test
     public void testPOSTCreateAQuestionCategory() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
         newQuestionCategory.setName("Inquisitive");
 
         final HttpRequest<QuestionCategoryCreateDTO> request = HttpRequest.
-                POST("/", newQuestionCategory).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                POST("/", newQuestionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<QuestionCategory> response = client.toBlocking().exchange(request,QuestionCategory.class);
 
         assertNotNull(response);
@@ -204,13 +212,15 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
 
     @Test
     public void testPOSTCreateAQuestionCategoryAlreadyExists() {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
         newQuestionCategory.setName(questionCategory.getName());
 
         final HttpRequest<QuestionCategoryCreateDTO> request = HttpRequest.
-                POST("/", newQuestionCategory).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                POST("/", newQuestionCategory).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -236,12 +246,14 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
 
     @Test
     public void testDELETEQuestionCategory() {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                DELETE(String.format("/%s", questionCategory.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(),ADMIN_ROLE);
 
         final HttpResponse<Boolean> response = client.toBlocking().exchange(request, Boolean.class);
 

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;

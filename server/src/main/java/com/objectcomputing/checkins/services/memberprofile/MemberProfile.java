@@ -6,7 +6,7 @@ import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -29,7 +29,7 @@ public class MemberProfile {
     private UUID id;
 
     @NotBlank
-    @Column(name = "firstName")
+    @Column(name = "firstname")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(firstName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -38,7 +38,7 @@ public class MemberProfile {
     private String firstName;
 
     @Nullable
-    @Column(name = "middleName")
+    @Column(name = "middlename")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(middleName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -47,7 +47,7 @@ public class MemberProfile {
     private String middleName;
 
     @NotBlank
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -73,7 +73,7 @@ public class MemberProfile {
     @Schema(description = "employee's title at the company")
     private String title ;
 
-    @Column(name="pdlId")
+    @Column(name="pdlid")
     @TypeDef(type=DataType.STRING)
     @Nullable
     @Schema(description = "employee's professional development lead")
@@ -89,7 +89,7 @@ public class MemberProfile {
     private String location;
 
     @NotNull
-    @Column(name="workEmail")
+    @Column(name="workemail")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -97,17 +97,17 @@ public class MemberProfile {
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
-    @Column(name="employeeId")
+    @Column(name="employeeid")
     @Nullable
     @Schema(description = "unique identifier for this employee")
     private String employeeId;
 
-    @Column(name="startDate")
+    @Column(name="startdate")
     @Schema(description = "employee's date of hire")
     @Nullable
     private LocalDate startDate;
 
-    @Column(name="bioText")
+    @Column(name="biotext")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(bioText::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -122,12 +122,12 @@ public class MemberProfile {
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 
-    @Column(name="terminationDate")
+    @Column(name="terminationdate")
     @Schema(description = "employee's date of termination")
     @Nullable
     private LocalDate terminationDate;
 
-    @Column(name="birthDate")
+    @Column(name="birthdate")
     @Schema(description = "employee's birthdate")
     @Nullable
     private LocalDate birthDate;

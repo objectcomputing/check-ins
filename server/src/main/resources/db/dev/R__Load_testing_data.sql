@@ -4,6 +4,7 @@ delete from checkin_document;
 delete from checkin_notes;
 delete from private_notes;
 delete from checkins;
+delete from guild_member_history;
 delete from guild_member;
 delete from guild;
 delete from member_skills;
