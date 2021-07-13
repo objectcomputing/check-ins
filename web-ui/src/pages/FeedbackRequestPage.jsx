@@ -24,6 +24,11 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
+  requestHeader: {
+    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+      fontSize: "x-large",
+    },
+  },
   stepContainer: {
     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       width: '80%',
@@ -49,7 +54,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "right",
   },
   actionButtons: {
-    margin: "0 0 0 1em"
+    margin: "0.5em 0 0 1em",
+    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+      padding: "0",
+    },
   }
 }));
 
