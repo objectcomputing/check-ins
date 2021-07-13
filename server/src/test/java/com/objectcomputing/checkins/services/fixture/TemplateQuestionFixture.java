@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.fixture;
 
-import com.objectcomputing.checkins.services.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 
 import java.util.UUID;
 

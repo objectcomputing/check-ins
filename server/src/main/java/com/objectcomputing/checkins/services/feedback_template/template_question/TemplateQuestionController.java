@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.template_question;
+package com.objectcomputing.checkins.services.feedback_template.template_question;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;

@@ -1,11 +1,15 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -32,6 +36,8 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "template is active", required=true)
     private Boolean active;
 
+    @Schema(description = "Questions attached to this template")
+    private List<TemplateQuestionResponseDTO> templateQuestions;
 
     public void setId(UUID id) {
         this.id = id;
@@ -64,6 +70,17 @@ public class FeedbackTemplateResponseDTO {
 
     public UUID getCreatedBy() {
         return createdBy;
+    }
+
+    public List<TemplateQuestionResponseDTO> getTemplateQuestions() {
+        if (templateQuestions == null) {
+            templateQuestions = new ArrayList<>();
+        }
+        return templateQuestions;
+    }
+
+    public void setTemplateQuestions(List<TemplateQuestionResponseDTO> templateQuestions) {
+        this.templateQuestions = templateQuestions;
     }
 
 }

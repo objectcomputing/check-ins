@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import io.micronaut.context.annotation.Type;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -15,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -54,6 +57,10 @@ public class FeedbackTemplate {
     @Schema(description = "whether the template can still be used", required = true)
     private Boolean active;
 
+    @Schema(description = "list of template questions attached to template", required = false)
+    List<TemplateQuestion> templateQuestions = new ArrayList<>();
+
+
     public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy) {
         this.id = null;
         this.title = title;
@@ -82,6 +89,14 @@ public class FeedbackTemplate {
     }
 
     public FeedbackTemplate() {}
+
+    public List<TemplateQuestion> getTemplateQuestions() {
+        return templateQuestions;
+    }
+
+    public void setTemplateQuestions(List<TemplateQuestion> templateQuestions) {
+        this.templateQuestions = templateQuestions;
+    }
 
     public UUID getId() {
         return id;

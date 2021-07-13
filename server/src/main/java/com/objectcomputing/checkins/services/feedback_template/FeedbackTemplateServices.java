@@ -11,7 +11,7 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
 
-    FeedbackTemplate delete(UUID id);
+    Boolean delete(UUID id);
 
     FeedbackTemplate getById(UUID id);
 

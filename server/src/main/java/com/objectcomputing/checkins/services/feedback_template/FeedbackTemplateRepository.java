@@ -26,8 +26,8 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query(value = "UPDATE feedback_templates SET active = false WHERE id = CAST(:id as varchar)")
-    Optional<FeedbackTemplate> softDeleteById(@NotNull UUID id);
+//    @Query(value = "UPDATE feedback_templates SET active = false WHERE id = CAST(:id as varchar)")
+//    Optional<FeedbackTemplate> softDeleteById(@NotNull UUID id);
 
     @Override
     <S extends FeedbackTemplate> S update(@Valid @NotNull @NonNull S entity);
