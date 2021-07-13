@@ -6,7 +6,7 @@ exports[`renders the confirmation message 1`] = `
 >
   <svg
     aria-hidden={true}
-    className="MuiSvgIcon-root"
+    className="MuiSvgIcon-root makeStyles-checkmark-2"
     focusable="false"
     style={
       Object {
