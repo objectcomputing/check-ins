@@ -114,6 +114,10 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         changeQuery("template", newFeedbackTemplate.id);
       }
     }
+    else if (submittedTemplate) {
+      changeQuery("template", submittedTemplate.id);
+    }
+
     setPreview({open: false, selectedTemplate: submittedTemplate});
   }
 
