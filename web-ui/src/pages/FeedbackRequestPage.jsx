@@ -11,9 +11,10 @@ import FeedbackTemplateSelector from "../components/feedback_template_selector/F
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
 import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
-import { AppContext } from "../context/AppContext";
+import {AppContext} from "../context/AppContext";
+import { createFeedbackRequest } from "../api/feedback";
+import {selectProfile, selectCsrfToken, selectCurrentUser} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
-import { selectProfile } from "../context/selectors";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -69,6 +70,8 @@ const FeedbackRequestPage = () => {
   const { state } = useContext(AppContext);
   const steps = getSteps();
   const classes = useStyles();
+  const memberProfile = selectCurrentUser(state);
+  const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
   const query = queryString.parse(location?.search);
@@ -77,8 +80,10 @@ const FeedbackRequestPage = () => {
   const fromQuery = query.from?.toString();
   const sendQuery = query.send?.toString();
   const dueQuery = query.due?.toString();
+  const sendDate = query.send?.toString();
   const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
+  const csrf = selectCsrfToken(state)
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -99,6 +104,7 @@ const FeedbackRequestPage = () => {
   const hasFrom = useCallback(() => {
     return !!fromQuery;
   }, [fromQuery])
+
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
@@ -129,13 +135,19 @@ const FeedbackRequestPage = () => {
     }
   }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
 
-  const handleSubmit = (() => {
-    const newLocation = {
-      pathname: "/feedback/request/confirmation",
-      search: queryString.stringify(query),
+const handleSubmit = () =>{
+    let feedbackRequest = {}
+    let fromArray = fromQuery.split(',')
+    if (fromArray.length === 1 ) {
+        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:"6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+        sendFeedbackRequest(feedbackRequest)
+    } else if (fromArray.length > 1) {
+        for (const recipient of fromArray) {
+           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: "6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+           sendFeedbackRequest(feedbackRequest)
+        }
+      }
     }
-    history.push(newLocation)
-  });
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
@@ -144,10 +156,9 @@ const FeedbackRequestPage = () => {
       return;
     }
     query.step = `${activeStep + 1}`;
-    history.push({ ...location, search: queryString.stringify(query) });
+    history.push({...location, search: queryString.stringify(query)});
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canProceed, activeStep, steps.length, query, location, history]); 
+  }, [canProceed, activeStep, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
     if (activeStep === 1) return;
@@ -155,20 +166,40 @@ const FeedbackRequestPage = () => {
     history.push({ ...location, search: queryString.stringify(query) });
   }, [activeStep, query, location, history]);
 
-  const urlIsValid = useCallback(() => {
-    switch (activeStep) {
-      case 1:
-        return hasFor();
-      case 2:
-        return hasFor() && hasTemplate();
-      case 3:
-        return hasFor() && hasTemplate() && hasFrom();
-      case 4:
-        return hasFor() && hasTemplate() && hasFrom() && hasSend();
-      default:
-        return false;
+    const sendFeedbackRequest = async(feedbackRequest) => {
+          if (csrf) {
+                    let res = await createFeedbackRequest(feedbackRequest, csrf);
+                    let data =
+                      res.payload && res.payload.data && !res.error
+                        ? res.payload.data
+                        : null;
+                           if (data) {
+                            const newLocation = {
+                              pathname: "/feedback/request/confirmation",
+                              search: queryString.stringify(query),
+                            }
+                            history.push(newLocation)
+                           }
+
+              }
+
+
     }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
+
+    const urlIsValid = useCallback(() => {
+      switch (activeStep) {
+        case 1:
+          return hasFor();
+        case 2:
+          return hasFor() && hasTemplate();
+        case 3:
+          return hasFor() && hasTemplate() && hasFrom();
+        case 4:
+          return hasFor() && hasTemplate() && hasFrom() && hasSend();
+        default:
+          return false;
+      }
+    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
 
   const handleQueryChange = (key, value) => {
     let newQuery = {
