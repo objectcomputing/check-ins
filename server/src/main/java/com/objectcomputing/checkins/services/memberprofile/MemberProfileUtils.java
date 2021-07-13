@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
 public class MemberProfileUtils {

@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.checkins;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -23,6 +23,6 @@ public interface CheckInRepository extends CrudRepository<CheckIn,UUID>{
     <S extends CheckIn> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
     @Override
-    <S extends CheckIn> S save(@Valid @NotNull @Nonnull S entity);
+    <S extends CheckIn> S save(@Valid @NotNull @NonNull S entity);
 
 }

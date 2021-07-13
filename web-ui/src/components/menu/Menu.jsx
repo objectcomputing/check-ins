@@ -86,7 +86,8 @@ const reportsLinks = [
   ["/checkins-reports", "CHECK-INS"],
   ["/skills-reports", "SKILLS"],
   ["/team-skills-reports", "TEAM SKILLS"],
-];
+  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
+]
 
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
