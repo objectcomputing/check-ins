@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   requestHeader: {
     ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "x-large",
+      marginBottom: "1em",
     },
   },
   stepContainer: {
