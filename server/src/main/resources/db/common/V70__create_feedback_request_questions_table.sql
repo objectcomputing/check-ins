@@ -4,6 +4,5 @@ CREATE TABLE feedback_request_questions(
       id varchar PRIMARY KEY,
       requestId varchar references feedback_requests(id),
       questionContent varchar,
-      answerContent varchar,
       orderNum smallint
 );

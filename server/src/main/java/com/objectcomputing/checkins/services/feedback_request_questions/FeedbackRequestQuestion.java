@@ -42,16 +42,6 @@ public class FeedbackRequestQuestion {
     @Schema(description = "The question asked to the recipient", required = true)
     private String questionContent;
 
-    @Column(name = "answerContent")
-    @Nullable
-    @TypeDef(type = DataType.STRING)
-    @ColumnTransformer(
-            read =  "pgp_sym_decrypt(answerContent::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}')"
-    )
-    @Schema(description = "The answer to the question", required = false)
-    private String answerContent;
-
     @Column(name = "orderNum")
     @NotNull
     @TypeDef(type = DataType.INTEGER)
@@ -62,37 +52,23 @@ public class FeedbackRequestQuestion {
         this.id = null;
         this.requestId=requestId;
         this.questionContent = questionContent;
-        this.answerContent = null;
         this.orderNum = orderNum;
     }
-
 
     public FeedbackRequestQuestion() {}
-
-    public FeedbackRequestQuestion(UUID id, UUID requestId, String questionContent, String answerContent, Integer orderNum) {
-        this.id = id;
-        this.requestId = requestId;
-        this.questionContent = questionContent;
-        this.answerContent = answerContent;
-        this.orderNum = orderNum;
-    }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackRequestQuestion that = (FeedbackRequestQuestion) o;
-        return id.equals(that.id) && orderNum.equals(that.orderNum) && requestId.equals(that.requestId) && questionContent.equals(that.questionContent) && Objects.equals(answerContent, that.answerContent);
+        return id.equals(that.id) && orderNum.equals(that.orderNum) && requestId.equals(that.requestId) && questionContent.equals(that.questionContent);
     }
-
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, requestId, questionContent, answerContent, orderNum);
+        return Objects.hash(id, requestId, questionContent, orderNum);
     }
-
-
 
     public UUID getId() {
         return id;
@@ -118,14 +94,6 @@ public class FeedbackRequestQuestion {
         this.questionContent = questionContent;
     }
 
-    public String getAnswerContent() {
-        return answerContent;
-    }
-
-    public void setAnswerContent(String answerContent) {
-        this.answerContent = answerContent;
-    }
-
     public Integer getOrderNum() {
         return orderNum;
     }
@@ -140,7 +108,6 @@ public class FeedbackRequestQuestion {
                 "id=" + id +
                 ", requestId=" + requestId +
                 ", questionContent='" + questionContent + '\'' +
-                ", answerContent='" + answerContent + '\'' +
                 ", orderNum='" + orderNum + '\'' +
                 '}';
     }

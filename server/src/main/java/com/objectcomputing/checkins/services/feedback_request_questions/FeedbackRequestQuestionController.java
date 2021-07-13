@@ -54,23 +54,6 @@ public class FeedbackRequestQuestionController {
     }
 
     /**
-     * Update a feedback request question with an answer
-     *
-     * @param requestBody {@link FeedbackRequestQuestionUpdateDTO} The updated feedback request
-     * @return {@link FeedbackRequestQuestionResponseDTO}
-     */
-    @Put()
-    public Single<HttpResponse<FeedbackRequestQuestionResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestQuestionUpdateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackReqQServices.update(fromDTO(requestBody)))
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedFeedbackQ -> (HttpResponse<FeedbackRequestQuestionResponseDTO>) HttpResponse
-                        .ok()
-                        .headers(headers -> headers.location(URI.create("/feedback_request_questions/" + savedFeedbackQ.getId())))
-                        .body(fromEntity(savedFeedbackQ)))
-                .subscribeOn(Schedulers.from(executorService));
-    }
-
-    /**
      * Delete a feedback question and possibly answer pair by UUID--admin only
      *
      * @param id {@link UUID} of the feedback request question/answer pair to be deleted
@@ -123,7 +106,6 @@ public class FeedbackRequestQuestionController {
         dto.setId(savedQuestion.getId());
         dto.setRequestId(savedQuestion.getRequestId());
         dto.setQuestionContent(savedQuestion.getQuestionContent());
-        dto.setAnswerContent(savedQuestion.getAnswerContent());
         dto.setOrderNum(savedQuestion.getOrderNum());
         return dto;
     }
@@ -131,17 +113,5 @@ public class FeedbackRequestQuestionController {
     private FeedbackRequestQuestion fromDTO(FeedbackRequestQuestionCreateDTO requestBody) {
         return new FeedbackRequestQuestion(requestBody.getRequestId(), requestBody.getQuestionContent(), requestBody.getOrderNum());
     }
-
-    private FeedbackRequestQuestion fromDTO(FeedbackRequestQuestionResponseDTO requestBody) {
-        return new FeedbackRequestQuestion(requestBody.getId(), requestBody.getRequestId(), requestBody.getQuestionContent(), requestBody.getAnswerContent(), requestBody.getOrderNum());
-    }
-    private FeedbackRequestQuestion fromDTO(FeedbackRequestQuestionUpdateDTO requestBody) {
-        FeedbackRequestQuestion question = new FeedbackRequestQuestion();
-        question.setId(requestBody.getId());
-        question.setAnswerContent(requestBody.getAnswerContent());
-        return question;
-
-    }
-
 
 }

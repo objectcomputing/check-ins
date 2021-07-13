@@ -23,10 +23,6 @@ public class FeedbackRequestQuestionResponseDTO {
     @Schema(description = "The question asked to the recipient", required = true)
     private String questionContent;
 
-    @Nullable
-    @Schema(description = "The answer to the question", required = false)
-    private String answerContent;
-
     @NotNull
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer orderNum;
@@ -45,14 +41,6 @@ public class FeedbackRequestQuestionResponseDTO {
 
     public void setQuestionContent(String questionContent) {
         this.questionContent = questionContent;
-    }
-
-    public String getAnswerContent() {
-        return answerContent;
-    }
-
-    public void setAnswerContent(String answerContent) {
-        this.answerContent = answerContent;
     }
 
     public Integer getOrderNum() {
