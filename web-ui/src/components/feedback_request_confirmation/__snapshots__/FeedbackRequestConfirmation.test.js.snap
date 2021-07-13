@@ -6,7 +6,7 @@ exports[`renders the confirmation message 1`] = `
 >
   <svg
     aria-hidden={true}
-    className="MuiSvgIcon-root makeStyles-checkmark-2"
+    className="MuiSvgIcon-root"
     focusable="false"
     style={
       Object {
@@ -24,17 +24,18 @@ exports[`renders the confirmation message 1`] = `
     className="MuiTypography-root makeStyles-announcement-1 MuiTypography-h3"
   >
     <b>
-      Feedback scheduled for today
+      Feedback request 
+       sent
+       for 
+       
     </b>
   </h3>
   <h6
     className="MuiTypography-root recipients-list MuiTypography-h6"
   >
     <b>
-      From:
+      Sent to: 
     </b>
-     
-    Alice, Bob, Eve
   </h6>
 </div>
 `;
