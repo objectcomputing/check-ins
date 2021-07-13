@@ -2,8 +2,6 @@ import React from 'react';
 import { allPermissions, roles, handleChange } from './sample-data';
 import DesktopTable from './DesktopTable';
 
-
-
 export default {
   component: DesktopTable,
   title: 'Check Ins/PermissionsTable(Desktop)',
@@ -12,8 +10,6 @@ export default {
 const Template = (args) => {
   return <DesktopTable {...args} />;
 }
-
-
 
 const tableProps = {
   roles: roles,

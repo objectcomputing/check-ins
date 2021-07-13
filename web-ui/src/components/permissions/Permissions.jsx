@@ -6,7 +6,6 @@ import { allPermissions, roles } from "./sample-data"
 
 
 export default function Permissions() {
-  // https://material-ui.com/components/use-media-query/#testing
   const showDesktop = useMediaQuery('(min-width:650px)', { noSsr: true });
   
   return (

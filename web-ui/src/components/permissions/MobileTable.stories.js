@@ -2,13 +2,10 @@ import React from 'react';
 import { allPermissions, roles, handleChange } from './sample-data';
 import PermissionsTableMobile from './MobileTable';
 
-
 export default {
   component: PermissionsTableMobile,
   title: 'Check Ins/PermissionsTable(Mobile)',
 }
-
-
 
 const MobileTemplate = (args) => {
   return (
