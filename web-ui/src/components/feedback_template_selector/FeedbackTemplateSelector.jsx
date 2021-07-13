@@ -46,7 +46,7 @@ const propTypes = {
   changeQuery: PropTypes.func
 };
 
-const FeedbackTemplateSelector = ({query, changeQuery}) => {
+  const FeedbackTemplateSelector = ({query, changeQuery}) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
@@ -125,7 +125,6 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
     }
   }, [changeQuery, query]);
 
-
   const onNewAdHocClick = () => {
     const newAdHocTemplate = {
       title: "Ad Hoc",
@@ -171,7 +170,6 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
         onCardClick={() => onCardClick(template)}/>
     ))
   }, [query, templates, searchText, onCardClick, preview.open]);
-
 
   return (
     <React.Fragment>
