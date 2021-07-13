@@ -1,0 +1,7 @@
+.role-content .member-card {
+  display: flex;
+}
+
+.role-content .role-search {
+  margin-bottom: 1rem;
+}
