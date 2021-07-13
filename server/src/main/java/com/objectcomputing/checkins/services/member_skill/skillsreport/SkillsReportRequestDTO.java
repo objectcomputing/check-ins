@@ -4,7 +4,7 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

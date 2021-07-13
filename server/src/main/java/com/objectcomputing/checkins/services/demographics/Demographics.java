@@ -25,7 +25,7 @@ public class Demographics {
     private UUID id;
 
     @NotNull
-    @Column(name="memberId")
+    @Column(name="memberid")
     @TypeDef(type= DataType.STRING)
     @Schema(description = "the userId of the employee", required = true)
     private UUID memberId;
@@ -36,17 +36,17 @@ public class Demographics {
     private String gender;
 
     @Nullable
-    @Column(name="degreeLevel")
+    @Column(name="degreelevel")
     @Schema(description = "the degree level of the employee")
     private String degreeLevel;
 
     @Nullable
-    @Column(name="industryTenure")
+    @Column(name="industrytenure")
     @Schema(description = "the industry tenure of the employee")
     private Integer industryTenure;
 
     @Nullable
-    @Column(name="personOfColor")
+    @Column(name="personofcolor")
     @Schema(description = "whether the employee is a person of color")
     private Boolean personOfColor = false;
 
@@ -56,12 +56,12 @@ public class Demographics {
     private Boolean veteran = false;
 
     @Nullable
-    @Column(name="militaryTenure")
+    @Column(name="militarytenure")
     @Schema(description = "the military tenure of the employee")
     private Integer militaryTenure;
 
     @Nullable
-    @Column(name="militaryBranch")
+    @Column(name="militarybranch")
     @Schema(description = "the military branch of the employee")
     private String militaryBranch;
 

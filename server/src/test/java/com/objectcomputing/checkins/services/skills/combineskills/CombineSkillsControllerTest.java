@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.MemberSkillFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
 import com.objectcomputing.checkins.services.member_skill.MemberSkill;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.skills.Skill;
 import com.objectcomputing.checkins.services.skills.SkillServices;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -16,13 +18,13 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
@@ -31,9 +33,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@MicronautTest
 public class CombineSkillsControllerTest extends TestContainersSuite
-        implements MemberProfileFixture, SkillFixture, MemberSkillFixture {
+        implements MemberProfileFixture, RoleFixture, SkillFixture, MemberSkillFixture {
 
     @Inject
     @Client("/services/skills/combine")
@@ -55,9 +56,11 @@ public class CombineSkillsControllerTest extends TestContainersSuite
 
     @Test
     public void testPOSTCombine2SkillsIntoOne() {
-
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
+
+        MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -82,7 +85,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         CombineSkillsDTO combineSkillsDTO =
              new CombineSkillsDTO("New Skill", "New Skill Desc", skillsToCombineArray);
 
-        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
         Skill returnedSkill = response.body();
@@ -201,6 +204,9 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
 
+        MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
 
@@ -219,7 +225,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         CombineSkillsDTO combineSkillsDTO =
                 new CombineSkillsDTO("New Skill", "New Skill Desc", newSkillsArray);
 
-        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
         Skill returnedSkill = response.body();
@@ -229,14 +235,14 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         assertEquals(returnedSkill.getName(), response.body().getName());
         assertEquals(String.format("%s/%s", request.getPath(), returnedSkill.getId()), response.getHeaders().get("location"));
 
-        final MutableHttpRequest<Object> skillRequest = HttpRequest.GET(String.format("/%s", skill1.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<Object> skillRequest = HttpRequest.GET(String.format("/%s", skill1.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> skillClient.toBlocking().exchange(skillRequest, Map.class));
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
 
-        final MutableHttpRequest<Object>  skillRequest2 = HttpRequest.GET(String.format("/%s", skill2.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<Object>  skillRequest2 = HttpRequest.GET(String.format("/%s", skill2.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         responseException = assertThrows(HttpClientResponseException.class,
                 () -> skillClient.toBlocking().exchange(skillRequest2, Map.class));
 
@@ -250,6 +256,9 @@ public class CombineSkillsControllerTest extends TestContainersSuite
 
         MemberProfile memberProfile1 = createADefaultMemberProfile();
         MemberProfile memberProfile2 = createAnUnrelatedUser();
+
+        MemberProfile memberProfileOfAdmin = createADefaultMemberProfileForPdl(memberProfile1);
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         Skill skill1 = createADefaultSkill();
         Skill skill2 = createASecondarySkill();
@@ -273,7 +282,7 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         CombineSkillsDTO combineSkillsDTO =
                 new CombineSkillsDTO("New Skill", "New Skill Desc", newSkillsArray);
 
-        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final MutableHttpRequest<CombineSkillsDTO> request = HttpRequest.POST("", combineSkillsDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
         Skill returnedSkill = response.body();
@@ -283,19 +292,15 @@ public class CombineSkillsControllerTest extends TestContainersSuite
         assertEquals(returnedSkill.getName(), response.body().getName());
         assertEquals(String.format("%s/%s", request.getPath(), returnedSkill.getId()), response.getHeaders().get("location"));
 
-        final MutableHttpRequest<Object> memberSkillRequest = HttpRequest.GET(String.format("/%s", memberSkill1.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> memberSkillClient.toBlocking().exchange(memberSkillRequest, Map.class));
+        MutableHttpRequest<Object> memberSkillRequest = HttpRequest.GET(String.format("/?skillid=%s", skill1.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        HttpResponse<Set<MemberSkill>> skillAssignments =  memberSkillClient.toBlocking().exchange(memberSkillRequest, Argument.setOf(MemberSkill.class));
+        Set<MemberSkill> memberSkillSet = skillAssignments.body();
+        assertEquals(Set.of(), memberSkillSet);
 
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
-
-        final MutableHttpRequest<Object> memberSkillRequest2 = HttpRequest.GET(String.format("/%s", memberSkill2.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-        responseException = assertThrows(HttpClientResponseException.class,
-                () -> memberSkillClient.toBlocking().exchange(memberSkillRequest2, Map.class));
-
-        assertNotNull(responseException.getResponse());
-        assertEquals(HttpStatus.NOT_FOUND,responseException.getStatus());
+        memberSkillRequest = HttpRequest.GET(String.format("/?skillid=%s", skill2.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        skillAssignments =  memberSkillClient.toBlocking().exchange(memberSkillRequest, Argument.setOf(MemberSkill.class));
+        memberSkillSet = skillAssignments.body();
+        assertEquals(Set.of(), memberSkillSet);
 
     }
 
