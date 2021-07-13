@@ -25,8 +25,11 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Gradle runs tests
-        run: ./gradlew check
+  sonarqube:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
@@ -37,9 +40,14 @@ jobs:
           curl -u "${SONAR_TOKEN}:" https://sonarqube.cloudops.objectcomputing.com/api/qualitygates/project_status?projectKey=$SONAR_PROJECT_KEY > result.json
           cat result.json
           if [[ $(jq -r '.projectStatus.status' result.json) = ERROR ]] ; then exit 1;fi
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gradle runs tests
+        run: ./gradlew check
