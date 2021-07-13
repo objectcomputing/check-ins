@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the feedback submit question 1`] = `
+<div
+  className="feedback-submit-question"
+>
+  <WithStyles(ForwardRef(Typography))
+    variant="body1"
+  >
+    <b>
+      Q
+      1
+      :
+    </b>
+     
+    How is the project going so far?
+  </WithStyles(ForwardRef(Typography))>
+  <WithStyles(ForwardRef(TextField))
+    className="fullWidth"
+    multiline={true}
+    placeholder="Type your answer..."
+    rowsMax={20}
+    variant="outlined"
+  />
+</div>
+`;

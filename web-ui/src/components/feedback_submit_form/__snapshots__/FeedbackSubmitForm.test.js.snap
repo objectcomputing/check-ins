@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the feedback submit form 1`] = `
+<div
+  className="submit-form"
+>
+  <WithStyles(ForwardRef(Typography))
+    className="makeStyles-announcement-1"
+    variant="h3"
+  >
+    Submitting Feedback on 
+    <b>
+      John Doe
+    </b>
+  </WithStyles(ForwardRef(Typography))>
+  <FeedbackSubmitQuestion
+    key="1"
+    question="How are you doing today?"
+    questionNumber={1}
+  />
+  <FeedbackSubmitQuestion
+    key="2"
+    question="How is the project going?"
+    questionNumber={2}
+  />
+  <FeedbackSubmitQuestion
+    key="3"
+    question="What is your current role on the team?"
+    questionNumber={3}
+  />
+  <div
+    className="submit-action-buttons"
+  >
+    <WithStyles(WithStyles(ForwardRef(Button)))
+      className="makeStyles-button-2"
+      color="primary"
+      variant="contained"
+    >
+      Review
+    </WithStyles(WithStyles(ForwardRef(Button)))>
+  </div>
+</div>
+`;
