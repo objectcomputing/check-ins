@@ -21,6 +21,10 @@ public class TemplateQuestionUpdateDTO {
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
 
+    @NotNull
+    @Schema(description = "id of the template this question is a part of", required = true)
+    private UUID templateId;
+
     public String getQuestion() {
         return question;
     }
@@ -43,5 +47,13 @@ public class TemplateQuestionUpdateDTO {
 
     public void setOrderNum(Integer orderNum) {
         this.orderNum = orderNum;
+    }
+
+    public void setTemplateId(UUID templateId) {
+        this.templateId = templateId;
+    }
+
+    public UUID getTemplateId( ) {
+        return templateId;
     }
 }

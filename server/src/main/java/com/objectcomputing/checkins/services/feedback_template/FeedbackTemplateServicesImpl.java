@@ -4,8 +4,12 @@ import com.mailjet.client.resource.Template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.feedback.Feedback;
 import com.objectcomputing.checkins.services.feedback_template.template_question.*;
+import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
+import com.objectcomputing.checkins.services.guild.member.GuildMember;
+import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -17,10 +21,9 @@ import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -45,60 +48,102 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public FeedbackTemplate save(FeedbackTemplate feedbackTemplate) {
+    public FeedbackTemplateResponseDTO read(UUID id) {
+        FeedbackTemplate foundTemplate = feedbackTemplateRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("No such template found"));
+
+        List<TemplateQuestionResponseDTO> questions = templateQuestionRepo
+                .findByTemplateId(Util.nullSafeUUIDToString(id))
+                .stream()
+                .map(question ->
+                        fromQuestionEntity(question)).collect(Collectors.toList());
+
+
+        return fromEntity(foundTemplate, questions);
+    }
+
+    @Override
+    public FeedbackTemplateResponseDTO save(FeedbackTemplateCreateDTO feedbackTemplate) {
 
         FeedbackTemplate newTemplateObject = null;
-        LOG.info("Feedback template object{} ", feedbackTemplate);
-        List<TemplateQuestion> newTemplateQuestions = new ArrayList<>();
-        if (feedbackTemplate != null ) {
+        List<TemplateQuestionResponseDTO> newTemplateQuestions = new ArrayList<>();
+        if (feedbackTemplate == null ) {
+            throw new BadArgException("Feedback template object is null and cannot be saved");
+        }
             try {
                 memberProfileServices.getById(feedbackTemplate.getCreatedBy());
             } catch (NotFoundException e) {
                 throw new BadArgException("Creator ID is invalid");
             }
 
-            if (!createIsPermitted()){
+            if (!createIsPermitted()) {
                 throw new PermissionException("You are not authorized to do this operation");
             }
+
             if (feedbackTemplate.getActive()) {
-                newTemplateObject = feedbackTemplateRepository.save(feedbackTemplate);
-                if (newTemplateObject.getId() != null) {
-                    for (TemplateQuestion templateQuestion : feedbackTemplate.getTemplateQuestions()) {
-                        templateQuestion.setTemplateId(newTemplateObject.getId());
-                        newTemplateQuestions.add(templateQuestionRepo.save(templateQuestion));
-                    }
-                    newTemplateObject.setTemplateQuestions(newTemplateQuestions);
-                    return newTemplateObject;
-                } else {
-                    throw new BadArgException("New template object could not be saved");
+                newTemplateObject = feedbackTemplateRepository.save(fromDTO(feedbackTemplate));
+                    if (newTemplateObject.getId() != null && feedbackTemplate.getTemplateQuestions() != null) {
+                        List<TemplateQuestionCreateDTO> questions = feedbackTemplate.getTemplateQuestions();
+                        for (int i = 0; i < feedbackTemplate.getTemplateQuestions().size(); ++i) {
+                            TemplateQuestionCreateDTO templateQuestion = questions.get(i);
+                            templateQuestion.setTemplateId(newTemplateObject.getId());
+                            templateQuestion.setOrderNum(i+1);
+                            newTemplateQuestions.add(fromQuestionEntity(templateQuestionRepo.save(fromQuestionDTO(templateQuestion))));
+                        }
+                    return fromEntity(newTemplateObject, newTemplateQuestions);
                 }
-
-            } else{
-                return feedbackTemplate;
+                return fromEntity(newTemplateObject);
+            } else {
+                return fromEntity(fromDTO(feedbackTemplate));
             }
-
-        } else {
-            throw new BadArgException("Feedback template in save is null");
-        }
-
     }
 
 
-    @Override
-    public FeedbackTemplate update(FeedbackTemplate feedbackTemplate) {
-        FeedbackTemplate updatedFeedbackTemplate;
 
+
+    @Override
+    public FeedbackTemplateResponseDTO update(FeedbackTemplateUpdateDTO feedbackTemplate) {
+        Optional<FeedbackTemplate> oldFeedbackTemplate;
+        FeedbackTemplateResponseDTO updated;
         if (feedbackTemplate.getId() != null) {
-            updatedFeedbackTemplate = getById(feedbackTemplate.getId());
+            oldFeedbackTemplate = feedbackTemplateRepository.findById(feedbackTemplate.getId());
+            if (oldFeedbackTemplate.isEmpty()) {
+                throw new NotFoundException("Template does not exist. Cannot update");
+            }
+            feedbackTemplate.setCreatedBy(oldFeedbackTemplate.get().getCreatedBy());
         } else {
-            throw new BadArgException("Feedback template does not exist. Cannot update");
+            throw new BadArgException("Feedback template ID is null. Cannot update");
         }
-        feedbackTemplate.setCreatedBy(updatedFeedbackTemplate.getCreatedBy());
-        if (!updateIsPermitted(feedbackTemplate.getCreatedBy())) {
+
+        if (!updateIsPermitted(oldFeedbackTemplate.get().getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
+        FeedbackTemplate updatedTemplate = feedbackTemplateRepository.update(fromDTO(feedbackTemplate));
+        List<TemplateQuestion> existingQuestions = templateQuestionRepo.findByTemplateId(Util.nullSafeUUIDToString(feedbackTemplate.getId()));
+        List<TemplateQuestionResponseDTO> newQuestions = new ArrayList<>();
 
-        return feedbackTemplateRepository.update(feedbackTemplate);
+        //Add any new questions to the template
+        feedbackTemplate.getTemplateQuestions().stream().forEach((newQuestion) -> {
+
+            Optional<TemplateQuestion> first = existingQuestions.stream().filter((existing) -> existing.getId().equals(newQuestion.getId())).findFirst();
+            if(!first.isPresent()) {
+                LOG.info("Going to save question :{}", fromQuestionDTO(newQuestion));
+                TemplateQuestion returnedQuestion = templateQuestionServices.save(fromQuestionDTO(newQuestion));
+                newQuestions.add(fromQuestionEntity(templateQuestionServices.save(fromQuestionDTO(newQuestion))));
+            } else {
+                LOG.info("Going to update question in place :{}", fromQuestionDTO(newQuestion));
+                newQuestions.add(fromQuestionEntity(templateQuestionServices.update(fromQuestionDTO(newQuestion))));
+            }
+        });
+
+        //Delete any questions that have been removed
+        existingQuestions.stream().forEach((existingQuestion) -> {
+            if(!feedbackTemplate.getTemplateQuestions().stream().filter((updatedQuestion) -> updatedQuestion.getId().equals(existingQuestion.getId())).findFirst().isPresent()) {
+                templateQuestionServices.delete(existingQuestion.getId());
+            }
+        });
+        updated = fromEntity(updatedTemplate, newQuestions);
+        return updated;
     }
 
     @Override
@@ -198,7 +243,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
-        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getActive());
+        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getActive());
     }
     private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate entity) {
         return fromEntity(entity, new ArrayList<>());
@@ -218,7 +263,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return dto;
     }
 
-    private TemplateQuestionResponseDTO fromEntity(TemplateQuestion templateQuestion) {
+    private TemplateQuestionResponseDTO fromQuestionEntity(TemplateQuestion templateQuestion) {
         TemplateQuestionResponseDTO dto = new TemplateQuestionResponseDTO();
         dto.setId(templateQuestion.getId());
         dto.setQuestion(templateQuestion.getQuestion());
@@ -227,15 +272,16 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return dto;
     }
 
-    private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
+    private TemplateQuestion fromQuestionDTO(TemplateQuestionCreateDTO dto) {
         return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getOrderNum());
     }
 
-    private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
+    private TemplateQuestion fromQuestionDTO(TemplateQuestionUpdateDTO dto) {
         TemplateQuestion newQuestion = new TemplateQuestion();
         newQuestion.setId(dto.getId());
         newQuestion.setQuestion(dto.getQuestion());
         newQuestion.setOrderNum(dto.getOrderNum());
+        newQuestion.setTemplateId(dto.getTemplateId());
         return newQuestion;
     }
 

@@ -36,7 +36,6 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "Questions attached to this template")
     private List<TemplateQuestionCreateDTO> templateQuestions;
 
-
     public void setTitle(String title) {
         this.title = title;
     }

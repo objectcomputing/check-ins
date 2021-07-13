@@ -43,7 +43,12 @@ public class TemplateQuestion {
     private Integer orderNum;
 
     public TemplateQuestion(String question, UUID templateId, Integer orderNum) {
+        this.id = null;
+        this.question = question;
+        this.templateId = templateId;
+        this.orderNum = orderNum;
     }
+
 
     @Override
     public String toString() {
@@ -55,11 +60,18 @@ public class TemplateQuestion {
                 '}';
     }
 
-    public TemplateQuestion(@NotNull String question, @Nullable Integer orderNum) {
+    public TemplateQuestion(@NotNull UUID id, @NotNull String question, @Nullable UUID templateId, Integer orderNum) {
+        this.id = id;
+        this.question = question;
+        this.templateId = templateId;
+        this.orderNum = orderNum;
+    }
+
+    public TemplateQuestion(@NotNull String question) {
         this.id = null;
         this.question = question;
         this.templateId = null;
-        this.orderNum = orderNum;
+        this.orderNum = null;
     }
 
 

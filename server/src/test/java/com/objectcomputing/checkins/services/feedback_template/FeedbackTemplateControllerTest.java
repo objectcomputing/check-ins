@@ -2,10 +2,17 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionUpdateDTO;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.TemplateQuestionFixture;
+import com.objectcomputing.checkins.services.guild.GuildUpdateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -25,12 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-public class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, FeedbackTemplateFixture {
+public class FeedbackTemplateControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, TemplateQuestionFixture, FeedbackTemplateFixture {
 
     @Inject
     @Client("/services/feedback/templates")
@@ -50,6 +54,21 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
        return feedbackTemplate;
     }
 
+   UUID saveDefaultFeedbackTemplateWithQuestions(FeedbackTemplate feedbackTemplate) {
+        FeedbackTemplateCreateDTO dto = createDTO(feedbackTemplate);
+        MemberProfile admin = createADefaultSupervisor();
+        createDefaultAdminRole(admin);
+        final TemplateQuestion question1 = createDefaultFeedbackQuestion();
+        final TemplateQuestion question2 = createSecondDefaultFeedbackQuestion();
+        dto.setTemplateQuestions(List.of(createDefaultTemplateQuestionDto(feedbackTemplate, question1), createDefaultTemplateQuestionDto(feedbackTemplate, question2)));
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        return response.getBody().get().getId();
+
+
+    }
     FeedbackTemplate saveInactiveFeedbackTemplate(UUID createdBy) {
         FeedbackTemplate feedbackTemplate = createFeedbackTemplate(createdBy);
         feedbackTemplate.setActive(false);
@@ -77,6 +96,31 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setActive(feedbackTemplate.getActive());
         return dto;
     }
+    TemplateQuestion saveDefaultQuestion() {
+        TemplateQuestion feedbackQuestion = createDefaultFeedbackQuestion();
+        getTemplateQuestionRepository().save(feedbackQuestion);
+        return feedbackQuestion;
+    }
+
+    TemplateQuestion saveSecondDefaultQuestion() {
+        TemplateQuestion feedbackQuestion = createSecondDefaultFeedbackQuestion();
+        getTemplateQuestionRepository().save(feedbackQuestion);
+        return feedbackQuestion;
+    }
+
+    TemplateQuestionCreateDTO createDTO(TemplateQuestion feedbackQuestion) {
+        TemplateQuestionCreateDTO dto = new TemplateQuestionCreateDTO();
+        dto.setQuestion(feedbackQuestion.getQuestion());
+        dto.setTemplateId(feedbackQuestion.getTemplateId());
+        dto.setOrderNum(feedbackQuestion.getOrderNum());
+        return dto;
+    }
+
+    void assertContentEqualsResponse(TemplateQuestion content, TemplateQuestionResponseDTO dto) {
+        assertEquals(content.getQuestion(), dto.getQuestion());
+        assertEquals(content.getTemplateId(), dto.getTemplateId());
+        assertEquals(content.getOrderNum(), dto.getOrderNum());
+    }
 
     void assertContentEqualsEntity(FeedbackTemplate content, FeedbackTemplateResponseDTO dto) {
         assertEquals(content.getTitle(), dto.getTitle());
@@ -103,12 +147,30 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
-    void testPostAllowedByAdmin() {
+    void testPostAllowedByMemberWithQuestions() {
+        MemberProfile memberOne = createADefaultMemberProfile();
+        FeedbackTemplate feedbackTemplate = createFeedbackTemplate(memberOne.getId());
+        FeedbackTemplateCreateDTO dto = createDTO(feedbackTemplate);
+        final TemplateQuestion question1 = createDefaultFeedbackQuestion();
+        final TemplateQuestion question2 = createSecondDefaultFeedbackQuestion();
+        dto.setTemplateQuestions(List.of(createDefaultTemplateQuestionDto(feedbackTemplate, question1), createDefaultTemplateQuestionDto(feedbackTemplate, question2) ));
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertContentEqualsEntity(feedbackTemplate, response.getBody().get());
+    }
+
+
+    @Test
+    void testPostAllowedByAdminWithQuestions() {
          MemberProfile admin = createADefaultMemberProfile();
          createDefaultAdminRole(admin);
          FeedbackTemplate feedbackTemplate = createFeedbackTemplate(admin.getId());
          FeedbackTemplateCreateDTO dto = createDTO(feedbackTemplate);
-
+        final TemplateQuestion question1 = createDefaultFeedbackQuestion();
+        final TemplateQuestion question2 = createSecondDefaultFeedbackQuestion();
+        dto.setTemplateQuestions(List.of(createDefaultTemplateQuestionDto(feedbackTemplate, question1), createDefaultTemplateQuestionDto(feedbackTemplate, question2) ));
          final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
@@ -158,18 +220,47 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
+    void testAddQuestionsByCreator() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
+        TemplateQuestion questionOne = saveDefaultFeedbackQuestion(template);
+        TemplateQuestion questionTwo = new TemplateQuestion("Question to push into list", template.getId(), 2);
+        TemplateQuestionUpdateDTO questionDto = updateTemplateQuestionDto(questionOne);
+        TemplateQuestionUpdateDTO questionDtoSecond = updateTemplateQuestionDto(questionTwo);
+        updateDTO.setId(template.getId());
+        updateDTO.setTitle("An Updated Title");
+        updateDTO.setDescription("An updated description");
+        updateDTO.setActive(true);
+        updateDTO.setCreatedBy(template.getCreatedBy());
+        updateDTO.setTemplateQuestions(List.of(questionDto, questionDtoSecond));
+        HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNotNull(response.getBody().get().getCreatedBy());
+        assertEquals(response.getBody().get().getCreatedBy(), memberOne.getId());
+        assertContentEqualsEntity(updateDTO, response.getBody().get());
+
+
+
+    }
+
+    @Test
     void testUpdateByCreator() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
-
         final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
+        TemplateQuestion questionOne = saveDefaultFeedbackQuestion(template);
+        TemplateQuestionUpdateDTO questionDto = updateTemplateQuestionDto(questionOne);
 
         // Update by the creator
         updateDTO.setId(template.getId());
         updateDTO.setTitle("An Updated Title");
         updateDTO.setDescription("An updated description");
         updateDTO.setActive(true);
-
+        updateDTO.setCreatedBy(template.getCreatedBy());
+        updateDTO.setTemplateQuestions(Collections.singletonList(questionDto));
         HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
@@ -185,14 +276,16 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final MemberProfile memberOne = createADefaultMemberProfile();
         final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        TemplateQuestion questionOne = saveDefaultFeedbackQuestion(template);
         final FeedbackTemplateUpdateDTO updateDTO = new FeedbackTemplateUpdateDTO();
-
+        TemplateQuestionUpdateDTO questionDto = updateTemplateQuestionDto(questionOne);
         // Update by unauthorized user
         updateDTO.setId(template.getId());
         updateDTO.setTitle(template.getTitle());
         updateDTO.setDescription(template.getDescription());
+        updateDTO.setCreatedBy(template.getCreatedBy());
         updateDTO.setActive(true);
-
+        updateDTO.setTemplateQuestions(Collections.singletonList(questionDto));
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
                 .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -214,8 +307,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
          updateDTO.setId(memberTwo.getId());
          updateDTO.setTitle(template.getTitle());
          updateDTO.setDescription(template.getDescription());
+        updateDTO.setCreatedBy(template.getCreatedBy());
          updateDTO.setActive(template.getActive());
-
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -226,7 +319,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals("No feedback template with id " + memberTwo.getId(), error);
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
     }
-
 
     @Test
     void testGetPublicTemplateById() {
@@ -241,12 +333,35 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertContentEqualsEntity(template, response.getBody().get());
     }
 
+    //TODO: How can we perform save without dependency on POST request?
+    @Test
+    void testGetPublicWithQuestionsById() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        FeedbackTemplate feedbackTemplate = createFeedbackTemplate(memberOne.getId());
+        UUID responseId = saveDefaultFeedbackTemplateWithQuestions(feedbackTemplate);
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", responseId))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+        FeedbackTemplateCreateDTO dto = createDTO(feedbackTemplate);
+        final TemplateQuestion question1 = createDefaultFeedbackQuestion();
+        final TemplateQuestion question2 = createSecondDefaultFeedbackQuestion();
+        List<TemplateQuestionCreateDTO> baseTemplateQuestions = List.of(createDefaultTemplateQuestionDto(feedbackTemplate, question1), createDefaultTemplateQuestionDto(feedbackTemplate, question2));
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(feedbackTemplate.getTitle(), response.getBody().get().getTitle());
+        assertEquals(feedbackTemplate.getDescription(), response.getBody().get().getDescription());
+        assertEquals(feedbackTemplate.getCreatedBy(), response.getBody().get().getCreatedBy());
+        assertEquals(feedbackTemplate.getActive(), response.getBody().get().getActive());
+
+
+
+    }
+
     @Test
     void testGetByIdNotFound() {
         final MemberProfile memberOne = createADefaultMemberProfile();
         final UUID random =  UUID.randomUUID();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", random))
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,

@@ -1,15 +1,18 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
 import com.objectcomputing.checkins.services.feedback.Feedback;
+import com.objectcomputing.checkins.services.guild.GuildResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface FeedbackTemplateServices {
 
-    FeedbackTemplate save(FeedbackTemplate feedbackTemplate);
+    FeedbackTemplateResponseDTO read(UUID id);
 
-    FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
+    FeedbackTemplateResponseDTO save(FeedbackTemplateCreateDTO feedbackTemplate);
+
+    FeedbackTemplateResponseDTO update(FeedbackTemplateUpdateDTO feedbackTemplate);
 
     Boolean delete(UUID id);
 

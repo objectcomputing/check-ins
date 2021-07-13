@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
@@ -20,20 +21,20 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     private final TemplateQuestionRepository templateQuestionRepository;
     private final CurrentUserServices currentUserServices;
-    private final FeedbackTemplateServices feedbackTemplateServices;
+    private final FeedbackTemplateRepository feedbackTemplateRepo;
 
     public TemplateQuestionServicesImpl(TemplateQuestionRepository templateQuestionRepository,
                                         CurrentUserServices currentUserServices,
                                         MemberProfileServices memberProfileServices,
-                                        FeedbackTemplateServices feedbackTemplateServices) {
+                                        FeedbackTemplateRepository feedbackTemplateRepo) {
         this.templateQuestionRepository = templateQuestionRepository;
         this.currentUserServices = currentUserServices;
-        this.feedbackTemplateServices = feedbackTemplateServices;
+        this.feedbackTemplateRepo = feedbackTemplateRepo;
     }
 
     @Override
     public TemplateQuestion update(TemplateQuestion templateQuestion) {
-        FeedbackTemplate feedbackTemplate;
+        Optional<FeedbackTemplate> feedbackTemplate;
         TemplateQuestion oldTemplateQuestion = null;
 
         if (templateQuestion.getId() != null) {
@@ -46,14 +47,12 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new BadArgException("Question ID does not exist");
         }
 
-        templateQuestion.setTemplateId(oldTemplateQuestion.getTemplateId());
-
-        try {
-            feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.getTemplateId());
-        } catch (NotFoundException e) {
+            templateQuestion.setTemplateId(oldTemplateQuestion.getTemplateId());
+            feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
+         if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("Template ID does not exist");
-        }
-        if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
+         }
+        else if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
         return templateQuestionRepository.update(templateQuestion);
@@ -66,14 +65,13 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         if (templateQuestion.isEmpty() || templateQuestion.get() == null) {
             throw new NotFoundException("Question with that ID does not exist");
         }
-        FeedbackTemplate feedbackTemplate;
-        try {
-            feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.get().getTemplateId());
-        } catch (NotFoundException e) {
+            Optional<FeedbackTemplate> feedbackTemplate;
+            feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
+        if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("Template ID does not exist");
         }
 
-        if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
+        if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
       templateQuestionRepository.deleteById(id);
@@ -83,14 +81,13 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     @Override
     public TemplateQuestion save(TemplateQuestion templateQuestion) {
-        FeedbackTemplate feedbackTemplate;
-        try {
-            feedbackTemplate = feedbackTemplateServices.getById(templateQuestion.getTemplateId());
-        } catch (NotFoundException e) {
+        Optional <FeedbackTemplate> feedbackTemplate;
+            feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
+         if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("Template ID does not exist");
         }
 
-        if (!createIsPermitted(feedbackTemplate.getCreatedBy())) {
+        if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
         if (templateQuestion.getId() != null) {

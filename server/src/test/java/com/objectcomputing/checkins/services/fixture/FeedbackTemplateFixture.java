@@ -1,7 +1,12 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateResponseDTO;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServicesImpl;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface FeedbackTemplateFixture extends RepositoryFixture{

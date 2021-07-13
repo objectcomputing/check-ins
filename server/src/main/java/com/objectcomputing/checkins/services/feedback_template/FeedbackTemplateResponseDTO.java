@@ -28,7 +28,7 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "description of the feedback template")
     private String description;
 
-    @NotNull
+    @Nullable
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 

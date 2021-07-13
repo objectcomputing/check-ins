@@ -39,6 +39,7 @@ public class FeedbackTemplate {
     @Schema(description = "title of feedback template", required = true)
     private String title;
 
+
     @Column(name = "description")
     @Nullable
     @TypeDef(type = DataType.STRING)
@@ -46,7 +47,7 @@ public class FeedbackTemplate {
     private String description;
 
     @Column(name = "createdBy")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID createdBy;
@@ -57,8 +58,6 @@ public class FeedbackTemplate {
     @Schema(description = "whether the template can still be used", required = true)
     private Boolean active;
 
-    @Schema(description = "list of template questions attached to template", required = false)
-    List<TemplateQuestion> templateQuestions = new ArrayList<>();
 
 
     public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy) {
@@ -77,26 +76,15 @@ public class FeedbackTemplate {
         this.active = active;
     }
 
-    public FeedbackTemplate(@NotNull UUID id,
-                    @NotNull String title,
-                    @Nullable String description,
-                    @NotNull Boolean active
-    ) {
+    public FeedbackTemplate(@NotNull UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.createdBy = createdBy;
         this.active = active;
     }
 
     public FeedbackTemplate() {}
-
-    public List<TemplateQuestion> getTemplateQuestions() {
-        return templateQuestions;
-    }
-
-    public void setTemplateQuestions(List<TemplateQuestion> templateQuestions) {
-        this.templateQuestions = templateQuestions;
-    }
 
     public UUID getId() {
         return id;
