@@ -111,10 +111,7 @@ const FeedbackRequestPage = () => {
    }, []);
 
   const hasSend = useCallback(() => {
-    let isValidPair = false
-    if(dueQuery) {
-      isValidPair = dueQuery >= sendQuery
-    }
+    const isValidPair = dueQuery ? dueQuery >= sendQuery : true;
     return (sendQuery && isValidDate(sendQuery) && isValidPair)
   }, [sendQuery, isValidDate, dueQuery]);
 
@@ -125,7 +122,8 @@ const FeedbackRequestPage = () => {
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasFor() && hasTemplate() && hasFrom() && hasSend() && isValidDate(dueQuery);
+        const dueQueryValid = dueQuery ? isValidDate(dueQuery) :  true;
+        return hasFor() && hasTemplate() && hasFrom() && hasSend() && dueQueryValid;
       default:
         return false;
     }
