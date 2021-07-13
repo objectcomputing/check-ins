@@ -26,15 +26,6 @@ public class OpportunitiesCreateDTO {
     @Schema(required = true, description = "date for expiresOn")
     private LocalDate expiresOn;
 
-
-    @NotNull
-    @Schema(required = true, description = "date for submittedOn")
-    private LocalDate submittedOn;
-
-    @NotNull
-    @Schema(required = true, description = "id of the submittedBy member")
-    private UUID submittedBy;
-
     @NotNull
     @Schema(required = true, description = "state of the associated opportunity")
     private Boolean pending;
@@ -67,22 +58,6 @@ public class OpportunitiesCreateDTO {
 
     public void setExpiresOn(LocalDate expiresOn) {
         this.expiresOn = expiresOn;
-    }
-
-    public LocalDate getSubmittedOn() {
-        return submittedOn;
-    }
-
-    public void setSubmittedOn(LocalDate submittedOn) {
-        this.submittedOn = submittedOn;
-    }
-
-    public UUID getSubmittedBy() {
-        return submittedBy;
-    }
-
-    public void setSubmittedBy(UUID submittedBy) {
-        this.submittedBy = submittedBy;
     }
 
     public Boolean getPending() { return pending; }

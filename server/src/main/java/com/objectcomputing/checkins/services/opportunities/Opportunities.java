@@ -88,6 +88,10 @@ public class Opportunities {
         this(null, name, description, url, expiresOn, submittedOn, submittedBy, pending);
     }
 
+    public Opportunities(String name, String description, String url, LocalDate expiresOn, Boolean pending) {
+        this(null, name, description, url, expiresOn, null, null, pending);
+    }
+
     public UUID getId() {
         return this.id;
     }

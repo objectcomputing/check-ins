@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.opportunities;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.validate.PermissionsValidation;
@@ -33,14 +34,13 @@ public class OpportunitiesServicesImpl implements OpportunitiesService {
     public Opportunities save(Opportunities opportunitiesResponse) {
         Opportunities opportunitiesResponseRet = null;
         if(opportunitiesResponse!=null){
-            final UUID memberId = opportunitiesResponse.getSubmittedBy();
-            LocalDate surSubDate = opportunitiesResponse.getSubmittedOn();
+            MemberProfile member = currentUserServices.getCurrentUser();
+            if(member!=null) {
+                opportunitiesResponse.setSubmittedBy(member.getId());
+                opportunitiesResponse.setSubmittedOn(LocalDate.now());
+            }
             if(opportunitiesResponse.getId()!=null){
                 throw new BadArgException(String.format("Found unexpected id for opportunities %s", opportunitiesResponse.getId()));
-            } else if(memberRepo.findById(memberId).isEmpty()){
-                throw new BadArgException(String.format("Member %s doesn't exists", memberId));
-            } else if(surSubDate.isBefore(LocalDate.EPOCH) || surSubDate.isAfter(LocalDate.MAX)) {
-                throw new BadArgException(String.format("Invalid date for opportunities submission date %s",memberId));
             }
             opportunitiesResponseRet = opportunitiesResponseRepo.save(opportunitiesResponse);
         }

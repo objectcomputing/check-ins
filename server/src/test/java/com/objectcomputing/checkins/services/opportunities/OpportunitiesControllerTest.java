@@ -44,18 +44,15 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         opportunitiesResponseCreateDTO.setDescription("Description");
         opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
         opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
         opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
-        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<Opportunities> response = client.toBlocking().exchange(request,Opportunities.class);
 
         Opportunities opportunitiesResponseResponse = response.body();
 
         assertNotNull(opportunitiesResponseResponse);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(opportunitiesResponseCreateDTO.getSubmittedBy(),opportunitiesResponseResponse.getSubmittedBy());
         assertEquals(String.format("%s/%s", request.getPath(), opportunitiesResponseResponse.getId()), response.getHeaders().get("location"));
     }
 
@@ -68,18 +65,15 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         opportunitiesResponseCreateDTO.setDescription("Description");
         opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
         opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
         opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
 
-        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(),MEMBER_ROLE);
         final HttpResponse<Opportunities> response = client.toBlocking().exchange(request, Opportunities.class);
 
         Opportunities opportunitiesResponseResponse = response.body();
 
         assertNotNull(opportunitiesResponseResponse);
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals(opportunitiesResponseCreateDTO.getSubmittedBy(),opportunitiesResponseResponse.getSubmittedBy());
         assertEquals(String.format("%s/%s", request.getPath(), opportunitiesResponseResponse.getId()), response.getHeaders().get("location"));
     }
     @Test
@@ -101,28 +95,6 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
-    @Test
-    void testCreateOpportunitiesForNonExistingMember(){
-        OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
-        opportunitiesResponseCreateDTO.setName("Name");
-        opportunitiesResponseCreateDTO.setDescription("Description");
-        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
-        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.now());
-        opportunitiesResponseCreateDTO.setSubmittedBy(UUID.randomUUID());
-        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
-
-        HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exists",opportunitiesResponseCreateDTO.getSubmittedBy()),error);
-    }
 
     @Test
     void testCreateANullOpportunities() {
@@ -136,30 +108,6 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
         assertEquals("Required Body [opportunitiesResponse] not specified",errors.asText());
         assertEquals(request.getPath(),href.asText());
         assertEquals(HttpStatus.BAD_REQUEST,responseException.getStatus());
-
-    }
-
-    @Test
-    void testCreateAOpportunitiesForInvalidDate() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        OpportunitiesCreateDTO opportunitiesResponseCreateDTO = new OpportunitiesCreateDTO();
-        opportunitiesResponseCreateDTO.setName("Name");
-        opportunitiesResponseCreateDTO.setDescription("Description");
-        opportunitiesResponseCreateDTO.setUrl("https://objectcomputing.com/jobs");
-        opportunitiesResponseCreateDTO.setExpiresOn(LocalDate.of(1965,11,13));
-        opportunitiesResponseCreateDTO.setSubmittedOn(LocalDate.of(1965,11,12));
-        opportunitiesResponseCreateDTO.setSubmittedBy(memberProfile.getId());
-        opportunitiesResponseCreateDTO.setPending(Boolean.FALSE);
-
-        final HttpRequest<OpportunitiesCreateDTO> request = HttpRequest.POST("",opportunitiesResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
-        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(request.getPath(),href);
-        assertEquals(String.format("Invalid date for opportunities submission date %s",opportunitiesResponseCreateDTO.getSubmittedBy()),error);
 
     }
 

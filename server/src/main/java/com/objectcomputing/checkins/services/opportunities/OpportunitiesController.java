@@ -70,7 +70,7 @@ public class OpportunitiesController {
     @Post()
     public Single<HttpResponse<Opportunities>> createOpportunities(@Body @Valid OpportunitiesCreateDTO opportunitiesResponse,
                                                      HttpRequest<OpportunitiesCreateDTO> request) {
-        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(), opportunitiesResponse.getSubmittedOn(), opportunitiesResponse.getSubmittedBy(), opportunitiesResponse.getPending())))
+        return Single.fromCallable(() -> opportunitiesResponseServices.save(new Opportunities(opportunitiesResponse.getName(), opportunitiesResponse.getDescription(), opportunitiesResponse.getUrl(), opportunitiesResponse.getExpiresOn(),opportunitiesResponse.getPending())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(opportunities -> {return (HttpResponse<Opportunities>) HttpResponse
                         .created(opportunities)
