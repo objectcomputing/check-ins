@@ -13,7 +13,7 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import DateFnsUtils from "@date-io/date-fns";
-import {selectProfile} from "../context/selectors";
+import {selectCurrentMembers, selectProfile} from "../context/selectors";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +57,7 @@ function getSteps() {
   return ["Select template", "Select recipients", "Set dates"];
 }
 
-const FeedbackRequestPage = () => {
+const FeedbackRequestPage = (effect, deps) => {
   const {state} = useContext(AppContext);
   const steps = getSteps();
   const classes = useStyles();
@@ -71,6 +71,8 @@ const FeedbackRequestPage = () => {
   const dueQuery = query.due?.toString();
   const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
+  const memberList = selectCurrentMembers(state);
+  const memberIds = memberList.map((member) => member.id);
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -89,8 +91,19 @@ const FeedbackRequestPage = () => {
   }, [templateQuery])
 
   const hasFrom = useCallback(() => {
-    return !!fromQuery;
-  }, [fromQuery])
+    if (fromQuery) {
+      const recipientList = fromQuery.split(",");
+      for (let recipientId of recipientList) {
+        if (!memberIds.includes(recipientId)) {
+          query.from = undefined;
+          history.push({...location, search: queryString.stringify(query)});
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }, [fromQuery, memberIds, history, location, query])
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
@@ -143,20 +156,20 @@ const FeedbackRequestPage = () => {
     history.push({...location, search: queryString.stringify(query)});
   }, [activeStep, query, location, history]);
 
-    const urlIsValid = useCallback(() => {
-      switch (activeStep) {
-        case 1:
-          return hasFor();
-        case 2:
-          return hasFor() && hasTemplate();
-        case 3:
-          return hasFor() && hasTemplate() && hasFrom();
-        case 4:
-          return hasFor() && hasTemplate() && hasFrom() && hasSend();
-        default:
-          return false;
-      }
-    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
+  const urlIsValid = useCallback(() => {
+    switch (activeStep) {
+      case 1:
+        return hasFor();
+      case 2:
+        return hasFor() && hasTemplate();
+      case 3:
+        return hasFor() && hasTemplate() && hasFrom();
+      case 4:
+        return hasFor() && hasTemplate() && hasFrom() && hasSend();
+      default:
+        return false;
+    }
+  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
 
   const handleQueryChange = (key, value) => {
     let newQuery = {
