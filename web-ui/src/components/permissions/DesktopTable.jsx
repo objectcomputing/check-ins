@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 });
 
 
-export default function PermissionsTable({roles, allPermissions, handleChange}) {
+export default function DesktopTable({roles, allPermissions, handleChange}) {
   const classes = useStyles();
 
   return (

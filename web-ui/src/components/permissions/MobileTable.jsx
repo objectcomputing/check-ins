@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 
-export default function PermissionsTableMobile({roles, allPermissions, handleChange}) {
+export default function MobileTable({roles, allPermissions, handleChange}) {
   const [roleIndex, setRoleIndex] = useState(0);
   const [searchPermission, setSearchPermission] = useState("");
 
