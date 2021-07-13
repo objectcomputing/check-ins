@@ -13,9 +13,8 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
-import {selectProfile, selectCsrfToken, selectCurrentUser} from "../context/selectors";
+import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMembers} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
-import {selectCurrentMembers, selectProfile} from "../context/selectors";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
