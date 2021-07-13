@@ -1,3 +1,11 @@
+.add-user-to-role {
+  display: flex;
+  align-items: center;
+}
+.role-header {
+  display: flex;
+  justify-content: space-between;
+}
 .role-content .member-card {
   display: flex;
 }
