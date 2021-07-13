@@ -8,7 +8,8 @@ import "./FeedbackSubmitQuestion.css"
 
 const propTypes = {
   question: PropTypes.string.isRequired,
-  questionNumber: PropTypes.number.isRequired
+  questionNumber: PropTypes.number.isRequired,
+  editable: PropTypes.bool.isRequired
 }
 
 const FeedbackSubmitQuestion = (props) => {
@@ -20,7 +21,11 @@ const FeedbackSubmitQuestion = (props) => {
         variant="outlined"
         placeholder="Type your answer..."
         multiline
-        rowsMax={20}/>
+        rowsMax={20}
+        InputProps={{
+          readOnly: !props.editable
+        }}
+      />
     </div>
   );
 }

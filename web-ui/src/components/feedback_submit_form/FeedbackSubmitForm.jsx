@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -47,11 +47,14 @@ const ColorButton = withStyles({
 })(Button);
 
 const propTypes = {
-  requesteeName: PropTypes.string.isRequired
+  requesteeName: PropTypes.string.isRequired,
 }
 
 const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
+
+  const [isReviewing, setIsReviewing] = useState(false);
+
   return (
     <div className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{props.requesteeName}</b></Typography>
@@ -59,15 +62,35 @@ const FeedbackSubmitForm = (props) => {
         <FeedbackSubmitQuestion
           key={sampleQuestion.id}
           question={sampleQuestion.question}
-          questionNumber={sampleQuestion.id}/>
+          questionNumber={sampleQuestion.id}
+          editable={!isReviewing}
+        />
       ))}
       <div className="submit-action-buttons">
-        <ColorButton
-          className={classes.button}
-          variant="contained"
-          color="primary">
-          Review
-        </ColorButton>
+        {isReviewing ?
+          <React.Fragment>
+            <ColorButton
+              className={classes.button}
+              onClick={() => setIsReviewing(false)}
+              variant="contained"
+              color="primary">
+              Edit
+            </ColorButton>
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="primary">
+              Submit
+            </Button>
+          </React.Fragment> :
+          <ColorButton
+            className={classes.button}
+            onClick={() => setIsReviewing(true)}
+            variant="contained"
+            color="primary">
+            Review
+          </ColorButton>
+        }
       </div>
     </div>
   );
