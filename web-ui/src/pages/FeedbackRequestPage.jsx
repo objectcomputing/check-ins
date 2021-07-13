@@ -24,6 +24,11 @@ const useStyles = makeStyles((theme) => ({
       padding: 0,
     },
   },
+  requestHeader: {
+    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+      fontSize: "x-large",
+    },
+  },
   stepContainer: {
     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       width: '80%',
@@ -49,7 +54,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "right",
   },
   actionButtons: {
-    margin: "0 0 0 1em"
+    margin: "0.5em 0 0 1em",
+    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+      padding: "0",
+    },
   }
 }));
 
@@ -103,10 +111,7 @@ const FeedbackRequestPage = () => {
   }, []);
 
   const hasSend = useCallback(() => {
-    let isValidPair = false
-    if (dueQuery) {
-      isValidPair = dueQuery >= sendQuery
-    }
+    const isValidPair = dueQuery ? dueQuery >= sendQuery : true;
     return (sendQuery && isValidDate(sendQuery) && isValidPair)
   }, [sendQuery, isValidDate, dueQuery]);
 
@@ -117,7 +122,8 @@ const FeedbackRequestPage = () => {
       case 2:
         return hasFor() && hasTemplate() && hasFrom();
       case 3:
-        return hasFor() && hasTemplate() && hasFrom() && hasSend() && isValidDate(dueQuery);
+        const dueQueryValid = dueQuery ? isValidDate(dueQuery) :  true;
+        return hasFor() && hasTemplate() && hasFrom() && hasSend() && dueQueryValid;
       default:
         return false;
     }

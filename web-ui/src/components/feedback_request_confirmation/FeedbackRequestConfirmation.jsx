@@ -14,8 +14,18 @@ const dateUtils = new DateFnsUtils();
 
 const useStyles = makeStyles({
   announcement: {
-    textAlign: "center"
+    textAlign: "center",
+      ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+        fontSize: "x-large",
+      },
   },
+
+  checkmark: {
+    ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
+      width: "65%",
+    },
+  },
+
 });
 
 let today = new Date();

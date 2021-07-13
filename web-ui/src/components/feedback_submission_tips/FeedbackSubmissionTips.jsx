@@ -4,6 +4,8 @@ import {makeStyles} from '@material-ui/core/styles';
 
 import "./FeedbackSubmissionTips.css";
 import Button from "@material-ui/core/Button";
+import PropTypes from "prop-types";
+
 const useStyles = makeStyles({
   title: {
     textAlign: "center",
@@ -51,13 +53,24 @@ const sbiInfo = [
   }
 ];
 
-const FeedbackSubmissionTips = () => {
+const propTypes = {
+  onNextClick: PropTypes.func
+}
+
+const FeedbackSubmissionTips = (props) => {
   const classes = useStyles();
   return (
     <div className="sbi-tips-page">
       <div className="header">
         <Typography className={classes.title} variant="h2"><b>Feedback Tips</b></Typography>
-        <div className={classes.button}><Button variant="contained" color="primary">Next</Button></div>
+        <div className={classes.button}>
+          <Button
+            onClick={() => props.onNextClick()}
+            variant="contained"
+            color="primary">
+            Next
+          </Button>
+        </div>
       </div>
       <Typography className={classes.announcement} variant="h5"><b>SBI is a common approach to providing constructive and fair feedback </b></Typography>
       <div className="submission-tips">
@@ -74,5 +87,7 @@ const FeedbackSubmissionTips = () => {
     </div>
   );
 }
+
+FeedbackSubmissionTips.propTypes = propTypes;
 
 export default FeedbackSubmissionTips;
