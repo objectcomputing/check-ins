@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -27,6 +28,10 @@ public class FeedbackAnswer {
     private UUID id;
 
     @Column(name="answer")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(answer::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}')"
+    )
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the content of the answer", required = true)
