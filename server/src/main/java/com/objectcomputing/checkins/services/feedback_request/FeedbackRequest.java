@@ -28,31 +28,30 @@ public class FeedbackRequest {
     private UUID id;
 
     @Column(name = "creatorId")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
     @Column(name = "requesteeId")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
     @Column(name = "recipientId")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
     @Column(name = "templateId")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template attached to request", required = true)
     private UUID templateId;
 
     @Column(name="sendDate")
-    @NotNull
     @NotBlank
     @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
@@ -112,8 +111,17 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
+    public FeedbackRequest(@NotNull UUID id,
+                           @Nullable LocalDate dueDate,
+                           @NotNull String status,
+                           @Nullable LocalDate submitDate) {
+        this.id = id;
+        this.dueDate = dueDate;
+        this.status = status;
+        this.submitDate = submitDate;
+    }
 
-    public FeedbackRequest(){};
+    public FeedbackRequest() {}
 
     public UUID getId() {
         return id;
