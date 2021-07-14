@@ -16,6 +16,11 @@ exports[`renders the feedback submit question 1`] = `
     How is the project going so far?
   </WithStyles(ForwardRef(Typography))>
   <WithStyles(ForwardRef(TextField))
+    InputProps={
+      Object {
+        "readOnly": true,
+      }
+    }
     className="fullWidth"
     multiline={true}
     placeholder="Type your answer..."

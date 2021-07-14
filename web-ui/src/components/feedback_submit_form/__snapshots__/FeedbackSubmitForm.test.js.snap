@@ -14,16 +14,19 @@ exports[`renders the feedback submit form 1`] = `
     </b>
   </WithStyles(ForwardRef(Typography))>
   <FeedbackSubmitQuestion
+    editable={true}
     key="1"
     question="How are you doing today?"
     questionNumber={1}
   />
   <FeedbackSubmitQuestion
+    editable={true}
     key="2"
     question="How is the project going?"
     questionNumber={2}
   />
   <FeedbackSubmitQuestion
+    editable={true}
     key="3"
     question="What is your current role on the team?"
     questionNumber={3}
@@ -34,6 +37,7 @@ exports[`renders the feedback submit form 1`] = `
     <WithStyles(WithStyles(ForwardRef(Button)))
       className="makeStyles-button-2"
       color="primary"
+      onClick={[Function]}
       variant="contained"
     >
       Review
