@@ -26,27 +26,33 @@ public class FeedbackAnswer {
     @Schema(description = "unique id of the feedback answer", required = true)
     private UUID id;
 
-    @Column(name = "questionId")
-    @NotNull
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the feedback question the answer is linked to", required = true)
-    private String questionId;
-
     @Column(name="answer")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
+    @Column(name = "questionId")
+    @NotNull
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the feedback question the answer is linked to", required = true)
+    private UUID questionId;
+
     @Column(name = "sentiment")
     @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the sentiment of the answer")
-    private String sentiment;
+    private Double sentiment;
 
     public FeedbackAnswer(String questionId, String answer, @Nullable String sentiment) {
         this.id = null;
         this.questionId = questionId;
+        this.answer = answer;
+        this.sentiment = sentiment;
+    }
+
+    public FeedbackAnswer(UUID id, String answer, @Nullable Double sentiment) {
+        this.id = id;
         this.answer = answer;
         this.sentiment = sentiment;
     }
@@ -61,11 +67,11 @@ public class FeedbackAnswer {
         this.id = id;
     }
 
-    public String getQuestionId() {
+    public UUID getQuestionId() {
         return questionId;
     }
 
-    public void setQuestionId(String questionId) {
+    public void setQuestionId(UUID questionId) {
         this.questionId = questionId;
     }
 
@@ -78,7 +84,7 @@ public class FeedbackAnswer {
     }
 
     @Nullable
-    public String getSentiment() {
+    public Double getSentiment() {
         return sentiment;
     }
 

@@ -9,7 +9,11 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackAnswerCreateDTO {
+public class FeedbackAnswerResponseDTO {
+
+    @NotNull
+    @Schema(description = "unique id of the feedback answer", required = true)
+    private UUID id;
 
     @NotBlank
     @Schema(description = "the content of the answer", required = true)
@@ -21,7 +25,15 @@ public class FeedbackAnswerCreateDTO {
 
     @Nullable
     @Schema(description = "the sentiment of the answer")
-    private String sentiment;
+    private Double sentiment;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public UUID getQuestionId() {
         return questionId;
@@ -44,7 +56,7 @@ public class FeedbackAnswerCreateDTO {
         return sentiment;
     }
 
-    public void setSentiment(@Nullable String sentiment) {
+    public void setSentiment(@Nullable Double sentiment) {
         this.sentiment = sentiment;
     }
 }

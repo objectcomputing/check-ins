@@ -9,26 +9,26 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackAnswerCreateDTO {
+public class FeedbackAnswerUpdateDTO {
+
+    @NotNull
+    @Schema(description = "unique id of the feedback answer", required = true)
+    private UUID id;
 
     @NotBlank
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
-    @NotNull
-    @Schema(description = "id of the feedback question the answer is linked to", required = true)
-    private UUID questionId;
-
     @Nullable
     @Schema(description = "the sentiment of the answer")
-    private String sentiment;
+    private double sentiment;
 
-    public UUID getQuestionId() {
-        return questionId;
+    public UUID getId() {
+        return id;
     }
 
-    public void setQuestionId(UUID questionId) {
-        this.questionId = questionId;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getAnswer() {
@@ -44,7 +44,7 @@ public class FeedbackAnswerCreateDTO {
         return sentiment;
     }
 
-    public void setSentiment(@Nullable String sentiment) {
+    public void setSentiment(@Nullable Double sentiment) {
         this.sentiment = sentiment;
     }
 }
