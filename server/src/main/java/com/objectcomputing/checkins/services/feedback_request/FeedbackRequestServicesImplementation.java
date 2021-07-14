@@ -1,14 +1,17 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
@@ -20,13 +23,15 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private final EmailSender emailSender;
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices) {
+                                                 MemberProfileServices memberProfileServices, EmailSender emailSender) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.emailSender = emailSender;
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
@@ -60,11 +65,14 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (feedbackRequest.getId() == null) {
-            return feedbackReqRepository.save(feedbackRequest);
+        if (feedbackRequest.getId() != null) {
+            throw new BadArgException(String.format("Found unexpected id %s for feedback request, please try updating instead.",
+                    feedbackRequest.getId()));
         }
 
-        return feedbackReqRepository.update(feedbackRequest);
+        FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
+        emailSender.sendEmail("Feedback Request", "You have received a new request for feedback from Michael Kimberlin about Quarter 3. Michael Kimberlin set this feedback to be due on _______. Click here to complete the request: ___________", memberProfileServices.getById(storedRequest.getRequesteeId()).getWorkEmail());
+        return storedRequest;
     }
 
     @Override
