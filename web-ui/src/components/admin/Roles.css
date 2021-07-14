@@ -2,9 +2,6 @@
   display: flex;
   align-items: center;
 }
-.role-content {
-  height: 100vh;
-}
 
 .role-header {
   display: flex;

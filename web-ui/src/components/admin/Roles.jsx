@@ -37,24 +37,26 @@ const Roles = () => {
   memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
+    const newMembersWithRoles = {};
     for (const member of memberProfiles) {
       let temp = roles.find((role) => role.memberid === member.id);
       if (temp) {
-        membersWithRoles[member.id] = { ...member, role: temp };
+        newMembersWithRoles[member.id] = { ...member, role: temp };
       }
     }
-    setMembersWithRoles(membersWithRoles);
+    setMembersWithRoles(newMembersWithRoles);
 
+    const newRoleToMemberMap = {};
     for (const role of roles || []) {
-      let memberList = roleToMemberMap[role.role];
+      let memberList = newRoleToMemberMap[role.role];
       if (!memberList) {
-        memberList = roleToMemberMap[role.role] = [];
+        memberList = newRoleToMemberMap[role.role] = [];
       }
-      if (membersWithRoles[role.memberid] !== undefined) {
-        memberList.push(membersWithRoles[role.memberid]);
+      if (newMembersWithRoles[role.memberid] !== undefined) {
+        memberList.push(newMembersWithRoles[role.memberid]);
       }
     }
-    setRoleToMemberMap(roleToMemberMap);
+    setRoleToMemberMap(newRoleToMemberMap);
   }, [memberProfiles, roles]);
 
   const removeFromRole = async (member) => {
@@ -113,7 +115,7 @@ const Roles = () => {
 
   let uniqueRoles = Object.keys(roleToMemberMap);
 
-  console.log({ roleToMemberMap });
+  console.log({ roleToMemberMap, roles });
 
   const createUserCards = (role) =>
     roleToMemberMap[role].map((member) => {

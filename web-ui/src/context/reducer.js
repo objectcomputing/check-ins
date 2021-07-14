@@ -154,12 +154,10 @@ export const reducer = (state, action) => {
       state.roles = action.payload;
       break;
     case DELETE_ROLE:
-      state.roles = [
-        ...state.roles.filter((role) => role.id !== action.payload.id),
-      ];
+      state.roles = state.roles.filter((role) => role.id !== action.payload);
       break;
     case UPDATE_ROLES:
-      state.roles.push(action.payload);
+      state.roles = [...state.roles, action.payload];
       break;
     case ADD_GUILD:
       state.guilds = [...state.guilds, action.payload];
