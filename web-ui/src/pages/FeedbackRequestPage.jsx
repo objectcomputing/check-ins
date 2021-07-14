@@ -13,7 +13,7 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
-import {selectProfile, selectCsrfToken, selectCurrentUser} from "../context/selectors";
+import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMembers} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
@@ -84,6 +84,8 @@ const FeedbackRequestPage = () => {
   const sendDate = query.send?.toString();
   const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
+  const memberList = selectCurrentMembers(state);
+  const memberIds = memberList.map((member) => member.id);
   const csrf = selectCsrfToken(state)
 
   const getStep = useCallback(() => {
@@ -103,8 +105,19 @@ const FeedbackRequestPage = () => {
   }, [templateQuery])
 
   const hasFrom = useCallback(() => {
-    return !!fromQuery;
-  }, [fromQuery])
+    if (fromQuery) {
+      const recipientList = fromQuery.split(",");
+      for (let recipientId of recipientList) {
+        if (!memberIds.includes(recipientId)) {
+          query.from = undefined;
+          history.push({...location, search: queryString.stringify(query)});
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }, [fromQuery, memberIds, history, location, query])
 
 
   const isValidDate = useCallback((dateString) => {
@@ -201,7 +214,7 @@ const handleSubmit = () =>{
           return false;
       }
     }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
-
+  
   const handleQueryChange = (key, value) => {
     let newQuery = {
       ...query,
