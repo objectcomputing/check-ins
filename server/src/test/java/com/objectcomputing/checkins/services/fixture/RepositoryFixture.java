@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
 import com.objectcomputing.checkins.services.feedback_request_questions.FeedbackRequestQuestionRepository;
@@ -139,6 +140,10 @@ public interface RepositoryFixture {
 
     default FeedbackRequestQuestionRepository getFeedbackRequestQuestionRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackRequestQuestionRepository.class);
+    }
+
+    default FeedbackAnswerRepository getFeedbackAnswerRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackAnswerRepository.class);
     }
 
      default SettingsRepository getSettingsRepository() {

@@ -45,7 +45,7 @@ public class FeedbackAnswer {
 
     @Column(name = "sentiment")
     @Nullable
-    @TypeDef(type = DataType.STRING)
+    @TypeDef(type = DataType.DOUBLE)
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
 
