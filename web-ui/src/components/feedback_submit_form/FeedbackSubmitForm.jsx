@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useContext, useCallback } from "react";
+import queryString from 'query-string';
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import {green} from '@material-ui/core/colors';
-
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
-
 import "./FeedbackSubmitForm.css";
+import {useLocation} from "react-router-dom";
 
 const useStyles = makeStyles({
   announcement: {
@@ -48,6 +48,18 @@ const ColorButton = withStyles({
 
 const propTypes = {
   requesteeName: PropTypes.string.isRequired
+}
+
+const location = useLocation();
+const query = queryString.parse(location?.search);
+const idQuery = query.id?.toString();
+
+const hasID = useCallback(() => {
+
+}, [idQuery])
+
+const isIDValid = () => {
+
 }
 
 const FeedbackSubmitForm = (props) => {

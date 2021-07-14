@@ -181,10 +181,7 @@ const handleSubmit = () =>{
                             }
                             history.push(newLocation)
                            }
-
               }
-
-
     }
 
     const urlIsValid = useCallback(() => {
