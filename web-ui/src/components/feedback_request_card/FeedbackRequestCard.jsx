@@ -7,12 +7,13 @@ import CardActions from '@material-ui/core/CardActions';
 import AvatarComponent from '../avatar/Avatar';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import "./ViewFeedbackSelector.css"
+import "./FeedbackRequestCard.css"
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import { Link } from "react-router-dom";
 import Divider from '@material-ui/core/Divider';
-
+import PropTypes from "prop-types";
+import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 
 const useStyles = makeStyles({
 
@@ -78,8 +79,13 @@ const useStylesText = makeStyles({
   }
 }, { name: "MuiTypography" })
 
+const propTypes = {
+  requesteeName: PropTypes.string.isRequired,
+  requesteeTitle: PropTypes.string.isRequired,
+  templateName: PropTypes.string.isRequired,
+}
 
-const ViewFeedbackSelector = () => {
+const FeedbackRequestCard = (props) => {
   const classes = useStyles();
   useStylesCardActions();
   useStylesText();
@@ -105,21 +111,19 @@ const ViewFeedbackSelector = () => {
                   className="no-wrap"
                 >
                   <Grid item>
-                    <AvatarComponent imageUrl="../../../public/default_profile.jpg"></AvatarComponent>
+                    <AvatarComponent imageUrl="../../../public/default_profile.jpg"/>
                   </Grid>
                   <Grid item xs className="small-margin">
-                    <Typography className="person-name" >Slim Jim</Typography>
-                    <Typography className="position-text">Resident Animal Ambassador</Typography>
+                    <Typography className="person-name" >{props.requesteeName}</Typography>
+                    <Typography className="position-text">{props.requesteeTitle}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
-                    <Typography className="dark-gray-text">Dev Template 1</Typography>
+                    <Typography className="dark-gray-text">{props.templateName}</Typography>
                     <Link to="" className="response-link red-text">View all responses</Link>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-
-
           </CardContent>
         </div>
         <CardActions disableSpacing>
@@ -134,55 +138,13 @@ const ViewFeedbackSelector = () => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Divider className="person-divider"></Divider>
+            <FeedbackRequestSubcard
+              recipientName={"Jane Doe"}
+              recipientTitle={"Senior Engineer"}/>
 
-            {/* //every person underneath the PDL requestee is mapped to this part of this component */}
-            <Grid container spacing={6} className="person-row">
-              <Grid item xs={12}>
-                <Grid container
-                  direction="row"
-                  alignItems="center"
-                  className="no-wrap"
-                >
-                  <Grid item>
-                    <AvatarComponent imageUrl="../../../public/default_profile.jpg"></AvatarComponent>
-                  </Grid>
-                  <Grid item xs className="small-margin">
-                    <Typography className="person-name" >Chip Dip</Typography>
-                    <Typography className="position-text">Senior Engineer</Typography>
-                  </Grid>
-                  <Grid item xs={4} className="align-end">
-                    <Typography >Submitted 5/22</Typography>
-                    <Link to="" className="response-link">View response</Link>
-
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-
-
-            <Divider className="person-divider" ></Divider>
-            <Grid container spacing={6} className="person-row" >
-              <Grid item xs={12} >
-                <Grid container
-                  direction="row"
-                  alignItems="center"
-                  className="no-wrap"
-                >
-                  <Grid item>
-                    <AvatarComponent imageUrl="../../../public/default_profile.jpg"></AvatarComponent>
-                  </Grid>
-                  <Grid item xs className="small-margin">
-                    <Typography className="person-name" >Erin Smith</Typography>
-                    <Typography className="position-text">External Colleague</Typography>
-                  </Grid>
-                  <Grid item xs={4} className="align-end">
-                    <Typography >Submitted 5/23</Typography>
-                    <Link to = " " className="response-link">View response</Link>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
+            <FeedbackRequestSubcard
+              recipientName={"Joe PDL"}
+              recipientTitle={"PDL"}/>
           </CardContent>
         </Collapse>
       </Card>
@@ -191,4 +153,7 @@ const ViewFeedbackSelector = () => {
 
   )
 }
-export default ViewFeedbackSelector;
+
+FeedbackRequestCard.propTypes = propTypes;
+
+export default FeedbackRequestCard;

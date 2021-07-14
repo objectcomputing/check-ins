@@ -95,8 +95,8 @@ function App() {
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
                 </Route>
-                <Route path="/viewfeedback/selector">
-                  <ViewFeedbackSelectorPage></ViewFeedbackSelectorPage>
+                <Route path="/feedback/view">
+                  <ViewFeedbackSelectorPage />
                 </Route>
                 <Route path="/feedback/submit">
                   <FeedbackSubmitPage />
