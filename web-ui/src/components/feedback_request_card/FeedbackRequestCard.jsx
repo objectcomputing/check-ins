@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@material-ui/core/Card';
 import { Typography } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,16 +8,14 @@ import CardActions from '@material-ui/core/CardActions';
 import AvatarComponent from '../avatar/Avatar';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import "./FeedbackRequestCard.css"
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import { Link } from "react-router-dom";
-import Divider from '@material-ui/core/Divider';
 import PropTypes from "prop-types";
-import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
+
+import "./FeedbackRequestCard.css";
 
 const useStyles = makeStyles({
-
   root: {
     color: "gray",
     maxWidth: "80%",
@@ -27,20 +26,6 @@ const useStyles = makeStyles({
       maxWidth: '100%',
     },
   },
-
-  textField: {
-    width: "15%",
-    ['@media (max-width:769px)']: { // eslint-disable-line no-useless-computed-key
-      width: '40%',
-    },
-    marginTop: "1.15em",
-    marginRight: "3em",
-  },
-  formControl: {
-    marginRight: "1em",
-  },
-
-
   expandClose: {
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
@@ -97,9 +82,7 @@ const FeedbackRequestCard = (props) => {
   };
 
   return (
-    <div className="input-row">
-
-      {/* //every requestee gets mapped to this part of the component */}
+    <div className="feedback-request-card">
       <Card className={classes.root}>
         <div className="has-padding-top">
           <CardContent className={classes.noBottomPadding}>
@@ -149,9 +132,7 @@ const FeedbackRequestCard = (props) => {
         </Collapse>
       </Card>
     </div>
-
-
-  )
+  );
 }
 
 FeedbackRequestCard.propTypes = propTypes;

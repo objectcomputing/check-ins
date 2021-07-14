@@ -1,16 +1,14 @@
+.view-feedback-page {
+    margin-top: 4em;
+}
+
 .input-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-self: center;
-    margin-top: 3em;
+    align-items: flex-end;
     width: 100%;
 }
-.MuiFormControl-root {
-    width: 20%;
-    margin-right: 2em;
-}
-
 
 @media screen and (max-width: 769px) {
 

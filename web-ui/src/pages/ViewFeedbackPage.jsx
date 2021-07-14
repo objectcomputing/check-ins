@@ -8,14 +8,11 @@ import TextField from "@material-ui/core/TextField";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@material-ui/core/Typography";
 
+import "./ViewFeedbackPage.css";
+
 const useStyles = makeStyles({
   textField: {
-    width: "15%",
-    ['@media (max-width:769px)']: { // eslint-disable-line no-useless-computed-key
-      width: '40%',
-    },
-    marginTop: "1.15em",
-    marginRight: "3em",
+
   },
   formControl: {
     marginRight: "1em",
@@ -43,7 +40,7 @@ const sampleFeedbackRequests = [
   }
 ];
 
-const ViewFeedbackSelectorPage = () => {
+const ViewFeedbackPage = () => {
 
   const classes = useStyles();
   const [feedbackRequests, setFeedbackRequests] = useState([]);
@@ -82,7 +79,7 @@ const ViewFeedbackSelectorPage = () => {
   }, [searchText, feedbackRequests]);
 
   return (
-    <React.Fragment>
+    <div className="view-feedback-page">
       <div className="input-row">
         <TextField
           className={classes.textField}
@@ -90,7 +87,7 @@ const ViewFeedbackSelectorPage = () => {
           onChange={(event) => setSearchText(event.target.value)}
           InputProps={{
             startAdornment: (
-              <InputAdornment className={classes.root} position="start">
+              <InputAdornment style={{color: "gray"}} position="start">
                 <Search/>
               </InputAdornment>
             ),
@@ -100,14 +97,15 @@ const ViewFeedbackSelectorPage = () => {
           <TextField
             id="select-time"
             select
-            label="Filter by"
-            value={"Past 3"}
+            fullWidth
+            label="Show requests sent within"
+            value={"3mo"}
             variant="outlined"
           >
-            <MenuItem value={"Past 3"}>Past 3 months</MenuItem>
-            <MenuItem value={"Past 6"}>Past 6 months</MenuItem>
-            <MenuItem value={"Past Year"}>Past year</MenuItem>
-            <MenuItem value={"All time"}>All time</MenuItem>
+            <MenuItem value={"3mo"}>Past 3 months</MenuItem>
+            <MenuItem value={"6mo"}>Past 6 months</MenuItem>
+            <MenuItem value={"1yr"}>Past year</MenuItem>
+            <MenuItem value={"all"}>All time</MenuItem>
           </TextField>
         </FormControl>
 
@@ -115,19 +113,20 @@ const ViewFeedbackSelectorPage = () => {
           <TextField
             id="select-sort-method"
             select
+            fullWidth
             label="Sort by"
-            value={"Submission"}
+            value={"sent_date"}
             variant="outlined"
           >
-            <MenuItem value={"Requested"}>Submission date</MenuItem>
-            <MenuItem value={"Submission"}>Request sent date</MenuItem>
+            <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
+            <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
           </TextField>
         </FormControl>
       </div>
       <div className="feedback-requests-list-container">
         {getFilteredFeedbackRequests()}
       </div>
-    </React.Fragment>
+    </div>
   )
 }
-export default ViewFeedbackSelectorPage;
+export default ViewFeedbackPage;
