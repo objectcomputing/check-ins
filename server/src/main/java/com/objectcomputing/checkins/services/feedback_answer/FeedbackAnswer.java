@@ -44,7 +44,7 @@ public class FeedbackAnswer {
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
 
-    public FeedbackAnswer(String questionId, String answer, @Nullable String sentiment) {
+    public FeedbackAnswer(String answer, UUID questionId, @Nullable Double sentiment) {
         this.id = null;
         this.questionId = questionId;
         this.answer = answer;
@@ -88,7 +88,7 @@ public class FeedbackAnswer {
         return sentiment;
     }
 
-    public void setSentiment(@Nullable String sentiment) {
+    public void setSentiment(@Nullable Double sentiment) {
         this.sentiment = sentiment;
     }
 

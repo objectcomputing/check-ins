@@ -21,7 +21,7 @@ public class FeedbackAnswerCreateDTO {
 
     @Nullable
     @Schema(description = "the sentiment of the answer")
-    private String sentiment;
+    private Double sentiment;
 
     public UUID getQuestionId() {
         return questionId;
@@ -44,7 +44,7 @@ public class FeedbackAnswerCreateDTO {
         return sentiment;
     }
 
-    public void setSentiment(@Nullable String sentiment) {
+    public void setSentiment(@Nullable Double sentiment) {
         this.sentiment = sentiment;
     }
 }
