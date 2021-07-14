@@ -19,7 +19,7 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     <S extends TemplateQuestion> S save(@NotNull @Valid @NonNull S entity);
 
     @Override
-    <S extends TemplateQuestion> S update(@Valid @javax.validation.constraints.NotNull @NonNull S entity);
+    <S extends TemplateQuestion> S update(@Valid @NotNull @NonNull S entity);
 
     @Override
     Optional<TemplateQuestion> findById(UUID id);

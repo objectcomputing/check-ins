@@ -1,12 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionUpdateDTO;
-import com.objectcomputing.checkins.services.guild.Guild;
-import com.objectcomputing.checkins.services.guild.GuildResponseDTO;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
+
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -17,7 +11,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -49,7 +42,7 @@ public class FeedbackTemplateController {
     /**
      * Create a feedback template
      *
-     * @param requestBody {@link FeedbackTemplateCreateDTO} New feedback templat4e to create
+     * @param requestBody {@link FeedbackTemplateCreateDTO} New feedback template to create
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Post()
@@ -120,54 +113,12 @@ public class FeedbackTemplateController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplates -> {
                     List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
+                            .collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
-    private FeedbackTemplate fromDTO(FeedbackTemplateCreateDTO dto) {
-        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getActive());
-    }
 
-    private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
-        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getActive());
-    }
-    private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate entity) {
-        return fromEntity(entity, new ArrayList<>());
-    }
 
-    private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate feedbackTemplate, List<TemplateQuestionResponseDTO> templateQuestions) {
-        if (feedbackTemplate == null) {
-            return null;
-        }
-        FeedbackTemplateResponseDTO dto = new FeedbackTemplateResponseDTO();
-        dto.setId(feedbackTemplate.getId());
-        dto.setTitle(feedbackTemplate.getTitle());
-        dto.setDescription(feedbackTemplate.getDescription());
-        dto.setCreatedBy(feedbackTemplate.getCreatedBy());
-        dto.setActive(feedbackTemplate.getActive());
-        dto.setTemplateQuestions(templateQuestions);
-        return dto;
-    }
 
-    private TemplateQuestionResponseDTO fromEntity(TemplateQuestion templateQuestion) {
-        TemplateQuestionResponseDTO dto = new TemplateQuestionResponseDTO();
-        dto.setId(templateQuestion.getId());
-        dto.setQuestion(templateQuestion.getQuestion());
-        dto.setTemplateId(templateQuestion.getTemplateId());
-        dto.setOrderNum(templateQuestion.getOrderNum());
-        return dto;
-    }
-
-    private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
-        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getOrderNum());
-    }
-
-    private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
-        TemplateQuestion newQuestion = new TemplateQuestion();
-        newQuestion.setId(dto.getId());
-        newQuestion.setQuestion(dto.getQuestion());
-        newQuestion.setOrderNum(dto.getOrderNum());
-        return newQuestion;
-    }
 }

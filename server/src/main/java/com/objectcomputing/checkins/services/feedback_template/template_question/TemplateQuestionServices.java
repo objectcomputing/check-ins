@@ -14,7 +14,7 @@ public interface TemplateQuestionServices {
 
     TemplateQuestion getById(UUID id);
 
-    List<TemplateQuestion> findByFields(UUID templateId);
+    List<TemplateQuestionResponseDTO> findByFields(UUID templateId);
 
 
 }

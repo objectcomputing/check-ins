@@ -39,7 +39,6 @@ public class FeedbackTemplate {
     @Schema(description = "title of feedback template", required = true)
     private String title;
 
-
     @Column(name = "description")
     @Nullable
     @TypeDef(type = DataType.STRING)
@@ -53,7 +52,7 @@ public class FeedbackTemplate {
     private UUID createdBy;
 
     @Column(name = "active")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.BOOLEAN)
     @Schema(description = "whether the template can still be used", required = true)
     private Boolean active;
@@ -84,7 +83,6 @@ public class FeedbackTemplate {
         this.active = active;
     }
 
-    public FeedbackTemplate() {}
 
     public UUID getId() {
         return id;

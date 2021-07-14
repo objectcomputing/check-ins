@@ -1,16 +1,12 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
-import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +18,7 @@ public class FeedbackTemplateCreateDTO {
     private String title;
 
     @Nullable
-    @Schema(description = "description of the feedback template", required = false)
+    @Schema(description = "description of the feedback template")
     private String description;
 
     @NotNull
@@ -33,6 +29,7 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "whether the template can still be used", required = true)
     private Boolean active;
 
+    @Nullable
     @Schema(description = "Questions attached to this template")
     private List<TemplateQuestionCreateDTO> templateQuestions;
 
@@ -40,7 +37,7 @@ public class FeedbackTemplateCreateDTO {
         this.title = title;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
@@ -56,15 +53,17 @@ public class FeedbackTemplateCreateDTO {
         return title;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }
 
+    @Nullable
     public List<TemplateQuestionCreateDTO> getTemplateQuestions() {
         return templateQuestions;
     }
 
-    public void setTemplateQuestions(List<TemplateQuestionCreateDTO> templateQuestions) {
+    public void setTemplateQuestions(@Nullable List<TemplateQuestionCreateDTO>  templateQuestions) {
         this.templateQuestions = templateQuestions;
     }
 

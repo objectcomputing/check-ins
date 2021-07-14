@@ -42,7 +42,7 @@ public class TemplateQuestion {
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
 
-    public TemplateQuestion(String question, UUID templateId, Integer orderNum) {
+    public TemplateQuestion(@NotNull String question, @Nullable UUID templateId, @Nullable Integer orderNum) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;
@@ -60,7 +60,7 @@ public class TemplateQuestion {
                 '}';
     }
 
-    public TemplateQuestion(@NotNull UUID id, @NotNull String question, @Nullable UUID templateId, Integer orderNum) {
+    public TemplateQuestion(@NotNull UUID id, @NotNull String question, @Nullable UUID templateId, @Nullable Integer orderNum) {
         this.id = id;
         this.question = question;
         this.templateId = templateId;
@@ -74,7 +74,12 @@ public class TemplateQuestion {
         this.orderNum = null;
     }
 
-
+public TemplateQuestion(@NotNull String question, @NotNull UUID templateId) {
+        this.question = question;
+        this.templateId = templateId;
+        this.orderNum = null;
+        this.id = null;
+}
 
     public TemplateQuestion() {}
 

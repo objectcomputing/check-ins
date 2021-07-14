@@ -1,29 +1,20 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.mailjet.client.resource.Template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.feedback.Feedback;
 import com.objectcomputing.checkins.services.feedback_template.template_question.*;
-import com.objectcomputing.checkins.services.guild.Guild;
-import com.objectcomputing.checkins.services.guild.GuildCreateDTO;
-import com.objectcomputing.checkins.services.guild.member.GuildMember;
-import com.objectcomputing.checkins.services.guild.member.GuildMemberResponseDTO;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Array;
-import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -33,7 +24,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private final MemberProfileServices memberProfileServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final TemplateQuestionRepository templateQuestionRepo;
-    private final static Logger LOG = LoggerFactory.getLogger(FeedbackTemplateServices.class);
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
                                         MemberProfileServices memberProfileServices,
@@ -67,6 +57,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
         FeedbackTemplate newTemplateObject = null;
         List<TemplateQuestionResponseDTO> newTemplateQuestions = new ArrayList<>();
+        //Perform initial checks that would preclude further operations
         if (feedbackTemplate == null ) {
             throw new BadArgException("Feedback template object is null and cannot be saved");
         }
@@ -80,9 +71,12 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 throw new PermissionException("You are not authorized to do this operation");
             }
 
+            //Only save feedback template and questions if it is marked as "active"--e.g. not an ad-hoc template
             if (feedbackTemplate.getActive()) {
                 newTemplateObject = feedbackTemplateRepository.save(fromDTO(feedbackTemplate));
                     if (newTemplateObject.getId() != null && feedbackTemplate.getTemplateQuestions() != null) {
+
+                        //Create list of questions and programmatically create order numbers
                         List<TemplateQuestionCreateDTO> questions = feedbackTemplate.getTemplateQuestions();
                         for (int i = 0; i < feedbackTemplate.getTemplateQuestions().size(); ++i) {
                             TemplateQuestionCreateDTO templateQuestion = questions.get(i);
@@ -105,6 +99,8 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     public FeedbackTemplateResponseDTO update(FeedbackTemplateUpdateDTO feedbackTemplate) {
         Optional<FeedbackTemplate> oldFeedbackTemplate;
         FeedbackTemplateResponseDTO updated;
+
+        //Perform initial checks that would preclude further operations
         if (feedbackTemplate.getId() != null) {
             oldFeedbackTemplate = feedbackTemplateRepository.findById(feedbackTemplate.getId());
             if (oldFeedbackTemplate.isEmpty()) {
@@ -122,47 +118,63 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         List<TemplateQuestion> existingQuestions = templateQuestionRepo.findByTemplateId(Util.nullSafeUUIDToString(feedbackTemplate.getId()));
         List<TemplateQuestionResponseDTO> newQuestions = new ArrayList<>();
 
-        //Add any new questions to the template
-        feedbackTemplate.getTemplateQuestions().stream().forEach((newQuestion) -> {
+        AtomicInteger counterNum = new AtomicInteger();
 
-            Optional<TemplateQuestion> first = existingQuestions.stream().filter((existing) -> existing.getId().equals(newQuestion.getId())).findFirst();
-            if(!first.isPresent()) {
-                LOG.info("Going to save question :{}", fromQuestionDTO(newQuestion));
-                TemplateQuestion returnedQuestion = templateQuestionServices.save(fromQuestionDTO(newQuestion));
-                newQuestions.add(fromQuestionEntity(templateQuestionServices.save(fromQuestionDTO(newQuestion))));
-            } else {
-                LOG.info("Going to update question in place :{}", fromQuestionDTO(newQuestion));
-                newQuestions.add(fromQuestionEntity(templateQuestionServices.update(fromQuestionDTO(newQuestion))));
-            }
-        });
+        //Add any new questions to the template and update their order numbers programmatically
+        if (feedbackTemplate.getTemplateQuestions() != null) {
+            feedbackTemplate.getTemplateQuestions().stream().forEach((newQuestion) -> {
+                counterNum.set(counterNum.get() + 1);
+                int numConverter = counterNum.get();
+                Optional<TemplateQuestion> first = existingQuestions.stream().filter((existing) -> existing.getId().equals(newQuestion.getId())).findFirst();
+                if(first.isEmpty()) {
+                    newQuestion.setOrderNum(numConverter);
+                    newQuestion.setTemplateId(feedbackTemplate.getId());
+                    TemplateQuestion returnedQuestion = templateQuestionServices.save(fromQuestionDTO(newQuestion));
+                    newQuestions.add(fromQuestionEntity(returnedQuestion));
+                } else {
+                    newQuestion.setOrderNum(numConverter);
+                    newQuestion.setTemplateId(feedbackTemplate.getId());
+                    TemplateQuestion returnedUpdateQuestion = templateQuestionRepo.update(fromQuestionDTO(newQuestion));
+                    newQuestions.add(fromQuestionEntity(returnedUpdateQuestion));
 
-        //Delete any questions that have been removed
-        existingQuestions.stream().forEach((existingQuestion) -> {
-            if(!feedbackTemplate.getTemplateQuestions().stream().filter((updatedQuestion) -> updatedQuestion.getId().equals(existingQuestion.getId())).findFirst().isPresent()) {
-                templateQuestionServices.delete(existingQuestion.getId());
-            }
-        });
+                }
+            });
+
+    //Delete any questions that were removed from the template from the separate TemplateQuestion repository
+            existingQuestions.stream().forEach((existingQuestion) -> {
+                boolean answer = newQuestions.stream().noneMatch((updatedQuestion) ->
+                        updatedQuestion.getId().equals(existingQuestion.getId()));
+                if (answer) {
+                    templateQuestionServices.delete(existingQuestion.getId());
+                }
+
+            });
+
+        }
+
+
         updated = fromEntity(updatedTemplate, newQuestions);
         return updated;
     }
 
+
+
+
     @Override
     public Boolean delete(@NotNull UUID id) {
-        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
+        final FeedbackTemplate feedbackTemplate = getById(id);
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (!feedbackTemplate.isPresent()) {
+        if (feedbackTemplate == null ) {
             throw new NotFoundException("No feedback template with id " + id);
         }
-
-            UUID creatorId = feedbackTemplate.get().getCreatedBy();
+        UUID creatorId = feedbackTemplate.getCreatedBy();
+        //Delete both template and any questions attached to it
         if (currentUserId.equals(creatorId) || currentUserServices.isAdmin() ) {
-            //Delete both template and any questions attached to it
-            feedbackTemplateRepository.deleteById(id);
-            List <TemplateQuestion> questionsToDelete = templateQuestionServices.findByFields(id);
-            for (TemplateQuestion question : questionsToDelete) {
+            List <TemplateQuestionResponseDTO> questionsToDelete = templateQuestionServices.findByFields(id);
+            for (TemplateQuestionResponseDTO question : questionsToDelete) {
                 templateQuestionServices.delete(question.getId());
             }
-
+            feedbackTemplateRepository.deleteById(id);
             return true;
         } else {
             throw new PermissionException("You are not authorized to do this operation");
@@ -174,7 +186,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     @Override
     public FeedbackTemplate getById(UUID id) {
         final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
-        if (!feedbackTemplate.isPresent()) {
+        if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("No feedback template with id " + id);
         }
 
@@ -187,7 +199,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
 
     @Override
-    public List<FeedbackTemplate> findByFields(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
+    public List<FeedbackTemplateResponseDTO> findByFields(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -214,8 +226,14 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 feedbackTemplateRepository.findAll().forEach(templateList::add);
             }
         }
+        List<FeedbackTemplateResponseDTO> convertedResponseList = new ArrayList<>();
+        templateList.stream().forEach((templateResponse) -> {
+            List <TemplateQuestionResponseDTO> templateQuestions = templateQuestionServices.findByFields(templateResponse.getId());
+            convertedResponseList.add(fromEntity(templateResponse, templateQuestions));
+        });
 
-        return templateList;
+
+        return convertedResponseList;
     }
 
     protected List<FeedbackTemplate> findByTitleLike(String title) {
@@ -245,6 +263,8 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
         return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getActive());
     }
+
+
     private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate entity) {
         return fromEntity(entity, new ArrayList<>());
     }
@@ -284,5 +304,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         newQuestion.setTemplateId(dto.getTemplateId());
         return newQuestion;
     }
+
+
 
 }

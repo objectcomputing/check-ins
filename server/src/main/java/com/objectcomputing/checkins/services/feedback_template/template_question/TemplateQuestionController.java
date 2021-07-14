@@ -108,7 +108,7 @@ public class TemplateQuestionController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplateQuestions -> {
                     List<TemplateQuestionResponseDTO> dtoList = feedbackTemplateQuestions.stream()
-                            .map(this::fromEntity).collect(Collectors.toList());
+                            .collect(Collectors.toList());
                     return (HttpResponse<List<TemplateQuestionResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }

@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class TemplateQuestionCreateDTO {
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
-    @NotNull
+    @Nullable
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
 

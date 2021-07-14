@@ -9,21 +9,23 @@ import java.util.UUID;
 
 @Introspected
 public class TemplateQuestionUpdateDTO {
-    @NotNull
-        @Schema(description = "id of the template question", required = true)
+
+    @Nullable
+    @Schema(description = "id of the template question", required = true)
     private UUID id;
 
     @NotNull
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
+    @NotNull
+    @Schema(description = "id of the template this question is a part of", required = true)
+    private UUID templateId;
+
     @Nullable
     @Schema(description = "order of question in template", required = true)
     private Integer orderNum;
 
-    @NotNull
-    @Schema(description = "id of the template this question is a part of", required = true)
-    private UUID templateId;
 
     public String getQuestion() {
         return question;

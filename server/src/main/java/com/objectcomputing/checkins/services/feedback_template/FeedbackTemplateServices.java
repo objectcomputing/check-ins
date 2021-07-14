@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback.Feedback;
-import com.objectcomputing.checkins.services.guild.GuildResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +16,6 @@ public interface FeedbackTemplateServices {
 
     FeedbackTemplate getById(UUID id);
 
-    List<FeedbackTemplate> findByFields(UUID createdBy, String title, Boolean onlyActive);
+    List<FeedbackTemplateResponseDTO> findByFields(UUID createdBy, String title, Boolean onlyActive);
 
 }

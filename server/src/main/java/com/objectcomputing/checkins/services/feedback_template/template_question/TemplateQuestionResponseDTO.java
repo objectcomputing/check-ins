@@ -11,7 +11,7 @@ import java.util.UUID;
 @Introspected
 public class TemplateQuestionResponseDTO {
 
-    @NotNull
+
     @Schema(description = "unique id of the feedback question", required = true)
     private UUID id;
 

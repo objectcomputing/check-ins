@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -50,11 +49,11 @@ public class FeedbackTemplateResponseDTO {
     }
     public void setActive(Boolean active){this.active = active;}
 
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
-    public void setCreatedBy(UUID createdBy) {
+    public void setCreatedBy(@Nullable UUID createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -64,10 +63,12 @@ public class FeedbackTemplateResponseDTO {
 
     public Boolean getActive() {return active;}
 
+    @Nullable
     public String getDescription() {
         return description;
     }
 
+    @Nullable
     public UUID getCreatedBy() {
         return createdBy;
     }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
@@ -113,7 +114,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
 
     @Override
-    public List<TemplateQuestion> findByFields(UUID templateId) {
+    public List<TemplateQuestionResponseDTO> findByFields(UUID templateId) {
         List<TemplateQuestion> questionList = new ArrayList<>();
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -121,7 +122,8 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
         else {
             questionList.addAll(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
         }
-        return questionList;
+
+        return questionList.stream().map(this::fromEntity).collect(Collectors.toList());
     }
 
     // only the creator of the template can add questions to it
@@ -134,5 +136,14 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     public boolean getIsPermitted() {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return currentUserId != null;
+    }
+
+    private TemplateQuestionResponseDTO fromEntity(TemplateQuestion templateQuestion) {
+        TemplateQuestionResponseDTO dto = new TemplateQuestionResponseDTO();
+        dto.setId(templateQuestion.getId());
+        dto.setQuestion(templateQuestion.getQuestion());
+        dto.setTemplateId(templateQuestion.getTemplateId());
+        dto.setOrderNum(templateQuestion.getOrderNum());
+        return dto;
     }
 }
