@@ -24,10 +24,9 @@ const AdminPage = () => {
     setRoles(false);
     setUsers(true);
   };
-  // uncommment lines when components are ready
   return (
     <div>
-      <div className="container">
+      <div className="admin-container">
         {permissions ? <div /> : roles ? <Roles /> : users && <div />}
       </div>
       <div className="bottom-nav">

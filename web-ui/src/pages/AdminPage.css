@@ -8,6 +8,7 @@
 }
 
 .bottom-nav .button {
+  background-color: white;
   border: 1px solid black;
   height: 75px;
   width: 33.3%;

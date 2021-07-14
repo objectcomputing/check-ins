@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../context/AppContext";
-import { selectNormalizedMembers } from "../../context/selectors";
+import { DELETE_ROLE, UPDATE_ROLES, UPDATE_TOAST } from "../../context/actions";
 import { getAvatarURL } from "../../api/api.js";
 import { addUserToRole, removeUserFromRole } from "../../api/roles";
 
 import {
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -23,60 +24,96 @@ import "./Roles.css";
 
 const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
-  const { csrf, roles } = state;
+  const { csrf, memberProfiles, roles } = state;
 
   const [addUser, setAddUser] = useState(false);
   const [editRole, setEditRole] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState({});
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
-  const [members, setMembers] = useState({});
+  const [membersWithRoles, setMembersWithRoles] = useState({});
+  const [selectedRole, setSelectedRole] = useState("");
 
-  const normalizedMembers = selectNormalizedMembers(state, searchText);
+  memberProfiles.sort((a, b) => a.name.localeCompare(b.name));
 
   useEffect(() => {
-    for (const member of normalizedMembers) {
+    for (const member of memberProfiles) {
       let temp = roles.find((role) => role.memberid === member.id);
       if (temp) {
-        members[member.id] = { ...member, role: temp };
+        membersWithRoles[member.id] = { ...member, role: temp };
       }
     }
-    setMembers(members);
+    setMembersWithRoles(membersWithRoles);
 
     for (const role of roles || []) {
       let memberList = roleToMemberMap[role.role];
       if (!memberList) {
         memberList = roleToMemberMap[role.role] = [];
       }
-      if (members[role.memberid] !== undefined) {
-        memberList.push(members[role.memberid]);
+      if (membersWithRoles[role.memberid] !== undefined) {
+        memberList.push(membersWithRoles[role.memberid]);
       }
     }
     setRoleToMemberMap(roleToMemberMap);
-  }, [normalizedMembers]);
+  }, [memberProfiles, roles]);
 
-  const removeFromRole = async (id) => {
-    if (csrf && id) {
-      let res = await removeUserFromRole(id, csrf);
-    }
-  };
-
-  const addToRole = async (role, memberid) => {
-    if (csrf && memberid && role) {
-      let res = await addUserToRole(role, memberid, csrf);
+  const removeFromRole = async (member) => {
+    if (member.role) {
+      let res = await removeUserFromRole(member.role.id, csrf);
       let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
+        res.payload && res.payload.status === 200 && !res.error
+          ? res.payload
+          : null;
+      if (data) {
+        // roleToMemberMap[member.role.role].filter(
+        //   (m) => m.role.id !== member.role.id
+        // );
+        // setRoleToMemberMap(roleToMemberMap);
+        dispatch({
+          type: DELETE_ROLE,
+          payload: member.role.id,
+        });
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "success",
+            toast: `${member.name} removed from ${member.role.role}s`,
+          },
+        });
+      }
     }
   };
 
-  const onClose = () => {
-    setModalOpen(false);
+  const addToRole = async (member) => {
+    let res = await addUserToRole(selectedRole, member.id, csrf);
+    let data =
+      res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    if (data) {
+      setAddUser(false);
+      roleToMemberMap[selectedRole].push(member);
+      setRoleToMemberMap(roleToMemberMap);
+      dispatch({
+        type: UPDATE_ROLES,
+        payload: data,
+      });
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `${member.name} added to ${selectedRole}s`,
+        },
+      });
+    }
+    setSelectedMember({});
+  };
+
+  const closeAddUser = () => {
+    setAddUser(false);
   };
 
   let uniqueRoles = Object.keys(roleToMemberMap);
 
-  console.log({ members, roles, uniqueRoles, roleToMemberMap, selectedMember });
+  console.log({ roleToMemberMap });
 
   const createUserCards = (role) =>
     roleToMemberMap[role].map((member) => {
@@ -102,7 +139,12 @@ const Roles = () => {
                 />
               }
             />
-            <div onClick={() => removeFromRole(role.id)}>
+            <div
+              className="icon"
+              onClick={() => {
+                removeFromRole(member);
+              }}
+            >
               <DeleteIcon />
             </div>
           </Card>
@@ -112,16 +154,18 @@ const Roles = () => {
 
   return (
     <div className="role-content">
-      <h2>Roles</h2>
-      <TextField
-        className="role-search"
-        label="Search Roles..."
-        placeholder="Role Name"
-        value={searchText}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-        }}
-      />
+      <div className="role-top">
+        <h2>Roles</h2>
+        <TextField
+          className="role-search"
+          label="Search Roles..."
+          placeholder="Role Name"
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+        />
+      </div>
       <div className="roles">
         {uniqueRoles.map((role) =>
           role.toLowerCase().includes(searchText.toLowerCase()) ? (
@@ -134,10 +178,15 @@ const Roles = () => {
                     </Typography>
                     <div
                       className="add-user-to-role"
-                      onClick={() => setModalOpen(true)}
+                      onClick={() => {
+                        setAddUser(true);
+                        setSelectedRole(role);
+                      }}
                     >
                       Add User
-                      <PersonAddIcon />
+                      <div className="person-icon">
+                        <PersonAddIcon />
+                      </div>
                     </div>
                   </div>
                 }
@@ -147,14 +196,14 @@ const Roles = () => {
                   </Typography>
                 }
               />
-              <CardContent>
+              <CardContent className="role-card">
                 {roleToMemberMap[role].length > 0 && createUserCards(role)}
               </CardContent>
               <CardActions>
-                <Modal open={modalOpen} onClose={onClose}>
+                <Modal open={addUser} onClose={closeAddUser}>
                   <div className="member-modal">
                     <Autocomplete
-                      options={Object.values(members)}
+                      options={memberProfiles}
                       value={selectedMember}
                       onChange={(event, newValue) =>
                         setSelectedMember(newValue)
@@ -164,11 +213,14 @@ const Roles = () => {
                         <TextField
                           {...params}
                           className="fullWidth"
-                          label="Member"
-                          placeholder="Select Member to add to role"
+                          label="User To Add"
+                          placeholder="Select User to add to role"
                         />
                       )}
                     />
+                    <Button onClick={() => addToRole(selectedMember)}>
+                      Save
+                    </Button>
                   </div>
                 </Modal>
               </CardActions>

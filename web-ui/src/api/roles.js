@@ -4,6 +4,7 @@ const roleURL = "/services/roles";
 
 export const removeUserFromRole = async (id, cookie) => {
   return resolve({
+    method: "delete",
     url: roleURL + `/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
@@ -12,8 +13,9 @@ export const removeUserFromRole = async (id, cookie) => {
 
 export const addUserToRole = async (role, memberid, cookie) => {
   return resolve({
+    method: "post",
     url: roleURL,
-    params: {
+    data: {
       role: role,
       memberid: memberid,
     },
