@@ -112,15 +112,8 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@NotNull UUID id,
-                           @Nullable LocalDate dueDate,
-                           @NotNull String status,
-                           @Nullable LocalDate submitDate) {
-        this.id = id;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.submitDate = submitDate;
-    }
+
+    public FeedbackRequest(){};
 
     public UUID getId() {
         return id;

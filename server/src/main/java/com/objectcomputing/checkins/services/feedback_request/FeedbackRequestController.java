@@ -146,6 +146,11 @@ public class FeedbackRequestController {
     }
 
     private FeedbackRequest fromDTO(FeedbackRequestUpdateDTO dto) {
-        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus(), dto.getSubmitDate());
+        FeedbackRequest request = new FeedbackRequest();
+        request.setId(dto.getId());
+        request.setDueDate(dto.getDueDate());
+        request.setStatus(dto.getStatus());
+        request.setSubmitDate(dto.getSubmitDate());
+        return request;
     }
 }
