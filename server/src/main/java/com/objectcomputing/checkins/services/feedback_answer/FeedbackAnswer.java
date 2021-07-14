@@ -23,24 +23,25 @@ public class FeedbackAnswer {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "unique id of the feedback answer")
+    @Schema(description = "unique id of the feedback answer", required = true)
     private UUID id;
 
     @Column(name = "questionId")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the feedback question the answer is linked to")
+    @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private String questionId;
 
     @Column(name="answer")
     @NotBlank
     @TypeDef(type = DataType.STRING)
+    @Schema(description = "the content of the answer", required = true)
     private String answer;
 
     @Column(name = "sentiment")
     @Nullable
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "the sentiment of the answer", required = false)
+    @Schema(description = "the sentiment of the answer")
     private String sentiment;
 
     public FeedbackAnswer(String questionId, String answer, @Nullable String sentiment) {
