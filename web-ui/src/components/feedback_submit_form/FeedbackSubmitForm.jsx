@@ -58,8 +58,6 @@ const FeedbackSubmitForm = (props) => {
 
   const [isReviewing, setIsReviewing] = useState(false);
 
-
-
   return (
     <div className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{props.requesteeName}</b></Typography>
