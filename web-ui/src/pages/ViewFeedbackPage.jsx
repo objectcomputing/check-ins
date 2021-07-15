@@ -14,12 +14,13 @@ const useStyles = makeStyles({
   pageTitle: {
     paddingRight: "0.4em",
     minWidth: "330px",
-    ["@media screen and (max-width: 600px)"]: { // eslint-disable-line no-useless-computed-key
+    ['@media screen and (max-width: 600px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "30px",
       width: "100%",
       padding: 0,
-      textAlign: "center"
-    }
+      textAlign: "center",
+      minWidth: "10px"
+    },
   },
   textField: {
     width: "100%",
