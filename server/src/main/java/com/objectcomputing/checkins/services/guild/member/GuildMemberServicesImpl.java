@@ -6,7 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.guild.Guild;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.annotation.Nullable;
@@ -24,18 +24,18 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
     private final GuildRepository guildRepo;
     private final GuildMemberRepository guildMemberRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberProfileServices;
     private final CurrentUserServices currentUserServices;
     private final GuildMemberHistoryRepository guildMemberHistoryRepository;
 
     public GuildMemberServicesImpl(GuildRepository guildRepo,
                                    GuildMemberRepository guildMemberRepo,
-                                   MemberProfileRepository memberRepo,
+                                   MemberProfileServices memberProfileServices,
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
-        this.memberRepo = memberRepo;
+        this.memberProfileServices = memberProfileServices;
         this.currentUserServices = currentUserServices;
         this.guildMemberHistoryRepository=guildMemberHistoryRepository;
     }
@@ -55,7 +55,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
         if (guildMember.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for Guild member", guildMember.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
+        } else if (memberProfileServices.getById(memberId) == null) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(), guildMember.getMemberid()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
@@ -88,7 +88,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
 
         if (id == null || guildMemberRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate guildMember to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
+        } else if (memberProfileServices.getById(memberId) == null) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (guildMemberRepo.findByGuildidAndMemberid(guildMember.getGuildid(), guildMember.getMemberid()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of guild %s", memberId, guildId));

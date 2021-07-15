@@ -201,7 +201,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(), href);
-        assertEquals(String.format("Member %s doesn't exist", checkinNoteCreateDTO.getCreatedbyid()), error);
+        assertEquals(String.format("No member profile for id %s", checkinNoteCreateDTO.getCreatedbyid()), error);
 
     }
 
@@ -825,7 +825,7 @@ public class CheckinNoteControllerTest extends TestContainersSuite implements Me
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", checkinNote.getCreatedbyid()), error);
+        assertEquals(String.format("No member profile for id %s", checkinNote.getCreatedbyid()), error);
         assertEquals(request.getPath(), href);
 
     }

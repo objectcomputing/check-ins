@@ -90,7 +90,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exists",surveyResponseCreateDTO.getCreatedBy()),error);
+        assertEquals(String.format("No member profile for id %s",surveyResponseCreateDTO.getCreatedBy()),error);
     }
 
     @Test
@@ -251,7 +251,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", surveyResponse.getCreatedBy()), error);
+        assertEquals(String.format("No member profile for id %s", surveyResponse.getCreatedBy()), error);
         assertEquals(request.getPath(), href);
 
     }

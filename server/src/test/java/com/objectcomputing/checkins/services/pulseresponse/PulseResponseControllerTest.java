@@ -92,7 +92,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
         assertEquals(request.getPath(),href);
-        assertEquals(String.format("Member %s doesn't exists",pulseResponseCreateDTO.getTeamMemberId()),error);
+        assertEquals(String.format("No member profile for id %s",pulseResponseCreateDTO.getTeamMemberId()),error);
     }
 
     @Test
@@ -273,7 +273,7 @@ public void testGetFindByfindBySubmissionDateBetween() {
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", pulseResponse.getTeamMemberId()), error);
+        assertEquals(String.format("No member profile for id %s", pulseResponse.getTeamMemberId()), error);
         assertEquals(request.getPath(), href);
 
     }
