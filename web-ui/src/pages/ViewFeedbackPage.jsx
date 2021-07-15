@@ -58,11 +58,18 @@ const ViewFeedbackPage = () => {
     }
 
     let requestsToDisplay = feedbackRequests;
-    if (searchText) {
-      const filtered = feedbackRequests.filter((request) => (
-        request.requestee?.toLowerCase().includes(searchText) ||
-        request.template?.toLowerCase().includes(searchText)
-      ));
+    if (searchText.trim()) {
+      // allow user to query multiple entries via comma-separated list
+      const queryList = searchText.split(",");
+      let filtered = feedbackRequests;
+      queryList.forEach((query) => {
+        if (query.trim()) {
+          filtered = filtered.filter((request) => (
+            request.requestee?.toLowerCase().includes(query.trim().toLowerCase()) ||
+            request.template?.toLowerCase().includes(query.trim().toLowerCase())
+          ));
+        }
+      });
       if (filtered.length === 0) {
         return <Typography variant="h2">No matching feedback requests</Typography>
       } else {
