@@ -128,13 +128,3 @@ const Notes = (props) => {
 };
 
 export default Notes;
-
-
-{/* <textarea
-disabled={
-  currentCheckin?.completed ||
-  note === undefined || Object.keys(note) === 0
-}
-onChange={handleNoteChange}
-value={note && note.description ? note.description : ""}
-/> */}
