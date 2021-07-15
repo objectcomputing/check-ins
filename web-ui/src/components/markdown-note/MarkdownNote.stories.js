@@ -26,5 +26,11 @@ CustomStyling.args = {
   style: {height: "175px"},
 }
 
+export const ReadOnly = Template.bind({});
+ReadOnly.args = {
+  readOnly: true,
+  defaultValue: "<h1>Cannot edit</h1>"
+}
+
 
 

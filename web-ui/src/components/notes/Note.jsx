@@ -13,7 +13,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-
+import MarkdownNote from "../markdown-note/MarkdownNote";
 import "./Note.css";
 
 async function realUpdate(note, csrf) {
@@ -85,44 +85,67 @@ const Notes = (props) => {
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
 
-  const handleNoteChange = (e) => {
+  // const handleNoteChange = (e) => {
+  //   if (Object.keys(note).length === 0 || !csrf) {
+  //     return;
+  //   }
+  //   const { value } = e.target;
+  //   setNote((note) => {
+  //     const newNote = { ...note, description: value };
+  //     updateNote(newNote, csrf);
+  //     return newNote;
+  //   });
+  // };
+  const handleNoteChange = (content, delta, source, editor) => {
     if (Object.keys(note).length === 0 || !csrf) {
       return;
     }
-    const { value } = e.target;
+    
     setNote((note) => {
-      const newNote = { ...note, description: value };
+      const newNote = { ...note, description: content };
       updateNote(newNote, csrf);
       return newNote;
     });
-  };
+  }
 
   return (
       <Card className="note">
         <CardHeader avatar={<NotesIcon />} title={`Notes for ${currentMember?.name}`} titleTypographyProps={{variant: "h5", component: "h2"}} />
         <CardContent>
-          <div className="container">
             {isLoading ? (
-              <div className="skeleton">
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
+              <div className="container">
+                <div className="skeleton">
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                </div>
               </div>
             ) : (
-              <textarea
-                disabled={
+              <MarkdownNote 
+                style={{height: "175px", marginBottom: "30px"}}
+                value={note && note.description ? note.description : ""}
+                onChange={handleNoteChange}
+                readOnly={
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
                 }
-                onChange={handleNoteChange}
-                value={note && note.description ? note.description : ""}
               />
             )}
-          </div>
+          
         </CardContent>
       </Card>
       );
 };
 
 export default Notes;
+
+
+{/* <textarea
+disabled={
+  currentCheckin?.completed ||
+  note === undefined || Object.keys(note) === 0
+}
+onChange={handleNoteChange}
+value={note && note.description ? note.description : ""}
+/> */}
