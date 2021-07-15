@@ -85,17 +85,6 @@ const Notes = (props) => {
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
 
-  // const handleNoteChange = (e) => {
-  //   if (Object.keys(note).length === 0 || !csrf) {
-  //     return;
-  //   }
-  //   const { value } = e.target;
-  //   setNote((note) => {
-  //     const newNote = { ...note, description: value };
-  //     updateNote(newNote, csrf);
-  //     return newNote;
-  //   });
-  // };
   const handleNoteChange = (content, delta, source, editor) => {
     if (Object.keys(note).length === 0 || !csrf) {
       return;
