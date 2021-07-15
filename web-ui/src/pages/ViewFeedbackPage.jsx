@@ -11,8 +11,23 @@ import Typography from "@material-ui/core/Typography";
 import "./ViewFeedbackPage.css";
 
 const useStyles = makeStyles({
+  pageTitle: {
+    paddingRight: "0.4em",
+    minWidth: "330px",
+    ["@media screen and (max-width: 600px)"]: { // eslint-disable-line no-useless-computed-key
+      fontSize: "30px",
+      width: "100%",
+      padding: 0,
+      textAlign: "center"
+    }
+  },
   textField: {
-
+    width: "100%",
+  },
+  searchField: {
+    width: "100%",
+    alignSelf: "start",
+    marginTop: "22px"
   },
   formControl: {
     marginRight: "1em",
@@ -54,7 +69,7 @@ const ViewFeedbackPage = () => {
     if (feedbackRequests === undefined) {
       return null;
     } else if (feedbackRequests.length === 0) {
-      return <Typography variant="h2">No feedback requests found</Typography>
+      return <Typography variant="h4" style={{color: "gray"}}>No feedback requests found</Typography>
     }
 
     let requestsToDisplay = feedbackRequests;
@@ -71,7 +86,7 @@ const ViewFeedbackPage = () => {
         }
       });
       if (filtered.length === 0) {
-        return <Typography variant="h2">No matching feedback requests</Typography>
+        return <Typography variant="h4" style={{color: "gray"}}>No matching feedback requests</Typography>
       } else {
         requestsToDisplay = filtered;
       }
@@ -79,6 +94,7 @@ const ViewFeedbackPage = () => {
 
     return requestsToDisplay.map((request) => (
       <FeedbackRequestCard
+        key={request.id}
         requesteeName={request.requestee}
         requesteeTitle={request.requesteeTitle}
         templateName={request.template}/>
@@ -87,48 +103,54 @@ const ViewFeedbackPage = () => {
 
   return (
     <div className="view-feedback-page">
-      <div className="input-row">
-        <TextField
-          className={classes.textField}
-          placeholder="Search..."
-          onChange={(event) => setSearchText(event.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment style={{color: "gray"}} position="start">
-                <Search/>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <FormControl className={classes.formControl}>
+      <div className="view-feedback-header-container">
+        <Typography className={classes.pageTitle} variant="h4">Feedback Requests</Typography>
+        <div className="input-row">
           <TextField
-            id="select-time"
-            select
-            fullWidth
-            label="Show requests sent within"
-            value={"3mo"}
-            variant="outlined"
-          >
-            <MenuItem value={"3mo"}>Past 3 months</MenuItem>
-            <MenuItem value={"6mo"}>Past 6 months</MenuItem>
-            <MenuItem value={"1yr"}>Past year</MenuItem>
-            <MenuItem value={"all"}>All time</MenuItem>
-          </TextField>
-        </FormControl>
+            className={classes.searchField}
+            placeholder="Search..."
+            helperText="Hint: Use commas to search for both name and template"
+            onChange={(event) => setSearchText(event.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment style={{color: "gray"}} position="start">
+                  <Search/>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControl className={classes.textField}>
+            <TextField
+              id="select-time"
+              select
+              fullWidth
+              size="small"
+              label="Show requests sent within"
+              value={"3mo"}
+              variant="outlined"
+            >
+              <MenuItem value={"3mo"}>Past 3 months</MenuItem>
+              <MenuItem value={"6mo"}>Past 6 months</MenuItem>
+              <MenuItem value={"1yr"}>Past year</MenuItem>
+              <MenuItem value={"all"}>All time</MenuItem>
+            </TextField>
+          </FormControl>
 
-        <FormControl>
-          <TextField
-            id="select-sort-method"
-            select
-            fullWidth
-            label="Sort by"
-            value={"sent_date"}
-            variant="outlined"
-          >
-            <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
-            <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
-          </TextField>
-        </FormControl>
+          <FormControl className={classes.textField}>
+            <TextField
+              id="select-sort-method"
+              select
+              fullWidth
+              size="small"
+              label="Sort by"
+              value={"sent_date"}
+              variant="outlined"
+            >
+              <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
+              <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
+            </TextField>
+          </FormControl>
+        </div>
       </div>
       <div className="feedback-requests-list-container">
         {getFilteredFeedbackRequests()}

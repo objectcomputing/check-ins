@@ -18,8 +18,7 @@ import "./FeedbackRequestCard.css";
 const useStyles = makeStyles({
   root: {
     color: "gray",
-    maxWidth: "80%",
-    width: "60%",
+    width: "100%",
     maxHeight: "10%",
     ['@media (max-width:769px)']: { // eslint-disable-line no-useless-computed-key
       width: '100%',
