@@ -32,6 +32,11 @@ const useStyles = makeStyles({
   formControl: {
     marginRight: "1em",
   },
+  notFoundMessage: {
+    color: "gray",
+    marginTop: "4em",
+    textAlign: "center"
+  }
 });
 
 const sampleFeedbackRequests = [
@@ -70,7 +75,7 @@ const ViewFeedbackPage = () => {
     if (feedbackRequests === undefined) {
       return null;
     } else if (feedbackRequests.length === 0) {
-      return <Typography variant="h5" style={{color: "gray"}}>No feedback requests found</Typography>
+      return <Typography className={classes.notFoundMessage} variant="h5">No feedback requests found</Typography>
     }
 
     let requestsToDisplay = feedbackRequests;
@@ -87,7 +92,7 @@ const ViewFeedbackPage = () => {
         }
       });
       if (filtered.length === 0) {
-        return <Typography variant="h5" style={{color: "gray"}}>No matching feedback requests</Typography>
+        return <Typography className={classes.notFoundMessage} variant="h5">No matching feedback requests</Typography>
       } else {
         requestsToDisplay = filtered;
       }
@@ -100,7 +105,7 @@ const ViewFeedbackPage = () => {
         requesteeTitle={request.requesteeTitle}
         templateName={request.template}/>
     ))
-  }, [searchText, feedbackRequests]);
+  }, [searchText, feedbackRequests, classes.notFoundMessage]);
 
   return (
     <div className="view-feedback-page">
