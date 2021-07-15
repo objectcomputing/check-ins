@@ -13,6 +13,9 @@ delete from role;
 delete from team_member;
 delete from team;
 delete from member_profile;
+delete from template_questions;
+delete from feedback_templates;
+
 
 INSERT INTO member_profile
     (id, firstName, lastName, title, location, workEmail, employeeid, startdate, biotext, supervisorid)
@@ -387,3 +390,21 @@ INSERT INTO pulse_response
 (id, submissiondate, updateddate, teammemberid, internalfeelings, externalfeelings)
 VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
+
+INSERT INTO feedback_templates (id, title, description, createdBy, active)
+values('fd7c4cae-e576-11eb-ba80-0242ac130004', 'OCI Feedback Template', 'Default OCI feedback template', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', true );
+
+INSERT INTO template_questions (id, question, templateId, orderNum)
+values ('4925178a-e577-11eb-ba80-0242ac130004', 'Today I am evaluating:', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 1 );
+
+INSERT INTO template_questions (id, question, templateId, orderNum)
+values ('84e20990-e577-11eb-ba80-0242ac130004', 'What are this team member''s top strengths (include examples where possible)?', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 2 );
+
+INSERT INTO template_questions (id, question, templateId, orderNum)
+values ('a70b2b64-e577-11eb-ba80-0242ac130004', 'In what ways are this team member’s contributions impacting the objectives of the organization, their project, or their team?', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 3 );
+
+INSERT INTO template_questions (id, question, templateId, orderNum)
+values ('c06df7f8-e577-11eb-ba80-0242ac130004', 'What can this team member improve on that would help them increase their effectiveness (include examples where possible)?', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 4 );
+
+INSERT INTO template_questions (id, question, templateId, orderNum)
+values ('d93b66a8-e577-11eb-ba80-0242ac130004', 'In what ways does this team member represent OCI''s values? (OCI Values: All of us is better than any one of us, Innovate courageously, Share it back)', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 5 );
