@@ -27,7 +27,7 @@
     text-decoration: none;
 }
 
-@media(min-width: 321px) and (max-width: 767px) {
+@media(min-width: 320px) and (max-width: 800px) {
   .feedback-request-page {
     display: flex;
     flex-direction: column;
@@ -37,7 +37,7 @@
   }
 
   .header-container {
-    margin: 0 5% 0 5%;
+    margin: 0em;
   }
 
   .current-step-content {
