@@ -29,7 +29,7 @@ public class MailJetSender implements EmailSender {
      * @param subject, {@link String} Subject of email
      * @param content {@link String} Contents of email
      */
-    // emailAddressToBodiesMap is email, address, email body
+    @Override
     public void sendEmail(String subject, String content, String... recipients) {
         MailjetRequest request;
         MailjetResponse response;
