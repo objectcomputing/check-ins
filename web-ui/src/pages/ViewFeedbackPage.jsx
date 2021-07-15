@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   searchField: {
     width: "100%",
     alignSelf: "start",
-    marginTop: "22px"
+    marginTop: "30px"
   },
   formControl: {
     marginRight: "1em",
@@ -60,6 +60,7 @@ const ViewFeedbackPage = () => {
   const classes = useStyles();
   const [feedbackRequests, setFeedbackRequests] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
 
   useEffect(() => {
     setFeedbackRequests(sampleFeedbackRequests);
@@ -69,7 +70,7 @@ const ViewFeedbackPage = () => {
     if (feedbackRequests === undefined) {
       return null;
     } else if (feedbackRequests.length === 0) {
-      return <Typography variant="h4" style={{color: "gray"}}>No feedback requests found</Typography>
+      return <Typography variant="h5" style={{color: "gray"}}>No feedback requests found</Typography>
     }
 
     let requestsToDisplay = feedbackRequests;
@@ -86,7 +87,7 @@ const ViewFeedbackPage = () => {
         }
       });
       if (filtered.length === 0) {
-        return <Typography variant="h4" style={{color: "gray"}}>No matching feedback requests</Typography>
+        return <Typography variant="h5" style={{color: "gray"}}>No matching feedback requests</Typography>
       } else {
         requestsToDisplay = filtered;
       }
@@ -109,7 +110,9 @@ const ViewFeedbackPage = () => {
           <TextField
             className={classes.searchField}
             placeholder="Search..."
-            helperText="Hint: Use commas to search for both name and template"
+            helperText={searchFocused ? "Hint: Use commas to search for both name and template" : " "}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
             onChange={(event) => setSearchText(event.target.value)}
             InputProps={{
               startAdornment: (
