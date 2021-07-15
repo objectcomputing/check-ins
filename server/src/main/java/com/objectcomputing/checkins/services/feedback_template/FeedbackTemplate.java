@@ -16,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +44,7 @@ public class FeedbackTemplate {
     @Column(name = "description")
     @Nullable
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "description of feedback template", required = false)
+    @Schema(description = "description of feedback template")
     private String description;
 
     @Column(name = "createdBy")
@@ -51,38 +53,29 @@ public class FeedbackTemplate {
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID createdBy;
 
-    @Column(name = "active")
-    @NotNull
-    @TypeDef(type = DataType.BOOLEAN)
-    @Schema(description = "whether the template can still be used", required = true)
-    private Boolean active;
+    @Column(name = "updatedOn")
+    @NotBlank
+    @TypeDef(type = DataType.DATE)
+    @Schema(description = "date the template was last updated")
+    private LocalDate updatedOn;
 
-
-
-    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy) {
+    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotBlank LocalDate updatedOn) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
-        this.active = true;
+        this.updatedOn = updatedOn;
     }
 
-    public FeedbackTemplate(@NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
-        this.id = null;
-        this.title = title;
-        this.description = description;
-        this.createdBy = createdBy;
-        this.active = active;
-    }
-
-    public FeedbackTemplate(@NotNull UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotNull Boolean active) {
+    public FeedbackTemplate(@NotNull UUID id, @NotNull String title, @Nullable String description, @NotNull UUID createdBy, @NotBlank LocalDate updatedOn) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
-        this.active = active;
+        this.updatedOn = updatedOn;
     }
 
+    public FeedbackTemplate () {}
 
     public UUID getId() {
         return id;
@@ -117,12 +110,12 @@ public class FeedbackTemplate {
         this.createdBy = createdBy;
     }
 
-    public Boolean getActive() {
-        return active;
+    public LocalDate getUpdatedOn() {
+        return updatedOn;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setUpdatedOn(LocalDate updatedOn) {
+        this.updatedOn = updatedOn;
     }
 
     @Override
@@ -130,27 +123,26 @@ public class FeedbackTemplate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackTemplate that = (FeedbackTemplate) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(title, that.title)
-                && Objects.equals(description, that.description)
-                && Objects.equals(createdBy, that.createdBy)
-                && Objects.equals(active, that.active);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(createdBy, that.createdBy) &&
+                Objects.equals(updatedOn, that.updatedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, createdBy, active);
+        return Objects.hash(id, title, description, createdBy, updatedOn);
     }
 
     @Override
-    public String
-    toString() {
+    public String toString() {
         return "FeedbackTemplate{" +
                 "id=" + id +
                 ", title='" + title +
                 ", description='" + description +
                 ", createdBy=" + createdBy +
-                ", active=" + active+
+                ", updatedOn=" + updatedOn +
                 '}';
     }
 }

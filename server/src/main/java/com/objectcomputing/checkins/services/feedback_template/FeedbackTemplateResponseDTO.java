@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,41 +32,33 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID createdBy;
 
-    @NotNull
-    @Schema(description = "template is active", required=true)
-    private Boolean active;
+    @NotBlank
+    @Schema(description = "date the template was last updated")
+    private LocalDate updatedOn;
 
-    @Schema(description = "Questions attached to this template")
-    private List<TemplateQuestionResponseDTO> templateQuestions;
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
     public UUID getId() {
         return id;
     }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public void setActive(Boolean active){this.active = active;}
 
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    public void setCreatedBy(@Nullable UUID createdBy) {
-        this.createdBy = createdBy;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public Boolean getActive() {return active;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     @Nullable
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(@Nullable String description) {
+        this.description = description;
     }
 
     @Nullable
@@ -73,15 +66,15 @@ public class FeedbackTemplateResponseDTO {
         return createdBy;
     }
 
-    public List<TemplateQuestionResponseDTO> getTemplateQuestions() {
-        if (templateQuestions == null) {
-            templateQuestions = new ArrayList<>();
-        }
-        return templateQuestions;
+    public void setCreatedBy(@Nullable UUID createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public void setTemplateQuestions(List<TemplateQuestionResponseDTO> templateQuestions) {
-        this.templateQuestions = templateQuestions;
+    public LocalDate getUpdatedOn() {
+        return updatedOn;
     }
 
+    public void setUpdatedOn(LocalDate updatedOn) {
+        this.updatedOn = updatedOn;
+    }
 }

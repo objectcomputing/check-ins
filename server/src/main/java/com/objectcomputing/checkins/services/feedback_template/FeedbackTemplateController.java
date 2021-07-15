@@ -11,6 +11,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -38,6 +39,9 @@ public class FeedbackTemplateController {
         this.eventLoopGroup = eventLoopGroup;
         this.executorService = executorService;
     }
+
+    // create an ad hoc template
+    //
 
     /**
      * Create a feedback template
@@ -93,7 +97,7 @@ public class FeedbackTemplateController {
      */
     @Get("/{id}")
     public Single<HttpResponse<FeedbackTemplateResponseDTO>> getById(UUID id) {
-        return Single.fromCallable(() -> feedbackTemplateServices.read(id))
+        return Single.fromCallable(() -> feedbackTemplateServices.getById(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(template -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse.ok(template))
                 .subscribeOn(Schedulers.from(executorService));
@@ -104,21 +108,20 @@ public class FeedbackTemplateController {
      *
      * @param title {@link String} Title of feedback template
      * @param createdBy {@link UUID} UUID of creator
-     * @param onlyActive {@link Boolean} whether the template has been soft deleted or not
      * @return {@link List<FeedbackTemplateResponseDTO>} List of feedback templates that match the input parameters
      */
-    @Get("/{?createdBy,title,onlyActive}")
-    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
-        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title, onlyActive))
+    @Get("/{?createdBy,title}")
+    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title) {
+        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplates -> {
-                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
-                            .collect(Collectors.toList());
+                    List<FeedbackTemplateResponseDTO> dtoList = new ArrayList<>(feedbackTemplates);
                     return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
-
-
+    private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
+        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getUpdatedOn());
+    }
 
 }

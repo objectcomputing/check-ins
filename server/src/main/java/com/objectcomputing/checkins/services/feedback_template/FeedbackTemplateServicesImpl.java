@@ -38,24 +38,9 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public FeedbackTemplateResponseDTO read(UUID id) {
-        FeedbackTemplate foundTemplate = feedbackTemplateRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("No such template found"));
+    public FeedbackTemplate save(FeedbackTemplateCreateDTO feedbackTemplate) {
 
-        List<TemplateQuestionResponseDTO> questions = templateQuestionRepo
-                .findByTemplateId(Util.nullSafeUUIDToString(id))
-                .stream()
-                .map(question ->
-                        fromQuestionEntity(question)).collect(Collectors.toList());
-
-
-        return fromEntity(foundTemplate, questions);
-    }
-
-    @Override
-    public FeedbackTemplateResponseDTO save(FeedbackTemplateCreateDTO feedbackTemplate) {
-
-        FeedbackTemplate newTemplateObject = null;
+        FeedbackTemplate newTemplateObject;
         List<TemplateQuestionResponseDTO> newTemplateQuestions = new ArrayList<>();
         //Perform initial checks that would preclude further operations
         if (feedbackTemplate == null ) {
@@ -199,7 +184,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
 
     @Override
-    public List<FeedbackTemplateResponseDTO> findByFields(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
+    public List<FeedbackTemplateResponseDTO> findByFields(@Nullable UUID createdBy, @Nullable String title) {
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -246,10 +231,10 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return currentUserId != null;
     }
 
-    public boolean updateIsPermitted(UUID createdBy) {
+    public boolean updateIsPermitted(UUID createdBy, boolean isActive) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isAdmin = currentUserServices.isAdmin();
-        return isAdmin || currentUserId.equals(createdBy);
+        return isAdmin || (isActive && currentUserId.equals(createdBy));
     }
 
     public boolean getIsPermitted() {
@@ -269,17 +254,17 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return fromEntity(entity, new ArrayList<>());
     }
 
-    private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate feedbackTemplate, List<TemplateQuestionResponseDTO> templateQuestions) {
-        if (feedbackTemplate == null) {
+    private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate entity) {
+        if (entity == null) {
             return null;
         }
         FeedbackTemplateResponseDTO dto = new FeedbackTemplateResponseDTO();
-        dto.setId(feedbackTemplate.getId());
-        dto.setTitle(feedbackTemplate.getTitle());
-        dto.setDescription(feedbackTemplate.getDescription());
-        dto.setCreatedBy(feedbackTemplate.getCreatedBy());
-        dto.setActive(feedbackTemplate.getActive());
-        dto.setTemplateQuestions(templateQuestions);
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setDescription(entity.getDescription());
+        dto.setCreatedBy(entity.getCreatedBy());
+        dto.setUpdatedOn(entity.getUpdatedOn());
+        dto.setActive(entity.getActive());
         return dto;
     }
 

@@ -15,7 +15,6 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTemplate, UUID> {
 
-
     List<FeedbackTemplate> findByTitleLike(String title);
 
     List<FeedbackTemplate> findByCreatedBy(UUID id);
@@ -24,6 +23,7 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
 
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
+
     @Override
     <S extends FeedbackTemplate> S update(@Valid @NotNull @NonNull S entity);
 
