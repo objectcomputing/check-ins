@@ -1,5 +1,11 @@
-.add-user-to-role {
+/* .role-buttons {
   display: flex;
+  align-items: center;
+} */
+
+.role-content {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
@@ -7,6 +13,7 @@
   display: flex;
   justify-content: space-between;
 }
+
 .role-content .member-card {
   display: flex;
   flex-direction: row;
@@ -24,6 +31,7 @@
 
 .role-content .roles {
   display: flex;
+  width: 95%;
 }
 
 @media (min-width: 750px) {
@@ -42,10 +50,22 @@
   justify-content: space-evenly;
 }
 
-.role-content .roles .add-user-to-role .person-icon {
+.role-content .roles .role-buttons .role-add {
   cursor: pointer;
   display: flex;
+  align-items: center;
   margin-left: 0.5rem;
+}
+
+.role-content .roles .role-buttons .role-edit {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.role-content .roles .role-buttons span {
+  margin-right: 0.5rem;
 }
 
 .role-content .role-top {

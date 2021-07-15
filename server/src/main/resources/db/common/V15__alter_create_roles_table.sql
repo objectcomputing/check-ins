@@ -3,6 +3,3 @@ ALTER COLUMN role TYPE VARCHAR;
 
 ALTER TABLE role
 ADD CONSTRAINT available_roles CHECK (role IN ('ADMIN', 'PDL', 'MEMBER') );
-
-ALTER TABLE role
-ADD COLUMN description VARCHAR;
