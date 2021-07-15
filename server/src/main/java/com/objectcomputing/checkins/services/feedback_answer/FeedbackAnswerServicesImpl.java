@@ -74,11 +74,13 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         }
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer.get());
-        if (!getIsPermitted(relatedFeedbackRequest)) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
+        boolean permitted = getIsPermitted(relatedFeedbackRequest);
 
-        return feedbackAnswer.get();
+        if (getIsPermitted(relatedFeedbackRequest)) {
+            return feedbackAnswer.get();
+        } else {
+            throw new PermissionException("You are not authorized to do this operation :(");
+        }
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {

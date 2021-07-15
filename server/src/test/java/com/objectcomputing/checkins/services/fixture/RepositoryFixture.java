@@ -153,4 +153,5 @@ public interface RepositoryFixture {
     default GuildMemberHistoryRepository getGuildMemberHistoryRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(GuildMemberHistoryRepository.class);
     }
+
 }

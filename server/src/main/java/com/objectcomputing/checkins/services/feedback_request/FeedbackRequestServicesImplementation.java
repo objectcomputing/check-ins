@@ -158,22 +158,16 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     }
 
     private boolean createIsPermitted(@NotNull UUID requesteeId) {
+        final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
-
-        if (currentUserServices.isAdmin()) {
-            return true;
-        }
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        if (currentUserId.equals(requesteePDL)) {
-            return true;
-        }
-        //TODO: Can a person's supervisor send a feedback request?
-        return false;
+        return isAdmin || currentUserId.equals(requesteePDL);
     }
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
     }
 

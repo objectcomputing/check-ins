@@ -26,53 +26,12 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Client("/services/feedback/answers")
     HttpClient client;
 
-    public FeedbackAnswerCreateDTO saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
-        MemberProfile requestee = createAnUnrelatedUser();
+    public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
+        createDefaultRole(RoleType.PDL, sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         FeedbackRequest feedbackRequest = createFeedbackRequest(sender, requestee, recipient);
         FeedbackRequestQuestion question = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-
-        FeedbackAnswer answer = createFeedbackAnswer(question.getId());
-        return createDTO(answer);
-    }
-
-    public void assertContentEqualsResponse(FeedbackAnswerCreateDTO content, FeedbackAnswerResponseDTO response) {
-        assertEquals(content.getAnswer(), response.getAnswer());
-        assertEquals(content.getQuestionId(), response.getQuestionId());
-        assertEquals(content.getSentiment(), response.getSentiment());
-    }
-
-    @Test
-    void testPostAnswerByAdmin() {
-        MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
-
-        MemberProfile sender = createASecondDefaultMemberProfile();
-        MemberProfile recipient = createAThirdDefaultMemberProfile();
-
-        FeedbackAnswerCreateDTO dto = saveSampleAnswer(sender, recipient);
-
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
-
-        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("You are not authorized to do this operation", exception.getMessage());
-    }
-
-    @Test
-    void testPostAnswerByRecipient() {
-        MemberProfile sender = createASecondDefaultMemberProfile();
-        MemberProfile recipient = createAThirdDefaultMemberProfile();
-
-        FeedbackAnswerCreateDTO dto = saveSampleAnswer(sender, recipient);
-        final HttpRequest<?> request = HttpRequest.POST("", dto)
-                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
-
-        assertTrue(response.getBody().isPresent());
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertContentEqualsResponse(dto, response.getBody().get());
+        return createFeedbackAnswer(question.getId());
     }
 
     FeedbackAnswerCreateDTO createDTO(FeedbackAnswer feedbackAnswer) {
@@ -81,6 +40,150 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         dto.setQuestionId(feedbackAnswer.getQuestionId());
         dto.setSentiment(feedbackAnswer.getSentiment());
         return dto;
+    }
+
+    FeedbackAnswerUpdateDTO updateDTO(FeedbackAnswer feedbackAnswer) {
+        FeedbackAnswerUpdateDTO dto = new FeedbackAnswerUpdateDTO();
+        dto.setId(feedbackAnswer.getId());
+        dto.setAnswer(feedbackAnswer.getAnswer());
+        dto.setSentiment(feedbackAnswer.getSentiment());
+        return dto;
+    }
+
+    public void assertContentEqualsResponse(FeedbackAnswer content, FeedbackAnswerResponseDTO response) {
+        assertEquals(content.getAnswer(), response.getAnswer());
+        assertEquals(content.getQuestionId(), response.getQuestionId());
+        assertEquals(content.getSentiment(), response.getSentiment());
+    }
+
+    public void assertUnauthorized(HttpClientResponseException exception) {
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+    }
+
+    @Test
+    void testPostAnswerByAdminUnauthorized() {
+        MemberProfile admin = createADefaultMemberProfile();
+        createDefaultAdminRole(admin);
+
+        MemberProfile sender = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswerCreateDTO dto = createDTO(saveSampleAnswer(sender, recipient));
+
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(exception);
+    }
+
+    @Test
+    void testPostAnswerByRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testPostBySenderUnauthorized() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(sender.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(exception);
+    }
+
+
+    @Test
+    void testUpdateByRecipient() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        feedbackAnswer.setAnswer(":p");
+        feedbackAnswer.setSentiment(1.0);
+        FeedbackAnswerUpdateDTO dto = updateDTO(feedbackAnswer);
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking()
+                .exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testUpdateByAdminUnauthorized() {
+        MemberProfile admin = createADefaultMemberProfile();
+        createDefaultAdminRole(admin);
+        MemberProfile sender = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        FeedbackAnswerUpdateDTO dto = updateDTO(feedbackAnswer);
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(exception);
+    }
+
+    @Test
+    void testGetByIdSender() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
+                .basicAuth(sender.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testGetByIdSubmitter() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testGetByIdUnauthorized() {
+        MemberProfile random = createADefaultMemberProfile();
+        MemberProfile sender = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
+                .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(exception);
     }
 
 }
