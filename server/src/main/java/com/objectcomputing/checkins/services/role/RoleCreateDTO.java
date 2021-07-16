@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,10 @@ public class RoleCreateDTO {
             allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
     private RoleType role;
 
+    @Nullable
+    @Schema(description = "description of the check in note", nullable = true)
+    private String description;
+
     @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
@@ -32,6 +37,14 @@ public class RoleCreateDTO {
 
     public void setRole(RoleType role) {
         this.role = role;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UUID getMemberid() {

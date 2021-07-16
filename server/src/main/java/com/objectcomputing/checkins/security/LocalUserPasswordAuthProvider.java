@@ -58,7 +58,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
             for (String curRole : roles) {
                 RoleType roleType = RoleType.valueOf(curRole);
                 if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getId()).isEmpty()) {
-                    roleRepository.save(new Role(roleType, memberProfile.getId()));
+                    roleRepository.save(new Role(roleType, "role description", memberProfile.getId()));
                 }
             }
         } else {
