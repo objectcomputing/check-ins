@@ -10,6 +10,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -67,12 +68,30 @@ public class FrozenTemplateController {
                 .subscribeOn(Schedulers.from(executorService));
     }
 
+    /**
+     * Get frozen template attached to certain request
+     *
+     * @param requestId {@link UUID} ID of the requested frozen template
+     * @return {@link FrozenTemplateResponseDTO}
+     */
+
+    @Get("/{?requestId}")
+    public Single<HttpResponse<FrozenTemplateResponseDTO>> findByValues(@Nullable UUID requestId) {
+        return Single.fromCallable(() -> frozenTemplateServices.findByValues(requestId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackTemplate -> (HttpResponse<FrozenTemplateResponseDTO>) HttpResponse
+                        .ok(fromEntity(feedbackTemplate))
+                        .headers(headers -> headers.location(URI.create("/frozen_template/" + feedbackTemplate.getId()))))
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
     private FrozenTemplateResponseDTO fromEntity(FrozenTemplate template) {
         FrozenTemplateResponseDTO dto = new FrozenTemplateResponseDTO();
         dto.setId(template.getId());
         dto.setTitle(template.getTitle());
         dto.setDescription(template.getDescription());
         dto.setCreatedBy(template.getCreatedBy());
+        dto.setRequestId(template.getRequestId());
         return dto;
     }
 
@@ -82,6 +101,7 @@ public class FrozenTemplateController {
        template.setTitle(dto.getTitle());
        template.setDescription(dto.getDescription());
        template.setCreatedBy(dto.getCreatedBy());
+       template.setRequestId(dto.getRequestId());
        return template;
     }
 }

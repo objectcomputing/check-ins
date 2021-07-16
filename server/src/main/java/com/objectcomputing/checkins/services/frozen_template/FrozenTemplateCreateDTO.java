@@ -23,6 +23,12 @@ public class FrozenTemplateCreateDTO {
     private UUID createdBy;
 
 
+    @NotBlank
+    @Schema(description = "UUID of the request this frozen template is attached to ", required = true)
+    private UUID requestId;
+
+
+
     public String getTitle() {
         return title;
     }
@@ -46,6 +52,14 @@ public class FrozenTemplateCreateDTO {
 
     public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public UUID getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
     }
 
 

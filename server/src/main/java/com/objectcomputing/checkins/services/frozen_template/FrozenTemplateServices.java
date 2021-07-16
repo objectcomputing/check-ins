@@ -8,4 +8,6 @@ public interface FrozenTemplateServices {
     FrozenTemplate save(FrozenTemplate ft);
 
     FrozenTemplate getById(UUID id);
+
+    FrozenTemplate findByValues(UUID requestId);
 }

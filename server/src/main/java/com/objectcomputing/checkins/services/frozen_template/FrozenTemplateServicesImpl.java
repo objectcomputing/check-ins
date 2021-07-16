@@ -2,10 +2,12 @@ package com.objectcomputing.checkins.services.frozen_template;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
 import java.util.Optional;
@@ -39,9 +41,18 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
             throw new BadArgException("Creator ID is invalid");
         }
 
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        req = feedbackRequestServices.getById(ft.getRequestId());
+        if (req ==null)  {
+            throw new NotFoundException("Could not find request");
+        }
+
         if (ft.getId() != null) {
             throw new BadArgException("Attempted to save feedback template with duplicate ID");
+        }
+        UUID creatorId = req.getCreatorId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (!creatorId.equals(currentUserId)) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
         return frozenTemplateRepository.save(ft);
 
@@ -50,14 +61,37 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
     @Override
     public FrozenTemplate getById(UUID id) {
         final Optional<FrozenTemplate> template= frozenTemplateRepository.findById(id);
-        if (!template.isPresent()) {
+        if (template.isEmpty()) {
             throw new NotFoundException("No feedback template with id " + id);
         }
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        FeedbackRequest req = feedbackRequestServices.getById(template.get().getRequestId());
 
+        UUID creatorId = req.getCreatorId();
+        UUID requesteeId = req.getRequesteeId();
+        UUID recipientId = req.getRecipientId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (!(creatorId.equals(currentUserId) || requesteeId.equals(currentUserId) || recipientId.equals(currentUserId) || currentUserServices.isAdmin() )) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
         return template.get();
 
     }
 
-    //
+    @Override
+    public FrozenTemplate findByValues(UUID requestId) {
+        FeedbackRequest req = feedbackRequestServices.getById(requestId);
+        if (req == null) {
+            throw new NotFoundException("Request does not exist");
+        }
+        UUID creatorId = req.getCreatorId();
+        UUID requesteeId = req.getRequesteeId();
+        UUID recipientId = req.getRecipientId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (!(creatorId.equals(currentUserId) || requesteeId.equals(currentUserId) || recipientId.equals(currentUserId) || currentUserServices.isAdmin() )) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        return frozenTemplateRepository.findByRequestId(Util.nullSafeUUIDToString(requestId));
+    }
+
 }

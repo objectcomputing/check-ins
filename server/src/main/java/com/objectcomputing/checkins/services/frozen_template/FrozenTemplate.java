@@ -43,20 +43,29 @@ public class FrozenTemplate {
     @Schema(description = "UUID of person who created the original feedback template, not necessarily request creator", required = true)
     private UUID createdBy;
 
+    @Column(name = "requestId")
+    @NotBlank
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "UUID of the request this frozen template is attached to ", required = true)
+    private UUID requestId;
 
-    public FrozenTemplate(UUID id, String title, @Nullable String description, UUID createdBy) {
+
+
+    public FrozenTemplate(UUID id, String title, @Nullable String description, UUID createdBy, UUID requestId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.requestId = requestId;
     }
 
 
-    public FrozenTemplate(String title, @Nullable String description, UUID createdBy) {
+    public FrozenTemplate(String title, @Nullable String description, UUID createdBy, UUID requestId) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.createdBy = createdBy;
+        this.requestId = requestId;
     }
 
     FrozenTemplate() {}
@@ -94,17 +103,25 @@ public class FrozenTemplate {
         this.createdBy = createdBy;
     }
 
+    public UUID getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FrozenTemplate that = (FrozenTemplate) o;
-        return id.equals(that.id) && title.equals(that.title) && Objects.equals(description, that.description) && createdBy.equals(that.createdBy);
+        return id.equals(that.id) && title.equals(that.title) && Objects.equals(description, that.description) && createdBy.equals(that.createdBy) && requestId.equals(that.requestId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, createdBy);
+        return Objects.hash(id, title, description, createdBy, requestId);
     }
 
 

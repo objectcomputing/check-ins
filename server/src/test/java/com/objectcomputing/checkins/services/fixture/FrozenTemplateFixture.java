@@ -8,21 +8,23 @@ import java.util.UUID;
 
 public interface FrozenTemplateFixture extends RepositoryFixture{
 
-    default FrozenTemplate saveDefaultFrozenTemplate(UUID createdBy) {
+    default FrozenTemplate saveDefaultFrozenTemplate(UUID createdBy, UUID requestId) {
         FrozenTemplate frozenTemplate = new FrozenTemplate(
                 "Default Template Title",
                 "Fake template to freeze for testing",
-                createdBy);
+                createdBy,
+                requestId);
         getFrozenTemplateRepository().save(frozenTemplate);
         return frozenTemplate;
 
     }
 
-    default FrozenTemplate saveAnotherFrozenTemplate(UUID createdBy) {
+    default FrozenTemplate saveAnotherFrozenTemplate(UUID createdBy, UUID requestId) {
         FrozenTemplate frozenTemplate = new FrozenTemplate(
                 "Another default template title",
                 "A second fake template to freeze for testing",
-                createdBy);
+                createdBy,
+                requestId);
         getFrozenTemplateRepository().save(frozenTemplate);
         return frozenTemplate;
 
