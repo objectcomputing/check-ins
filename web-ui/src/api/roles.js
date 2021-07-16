@@ -23,3 +23,15 @@ export const addUserToRole = async (role, memberid, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const addNewRole = async (role, cookie) => {
+  return resolve({
+    method: "post",
+    url: roleURL,
+    data: {
+      role: role,
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+};

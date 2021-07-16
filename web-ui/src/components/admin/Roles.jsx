@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { DELETE_ROLE, UPDATE_ROLES, UPDATE_TOAST } from "../../context/actions";
 import { getAvatarURL } from "../../api/api.js";
-import { addUserToRole, removeUserFromRole } from "../../api/roles";
+import { addUserToRole, addNewRole, removeUserFromRole } from "../../api/roles";
 
 import {
   Button,
@@ -27,8 +27,10 @@ const Roles = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, roles } = state;
 
-  const [addUser, setAddUser] = useState(false);
-  const [editRole, setEditRole] = useState(false);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [showAddRole, setShowAddRole] = useState(false);
+  const [newRole, setNewRole] = useState("");
+  // const [editRole, setEditRole] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedMember, setSelectedMember] = useState({});
   const [roleToMemberMap, setRoleToMemberMap] = useState({});
@@ -39,10 +41,6 @@ const Roles = () => {
   useEffect(() => {
     const memberMap = {};
     for (const member of memberProfiles) {
-      // let temp = roles.find((role) => role.memberid === member.id);
-      // if (temp) {
-      //   memberMap[member.id] = { ...member, role: temp };
-      // }
       memberMap[member.id] = member;
     }
 
@@ -56,7 +54,6 @@ const Roles = () => {
         memberList.push({ ...memberMap[role.memberid], roleId: role.id });
       }
     }
-    console.log({ newRoleToMemberMap });
     setRoleToMemberMap(newRoleToMemberMap);
   }, [memberProfiles, roles]);
 
@@ -91,7 +88,7 @@ const Roles = () => {
     let data =
       res.payload && res.payload.data && !res.error ? res.payload.data : null;
     if (data) {
-      setAddUser(false);
+      setShowAddUser(false);
       dispatch({
         type: UPDATE_ROLES,
         payload: data,
@@ -107,19 +104,45 @@ const Roles = () => {
     setSelectedMember({});
   };
 
-  const closeAddUser = () => {
-    setAddUser(false);
+  const addRole = async (member, role) => {
+    let res = await addNewRole(selectedRole, member.id, csrf);
+    let data =
+      res.payload && res.payload.data && !res.error ? res.payload.data : null;
+    if (data) {
+      setShowAddRole(false);
+      dispatch({
+        type: UPDATE_ROLES,
+        payload: data,
+      });
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `${member.name} added to ${selectedRole}s`,
+        },
+      });
+    }
   };
 
-  const closeEditRole = () => {
-    setEditRole(false);
+  const closeAddUser = () => {
+    setShowAddUser(false);
   };
+
+  const closeAddRole = () => {
+    setShowAddRole(false);
+  };
+
+  // const closeEditRole = () => {
+  //   setEditRole(false);
+  // };
+
+  console.log({ newRole });
 
   const createUserCards = (role) =>
     roleToMemberMap[role].map(
       (member) =>
         member && (
-          <div>
+          <div key={member.id}>
             <Card className="member-card">
               <CardHeader
                 title={
@@ -152,26 +175,30 @@ const Roles = () => {
           </div>
         )
     );
-  console.log({ roleToMemberMap, uniqueRoles });
 
   return (
     <div className="role-content">
       <div className="roles">
         <div className="role-top">
-          <h2>Roles</h2>
-          <TextField
-            className="role-search"
-            label="Search Roles..."
-            placeholder="Role Name"
-            value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-          />
+          <div className="role-top-left">
+            <h2>Roles</h2>
+            <TextField
+              className="role-search"
+              label="Search Roles..."
+              placeholder="Role Name"
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+            />
+          </div>
+          <Button color="primary" onClick={() => setShowAddRole(true)}>
+            Add New Role
+          </Button>
         </div>
         {uniqueRoles.map((role) =>
           role.toLowerCase().includes(searchText.toLowerCase()) ? (
-            <Card className="role">
+            <Card className="role" key={role}>
               <CardHeader
                 title={
                   <div className="role-header">
@@ -181,20 +208,21 @@ const Roles = () => {
                     <Typography variant="h5" component="h4">
                       {role.description || ""}
                     </Typography>
-                    <div
-                      className="role-buttons"
-                      onClick={() => {
-                        setAddUser(true);
-                        setSelectedRole(role);
-                      }}
-                    >
-                      <div className="role-add">
+                    <div className="role-buttons">
+                      <Button
+                        className="role-add"
+                        color="primary"
+                        onClick={() => {
+                          setShowAddUser(true);
+                          setSelectedRole(role);
+                        }}
+                      >
                         <span>Add User</span>
                         <PersonAddIcon />
-                      </div>
-                      <div className="role-edit">
+                      </Button>
+                      <Button className="role-edit" color="primary">
                         <span>Edit Role</span> <EditIcon />
-                      </div>
+                      </Button>
                     </div>
                   </div>
                 }
@@ -208,8 +236,8 @@ const Roles = () => {
                 {createUserCards(role)}
               </CardContent>
               <CardActions>
-                <Modal open={addUser} onClose={closeAddUser}>
-                  <div className="member-modal">
+                <Modal open={showAddUser} onClose={closeAddUser}>
+                  <div className="role-modal">
                     <Autocomplete
                       options={memberProfiles}
                       value={selectedMember}
@@ -222,16 +250,34 @@ const Roles = () => {
                           {...params}
                           className="fullWidth"
                           label="User To Add"
-                          placeholder="Select User to add to role"
+                          placeholder={`Select User to add to ${selectedRole}s`}
                         />
                       )}
                     />
-                    <Button onClick={() => addToRole(selectedMember)}>
+                    <Button
+                      color="primary"
+                      onClick={() => addToRole(selectedMember)}
+                    >
                       Save
                     </Button>
                   </div>
                 </Modal>
-                {/* <Modal open={editRole} onClose={closeEditRole}>
+                <Modal open={showAddRole} onClose={closeAddRole}>
+                  <div className="role-modal">
+                    <TextField
+                      className="fullWidth"
+                      label="Role Description"
+                      placeholder="Set new role description"
+                      onChange={setNewRole}
+                      value={newRole ? newRole : ""}
+                      variant="outlined"
+                    />
+                    <Button color="primary" onClick={() => addRole(newRole)}>
+                      Save
+                    </Button>
+                  </div>
+                </Modal>
+                {/* <Modal open={} onClose={closeEditRole}>
                   <div className="edit-role-modal">
                     <TextField
                       id="role-description"
