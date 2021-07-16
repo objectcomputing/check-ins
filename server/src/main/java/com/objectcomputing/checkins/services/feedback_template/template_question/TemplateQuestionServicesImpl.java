@@ -26,7 +26,6 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
     public TemplateQuestionServicesImpl(TemplateQuestionRepository templateQuestionRepository,
                                         CurrentUserServices currentUserServices,
-                                        MemberProfileServices memberProfileServices,
                                         FeedbackTemplateRepository feedbackTemplateRepo) {
         this.templateQuestionRepository = templateQuestionRepository;
         this.currentUserServices = currentUserServices;
@@ -34,9 +33,38 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     }
 
     @Override
+    public TemplateQuestion save(TemplateQuestion templateQuestion) {
+        if (templateQuestion == null) {
+            throw new BadArgException("Attempted to save null template question");
+        } else if (templateQuestion.getTemplateId() == null) {
+            throw new BadArgException("Attempted to save question with no template ID");
+        }
+
+        Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
+        if (feedbackTemplate.isEmpty()) {
+            throw new NotFoundException("Template ID does not exist");
+        }
+
+        if (!createIsPermitted(feedbackTemplate.get().getCreatorId())) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+        if (templateQuestion.getId() != null) {
+            return templateQuestionRepository.update(templateQuestion);
+        }
+
+        return templateQuestionRepository.save(templateQuestion);
+    }
+
+    @Override
     public TemplateQuestion update(TemplateQuestion templateQuestion) {
+        if (templateQuestion == null) {
+            throw new BadArgException("Attempted to save null template question");
+        } else if (templateQuestion.getTemplateId() == null) {
+            throw new BadArgException("Attempted to save question with no template ID");
+        }
+
         Optional<FeedbackTemplate> feedbackTemplate;
-        TemplateQuestion oldTemplateQuestion = null;
+        TemplateQuestion oldTemplateQuestion;
 
         if (templateQuestion.getId() != null) {
              oldTemplateQuestion = getById(templateQuestion.getId());
@@ -53,7 +81,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
          if (feedbackTemplate.isEmpty()) {
             throw new NotFoundException("Template ID does not exist");
          }
-        else if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
+        else if (!createIsPermitted(feedbackTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
         return templateQuestionRepository.update(templateQuestion);
@@ -63,39 +91,34 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     @Override
     public Boolean delete(UUID id) {
         final Optional<TemplateQuestion> templateQuestion = templateQuestionRepository.findById(id);
-        if (templateQuestion.isEmpty() || templateQuestion.get() == null) {
-            throw new NotFoundException("Question with that ID does not exist");
+        if (templateQuestion.isEmpty()) {
+            throw new BadArgException("Could not find template question with ID " + id);
+        } else if (templateQuestion.get().getTemplateId() == null) {
+            throw new BadArgException("Attempted to delete question with null template ID");
         }
-            Optional<FeedbackTemplate> feedbackTemplate;
-            feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
+
+        Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.get().getTemplateId());
         if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("Template ID does not exist");
+            throw new NotFoundException("Could not find feedback template with ID " + templateQuestion.get().getTemplateId());
         }
 
-        if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
+        if (!createIsPermitted(feedbackTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
-      templateQuestionRepository.deleteById(id);
+
+        FeedbackTemplate updatedTemplate = new FeedbackTemplate(
+                feedbackTemplate.get().getId(),
+                feedbackTemplate.get().getTitle(),
+                feedbackTemplate.get().getDescription(),
+                currentUserServices.getCurrentUser().getId()
+        );
+
+        // delete the question
+        templateQuestionRepository.deleteById(id);
+
+        // indicate that the template has been updated
+        feedbackTemplateRepo.update(updatedTemplate);
         return true;
-
-    }
-
-    @Override
-    public TemplateQuestion save(TemplateQuestion templateQuestion) {
-        Optional <FeedbackTemplate> feedbackTemplate;
-            feedbackTemplate = feedbackTemplateRepo.findById(templateQuestion.getTemplateId());
-         if (feedbackTemplate.isEmpty()) {
-            throw new NotFoundException("Template ID does not exist");
-        }
-
-        if (!createIsPermitted(feedbackTemplate.get().getCreatedBy())) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
-        if (templateQuestion.getId() != null) {
-            return templateQuestionRepository.update(templateQuestion);
-        }
-
-        return templateQuestionRepository.save(templateQuestion);
     }
 
     @Override
@@ -105,7 +128,7 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (!templateQuestion.isPresent()) {
+        if (templateQuestion.isEmpty()) {
             throw new NotFoundException("No feedback question with ID " + id);
         }
 
@@ -114,19 +137,15 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
 
 
     @Override
-    public List<TemplateQuestionResponseDTO> findByFields(UUID templateId) {
-        List<TemplateQuestion> questionList = new ArrayList<>();
+    public List<TemplateQuestion> findByFields(UUID templateId) {
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
-        else {
-            questionList.addAll(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
-        }
 
-        return questionList.stream().map(this::fromEntity).collect(Collectors.toList());
+        return new ArrayList<>(templateQuestionRepository.findByTemplateId(Util.nullSafeUUIDToString(templateId)));
     }
 
-    // only the creator of the template can add questions to it
+    // only admins or the creator of the template can add questions to it
     public boolean createIsPermitted(UUID templateCreatorId) {
         boolean isAdmin = currentUserServices.isAdmin();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
@@ -136,14 +155,5 @@ public class TemplateQuestionServicesImpl implements TemplateQuestionServices {
     public boolean getIsPermitted() {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return currentUserId != null;
-    }
-
-    private TemplateQuestionResponseDTO fromEntity(TemplateQuestion templateQuestion) {
-        TemplateQuestionResponseDTO dto = new TemplateQuestionResponseDTO();
-        dto.setId(templateQuestion.getId());
-        dto.setQuestion(templateQuestion.getQuestion());
-        dto.setTemplateId(templateQuestion.getTemplateId());
-        dto.setOrderNum(templateQuestion.getOrderNum());
-        return dto;
     }
 }

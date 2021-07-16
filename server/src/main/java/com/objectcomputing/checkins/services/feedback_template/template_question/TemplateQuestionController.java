@@ -85,7 +85,6 @@ public class TemplateQuestionController {
                 .ok();
     }
 
-
     /**
      * Get feedback question by ID
      *
@@ -102,18 +101,22 @@ public class TemplateQuestionController {
                 .subscribeOn(Schedulers.from(executorService));
     }
 
+    /**
+     * Get all feedback questions that are part of a specific template
+     *
+     * @param templateId The {@link UUID} of the template
+     * @return list of {@link TemplateQuestionResponseDTO}
+     */
     @Get("/{?templateId}")
     public Single<HttpResponse<List<TemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
         return Single.fromCallable(() -> templateQuestionServices.findByFields(templateId))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(feedbackTemplateQuestions -> {
-                    List<TemplateQuestionResponseDTO> dtoList = feedbackTemplateQuestions.stream()
-                            .collect(Collectors.toList());
+                .map(templateQuestions -> {
+                    List<TemplateQuestionResponseDTO> dtoList = templateQuestions.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<TemplateQuestionResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }
-
-
 
     // TODO: Create endpoint for getting all questions for a given template ID and feedback request ID
 

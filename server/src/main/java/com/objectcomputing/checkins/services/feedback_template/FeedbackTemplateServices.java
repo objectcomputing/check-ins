@@ -5,14 +5,14 @@ import java.util.UUID;
 
 public interface FeedbackTemplateServices {
 
-    FeedbackTemplate save(FeedbackTemplateCreateDTO feedbackTemplate);
+    FeedbackTemplate save(FeedbackTemplate feedbackTemplate);
 
-    FeedbackTemplate update(FeedbackTemplateUpdateDTO feedbackTemplate);
+    FeedbackTemplate update(FeedbackTemplate feedbackTemplate);
 
     Boolean delete(UUID id);
 
     FeedbackTemplate getById(UUID id);
 
-    List<FeedbackTemplateResponseDTO> findByFields(UUID createdBy, String title);
+    List<FeedbackTemplate> findByFields(UUID creatorId, String title);
 
 }

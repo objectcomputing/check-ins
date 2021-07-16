@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -8,15 +7,13 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 
 @Introspected
 public class FeedbackTemplateResponseDTO {
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the feedback template", required = true)
     private UUID id;
 
@@ -30,11 +27,19 @@ public class FeedbackTemplateResponseDTO {
 
     @Nullable
     @Schema(description = "ID of person who created the feedback template", required = true)
-    private UUID createdBy;
+    private UUID creatorId;
 
     @NotBlank
+    @Schema(description = "date the template was created", required = true)
+    private LocalDate dateCreated;
+
+    @NotBlank
+    @Schema(description = "UUID of person who last updated the feedback template")
+    private UUID updaterId;
+
+    @Nullable
     @Schema(description = "date the template was last updated")
-    private LocalDate updatedOn;
+    private LocalDate dateUpdated;
 
     public UUID getId() {
         return id;
@@ -62,19 +67,36 @@ public class FeedbackTemplateResponseDTO {
     }
 
     @Nullable
-    public UUID getCreatedBy() {
-        return createdBy;
+    public UUID getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreatedBy(@Nullable UUID createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatorId(@Nullable UUID creatorId) {
+        this.creatorId = creatorId;
     }
 
-    public LocalDate getUpdatedOn() {
-        return updatedOn;
+    public LocalDate getDateCreated() {
+        return dateCreated;
     }
 
-    public void setUpdatedOn(LocalDate updatedOn) {
-        this.updatedOn = updatedOn;
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public UUID getUpdaterId() {
+        return updaterId;
+    }
+
+    public void setUpdaterId(UUID updaterId) {
+        this.updaterId = updaterId;
+    }
+
+    @Nullable
+    public LocalDate getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(@Nullable LocalDate dateUpdated) {
+        this.dateUpdated = dateUpdated;
     }
 }

@@ -22,13 +22,9 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "description of the feedback template")
     private String description;
 
-    @NotNull
-    @Schema(description = "ID of person who created the feedback template", required = true)
-    private UUID createdBy;
-
     @NotBlank
-    @Schema(description = "date the template was last updated")
-    private LocalDate updatedOn;
+    @Schema(description = "UUID of person who created the feedback template", required = true)
+    private UUID creatorId;
 
     public String getTitle() {
         return title;
@@ -47,19 +43,11 @@ public class FeedbackTemplateCreateDTO {
         this.description = description;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
+    public UUID getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDate getUpdatedOn() {
-        return updatedOn;
-    }
-
-    public void setUpdatedOn(LocalDate updatedOn) {
-        this.updatedOn = updatedOn;
+    public void setCreatorId(UUID creatorId) {
+        this.creatorId = creatorId;
     }
 }

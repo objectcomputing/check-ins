@@ -31,8 +31,8 @@ public class TemplateQuestionControllerTest extends TestContainersSuite implemen
     @Client("/services/feedback/template_questions")
     HttpClient client;
 
-    FeedbackTemplate saveDefaultFeedbackTemplate(UUID createdBy) {
-        FeedbackTemplate feedbackTemplate = createFeedbackTemplate(createdBy);
+    FeedbackTemplate saveDefaultFeedbackTemplate(UUID creatorId) {
+        FeedbackTemplate feedbackTemplate = createFeedbackTemplate(creatorId);
         getFeedbackTemplateRepository().save(feedbackTemplate);
         return feedbackTemplate;
     }

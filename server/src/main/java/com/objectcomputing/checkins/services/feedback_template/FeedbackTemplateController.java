@@ -40,9 +40,6 @@ public class FeedbackTemplateController {
         this.executorService = executorService;
     }
 
-    // create an ad hoc template
-    //
-
     /**
      * Create a feedback template
      *
@@ -51,11 +48,11 @@ public class FeedbackTemplateController {
      */
     @Post()
     public Single<HttpResponse<FeedbackTemplateResponseDTO>> save(@Body @Valid @NotNull FeedbackTemplateCreateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackTemplateServices.save(requestBody))
+        return Single.fromCallable(() -> feedbackTemplateServices.save(fromDTO(requestBody)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedFeedbackTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
-                        .created(savedFeedbackTemplate)
-                        .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedFeedbackTemplate.getId()))))
+                .map(savedTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
+                        .created(fromEntity(savedTemplate))
+                        .headers(headers -> headers.location(URI.create("/feedback_templates/" + savedTemplate.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -67,12 +64,12 @@ public class FeedbackTemplateController {
      */
     @Put()
     public Single<HttpResponse<FeedbackTemplateResponseDTO>> update(@Body @Valid @NotNull FeedbackTemplateUpdateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackTemplateServices.update(requestBody))
+        return Single.fromCallable(() -> feedbackTemplateServices.update(fromDTO(requestBody)))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedFeedbackTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
+                .map(savedTemplate -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse
                         .ok()
-                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedFeedbackTemplate.getId())))
-                        .body(savedFeedbackTemplate))
+                        .headers(headers -> headers.location(URI.create("/feedback_template/" + savedTemplate.getId())))
+                        .body(fromEntity(savedTemplate)))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -99,7 +96,7 @@ public class FeedbackTemplateController {
     public Single<HttpResponse<FeedbackTemplateResponseDTO>> getById(UUID id) {
         return Single.fromCallable(() -> feedbackTemplateServices.getById(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(template -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse.ok(template))
+                .map(template -> (HttpResponse<FeedbackTemplateResponseDTO>) HttpResponse.ok(fromEntity(template)))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -107,21 +104,53 @@ public class FeedbackTemplateController {
      * Get feedback templates by title or by the creator id, filter by active status
      *
      * @param title {@link String} Title of feedback template
-     * @param createdBy {@link UUID} UUID of creator
+     * @param creatorId {@link UUID} UUID of creator
      * @return {@link List<FeedbackTemplateResponseDTO>} List of feedback templates that match the input parameters
      */
-    @Get("/{?createdBy,title}")
-    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID createdBy, @Nullable String title) {
-        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(createdBy, title))
+    @Get("/{?creatorId,title}")
+    public Single<HttpResponse<List<FeedbackTemplateResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable String title) {
+        return Single.fromCallable(() -> feedbackTemplateServices.findByFields(creatorId, title))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplates -> {
-                    List<FeedbackTemplateResponseDTO> dtoList = new ArrayList<>(feedbackTemplates);
+                    List<FeedbackTemplateResponseDTO> dtoList = feedbackTemplates.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackTemplateResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
+    /**
+     * Converts a {@link FeedbackTemplateCreateDTO} into a {@link FeedbackTemplate}
+     * @param dto {@link FeedbackTemplateCreateDTO}
+     * @return {@link FeedbackTemplate}
+     */
+    private FeedbackTemplate fromDTO(FeedbackTemplateCreateDTO dto) {
+        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatorId());
+    }
+
+    /**
+     * Converts a {@link FeedbackTemplateUpdateDTO} into a {@link FeedbackTemplate}
+     * @param dto {@link FeedbackTemplateUpdateDTO}
+     * @return {@link FeedbackTemplate}
+     */
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
-        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getCreatedBy(), dto.getUpdatedOn());
+        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getUpdaterId());
+    }
+
+    /**
+     * Converts a {@link FeedbackTemplate} into a {@link FeedbackTemplateResponseDTO}
+     * @param feedbackTemplate {@link FeedbackTemplate}
+     * @return {@link FeedbackTemplateResponseDTO}
+     */
+    private FeedbackTemplateResponseDTO fromEntity(FeedbackTemplate feedbackTemplate) {
+        FeedbackTemplateResponseDTO dto = new FeedbackTemplateResponseDTO();
+        dto.setId(feedbackTemplate.getId());
+        dto.setTitle(feedbackTemplate.getTitle());
+        dto.setDescription(feedbackTemplate.getDescription());
+        dto.setCreatorId(feedbackTemplate.getCreatorId());
+        dto.setDateCreated(feedbackTemplate.getDateCreated());
+        dto.setUpdaterId(feedbackTemplate.getUpdaterId());
+        dto.setDateUpdated(feedbackTemplate.getDateUpdated());
+        return dto;
     }
 
 }

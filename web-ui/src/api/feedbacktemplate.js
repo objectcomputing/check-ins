@@ -22,7 +22,7 @@ export const getFeedbackTemplate = async (feedbackTemplateId, cookie) => {
 
 export const getAllFeedbackTemplates = async (cookie) => {
   return resolve({
-    url: `${feedbackTemplateUrl}/?onlyActive=${true}`,
+    url: feedbackTemplateUrl,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   })

@@ -17,9 +17,7 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
 
     List<FeedbackTemplate> findByTitleLike(String title);
 
-    List<FeedbackTemplate> findByCreatedBy(UUID id);
-
-    List<FeedbackTemplate> findByActive(Boolean active);
+    List<FeedbackTemplate> findByCreatorId(UUID id);
 
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
@@ -27,6 +25,6 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
     @Override
     <S extends FeedbackTemplate> S update(@Valid @NotNull @NonNull S entity);
 
-    Optional<FeedbackTemplate> findById(UUID id);
+    Optional<FeedbackTemplate> findById(@NonNull UUID id);
 
 }
