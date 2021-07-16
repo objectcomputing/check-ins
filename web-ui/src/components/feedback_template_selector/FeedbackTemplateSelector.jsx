@@ -12,10 +12,8 @@ import {
 } from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
-
 import "./FeedbackTemplateSelector.css";
 import {Search} from "@material-ui/icons";
-
 const allTemplates = [
   {
     id: 123,
@@ -48,12 +46,11 @@ const propTypes = {
   changeQuery: PropTypes.func
 };
 
-const FeedbackTemplateSelector = ({changeQuery}) => {
+  const FeedbackTemplateSelector = ({query, changeQuery}) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const currentUserId = currentUser?.id;
-
   const [templates, setTemplates] = useState([]);
   const [preview, setPreview] = useState({open: false, selectedTemplate: null});
   const [searchText, setSearchText] = useState("");
@@ -77,7 +74,7 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         templatesFetched.current = true;
         return [...templateList, ...allTemplates];
       }
-    }
+     }
     if (csrf && currentUserId) {
       getTemplates(csrf).then((templateList) => {
         setTemplates(templateList);
@@ -114,14 +111,23 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         changeQuery("template", newFeedbackTemplate.id);
       }
     }
+    else if (submittedTemplate) {
+      changeQuery("template", submittedTemplate.id);
+    }
+
     setPreview({open: false, selectedTemplate: submittedTemplate});
   }
-
   const onCardClick = useCallback((template) => {
-    if (template && template.id) {
+
+    if (!template || !template.id) {
+      return;
+    }
+    if (query === template.id) {
+      changeQuery("template", undefined);
+    } else {
       changeQuery("template", template.id);
     }
-  }, [changeQuery]);
+  }, [changeQuery, query]);
 
   const onNewAdHocClick = () => {
     const newAdHocTemplate = {
@@ -161,13 +167,13 @@ const FeedbackTemplateSelector = ({changeQuery}) => {
         createdBy={template.createdBy}
         description={template.description}
         isAdHoc={template.isAdHoc}
+        isSelected={query === template.id}
         questions={template.questions}
         expanded={preview.open}
         onPreviewClick={(e) => handlePreviewOpen(e, template)}
         onCardClick={() => onCardClick(template)}/>
     ))
-  }, [templates, searchText, onCardClick, preview.open]);
-
+  }, [query, templates, searchText, onCardClick, preview.open]);
 
   return (
     <React.Fragment>

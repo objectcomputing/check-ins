@@ -44,8 +44,8 @@ const SelectDate = () =>{
 
 
     const handleDueDateChange = useCallback((date) => {
-        query.due = dateUtils.format(date, "yyyy-MM-dd");
-        history.push({...location, search: queryString.stringify(query)});
+      query.due = date ? dateUtils.format(date, "yyyy-MM-dd") : undefined;
+      history.push({...location, search: queryString.stringify(query)});
     },[location, history, query]);
 
     const handleSendDateChange = useCallback((date) => {
@@ -58,37 +58,38 @@ const SelectDate = () =>{
     return (
     <React.Fragment>
       <div className={classes.pickerContain}>
-           <DatePicker
-           className= {classes.picker}
-                   disableToolbar
-                   format="MM/dd/yyyy"
-                   margin="normal"
-                   id="set-send-date"
-                   label="Send Date:"
-                   value={sendDate}
-                   minDate={dateUtils.date()}
-                   onChange={handleSendDateChange}
-                   KeyboardButtonProps={{
-                     'aria-label': 'change date',
-                   }}
-                 />
-                <DatePicker
-                className= {classes.picker}
-                    disableToolbar
-                    format="MM/dd/yyyy"
-                    margin="normal"
-                    id="set-due-date"
-                    label="Due Date:"
-                    emptyLabel="No due date"
-                    value={dueDate}
-                    minDate={sendDate}
-                    minDateMessage={'Date should not be before send Date'}
-                    onChange={handleDueDateChange}
-                    KeyboardButtonProps={{
-                       'aria-label': 'change date',
-                    }}
-                 />
-                 </div>
+        <DatePicker
+          className= {classes.picker}
+          disableToolbar
+          format="MM/dd/yyyy"
+          margin="normal"
+          id="set-send-date"
+          label="Send Date:"
+          value={sendDate}
+          minDate={dateUtils.date()}
+          onChange={handleSendDateChange}
+          KeyboardButtonProps={{
+           'aria-label': 'change date',
+          }}
+        />
+        <DatePicker
+          className= {classes.picker}
+          disableToolbar
+          format="MM/dd/yyyy"
+          margin="normal"
+          id="set-due-date"
+          label="Due Date:"
+          emptyLabel="No due date"
+          value={dueDate}
+          minDate={sendDate}
+          minDateMessage="Due date must not be prior to the send date"
+          clearable={true}
+          onChange={handleDueDateChange}
+          KeyboardButtonProps={{
+            'aria-label': 'change date',
+          }}
+        />
+      </div>
     </React.Fragment>);
 };
 export default SelectDate;

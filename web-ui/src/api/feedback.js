@@ -1,11 +1,22 @@
 import { resolve } from "./api.js";
 
 const feedbackSuggestionURL = "/services/feedback/suggestions";
+const feedbackRequestURL = "/services/feedback/requests"
 
 export const getFeedbackSuggestion = async (id, cookie) => {
   return resolve({
     url: `${feedbackSuggestionURL}/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
+  });
+};
+
+export const createFeedbackRequest = async (feedbackRequest, cookie) => {
+  return resolve({
+    method: "post",
+    url: feedbackRequestURL,
+    responseType: "json",
+    data: feedbackRequest,
+    headers: { "X-CSRF-Header": cookie },
   });
 };
