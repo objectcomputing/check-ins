@@ -63,7 +63,6 @@ const ViewFeedbackSelectorPage = () => {
                         labelId="select-sort-method-label"
                         id="select-sort-method"
                         value ={"Submission"}
-     
                     >
                         <MenuItem value={"Requested"}>Submission date</MenuItem>
                         <MenuItem value={"Submission"}>Request sent date</MenuItem>

@@ -1,0 +1,84 @@
+.response-box {
+    width: 99%;
+}
+
+.response-card {
+    width: 100%;
+    margin-right: 3em;
+}
+.page-container {
+    margin-top: 15vh;
+}
+
+.avatar-photo {
+    margin-right: 0.5em;
+}
+.MuiCardContent-root:last-child {
+    padding-bottom: 16px;
+    padding-top: 16px;
+}
+
+.MuiGrid-spacing-xs-3 > .MuiGrid-item {
+    margin-left: 2em;
+}
+
+.MuiGrid-root.MuiGrid-container.MuiGrid-item.MuiGrid-grid-xs-10.MuiGrid-spacing-xs-3 > .MuiGrid-item {
+    margin-left: 2em;
+
+}
+.top-bottom-padding {
+    padding-top: 1em;
+    padding-bottom: 1em;
+
+}
+.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.MuiInputBase-formControl.MuiInputBase-multiline.MuiFilledInput-multiline {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+
+.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true {
+    margin-right: 0.8em;
+}
+
+/* 
+.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-10 {
+    margin-bottom: 2em;
+
+} */
+.justify-center {
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-items: center;
+}
+
+@media screen and (max-width: 770px) {
+
+    .MuiGrid-root.MuiGrid-container.MuiGrid-item.MuiGrid-grid-xs-10.MuiGrid-spacing-xs-3 > .MuiGrid-item {
+        margin-left: 0;
+    }
+
+    .MuiGrid-spacing-xs-3 > .MuiGrid-item {
+        margin-left: 0;
+    }
+    .MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-3 {
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+        justify-items: center;
+        align-self: center;
+    }
+    .page-container {
+        margin-top: 2em;
+    }
+    .avatar-photo {
+        margin-bottom: 0.5em;
+    }
+
+
+    
+}

@@ -18,6 +18,7 @@ import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 import FeedbackSubmitPage from "./pages/FeedbackSubmitPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
 import ViewFeedbackSelectorPage from "./pages/ViewFeedbackSelectorPage"
+import ViewFeedbackResponses from "./components/view_feedback_responses/ViewFeedbackResponses"
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 import GroupIcon from "@material-ui/icons/Group";
@@ -97,6 +98,9 @@ function App() {
                 </Route>
                 <Route path="/viewfeedback/selector">
                   <ViewFeedbackSelectorPage></ViewFeedbackSelectorPage>
+                </Route>
+                <Route path ="/viewfeedback/responses">
+                  <ViewFeedbackResponses></ViewFeedbackResponses>
                 </Route>
                 <Route path="/feedback/submit">
                   <FeedbackSubmitPage />
