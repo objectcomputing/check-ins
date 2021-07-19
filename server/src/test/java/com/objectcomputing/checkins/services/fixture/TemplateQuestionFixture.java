@@ -7,37 +7,19 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 
 public interface TemplateQuestionFixture extends RepositoryFixture {
 
-    default TemplateQuestion createDefaultFeedbackQuestion() {
-        return new TemplateQuestion("How are you doing today?");
+    default TemplateQuestion createDefaultTemplateQuestion() {
+        return new TemplateQuestion("How are you doing today?", 1);
     }
 
-    default TemplateQuestion createSecondDefaultFeedbackQuestion() {
-        return new TemplateQuestion("How is the project going?");
+    default TemplateQuestion createSecondDefaultTemplateQuestion() {
+        return new TemplateQuestion("How is the project going?", 2);
     }
 
-    default TemplateQuestion saveDefaultFeedbackQuestion(FeedbackTemplate template) {
-        return getTemplateQuestionRepository().save(new TemplateQuestion("How are you?", template.getId()));
+    default TemplateQuestion saveTemplateQuestion(FeedbackTemplate template, Integer questionNumber) {
+        return getTemplateQuestionRepository().save(new TemplateQuestion("How are you?", template.getId(), questionNumber));
     }
 
-
-    default TemplateQuestionUpdateDTO updateTemplateQuestionDto(TemplateQuestion questionEntity ){
-      TemplateQuestionUpdateDTO dto = new TemplateQuestionUpdateDTO();
-        dto.setId(questionEntity.getId());
-        dto.setTemplateId(questionEntity.getTemplateId());
-        dto.setQuestion(questionEntity.getQuestion());
-        dto.setOrderNum(questionEntity.getOrderNum());
-        return dto;
-
+    default TemplateQuestion saveAnotherTemplateQuestion(FeedbackTemplate template, Integer questionNumber) {
+        return getTemplateQuestionRepository().save(new TemplateQuestion("How is the project going so far?", template.getId(), questionNumber));
     }
-
-    default TemplateQuestionCreateDTO createDefaultTemplateQuestionDto(FeedbackTemplate template, TemplateQuestion question) {
-        TemplateQuestionCreateDTO dto = new TemplateQuestionCreateDTO();
-        dto.setQuestion(question.getQuestion());
-        dto.setTemplateId(template.getId());
-        dto.setOrderNum(question.getOrderNum());
-        return dto;
-    }
-
-
-
 }

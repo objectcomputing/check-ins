@@ -1,32 +1,28 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
-
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected
 public class TemplateQuestionResponseDTO {
 
-
     @Schema(description = "unique id of the feedback question", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
-    @Nullable
+    @NotBlank
     @Schema(description = "order of question in template", required = true)
-    private Integer orderNum;
-
+    private Integer questionNumber;
 
     public UUID getId() {
         return id;
@@ -52,12 +48,11 @@ public class TemplateQuestionResponseDTO {
         this.templateId = templateId;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber = questionNumber;
     }
-
 }

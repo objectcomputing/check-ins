@@ -5,12 +5,12 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -25,61 +25,62 @@ public class TemplateQuestion {
     private UUID id;
 
     @Column(name = "question")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
     @Column(name = "templateId")
-    @Nullable
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
-    @Column(name = "orderNum")
-    @Nullable
+    @Column(name = "questionNumber")
+    @NotBlank
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)
-    private Integer orderNum;
+    private Integer questionNumber;
 
-    public TemplateQuestion(@NotNull String question, @Nullable UUID templateId, @Nullable Integer orderNum) {
+    /**
+     * Constructs a new {@link TemplateQuestion} to save
+     *
+     * @param question The content of the question
+     * @param templateId The ID of the feedback template this question is part of
+     * @param questionNumber The order of the question in the template
+     */
+    public TemplateQuestion(@NotBlank String question, @NotBlank UUID templateId, @NotBlank Integer questionNumber) {
         this.id = null;
         this.question = question;
         this.templateId = templateId;
-        this.orderNum = orderNum;
+        this.questionNumber = questionNumber;
     }
 
-
-    @Override
-    public String toString() {
-        return "TemplateQuestion{" +
-                "id=" + id +
-                ", question='" + question + '\'' +
-                ", templateId=" + templateId +
-                ", orderNum=" + orderNum +
-                '}';
-    }
-
-    public TemplateQuestion(@NotNull UUID id, @NotNull String question, @Nullable UUID templateId, @Nullable Integer orderNum) {
+    /**
+     * Constructs a {@link TemplateQuestion} to update
+     *
+     * @param id The {@link UUID} of the existing {@link TemplateQuestion}
+     * @param question The content of the question
+     * @param questionNumber The order of the question in the template
+     */
+    public TemplateQuestion(@NotBlank UUID id, @NotBlank String question, @NotBlank Integer questionNumber) {
         this.id = id;
         this.question = question;
-        this.templateId = templateId;
-        this.orderNum = orderNum;
+        this.questionNumber = questionNumber;
     }
 
-    public TemplateQuestion(@NotNull String question) {
+    /**
+     * Constructs a {@link TemplateQuestion} initially detached from a template
+     *
+     * @param question The content of the question
+     * @param questionNumber The order of the question in the template
+     */
+    public TemplateQuestion(@NotBlank String question, @NotBlank Integer questionNumber) {
         this.id = null;
-        this.question = question;
         this.templateId = null;
-        this.orderNum = null;
-    }
-
-public TemplateQuestion(@NotNull String question, @NotNull UUID templateId) {
         this.question = question;
-        this.templateId = templateId;
-        this.orderNum = null;
-        this.id = null;
-}
+        this.questionNumber = questionNumber;
+    }
 
     public TemplateQuestion() {}
 
@@ -99,6 +100,14 @@ public TemplateQuestion(@NotNull String question, @NotNull UUID templateId) {
         this.question = question;
     }
 
+    public Integer getQuestionNumber() {
+        return questionNumber;
+    }
+
+    public void setQuestionNumber(Integer orderNum) {
+        this.questionNumber = orderNum;
+    }
+
     public UUID getTemplateId() {
         return templateId;
     }
@@ -107,11 +116,26 @@ public TemplateQuestion(@NotNull String question, @NotNull UUID templateId) {
         this.templateId = templateId;
     }
 
-    public Integer getOrderNum() { return orderNum; }
-
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TemplateQuestion that = (TemplateQuestion) o;
+        return Objects.equals(id, that.id) && Objects.equals(question, that.question) && Objects.equals(questionNumber, that.questionNumber) && Objects.equals(templateId, that.templateId);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, question, questionNumber, templateId);
+    }
 
+    @Override
+    public String toString() {
+        return "TemplateQuestion{" +
+                "id=" + id +
+                ", question='" + question +
+                ", questionNumber=" + questionNumber +
+                ", templateId=" + templateId +
+                '}';
+    }
 }

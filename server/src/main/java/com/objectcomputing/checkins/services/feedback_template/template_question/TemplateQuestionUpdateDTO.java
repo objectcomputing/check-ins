@@ -3,37 +3,23 @@ package com.objectcomputing.checkins.services.feedback_template.template_questio
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Introspected
 public class TemplateQuestionUpdateDTO {
 
-    @Nullable
+    @NotBlank
     @Schema(description = "id of the template question", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
-    @NotNull
-    @Schema(description = "id of the template this question is a part of", required = true)
-    private UUID templateId;
-
-    @Nullable
+    @NotBlank
     @Schema(description = "order of question in template", required = true)
-    private Integer orderNum;
-
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
+    private Integer questionNumber;
 
     public UUID getId() {
         return id;
@@ -43,19 +29,19 @@ public class TemplateQuestionUpdateDTO {
         this.id = id;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public UUID getTemplateId( ) {
-        return templateId;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber = questionNumber;
     }
 }

@@ -75,9 +75,8 @@ public class TemplateQuestionController {
      * Delete a feedback template question
      *
      * @param id {@link UUID} ID of the feedback template question being deleted
-     *        @return {Boolean}
+     * @return {Boolean}
      */
-
     @Delete("/{id}")
     public HttpResponse<?> deleteTemplateQuestion(@NotNull UUID id) {
         templateQuestionServices.delete(id);
@@ -118,26 +117,36 @@ public class TemplateQuestionController {
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
-    // TODO: Create endpoint for getting all questions for a given template ID and feedback request ID
+    /**
+     * Converts a {@link TemplateQuestionCreateDTO} into a {@link TemplateQuestion}
+     * @param dto {@link TemplateQuestionCreateDTO}
+     * @return {@link TemplateQuestion}
+     */
+    private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
+        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getQuestionNumber());
+    }
 
+    /**
+     * Converts a {@link TemplateQuestionUpdateDTO} into a {@link TemplateQuestion}
+     * @param dto {@link TemplateQuestionUpdateDTO}
+     * @return {@link TemplateQuestion}
+     */
+    private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
+        return new TemplateQuestion(dto.getId(), dto.getQuestion(), dto.getQuestionNumber());
+    }
+
+    /**
+     * Converts a {@link TemplateQuestion} into a {@link TemplateQuestionResponseDTO}
+     * @param templateQuestion {@link TemplateQuestion}
+     * @return {@link TemplateQuestionResponseDTO}
+     */
     private TemplateQuestionResponseDTO fromEntity(TemplateQuestion templateQuestion) {
         TemplateQuestionResponseDTO dto = new TemplateQuestionResponseDTO();
         dto.setId(templateQuestion.getId());
         dto.setQuestion(templateQuestion.getQuestion());
         dto.setTemplateId(templateQuestion.getTemplateId());
-        dto.setOrderNum(templateQuestion.getOrderNum());
+        dto.setQuestionNumber(templateQuestion.getQuestionNumber());
         return dto;
     }
 
-    private TemplateQuestion fromDTO(TemplateQuestionCreateDTO dto) {
-        return new TemplateQuestion(dto.getQuestion(), dto.getTemplateId(), dto.getOrderNum());
-    }
-
-    private TemplateQuestion fromDTO(TemplateQuestionUpdateDTO dto) {
-        TemplateQuestion newQuestion = new TemplateQuestion();
-        newQuestion.setId(dto.getId());
-        newQuestion.setQuestion(dto.getQuestion());
-        newQuestion.setOrderNum(dto.getOrderNum());
-        return newQuestion;
-    }
 }

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -11,7 +10,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;

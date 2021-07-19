@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.FeedbackTemplateFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -10,6 +9,7 @@ import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TemplateQuestionFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -449,6 +449,25 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("No feedback template with ID " + template.getId(), exception.getMessage());
+    }
+
+    @Test
+    void testDeleteWithQuestions() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate template = saveFeedbackTemplate(memberOne.getId());
+
+        saveTemplateQuestion(template, 1);
+        saveAnotherTemplateQuestion(template, 2);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", template.getId()))
+                .basicAuth(memberOne.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        // Ensure deleting the template also deletes all connected questions
+        List<TemplateQuestion> questions = getTemplateQuestionRepository().findByTemplateId(Util.nullSafeUUIDToString(template.getId()));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(0, questions.size());
     }
 
     @Test

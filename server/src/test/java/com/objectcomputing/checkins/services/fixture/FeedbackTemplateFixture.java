@@ -1,12 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateResponseDTO;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServices;
-import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateServicesImpl;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionResponseDTO;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface FeedbackTemplateFixture extends RepositoryFixture{
@@ -23,6 +18,7 @@ public interface FeedbackTemplateFixture extends RepositoryFixture{
         return new FeedbackTemplate( "Something completely different", "Fake Title Private Description amazing feedback template 3", creatorId);
     }
 
-
-
+    default FeedbackTemplate saveFeedbackTemplate(UUID creatorId) {
+        return getFeedbackTemplateRepository().save(new FeedbackTemplate("Sample Template", "A saved feedback template", creatorId));
+    }
 }
