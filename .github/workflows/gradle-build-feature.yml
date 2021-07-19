@@ -47,8 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Gradle build
-        run: ./gradlew build
+      - name: Gradle run
+        run: ./gradlew run
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
