@@ -79,10 +79,10 @@ public class FeedbackRequestController {
      * @return {@link HttpResponse}
      */
     @Delete("/{id}")
-    public Single<HttpResponse> delete(@NotNull UUID id) {
+    public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> feedbackReqServices.delete(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(successFlag -> (HttpResponse) HttpResponse.ok())
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -101,11 +101,16 @@ public class FeedbackRequestController {
                         .headers(headers -> headers.location(URI.create("/feedback_request" + savedFeedbackRequest.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
+
     /**
-     * Get feedback request by creator's ID
+     * Search for all feedback requests that match the intersection of the provided values
+     * Any values that are null are not applied to the intersection
      *
-     * @param creatorId {@link UUID} ID of member profile who created the feedback request
-     * @return {@link List<FeedbackResponseDTO>} List of feedback requests that were made by certain creator
+     * @param creatorId The {@link UUID} of the creator of the request
+     * @param requesteeId The {@link UUID} of the requestee
+     * @param templateId The {@link UUID} of the feedback template
+     * @param oldestDate The date that filters out any requests that were made before that date
+     * @return list of {@link FeedbackRequestResponseDTO}
      */
     @Get("/{?creatorId,requesteeId,oldestDate}")
     public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {

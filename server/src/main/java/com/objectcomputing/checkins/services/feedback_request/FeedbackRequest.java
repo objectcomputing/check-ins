@@ -27,30 +27,30 @@ public class FeedbackRequest {
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
-    @Column(name = "creatorId")
+    @Column(name = "creator_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @Column(name = "requesteeId")
+    @Column(name = "requestee_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
-    @Column(name = "recipientId")
+    @Column(name = "recipient_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @Column(name="sendDate")
+    @Column(name="send_date")
     @NotBlank
     @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
 
-    @Column(name="dueDate")
+    @Column(name="due_date")
     @Nullable
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
@@ -61,7 +61,7 @@ public class FeedbackRequest {
     @Schema(description = "completion status of request", required = true)
     private String status;
 
-    @Column(name = "submitDate")
+    @Column(name = "submit_date")
     @Nullable
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
@@ -144,7 +144,6 @@ public class FeedbackRequest {
     public void setRecipientId(UUID recipientId) {
         this.recipientId = recipientId;
     }
-
 
     public LocalDate getSendDate() {
         return sendDate;

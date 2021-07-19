@@ -25,49 +25,36 @@ public class FeedbackRequestQuestion {
     @Schema(description = "unique id of the request question answer entry", required = true)
     private UUID id;
 
-    @Column(name = "requestId")
+    @Column(name = "question")
+    @NotBlank
+    @TypeDef(type = DataType.STRING)
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(question::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}')"
+    )
+    @Schema(description = "The question asked to the recipient", required = true)
+    private String question;
+
+    @Column(name = "request_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request the question answer pair is attached to", required = true)
     private UUID requestId;
 
-    @Column(name = "questionContent")
-    @NotBlank
-    @TypeDef(type = DataType.STRING)
-    @ColumnTransformer(
-            read =  "pgp_sym_decrypt(questionContent::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}')"
-    )
-    @Schema(description = "The question asked to the recipient", required = true)
-    private String questionContent;
-
-    @Column(name = "orderNum")
+    @Column(name = "question_number")
     @NotNull
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "Order number of the question relative to others in its set", required = true)
-    private Integer orderNum;
+    private Integer questionNumber;
 
-    public FeedbackRequestQuestion(UUID requestId, String questionContent, Integer orderNum) {
+    public FeedbackRequestQuestion(String question, UUID requestId, Integer questionNumber) {
         this.id = null;
         this.requestId=requestId;
-        this.questionContent = questionContent;
-        this.orderNum = orderNum;
+        this.question = question;
+        this.questionNumber = questionNumber;
     }
 
     public FeedbackRequestQuestion() {}
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FeedbackRequestQuestion that = (FeedbackRequestQuestion) o;
-        return id.equals(that.id) && orderNum.equals(that.orderNum) && requestId.equals(that.requestId) && questionContent.equals(that.questionContent);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, requestId, questionContent, orderNum);
-    }
 
     public UUID getId() {
         return id;
@@ -75,6 +62,14 @@ public class FeedbackRequestQuestion {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public UUID getRequestId() {
@@ -85,20 +80,25 @@ public class FeedbackRequestQuestion {
         this.requestId = requestId;
     }
 
-    public String getQuestionContent() {
-        return questionContent;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public void setQuestionContent(String questionContent) {
-        this.questionContent = questionContent;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber = questionNumber;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FeedbackRequestQuestion question1 = (FeedbackRequestQuestion) o;
+        return Objects.equals(id, question1.id) && Objects.equals(requestId, question1.requestId) && Objects.equals(question, question1.question) && Objects.equals(questionNumber, question1.questionNumber);
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, requestId, question, questionNumber);
     }
 
     @Override
@@ -106,10 +106,8 @@ public class FeedbackRequestQuestion {
         return "FeedbackRequestQuestion{" +
                 "id=" + id +
                 ", requestId=" + requestId +
-                ", questionContent='" + questionContent + '\'' +
-                ", orderNum='" + orderNum + '\'' +
+                ", question='" + question +
+                ", questionNumber=" + questionNumber +
                 '}';
     }
-
-
 }

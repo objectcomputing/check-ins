@@ -109,7 +109,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public Boolean delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback request with id " + id);
         }
 
@@ -124,7 +124,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public FeedbackRequest getById(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
 
@@ -165,11 +165,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        if (currentUserId.equals(requesteePDL)) {
-            return true;
-        }
-        //TODO: Can a person's supervisor send a feedback request?
-        return false;
+        return currentUserId.equals(requesteePDL);
     }
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
