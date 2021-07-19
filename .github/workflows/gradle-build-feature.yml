@@ -49,6 +49,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Gradle run
         run: ./gradlew run
+        env:
+          AES_KEY: ${{ secrets.AES_KEY }}
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
