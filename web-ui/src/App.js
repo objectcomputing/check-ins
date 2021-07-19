@@ -26,6 +26,7 @@ import DateFnsUtils from "@date-io/date-fns";
 
 import "./App.css";
 import FeedbackRequestConfirmation from "./components/feedback_request_confirmation/FeedbackRequestConfirmation";
+import FeedbackSubmitConfirmation from "./components/feedback_submit_confirmation/FeedbackSubmitConfirmation";
 
 const customHistory = createBrowserHistory();
 
@@ -95,8 +96,11 @@ function App() {
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
                 </Route>
-                <Route path="/feedback/view">
+                <Route exact path="/feedback/view">
                   <ViewFeedbackPage />
+                </Route>
+                <Route exact path="/feedback/submit/confirmation">
+                  <FeedbackSubmitConfirmation />
                 </Route>
                 <Route path="/feedback/submit">
                   <FeedbackSubmitPage />

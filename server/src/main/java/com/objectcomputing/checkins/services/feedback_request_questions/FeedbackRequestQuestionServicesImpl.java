@@ -1,0 +1,109 @@
+package com.objectcomputing.checkins.services.feedback_request_questions;
+
+import com.objectcomputing.checkins.exceptions.NotFoundException;
+import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
+
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Singleton
+public class FeedbackRequestQuestionServicesImpl implements FeedbackRequestQuestionServices{
+    private final FeedbackRequestServices feedbackReqServices;
+    private final FeedbackRequestQuestionRepository feedbackReqQuestionRepo;
+    private final CurrentUserServices currentUserServices;
+
+    public FeedbackRequestQuestionServicesImpl(FeedbackRequestServices feedbackReqServices,
+                                           FeedbackRequestQuestionRepository feedbackReqQuestionRepo,
+                                           CurrentUserServices currentUserServices) {
+        this.feedbackReqServices = feedbackReqServices;
+        this.feedbackReqQuestionRepo = feedbackReqQuestionRepo;
+        this.currentUserServices = currentUserServices;
+    }
+
+    @Override
+    public FeedbackRequestQuestion save(FeedbackRequestQuestion feedbackRequestQuestion) {
+
+        if (feedbackRequestQuestion.getRequestId() == null) {
+            throw new NotFoundException("Request ID is null");
+        }
+            FeedbackRequest feedbackRequest;
+            feedbackRequest = feedbackReqServices.getById(feedbackRequestQuestion.getRequestId());
+            if (feedbackRequest == null) {
+                throw new NotFoundException("Request does not exist");
+            }
+        UUID creatorId = feedbackRequest.getCreatorId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        if (creatorId != null) {
+            if (!creatorId.equals(currentUserId) && !currentUserServices.isAdmin()) {
+                throw new PermissionException("You are not authorized to do this operation ");
+            }
+        }
+        if (feedbackRequestQuestion.getId() != null) {
+            return feedbackReqQuestionRepo.update(feedbackRequestQuestion);
+        }
+        return feedbackReqQuestionRepo.save(feedbackRequestQuestion);
+    }
+
+    @Override
+    public Boolean delete(UUID id) {
+        final Optional<FeedbackRequestQuestion> feedbackReqQ = feedbackReqQuestionRepo.findById(id);
+        FeedbackRequest req;
+        if (feedbackReqQ.isEmpty()) {
+            throw new NotFoundException("No feedback request with id " + id);
+        }
+        req = feedbackReqServices.getById(feedbackReqQ.get().getRequestId());
+        if (req == null) {
+            throw new NotFoundException("Could not find request with that ID");
+        }
+        if (!currentUserServices.isAdmin()) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        feedbackReqQuestionRepo.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public FeedbackRequestQuestion getById(UUID id) {
+        final Optional<FeedbackRequestQuestion> feedbackReqQuestion = feedbackReqQuestionRepo.findById(id);
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        FeedbackRequest feedbackRequest;
+        if (feedbackReqQuestion.isEmpty()) {
+            throw new NotFoundException("No feedback request question with id " + id);
+        }
+        feedbackRequest = feedbackReqServices.getById(feedbackReqQuestion.get().getRequestId());
+        if (feedbackRequest == null) {
+            throw new NotFoundException("Attached request for question not found");
+        }
+
+        if (currentUser.getId().equals(feedbackRequest.getRecipientId()) || currentUser.getId().equals(feedbackRequest.getCreatorId()) || currentUserServices.isAdmin()) {
+            return feedbackReqQuestion.get();
+        } else {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+    }
+
+    @Override
+    public List<FeedbackRequestQuestion> findByValues(UUID requestId) {
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+        FeedbackRequest feedbackRequest = feedbackReqServices.getById(requestId);
+        if (feedbackRequest == null) {
+            throw new NotFoundException("Feedback request in search not found");
+        }
+        UUID creatorId = feedbackRequest.getCreatorId();
+        UUID recipientId = feedbackRequest.getRecipientId();
+        if (currentUser.getId().equals(creatorId) || currentUser.getId().equals(recipientId) || currentUserServices.isAdmin()) {
+            return new ArrayList<>(feedbackReqQuestionRepo.findByRequestId(Util.nullSafeUUIDToString(requestId)));
+        } else {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+    }
+}

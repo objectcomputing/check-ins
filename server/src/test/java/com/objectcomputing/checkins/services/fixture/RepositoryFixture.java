@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
 import com.objectcomputing.checkins.services.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
+import com.objectcomputing.checkins.services.feedback_request_questions.FeedbackRequestQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
@@ -134,6 +135,10 @@ public interface RepositoryFixture {
 
     default EmployeeHoursRepository getEmployeeHoursRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmployeeHoursRepository.class);
+    }
+
+    default FeedbackRequestQuestionRepository getFeedbackRequestQuestionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackRequestQuestionRepository.class);
     }
 
      default SettingsRepository getSettingsRepository() {
