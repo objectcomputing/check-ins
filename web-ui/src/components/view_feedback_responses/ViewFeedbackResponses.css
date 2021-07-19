@@ -7,7 +7,11 @@
     margin-right: 3em;
 }
 .page-container {
-    margin-top: 15vh;
+    margin-top: 8vh;
+}
+
+.MuiTypography-root.question-text.MuiTypography-body1 {
+    font-weight: bold;
 }
 
 .avatar-photo {
@@ -26,6 +30,10 @@
     margin-left: 2em;
 
 }
+
+.MuiGrid-root.MuiGrid-container.MuiGrid-spacing-xs-1.MuiGrid-item.MuiGrid-grid-xs-11 {
+    margin-bottom: 3em;
+}
 .top-bottom-padding {
     padding-top: 1em;
     padding-bottom: 1em;
@@ -38,16 +46,17 @@
     padding-bottom: 0.5em;
 }
 
-
-.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true {
-    margin-right: 0.8em;
+.MuiGrid-root.text-center.MuiGrid-item.MuiGrid-grid-xs-12 {
+    margin: 0;
 }
 
-/* 
-.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-10 {
-    margin-bottom: 2em;
+.text-center {
+ text-align: center;
+}
+.MuiFormControl-root.MuiTextField-root.response-box {
+    margin-left: 0.5em;
+}
 
-} */
 .justify-center {
     justify-content: center;
     align-items: center;
@@ -56,10 +65,15 @@
     justify-items: center;
 }
 
-@media screen and (max-width: 770px) {
+
+@media screen and (max-width: 1026px) {
 
     .MuiGrid-root.MuiGrid-container.MuiGrid-item.MuiGrid-grid-xs-10.MuiGrid-spacing-xs-3 > .MuiGrid-item {
         margin-left: 0;
+    }
+
+    .MuiGrid-root.small-margin.MuiGrid-item.MuiGrid-grid-xs-true{
+        margin-left: 0.5em;
     }
 
     .MuiGrid-spacing-xs-3 > .MuiGrid-item {
