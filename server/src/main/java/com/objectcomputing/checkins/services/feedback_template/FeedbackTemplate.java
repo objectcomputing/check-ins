@@ -37,26 +37,26 @@ public class FeedbackTemplate {
     @Schema(description = "description of feedback template")
     private String description;
 
-    @Column(name = "creatorId")
+    @Column(name = "creator_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID creatorId;
 
-    @Column(name = "dateCreated")
+    @Column(name = "date_created")
     @DateCreated
     @NotBlank
     @TypeDef(type = DataType.DATE)
     @Schema(description = "date the template was created", required = true)
     private LocalDate dateCreated;
 
-    @Column(name = "updaterId")
+    @Column(name = "updater_id")
     @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who last updated the feedback template")
     private UUID updaterId;
 
-    @Column(name = "dateUpdated")
+    @Column(name = "date_updated")
     @DateUpdated
     @Nullable
     @TypeDef(type = DataType.DATE)

@@ -30,13 +30,13 @@ public class TemplateQuestion {
     @Schema(description = "text of the question to receive feedback on", required = true)
     private String question;
 
-    @Column(name = "templateId")
+    @Column(name = "template_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template this question is a part of", required = true)
     private UUID templateId;
 
-    @Column(name = "questionNumber")
+    @Column(name = "question_number")
     @NotBlank
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "order of question in template", required = true)

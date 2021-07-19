@@ -24,12 +24,12 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     @Override
     Optional<TemplateQuestion> findById(@NonNull UUID id);
 
-    @Query(value = "SELECT * from template_questions WHERE templateId = :templateId ORDER BY questionNumber")
+    @Query(value = "SELECT * from template_questions WHERE template_id = :templateId ORDER BY question_number")
     List<TemplateQuestion> findByTemplateId(String templateId);
 
     @Query(value = "SELECT * " +
             "FROM template_questions " +
-            "WHERE (questionNumber = :questionNumber) " +
-            "AND (templateId = :templateId)", nativeQuery = true)
+            "WHERE (question_number = :questionNumber) " +
+            "AND (template_id = :templateId)", nativeQuery = true)
     List<TemplateQuestion> search(@NotNull String templateId, @NotNull Integer questionNumber);
 }
