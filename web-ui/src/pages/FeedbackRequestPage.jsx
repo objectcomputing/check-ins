@@ -106,39 +106,40 @@ const FeedbackRequestPage = () => {
 
 
   const hasTemplate = useCallback(() => {
-    if (!templateChecked.current) {
 
-    async function isTemplateValid(csrf) {
-      if (!templateQuery || !csrf) {
-        return false;
+    if (!templateChecked.current) {
+      async function isTemplateValid(csrf) {
+        if (!templateQuery || !csrf) {
+          return false;
+        }
+        let res = await getFeedbackTemplate(templateQuery, csrf);
+        let templateResponse =
+            res.payload &&
+            res.payload.data &&
+            res.payload.status === 200 &&
+            !res.error
+                ? res.payload.data
+                : null
+        if (templateResponse === null) {
+          templateChecked.current = true;
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "The Id for the template you selected does not exist.",
+            },
+          });
+          return true;
+        }
       }
-      let res = await getFeedbackTemplate(templateQuery, csrf);
-      let templateResponse =
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-              ? res.payload.data
-              : null
-      if (templateResponse === null) {
-        templateChecked.current = true;
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "The Id for the template you selected does not exist.",
-          },
-        });
-        return true;
-      }
-    }
     if (csrf && templateQuery && !templateChecked.current) {
       isTemplateValid(templateQuery, csrf).then(checked => {
         templateChecked.current = checked;
       });
     }
-  }
-    }, [csrf, templateQuery]);
+     return !templateChecked.current && !!templateQuery;
+    }
+  }, [csrf, templateQuery]);
 
 
   const hasFrom = useCallback(() => {
