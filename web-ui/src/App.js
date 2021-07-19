@@ -17,7 +17,7 @@ import SkillReportPage from "./pages/SkillReportPage";
 import FeedbackRequestPage from "./pages/FeedbackRequestPage";
 import FeedbackSubmitPage from "./pages/FeedbackSubmitPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
-import ViewFeedbackSelectorPage from "./pages/ViewFeedbackSelectorPage"
+import ViewFeedbackPage from "./pages/ViewFeedbackPage"
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 import GroupIcon from "@material-ui/icons/Group";
@@ -97,8 +97,8 @@ function App() {
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
                 </Route>
-                <Route exact path="/viewfeedback/selector">
-                  <ViewFeedbackSelectorPage></ViewFeedbackSelectorPage>
+                <Route exact path="/feedback/view">
+                  <ViewFeedbackPage />
                 </Route>
                 <Route exact path = "/viewfeedback/responses">
                   <ViewFeedbackResponses></ViewFeedbackResponses>
