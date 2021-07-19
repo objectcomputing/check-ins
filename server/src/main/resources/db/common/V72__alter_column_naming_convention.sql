@@ -10,9 +10,6 @@ ALTER TABLE feedback_requests
 RENAME COLUMN recipientId TO recipient_id;
 
 ALTER TABLE feedback_requests
-RENAME COLUMN templateId TO template_id;
-
-ALTER TABLE feedback_requests
 RENAME COLUMN sendDate TO send_date;
 
 ALTER TABLE feedback_requests
