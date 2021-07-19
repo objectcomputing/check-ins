@@ -32,8 +32,20 @@ jobs:
         with:
           name: Package
           path: build/libs
-  sonarqube:
+  tests:
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Package
+          path: build/libs
+      - name: Gradle runs tests
+        run: ./gradlew check
+  sonarqube:
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -57,15 +69,3 @@ jobs:
           SONAR_PROJECT_KEY: oci-checkins
           SONAR_URL: https://sonarqube.cloudops.objectcomputing.com
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-  tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: Package
-          path: build/libs
-      - name: Gradle runs tests
-        run: ./gradlew check
