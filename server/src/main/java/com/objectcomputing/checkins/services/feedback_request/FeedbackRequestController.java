@@ -79,9 +79,11 @@ public class FeedbackRequestController {
      * @return {@link HttpResponse}
      */
     @Delete("/{id}")
-    public HttpResponse<?> delete(@NotNull UUID id) {
-        feedbackReqServices.delete(id);
-        return HttpResponse.ok();
+    public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
+        return Single.fromCallable(() -> feedbackReqServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
     }
 
     /**

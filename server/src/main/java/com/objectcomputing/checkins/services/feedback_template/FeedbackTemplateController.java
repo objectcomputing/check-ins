@@ -78,10 +78,11 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplateResponseDTO}
      */
     @Delete("/{id}")
-    public HttpResponse<?> delete(@NotNull UUID id) {
-        feedbackTemplateServices.delete(id);
-        return HttpResponse
-                .ok();
+    public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
+        return Single.fromCallable(() -> feedbackTemplateServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
     }
 
     /**
