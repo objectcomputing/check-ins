@@ -20,7 +20,7 @@ import java.util.*;
 
 
 @Singleton
-public class FeedbackRequestServicesImplementation implements FeedbackRequestServices {
+public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
@@ -31,11 +31,11 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     private String notificationSubject;
     private String notificationContent;
 
-    public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
-                                                 CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices, EmailSender emailSender,
-                                                 @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                                 @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
+    public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
+                                       CurrentUserServices currentUserServices,
+                                       MemberProfileServices memberProfileServices, EmailSender emailSender,
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
@@ -107,7 +107,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
 
         boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
@@ -161,7 +160,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, LocalDate oldestDate) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
 
@@ -169,7 +168,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(templateId), oldestDate));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
