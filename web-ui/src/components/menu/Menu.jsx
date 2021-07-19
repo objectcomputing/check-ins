@@ -89,7 +89,7 @@ const reportsLinks = [
 
 const feedbackLinks = [
   ["/feedback/request", "REQUEST"],
-  ["", "VIEW"],
+  ["/feedback/view", "VIEW"],
 ]
 
 const isCollapsibleListOpen = (linksArr, loc) => {

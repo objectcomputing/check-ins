@@ -408,3 +408,8 @@ values ('c06df7f8-e577-11eb-ba80-0242ac130004', 'What can this team member impro
 
 INSERT INTO template_questions (id, question, templateId, orderNum)
 values ('d93b66a8-e577-11eb-ba80-0242ac130004', 'In what ways does this team member represent OCI''s values? (OCI Values: All of us is better than any one of us, Innovate courageously, Share it back)', 'fd7c4cae-e576-11eb-ba80-0242ac130004', 5 );
+
+INSERT INTO feedback_requests
+(id, creatorId, requesteeId, recipientId, templateId, sendDate, dueDate, submitDate, status)
+VALUES
+('d62b5c09-7ff9-4b0a-bfee-7f467470a7ef', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-07-07', null, null, 'pending');
