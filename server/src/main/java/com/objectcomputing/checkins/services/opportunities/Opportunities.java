@@ -55,15 +55,15 @@ public class Opportunities {
     @Schema(description = "description of url", required = true)
     private String url;
 
-    @Column(name="expiresOn")
+    @Column(name="expireson")
     @Schema(description = "date for expiresOn", required = true)
     private LocalDate expiresOn;
 
-    @Column(name="submittedOn")
+    @Column(name="submittedon")
     @Schema(description = "date for submittedOn", required = true)
     private LocalDate submittedOn;
 
-    @Column(name="submittedBy")
+    @Column(name="submittedby")
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
     private UUID submittedBy;

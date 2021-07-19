@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.OpportunitiesFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.opportunities.Opportunities;
 import com.objectcomputing.checkins.services.opportunities.OpportunitiesCreateDTO;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class OpportunitiesControllerTest extends TestContainersSuite implements MemberProfileFixture, OpportunitiesFixture {
+public class OpportunitiesControllerTest extends TestContainersSuite implements MemberProfileFixture, OpportunitiesFixture, RoleFixture {
 
     @Inject
     @Client("/services/opportunities")
@@ -215,11 +216,12 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Opportunities> response = client.toBlocking().exchange(request, Opportunities.class);
 
         assertEquals(opportunitiesResponse, response.body());
@@ -230,12 +232,13 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNonExistingOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setId(UUID.randomUUID());
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -251,12 +254,13 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotExistingMemberOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setSubmittedBy(UUID.randomUUID());
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -272,12 +276,13 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateNotMemberOpportunitiesWithoutId(){
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setId(null);
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -321,12 +326,13 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testUpdateInvalidDateOpportunities(){
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
         opportunitiesResponse.setSubmittedOn(LocalDate.of(1965,12,11));
 
         final HttpRequest<Opportunities> request = HttpRequest.PUT("", opportunitiesResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -407,11 +413,12 @@ public class OpportunitiesControllerTest extends TestContainersSuite implements 
     @Test
     void testdeleteOpportunitiesIfAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
+        createDefaultAdminRole(memberProfile);
 
         Opportunities opportunitiesResponse  = createADefaultOpportunities(memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", opportunitiesResponse.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                DELETE(String.format("/%s", opportunitiesResponse.getId())).basicAuth(memberProfile.getWorkEmail(),ADMIN_ROLE);
 
         final HttpResponse<Boolean> response = client.toBlocking().exchange(request, Boolean.class);
 
