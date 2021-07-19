@@ -110,7 +110,7 @@ const FeedbackRequestPage = () => {
 
     async function isTemplateValid(csrf) {
       if (!templateQuery || !csrf) {
-        return 1;
+        return false;
       }
       let res = await getFeedbackTemplate(templateQuery, csrf);
       let templateResponse =
@@ -129,11 +129,12 @@ const FeedbackRequestPage = () => {
             toast: "The Id for the template you selected does not exist.",
           },
         });
+        return true;
       }
     }
     if (csrf && templateQuery && !templateChecked.current) {
-      isTemplateValid(templateQuery, csrf).then(valid => {
-        templateChecked.current = true;
+      isTemplateValid(templateQuery, csrf).then(checked => {
+        templateChecked.current = checked;
       });
     }
   }
