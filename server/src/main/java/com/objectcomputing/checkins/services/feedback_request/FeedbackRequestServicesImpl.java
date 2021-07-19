@@ -15,15 +15,15 @@ import java.util.*;
 
 
 @Singleton
-public class FeedbackRequestServicesImplementation implements FeedbackRequestServices {
+public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
 
-    public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
-                                                 CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices) {
+    public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
+                                       CurrentUserServices currentUserServices,
+                                       MemberProfileServices memberProfileServices) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;

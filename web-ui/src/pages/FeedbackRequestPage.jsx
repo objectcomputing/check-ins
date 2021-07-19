@@ -6,6 +6,7 @@ import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { useLocation, useHistory } from 'react-router-dom';
+import { UPDATE_TOAST } from "../context/actions";
 import queryString from 'query-string';
 import FeedbackTemplateSelector from "../components/feedback_template_selector/FeedbackTemplateSelector";
 import FeedbackRecipientSelector from "../components/feedback_recipient_selector/FeedbackRecipientSelector";
@@ -68,7 +69,7 @@ function getSteps() {
 }
 
 const FeedbackRequestPage = () => {
-  const { state } = useContext(AppContext);
+  const {state, dispatch} = useContext(AppContext);
   const steps = getSteps();
   const classes = useStyles();
   const memberProfile = selectCurrentUser(state);
@@ -87,6 +88,7 @@ const FeedbackRequestPage = () => {
   const memberList = selectCurrentMembers(state);
   const memberIds = memberList.map((member) => member.id);
   const csrf = selectCsrfToken(state)
+
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -109,15 +111,22 @@ const FeedbackRequestPage = () => {
       const recipientList = fromQuery.split(",");
       for (let recipientId of recipientList) {
         if (!memberIds.includes(recipientId)) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Member ID in URL is invalid",
+            },
+          });
           query.from = undefined;
           history.push({...location, search: queryString.stringify(query)});
-          return false;
-        }
+        return false;
       }
-      return true;
     }
-    return false;
-  }, [fromQuery, memberIds, history, location, query])
+    return true;
+  }
+  return false;
+  }, [fromQuery, memberIds, history, location, query, dispatch])
 
 
   const isValidDate = useCallback((dateString) => {
@@ -194,6 +203,15 @@ const handleSubmit = () =>{
                             }
                             history.push(newLocation)
                            }
+                           else if(res.error || data === null) {
+                             dispatch({
+                               type: UPDATE_TOAST,
+                               payload: {
+                                 severity: "error",
+                                 toast: "An error has occurred while submitting your request.",
+                               },
+                             });
+                           }
 
               }
 
@@ -224,6 +242,13 @@ const handleSubmit = () =>{
   }
 
   if (!urlIsValid()) {
+    dispatch({
+      type: UPDATE_TOAST,
+      payload: {
+        severity: "error",
+        toast: "An error has occurred with the URL",
+      },
+    });
     history.push("/checkins");
   }
 
@@ -262,6 +287,6 @@ const handleSubmit = () =>{
       </div>
     </div>
   );
-};
+}
 
 export default FeedbackRequestPage;
