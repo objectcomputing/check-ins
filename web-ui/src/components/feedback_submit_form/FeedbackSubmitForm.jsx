@@ -8,6 +8,7 @@ import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQu
 import Button from "@material-ui/core/Button";
 
 import "./FeedbackSubmitForm.css";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles({
   announcement: {
@@ -52,6 +53,8 @@ const propTypes = {
 
 const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
+  const history = useHistory();
+  const handleClick = () => history.push('/feedback/submit/confirmation');
 
   const [isReviewing, setIsReviewing] = useState(false);
 
@@ -78,6 +81,7 @@ const FeedbackSubmitForm = (props) => {
             </ColorButton>
             <Button
               className={classes.button}
+              onClick={handleClick}
               variant="contained"
               color="primary">
               Submit
