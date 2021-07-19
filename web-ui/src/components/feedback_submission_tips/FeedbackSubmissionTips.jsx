@@ -75,7 +75,7 @@ const FeedbackSubmissionTips = (props) => {
       <Typography className={classes.announcement} variant="h5"><b>SBI is a common approach to providing constructive and fair feedback </b></Typography>
       <div className="submission-tips">
         {sbiInfo.map((info) => (
-          <div className="sbi-info">
+          <div className="sbi-info" key={info.letter}>
             <div className="sbi-circle">{info.letter}</div>
             <div className="sbi-title-and-description">
               <Typography className="sbi-info-title" variant="h3">{info.title}</Typography>
