@@ -27,6 +27,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import "./App.css";
 import FeedbackRequestConfirmation from "./components/feedback_request_confirmation/FeedbackRequestConfirmation";
 import FeedbackSubmitConfirmation from "./components/feedback_submit_confirmation/FeedbackSubmitConfirmation";
+import FeedbackSubmissionValidation from "./components/feedback_submission_validation/FeedbackSubmissionValidation";
 
 const customHistory = createBrowserHistory();
 
@@ -92,6 +93,10 @@ function App() {
                 <Route path="/team-skills-reports">
                   <Header title="Team Skill Reports" />
                   <TeamSkillReportPage />
+                </Route>
+                <Route path="/feedback/submission/validation">
+                  <Header title="Submission User Validation" />
+                  <FeedbackSubmissionValidation />
                 </Route>
                 <Route path="/feedback/request">
                   <FeedbackRequestPage />
