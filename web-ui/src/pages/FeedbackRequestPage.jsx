@@ -108,7 +108,7 @@ const FeedbackRequestPage = () => {
   const hasTemplate = useCallback(() => {
 
     if (!templateChecked.current) {
-      async function isTemplateValid(csrf) {
+      async function isTemplateValid(templateQuery, csrf) {
         if (!templateQuery || !csrf) {
           return false;
         }
