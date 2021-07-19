@@ -23,7 +23,7 @@ public class FrozenTemplateResponseDTO {
 
     @NotBlank
     @Schema(description = "UUID of person who created the feedback template", required = true)
-    private UUID createdBy;
+    private UUID creatorId;
 
     @NotBlank
     @Schema(description = "UUID of the request this frozen template is attached to ", required = true)
@@ -46,12 +46,12 @@ public class FrozenTemplateResponseDTO {
         this.description = description;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
+    public UUID getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatorId(UUID creatorId) {
+        this.creatorId = creatorId;
     }
 
     public UUID getId() {

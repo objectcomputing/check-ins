@@ -20,7 +20,7 @@ public class FrozenTemplateCreateDTO {
 
     @NotBlank
     @Schema(description = "UUID of person who created the feedback template, not necessarily request creator", required = true)
-    private UUID createdBy;
+    private UUID creatorId;
 
 
     @NotBlank
@@ -46,12 +46,12 @@ public class FrozenTemplateCreateDTO {
         this.description = description;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
+    public UUID getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatorId(UUID creatorId) {
+        this.creatorId = creatorId;
     }
 
     public UUID getRequestId() {

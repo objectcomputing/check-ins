@@ -36,7 +36,7 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
     public FrozenTemplate save(FrozenTemplate ft) {
         FeedbackRequest req;
         try {
-            memberProfileServices.getById(ft.getCreatedBy());
+            memberProfileServices.getById(ft.getCreatorId());
         } catch (NotFoundException e) {
             throw new BadArgException("Creator ID is invalid");
         }
