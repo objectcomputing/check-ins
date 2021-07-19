@@ -1,9 +1,10 @@
-package com.objectcomputing.checkins.services.feedback_request_questions;
+package com.objectcomputing.checkins.services.frozen_template_questions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.frozen_template.FrozenTemplate;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
@@ -16,20 +17,22 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite implements RepositoryFixture, FeedbackRequestFixture, FeedbackRequestQuestionFixture, MemberProfileFixture, RoleFixture {
+public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite implements RepositoryFixture, FeedbackRequestFixture, FrozenTemplateFixture, FrozenTemplateQuestionFixture, MemberProfileFixture, RoleFixture {
     @Inject
-    @Client("/services/feedback/request_questions")
+    @Client("/services/feedback/frozen_template_questions")
     HttpClient client;
 
-    private FeedbackRequest createSampleFeedbackRequest(MemberProfile pdlMember, MemberProfile requestee, MemberProfile recipient) {
-        createDefaultRole(RoleType.PDL, pdlMember);
-        return createFeedbackRequest(pdlMember, requestee, recipient);
+    private FrozenTemplate createSampleFrozenTemplate(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+        FeedbackRequest req = createFeedbackRequest(creator, requestee, recipient);
+        FrozenTemplate ft = saveDefaultFrozenTemplate(creator.getId(), req.getId());
+        return ft;
     }
 
     private void assertUnauthorized(HttpClientResponseException responseException) {
@@ -39,12 +42,12 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
-    private void assertResponseEqualsEntity(FeedbackRequestQuestion feedbackRequestQ, FeedbackRequestQuestionResponseDTO dto) {
+    private void assertResponseEqualsEntity(FrozenTemplateQuestion feedbackRequestQ, FrozenTemplateQuestionResponseDTO dto) {
         if (feedbackRequestQ == null || dto == null) {
             assertNull(feedbackRequestQ);
             assertNull(dto);
         } else {
-            assertEquals(feedbackRequestQ.getRequestId(), dto.getRequestId());
+            assertEquals(feedbackRequestQ.getFrozenTemplateId(), dto.getFrozenTemplateId());
             assertEquals(feedbackRequestQ.getQuestionContent(), dto.getQuestionContent());
             assertEquals(feedbackRequestQ.getOrderNum(), dto.getOrderNum());
         }
@@ -55,11 +58,11 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         final MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest req = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(req.getId());
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, employeeMemberProfile, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.POST("", questionOne)
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestQuestionResponseDTO.class);
+        final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(questionOne, response.getBody().get());
@@ -71,8 +74,8 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         final MemberProfile recipient = createADefaultRecipient();
         final MemberProfile randomMember = createASecondDefaultMemberProfile();
-        FeedbackRequest req = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(req.getId());
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, employeeMemberProfile, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.POST("", questionOne)
                 .basicAuth(randomMember.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -87,11 +90,11 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         final MemberProfile recipient = createADefaultRecipient();
         final MemberProfile admin = createADefaultSupervisor();
         createDefaultAdminRole(admin);
-        FeedbackRequest req = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(req.getId());
+        FrozenTemplate template= createSampleFrozenTemplate(pdlMemberProfile, employeeMemberProfile, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.POST("", questionOne)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<FeedbackRequestQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestQuestionResponseDTO.class);
+        final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(questionOne, response.getBody().get());
@@ -102,11 +105,11 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", questionOne.getId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<FeedbackRequestQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestQuestionResponseDTO.class);
+        final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
         assertEquals(HttpStatus.OK, response.getStatus());
         assertResponseEqualsEntity(questionOne, response.body());
     }
@@ -116,11 +119,11 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", questionOne.getId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackRequestQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestQuestionResponseDTO.class);
+        final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
         assertEquals(HttpStatus.OK, response.getStatus());
         assertResponseEqualsEntity(questionOne, response.body());
     }
@@ -132,11 +135,11 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile admin = createADefaultSupervisor();
         createDefaultAdminRole(admin);
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", questionOne.getId()))
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<FeedbackRequestQuestionResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestQuestionResponseDTO.class);
+        final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
         assertEquals(HttpStatus.OK, response.getStatus());
         assertResponseEqualsEntity(questionOne, response.body());
     }
@@ -147,8 +150,8 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile random = createASecondDefaultMemberProfile();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
+        FrozenTemplate frozenTemplate = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(frozenTemplate.getId());
         final HttpRequest<?> request = HttpRequest.GET(String.format("%s", questionOne.getId()))
                 .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
@@ -157,16 +160,16 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
     }
 
     @Test
-    void testGetByRequestIdAuthorized() {
+    void testGetByFrozenTemplateIdAuthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getRequestId()))
+       FrozenTemplate frozenTemplate = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(frozenTemplate.getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<List<FeedbackRequestQuestionResponseDTO>> response = client.toBlocking()
-                .exchange(request, Argument.listOf(FeedbackRequestQuestionResponseDTO.class));
+        final HttpResponse<List<FrozenTemplateQuestionResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FrozenTemplateQuestionResponseDTO.class));
 
         assertTrue(response.getBody().isPresent());
         assertEquals(1, response.getBody().get().size());
@@ -175,17 +178,17 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
     }
 
     @Test
-    void testGetMultipleByRequestIdAuthorized() {
+    void testGetMultipleByFrozenTemplateIdAuthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        FeedbackRequestQuestion questionTwo = createAnotherDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getRequestId()))
+        FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
+        FrozenTemplateQuestion questionTwo = createAnotherDefaultFrozenTemplateQuestion(template.getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpResponse<List<FeedbackRequestQuestionResponseDTO>> response = client.toBlocking()
-                .exchange(request, Argument.listOf(FeedbackRequestQuestionResponseDTO.class));
+        final HttpResponse<List<FrozenTemplateQuestionResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FrozenTemplateQuestionResponseDTO.class));
 
         assertTrue(response.getBody().isPresent());
         assertEquals(2, response.getBody().get().size());
@@ -195,56 +198,19 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
     }
 
     @Test
-    void testGetByRequestIdUnauthorized() {
+    void testGetByFrozenTemplateIdUnauthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile randomPerson = createAnUnrelatedUser();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getRequestId()))
+        FrozenTemplate frozenTemplate= createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(frozenTemplate.getId());
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(randomPerson.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
         assertUnauthorized(responseException);
     }
 
-    @Test
-    void testDeleteAdmin() {
-        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
-        MemberProfile recipient = createADefaultRecipient();
-        MemberProfile admin = createADefaultSupervisor();
-        createDefaultAdminRole(admin);
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", questionOne.getId()))
-                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpResponse<?> response = client.toBlocking()
-                .exchange(request, Argument.listOf(FeedbackRequestQuestionResponseDTO.class));
-        assertEquals(HttpStatus.OK, response.getStatus());
-        final HttpRequest<?> getRequest = HttpRequest.GET(String.format("/%s", questionOne.getId()))
-                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(getRequest, Map.class));
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        assertEquals("No feedback request question with id " + questionOne.getId(), error);
-        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-    }
-
-    @Test
-    void testDeleteUnauthorized() {
-        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
-        MemberProfile recipient = createADefaultRecipient();
-        FeedbackRequest feedbackRequest = createSampleFeedbackRequest(pdlMemberProfile, requestee, recipient);
-        FeedbackRequestQuestion questionOne = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", questionOne.getId()))
-                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-        assertUnauthorized(responseException);
-    }
 
 }

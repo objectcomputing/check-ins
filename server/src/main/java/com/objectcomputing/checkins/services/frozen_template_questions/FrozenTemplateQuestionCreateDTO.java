@@ -1,17 +1,20 @@
-package com.objectcomputing.checkins.services.feedback_request_questions;
+package com.objectcomputing.checkins.services.frozen_template_questions;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackRequestQuestionCreateDTO {
+public class FrozenTemplateQuestionCreateDTO {
 
     @NotNull
-    @Schema(description = "id of the feedback request the question answer pair is attached to", required = true)
-    private UUID requestId;
+    @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
+    private UUID frozenTemplateId;
+
 
     @NotBlank
     @Schema(description = "The question asked to the recipient", required = true)
@@ -21,12 +24,12 @@ public class FeedbackRequestQuestionCreateDTO {
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer orderNum;
 
-    public UUID getRequestId() {
-        return requestId;
+    public UUID getFrozenTemplateId() {
+        return frozenTemplateId;
     }
 
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
+    public void setFrozenTemplateId(UUID frozenTemplateId) {
+        this.frozenTemplateId = frozenTemplateId;
     }
 
     public String getQuestionContent() {
@@ -44,4 +47,5 @@ public class FeedbackRequestQuestionCreateDTO {
     public void setOrderNum(Integer orderNum) {
         this.orderNum = orderNum;
     }
+
 }

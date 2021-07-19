@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
+import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
@@ -24,7 +25,8 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
     public FrozenTemplateServicesImpl(CurrentUserServices currentUserServices,
                                       MemberProfileServices memberProfileServices,
                                       FrozenTemplateRepository frozenTemplateRepository,
-                                      FeedbackRequestServices feedbackRequestServices) {
+                                      FeedbackRequestServices feedbackRequestServices
+                                      ) {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.frozenTemplateRepository = frozenTemplateRepository;
@@ -35,25 +37,26 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
     @Override
     public FrozenTemplate save(FrozenTemplate ft) {
         FeedbackRequest req;
+        req = feedbackRequestServices.getById(ft.getRequestId());
+        if (req ==null)  {
+            throw new NotFoundException("Could not find request");
+        }
+        UUID creatorId = req.getCreatorId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
         try {
-            memberProfileServices.getById(ft.getCreatorId());
+            memberProfileServices.getById(creatorId);
         } catch (NotFoundException e) {
             throw new BadArgException("Creator ID is invalid");
         }
 
-        req = feedbackRequestServices.getById(ft.getRequestId());
-        if (req ==null)  {
-            throw new NotFoundException("Could not find request");
+        if (!creatorId.equals(currentUserId)) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
 
         if (ft.getId() != null) {
             throw new BadArgException("Attempted to save feedback template with duplicate ID");
         }
-        UUID creatorId = req.getCreatorId();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (!creatorId.equals(currentUserId)) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
+
         return frozenTemplateRepository.save(ft);
 
     }

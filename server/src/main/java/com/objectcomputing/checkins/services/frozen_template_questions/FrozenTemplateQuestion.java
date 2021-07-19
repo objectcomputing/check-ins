@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_request_questions;
+package com.objectcomputing.checkins.services.frozen_template_questions;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedback_request_questions")
-public class FeedbackRequestQuestion {
+@Table(name = "frozen_template_questions")
+public class FrozenTemplateQuestion {
     @Id
     @Column(name = "id")
     @AutoPopulated
@@ -25,49 +25,37 @@ public class FeedbackRequestQuestion {
     @Schema(description = "unique id of the request question answer entry", required = true)
     private UUID id;
 
-    @Column(name = "requestId")
+    @Column(name = "frozen_template_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the feedback request the question answer pair is attached to", required = true)
-    private UUID requestId;
+    @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
+    private UUID frozenTemplateId;
 
-    @Column(name = "questionContent")
+    @Column(name = "question_content")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(questionContent::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(question_content::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
     @Schema(description = "The question asked to the recipient", required = true)
     private String questionContent;
 
-    @Column(name = "orderNum")
+    @Column(name = "order_num")
     @NotNull
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer orderNum;
 
-    public FeedbackRequestQuestion(UUID requestId, String questionContent, Integer orderNum) {
+    public FrozenTemplateQuestion(UUID frozenTemplateId, String questionContent, Integer orderNum) {
         this.id = null;
-        this.requestId=requestId;
+        this.frozenTemplateId=frozenTemplateId;
         this.questionContent = questionContent;
         this.orderNum = orderNum;
     }
 
-    public FeedbackRequestQuestion() {}
+    public FrozenTemplateQuestion() {}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FeedbackRequestQuestion that = (FeedbackRequestQuestion) o;
-        return id.equals(that.id) && orderNum.equals(that.orderNum) && requestId.equals(that.requestId) && questionContent.equals(that.questionContent);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, requestId, questionContent, orderNum);
-    }
 
     public UUID getId() {
         return id;
@@ -77,13 +65,14 @@ public class FeedbackRequestQuestion {
         this.id = id;
     }
 
-    public UUID getRequestId() {
-        return requestId;
+    public UUID getFrozenTemplateId() {
+        return frozenTemplateId;
     }
 
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
+    public void setFrozenTemplateId(UUID frozenTemplateId) {
+        this.frozenTemplateId = frozenTemplateId;
     }
+
 
     public String getQuestionContent() {
         return questionContent;
@@ -102,14 +91,36 @@ public class FeedbackRequestQuestion {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FrozenTemplateQuestion that = (FrozenTemplateQuestion) o;
+        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && questionContent.equals(that.questionContent) && orderNum.equals(that.orderNum);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, frozenTemplateId, questionContent, orderNum);
+    }
+
+    @Override
     public String toString() {
-        return "FeedbackRequestQuestion{" +
+        return "FrozenTemplateQuestion{" +
                 "id=" + id +
-                ", requestId=" + requestId +
+                ", frozenTemplateId=" + frozenTemplateId +
                 ", questionContent='" + questionContent + '\'' +
-                ", orderNum='" + orderNum + '\'' +
+                ", orderNum=" + orderNum +
                 '}';
     }
+
+
+
+
+
+
+
+
+
 
 
 }
