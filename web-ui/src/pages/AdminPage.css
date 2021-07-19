@@ -1,3 +1,7 @@
+.admin-container {
+  margin-bottom: 5rem;
+}
+
 .bottom-nav {
   display: flex;
   justify-content: space-evenly;
@@ -7,6 +11,7 @@
 }
 
 .bottom-nav .button {
+  background-color: #fafafa;
   border: 1px solid black;
   height: 75px;
   width: 33.3%;

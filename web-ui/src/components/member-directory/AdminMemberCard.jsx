@@ -11,7 +11,7 @@ import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
 
-import "./MemberSummaryCard.css";
+import "./AdminMemberCard.css";
 import SplitButton from "../split-button/SplitButton";
 
 import { updateMember } from "../../api/member";
@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const MemberSummaryCard = ({ member, index }) => {
+const AdminMemberCard = ({ member, index }) => {
   const { state, dispatch } = useContext(AppContext);
   const { memberProfiles, userProfile, csrf } = state;
   const isAdmin =
@@ -144,9 +144,63 @@ const MemberSummaryCard = ({ member, index }) => {
             </Typography>
           </Container>
         </CardContent>
+        {isAdmin && (
+          <CardActions>
+            <SplitButton
+              className="split-button"
+              options={options}
+              onClick={handleAction}
+            />
+            <Dialog
+              open={openDelete}
+              onClose={handleCloseDeleteConfirmation}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">Delete member?</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete the member's data?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDeleteConfirmation} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={handleDeleteMember} color="primary" autoFocus>
+                  Yes
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <MemberModal
+              member={member}
+              open={open}
+              onClose={handleClose}
+              onSave={async (member) => {
+                let res = await updateMember(member, csrf);
+                let data =
+                  res.payload && res.payload.data && !res.error
+                    ? res.payload.data
+                    : null;
+                if (data) {
+                  const copy = [...memberProfiles];
+                  const index = copy.findIndex(
+                    (profile) => profile.id === data.id
+                  );
+                  copy[index] = data;
+                  dispatch({
+                    type: UPDATE_MEMBER_PROFILES,
+                    payload: copy,
+                  });
+                  handleClose();
+                }
+              }}
+            />
+          </CardActions>
+        )}
       </Card>
     </Box>
   );
 };
 
-export default MemberSummaryCard;
+export default AdminMemberCard;
