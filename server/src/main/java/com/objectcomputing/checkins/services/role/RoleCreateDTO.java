@@ -22,7 +22,7 @@ public class RoleCreateDTO {
     private RoleType role;
 
     @Nullable
-    @Schema(description = "description of the check in note", nullable = true)
+    @Schema(description = "description of the role", nullable = true)
     private String description;
 
     @NotNull
