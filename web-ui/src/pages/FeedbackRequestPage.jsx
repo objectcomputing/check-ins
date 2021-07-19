@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, {useContext, useCallback, useRef} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -15,6 +15,8 @@ import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
 import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMembers} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
+import {getFeedbackTemplate} from "../api/feedbacktemplate";
+import { UPDATE_TOAST } from "../context/actions";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -87,6 +89,8 @@ const FeedbackRequestPage = () => {
   const memberList = selectCurrentMembers(state);
   const memberIds = memberList.map((member) => member.id);
   const csrf = selectCsrfToken(state)
+  const templateChecked = useRef(false);
+
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -100,9 +104,42 @@ const FeedbackRequestPage = () => {
     return !!forQuery;
   }, [forQuery])
 
+
   const hasTemplate = useCallback(() => {
-    return !!templateQuery;
-  }, [templateQuery])
+    if (!templateChecked.current) {
+
+    async function isTemplateValid(csrf) {
+      console.log("runs")
+      if (!templateQuery || !csrf) {
+        return 1;
+      }
+      let res = await getFeedbackTemplate(templateQuery, csrf);
+      let templateResponse =
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null
+      if (templateResponse === null) {
+        templateChecked.current = true;
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "The Id for the template you selected does not exist.",
+          },
+        });
+      }
+    }
+    if (csrf && templateQuery && !templateChecked.current) {
+      isTemplateValid(templateQuery, csrf).then(valid => {
+        templateChecked.current = true;
+      });
+    }
+  }
+    }, [csrf, templateQuery]);
+
 
   const hasFrom = useCallback(() => {
     if (fromQuery) {
@@ -256,7 +293,7 @@ const handleSubmit = () =>{
         </Stepper>
       </div>
       <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
+        {activeStep === 1 && <FeedbackTemplateSelector onClick={templateChecked.current = false} changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate />}
       </div>
