@@ -45,12 +45,6 @@ public class FeedbackRequest {
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @Column(name = "template_id")
-    @NotBlank
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the template attached to request", required = true)
-    private UUID templateId;
-
     @Column(name="send_date")
     @NotBlank
     @Schema(description = "date request was sent", required = true)
@@ -75,7 +69,6 @@ public class FeedbackRequest {
     public FeedbackRequest(@NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
-                           @NotNull UUID templateId,
                            @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
@@ -84,7 +77,6 @@ public class FeedbackRequest {
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
         this.recipientId = recipientId;
-        this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
@@ -95,7 +87,6 @@ public class FeedbackRequest {
                            @NotNull UUID creatorId,
                            @NotNull UUID requesteeId,
                            @NotNull UUID recipientId,
-                           @NotNull UUID templateId,
                            @NotNull LocalDate sendDate,
                            @Nullable LocalDate dueDate,
                            @NotNull String status,
@@ -104,7 +95,6 @@ public class FeedbackRequest {
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
         this.recipientId = recipientId;
-        this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
@@ -155,14 +145,6 @@ public class FeedbackRequest {
         this.recipientId = recipientId;
     }
 
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
-    }
-
     public LocalDate getSendDate() {
         return sendDate;
     }
@@ -207,7 +189,6 @@ public class FeedbackRequest {
                 && Objects.equals(creatorId, that.creatorId)
                 && Objects.equals(requesteeId, that.requesteeId)
                 && Objects.equals(recipientId, that.recipientId)
-                && Objects.equals(templateId, that.templateId)
                 && Objects.equals(sendDate, that.sendDate)
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
@@ -216,7 +197,7 @@ public class FeedbackRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, templateId, sendDate, dueDate, status, submitDate);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, dueDate, status, submitDate);
     }
 
     @Override
@@ -226,7 +207,6 @@ public class FeedbackRequest {
                 ", creatorId=" + creatorId +
                 ", recipientId=" + recipientId +
                 ", requesteeId=" + requesteeId +
-                ", templateId=" + templateId +
                 ", sendDate=" + sendDate +
                 ", dueDate=" + dueDate +
                 ", status='" + status +

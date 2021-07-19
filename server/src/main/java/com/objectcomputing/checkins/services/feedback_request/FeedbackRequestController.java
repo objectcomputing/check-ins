@@ -112,9 +112,9 @@ public class FeedbackRequestController {
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
-    @Get("/{?creatorId,requesteeId,templateId,oldestDate}")
-    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID templateId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
-        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, templateId, oldestDate))
+    @Get("/{?creatorId,requesteeId,oldestDate}")
+    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
+        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, oldestDate))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
@@ -129,7 +129,6 @@ public class FeedbackRequestController {
         dto.setCreatorId(feedbackRequest.getCreatorId());
         dto.setRequesteeId(feedbackRequest.getRequesteeId());
         dto.setRecipientId(feedbackRequest.getRecipientId());
-        dto.setTemplateId(feedbackRequest.getTemplateId());
         dto.setSendDate(feedbackRequest.getSendDate());
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
@@ -143,7 +142,6 @@ public class FeedbackRequestController {
                 dto.getCreatorId(),
                 dto.getRequesteeId(),
                 dto.getRecipientId(),
-                dto.getTemplateId(),
                 dto.getSendDate(),
                 dto.getDueDate(),
                 dto.getStatus(),

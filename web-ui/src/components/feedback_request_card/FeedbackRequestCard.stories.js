@@ -1,16 +1,16 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
-import ViewFeedbackSelector from "./ViewFeedbackSelector";
+import FeedbackRequestCard from "./FeedbackRequestCard";
 import {AppContextProvider} from "../../context/AppContext";
 
 export default {
-  title: "Check Ins/ViewFeedbackSelector",
-  component: ViewFeedbackSelector,
+  title: "Check Ins/FeedbackRequestCard",
+  component: FeedbackRequestCard,
   decorators: [(ViewFeedbackSelector) => {
     return (<AppContextProvider><BrowserRouter><ViewFeedbackSelector/></BrowserRouter></AppContextProvider>);
   }]
 };
-const Template = (args) => <ViewFeedbackSelector {...args} />;
+const Template = (args) => <FeedbackRequestCard {...args} />;
 
 export const DefaultTemplate = Template.bind({});
 DefaultTemplate.args = {};
