@@ -109,7 +109,6 @@ const FeedbackRequestPage = () => {
     if (!templateChecked.current) {
 
     async function isTemplateValid(csrf) {
-      console.log("runs")
       if (!templateQuery || !csrf) {
         return 1;
       }
