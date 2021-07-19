@@ -349,7 +349,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testGetByCreatorTemplateRequesteeIdPermitted() {
+    void testGetByCreatorRequesteeIdPermitted() {
         //create two employee-PDL relationships
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
@@ -375,7 +375,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testGetByCreatorTemplateRequesteeIdNotPermitted() {
+    void testGetByCreatorRequesteeIdNotPermitted() {
         //create two employee-PDL relationships
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
@@ -401,7 +401,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testGetByCreatorTemplateRequesteeIdMultiplePermitted() {
+    void testGetByCreatorRequesteeIdMultiplePermitted() {
         //create two employee-PDL relationships
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
