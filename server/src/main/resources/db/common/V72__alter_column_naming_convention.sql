@@ -37,16 +37,19 @@ RENAME COLUMN orderNum TO question_number;
 -- Rename columns in table feedback_templates
 
 ALTER TABLE feedback_templates
-RENAME COLUMN creatorId TO creator_id;
+DROP COLUMN active;
 
 ALTER TABLE feedback_templates
-RENAME COLUMN dateCreated TO date_created;
+RENAME COLUMN createdBy TO creator_id;
 
 ALTER TABLE feedback_templates
-RENAME COLUMN updaterId TO updater_id;
+ADD COLUMN date_created date;
 
 ALTER TABLE feedback_templates
-RENAME COLUMN dateUpdated TO date_updated;
+ADD COLUMN updater_id varchar REFERENCES member_profile(id);
+
+ALTER TABLE feedback_templates
+ADD COLUMN date_updated date;
 
 
 -- Rename columns in table template_questions
