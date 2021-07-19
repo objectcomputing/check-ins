@@ -5,10 +5,12 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import io.micronaut.context.annotation.Property;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.Email;
@@ -20,17 +22,29 @@ import java.util.*;
 @Singleton
 public class FeedbackRequestServicesImplementation implements FeedbackRequestServices {
 
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private final EmailSender emailSender;
+    private EmailSender emailSender;
+    private String notificationSubject;
+    private String notificationContent;
 
     public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
                                                  CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices, EmailSender emailSender) {
+                                                 MemberProfileServices memberProfileServices, EmailSender emailSender,
+                                                 @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
+                                                 @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.emailSender = emailSender;
+        this.notificationContent = notificationContent;
+        this.notificationSubject = notificationSubject;
+    }
+
+    public void setEmailSender(EmailSender emailSender) {
         this.emailSender = emailSender;
     }
 
@@ -71,7 +85,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        emailSender.sendEmail("Feedback Request", "You have received a new request for feedback from Michael Kimberlin about Quarter 3. Michael Kimberlin set this feedback to be due on _______. Click here to complete the request: ___________", memberProfileServices.getById(storedRequest.getRequesteeId()).getWorkEmail());
+        emailSender.sendEmail(notificationSubject, notificationContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         return storedRequest;
     }
 
