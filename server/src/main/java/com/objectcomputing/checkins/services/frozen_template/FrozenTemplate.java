@@ -37,13 +37,13 @@ public class FrozenTemplate {
     @Schema(description = "description of feedback template", required = false)
     private String description;
 
-    @Column(name = "createdBy")
+    @Column(name = "creator_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who created the original feedback template, not necessarily request creator", required = true)
     private UUID createdBy;
 
-    @Column(name = "requestId")
+    @Column(name = "request_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of the request this frozen template is attached to ", required = true)

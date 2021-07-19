@@ -17,6 +17,6 @@ public interface FrozenTemplateRepository extends CrudRepository<FrozenTemplate,
     @Override
     <S extends FrozenTemplate> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query("SELECT * from frozen_templates WHERE requestId = :requestId")
+    @Query("SELECT * from frozen_templates WHERE request_id = :requestId")
     FrozenTemplate findByRequestId(String requestId);
 }
