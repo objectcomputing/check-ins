@@ -1,34 +1,20 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
-import MemberModal from "./MemberModal";
 import { AppContext } from "../../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardActions, CardHeader } from "@material-ui/core";
+import { Card, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
 
 import "./MemberSummaryCard.css";
-import SplitButton from "../split-button/SplitButton";
-
-import { updateMember } from "../../api/member";
-import { deleteMember } from "../../api/member.js";
-import { DELETE_MEMBER_PROFILE } from "../../context/actions.js";
-import { UPDATE_TOAST } from "../../context/actions.js";
 
 import {
   Box,
-  Button,
   CardContent,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   makeStyles,
   Typography,
 } from "@material-ui/core";
@@ -39,11 +25,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const MemberSummaryCard = ({ member, index }) => {
-  const { state, dispatch } = useContext(AppContext);
-  const { memberProfiles, userProfile, csrf } = state;
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+const MemberSummaryCard = ({ member }) => {
+  const { state } = useContext(AppContext);
   const {
     location,
     name,
@@ -53,45 +36,10 @@ const MemberSummaryCard = ({ member, index }) => {
     pdlId,
     terminationDate,
   } = member;
-  const memberId = member?.id;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
 
   const classes = useStyles();
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-
-  const [openDelete, setOpenDelete] = useState(false);
-  const handleOpenDeleteConfirmation = () => setOpenDelete(true);
-
-  const handleClose = () => setOpen(false);
-  const handleCloseDeleteConfirmation = () => setOpenDelete(false);
-
-  const options = isAdmin ? ["Edit", "Delete"] : ["Edit"];
-
-  const handleAction = (e, index) => {
-    if (index === 0) {
-      handleOpen();
-    } else if (index === 1) {
-      handleOpenDeleteConfirmation();
-    }
-  };
-
-  const handleDeleteMember = async () => {
-    let res = await deleteMember(memberId, csrf);
-    if (res && res.payload && res.payload.status === 200) {
-      dispatch({ type: DELETE_MEMBER_PROFILE, payload: memberId });
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "success",
-          toast: "Member deleted",
-        },
-      });
-    }
-    handleCloseDeleteConfirmation();
-  };
 
   return (
     <Box display="flex" flexWrap="wrap">
