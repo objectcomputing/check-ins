@@ -11,13 +11,11 @@ import { Card, CardActions, CardHeader } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
 
-import "./AdminMemberCard.css";
+import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
 
-import { updateMember } from "../../api/member";
-import { deleteMember } from "../../api/member.js";
-import { DELETE_MEMBER_PROFILE } from "../../context/actions.js";
-import { UPDATE_TOAST } from "../../context/actions.js";
+import { updateMember, deleteMember } from "../../api/member.js";
+import { DELETE_MEMBER_PROFILE, UPDATE_TOAST } from "../../context/actions.js";
 
 import {
   Box,
