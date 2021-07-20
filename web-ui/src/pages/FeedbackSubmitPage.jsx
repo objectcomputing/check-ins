@@ -45,7 +45,6 @@ const FeedbackSubmitPage = () => {
 
       // make call to the API
       let res = await getFeedbackRequestById(requestQuery, cookie);
-      console.log(res);
       return (
         res.payload &&
         res.payload.data &&
