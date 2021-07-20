@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../context/AppContext";
 import { DELETE_ROLE, UPDATE_ROLES, UPDATE_TOAST } from "../../context/actions";
-import { getAvatarURL } from "../../api/api.js";
 import { addUserToRole, addNewRole, removeUserFromRole } from "../../api/roles";
+
+import RoleUserCards from "./RoleUserCards";
 
 import {
   Button,
@@ -15,11 +16,8 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import EditIcon from "@material-ui/icons/Edit";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import Avatar from "@material-ui/core/Avatar";
 
 import "./Roles.css";
 
@@ -60,7 +58,6 @@ const Roles = () => {
   const uniqueRoles = Object.keys(roleToMemberMap);
 
   const removeFromRole = async (member, role) => {
-    console.log({ member, role });
     const members = roleToMemberMap[role];
     const { roleId } = members.find((m) => member.id === m.id);
     let res = await removeUserFromRole(roleId, csrf);
@@ -136,46 +133,6 @@ const Roles = () => {
   //   setEditRole(false);
   // };
 
-  console.log({ newRole });
-
-  const createUserCards = (role) =>
-    roleToMemberMap[role].map(
-      (member) =>
-        member && (
-          <div key={member.id}>
-            <Card className="member-card">
-              <CardHeader
-                title={
-                  <Typography variant="h5" component="h2">
-                    {member.name}
-                  </Typography>
-                }
-                subheader={
-                  <Typography color="textSecondary" component="h3">
-                    {member.title}
-                  </Typography>
-                }
-                disableTypography
-                avatar={
-                  <Avatar
-                    className="large"
-                    src={getAvatarURL(member.workEmail)}
-                  />
-                }
-              />
-              <div
-                className="icon"
-                onClick={() => {
-                  removeFromRole(member, role);
-                }}
-              >
-                <DeleteIcon />
-              </div>
-            </Card>
-          </div>
-        )
-    );
-
   return (
     <div className="role-content">
       <div className="roles">
@@ -192,9 +149,9 @@ const Roles = () => {
               }}
             />
           </div>
-          <Button color="primary" onClick={() => setShowAddRole(true)}>
+          {/* <Button color="primary" onClick={() => setShowAddRole(true)}>
             Add New Role
-          </Button>
+          </Button> */}
         </div>
         {uniqueRoles.map((role) =>
           role.toLowerCase().includes(searchText.toLowerCase()) ? (
@@ -205,9 +162,13 @@ const Roles = () => {
                     <Typography variant="h4" component="h3">
                       {role}
                     </Typography>
-                    <Typography variant="h5" component="h4">
+                    <Typography variant="h5" component="h5">
                       {role.description || ""}
                     </Typography>
+                  </div>
+                }
+                subheader={
+                  <div>
                     <div className="role-buttons">
                       <Button
                         className="role-add"
@@ -220,26 +181,29 @@ const Roles = () => {
                         <span>Add User</span>
                         <PersonAddIcon />
                       </Button>
-                      <Button className="role-edit" color="primary">
+                      {/* <Button className="role-edit" color="primary">
                         <span>Edit Role</span> <EditIcon />
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 }
-                subheader={
-                  <Typography color="textSecondary" component="h5">
-                    {role?.description || ""}
-                  </Typography>
-                }
               />
               <CardContent className="role-card">
-                {createUserCards(role)}
+                {
+                  <RoleUserCards
+                    role={role}
+                    roleToMemberMap={roleToMemberMap}
+                    removeFromRole={removeFromRole}
+                  />
+                }
               </CardContent>
               <CardActions>
                 <Modal open={showAddUser} onClose={closeAddUser}>
                   <div className="role-modal">
                     <Autocomplete
-                      options={memberProfiles}
+                      options={memberProfiles.filter(
+                        (member) => !roleToMemberMap[role].includes(member.id)
+                      )}
                       value={selectedMember}
                       onChange={(event, newValue) =>
                         setSelectedMember(newValue)
