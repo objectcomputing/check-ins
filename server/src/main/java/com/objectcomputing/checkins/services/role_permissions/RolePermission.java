@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
-import com.objectcomputing.checkins.services.role_permissions.RolePermission;
-import com.objectcomputing.checkins.services.role_permissions.RolePermissionType;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;

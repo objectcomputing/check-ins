@@ -1,8 +1,5 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
-
-import com.objectcomputing.checkins.services.role_permissions.RolePermission;
-import com.objectcomputing.checkins.services.role_permissions.RolePermissionType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;

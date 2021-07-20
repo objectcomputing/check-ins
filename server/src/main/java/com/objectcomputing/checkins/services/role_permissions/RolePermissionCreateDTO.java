@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
-import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role_permissions.RolePermissionType;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -15,7 +15,7 @@ import static com.objectcomputing.checkins.services.role_permissions.RolePermiss
 @Introspected
 public class RolePermissionCreateDTO {
     @NotNull
-    @Column(name = "role")
+    @Column(name = "permission")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "role this member has", required = true,
             allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})

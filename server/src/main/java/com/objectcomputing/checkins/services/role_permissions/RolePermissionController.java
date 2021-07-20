@@ -2,10 +2,10 @@ package com.objectcomputing.checkins.services.role_permissions;
 
 
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role_permissions.RolePermission;
 import com.objectcomputing.checkins.services.role_permissions.RolePermissionCreateDTO;
 import com.objectcomputing.checkins.services.role_permissions.RolePermissionServices;
-import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role_permissions.RolePermissionType;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -69,11 +69,11 @@ public class RolePermissionController {
     /**
      * Update role.
      *
-     * @param permission, {@link Role}
-     * @return {@link HttpResponse<Role>}
+     * @param permission, {@link RolePermission}
+     * @return {@link HttpResponse<RolePermission>}
      */
     @Put()
-    @Secured(RoleType.Constants.ADMIN_ROLE)
+    @Secured(RolePermissionType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<RolePermission>> update(@Body @Valid @NotNull RolePermission permission, HttpRequest<RolePermission> request) {
         return Single.fromCallable(() -> roleServices.update(permission))
                 .observeOn(Schedulers.from(eventLoopGroup))
@@ -87,8 +87,8 @@ public class RolePermissionController {
     /**
      * Get Role based off id
      *
-     * @param id {@link RoleType} of the role member entry
-     * @return {@link Role}
+     * @param id {@link RolePermissionType} of the role member entry
+     * @return {@link RolePermission}
      */
     @Get("/{id}")
     public Single<HttpResponse<RolePermission>> readRole(@NotNull UUID id) {
@@ -109,7 +109,7 @@ public class RolePermissionController {
      *
      * @param permission     {@link RolePermissionType} of role
      * @param memberid {@link UUID} of member
-     * @return {@link List < Role > list of roles}
+     * @return {@link List < RolePermission > list of permissions}
      */
     @Get("/{?permission,memberid}")
     public Single<HttpResponse<Set<RolePermission>>> findRole(@Nullable RolePermissionType permission, @Nullable UUID memberid) {
@@ -120,12 +120,12 @@ public class RolePermissionController {
     }
 
     /**
-     * Delete role
+     * Delete permission
      *
-     * @param id, id of {@link Role} to delete
+     * @param id, id of {@link RolePermission} to delete
      */
     @Delete("/{id}")
-    @Secured(RoleType.Constants.ADMIN_ROLE)
+    @Secured(RolePermissionType.Constants.ADMIN_ROLE)
     public HttpResponse<?> deleteRole(UUID id) {
         roleServices.delete(id);
         return HttpResponse.ok();

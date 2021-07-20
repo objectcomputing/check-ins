@@ -124,12 +124,12 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         RolePermission authRole = createDefaultAdminRole(unrelatedProfile);
 
-        RolePermissionCreateDTO role = new RolePermissionCreateDTO();
-        role.setMemberid(UUID.randomUUID());
-        role.setRole(RolePermissionType.MEMBER);
+        RolePermissionCreateDTO permission = new RolePermissionCreateDTO();
+        permission.setMemberid(UUID.randomUUID());
+        permission.setRole(RolePermissionType.MEMBER);
 
 
-        final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", role)
+        final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", permission)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getPermission().name());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
@@ -138,7 +138,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
+        assertEquals(String.format("Member %s doesn't exist", permission.getMemberid()), error);
         assertEquals(request.getPath(), href);
     }
 
@@ -212,7 +212,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         RolePermission role = createDefaultAdminRole(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getPermission(),
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?permission=%s&memberid=%s", role.getPermission(),
                 role.getMemberid())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getPermission().name());
         final HttpResponse<Set<RolePermission>> response = client.toBlocking().exchange(request, Argument.setOf(RolePermission.class));
 
@@ -225,7 +225,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         RolePermission role = createDefaultAdminRole(unrelatedProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RolePermissionType.PDL))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?permission=%s", RolePermissionType.PDL))
                 .basicAuth(unrelatedProfile.getWorkEmail(), role.getPermission().name());
         HttpResponse<Set<RolePermission>> response = client.toBlocking().exchange(request, Argument.setOf(RolePermission.class));
 
