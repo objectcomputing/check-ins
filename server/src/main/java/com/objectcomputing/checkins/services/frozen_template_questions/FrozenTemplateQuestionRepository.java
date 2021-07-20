@@ -25,6 +25,6 @@ public interface FrozenTemplateQuestionRepository extends CrudRepository<FrozenT
     @Override
     <S extends FrozenTemplateQuestion> S update(@NotNull @Nonnull S entity);
 
-    @Query(value = "SELECT id, frozen_template_id, PGP_SYM_DECRYPT(cast(question_content as bytea), '${aes.key}') as question_content, order_num from frozen_template_questions WHERE frozen_template_id = :frozenTemplateId ORDER BY order_num", nativeQuery = true)
+    @Query(value = "SELECT id, frozen_template_id, PGP_SYM_DECRYPT(cast(question_content as bytea), '${aes.key}') as question_content, question_number from frozen_template_questions WHERE frozen_template_id = :frozenTemplateId ORDER BY question_number", nativeQuery = true)
     List<FrozenTemplateQuestion> findByFrozenTemplateId(@NotNull String frozenTemplateId);
 }

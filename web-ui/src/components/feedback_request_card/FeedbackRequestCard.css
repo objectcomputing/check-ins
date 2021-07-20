@@ -69,6 +69,10 @@
     margin-right: 2em;
 }
 
+.responder-name {
+    display: inline;
+}
+
 
 @media screen and (max-width: 769px) {
 

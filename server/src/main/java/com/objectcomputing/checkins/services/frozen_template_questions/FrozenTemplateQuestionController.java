@@ -72,12 +72,12 @@ public class FrozenTemplateQuestionController {
     /**
      * Get feedback request question and answer pair by request id
      *
-     * @param requestId {@link UUID} ID of feedback request
+     * @param templateId {@link UUID} ID of frozen template
      * @return {@link List <FeedbackRequestQuestionResponseDTO>} List of feedback requests question/answers that are attached to a certain feedback request
      */
-    @Get("/{?requestId}")
-    public Single<HttpResponse<List<FrozenTemplateQuestionResponseDTO>>> findByValues(@Nullable UUID requestId) {
-        return Single.fromCallable(() -> frozenTemplateQServices.findByValues(requestId))
+    @Get("/{?templateId}")
+    public Single<HttpResponse<List<FrozenTemplateQuestionResponseDTO>>> findByValues(@Nullable UUID templateId) {
+        return Single.fromCallable(() -> frozenTemplateQServices.findByValues(templateId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqQs -> {
                     List<FrozenTemplateQuestionResponseDTO> dtoList = feedbackReqQs.stream()
@@ -92,14 +92,14 @@ public class FrozenTemplateQuestionController {
         dto.setId(savedQuestion.getId());
         dto.setFrozenTemplateId(savedQuestion.getFrozenTemplateId());
         dto.setQuestionContent(savedQuestion.getQuestionContent());
-        dto.setOrderNum(savedQuestion.getOrderNum());
+        dto.setQuestionNumber(savedQuestion.getQuestionNumber());
         return dto;
     }
 
     private FrozenTemplateQuestion fromDTO(FrozenTemplateQuestionCreateDTO requestBody) {
         return new FrozenTemplateQuestion(requestBody.getFrozenTemplateId(),
                 requestBody.getQuestionContent(),
-                requestBody.getOrderNum());
+                requestBody.getQuestionNumber());
     }
 
 }

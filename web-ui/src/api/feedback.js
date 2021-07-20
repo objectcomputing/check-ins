@@ -23,10 +23,7 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
 
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({
-    url: feedbackRequestURL,
-    params: {
-      id: id
-    },
+    url: `${feedbackRequestURL}/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });

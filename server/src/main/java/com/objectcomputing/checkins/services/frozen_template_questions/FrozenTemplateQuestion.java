@@ -41,17 +41,17 @@ public class FrozenTemplateQuestion {
     @Schema(description = "The question asked to the recipient", required = true)
     private String questionContent;
 
-    @Column(name = "order_num")
+    @Column(name = "question_number")
     @NotNull
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "Order number of the question relative to others in its set", required = true)
-    private Integer orderNum;
+    private Integer questionNumber;
 
-    public FrozenTemplateQuestion(UUID frozenTemplateId, String questionContent, Integer orderNum) {
+    public FrozenTemplateQuestion(UUID frozenTemplateId, String questionContent, Integer questionNumber) {
         this.id = null;
         this.frozenTemplateId=frozenTemplateId;
         this.questionContent = questionContent;
-        this.orderNum = orderNum;
+        this.questionNumber = questionNumber;
     }
 
     public FrozenTemplateQuestion() {}
@@ -82,12 +82,12 @@ public class FrozenTemplateQuestion {
         this.questionContent = questionContent;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber = questionNumber;
     }
 
     @Override
@@ -95,12 +95,12 @@ public class FrozenTemplateQuestion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FrozenTemplateQuestion that = (FrozenTemplateQuestion) o;
-        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && questionContent.equals(that.questionContent) && orderNum.equals(that.orderNum);
+        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && questionContent.equals(that.questionContent) && questionNumber.equals(that.questionNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, frozenTemplateId, questionContent, orderNum);
+        return Objects.hash(id, frozenTemplateId, questionContent, questionNumber);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class FrozenTemplateQuestion {
                 "id=" + id +
                 ", frozenTemplateId=" + frozenTemplateId +
                 ", questionContent='" + questionContent + '\'' +
-                ", orderNum=" + orderNum +
+                ", orderNum=" + questionNumber +
                 '}';
     }
 

@@ -1,8 +1,7 @@
+
 package com.objectcomputing.checkins.services.frozen_template_questions;
 
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,7 +21,7 @@ public class FrozenTemplateQuestionCreateDTO {
 
     @NotNull
     @Schema(description = "Order number of the question relative to others in its set", required = true)
-    private Integer orderNum;
+    private Integer questionNumber;
 
     public UUID getFrozenTemplateId() {
         return frozenTemplateId;
@@ -40,12 +39,12 @@ public class FrozenTemplateQuestionCreateDTO {
         this.questionContent = questionContent;
     }
 
-    public Integer getOrderNum() {
-        return orderNum;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber= questionNumber;
     }
 
 }

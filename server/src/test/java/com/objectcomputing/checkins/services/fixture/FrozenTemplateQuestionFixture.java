@@ -5,16 +5,16 @@ import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTem
 import java.util.UUID;
 
 public interface FrozenTemplateQuestionFixture extends RepositoryFixture {
-    default FrozenTemplateQuestion createDefaultFrozenTemplateQuestion(UUID requestId) {
+    default FrozenTemplateQuestion createDefaultFrozenTemplateQuestion(UUID frozenTemplateId) {
         return getFeedbackRequestQuestionRepository().save(new FrozenTemplateQuestion(
-                requestId,
+                frozenTemplateId,
                 "How are you?",
                 1));
     }
 
-    default FrozenTemplateQuestion createAnotherDefaultFrozenTemplateQuestion(UUID requestId) {
+    default FrozenTemplateQuestion createAnotherDefaultFrozenTemplateQuestion(UUID frozenTemplateId) {
         return getFeedbackRequestQuestionRepository().save(new FrozenTemplateQuestion(
-                requestId,
+                frozenTemplateId,
                 "Do you like opossums more than other animals?",
                 2));
     }

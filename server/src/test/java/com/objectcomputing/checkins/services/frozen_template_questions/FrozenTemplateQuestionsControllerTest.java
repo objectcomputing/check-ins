@@ -17,7 +17,6 @@ import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +48,7 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         } else {
             assertEquals(feedbackRequestQ.getFrozenTemplateId(), dto.getFrozenTemplateId());
             assertEquals(feedbackRequestQ.getQuestionContent(), dto.getQuestionContent());
-            assertEquals(feedbackRequestQ.getOrderNum(), dto.getOrderNum());
+            assertEquals(feedbackRequestQ.getQuestionNumber(), dto.getQuestionNumber());
         }
     }
 
@@ -59,7 +58,10 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         final MemberProfile recipient = createADefaultRecipient();
         FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, employeeMemberProfile, recipient);
-        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
+        FrozenTemplateQuestion questionOne = new FrozenTemplateQuestion(
+                template.getId(),
+                "How are you?",
+                1);
         final HttpRequest<?> request = HttpRequest.POST("", questionOne)
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
@@ -91,7 +93,10 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         final MemberProfile admin = createADefaultSupervisor();
         createDefaultAdminRole(admin);
         FrozenTemplate template= createSampleFrozenTemplate(pdlMemberProfile, employeeMemberProfile, recipient);
-        FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
+        FrozenTemplateQuestion questionOne = new FrozenTemplateQuestion(
+                template.getId(),
+                "How are you?",
+                1);
         final HttpRequest<?> request = HttpRequest.POST("", questionOne)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FrozenTemplateQuestionResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateQuestionResponseDTO.class);
@@ -164,9 +169,9 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-       FrozenTemplate frozenTemplate = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
+        FrozenTemplate frozenTemplate = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
         FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(frozenTemplate.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?templateId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FrozenTemplateQuestionResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FrozenTemplateQuestionResponseDTO.class));
@@ -185,7 +190,7 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         FrozenTemplate template = createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
         FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(template.getId());
         FrozenTemplateQuestion questionTwo = createAnotherDefaultFrozenTemplateQuestion(template.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?templateId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FrozenTemplateQuestionResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FrozenTemplateQuestionResponseDTO.class));
@@ -205,7 +210,7 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
         MemberProfile randomPerson = createAnUnrelatedUser();
         FrozenTemplate frozenTemplate= createSampleFrozenTemplate(pdlMemberProfile, requestee, recipient);
         FrozenTemplateQuestion questionOne = createDefaultFrozenTemplateQuestion(frozenTemplate.getId());
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", questionOne.getFrozenTemplateId()))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?templateId=%s", questionOne.getFrozenTemplateId()))
                 .basicAuth(randomPerson.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));

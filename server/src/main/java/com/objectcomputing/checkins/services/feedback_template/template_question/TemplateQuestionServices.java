@@ -1,5 +1,4 @@
-package com.objectcomputing.checkins.services.template_question;
-
+package com.objectcomputing.checkins.services.feedback_template.template_question;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +14,4 @@ public interface TemplateQuestionServices {
     TemplateQuestion getById(UUID id);
 
     List<TemplateQuestion> findByFields(UUID templateId);
-
-
 }
