@@ -27,33 +27,43 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Upload artifact
+      - name: Upload artifact for Gradle package
         uses: actions/upload-artifact@v2
         with:
-          name: Package
+          name: package
           path: build/libs
   tests:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Download artifact
+      - name: Download artifact for Gradle package
         uses: actions/download-artifact@v2
         with:
-          name: Package
+          name: package
           path: build/libs
       - name: Gradle runs tests
         run: ./gradlew check
+      - name: Upload artifact for test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: server/build/test-results
   sonarqube:
     needs: tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Download artifact
+      - name: Download artifact for Gradle package
         uses: actions/download-artifact@v2
         with:
-          name: Package
+          name: package
           path: build/libs
+      - name: Download artifact for test results
+        uses: actions/download-artifact@v2
+        with:
+          name: test-results
+          path: server/build/test-results
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
