@@ -91,14 +91,14 @@ public class FrozenTemplateQuestionController {
         FrozenTemplateQuestionResponseDTO dto = new FrozenTemplateQuestionResponseDTO();
         dto.setId(savedQuestion.getId());
         dto.setFrozenTemplateId(savedQuestion.getFrozenTemplateId());
-        dto.setQuestionContent(savedQuestion.getQuestionContent());
+        dto.setQuestionContent(savedQuestion.getQuestion());
         dto.setQuestionNumber(savedQuestion.getQuestionNumber());
         return dto;
     }
 
     private FrozenTemplateQuestion fromDTO(FrozenTemplateQuestionCreateDTO requestBody) {
         return new FrozenTemplateQuestion(requestBody.getFrozenTemplateId(),
-                requestBody.getQuestionContent(),
+                requestBody.getQuestion(),
                 requestBody.getQuestionNumber());
     }
 

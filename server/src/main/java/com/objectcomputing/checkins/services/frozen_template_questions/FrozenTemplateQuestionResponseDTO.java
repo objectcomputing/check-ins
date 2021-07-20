@@ -18,7 +18,7 @@ public class FrozenTemplateQuestionResponseDTO {
 
     @NotBlank
     @Schema(description = "The question asked to the recipient", required = true)
-    private String questionContent;
+    private String question;
 
     @NotNull
     @Schema(description = "Order number of the question relative to others in its set", required = true)
@@ -33,11 +33,11 @@ public class FrozenTemplateQuestionResponseDTO {
     }
 
     public String getQuestionContent() {
-        return questionContent;
+        return question;
     }
 
-    public void setQuestionContent(String questionContent) {
-        this.questionContent = questionContent;
+    public void setQuestionContent(String question) {
+        this.question = question;
     }
 
     public Integer getQuestionNumber() {

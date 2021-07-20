@@ -30,7 +30,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
     HttpClient client;
 
     void assertContentEqualsEntity(FrozenTemplate template, FrozenTemplateResponseDTO res) {
-        assertEquals(template.getOriginalCreatorId(), res.getOriginalCreatorId());
+        assertEquals(template.getTemplateCreatorId(), res.getTemplateCreatorId());
         assertEquals(template.getDescription(), res.getDescription());
         assertEquals(template.getTitle(), res.getTitle());
         assertEquals(template.getRequestId(), res.getRequestId());
@@ -59,7 +59,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setOriginalCreatorId(memberOne.getId());
+        dto.setTemplateCreatorId(memberOne.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -85,7 +85,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setOriginalCreatorId(memberOne.getId());
+        dto.setTemplateCreatorId(memberOne.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -112,7 +112,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
        dto.setTitle("Random Title");
        dto.setDescription("Random description");
-       dto.setOriginalCreatorId(memberOne.getId());
+       dto.setTemplateCreatorId(memberOne.getId());
        dto.setRequestId(req.getId());
 
        final HttpRequest<?> request = HttpRequest.POST("", dto)

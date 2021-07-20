@@ -90,17 +90,17 @@ public class FrozenTemplateController {
         dto.setId(template.getId());
         dto.setTitle(template.getTitle());
         dto.setDescription(template.getDescription());
-        dto.setOriginalCreatorId(template.getOriginalCreatorId());
+        dto.setTemplateCreatorId(template.getTemplateCreatorId());
         dto.setRequestId(template.getRequestId());
         return dto;
     }
 
     private FrozenTemplate fromDTO(FrozenTemplateCreateDTO dto) {
        FrozenTemplate template = new FrozenTemplate();
-       template.setOriginalCreatorId(dto.getOriginalCreatorId());
+       template.setTemplateCreatorId(dto.getTemplateCreatorId());
        template.setTitle(dto.getTitle());
        template.setDescription(dto.getDescription());
-       template.setOriginalCreatorId(dto.getOriginalCreatorId());
+       template.setTemplateCreatorId(dto.getTemplateCreatorId());
        template.setRequestId(dto.getRequestId());
        return template;
     }

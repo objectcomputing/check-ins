@@ -31,15 +31,15 @@ public class FrozenTemplateQuestion {
     @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
     private UUID frozenTemplateId;
 
-    @Column(name = "question_content")
+    @Column(name = "question")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @ColumnTransformer(
-            read =  "pgp_sym_decrypt(question_content::bytea,'${aes.key}')",
+            read =  "pgp_sym_decrypt(question::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
     @Schema(description = "The question asked to the recipient", required = true)
-    private String questionContent;
+    private String question;
 
     @Column(name = "question_number")
     @NotNull
@@ -47,10 +47,10 @@ public class FrozenTemplateQuestion {
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer questionNumber;
 
-    public FrozenTemplateQuestion(UUID frozenTemplateId, String questionContent, Integer questionNumber) {
+    public FrozenTemplateQuestion(UUID frozenTemplateId, String question, Integer questionNumber) {
         this.id = null;
         this.frozenTemplateId=frozenTemplateId;
-        this.questionContent = questionContent;
+        this.question = question;
         this.questionNumber = questionNumber;
     }
 
@@ -74,12 +74,12 @@ public class FrozenTemplateQuestion {
     }
 
 
-    public String getQuestionContent() {
-        return questionContent;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setQuestionContent(String questionContent) {
-        this.questionContent = questionContent;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public Integer getQuestionNumber() {
@@ -95,12 +95,12 @@ public class FrozenTemplateQuestion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FrozenTemplateQuestion that = (FrozenTemplateQuestion) o;
-        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && questionContent.equals(that.questionContent) && questionNumber.equals(that.questionNumber);
+        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && question.equals(that.question) && questionNumber.equals(that.questionNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, frozenTemplateId, questionContent, questionNumber);
+        return Objects.hash(id, frozenTemplateId, question, questionNumber);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class FrozenTemplateQuestion {
         return "FrozenTemplateQuestion{" +
                 "id=" + id +
                 ", frozenTemplateId=" + frozenTemplateId +
-                ", questionContent='" + questionContent + '\'' +
+                ", questionContent='" + question + '\'' +
                 ", orderNum=" + questionNumber +
                 '}';
     }

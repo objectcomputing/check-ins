@@ -47,7 +47,7 @@ public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite i
             assertNull(dto);
         } else {
             assertEquals(feedbackRequestQ.getFrozenTemplateId(), dto.getFrozenTemplateId());
-            assertEquals(feedbackRequestQ.getQuestionContent(), dto.getQuestionContent());
+            assertEquals(feedbackRequestQ.getQuestion(), dto.getQuestionContent());
             assertEquals(feedbackRequestQ.getQuestionNumber(), dto.getQuestionNumber());
         }
     }

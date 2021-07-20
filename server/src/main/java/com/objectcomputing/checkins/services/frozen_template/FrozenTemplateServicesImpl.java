@@ -5,7 +5,6 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
-import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
@@ -36,11 +35,7 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
 
     @Override
     public FrozenTemplate save(FrozenTemplate ft) {
-        FeedbackRequest req;
-        req = feedbackRequestServices.getById(ft.getRequestId());
-        if (req ==null)  {
-            throw new NotFoundException("Could not find request");
-        }
+        FeedbackRequest req = feedbackRequestServices.getById(ft.getRequestId());
         UUID creatorId = req.getCreatorId();
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         try {

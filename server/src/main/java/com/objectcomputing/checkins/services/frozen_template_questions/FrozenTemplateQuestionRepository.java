@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.frozen_template_questions;
 
-import com.objectcomputing.checkins.services.action_item.ActionItem;
-import com.objectcomputing.checkins.services.frozen_template.FrozenTemplate;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -25,6 +23,6 @@ public interface FrozenTemplateQuestionRepository extends CrudRepository<FrozenT
     @Override
     <S extends FrozenTemplateQuestion> S update(@NotNull @Nonnull S entity);
 
-    @Query(value = "SELECT id, frozen_template_id, PGP_SYM_DECRYPT(cast(question_content as bytea), '${aes.key}') as question_content, question_number from frozen_template_questions WHERE frozen_template_id = :frozenTemplateId ORDER BY question_number", nativeQuery = true)
+    @Query(value = "SELECT id, frozen_template_id, PGP_SYM_DECRYPT(cast(question as bytea), '${aes.key}') as question, question_number from frozen_template_questions WHERE frozen_template_id = :frozenTemplateId ORDER BY question_number", nativeQuery = true)
     List<FrozenTemplateQuestion> findByFrozenTemplateId(@NotNull String frozenTemplateId);
 }
