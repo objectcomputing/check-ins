@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.memberprofile.retentionreport;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture {
+public class RetentionReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
     @Inject
     @Client("/reports/retention")
     private HttpClient client;
@@ -103,8 +104,11 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setEndDate(LocalDate.now());
         dto.setFrequency("WEEKLY");
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -122,8 +126,11 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setEndDate(LocalDate.now());
         dto.setFrequency("");
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -141,8 +148,11 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setEndDate(LocalDate.now());
         dto.setFrequency("MoNtHlY");
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 
@@ -165,10 +175,11 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         final MemberProfile memberProfile3 = createANewHireProfile();
         final MemberProfile memberProfile4 = createATerminatedNewHireProfile();
 
-
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<RetentionReportResponseDTO> response = client.toBlocking()
                 .exchange(request, RetentionReportResponseDTO.class);
 

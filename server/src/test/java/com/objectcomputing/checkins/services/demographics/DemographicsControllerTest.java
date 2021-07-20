@@ -3,7 +3,10 @@ package com.objectcomputing.checkins.services.demographics;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.DemographicsFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -28,7 +31,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DemographicsControllerTest extends TestContainersSuite implements DemographicsFixture, MemberProfileFixture {
+public class DemographicsControllerTest extends TestContainersSuite implements DemographicsFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/demographics")
@@ -74,6 +77,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     public void testGetAllDemographics() {
 
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
+        createDefaultAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
 
@@ -92,6 +96,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testGETFindByValidGender() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
+        createDefaultAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?gender=%s", demographic.getGender()))
@@ -109,6 +114,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testGETFindByWrongNameReturnsEmptyBody() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
+        createDefaultAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?gender=%s", encodeValue("random")))
@@ -125,6 +131,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPOSTCreateADemographics() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
+        createDefaultAdminRole(alice);
 
         DemographicsCreateDTO newDemographics = new DemographicsCreateDTO();
         newDemographics.setMemberId(alice.getId());
@@ -143,6 +150,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPOSTCreateADemographicsNoName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
+        createDefaultAdminRole(alice);
 
         DemographicsCreateDTO newDemographics = new DemographicsCreateDTO();
 
@@ -159,6 +167,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTSuccessfulUpdate() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultAdminRole(lucy);
 
         Demographics demographicToUpdate = createDefaultDemographics(lucy.getId());
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
@@ -178,6 +187,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultAdminRole(lucy);
 
         Demographics demographicToUpdate = createDefaultDemographics(lucy.getId());
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
@@ -198,6 +208,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTNoId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultAdminRole(lucy);
 
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
 
@@ -214,6 +225,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographics() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultAdminRole(lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 
@@ -228,11 +240,12 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographicsWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultAdminRole(lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", UUID.randomUUID())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+                DELETE(String.format("/%s", UUID.randomUUID())).basicAuth(lucy.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -244,6 +257,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographicsNoPermission() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
+        createDefaultRole(RoleType.MEMBER, lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 

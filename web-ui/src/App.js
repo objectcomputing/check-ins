@@ -16,6 +16,7 @@ import MemberProfilePage from "./pages/MemberProfilePage";
 import EditSkillsPage from "./pages/EditSkillsPage";
 import SkillReportPage from "./pages/SkillReportPage";
 import TeamSkillReportPage from "./pages/TeamSkillReportPage";
+import BirthdayAnniversaryReportPage from "./pages/BirthdayAnniversaryReportPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -92,6 +93,10 @@ function App() {
                 <Route path="/team-skills-reports">
                   <Header title="Team Skill Reports" />
                   <TeamSkillReportPage />
+                </Route>
+                <Route path="/birthday-anniversary-reports">
+                  <Header title="Birthday & Anniversary Reports" />
+                  <BirthdayAnniversaryReportPage />
                 </Route>
                 <Route path="/">
                   <Header />

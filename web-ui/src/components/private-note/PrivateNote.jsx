@@ -15,6 +15,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 
 import "./PrivateNote.css";
+import MarkdownNote from "../markdown-note/MarkdownNote";
 
 async function realUpdate(note, csrf) {
   await updatePrivateNote(note, csrf);
@@ -89,41 +90,43 @@ const PrivateNote = () => {
     }
   }, [csrf, checkinId, currentUserId, pdlId]);
 
-  const handleNoteChange = (e) => {
+  const handleNoteChange = (content, delta, source, editor) => {
     if (Object.keys(note).length === 0 || !csrf) {
       return;
     }
-    const { value } = e.target;
+    
     setNote((note) => {
-      const newNote = { ...note, description: value };
+      const newNote = { ...note, description: content };
       updateNote(newNote, csrf);
       return newNote;
     });
-  };
+  }
 
   return canView && (
       <Card className="private-note">
         <CardHeader avatar={<LockIcon />} title="Private Notes" titleTypographyProps={{variant: "h5", component: "h2"}} />
         <CardContent>
-          <div className="container">
             {isLoading ? (
-              <div className="skeleton">
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
-                <Skeleton variant="text" height={"2rem"} />
+              <div className="container">
+                <div className="skeleton">
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                  <Skeleton variant="text" height={"2rem"} />
+                </div>
               </div>
             ) : (
-              <textarea
-                disabled={
+              <MarkdownNote 
+                style={{height: "175px", marginBottom: "30px"}}
+                value={note && note.description ? note.description : ""}
+                onChange={handleNoteChange}
+                readOnly={
                   currentCheckin?.completed ||
                   note === undefined || Object.keys(note) === 0
                 }
-                onChange={handleNoteChange}
-                value={note && note.description ? note.description : ""}
               />
             )}
-          </div>
+          
         </CardContent>
       </Card>
       );
