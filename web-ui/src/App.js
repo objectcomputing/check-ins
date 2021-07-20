@@ -2,7 +2,7 @@ import React from "react";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
-import Routes from "./components/Routes/Routes";
+import Routes from "./components/routes/Routes";
 import Menu from "./components/menu/Menu";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
