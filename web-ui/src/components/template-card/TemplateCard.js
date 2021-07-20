@@ -104,10 +104,10 @@ const TemplateCard = (props) => {
               allowPreview
               onPreview={handlePreviewClick}/>
             <CardContent className="card-content">
-                <div className="template-details">
+                    <div className="template-details">
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>
                     <p className="description">{cutText(props.description, 90)}</p>
-                </div>
+                    </div>
                 <p className="creator">Created by: <b>{creatorName}</b></p>
             </CardContent>
         </Card>
