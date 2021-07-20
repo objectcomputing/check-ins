@@ -23,12 +23,11 @@ public interface FeedbackRequestRepository extends CrudRepository<FeedbackReques
 
     @Query(value = "SELECT * " +
             "FROM feedback_requests " +
-            "WHERE (:creatorId IS NULL OR creatorId = :creatorId) " +
-            "AND (:requesteeId IS NULL OR requesteeId = :requesteeId) " +
-            "AND (:templateId IS NULL OR templateId = :templateId ) " +
-            "AND (CAST(:oldestDate as date) IS NULL OR sendDate >= :oldestDate) "
+            "WHERE (:creatorId IS NULL OR creator_id = :creatorId) " +
+            "AND (:requesteeId IS NULL OR requestee_id = :requesteeId) " +
+            "AND (CAST(:oldestDate as date) IS NULL OR send_date >= :oldestDate) "
             ,nativeQuery = true)
-    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String requesteeId, @Nullable String templateId, @Nullable LocalDate oldestDate);
+    List<FeedbackRequest> findByValues(@Nullable String creatorId, @Nullable String requesteeId, @Nullable LocalDate oldestDate);
 
     List<FeedbackRequest> findBySendDateAfter(@Nullable LocalDate sendDate);
 }

@@ -45,8 +45,8 @@ public class FeedbackRequestQuestionsControllerTest extends TestContainersSuite 
             assertNull(dto);
         } else {
             assertEquals(feedbackRequestQ.getRequestId(), dto.getRequestId());
-            assertEquals(feedbackRequestQ.getQuestionContent(), dto.getQuestionContent());
-            assertEquals(feedbackRequestQ.getOrderNum(), dto.getOrderNum());
+            assertEquals(feedbackRequestQ.getQuestion(), dto.getQuestion());
+            assertEquals(feedbackRequestQ.getQuestionNumber(), dto.getQuestionNumber());
         }
     }
 

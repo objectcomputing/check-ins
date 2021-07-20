@@ -19,6 +19,6 @@ public interface FeedbackRequestQuestionRepository extends CrudRepository<Feedba
     @Override
     <S extends FeedbackRequestQuestion> S update(@NotNull @Nonnull S entity);
 
-    @Query(value = "SELECT id, requestId, PGP_SYM_DECRYPT(cast(questionContent as bytea), '${aes.key}') as questionContent, orderNum from feedback_request_questions WHERE requestId = :requestId ORDER BY orderNum", nativeQuery = true)
+    @Query(value = "SELECT id, request_id, PGP_SYM_DECRYPT(cast(question as bytea), '${aes.key}') as question, question_number from feedback_request_questions WHERE request_id = :requestId ORDER BY question_number", nativeQuery = true)
     List<FeedbackRequestQuestion> findByRequestId(@NotNull String requestId);
 }

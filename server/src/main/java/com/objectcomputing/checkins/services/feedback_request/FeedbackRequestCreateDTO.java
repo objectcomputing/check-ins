@@ -22,9 +22,6 @@ public class FeedbackRequestCreateDTO {
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @NotNull
-    @Schema(description = "id of the template attached to request", required = true)
-    private UUID templateId;
 
     @Schema(description = "date request was sent")
     private LocalDate sendDate;
@@ -64,14 +61,6 @@ public class FeedbackRequestCreateDTO {
 
     public void setRecipientId(UUID recipientId) {
         this.recipientId = recipientId;
-    }
-
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public void setTemplateId(UUID templateId) {
-        this.templateId = templateId;
     }
 
     public LocalDate getSendDate() {

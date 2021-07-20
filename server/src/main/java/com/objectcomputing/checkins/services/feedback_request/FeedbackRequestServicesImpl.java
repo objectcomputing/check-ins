@@ -15,15 +15,15 @@ import java.util.*;
 
 
 @Singleton
-public class FeedbackRequestServicesImplementation implements FeedbackRequestServices {
+public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
 
-    public FeedbackRequestServicesImplementation(FeedbackRequestRepository feedbackReqRepository,
-                                                 CurrentUserServices currentUserServices,
-                                                 MemberProfileServices memberProfileServices) {
+    public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
+                                       CurrentUserServices currentUserServices,
+                                       MemberProfileServices memberProfileServices) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
@@ -85,7 +85,6 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
 
         boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
@@ -110,7 +109,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     @Override
     public Boolean delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback request with id " + id);
         }
 
@@ -125,7 +124,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     @Override
     public FeedbackRequest getById(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
 
@@ -139,7 +138,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, LocalDate oldestDate) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
 
@@ -147,7 +146,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(templateId), oldestDate));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
@@ -168,7 +167,7 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
     }
 
     private boolean updateStatusIsPermitted(FeedbackRequest feedbackRequest) {
