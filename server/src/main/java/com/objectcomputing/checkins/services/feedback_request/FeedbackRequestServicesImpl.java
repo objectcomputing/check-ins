@@ -1,14 +1,19 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.notifications.email.MailJetConfig;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import io.micronaut.context.annotation.Property;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
@@ -17,16 +22,30 @@ import java.util.*;
 @Singleton
 public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private EmailSender emailSender;
+    private String notificationSubject;
+    private String notificationContent;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
-                                       MemberProfileServices memberProfileServices) {
+                                       MemberProfileServices memberProfileServices, EmailSender emailSender,
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.emailSender = emailSender;
+        this.notificationContent = notificationContent;
+        this.notificationSubject = notificationSubject;
+    }
+
+    public void setEmailSender(EmailSender emailSender) {
+        this.emailSender = emailSender;
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
@@ -60,11 +79,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (feedbackRequest.getId() == null) {
-            return feedbackReqRepository.save(feedbackRequest);
+        if (feedbackRequest.getId() != null) {
+            throw new BadArgException(String.format("Found unexpected id %s for feedback request, please try updating instead.",
+                    feedbackRequest.getId()));
         }
 
-        return feedbackReqRepository.update(feedbackRequest);
+        FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
+        emailSender.sendEmail(notificationSubject, notificationContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        return storedRequest;
     }
 
     @Override

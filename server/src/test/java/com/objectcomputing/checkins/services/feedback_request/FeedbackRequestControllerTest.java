@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
@@ -11,6 +12,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import java.util.*;
 
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -19,7 +21,10 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import javax.inject.Inject;
 
 import java.time.LocalDate;
@@ -27,11 +32,29 @@ import java.time.LocalDate;
 import static com.objectcomputing.checkins.services.memberprofile.MemberProfileTestUtil.mkMemberProfile;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackRequestFixture, RoleFixture {
     @Inject
     @Client("/services/feedback/requests")
     HttpClient client;
+
+    private EmailSender emailSender = mock(EmailSender.class);
+
+    @Inject
+    private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
+
+    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
+
+    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
+
+
+
+    @BeforeEach
+    void resetMocks() {
+        Mockito.reset(emailSender);
+        feedbackRequestServicesImpl.setEmailSender(emailSender);
+    }
 
     private FeedbackRequest createSampleFeedbackRequest(MemberProfile pdlMember, MemberProfile requestee, MemberProfile recipient) {
         createDefaultRole(RoleType.PDL, pdlMember);
@@ -115,6 +138,30 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertResponseEqualsCreate(response.body(), dto);
+    }
+
+    @Test
+    void testCreateFeedbackRequestSendsEmail() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        final MemberProfile recipient = createADefaultRecipient();
+        //create feedback request
+        final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        dto.setCreatorId(pdlMemberProfile.getId());
+        dto.setRequesteeId(employeeMemberProfile.getId());
+        dto.setRecipientId(recipient.getId());
+        dto.setSendDate(LocalDate.now());
+        dto.setStatus("pending");
+        dto.setDueDate(null);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        //verify appropriate email was sent
+        verify(emailSender).sendEmail(notificationSubject, notificationContent, recipient.getWorkEmail());
     }
 
     @Test
