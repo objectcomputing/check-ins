@@ -1,4 +1,4 @@
-import React, {useContext, useCallback, useRef} from "react";
+import React, {useContext, useCallback, useEffect, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -93,8 +93,8 @@ const FeedbackRequestPage = () => {
   const requestee = selectProfile(state, forQuery);
   const memberIds = selectCurrentMemberIds(state);
   const csrf = selectCsrfToken(state)
-  const templateChecked = useRef(false);
-
+  const [readyToProceed, setReadyToProceed] = useState(false);
+  const pathname = location.pathname;
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -110,9 +110,7 @@ const FeedbackRequestPage = () => {
 
 
   const hasTemplate = useCallback(() => {
-
-    if (!templateChecked.current) {
-      async function isTemplateValid(templateQuery, csrf) {
+      async function isTemplateValid() {
         if (!templateQuery || !csrf) {
           return false;
         }
@@ -125,7 +123,6 @@ const FeedbackRequestPage = () => {
                 ? res.payload.data
                 : null
         if (templateResponse === null) {
-          templateChecked.current = true;
           window.snackDispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -133,17 +130,19 @@ const FeedbackRequestPage = () => {
               toast: "The Id for the template you selected does not exist.",
             },
           });
-          return true;
+          return false;
+        }
+        else{
+          return true
         }
       }
-    if (csrf && templateQuery && !templateChecked.current) {
-      isTemplateValid(templateQuery, csrf).then(checked => {
-        templateChecked.current = checked;
-      });
-    }
-     return !templateChecked.current && !!templateQuery;
-    }
-  }, [csrf, templateQuery]);
+    if (csrf && templateQuery) {
+        isTemplateValid().then((isValid) => {
+          return isValid;
+        })
+      }
+     return !!templateQuery;
+    }, [csrf, templateQuery]);
 
 
   const hasFrom = useCallback(() => {
@@ -310,7 +309,7 @@ const handleSubmit = () =>{
         </Stepper>
       </div>
       <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector onClick={templateChecked.current = false} changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
         {activeStep === 2 && <FeedbackRecipientSelector />}
         {activeStep === 3 && <SelectDate />}
       </div>
