@@ -37,7 +37,7 @@ public class FeedbackAnswer {
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
-    @Column(name = "questionId")
+    @Column(name = "question_id")
     @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
