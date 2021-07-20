@@ -9,17 +9,25 @@ import java.util.UUID;
 @Introspected
 public class FeedbackRequestQuestionCreateDTO {
 
+    @NotBlank
+    @Schema(description = "The question asked to the recipient", required = true)
+    private String question;
+
     @NotNull
     @Schema(description = "id of the feedback request the question answer pair is attached to", required = true)
     private UUID requestId;
 
-    @NotBlank
-    @Schema(description = "The question asked to the recipient", required = true)
-    private String questionContent;
-
     @NotNull
     @Schema(description = "Order number of the question relative to others in its set", required = true)
-    private Integer orderNum;
+    private Integer questionNumber;
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
 
     public UUID getRequestId() {
         return requestId;
@@ -29,19 +37,11 @@ public class FeedbackRequestQuestionCreateDTO {
         this.requestId = requestId;
     }
 
-    public String getQuestionContent() {
-        return questionContent;
+    public Integer getQuestionNumber() {
+        return questionNumber;
     }
 
-    public void setQuestionContent(String questionContent) {
-        this.questionContent = questionContent;
-    }
-
-    public Integer getOrderNum() {
-        return orderNum;
-    }
-
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
+    public void setQuestionNumber(Integer questionNumber) {
+        this.questionNumber = questionNumber;
     }
 }

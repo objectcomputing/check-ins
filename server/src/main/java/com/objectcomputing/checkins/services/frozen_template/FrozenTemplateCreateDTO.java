@@ -1,30 +1,33 @@
-package com.objectcomputing.checkins.services.feedback_template;
+package com.objectcomputing.checkins.services.frozen_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Introspected
-public class FeedbackTemplateCreateDTO {
+public class FrozenTemplateCreateDTO {
 
     @NotBlank
-    @Schema(description = "title of the feedback template", required = true)
+    @Schema(description = "title of feedback template", required = true)
     private String title;
 
     @Nullable
-    @Schema(description = "description of the feedback template")
+    @Schema(description = "description of feedback template", required = false)
     private String description;
 
     @NotBlank
-    @Schema(description = "UUID of person who created the feedback template", required = true)
+    @Schema(description = "UUID of person who created the feedback template, not necessarily request creator", required = true)
     private UUID creatorId;
+
+
+    @NotBlank
+    @Schema(description = "UUID of the request this frozen template is attached to ", required = true)
+    private UUID requestId;
+
+
 
     public String getTitle() {
         return title;
@@ -50,4 +53,14 @@ public class FeedbackTemplateCreateDTO {
     public void setCreatorId(UUID creatorId) {
         this.creatorId = creatorId;
     }
+
+    public UUID getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
+    }
+
+
 }

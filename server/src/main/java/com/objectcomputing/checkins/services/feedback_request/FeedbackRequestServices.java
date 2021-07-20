@@ -13,5 +13,5 @@ public interface FeedbackRequestServices {
 
     FeedbackRequest getById(UUID id);
 
-    List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate);
+    List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, LocalDate oldestDate);
 }

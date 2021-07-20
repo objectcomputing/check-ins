@@ -60,10 +60,10 @@ public class FeedbackRequestQuestionController {
      * @return {@link HttpResponse}
      */
     @Delete("/{id}")
-    public Single<HttpResponse> delete(@NotNull UUID id) {
+    public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> feedbackReqQServices.delete(id))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(successFlag -> (HttpResponse) HttpResponse.ok())
+                .map(successFlag -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -100,18 +100,27 @@ public class FeedbackRequestQuestionController {
                 }).subscribeOn(Schedulers.from(executorService));
     }
 
-
+    /**
+     * Converts a {@link FeedbackRequestQuestion} into a {@link FeedbackRequestQuestionResponseDTO}
+     * @param savedQuestion {@link FeedbackRequestQuestion}
+     * @return {@link FeedbackRequestQuestionResponseDTO}
+     */
     private FeedbackRequestQuestionResponseDTO fromEntity(FeedbackRequestQuestion savedQuestion) {
         FeedbackRequestQuestionResponseDTO dto = new FeedbackRequestQuestionResponseDTO();
         dto.setId(savedQuestion.getId());
         dto.setRequestId(savedQuestion.getRequestId());
-        dto.setQuestionContent(savedQuestion.getQuestionContent());
-        dto.setOrderNum(savedQuestion.getOrderNum());
+        dto.setQuestion(savedQuestion.getQuestion());
+        dto.setQuestionNumber(savedQuestion.getQuestionNumber());
         return dto;
     }
 
-    private FeedbackRequestQuestion fromDTO(FeedbackRequestQuestionCreateDTO requestBody) {
-        return new FeedbackRequestQuestion(requestBody.getRequestId(), requestBody.getQuestionContent(), requestBody.getOrderNum());
+    /**
+     * Converts a {@link FeedbackRequestQuestionCreateDTO} into a {@link FeedbackRequestQuestion}
+     * @param dto {@link FeedbackRequestQuestionCreateDTO}
+     * @return {@link FeedbackRequestQuestion}
+     */
+    private FeedbackRequestQuestion fromDTO(FeedbackRequestQuestionCreateDTO dto) {
+        return new FeedbackRequestQuestion(dto.getQuestion(), dto.getRequestId(), dto.getQuestionNumber());
     }
 
 }

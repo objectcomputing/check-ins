@@ -113,7 +113,6 @@ public class GuildServicesImpl implements GuildServices {
                             guildMemberServices.delete(existingMember.getId());
                         }
                     });
-
                     updated = fromEntity(newGuildEntity, newMembers);
                 } else {
                     throw new BadArgException(String.format("Guild ID %s does not exist, can't update.", guildDTO.getId()));

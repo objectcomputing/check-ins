@@ -85,7 +85,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
 
         boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
@@ -110,7 +109,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public Boolean delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback request with id " + id);
         }
 
@@ -125,7 +124,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public FeedbackRequest getById(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
 
@@ -139,7 +138,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, LocalDate oldestDate) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
 
@@ -147,7 +146,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(templateId), oldestDate));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
@@ -166,11 +165,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
 
         //a PDL may create a request for a user who is assigned to them
-        if (currentUserId.equals(requesteePDL)) {
-            return true;
-        }
-        //TODO: Can a person's supervisor send a feedback request?
-        return false;
+        return currentUserId.equals(requesteePDL);
     }
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
