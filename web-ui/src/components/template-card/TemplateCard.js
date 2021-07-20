@@ -14,15 +14,6 @@ import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
 import {getMember} from "../../api/member";
 
-const propTypes = {
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    createdBy: PropTypes.string.isRequired,
-    isAdHoc: PropTypes.bool,
-    onPreviewClick: PropTypes.func,
-    onCardClick: PropTypes.func
-}
-
 const cutText = (text, maxCharacters) => {
     if (!text) {
         text = "";
@@ -67,6 +58,15 @@ const TemplateCardHeader = withStyles(templateCardHeaderStyles, {
     </div>
 ));
 
+const propTypes = {
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    creatorId: PropTypes.string.isRequired,
+    isAdHoc: PropTypes.bool,
+    onPreviewClick: PropTypes.func,
+    onCardClick: PropTypes.func
+}
+
 const TemplateCard = (props) => {
 
     const { state } = useContext(AppContext);
@@ -82,8 +82,8 @@ const TemplateCard = (props) => {
     // Get name of the template creator
     useEffect(() => {
         async function getCreatorName() {
-            if (props.createdBy) {
-                let res = await getMember(props.createdBy, csrf);
+            if (props.creatorId) {
+                let res = await getMember(props.creatorId, csrf);
                 let creatorProfile =
                   res.payload && res.payload.data && !res.error
                     ? res.payload.data
@@ -94,7 +94,7 @@ const TemplateCard = (props) => {
         if (csrf) {
             getCreatorName();
         }
-    }, [props.createdBy, csrf]);
+    }, [props.creatorId, csrf]);
 
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>

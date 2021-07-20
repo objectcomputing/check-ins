@@ -14,29 +14,27 @@ import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 import "./FeedbackTemplateSelector.css";
 import {Search} from "@material-ui/icons";
+
 const allTemplates = [
   {
     id: 123,
     title: "Survey 1",
-    isAdHoc: false,
     description: "Make a survey with a few questions",
-    createdBy: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
+    creatorId: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
     questions: []
   },
   {
     id: 124,
     title: "Feedback Survey 2",
-    isAdHoc: false,
     description: "Another type of survey",
-    createdBy: "2559a257-ae84-4076-9ed4-3820c427beeb",
+    creatorId: "2559a257-ae84-4076-9ed4-3820c427beeb",
     questions: [],
   },
   {
     id: 125,
     title: "Custom Template",
-    isAdHoc: false,
     description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-    createdBy: "802cb1f5-a255-4236-8719-773fa53d79d9",
+    creatorId: "802cb1f5-a255-4236-8719-773fa53d79d9",
     questions: []
   },
 ];
@@ -52,7 +50,7 @@ const propTypes = {
   const currentUser = selectCurrentUser(state);
   const currentUserId = currentUser?.id;
   const [templates, setTemplates] = useState([]);
-  const [preview, setPreview] = useState({open: false, selectedTemplate: null});
+  const [preview, setPreview] = useState({open: false, selectedTemplate: {}, createAdHoc: false});
   const [searchText, setSearchText] = useState("");
   const templatesFetched = useRef(false);
 
@@ -84,29 +82,27 @@ const propTypes = {
 
   const handlePreviewOpen = (event, selectedTemplate) => {
     event.stopPropagation();
-    setPreview({open: true, selectedTemplate: selectedTemplate});
+    setPreview({open: true, selectedTemplate: selectedTemplate, createAdHoc: false});
   }
 
   const handlePreviewClose = (selectedTemplate) => {
-    setPreview({open: false, selectedTemplate: selectedTemplate});
+    setPreview({open: false, selectedTemplate: selectedTemplate, createAdHoc: false});
   }
 
   const handlePreviewSubmit = async (submittedTemplate) => {
     if (!currentUserId || !csrf) {
       return;
     }
-    if (submittedTemplate && submittedTemplate.isAdHoc) {
+    if (submittedTemplate && preview.createAdHoc) {
       let newFeedbackTemplate = {
         title: submittedTemplate.title,
         description: submittedTemplate.description,
-        createdBy: currentUserId,
-        active: true,
+        creatorId: currentUserId,
       };
 
       const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
       if (!res.error && res.payload && res.payload.data) {
         newFeedbackTemplate.id = res.payload.data.id;
-        newFeedbackTemplate.isAdHoc = true;
         setTemplates([...templates, newFeedbackTemplate]);
         changeQuery("template", newFeedbackTemplate.id);
       }
@@ -115,10 +111,10 @@ const propTypes = {
       changeQuery("template", submittedTemplate.id);
     }
 
-    setPreview({open: false, selectedTemplate: submittedTemplate});
+    setPreview({open: false, selectedTemplate: submittedTemplate, createAdHoc: false});
   }
-  const onCardClick = useCallback((template) => {
 
+  const onCardClick = useCallback((template) => {
     if (!template || !template.id) {
       return;
     }
@@ -130,13 +126,7 @@ const propTypes = {
   }, [changeQuery, query]);
 
   const onNewAdHocClick = () => {
-    const newAdHocTemplate = {
-      title: "Ad Hoc",
-      description: "Ask a single question",
-      createdBy: currentUserId,
-      isAdHoc: true,
-    }
-    setPreview({open: true, selectedTemplate: newAdHocTemplate});
+    setPreview({open: true, selectedTemplate: {}, createAdHoc: true});
   }
 
   const getFilteredTemplates = useCallback(() => {
@@ -164,7 +154,7 @@ const propTypes = {
       <TemplateCard
         key={template.id}
         title={template.title}
-        createdBy={template.createdBy}
+        creatorId={template.creatorId}
         description={template.description}
         isAdHoc={template.isAdHoc}
         isSelected={query === template.id}
@@ -183,6 +173,7 @@ const propTypes = {
         open={preview.open}
         onSubmit={(submittedTemplate) => handlePreviewSubmit(submittedTemplate)}
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
+        createAdHoc={preview.createAdHoc}
       />
       }
       <div className="feedback-template-actions">
