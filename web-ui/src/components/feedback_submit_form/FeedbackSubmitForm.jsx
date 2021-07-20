@@ -49,13 +49,6 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired
 }
 
-
-
-//const hasID = useCallback(() => {
-//
-//}, [idQuery])
-
-
 const FeedbackSubmitForm = (props) => {
   const FeedbackSubmitForm = (props) => {
     const classes = useStyles();
