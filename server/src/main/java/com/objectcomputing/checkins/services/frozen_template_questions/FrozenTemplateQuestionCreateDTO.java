@@ -10,7 +10,7 @@ import java.util.UUID;
 @Introspected
 public class FrozenTemplateQuestionCreateDTO {
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
     private UUID frozenTemplateId;
 
@@ -19,7 +19,7 @@ public class FrozenTemplateQuestionCreateDTO {
     @Schema(description = "The question asked to the recipient", required = true)
     private String question;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer questionNumber;
 

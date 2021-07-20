@@ -26,7 +26,7 @@ public class FrozenTemplateQuestion {
     private UUID id;
 
     @Column(name = "frozen_template_id")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
     private UUID frozenTemplateId;
@@ -42,7 +42,7 @@ public class FrozenTemplateQuestion {
     private String question;
 
     @Column(name = "question_number")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer questionNumber;
