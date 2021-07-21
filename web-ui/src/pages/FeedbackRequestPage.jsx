@@ -110,42 +110,38 @@ const FeedbackRequestPage = () => {
   }, [forQuery])
 
 
-  const hasTemplate = useCallback(() => {
-      async function isTemplateValid() {
-        if (!templateQuery || !csrf) {
-          return false;
-        }
-        let res = await getFeedbackTemplate(templateQuery, csrf);
-        let templateResponse =
-            res.payload &&
-            res.payload.data &&
-            res.payload.status === 200 &&
-            !res.error
-                ? res.payload.data
-                : null
-        if (templateResponse === null) {
-          window.snackDispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: "error",
-              toast: "The Id for the template you selected does not exist.",
-            },
-          });
-          return false;
-        }
-        else {
-          return true;
-        }
+useEffect(() => {
+  async function isTemplateValid() {
+      if (!templateQuery || !csrf) {
+        return false;
       }
-    if (csrf && templateQuery) {
-        isTemplateValid().then((isValid) => {
-          return isValid;
-        })
+      let res = await getFeedbackTemplate(templateQuery, csrf);
+      let templateResponse =
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null
+      if (templateResponse === null) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "The Id for the template you selected does not exist.",
+          },
+        });
+        return false;
       }
-    else {
-      return !!templateQuery;
+      else {
+        return true;
+      }
     }
-    }, [csrf, templateQuery]);
+
+    isTemplateValid().then((isValid) => {
+      setTemplateIsValid(isValid);
+    });
+  }, [csrf, templateQuery]);
 
 
   const hasFrom = useCallback(() => {
@@ -185,16 +181,16 @@ const FeedbackRequestPage = () => {
         case 1:
           return hasFor() && templateIsValid
         case 2:
-          return hasFor() && hasTemplate() && hasFrom();
+          return hasFor() && templateIsValid && hasFrom();
         case 3:
           const dueQueryValid = dueQuery ? isValidDate(dueQuery) : true;
-          return hasFor() && hasTemplate() && hasFrom() && hasSend() && dueQueryValid;
+          return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
         default:
           return false;
       }
     }
     return false;
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate, query]);
+  }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
 const handleSubmit = () =>{
     let feedbackRequest = {}
@@ -253,11 +249,11 @@ const handleSubmit = () =>{
           case 1:
             return hasFor();
           case 2:
-            return hasFor() && hasTemplate();
+            return hasFor() && templateIsValid
           case 3:
-            return hasFor() && hasTemplate() && hasFrom();
+            return hasFor() && templateIsValid && hasFrom();
           case 4:
-            return hasFor() && hasTemplate() && hasFrom() && hasSend();
+            return hasFor() && templateIsValid && hasFrom() && hasSend();
           default:
             return false;
         }
