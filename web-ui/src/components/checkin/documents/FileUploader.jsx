@@ -11,7 +11,7 @@ const FileUploader = ({ fileRef, handleFile }) => {
   const { checkinId } = useParams();
   const currentCheckin = selectCheckin(state, checkinId);
 
-  // Programatically click the hidden file input element when the Button component is clicked
+  // Programmatically click the hidden file input element when the Button component is clicked
   const handleClick = (event) => {
     fileRef.current.click();
   };
