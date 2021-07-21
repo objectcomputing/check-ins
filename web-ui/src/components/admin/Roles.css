@@ -41,73 +41,64 @@
   width: 25ch;
 }
 
-.role-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.roles-content {
+  margin-left: 1rem;
 }
 
-.role-header {
+.roles-header {
   display: flex;
   justify-content: center;
 }
 
-.role-content .member-card {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 1rem 1rem;
-}
-
-.role-content .member-card .icon {
+.roles-content .icon {
   padding-right: 2rem;
   cursor: pointer;
 }
 
-.role-content .role-search {
+.roles-content .roles-list-item {
+  align-items: center;
+}
+
+.roles-content .roles-search {
   margin-bottom: 1rem;
 }
 
-.role-content .roles {
-  display: flex;
-  width: 95%;
-}
-
-@media (min-width: 750px) {
-  .role-content .roles {
-    display: block;
+@media (max-width: 750px) {
+  .roles-content .roles {
+    display: block !important;
+  }
+  .roles-content .roles .roles-bot {
+    display: block !important;
   }
 }
 
-.role-content .roles .role {
+.roles-content .roles .role {
   margin: 1rem;
 }
 
-.role-content .roles .role .role-card {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
-.role-content .roles .role-buttons .role-add {
+.roles-content .roles .role-buttons .role-add {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.role-content .roles .role-buttons .role-edit {
+.roles-content .roles .role-buttons .role-edit {
   cursor: pointer;
   display: flex;
   align-items: center;
   margin-left: 0.5rem;
 }
 
-.role-content .roles .role-buttons span {
+.roles-content .roles .role-buttons span {
   margin-right: 0.5rem;
 }
 
-.role-content .role-top {
+.roles-content .roles .roles-bot {
+  display: flex;
+}
+
+.roles-content .roles .roles-top {
   display: flex;
   justify-content: space-between;
   margin-left: 16px;
