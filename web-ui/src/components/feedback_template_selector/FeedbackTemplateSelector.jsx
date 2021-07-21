@@ -7,13 +7,14 @@ import Button from "@material-ui/core/Button";
 import {Tooltip} from "@material-ui/core";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import {
-  createFeedbackTemplate,
+  createFeedbackTemplateWithQuestion,
   getAllFeedbackTemplates
 } from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 import "./FeedbackTemplateSelector.css";
 import {Search} from "@material-ui/icons";
+import {UPDATE_TOAST} from "../../context/actions";
 
 const propTypes = {
   query: PropTypes.string,
@@ -21,7 +22,7 @@ const propTypes = {
 };
 
   const FeedbackTemplateSelector = ({query, changeQuery}) => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);
   const currentUserId = currentUser?.id;
@@ -65,20 +66,35 @@ const propTypes = {
     setPreview({open: false, selectedTemplate: selectedTemplate, createAdHoc: false});
   }
 
-  const handlePreviewSubmit = async (submittedTemplate) => {
+  const handlePreviewSubmit = async (submittedTemplate, submittedQuestion) => {
     if (!currentUserId || !csrf) {
       return;
     }
-    if (submittedTemplate && preview.createAdHoc) {
-      let newFeedbackTemplate = {
+    if (submittedTemplate && submittedQuestion && preview.createAdHoc) {
+      const newFeedbackTemplate = {
         title: submittedTemplate.title,
         description: submittedTemplate.description,
         creatorId: currentUserId,
       };
 
-      const res = await createFeedbackTemplate(newFeedbackTemplate, csrf);
-      if (!res.error && res.payload && res.payload.data) {
-        newFeedbackTemplate.id = res.payload.data.id;
+      const newTemplateQuestion = {
+        question: submittedQuestion,
+        questionNumber: 1
+      }
+
+      const {templateRes, questionRes} = await createFeedbackTemplateWithQuestion(newFeedbackTemplate, newTemplateQuestion, csrf);
+
+      if (templateRes.error || questionRes.error) {
+        const errorMessage = templateRes.error ? "Failed to save ad-hoc template" : "Failed to save question for ad-hoc template";
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: errorMessage
+          }
+        });
+      } else if (templateRes.payload && templateRes.payload.data) {
+        newFeedbackTemplate.id = templateRes.payload.data.id;
         setTemplates([...templates, newFeedbackTemplate]);
         changeQuery("template", newFeedbackTemplate.id);
       }
@@ -115,8 +131,8 @@ const propTypes = {
     let templatesToDisplay = templates;
     if (searchText) {
       const filtered = templates.filter((template) =>
-        template.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        template.description.toLowerCase().includes(searchText.toLowerCase())
+        template.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+        template.description?.toLowerCase().includes(searchText.toLowerCase())
       );
 
       if (filtered.length === 0) {
@@ -147,7 +163,7 @@ const propTypes = {
       <TemplatePreviewModal
         template={preview.selectedTemplate}
         open={preview.open}
-        onSubmit={(submittedTemplate) => handlePreviewSubmit(submittedTemplate)}
+        onSubmit={(submittedTemplate, submittedQuestion) => handlePreviewSubmit(submittedTemplate, submittedQuestion)}
         onClose={() => handlePreviewClose(preview.selectedTemplate)}
         createAdHoc={preview.createAdHoc}
       />

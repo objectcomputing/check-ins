@@ -101,11 +101,13 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
 
   const submitPreview = () => {
     const submittedTemplate = {...template};
+    let submittedQuestion = null;
     if (createAdHoc) {
       submittedTemplate.title = newAdHocData.title;
       submittedTemplate.description = newAdHocData.description;
+      submittedQuestion = newAdHocData.question;
     }
-    onSubmit(submittedTemplate);
+    onSubmit(submittedTemplate, submittedQuestion);
   };
 
   return (
@@ -140,7 +142,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
             </Typography>
           }
           <List>
-            {templateQuestions && templateQuestions.map((templateQuestion, index) => (
+            {templateQuestions && templateQuestions.map((templateQuestion) => (
               <ListItem
                 className={classes.questionListItem}
                 key={templateQuestion?.id}
