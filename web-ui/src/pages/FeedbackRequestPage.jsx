@@ -13,7 +13,7 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
-import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMembers, selectCurrentMemberIds} from "../context/selectors";
+import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
 import { UPDATE_TOAST } from "../context/actions";
@@ -77,12 +77,7 @@ const FeedbackRequestPage = () => {
   const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
-
-
   const [query, setQuery] = useState(null);
-  useEffect(()=> {
-    setQuery(queryString.parse(location?.search));
-  }, [queryString, location.search])
   const stepQuery = query?.step?.toString();
   const templateQuery = query?.template?.toString();
   const fromQuery = query?.from?.toString();
@@ -95,6 +90,11 @@ const FeedbackRequestPage = () => {
   const csrf = selectCsrfToken(state)
   const [readyToProceed, setReadyToProceed] = useState(false);
   const pathname = location.pathname;
+
+
+  useEffect(()=> {
+    setQuery(queryString.parse(location?.search));
+  }, [location.search])
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -132,8 +132,8 @@ const FeedbackRequestPage = () => {
           });
           return false;
         }
-        else{
-          return true
+        else {
+          return true;
         }
       }
     if (csrf && templateQuery) {
@@ -141,7 +141,9 @@ const FeedbackRequestPage = () => {
           return isValid;
         })
       }
-     return !!templateQuery;
+    else {
+      return !!templateQuery;
+    }
     }, [csrf, templateQuery]);
 
 
@@ -180,6 +182,7 @@ const FeedbackRequestPage = () => {
     if(query) {
       switch (activeStep) {
         case 1:
+          console.log(hasTemplate())
           return hasFor() && hasTemplate();
         case 2:
           return hasFor() && hasTemplate() && hasFrom();
