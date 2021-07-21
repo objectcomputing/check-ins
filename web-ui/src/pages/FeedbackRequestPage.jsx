@@ -89,6 +89,7 @@ const FeedbackRequestPage = () => {
   const memberIds = selectCurrentMemberIds(state);
   const csrf = selectCsrfToken(state)
   const [readyToProceed, setReadyToProceed] = useState(false);
+  const [templateIsValid, setTemplateIsValid] = useState();
   const pathname = location.pathname;
 
 
@@ -182,8 +183,7 @@ const FeedbackRequestPage = () => {
     if(query) {
       switch (activeStep) {
         case 1:
-          console.log(hasTemplate())
-          return hasFor() && hasTemplate();
+          return hasFor() && templateIsValid
         case 2:
           return hasFor() && hasTemplate() && hasFrom();
         case 3:
@@ -263,7 +263,7 @@ const handleSubmit = () =>{
         }
       }
       return true;
-    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, query]);
+    }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
   
   const handleQueryChange = (key, value) => {
     let newQuery = {
