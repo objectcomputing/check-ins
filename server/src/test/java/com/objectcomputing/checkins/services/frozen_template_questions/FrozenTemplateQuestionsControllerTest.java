@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FrozenTemplateQuestionsControllerTest extends TestContainersSuite implements RepositoryFixture, FeedbackRequestFixture, FrozenTemplateFixture, FrozenTemplateQuestionFixture, MemberProfileFixture, RoleFixture {
     @Inject
-    @Client("/services/feedback/frozen_template_questions")
+    @Client("/services/feedback/frozen-template-questions")
     HttpClient client;
 
     private FrozenTemplate createSampleFrozenTemplate(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {

@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 
-@Controller("/services/feedback/frozen_template_questions")
+@Controller("/services/feedback/frozen-template-questions")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "frozen template question")
 public class FrozenTemplateQuestionController {
@@ -49,7 +49,7 @@ public class FrozenTemplateQuestionController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedQuestion -> (HttpResponse<FrozenTemplateQuestionResponseDTO>) HttpResponse
                         .created(fromEntity(savedQuestion))
-                        .headers(headers -> headers.location(URI.create("/frozen_template_questions/" + savedQuestion.getId()))))
+                        .headers(headers -> headers.location(URI.create("/frozen-template-questions/" + savedQuestion.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -65,7 +65,7 @@ public class FrozenTemplateQuestionController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedbackQ -> (HttpResponse<FrozenTemplateQuestionResponseDTO>) HttpResponse
                         .ok(fromEntity(savedFeedbackQ))
-                        .headers(headers -> headers.location(URI.create("/frozen_template_questions/" + savedFeedbackQ.getId()))))
+                        .headers(headers -> headers.location(URI.create("/frozen-template-questions/" + savedFeedbackQ.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 

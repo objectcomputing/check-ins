@@ -17,11 +17,11 @@ import java.net.URI;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
-@Controller("/services/feedback/frozen_templates")
+@Controller("/services/feedback/frozen-templates")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Tag(name = "frozen_templates")
+@Tag(name = "frozen-templates")
 public class FrozenTemplateController {
 
     private final FrozenTemplateServices frozenTemplateServices;
@@ -48,7 +48,7 @@ public class FrozenTemplateController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedbackTemplate -> (HttpResponse<FrozenTemplateResponseDTO>) HttpResponse
                         .created(fromEntity(savedFeedbackTemplate))
-                        .headers(headers -> headers.location(URI.create("/frozen_templates/" + savedFeedbackTemplate.getId()))))
+                        .headers(headers -> headers.location(URI.create("/frozen-templates/" + savedFeedbackTemplate.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -64,7 +64,7 @@ public class FrozenTemplateController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplate -> (HttpResponse<FrozenTemplateResponseDTO>) HttpResponse
                         .ok(fromEntity(feedbackTemplate))
-                        .headers(headers -> headers.location(URI.create("/frozen_template/" + feedbackTemplate.getId()))))
+                        .headers(headers -> headers.location(URI.create("/frozen-template/" + feedbackTemplate.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
@@ -81,7 +81,7 @@ public class FrozenTemplateController {
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackTemplate -> (HttpResponse<FrozenTemplateResponseDTO>) HttpResponse
                         .ok(fromEntity(feedbackTemplate))
-                        .headers(headers -> headers.location(URI.create("/frozen_template/" + feedbackTemplate.getId()))))
+                        .headers(headers -> headers.location(URI.create("/frozen-template/" + feedbackTemplate.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
     }
 

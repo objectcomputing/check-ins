@@ -26,7 +26,7 @@ import java.util.UUID;
 public class FrozenTemplateControllerTest extends TestContainersSuite implements RepositoryFixture, RoleFixture, FrozenTemplateFixture, MemberProfileFixture, FeedbackRequestFixture {
 
     @Inject
-    @Client("/services/feedback/frozen_templates")
+    @Client("/services/feedback/frozen-templates")
     HttpClient client;
 
     void assertContentEqualsEntity(FrozenTemplate template, FrozenTemplateResponseDTO res) {
