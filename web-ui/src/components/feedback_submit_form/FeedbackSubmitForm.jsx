@@ -97,8 +97,7 @@ const FeedbackSubmitForm = (props) => {
           </div>
         </div>
     );
-  };
+};
 
-  FeedbackSubmitForm.propTypes = propTypes;
-}
+FeedbackSubmitForm.propTypes = propTypes;
 export default FeedbackSubmitForm;
