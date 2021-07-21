@@ -15,30 +15,6 @@ import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
 import "./FeedbackTemplateSelector.css";
 import {Search} from "@material-ui/icons";
 
-const allTemplates = [
-  {
-    id: 123,
-    title: "Survey 1",
-    description: "Make a survey with a few questions",
-    creatorId: "01b7d769-9fa2-43ff-95c7-f3b950a27bf9",
-    questions: []
-  },
-  {
-    id: 124,
-    title: "Feedback Survey 2",
-    description: "Another type of survey",
-    creatorId: "2559a257-ae84-4076-9ed4-3820c427beeb",
-    questions: [],
-  },
-  {
-    id: 125,
-    title: "Custom Template",
-    description: "A very very very very very very very very very very very very very very very very very very very very very very very very very very long description",
-    creatorId: "802cb1f5-a255-4236-8719-773fa53d79d9",
-    questions: []
-  },
-];
-
 const propTypes = {
   query: PropTypes.string,
   changeQuery: PropTypes.func
@@ -70,7 +46,7 @@ const propTypes = {
           : null
       if (templateList) {
         templatesFetched.current = true;
-        return [...templateList, ...allTemplates];
+        return templateList;
       }
      }
     if (csrf && currentUserId) {

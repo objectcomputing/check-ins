@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -10,11 +10,15 @@ import Slide from '@material-ui/core/Slide';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button"
 import "./TemplatePreviewModal.css";
 import AdHocCreationForm from "./ad_hoc_creation_form/AdHocCreationForm";
 import PropTypes from "prop-types";
+import {getQuestionsOnTemplate} from "../../api/feedbacktemplate";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
+import {ListItemAvatar} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +39,16 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '25ch',
-
+  },
+  questionNumber: {
+    width: "2em",
+    height: "2em",
+    fontSize: "1em",
+    color: "white",
+    backgroundColor: theme.palette.primary.main
+  },
+  questionListItem: {
+    padding: "1.5em 1.5em"
   }
 }));
 
@@ -52,10 +65,39 @@ const propTypes = {
 }
 
 const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }) => {
-
   const classes = useStyles();
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const currentUserId = selectCurrentUser(state)?.id;
 
   const [newAdHocData, setNewAdHocData] = useState({});
+  const creatorName = selectProfile(state, template?.creatorId)?.name;
+  const [templateQuestions, setTemplateQuestions] = useState([]);
+
+  useEffect(() => {
+    async function getTemplateQuestions(templateId, csrf) {
+      if (!currentUserId || !csrf) {
+        return [];
+      }
+      let res = await getQuestionsOnTemplate(templateId, csrf);
+      let questionList =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (questionList) {
+        return questionList;
+      }
+    }
+    if (template && template.id) {
+      getTemplateQuestions(template.id, csrf).then((questionsList) => {
+        setTemplateQuestions(questionsList);
+      });
+    }
+
+  }, [csrf, currentUserId, template]);
 
   const submitPreview = () => {
     const submittedTemplate = {...template};
@@ -74,7 +116,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {template.isAdHoc && !template.id ? "New Ad-Hoc Template" : template.title}
+            {createAdHoc ? "New Ad-Hoc Template" : template.title}
           </Typography>
           <Button className="ad-hoc-next-button"
                   onClick={submitPreview}
@@ -88,15 +130,28 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
       {createAdHoc ?
         <AdHocCreationForm onFormChange={(form) => setNewAdHocData(form)}/> :
         <React.Fragment>
-          <Typography>{template.description}</Typography>
+          <Typography variant="h6">{template?.description}</Typography>
+          <Typography style={{color: "gray"}}>
+            <em>Created by {creatorName}</em>
+          </Typography>
+          {templateQuestions && templateQuestions.length === 0 &&
+            <Typography variant="h5" style={{marginTop: "1em"}}>
+              This template has no questions
+            </Typography>
+          }
           <List>
-            {template.questions && template.questions.map((question, index) => (
-              <React.Fragment>
-                <ListItem button>
-                  <ListItemText primary={`Question ${index + 1}`} secondary={question}/>
-                </ListItem>
-                <Divider/>
-              </React.Fragment>
+            {templateQuestions && templateQuestions.map((templateQuestion, index) => (
+              <ListItem
+                className={classes.questionListItem}
+                key={templateQuestion?.id}
+                divider>
+                <ListItemAvatar>
+                  <Avatar className={classes.questionNumber}>
+                    {templateQuestion?.questionNumber}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={templateQuestion?.question}/>
+              </ListItem>
             ))}
           </List>
         </React.Fragment>
