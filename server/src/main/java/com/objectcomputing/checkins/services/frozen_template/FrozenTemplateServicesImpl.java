@@ -24,7 +24,8 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
     public FrozenTemplateServicesImpl(CurrentUserServices currentUserServices,
                                       MemberProfileServices memberProfileServices,
                                       FrozenTemplateRepository frozenTemplateRepository,
-                                      FeedbackRequestServices feedbackRequestServices) {
+                                      FeedbackRequestServices feedbackRequestServices
+                                      ) {
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.frozenTemplateRepository = frozenTemplateRepository;
@@ -34,26 +35,23 @@ public class FrozenTemplateServicesImpl implements FrozenTemplateServices{
 
     @Override
     public FrozenTemplate save(FrozenTemplate ft) {
-        FeedbackRequest req;
+        FeedbackRequest req = feedbackRequestServices.getById(ft.getRequestId());
+        UUID creatorId = req.getCreatorId();
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
         try {
-            memberProfileServices.getById(ft.getCreatorId());
+            memberProfileServices.getById(creatorId);
         } catch (NotFoundException e) {
             throw new BadArgException("Creator ID is invalid");
         }
 
-        req = feedbackRequestServices.getById(ft.getRequestId());
-        if (req ==null)  {
-            throw new NotFoundException("Could not find request");
+        if (!creatorId.equals(currentUserId)) {
+            throw new PermissionException("You are not authorized to do this operation");
         }
 
         if (ft.getId() != null) {
             throw new BadArgException("Attempted to save feedback template with duplicate ID");
         }
-        UUID creatorId = req.getCreatorId();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (!creatorId.equals(currentUserId)) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
+
         return frozenTemplateRepository.save(ft);
 
     }

@@ -37,11 +37,12 @@ public class FrozenTemplate {
     @Schema(description = "description of feedback template", required = false)
     private String description;
 
-    @Column(name = "creator_id")
+    @Column(name = "template_creator_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "UUID of person who created the original feedback template, not necessarily request creator", required = true)
-    private UUID creatorId;
+    private UUID templateCreatorId;
+
 
     @Column(name = "request_id")
     @NotBlank
@@ -51,24 +52,27 @@ public class FrozenTemplate {
 
 
 
-    public FrozenTemplate(UUID id, String title, @Nullable String description, UUID creatorId, UUID requestId) {
+
+    public FrozenTemplate(UUID id, String title, @Nullable String description, UUID templateCreatorId, UUID requestId) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.creatorId = creatorId;
+        this.templateCreatorId = templateCreatorId;
         this.requestId = requestId;
     }
 
 
-    public FrozenTemplate(String title, @Nullable String description, UUID creatorId, UUID requestId) {
+    public FrozenTemplate(String title, @Nullable String description, UUID templateCreatorId, UUID requestId) {
         this.id = null;
         this.title = title;
         this.description = description;
-        this.creatorId = creatorId;
+        this.templateCreatorId = templateCreatorId;
         this.requestId = requestId;
     }
 
     FrozenTemplate() {}
+
+
 
     public UUID getId() {
         return id;
@@ -86,6 +90,7 @@ public class FrozenTemplate {
         this.title = title;
     }
 
+
     @Nullable
     public String getDescription() {
         return description;
@@ -95,12 +100,12 @@ public class FrozenTemplate {
         this.description = description;
     }
 
-    public UUID getCreatorId() {
-        return creatorId;
+    public UUID getTemplateCreatorId() {
+        return templateCreatorId;
     }
 
-    public void setCreatorId(UUID creatorId) {
-        this.creatorId = creatorId;
+    public void setTemplateCreatorId(UUID templateCreatorId) {
+        this.templateCreatorId = templateCreatorId;
     }
 
     public UUID getRequestId() {
@@ -111,17 +116,29 @@ public class FrozenTemplate {
         this.requestId = requestId;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FrozenTemplate that = (FrozenTemplate) o;
-        return id.equals(that.id) && title.equals(that.title) && Objects.equals(description, that.description) && creatorId.equals(that.creatorId) && requestId.equals(that.requestId);
+        return id.equals(that.id) && title.equals(that.title) && Objects.equals(description, that.description) && templateCreatorId.equals(that.templateCreatorId) && requestId.equals(that.requestId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, creatorId, requestId);
+        return Objects.hash(id, title, description, templateCreatorId, requestId);
+    }
+
+    @Override
+    public String toString() {
+        return "FrozenTemplate{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", templateCreatorId=" + templateCreatorId +
+                ", requestId=" + requestId +
+                '}';
     }
 
 

@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.feedback_request_questions;
+package com.objectcomputing.checkins.services.frozen_template_questions;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -16,14 +16,20 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedback_request_questions")
-public class FeedbackRequestQuestion {
+@Table(name = "frozen_template_questions")
+public class FrozenTemplateQuestion {
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
     @Schema(description = "unique id of the request question answer entry", required = true)
     private UUID id;
+
+    @Column(name = "frozen_template_id")
+    @NotBlank
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
+    private UUID frozenTemplateId;
 
     @Column(name = "question")
     @NotBlank
@@ -35,26 +41,21 @@ public class FeedbackRequestQuestion {
     @Schema(description = "The question asked to the recipient", required = true)
     private String question;
 
-    @Column(name = "request_id")
-    @NotNull
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the feedback request the question answer pair is attached to", required = true)
-    private UUID requestId;
-
     @Column(name = "question_number")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.INTEGER)
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer questionNumber;
 
-    public FeedbackRequestQuestion(String question, UUID requestId, Integer questionNumber) {
+    public FrozenTemplateQuestion(UUID frozenTemplateId, String question, Integer questionNumber) {
         this.id = null;
-        this.requestId=requestId;
+        this.frozenTemplateId=frozenTemplateId;
         this.question = question;
         this.questionNumber = questionNumber;
     }
 
-    public FeedbackRequestQuestion() {}
+    public FrozenTemplateQuestion() {}
+
 
     public UUID getId() {
         return id;
@@ -64,20 +65,21 @@ public class FeedbackRequestQuestion {
         this.id = id;
     }
 
+    public UUID getFrozenTemplateId() {
+        return frozenTemplateId;
+    }
+
+    public void setFrozenTemplateId(UUID frozenTemplateId) {
+        this.frozenTemplateId = frozenTemplateId;
+    }
+
+
     public String getQuestion() {
         return question;
     }
 
     public void setQuestion(String question) {
         this.question = question;
-    }
-
-    public UUID getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
     }
 
     public Integer getQuestionNumber() {
@@ -92,22 +94,33 @@ public class FeedbackRequestQuestion {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FeedbackRequestQuestion question1 = (FeedbackRequestQuestion) o;
-        return Objects.equals(id, question1.id) && Objects.equals(requestId, question1.requestId) && Objects.equals(question, question1.question) && Objects.equals(questionNumber, question1.questionNumber);
+        FrozenTemplateQuestion that = (FrozenTemplateQuestion) o;
+        return id.equals(that.id) && frozenTemplateId.equals(that.frozenTemplateId) && question.equals(that.question) && questionNumber.equals(that.questionNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, requestId, question, questionNumber);
+        return Objects.hash(id, frozenTemplateId, question, questionNumber);
     }
 
     @Override
     public String toString() {
-        return "FeedbackRequestQuestion{" +
+        return "FrozenTemplateQuestion{" +
                 "id=" + id +
-                ", requestId=" + requestId +
-                ", question='" + question +
-                ", questionNumber=" + questionNumber +
+                ", frozenTemplateId=" + frozenTemplateId +
+                ", questionContent='" + question + '\'' +
+                ", orderNum=" + questionNumber +
                 '}';
     }
+
+
+
+
+
+
+
+
+
+
+
 }

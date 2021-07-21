@@ -2,8 +2,9 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_request_questions.FeedbackRequestQuestion;
 import com.objectcomputing.checkins.services.fixture.*;
+import com.objectcomputing.checkins.services.frozen_template.FrozenTemplate;
+import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestion;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.http.HttpRequest;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FeedbackRequestQuestionFixture {
+public class FeedbackAnswerControllerTest extends TestContainersSuite implements FeedbackAnswerFixture, MemberProfileFixture, RoleFixture, FeedbackRequestFixture, FrozenTemplateFixture, FrozenTemplateQuestionFixture {
 
     @Inject
     @Client("/services/feedback/answers")
@@ -29,8 +30,10 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         createDefaultRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+        MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackRequest feedbackRequest = createFeedbackRequest(sender, requestee, recipient);
-        FeedbackRequestQuestion question = createDefaultFeedbackRequestQuestion(feedbackRequest.getId());
+        FrozenTemplate ft = saveDefaultFrozenTemplate(templateCreator.getId(), feedbackRequest.getId());
+        FrozenTemplateQuestion question = createDefaultFrozenTemplateQuestion(ft.getId());
         return createFeedbackAnswer(question.getId());
     }
 
@@ -98,6 +101,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     void testPostBySenderUnauthorized() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
+
 
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
         FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);

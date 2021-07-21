@@ -38,7 +38,7 @@ public class FeedbackAnswer {
     private String answer;
 
     @Column(name = "question_id")
-    @NotNull
+    @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;

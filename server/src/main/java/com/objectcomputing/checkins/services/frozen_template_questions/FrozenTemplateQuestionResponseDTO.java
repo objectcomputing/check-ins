@@ -1,53 +1,43 @@
-package com.objectcomputing.checkins.services.feedback_request_questions;
+package com.objectcomputing.checkins.services.frozen_template_questions;
 
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-public class FeedbackRequestQuestionResponseDTO {
+public class FrozenTemplateQuestionResponseDTO {
 
-    @NotNull
-    @TypeDef(type = DataType.STRING)
+    @NotBlank
     @Schema(description = "unique id of the request question answer entry", required = true)
     private UUID id;
+
+    @NotBlank
+    @Schema(description = "id of the versioned template (and by extension, feedback request) that question is attached to ", required = true)
+    private UUID frozenTemplateId;
+
 
     @NotBlank
     @Schema(description = "The question asked to the recipient", required = true)
     private String question;
 
-    @NotNull
-    @Schema(description = "id of the feedback request the question is attached to", required = true)
-    private UUID requestId;
-
-    @NotNull
+    @NotBlank
     @Schema(description = "Order number of the question relative to others in its set", required = true)
     private Integer questionNumber;
 
-    public UUID getId() {
-        return id;
+    public UUID getFrozenTemplateId() {
+        return frozenTemplateId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setFrozenTemplateId(UUID frozenTemplateId) {
+        this.frozenTemplateId = frozenTemplateId;
     }
 
-    public String getQuestion() {
+    public String getQuestionContent() {
         return question;
     }
 
-    public void setQuestion(String question) {
+    public void setQuestionContent(String question) {
         this.question = question;
-    }
-
-    public UUID getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
     }
 
     public Integer getQuestionNumber() {
@@ -57,4 +47,13 @@ public class FeedbackRequestQuestionResponseDTO {
     public void setQuestionNumber(Integer questionNumber) {
         this.questionNumber = questionNumber;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
 }

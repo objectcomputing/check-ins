@@ -26,11 +26,11 @@ import java.util.UUID;
 public class FrozenTemplateControllerTest extends TestContainersSuite implements RepositoryFixture, RoleFixture, FrozenTemplateFixture, MemberProfileFixture, FeedbackRequestFixture {
 
     @Inject
-    @Client("/services/feedback/frozen_templates")
+    @Client("/services/feedback/frozen-templates")
     HttpClient client;
 
     void assertContentEqualsEntity(FrozenTemplate template, FrozenTemplateResponseDTO res) {
-        assertEquals(template.getCreatorId(), res.getCreatorId());
+        assertEquals(template.getTemplateCreatorId(), res.getTemplateCreatorId());
         assertEquals(template.getDescription(), res.getDescription());
         assertEquals(template.getTitle(), res.getTitle());
         assertEquals(template.getRequestId(), res.getRequestId());
@@ -59,7 +59,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setCreatorId(memberOne.getId());
+        dto.setTemplateCreatorId(memberOne.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -85,7 +85,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setCreatorId(memberOne.getId());
+        dto.setTemplateCreatorId(memberOne.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -112,7 +112,7 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
        dto.setTitle("Random Title");
        dto.setDescription("Random description");
-       dto.setCreatorId(memberOne.getId());
+       dto.setTemplateCreatorId(memberOne.getId());
        dto.setRequestId(req.getId());
 
        final HttpRequest<?> request = HttpRequest.POST("", dto)
