@@ -1,19 +1,47 @@
 package com.objectcomputing.checkins.services.request_notifications;
 
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
+import io.micronaut.context.annotation.Property;
 import javax.inject.Singleton;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Singleton
 public class CheckServicesImpl implements CheckServices {
+    private final FeedbackRequestRepository feedbackReqRepository;
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
+    public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
+    public static final String submitURL = "https://checkins.objectcomputing.com/feedback/submit?requestId=";
+    private EmailSender emailSender;
+    private String notificationSubject;
+    private String notificationContent;
+    private final MemberProfileServices memberProfileServices;
+
+    public CheckServicesImpl(FeedbackRequestRepository feedbackReqRepository, EmailSender emailSender,
+                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
+                             @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
+                             MemberProfileServices memberProfileServices) {
+        this.feedbackReqRepository = feedbackReqRepository;
+        this.emailSender = emailSender;
+        this.notificationContent = notificationContent;
+        this.notificationSubject = notificationSubject;
+        this.memberProfileServices = memberProfileServices;
+    }
 
     @Override
-    public List<FeedbackRequest> GetTodaysRequests(LocalDate today) {
-        List<FeedbackRequest> todaysRequests = null;
+    public boolean GetTodaysRequests(LocalDate today) {
+        List<FeedbackRequest> todaysRequests = new ArrayList<>();
+        todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today));
+        for (FeedbackRequest req: todaysRequests) {
 
-        return todaysRequests;
+            String newContent =  notificationContent + "<a href=\""+submitURL+req.getId()+"\">Check-Ins application</a>.";
+            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(req.getRecipientId()).getWorkEmail());
+        }
+
+        return true;
     }
 
 }
