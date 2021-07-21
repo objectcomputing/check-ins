@@ -90,7 +90,6 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {
         FrozenTemplateQuestion question;
-        FrozenTemplate template=null;
         FeedbackRequest feedbackRequest;
         try {
             question = frozenTemplateQServices.getById(feedbackAnswer.getQuestionId());
@@ -98,10 +97,12 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
             throw new BadArgException("Attempted to save answer with invalid question ID " + feedbackAnswer.getQuestionId());
         }
 
+        FrozenTemplate template;
+
         try {
             template = frozenTemplateServices.getById(question.getFrozenTemplateId());
         } catch(NotFoundException e) {
-            throw new BadArgException("Attempted to save answer with invalid template attached" + template.getId());
+            throw new BadArgException("Attempted to save answer with invalid template attached");
         }
 
         try {
