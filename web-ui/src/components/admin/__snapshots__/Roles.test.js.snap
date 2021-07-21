@@ -2,16 +2,16 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="role-content"
+  className="roles-content"
 >
   <div
     className="roles"
   >
     <div
-      className="role-top"
+      className="roles-top"
     >
       <div
-        className="role-top-left"
+        className="roles-top-left"
       >
         <h2>
           Roles
@@ -47,6 +47,9 @@ exports[`renders correctly 1`] = `
         </div>
       </div>
     </div>
+    <div
+      className="roles-bot"
+    />
   </div>
 </div>
 `;
