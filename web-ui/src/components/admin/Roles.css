@@ -67,13 +67,21 @@
   .roles-content .roles {
     display: block !important;
   }
+  .roles-content .roles .role {
+    max-height: unset !important;
+    overflow: visible !important;
+  }
+
   .roles-content .roles .roles-bot {
     display: block !important;
   }
 }
 
 .roles-content .roles .role {
+  height: 100%;
+  max-height: 35rem;
   margin: 1rem;
+  overflow: scroll;
 }
 
 .roles-content .roles .role-buttons .role-add {
