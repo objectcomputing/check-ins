@@ -3,11 +3,13 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteServicesImpl;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -16,7 +18,7 @@ import java.util.*;
 
 @Singleton
 public class FeedbackRequestServicesImplementation implements FeedbackRequestServices {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CheckinNoteServicesImpl.class);
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
@@ -130,8 +132,9 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         }
 
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
+        final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID recipientId = feedbackReq.get().getRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId)) {
+        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -173,8 +176,14 @@ public class FeedbackRequestServicesImplementation implements FeedbackRequestSer
         return false;
     }
 
-    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
-        return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
+    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
+        LocalDate today = LocalDate.now();
+        if(today.isAfter(sendDate)){
+            return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
+        }
+        else{
+            throw new PermissionException("You are not permitted to access this request before the send date.");
+        }
     }
 
     private boolean updateStatusIsPermitted(FeedbackRequest feedbackRequest) {

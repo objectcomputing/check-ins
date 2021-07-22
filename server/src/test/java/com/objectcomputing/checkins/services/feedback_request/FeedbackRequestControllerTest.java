@@ -767,5 +767,25 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         assertUnauthorized(responseException);
     }
+    @Test
+    void testRecipientGetBeforeSendDateNotAuthorized() {
+        LocalDate testDate = LocalDate.now();
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        MemberProfile creator = createAnUnrelatedUser();
+        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), UUID.randomUUID(), testDate, null, "pending", testDate.minusDays(1));
+        getFeedbackRequestRepository().save(feedbackRequest);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        // the sendDate must be before the sent date
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("You are not permitted to access this request before the send date.", responseException.getMessage());
+    }
 
 }
