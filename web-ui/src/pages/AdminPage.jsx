@@ -29,7 +29,7 @@ const AdminPage = () => {
   return (
     <div>
       <div className="admin-container">
-        {permissions ? <div /> : roles ? <Roles /> : users && <UsersPage />}
+        {permissions ? <div /> : roles ? <Roles /> : users && <UserPage />}
       </div>
       <div className="bottom-nav">
         <Button
