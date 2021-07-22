@@ -32,16 +32,18 @@ public class CheckServicesImpl implements CheckServices {
     }
 
     @Override
-    public boolean GetTodaysRequests(LocalDate today) {
+    public boolean GetTodaysRequests() {
+        LocalDate today = LocalDate.now();
         List<FeedbackRequest> todaysRequests = new ArrayList<>();
         todaysRequests.addAll(feedbackReqRepository.findByValues(null, null, null, today));
         for (FeedbackRequest req: todaysRequests) {
-
             String newContent =  notificationContent + "<a href=\""+submitURL+req.getId()+"\">Check-Ins application</a>.";
-            emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(req.getRecipientId()).getWorkEmail());
+            emailSender.sendEmail(notificationSubject, newContent);
         }
 
         return true;
     }
 
 }
+
+//, memberProfileServices.getById(req.getRecipientId()).getWorkEmail()

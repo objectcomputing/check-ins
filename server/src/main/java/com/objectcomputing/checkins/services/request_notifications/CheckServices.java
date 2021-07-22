@@ -5,5 +5,5 @@ import java.util.List;
 import java.time.LocalDate;
 
 public interface CheckServices {
-    boolean GetTodaysRequests(LocalDate today);
+    boolean GetTodaysRequests();
 }

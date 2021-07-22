@@ -38,12 +38,10 @@ public class CheckServicesController {
 
     @Get
     public Single<? extends HttpResponse<?>> GetTodaysRequests() {
-        LocalDate today = LocalDate.now();
-        return Single.fromCallable(() -> checkServices.GetTodaysRequests(today))
+        return Single.fromCallable(() -> checkServices.GetTodaysRequests())
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(success -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(ioExecutorService));
-
 
     }
 
