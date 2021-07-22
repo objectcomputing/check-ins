@@ -9,6 +9,4 @@ services:
     ports:
       - "5432:5432"
     container_name: checkinsdb
-  server:
-    image: server-build
-    container_name: server
+

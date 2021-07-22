@@ -13,6 +13,7 @@ plugins {
     id "idea"
     id "groovy"
     id "jacoco"
+    id "com.palantir.docker" version "0.27.0"
 }
 
 
@@ -172,4 +173,8 @@ appengine {
         promote = true
         project = 'oci-intern-2019'
     }
+}
+
+docker {
+    name 'server-container'
 }
