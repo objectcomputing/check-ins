@@ -25,7 +25,6 @@ plugins {
     id "jacoco"
     id "java"
     id "org.sonarqube" version "3.0"
-//    id "com.palantir.docker" version "0.27.0"
 }
 
 sonarqube {
@@ -96,12 +95,3 @@ publishing {
         }
     }
 }
-
-//docker {
-//    name 'server-image'
-//    files 'check-ins-server.jar'
-//}
-
-
-
-

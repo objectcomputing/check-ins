@@ -181,12 +181,6 @@ docker {
     files 'check-ins-server.jar'
 }
 
-//docker {
-//    name 'server-image'
-//    dockerfile project.file('server/Dockerfile')
-//    files 'check-ins-server.jar'
-//}
-
 //dockerRun {
 //    name 'server-container'
 //    image 'server-image'
