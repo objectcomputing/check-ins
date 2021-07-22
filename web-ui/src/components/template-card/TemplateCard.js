@@ -41,11 +41,12 @@ const templateCardHeaderStyles = ({ palette, breakpoints }) => {
             minWidth: 256,
         },
         header: {
-            padding: `4px ${space}px 0`,
+            padding: `1px ${space}px 0`,
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'row',
             justifyContent: 'space-between',
+            maxHeight: '30px',
         },
     };
 };
