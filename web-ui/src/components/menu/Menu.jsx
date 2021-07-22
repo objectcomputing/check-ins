@@ -18,6 +18,7 @@ import {
   ListItem,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@material-ui/core";
 
 import "./Menu.css";
@@ -69,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
   },
   listItem: {
-    textAlign: "center",
+    textAlign: "left",
   },
   subListItem: {
     fontSize: "0.9rem",
@@ -204,14 +205,18 @@ function Menu() {
           ],
           false
         )}
+
+        <ListItem
+          button
+          onClick={toggleDirectory}
+          className={classes.listItem}
+          
+        >
+          <Typography variant="body1">DIRECTORY</Typography>
+            
+        </ListItem>
       </List>
-      <Button
-        onClick={toggleDirectory}
-        size="large"
-        style={{ color: "white", width: "100%" }}
-      >
-        Directory
-      </Button>
+
       <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
         <List className={classes.listStyle} component="nav" disablePadding>
           {createListJsx(directoryLinks, true)}
