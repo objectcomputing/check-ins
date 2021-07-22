@@ -35,7 +35,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         if (month != null) {
             memberProfiles = memberProfiles
                     .stream()
-                    .filter(member -> month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
+                    .filter(member -> member.getStartDate() != null && month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
                     .collect(Collectors.toList());
         }
 
