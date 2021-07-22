@@ -45,5 +45,3 @@ public class CheckServicesImpl implements CheckServices {
     }
 
 }
-
-//, memberProfileServices.getById(req.getRecipientId()).getWorkEmail()
