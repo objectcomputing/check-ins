@@ -6,8 +6,11 @@ import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
-import com.objectcomputing.checkins.services.template_question.TemplateQuestionRepository;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
+import com.objectcomputing.checkins.services.frozen_template.FrozenTemplateRepository;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
+import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
@@ -44,6 +47,10 @@ public interface RepositoryFixture {
 
     default FeedbackTemplateRepository getFeedbackTemplateRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackTemplateRepository.class);
+    }
+
+    default FrozenTemplateRepository getFrozenTemplateRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FrozenTemplateRepository.class);
     }
 
     default TemplateQuestionRepository getTemplateQuestionRepository() {
@@ -134,6 +141,14 @@ public interface RepositoryFixture {
 
     default EmployeeHoursRepository getEmployeeHoursRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmployeeHoursRepository.class);
+    }
+
+    default FrozenTemplateQuestionRepository getFeedbackRequestQuestionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FrozenTemplateQuestionRepository.class);
+    }
+
+    default FeedbackAnswerRepository getFeedbackAnswerRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackAnswerRepository.class);
     }
 
      default SettingsRepository getSettingsRepository() {

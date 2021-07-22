@@ -5,7 +5,6 @@ import CardContent from '@material-ui/core/CardContent';
 import PropTypes from "prop-types";
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-
 import "./TemplateCard.css"
 import {withStyles} from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
@@ -74,6 +73,7 @@ const TemplateCard = (props) => {
     const csrf = selectCsrfToken(state);
     const [creatorName, setCreatorName] = useState("");
 
+
     const handlePreviewClick = (e) => {
         e.stopPropagation();
         props.onPreviewClick(e);
@@ -100,7 +100,7 @@ const TemplateCard = (props) => {
         <Card onClick={props.onCardClick} className='feedback-template-card'>
             <CardHeader
               component={TemplateCardHeader}
-              selected={props.selected}
+              selected={props.isSelected}
               allowPreview
               onPreview={handlePreviewClick}/>
             <CardContent className="card-content">
