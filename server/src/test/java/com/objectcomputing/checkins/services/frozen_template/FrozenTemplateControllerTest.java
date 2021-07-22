@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.frozen_template;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.fixture.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,14 +24,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FrozenTemplateControllerTest extends TestContainersSuite implements RepositoryFixture, RoleFixture, FrozenTemplateFixture, MemberProfileFixture, FeedbackRequestFixture {
+public class FrozenTemplateControllerTest extends TestContainersSuite implements RepositoryFixture, RoleFixture, FrozenTemplateFixture, FeedbackTemplateFixture, MemberProfileFixture, FeedbackRequestFixture {
 
     @Inject
     @Client("/services/feedback/frozen-templates")
     HttpClient client;
 
     void assertContentEqualsEntity(FrozenTemplate template, FrozenTemplateResponseDTO res) {
-        assertEquals(template.getTemplateCreatorId(), res.getTemplateCreatorId());
+        assertEquals(template.getOriginalTemplateId(), res.getOriginalTemplateId());
         assertEquals(template.getDescription(), res.getDescription());
         assertEquals(template.getTitle(), res.getTitle());
         assertEquals(template.getRequestId(), res.getRequestId());
@@ -54,12 +55,13 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         createDefaultRole(RoleType.PDL, memberOne);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-        FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", memberOne.getId(),req.getId() );
+        FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+        FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", savedTemplate.getId(),req.getId() );
 //        //create frozen template
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setTemplateCreatorId(memberOne.getId());
+        dto.setOriginalTemplateId(savedTemplate.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -81,11 +83,12 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
         MemberProfile admin = createADefaultSupervisor();
         createDefaultAdminRole(admin);
         FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-        FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", memberOne.getId(),req.getId() );       //create frozen template
+        FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+        FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", savedTemplate.getId(),req.getId() );       //create frozen template
         FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
         dto.setTitle("Random Title");
         dto.setDescription("Random description");
-        dto.setTemplateCreatorId(memberOne.getId());
+        dto.setOriginalTemplateId(savedTemplate.getId());
         dto.setRequestId(req.getId());
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -108,11 +111,12 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        MemberProfile recipient = createADefaultRecipient();
        MemberProfile rando = createASecondDefaultMemberProfile();
        FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-       FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", memberOne.getId(),req.getId() );       //create frozen template
+       FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+       FrozenTemplate temp = new FrozenTemplate("Random Title", "Random description", savedTemplate.getId(),req.getId() );       //create frozen template
        FrozenTemplateCreateDTO dto = new FrozenTemplateCreateDTO();
        dto.setTitle("Random Title");
        dto.setDescription("Random description");
-       dto.setTemplateCreatorId(memberOne.getId());
+       dto.setOriginalTemplateId(savedTemplate.getId());
        dto.setRequestId(req.getId());
 
        final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -135,8 +139,8 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        MemberProfile recipient = createADefaultRecipient();
        MemberProfile rando = createASecondDefaultMemberProfile();
        FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-       FrozenTemplate temp = saveDefaultFrozenTemplate(rando.getId(), req.getId());
-
+       FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+       FrozenTemplate temp = saveDefaultFrozenTemplate(savedTemplate.getId(), req.getId());
        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", temp.getId()))
                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.PDL_ROLE);
        final HttpResponse<FrozenTemplateResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateResponseDTO.class);
@@ -155,7 +159,8 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        MemberProfile recipient = createADefaultRecipient();
        MemberProfile rando = createASecondDefaultMemberProfile();
        FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-       FrozenTemplate temp = saveDefaultFrozenTemplate(rando.getId(), req.getId());
+       FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+       FrozenTemplate temp = saveDefaultFrozenTemplate(savedTemplate.getId(), req.getId());
 
        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", temp.getId()))
                .basicAuth(rando.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
@@ -177,7 +182,8 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        MemberProfile recipient = createADefaultRecipient();
        MemberProfile rando = createASecondDefaultMemberProfile();
        FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-       FrozenTemplate temp = saveDefaultFrozenTemplate(rando.getId(), req.getId());
+       FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+       FrozenTemplate temp = saveDefaultFrozenTemplate(savedTemplate.getId(), req.getId());
        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", temp.getRequestId()))
                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.PDL_ROLE);
        final HttpResponse<FrozenTemplateResponseDTO> response = client.toBlocking().exchange(request, FrozenTemplateResponseDTO.class);
@@ -195,7 +201,8 @@ public class FrozenTemplateControllerTest extends TestContainersSuite implements
        MemberProfile recipient = createADefaultRecipient();
        MemberProfile rando = createASecondDefaultMemberProfile();
        FeedbackRequest req = createFeedbackRequest(memberOne, requestee, recipient);
-       FrozenTemplate temp = saveDefaultFrozenTemplate(rando.getId(), req.getId());
+       FeedbackTemplate savedTemplate = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberOne.getId()));
+       FrozenTemplate temp = saveDefaultFrozenTemplate(savedTemplate.getId(), req.getId());
        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", temp.getRequestId()))
                .basicAuth(rando.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
