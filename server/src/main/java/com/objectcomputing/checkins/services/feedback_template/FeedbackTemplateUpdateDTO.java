@@ -4,13 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
 public class FeedbackTemplateUpdateDTO {
-    @NotNull
+
+    @NotBlank
     @Schema(description = "id of the feedback template", required = true)
     private UUID id;
 
@@ -22,35 +22,40 @@ public class FeedbackTemplateUpdateDTO {
     @Schema(description = "the updated description of the feedback template")
     private String description;
 
-    @NotNull
-    @Schema(description = "whether the template can still be used", required = true)
-    private Boolean active;
+    @NotBlank
+    @Schema(description = "UUID of person who last updated the feedback template")
+    private UUID updaterId;
 
-    public void setTitle(String title) {
-        this.title = title;
+    public UUID getId() {
+        return id;
     }
 
-    public void setId(UUID id) {this.id = id;}
-
-    public UUID getId(){ return id; }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Nullable
     public String getDescription() {
         return description;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setDescription(@Nullable String description) {
+        this.description = description;
     }
 
-    public Boolean getActive() {
-        return active;
+    public UUID getUpdaterId() {
+        return updaterId;
+    }
+
+    public void setUpdaterId(UUID updaterId) {
+        this.updaterId = updaterId;
     }
 }

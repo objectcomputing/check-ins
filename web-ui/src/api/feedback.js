@@ -20,3 +20,11 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const getFeedbackRequestById = async (id, cookie) => {
+  return resolve({
+    url: `${feedbackRequestURL}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}

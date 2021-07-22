@@ -3,17 +3,14 @@ package com.objectcomputing.checkins.services.feedback_template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.services.feedback_template.template_question.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.util.Util;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -21,44 +18,57 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private final FeedbackTemplateRepository feedbackTemplateRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private final TemplateQuestionServices templateQuestionServices;
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
-                                        MemberProfileServices memberProfileServices, CurrentUserServices currentUserServices) {
+                                        MemberProfileServices memberProfileServices,
+                                        CurrentUserServices currentUserServices,
+                                        TemplateQuestionServices templateQuestionServices) {
         this.feedbackTemplateRepository = feedbackTemplateRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
+        this.templateQuestionServices = templateQuestionServices;
     }
 
     @Override
     public FeedbackTemplate save(FeedbackTemplate feedbackTemplate) {
+
+        if (feedbackTemplate == null) {
+            throw new BadArgException("Feedback template object is null and cannot be saved");
+        } else if (feedbackTemplate.getId() != null) {
+            throw new BadArgException("Attempted to save template with non-auto-populated ID");
+        }
+
         try {
-            memberProfileServices.getById(feedbackTemplate.getCreatedBy());
+            memberProfileServices.getById(feedbackTemplate.getCreatorId());
         } catch (NotFoundException e) {
             throw new BadArgException("Creator ID is invalid");
         }
 
-        if (!createIsPermitted()){
+        if (!createIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
-        }
-        if (feedbackTemplate.getId() != null) {
-            throw new BadArgException("Attempted to save feedback template with duplicate ID");
         }
 
         return feedbackTemplateRepository.save(feedbackTemplate);
     }
 
-
     @Override
     public FeedbackTemplate update(FeedbackTemplate feedbackTemplate) {
-        FeedbackTemplate updatedFeedbackTemplate;
 
-        if (feedbackTemplate.getId() != null) {
-            updatedFeedbackTemplate = getById(feedbackTemplate.getId());
-        } else {
-            throw new BadArgException("Feedback template does not exist. Cannot update");
+        if (feedbackTemplate == null) {
+            throw new BadArgException("Feedback template object is null and cannot be updated");
+        } else if (feedbackTemplate.getId() == null) {
+            throw new BadArgException("Attempted to update template with null ID");
         }
-        feedbackTemplate.setCreatedBy(updatedFeedbackTemplate.getCreatedBy());
-        if (!updateIsPermitted(feedbackTemplate.getCreatedBy())) {
+
+        Optional<FeedbackTemplate> originalTemplate = feedbackTemplateRepository.findById(feedbackTemplate.getId());
+        if (originalTemplate.isEmpty()) {
+            throw new NotFoundException("Could not update template with nonexistent ID " + feedbackTemplate.getId());
+        }
+
+        feedbackTemplate.setCreatorId(originalTemplate.get().getCreatorId());
+
+        if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -66,29 +76,27 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public FeedbackTemplate delete(@NotNull UUID id) {
-        final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
-        final String idString = Util.nullSafeUUIDToString(id);
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        if (!feedbackTemplate.isPresent()) {
-            throw new NotFoundException("No feedback template with id " + id);
-        }
+    public Boolean delete(@NotNull UUID id) {
+        final FeedbackTemplate template = getById(id);
 
-        UUID creatorId = feedbackTemplate.get().getCreatedBy();
-        if (!currentUserId.equals(creatorId)) {
+        if (!deleteIsPermitted(template.getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        feedbackTemplateRepository.softDeleteById(id);
+        // delete all questions connected to the template
+        List<TemplateQuestion> questionsToDelete = templateQuestionServices.findByFields(id);
+        questionsToDelete.forEach((TemplateQuestion question) -> templateQuestionServices.delete(question.getId()));
 
-        return feedbackTemplate.get();
+        // delete the template itself
+        feedbackTemplateRepository.deleteById(id);
+        return true;
     }
 
     @Override
     public FeedbackTemplate getById(UUID id) {
         final Optional<FeedbackTemplate> feedbackTemplate = feedbackTemplateRepository.findById(id);
-        if (!feedbackTemplate.isPresent()) {
-            throw new NotFoundException("No feedback template with id " + id);
+        if (feedbackTemplate.isEmpty()) {
+            throw new NotFoundException("No feedback template with ID " + id);
         }
 
         if (!getIsPermitted()) {
@@ -100,33 +108,22 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
 
     @Override
-    public List<FeedbackTemplate> findByFields(@Nullable UUID createdBy, @Nullable String title, @Nullable Boolean onlyActive) {
+    public List<FeedbackTemplate> findByFields(@Nullable UUID creatorId, @Nullable String title) {
         if (!getIsPermitted()) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
         List<FeedbackTemplate> templateList = new ArrayList<>();
-
         // Filters only active templates by default
-        if (onlyActive != null && onlyActive) {
-            templateList.addAll(feedbackTemplateRepository.findByActive(true));
-            if (title != null) {
-                templateList.retainAll(findByTitleLike(title));
+        if (title != null) {
+            templateList.addAll(findByTitleLike(title));
+            if (creatorId != null) {
+                templateList.retainAll(feedbackTemplateRepository.findByCreatorId(creatorId));
             }
-            if (createdBy != null) {
-                templateList.retainAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
-            }
+        } else if (creatorId != null) {
+            templateList.addAll(feedbackTemplateRepository.findByCreatorId(creatorId));
         } else {
-            if (title != null) {
-                templateList.addAll(findByTitleLike(title));
-                if (createdBy != null) {
-                    templateList.retainAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
-                }
-            } else if (createdBy != null) {
-                templateList.addAll(feedbackTemplateRepository.findByCreatedBy(createdBy));
-            } else {
-                feedbackTemplateRepository.findAll().forEach(templateList::add);
-            }
+            feedbackTemplateRepository.findAll().forEach(templateList::add);
         }
 
         return templateList;
@@ -142,14 +139,18 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return currentUserId != null;
     }
 
-    public boolean updateIsPermitted(UUID createdBy) {
+    public boolean updateIsPermitted(UUID creatorId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isAdmin = currentUserServices.isAdmin();
-        return isAdmin || currentUserId.equals(createdBy);
+        return isAdmin || currentUserId.equals(creatorId);
     }
 
     public boolean getIsPermitted() {
         return createIsPermitted();
+    }
+
+    public boolean deleteIsPermitted(UUID creatorId) {
+        return updateIsPermitted(creatorId);
     }
 
 }

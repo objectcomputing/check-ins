@@ -22,6 +22,14 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 null, null,null));
     }
 
+    default MemberProfile createAThirdDefaultMemberProfile() {
+        return getMemberProfileRepository().save(new MemberProfile("Willy", null, "Wonka",
+                null, "magic factory owner", null, "Chocolate Factory",
+                "wonkaw@objectcomputing.com", "willy-wonka-employee", LocalDate.now(),
+                "questionable employer, but gives free golden tickets",
+                null, null,null));
+    }
+
     default MemberProfile createADefaultMemberProfileForPdl(MemberProfile memberProfile) {
         return getMemberProfileRepository().save(new MemberProfile("Bill PDL", null, "Johnson",
                 null, "Comedic Relief PDL", memberProfile.getId(), "New York, New York",

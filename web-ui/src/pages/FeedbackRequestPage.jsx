@@ -242,6 +242,13 @@ const handleSubmit = () =>{
   }
 
   if (!urlIsValid()) {
+    dispatch({
+      type: UPDATE_TOAST,
+      payload: {
+        severity: "error",
+        toast: "An error has occurred with the URL",
+      },
+    });
     history.push("/checkins");
   }
 
