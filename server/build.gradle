@@ -14,6 +14,7 @@ plugins {
     id "groovy"
     id "jacoco"
     id "com.palantir.docker" version "0.27.0"
+//    id "com.palantir.docker-run" version "0.27.0"
 }
 
 
@@ -176,5 +177,17 @@ appengine {
 }
 
 docker {
-    name 'server-container'
+    name 'server-image'
+    files 'check-ins-server.jar'
 }
+
+//docker {
+//    name 'server-image'
+//    dockerfile project.file('server/Dockerfile')
+//    files 'check-ins-server.jar'
+//}
+
+//dockerRun {
+//    name 'server-container'
+//    image 'server-image'
+//}

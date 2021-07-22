@@ -24,7 +24,7 @@ jobs:
           cd server
           docker build --tag "" .
       - name: Docker compose database
-        run: docker compose -f docker-compose-db.yaml up
+        run: docker compose up
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
         with:
