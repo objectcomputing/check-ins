@@ -19,11 +19,9 @@ jobs:
       name: Test
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker image
-        run: |-
-          cd server
-          docker build --tag "" .
-      - name: Docker compose database
+      - name: Gradle assemble
+        run: ./gradlew assemble
+      - name: Docker compose
         run: docker compose up
       - name: Set up Node 14
         uses: actions/setup-node@v2-beta
