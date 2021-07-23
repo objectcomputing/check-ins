@@ -12,7 +12,11 @@ delete from questions;
 delete from role;
 delete from team_member;
 delete from team;
+delete from frozen_template_questions;
 delete from frozen_templates;
+delete from template_questions;
+delete from feedback_templates;
+delete from feedback_requests;
 delete from member_profile;
 
 INSERT INTO member_profile
@@ -432,12 +436,12 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, send_date, due_date, submit_date, status)
 VALUES
-('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2021-07-07', null, '2021-07-08', 'submitted');
+('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2021-07-07', null, null, 'pending');
 
 INSERT INTO frozen_templates
 (id, title, description, template_creator_id, request_id)
 VALUES
-('b3199c2b-4f86-4e13-ab5b-d658b8523115', 'Frozen template 1', 'This is the description', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', 'ab7b21d4-f88c-4494-9b0b-8541636025eb');
+('b3199c2b-4f86-4e13-ab5b-d658b8523115', 'Frozen template 1', 'This is the description', '2559a257-ae84-4076-9ed4-3820c427beeb', 'ab7b21d4-f88c-4494-9b0b-8541636025eb');
 
 INSERT INTO frozen_template_questions
 (id, frozen_template_id, question, question_number)
