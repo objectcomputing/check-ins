@@ -5,9 +5,10 @@
 .bottom-nav {
   display: flex;
   justify-content: space-evenly;
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  width: calc(100% - 150px);
+  /* width: calc(100% - var(--nav-width)); */
+  z-index: 1;
 }
 
 .bottom-nav .button {

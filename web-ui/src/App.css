@@ -1,3 +1,7 @@
+:root {
+  --nav-width: 150px;
+}
+
 @media (min-width: 750px) {
   .App {
     padding-left: 150px;

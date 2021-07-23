@@ -267,7 +267,8 @@ export const selectNormalizedMembersAdmin = createSelector(
   selectTerminatedMembers,
   (state, searchText) => searchText,
   (memberProfiles, terminatedProfiles, searchText) =>
-    memberProfiles.concat(terminatedProfiles)
+    memberProfiles
+      .concat(terminatedProfiles)
       ?.filter((member) => {
         let normName = member.name
           .normalize("NFD")
