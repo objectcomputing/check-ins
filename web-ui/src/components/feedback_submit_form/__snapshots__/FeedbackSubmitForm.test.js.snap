@@ -35,7 +35,7 @@ exports[`renders the feedback submit form 1`] = `
     className="submit-action-buttons"
   >
     <WithStyles(WithStyles(ForwardRef(Button)))
-      className="makeStyles-button-3"
+      className="makeStyles-button-2"
       color="primary"
       onClick={[Function]}
       variant="contained"

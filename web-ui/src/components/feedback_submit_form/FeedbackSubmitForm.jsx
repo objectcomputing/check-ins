@@ -52,13 +52,14 @@ const ColorButton = withStyles({
 })(Button);
 
 const propTypes = {
-  requesteeName: PropTypes.string.isRequired
+  requesteeName: PropTypes.string.isRequired,
+  requestId: PropTypes.string.isRequired,
 }
 
-  const FeedbackSubmitForm = (props) => {
-    const classes = useStyles();
-    const history = useHistory();
-    const handleClick = () => history.push('/feedback/submit/confirmation');
+const FeedbackSubmitForm = (props) => {
+  const classes = useStyles();
+  const history = useHistory();
+  const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
 
     const [isReviewing, setIsReviewing] = useState(false);
 
@@ -109,7 +110,7 @@ const propTypes = {
           </div>
         </div>
     );
-  };
+};
 
-  FeedbackSubmitForm.propTypes = propTypes;
+FeedbackSubmitForm.propTypes = propTypes;
 export default FeedbackSubmitForm;

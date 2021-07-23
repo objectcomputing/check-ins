@@ -23,10 +23,8 @@ exports[`renders the confirmation message 1`] = `
   <h3
     className="MuiTypography-root makeStyles-announcement-1 MuiTypography-h3"
   >
-    <b>
-      Thank you for your feedback on 
-       
-    </b>
+    Thank you for your feedback on 
+    <b />
   </h3>
 </div>
 `;

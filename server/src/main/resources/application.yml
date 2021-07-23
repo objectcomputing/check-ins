@@ -79,7 +79,7 @@ check-ins:
       max-suggestions: 6
       notifications:
         subject: "Feedback request"
-        content: "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com\">Check-Ins application</a>."
+        content: "You have received a feedback request. Please go to the "
 ---
 flyway:
   enabled: enabled

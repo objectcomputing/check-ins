@@ -70,7 +70,7 @@ public class FrozenTemplate {
         this.requestId = requestId;
     }
 
-    FrozenTemplate() {}
+    public FrozenTemplate() {}
 
 
 

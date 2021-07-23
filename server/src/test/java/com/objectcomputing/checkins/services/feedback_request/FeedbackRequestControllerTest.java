@@ -161,7 +161,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         //verify appropriate email was sent
-        verify(emailSender).sendEmail(notificationSubject, notificationContent, recipient.getWorkEmail());
+        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
     }
 
     @Test

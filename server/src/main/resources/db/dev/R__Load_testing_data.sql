@@ -12,6 +12,7 @@ delete from questions;
 delete from role;
 delete from team_member;
 delete from team;
+delete from frozen_templates;
 delete from member_profile;
 
 INSERT INTO member_profile
@@ -393,6 +394,36 @@ INSERT INTO feedback_templates
 VALUES
 ('18ef2032-c264-411e-a8e1-ddda9a714bae', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Q1 Feedback', 'Get feedback for quarter 1', '2021-06-06', null, null);
 
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('d6d05f53-682c-4c37-be32-8aab5f89767f', 'What are this team member''s top strengths (include examples where possible)?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
+VALUES
+('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('89c8b612-fca8-4144-88cd-176ddfca35ad', 'What can this team member improve on that would help them increase their effectiveness (include examples where possible)?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
+VALUES
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2021-04-04', null, null);
+
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, send_date, due_date, submit_date, status)
 VALUES
@@ -402,3 +433,18 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, send_date, due_date, submit_date, status)
 VALUES
 ('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2021-07-07', null, '2021-07-08', 'submitted');
+
+INSERT INTO frozen_templates
+(id, title, description, template_creator_id, request_id)
+VALUES
+('b3199c2b-4f86-4e13-ab5b-d658b8523115', 'Frozen template 1', 'This is the description', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', 'ab7b21d4-f88c-4494-9b0b-8541636025eb');
+
+INSERT INTO frozen_template_questions
+(id, frozen_template_id, question, question_number)
+VALUES
+('190a1602-c97e-43e4-a0dc-5a88697b42f6', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'What are this team member''s top strengths (include examples where possible)?', '1');
+
+INSERT INTO frozen_template_questions
+(id, frozen_template_id, question, question_number)
+VALUES
+    ('8fdf6aa3-4d4b-4c6d-ad16-66895192a63c', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '2');
