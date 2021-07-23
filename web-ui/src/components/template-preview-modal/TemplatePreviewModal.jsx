@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,13 +7,18 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import {TextField} from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button"
 import "./TemplatePreviewModal.css";
+import AdHocCreationForm from "./ad_hoc_creation_form/AdHocCreationForm";
+import PropTypes from "prop-types";
+import {getQuestionsOnTemplate} from "../../api/feedbacktemplate";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
+import {ListItemAvatar} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +39,16 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: '25ch',
-
+  },
+  questionNumber: {
+    width: "2em",
+    height: "2em",
+    fontSize: "1em",
+    color: "white",
+    backgroundColor: theme.palette.primary.main
+  },
+  questionListItem: {
+    padding: "1.5em 1.5em"
   }
 }));
 
@@ -42,31 +56,59 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
+const propTypes = {
+  open: PropTypes.bool.isRequired,
+  onSubmit: PropTypes.func,
+  onClose: PropTypes.func,
+  template: PropTypes.object,
+  createAdHoc: PropTypes.bool
+}
 
+const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }) => {
   const classes = useStyles();
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const currentUserId = selectCurrentUser(state)?.id;
 
-  const [adHocTitle, setAdHocTitle] = useState(template?.title);
-  const [adHocDescription, setAdHocDescription] = useState(template?.description);
+  const [newAdHocData, setNewAdHocData] = useState({});
+  const creatorName = selectProfile(state, template?.creatorId)?.name;
+  const [templateQuestions, setTemplateQuestions] = useState([]);
+
+  useEffect(() => {
+    async function getTemplateQuestions(templateId, csrf) {
+      if (!currentUserId || !csrf) {
+        return [];
+      }
+      let res = await getQuestionsOnTemplate(templateId, csrf);
+      let questionList =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null;
+      if (questionList) {
+        return questionList;
+      }
+    }
+    if (template && template.id) {
+      getTemplateQuestions(template.id, csrf).then((questionsList) => {
+        setTemplateQuestions(questionsList);
+      });
+    }
+
+  }, [csrf, currentUserId, template]);
 
   const submitPreview = () => {
-    if (!template) {
-      return;
-    }
-
     const submittedTemplate = {...template};
-    if (template.isAdHoc) {
-      submittedTemplate.title = adHocTitle;
-      submittedTemplate.description = adHocDescription;
+    let submittedQuestion = null;
+    if (createAdHoc) {
+      submittedTemplate.title = newAdHocData.title;
+      submittedTemplate.description = newAdHocData.description;
+      submittedQuestion = newAdHocData.question;
     }
-    onSubmit(submittedTemplate);
-    setAdHocTitle(template?.title);
-    setAdHocDescription(template?.description);
+    onSubmit(submittedTemplate, submittedQuestion);
   };
-
-  if (!template) {
-    return null;
-  }
 
   return (
     <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
@@ -76,7 +118,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            {template.isAdHoc && !template.id ? "New Ad-Hoc Template" : template.title}
+            {createAdHoc ? "New Ad-Hoc Template" : template.title}
           </Typography>
           <Button className="ad-hoc-next-button"
                   onClick={submitPreview}
@@ -87,55 +129,40 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template }) => {
       </AppBar>
 
       <div className="preview-modal-content">
-      {template.isAdHoc && !template.id ?
+      {createAdHoc ?
+        <AdHocCreationForm onFormChange={(form) => setNewAdHocData(form)}/> :
         <React.Fragment>
-          <TextField
-            label="Title"
-            placeholder="Ad Hoc"
-            fullWidth
-            margin="normal"
-            value={adHocTitle}
-            onChange={(event) => {
-              setAdHocTitle(event.target.value)
-            }}/>
-          <TextField
-            label="Description"
-            placeholder="Ask a single question"
-            fullWidth
-            margin="normal"
-            value={adHocDescription}
-            onChange={(event) => {
-              setAdHocDescription(event.target.value)
-
-            }}/>
-        </React.Fragment>
-        :
-        <Typography>{template.description}</Typography>
-      }
-
-      {template.isAdHoc && !template.id ?
-        <TextField
-          label="Ask a feedback question"
-          placeholder="How is your day going?"
-          fullWidth
-          multiline
-          rowsMax={10}
-          margin="normal"/>
-        :
-        <List>
-          {template.questions && template.questions.map((question, index) => (
-            <React.Fragment>
-              <ListItem button>
-                <ListItemText primary={`Question ${index + 1}`} secondary={question}/>
+          <Typography variant="h6">{template?.description}</Typography>
+          <Typography style={{color: "gray"}}>
+            <em>Created by {creatorName}</em>
+          </Typography>
+          {templateQuestions && templateQuestions.length === 0 &&
+            <Typography variant="h5" style={{marginTop: "1em"}}>
+              This template has no questions
+            </Typography>
+          }
+          <List>
+            {templateQuestions && templateQuestions.map((templateQuestion) => (
+              <ListItem
+                className={classes.questionListItem}
+                key={templateQuestion?.id}
+                divider>
+                <ListItemAvatar>
+                  <Avatar className={classes.questionNumber}>
+                    {templateQuestion?.questionNumber}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={templateQuestion?.question}/>
               </ListItem>
-              <Divider/>
-            </React.Fragment>
-          ))}
-        </List>
+            ))}
+          </List>
+        </React.Fragment>
       }
       </div>
     </Dialog>
   );
 }
+
+TemplatePreviewModal.propTypes = propTypes;
 
 export default TemplatePreviewModal;
