@@ -422,6 +422,7 @@ exports[`<Menu /> renders correctly 1`] = `
             >
               <div
                 className="MuiListItemText-root"
+
               >
                 <span
                   className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
