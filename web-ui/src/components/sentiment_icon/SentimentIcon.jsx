@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from "react";
 import PropTypes from "prop-types";
 import IconButton from "@material-ui/core/IconButton";
-import {SentimentSatisfied, SentimentVeryDissatisfied, SentimentVerySatisfied} from "@material-ui/icons";
+import {NotInterested, SentimentSatisfied, SentimentVeryDissatisfied, SentimentVerySatisfied} from "@material-ui/icons";
 import {Popover} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -94,6 +94,14 @@ const SentimentIcon = (props) => {
 
   const handlePopoverClose = () => {
     setAnchorElement(null);
+  }
+
+  if (props.sentimentScore === undefined || currentSentiment < -1 || 1 < currentSentiment) {
+    return (
+      <IconButton disabled>
+        <NotInterested style={{color: "gray"}}/>
+      </IconButton>
+    );
   }
 
   return (
