@@ -18,14 +18,14 @@ public class RolePermissionCreateDTO {
     @Column(name = "permission")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "role this member has", required = true,
-            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
+            allowableValues = {READCHECKIN_PERMISSION, CREATECHECKIN_PERMISSION, READCHECKIN_PERMISSION})
     private RolePermissionType permission;
 
     @NotNull
-    @Column(name = "memberid")
+    @Column(name = "roleid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
+    @Schema(description = "id of the role this entry is associated with", required = true)
+    private UUID roleid;
 
     public RolePermissionType getRole() {
         return permission;
@@ -35,12 +35,12 @@ public class RolePermissionCreateDTO {
         this.permission = permission;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getRoleid() {
+        return roleid;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setRoleid(UUID roleid) {
+        this.roleid = roleid;
     }
 }
 

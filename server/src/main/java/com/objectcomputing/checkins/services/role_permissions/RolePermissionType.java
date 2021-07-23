@@ -1,9 +1,9 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
 public enum RolePermissionType {
-    ADMIN,
-    PDL,
-    MEMBER;
+    READCHECKIN,
+    CREATECHECKIN,
+    DELETECHECKIN;
 
     @Override
     public String toString() {
@@ -11,8 +11,8 @@ public enum RolePermissionType {
     }
 
     public static class Constants {
-        public static final String ADMIN_ROLE = "ADMIN";
-        public static final String PDL_ROLE = "PDL";
-        public static final String MEMBER_ROLE = "MEMBER";
+        public static final String READCHECKIN_PERMISSION = "READCHECKIN";
+        public static final String CREATECHECKIN_PERMISSION = "CREATECHECKIN";
+        public static final String DELETECHECKIN_PERMISSION = "DELETECHECKIN";
     }
 }

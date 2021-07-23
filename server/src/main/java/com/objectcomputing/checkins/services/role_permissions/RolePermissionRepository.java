@@ -16,11 +16,11 @@ public interface RolePermissionRepository extends CrudRepository<RolePermission,
 
     List<RolePermission> findByPermission(RolePermissionType permission);
 
-    List<RolePermission> findByMemberid(UUID uuid);
+    List<RolePermission> findByRoleid(UUID uuid);
 
-    Optional<RolePermission> findByPermissionAndMemberid(RolePermissionType permission, UUID memberId);
+    Optional<RolePermission> findByPermissionAndRoleid(RolePermissionType permission, UUID memberId);
 
-    void deleteByPermissionAndMemberid(RolePermissionType permission, UUID memberId);
+    void deleteByPermissionAndRoleid(RolePermissionType permission, UUID memberId);
 
     @Override
     <S extends RolePermission> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

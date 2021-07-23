@@ -23,29 +23,29 @@ public class RolePermission {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to role entry", required = true)
+    @Schema(description = "id of this role to permission entry", required = true)
     private UUID id;
 
     @NotNull
-    @Schema(description = "role this member has", required = true,
+    @Schema(description = "permission this role has", required = true,
             allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
     @TypeDef(type = DataType.OBJECT)
     private RolePermissionType permission;
 
     @NotNull
-    @Column(name = "memberid")
+    @Column(name = "roleid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
+    @Schema(description = "id of the role this entry is associated with", required = true)
+    private UUID roleid;
 
-    public RolePermission(RolePermissionType permission, UUID memberid) {
-        this(null, permission, memberid);
+    public RolePermission(RolePermissionType permission, UUID roleid) {
+        this(null, permission, roleid);
     }
 
-    public RolePermission(UUID id, RolePermissionType permission, UUID memberid) {
+    public RolePermission(UUID id, RolePermissionType permission, UUID roleid) {
         this.id = id;
         this.permission = permission;
-        this.memberid = memberid;
+        this.roleid = roleid;
     }
 
     public UUID getId() {
@@ -64,12 +64,12 @@ public class RolePermission {
         this.permission = permission;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getRoleid() {
+        return roleid;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setRoleid(UUID roleid) {
+        this.roleid = roleid;
     }
 
     @Override
@@ -79,12 +79,12 @@ public class RolePermission {
         RolePermission that = (RolePermission) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(permission, that.permission) &&
-                Objects.equals(memberid, that.memberid);
+                Objects.equals(roleid, that.roleid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, permission, memberid);
+        return Objects.hash(id, permission, roleid);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class RolePermission {
         return "RolePermission{" +
                 "id=" + id +
                 ", permission=" + permission +
-                ", memberid=" + memberid +
+                ", roleid=" + roleid +
                 '}';
     }
 }
