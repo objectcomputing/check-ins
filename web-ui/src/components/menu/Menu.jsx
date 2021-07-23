@@ -187,13 +187,9 @@ function Menu() {
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createListJsx(
-          [
-            ["/home", "HOME"],
-            ["/checkins", "CHECK-INS"],
-          ],
-          false
-        )}
+        {createLinkJsx("/home", "HOME", false)}
+        {isAdmin && createLinkJsx("/admin", "ADMIN", false)}
+        {createLinkJsx("/checkins", "CHECK-INS", false)}
         <ListItem
             button
             onClick={toggleDirectory}
@@ -218,7 +214,6 @@ function Menu() {
               {createListJsx(reportsLinks, true)}
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
-            {createLinkJsx("/admin", "ADMIN", false)}
           </>
       )}
       </List>
