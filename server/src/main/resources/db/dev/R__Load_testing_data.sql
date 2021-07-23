@@ -394,6 +394,36 @@ INSERT INTO feedback_templates
 VALUES
 ('18ef2032-c264-411e-a8e1-ddda9a714bae', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Q1 Feedback', 'Get feedback for quarter 1', '2021-06-06', null, null);
 
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('d6d05f53-682c-4c37-be32-8aab5f89767f', 'What are this team member''s top strengths (include examples where possible)?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
+VALUES
+('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('89c8b612-fca8-4144-88cd-176ddfca35ad', 'What can this team member improve on that would help them increase their effectiveness (include examples where possible)?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
+VALUES
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2021-04-04', null, null);
+
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, send_date, due_date, submit_date, status)
 VALUES
