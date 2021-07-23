@@ -21,6 +21,7 @@ const SentimentIcon = (props) => {
   const [anchorElement, setAnchorElement] = useState(null);
   const [showSentimentPicker, setShowSentimentPicker] = useState(false);
   const [selectedSentiment, setSelectedSentiment] = useState(null);
+  const [currentSentiment, setCurrentSentiment] = useState(props.sentimentScore);
 
   // Gets the appropriate icon, button styles, and icon styles based on the sentiment score
   const getSentimentStyles = useCallback((sentimentScore, isSelected) => {
@@ -67,17 +68,19 @@ const SentimentIcon = (props) => {
   }, [selectedSentiment, getSentimentStyles]);
 
   const updateSentiment = (newSentiment) => {
+    if (typeof currentSentiment !== "number") return;  // type check
+    if (selectedSentiment === null) return;  // do not attempt update if no option is selected
     // prevent saving updated sentiment if it is the same as before
     if (
-      (newSentiment < -sentimentThreshold && props.sentimentScore < -sentimentThreshold) ||
-      (Math.abs(newSentiment) < sentimentThreshold && Math.abs(props.sentimentScore) < sentimentThreshold) ||
-      (newSentiment > sentimentThreshold && props.sentimentScore > sentimentThreshold)
+      (newSentiment < -sentimentThreshold && currentSentiment < -sentimentThreshold) ||
+      (Math.abs(newSentiment) < sentimentThreshold && Math.abs(currentSentiment) < sentimentThreshold) ||
+      (newSentiment > sentimentThreshold && currentSentiment > sentimentThreshold)
     ) {
       setAnchorElement(null);
       return;
     }
 
-    console.log(`Updating to ${newSentiment}`);
+    setCurrentSentiment(newSentiment);
     // TODO: Make appropriate API call to update the sentiment
 
     setAnchorElement(null);
@@ -95,7 +98,7 @@ const SentimentIcon = (props) => {
 
   return (
     <React.Fragment>
-      {getSentimentIcon(props.sentimentScore)}
+      {getSentimentIcon(currentSentiment)}
       <Popover
         open={!!anchorElement}
         anchorEl={anchorElement}
@@ -135,7 +138,8 @@ const SentimentIcon = (props) => {
               <Button
                 color="primary"
                 variant="outlined"
-                onClick={() => updateSentiment(selectedSentiment)}>
+                onClick={() => updateSentiment(selectedSentiment)}
+                disabled={selectedSentiment === null}>
                 Save
               </Button>
             </React.Fragment>
