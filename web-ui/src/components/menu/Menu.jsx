@@ -8,7 +8,6 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   AppBar,
   Avatar,
-  Button,
   CssBaseline,
   Collapse,
   Drawer,
@@ -57,35 +56,29 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-  nested: {
-    paddingLeft: theme.spacing(4),
-    textAlign: "center",
-  },
-  ListItemText: {
-    fontSize: "0.9rem",
-  },
   listStyle: {
     textDecoration: "none",
     color: "white",
+    textAlign: "left",
   },
-  listItem: {
-    textAlign: "center",
+  nested: {
+    paddingLeft: theme.spacing(4),
   },
   subListItem: {
     fontSize: "0.9rem",
-  },
+  }
 }));
 
 const directoryLinks = [
-  ["/guilds", "GUILDS"],
-  ["/people", "PEOPLE"],
-  ["/teams", "TEAMS"],
+  ["/guilds", "Guilds"],
+  ["/people", "People"],
+  ["/teams", "Teams"],
 ];
 
 const reportsLinks = [
-  ["/checkins-reports", "CHECK-INS"],
-  ["/skills-reports", "SKILLS"],
-  ["/team-skills-reports", "TEAM SKILLS"],
+  ["/checkins-reports", "Check-ins"],
+  ["/skills-reports", "Skills"],
+  ["/team-skills-reports", "Team Skills"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
 ]
 
@@ -158,16 +151,12 @@ function Menu() {
         key={path}
         component={Link}
         to={path}
-        className={
-          isSubLink ? `${classes.listItem} ${classes.nested}` : classes.listItem
-        }
+        className={isSubLink ? classes.nested : null}
         button
         onClick={
           isSubLink
             ? undefined
-            : () => {
-                closeSubMenus();
-              }
+            : () => { closeSubMenus(); }
         }
         selected={isLinkSelected(path)}
       >
@@ -187,7 +176,7 @@ function Menu() {
   };
 
   const drawer = (
-    <div>
+    <>
       <div className={classes.toolbar} />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <img
@@ -196,46 +185,39 @@ function Menu() {
           style={{ width: "50%" }}
         />
       </div>
+
       <List component="nav" className={classes.listStyle}>
-        {createListJsx(
-          [
-            ["/home", "HOME"],
-            ["/admin", "ADMIN"],
-            ["/checkins", "CHECK-INS"],
-          ],
-          false
-        )}
-      </List>
-      <Button
-        onClick={toggleDirectory}
-        size="large"
-        style={{ color: "white", width: "100%" }}
-      >
-        Directory
-      </Button>
-      <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
-        <List className={classes.listStyle} component="nav" disablePadding>
-          {createListJsx(directoryLinks, true)}
-        </List>
-      </Collapse>
-      {isAdmin && (
-        <div>
-          <Button
-            onClick={toggleReports}
-            size="large"
-            style={{ color: "white", width: "100%" }}
+        {createLinkJsx("/home", "HOME", false)}
+        {isAdmin && createLinkJsx("/admin", "ADMIN", false)}
+        {createLinkJsx("/checkins", "CHECK-INS", false)}
+        <ListItem
+            button
+            onClick={toggleDirectory}
+            className={classes.listItem}
           >
-            Reports
-          </Button>
-          <List className={classes.listStyle} component="nav" disablePadding>
+            <ListItemText primary="DIRECTORY" />
+          </ListItem>
+        <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
+          {createListJsx(directoryLinks, true)}
+        </Collapse>
+      
+      {isAdmin && (
+          <>
+            <ListItem
+              button
+              onClick={toggleReports}
+              className={classes.listItem}
+            >
+              <ListItemText primary="REPORTS" />
+            </ListItem>
             <Collapse in={reportsOpen} timeout="auto" unmountOnExit>
               {createListJsx(reportsLinks, true)}
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
-          </List>
-        </div>
+          </>
       )}
-    </div>
+      </List>
+    </>
   );
 
   return (
