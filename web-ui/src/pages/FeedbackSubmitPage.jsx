@@ -85,7 +85,7 @@ const FeedbackSubmitPage = () => {
         <React.Fragment>
           {feedbackRequestFetched.current && (showTips ?
             <FeedbackSubmissionTips onNextClick={() => setShowTips(false)}/> :
-            <FeedbackSubmitForm requesteeName={requestee?.name}/>
+            <FeedbackSubmitForm requesteeName={requestee?.name} requestId={requestQuery}/>
           )}
         </React.Fragment>
       }
