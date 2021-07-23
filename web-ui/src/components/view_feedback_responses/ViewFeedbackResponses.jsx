@@ -7,9 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import AvatarComponent from '../avatar/Avatar'
-import MoodBadIcon from '@material-ui/icons/MoodBad';
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import SentimentSatisfiedIcon from '@material-ui/icons/SentimentSatisfied';
+import SentimentIcon from "../sentiment_icon/SentimentIcon";
 //note that request id will be in actual object, so you will need to get information out of request id, template id and state
 
 
@@ -20,8 +18,6 @@ const useStylesCardContent = makeStyles({
       }
     }
   }, { name: "MuiCardContent" })
-
-
 
 
 const ViewFeedbackResponses = (props) => {
@@ -54,7 +50,7 @@ const ViewFeedbackResponses = (props) => {
             answer: "I don't know that much about opossums",
             questionId: 1,
             responderName: "Erin Deeds",
-            sentiment: 0.5,
+            sentiment: 0,
     
         },
         {
@@ -68,7 +64,7 @@ const ViewFeedbackResponses = (props) => {
             answer: "I always thought they were sort of nasty creatures...",
             questionId: 2,
             responderName: "Erin Deeds",
-            sentiment: 0.2
+            sentiment: -0.7
     
         },
         {
@@ -81,7 +77,7 @@ const ViewFeedbackResponses = (props) => {
           answer: "I never knew that about opossums. I think my opinion of them is a little better now.",
           questionId: 3,
           responderName: "Erin Deeds",
-          sentiment: 0.5,
+          sentiment: 0.1,
     
       },
       {
@@ -116,7 +112,7 @@ const ViewFeedbackResponses = (props) => {
                                                         alignItems="center"
                                                     >
                                                         <Grid item>
-                                                            <AvatarComponent className="avatar-photo" imageUrl="../../../public/default_profile.jpg"></AvatarComponent>
+                                                            <AvatarComponent className="avatar-photo" imageUrl="../../../public/default_profile.jpg"/>
                                                         </Grid>
                                                         <Grid item xs >
                                                             <Typography className="responder-name">{answer.responderName}</Typography>
@@ -134,11 +130,7 @@ const ViewFeedbackResponses = (props) => {
                                                             />
                                                         </Grid>
                                                         <Grid item xs className="small-margin">
-                                                            {answer.sentiment >=0 && answer.sentiment < 0.3 ? <MoodBadIcon fontSize="large"></MoodBadIcon> :
-                                                            answer.sentiment >= 0.3 && answer.sentiment < 0.7 ? <SentimentSatisfiedIcon fontSize="large"></SentimentSatisfiedIcon>:
-                                                            answer.sentiment >= 0.7 && answer.sentiment <= 1.0 ? <InsertEmoticonIcon fontSize="large"></InsertEmoticonIcon> :
-                                                            null
-                                                            }
+                                                          <SentimentIcon sentimentScore={answer.sentiment}/>
                                                         </Grid>
                                                     </Grid>
                                                 </Grid>
@@ -146,7 +138,7 @@ const ViewFeedbackResponses = (props) => {
                                         </CardContent>
                                     </Card>
                                 </Grid>
-                            ) : <React.Fragment></React.Fragment>
+                            ) : <React.Fragment/>
                         })
                         }
 
