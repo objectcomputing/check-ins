@@ -190,7 +190,6 @@ function Menu() {
         {createListJsx(
           [
             ["/home", "HOME"],
-            ["/admin", "ADMIN"],
             ["/checkins", "CHECK-INS"],
           ],
           false
@@ -219,6 +218,7 @@ function Menu() {
               {createListJsx(reportsLinks, true)}
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
+            {createLinkJsx("/admin", "ADMIN", false)}
           </>
       )}
       </List>
