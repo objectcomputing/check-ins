@@ -5,7 +5,7 @@ import { ResponsiveRadar } from "@nivo/radar";
 const MyResponsiveRadar = ({ data, selectedMembers }) => (
   <ResponsiveRadar
     data={data}
-    keys={selectedMembers.map((member) => member.firstName)}
+    keys={selectedMembers.map((member) => member.name)}
     indexBy="skill"
     maxValue="auto"
     margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
