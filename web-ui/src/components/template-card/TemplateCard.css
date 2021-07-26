@@ -16,7 +16,6 @@
 .feedback-template-card .card-content {
   display: grid;
   grid-template-rows: 200px 30px;
-  padding-top: 0;
 }
 
 .feedback-template-card .template-details {
@@ -25,6 +24,7 @@
   text-align: center;
   padding-bottom: 0;
   margin-bottom: 0;
+  max-height: 200px;
 }
 
 .feedback-template-card .template-name {
