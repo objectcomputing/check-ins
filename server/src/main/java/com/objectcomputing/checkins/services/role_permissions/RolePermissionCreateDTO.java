@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
-import com.objectcomputing.checkins.services.role_permissions.RolePermissionType;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
@@ -18,7 +17,7 @@ public class RolePermissionCreateDTO {
     @Column(name = "permission")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "role this member has", required = true,
-            allowableValues = {READCHECKIN_PERMISSION, CREATECHECKIN_PERMISSION, READCHECKIN_PERMISSION})
+            allowableValues = {READCHECKIN_PERMISSION, CREATECHECKIN_PERMISSION, DELETECHECKIN_PERMISSION, UNASSIGNED_PERMISSION})
     private RolePermissionType permission;
 
     @NotNull
@@ -27,11 +26,11 @@ public class RolePermissionCreateDTO {
     @Schema(description = "id of the role this entry is associated with", required = true)
     private UUID roleid;
 
-    public RolePermissionType getRole() {
+    public RolePermissionType getRolePermission() {
         return permission;
     }
 
-    public void setRole(RolePermissionType permission) {
+    public void setRolePermission(RolePermissionType permission) {
         this.permission = permission;
     }
 

@@ -27,14 +27,14 @@ public class RolePermissionServiceImpl implements RolePermissionServices {
         final RolePermissionType permissionType = permission.getPermission();
         final UUID roleId = permission.getRoleid();
 
-        if (permissionType == null || memberId == null) {
+        if (permissionType == null || roleId == null) {
             throw new BadArgException(String.format("Invalid permission %s", permission));
         } else if (permission.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for permission", permission.getId()));
         } else if (roleRepo.findById(roleId).isEmpty()) {
-            throw new BadArgException(String.format("Role %s doesn't exist", memberId));
+            throw new BadArgException(String.format("Role %s doesn't exist", roleId));
         } else if (rolepermissionRepo.findByPermissionAndRoleid(permissionType, permission.getRoleid()).isPresent()) {
-            throw new BadArgException(String.format("Role %s already has permission %s", memberId, permissionType));
+            throw new BadArgException(String.format("Role Id %s already has permission %s", memberId, permissionType));
         }
 
         return rolepermissionRepo.save(permission);
@@ -54,7 +54,7 @@ public class RolePermissionServiceImpl implements RolePermissionServices {
         } else if (id == null || rolepermissionRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate permission to update with id %s", id));
         } else if (roleRepo.findById(roleId).isEmpty()) {
-            throw new BadArgException(String.format("Role %s doesn't exist", roleId));
+            throw new BadArgException(String.format("Role Id %s doesn't exist", roleId));
         }
 
         return rolepermissionRepo.update(permission);

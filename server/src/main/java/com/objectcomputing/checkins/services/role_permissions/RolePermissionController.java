@@ -54,7 +54,7 @@ public class RolePermissionController {
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<RolePermission>> create(@Body @Valid RolePermissionCreateDTO permission,
                                              HttpRequest<RolePermissionCreateDTO> request) {
-        return Single.fromCallable(() -> roleServices.save(new RolePermission(permission.getRole(), permission.getRoleid())))
+        return Single.fromCallable(() -> roleServices.save(new RolePermission(permission.getRolePermission(), permission.getRoleid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> {
                     return (HttpResponse<RolePermission>) HttpResponse

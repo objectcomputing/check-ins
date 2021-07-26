@@ -3,6 +3,6 @@ CREATE TABLE role_permissions(
    id varchar PRIMARY KEY,
    permission VARCHAR,
    roleid varchar REFERENCES role(id),
-   CONSTRAINT available_permissions CHECK (permission IN ('READCHECKIN', 'CREATECHECKIN', 'DELETECHECKIN') ),
+   CONSTRAINT available_permissions CHECK (permission IN ('READCHECKIN', 'CREATECHECKIN', 'DELETECHECKIN','UNASSIGNED') ),
    UNIQUE(roleid, permission)
 );
