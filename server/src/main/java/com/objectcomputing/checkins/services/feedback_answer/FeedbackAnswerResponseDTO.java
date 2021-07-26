@@ -23,6 +23,11 @@ public class FeedbackAnswerResponseDTO {
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
+    @NotBlank
+    @Schema(description = "id of the request this question is linked to ", required = true)
+    private UUID requestId;
+
+
     @Nullable
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
@@ -50,6 +55,15 @@ public class FeedbackAnswerResponseDTO {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
+
+    public UUID getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
+    }
+
 
     @Nullable
     public Double getSentiment() {
