@@ -91,7 +91,7 @@ public class FrozenTemplateQuestionController {
         FrozenTemplateQuestionResponseDTO dto = new FrozenTemplateQuestionResponseDTO();
         dto.setId(savedQuestion.getId());
         dto.setFrozenTemplateId(savedQuestion.getFrozenTemplateId());
-        dto.setQuestionContent(savedQuestion.getQuestion());
+        dto.setQuestion(savedQuestion.getQuestion());
         dto.setQuestionNumber(savedQuestion.getQuestionNumber());
         return dto;
     }

@@ -23,21 +23,6 @@ const useStyles = makeStyles({
   }
 });
 
-const sampleQuestions = [
-  {
-    id: 1,
-    question: "How are you doing today?"
-  },
-  {
-    id: 2,
-    question: "How is the project going?"
-  },
-  {
-    id: 3,
-    question: "What is your current role on the team?"
-  }
-];
-
 const ColorButton = withStyles({
   root: {
     color: "white",

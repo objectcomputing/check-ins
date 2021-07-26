@@ -32,11 +32,11 @@ public class FrozenTemplateQuestionResponseDTO {
         this.frozenTemplateId = frozenTemplateId;
     }
 
-    public String getQuestionContent() {
+    public String getQuestion() {
         return question;
     }
 
-    public void setQuestionContent(String question) {
+    public void setQuestion(String question) {
         this.question = question;
     }
 

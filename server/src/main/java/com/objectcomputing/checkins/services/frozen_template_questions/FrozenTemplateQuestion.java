@@ -108,7 +108,7 @@ public class FrozenTemplateQuestion {
         return "FrozenTemplateQuestion{" +
                 "id=" + id +
                 ", frozenTemplateId=" + frozenTemplateId +
-                ", questionContent='" + question + '\'' +
+                ", question='" + question + '\'' +
                 ", orderNum=" + questionNumber +
                 '}';
     }

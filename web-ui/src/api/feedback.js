@@ -70,17 +70,12 @@ export const getQuestionsByRequestId = async (requestId, cookie) => {
   const frozenTemplateReq = getFrozenTemplateByRequestId(requestId, cookie);
   const questionsReq = frozenTemplateReq.then((frozenTemplateRes) => {
     if (frozenTemplateRes.payload && frozenTemplateRes.payload.data && !frozenTemplateRes.error ) {
-      console.log( ":)" )
-      console.log(frozenTemplateRes.payload.data.id);
       return getQuestionsByFrozenTemplateId(frozenTemplateRes.payload.data.id, cookie);
-    } else {
-      console.error(frozenTemplateRes.error);
     }
   });
 
-  Promise.all([frozenTemplateReq, questionsReq]).then(([frozenTemplateRes, questionsRes ]) => {
-    console.log(frozenTemplateRes);
-    console.log(questionsRes);
-  })
+  return Promise.all([frozenTemplateReq, questionsReq]).then(([frozenTemplateRes, questionsRes ]) => {
+    return questionsRes;
+  });
 
 }
