@@ -100,8 +100,8 @@ function App() {
                 <Route exact path="/feedback/view">
                   <ViewFeedbackPage />
                 </Route>
-                <Route exact path = "/viewfeedback/responses">
-                  <ViewFeedbackResponses></ViewFeedbackResponses>
+                <Route exact path = "/feedback/view/responses">
+                  <ViewFeedbackResponses/>
                 </Route>
                 <Route exact path="/feedback/submit/confirmation">
                   <FeedbackSubmitConfirmation />
