@@ -14,9 +14,9 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
      * @param requestee The {@link MemberProfile} of the requestee of the feedback request
      * @return The saved {@link FeedbackRequest}
      */
-    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), testDate, null, "pending", null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null));
     }
 
     default MemberProfile createADefaultRecipient() {

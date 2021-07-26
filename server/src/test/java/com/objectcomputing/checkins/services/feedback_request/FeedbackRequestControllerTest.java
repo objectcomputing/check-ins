@@ -3,10 +3,8 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.fixture.FeedbackRequestFixture;
-import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-import com.objectcomputing.checkins.services.fixture.RepositoryFixture;
-import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
+import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import java.util.*;
@@ -34,7 +32,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackRequestFixture, RoleFixture {
+public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
     @Inject
     @Client("/services/feedback/requests")
     HttpClient client;
@@ -48,8 +46,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
 
-
-
     @BeforeEach
     void resetMocks() {
         Mockito.reset(emailSender);
@@ -58,7 +54,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     private FeedbackRequest createSampleFeedbackRequest(MemberProfile pdlMember, MemberProfile requestee, MemberProfile recipient) {
         createDefaultRole(RoleType.PDL, pdlMember);
-        return createFeedbackRequest(pdlMember, requestee, recipient);
+        FeedbackTemplate template = createFeedbackTemplate(pdlMember.getId());
+        getFeedbackTemplateRepository().save(template);
+        return createFeedbackRequest(pdlMember, requestee, recipient, template.getId());
     }
 
     private void assertUnauthorized(HttpClientResponseException responseException) {
@@ -69,23 +67,22 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     private void assertResponseEqualsEntity(FeedbackRequest feedbackRequest, FeedbackRequestResponseDTO dto) {
-            assertEquals(feedbackRequest.getId(), dto.getId());
-            assertEquals(feedbackRequest.getCreatorId(), dto.getCreatorId());
-            assertEquals(feedbackRequest.getRequesteeId(), dto.getRequesteeId());
-            assertEquals(feedbackRequest.getSendDate(), dto.getSendDate());
-            assertEquals(feedbackRequest.getDueDate(), dto.getDueDate());
-            assertEquals(feedbackRequest.getRecipientId(), dto.getRecipientId());
-
+        assertEquals(feedbackRequest.getId(), dto.getId());
+        assertEquals(feedbackRequest.getCreatorId(), dto.getCreatorId());
+        assertEquals(feedbackRequest.getRequesteeId(), dto.getRequesteeId());
+        assertEquals(feedbackRequest.getSendDate(), dto.getSendDate());
+        assertEquals(feedbackRequest.getDueDate(), dto.getDueDate());
+        assertEquals(feedbackRequest.getTemplateId(), dto.getTemplateId());
+        assertEquals(feedbackRequest.getRecipientId(), dto.getRecipientId());
     }
 
     private void assertResponseEqualsCreate(FeedbackRequestResponseDTO entity, FeedbackRequestCreateDTO dto) {
-            assertEquals(entity.getCreatorId(), dto.getCreatorId());
-            assertEquals(entity.getRequesteeId(), dto.getRequesteeId());
-            assertEquals(entity.getSendDate(), dto.getSendDate());
-            assertEquals(entity.getStatus(), dto.getStatus());
-            assertEquals(entity.getDueDate(), dto.getDueDate());
-            assertEquals(entity.getRecipientId(), dto.getRecipientId());
-
+        assertEquals(entity.getCreatorId(), dto.getCreatorId());
+        assertEquals(entity.getRequesteeId(), dto.getRequesteeId());
+        assertEquals(entity.getSendDate(), dto.getSendDate());
+        assertEquals(entity.getStatus(), dto.getStatus());
+        assertEquals(entity.getDueDate(), dto.getDueDate());
+        assertEquals(entity.getRecipientId(), dto.getRecipientId());
     }
 
     @Test
@@ -98,10 +95,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(admin.getId()));
         dto.setCreatorId(admin.getId());
         dto.setRequesteeId(memberProfile.getId());
         dto.setSendDate(LocalDate.now());
         dto.setStatus("pending");
+        dto.setTemplateId(template.getId());
         dto.setRecipientId(recipient.getId());
         dto.setDueDate(null);
 
@@ -112,7 +111,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertResponseEqualsCreate(response.body(), dto);
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsCreate(response.getBody().get(), dto);
     }
 
     @Test
@@ -123,11 +123,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final MemberProfile recipient = createADefaultRecipient();
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         dto.setCreatorId(pdlMemberProfile.getId());
         dto.setRequesteeId(employeeMemberProfile.getId());
         dto.setRecipientId(recipient.getId());
         dto.setSendDate(LocalDate.now());
         dto.setStatus("pending");
+        dto.setTemplateId(template.getId());
         dto.setDueDate(null);
 
         //send feedback request
@@ -137,7 +139,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertResponseEqualsCreate(response.body(), dto);
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsCreate(response.getBody().get(), dto);
     }
 
     @Test
@@ -148,12 +151,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final MemberProfile recipient = createADefaultRecipient();
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         dto.setCreatorId(pdlMemberProfile.getId());
         dto.setRequesteeId(employeeMemberProfile.getId());
         dto.setRecipientId(recipient.getId());
         dto.setSendDate(LocalDate.now());
         dto.setStatus("pending");
         dto.setDueDate(null);
+        dto.setTemplateId(template.getId());
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -174,12 +179,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberProfileForPDL.getId()));
         dto.setCreatorId(memberProfileForPDL.getId());
         dto.setRequesteeId(memberProfile.getId());
         dto.setRecipientId(recipient.getId());
         dto.setSendDate(LocalDate.now());
         dto.setStatus("pending");
         dto.setDueDate(null);
+        dto.setTemplateId(template.getId());
 
         //send feedback request
         final HttpRequest<?> request = HttpRequest.POST("", dto)
@@ -199,6 +206,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //create feedback request
         final FeedbackRequestCreateDTO dto = new FeedbackRequestCreateDTO();
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(memberProfile.getId()));
+        dto.setTemplateId(template.getId());
         dto.setCreatorId(requesteeProfile.getId());
         dto.setRequesteeId(memberProfile.getId());
         dto.setRecipientId(recipient.getId());
@@ -230,7 +239,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertResponseEqualsEntity(feedbackRequest, response.body());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
@@ -246,7 +256,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertResponseEqualsEntity(feedbackRequest, response.body());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
@@ -299,7 +310,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         // recipient must be able to get the feedback request
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertResponseEqualsEntity(feedbackRequest, response.body());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
@@ -331,22 +343,23 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         //create two sample feedback requests by the same PDL
-        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne);
-        createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo);
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne, template.getId());
+
+        FeedbackRequest feedbackReq2 = createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo, template.getId());
 
         //search for feedback requests by a specific creator
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackReq.getCreatorId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
-        if (response.getBody().isPresent()) {
-            for (FeedbackRequestResponseDTO dto : response.getBody().get()) {
-                assertResponseEqualsEntity(feedbackReq, dto);
-            }
-        }
 
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(2, response.getBody().get().size());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReq2, response.getBody().get().get(1));
     }
 
     @Test
@@ -361,24 +374,22 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile memberThree = createAThirdDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipient = createADefaultRecipient();
 
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         //create two sample feedback requests by the same PDL
-        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipient);
-        FeedbackRequest feedbackReqTwo = createFeedbackRequest(pdlMemberProfile, memberTwo, recipient);
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipient, template.getId());
+        FeedbackRequest feedbackReqTwo = createFeedbackRequest(pdlMemberProfile, memberTwo, recipient, template.getId());
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackReq.getCreatorId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
-        if (response.getBody().isPresent()) {
-            List<FeedbackRequestResponseDTO> dtoList = response.body();
-
-            assertEquals(dtoList.size(), 2);
-            assertResponseEqualsEntity(feedbackReq, dtoList.get(0));
-            assertResponseEqualsEntity(feedbackReqTwo, dtoList.get(1));
-        }
-
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(response.getBody().get().size(), 2);
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
+        assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
+
     }
 
     @Test
@@ -408,14 +419,17 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
         //create two sample feedback requests by the same PDL
-        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne);
-        createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo);
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne, template.getId());
+        createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo, template.getId());
 
         //search for feedback requests by a specific creator, requestee, and template
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId()))
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
         assertEquals(1, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -434,8 +448,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
         //create two sample feedback requests by the same PDL
-        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne);
-        createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo);
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
+        FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne, template.getId());
+        createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo, template.getId());
 
         //search for feedback requests by a specific creator, requestee, and template
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s&requesteeId=%s", feedbackReq.getCreatorId(), feedbackReq.getRequesteeId()))
@@ -470,10 +485,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
-        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
@@ -505,10 +522,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
-        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
@@ -539,11 +557,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
-        assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -557,11 +575,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientTwo = createASecondDefaultRecipient();
         MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfile);
 
-        UUID identicalTemplateId = UUID.randomUUID();
         LocalDate now = LocalDate.now();
         LocalDate oldestDate = now.minusMonths(3);
         LocalDate withinLastFewMonths = now.minusMonths(2);
-        LocalDate outOfRange = now.minusMonths(10);
 
         // create sample feedback requests with different send dates
         FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
@@ -576,11 +592,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertEquals(2, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqThree, response.getBody().get().get(1));
-        assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
@@ -594,7 +610,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
-        UUID identicalTemplateId = UUID.randomUUID();
         LocalDate now = LocalDate.now();
         LocalDate oldestDate = LocalDate.of(2010, 10, 10);
         LocalDate withinLastFewMonths = now.minusMonths(2);
@@ -613,11 +628,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertEquals(3, response.getBody().get().size());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get().get(0));
         assertResponseEqualsEntity(feedbackReqTwo, response.getBody().get().get(1));
         assertResponseEqualsEntity(feedbackReqThree, response.getBody().get().get(2));
-        assertEquals(HttpStatus.OK, response.getStatus());
     }
 
     @Test
@@ -641,6 +657,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
     }
 
@@ -690,6 +707,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
     }
 
@@ -740,6 +758,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
     }
 
@@ -782,7 +801,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-
     }
 
     @Test
