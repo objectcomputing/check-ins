@@ -802,12 +802,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
     @Test
     void testRecipientGetBeforeSendDateNotAuthorized() {
-        LocalDate testDate = LocalDate.now();
+        LocalDate testDate = LocalDate.now().plusDays(1);
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile creator = createAnUnrelatedUser();
-        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), UUID.randomUUID(), testDate, null, "pending", testDate.minusDays(1));
+        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), testDate, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackRequest);
 
         //get feedback request

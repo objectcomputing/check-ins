@@ -106,7 +106,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
 
         boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
@@ -149,10 +148,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (!feedbackReq.isPresent()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-
+        final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID recipientId = feedbackReq.get().getRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId)) {
+        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -160,7 +159,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID templateId, LocalDate oldestDate) {
+    public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, LocalDate oldestDate) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         UUID currentUserId = currentUser.getId();
 
@@ -168,7 +167,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
             if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
-                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(templateId), oldestDate));
+                feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
@@ -189,7 +188,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
-        if(today.isAfter(sendDate)){
+        if(sendDate.isBefore(today)){
             return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
         }
         else{
