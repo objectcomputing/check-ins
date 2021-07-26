@@ -46,13 +46,12 @@ export const getFrozenTemplateByRequestId = async (requestId, cookie) => {
 export const getQuestionsByFrozenTemplateId = async(frozenTemplateId, cookie) => {
   return resolve({
     url: `${questionsURL}`,
-    responseType: "json",
     params: {
-      frozenTemplateId: frozenTemplateId
+      templateId: frozenTemplateId
     },
+    responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
-
 }
 
 export const getAnswersByQuestionId = async(questionId, cookie) => {
@@ -69,12 +68,17 @@ export const getAnswersByQuestionId = async(questionId, cookie) => {
 export const getQuestionsByRequestId = async (requestId, cookie) => {
 
   const frozenTemplateReq = getFrozenTemplateByRequestId(requestId, cookie);
-
   const questionsReq = frozenTemplateReq.then((frozenTemplateRes) => {
-    return getQuestionsByFrozenTemplateId(frozenTemplateRes, cookie);
+    if (frozenTemplateRes.payload && frozenTemplateRes.payload.data && !frozenTemplateRes.error ) {
+      console.log( ":)" )
+      console.log(frozenTemplateRes.payload.data.id);
+      return getQuestionsByFrozenTemplateId(frozenTemplateRes.payload.data.id, cookie);
+    } else {
+      console.error(frozenTemplateRes.error);
+    }
   });
 
-  Promise.all([frozenTemplateReq, questionsReq]).then(([frozenTemplateRes, questionsRes]) => {
+  Promise.all([frozenTemplateReq, questionsReq]).then(([frozenTemplateRes, questionsRes ]) => {
     console.log(frozenTemplateRes);
     console.log(questionsRes);
   })

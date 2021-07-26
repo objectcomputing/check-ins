@@ -446,9 +446,9 @@ VALUES
 INSERT INTO frozen_template_questions
 (id, frozen_template_id, question, question_number)
 VALUES
-('190a1602-c97e-43e4-a0dc-5a88697b42f6', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'What are this team member''s top strengths (include examples where possible)?', '1');
+('190a1602-c97e-43e4-a0dc-5a88697b42f6', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '1');
 
 INSERT INTO frozen_template_questions
 (id, frozen_template_id, question, question_number)
 VALUES
-    ('8fdf6aa3-4d4b-4c6d-ad16-66895192a63c', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '2');
+('8fdf6aa3-4d4b-4c6d-ad16-66895192a63c', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '${aeskey}'), '2');
