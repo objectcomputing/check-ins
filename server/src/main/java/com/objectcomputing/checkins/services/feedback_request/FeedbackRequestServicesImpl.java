@@ -106,6 +106,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
+        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
 
         boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());

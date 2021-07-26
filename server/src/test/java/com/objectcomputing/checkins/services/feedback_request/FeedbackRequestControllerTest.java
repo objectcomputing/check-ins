@@ -42,9 +42,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
 
-    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
+    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT)
+    String notificationSubject;
 
-    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
+    @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT)
+    String notificationContent;
 
     @BeforeEach
     void resetMocks() {
@@ -166,7 +168,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         //verify appropriate email was sent
-        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
+        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId=" + response.getBody().get().getId() + "\">Check-Ins application</a>.", recipient.getWorkEmail());
     }
 
     @Test
@@ -346,8 +348,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         //create two sample feedback requests by the same PDL
         FeedbackRequest feedbackReq = createFeedbackRequest(pdlMemberProfile, memberOne, recipientOne, template.getId());
-
-        FeedbackRequest feedbackReq2 = createFeedbackRequest(pdlMemberProfileTwo, memberTwo, recipientTwo, template.getId());
+        FeedbackRequest feedbackReq2 = createFeedbackRequest(pdlMemberProfile, memberTwo, recipientTwo, template.getId());
 
         //search for feedback requests by a specific creator
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?creatorId=%s", feedbackReq.getCreatorId()))
@@ -474,9 +475,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipientTwo = createASecondDefaultRecipient();
         LocalDate now = LocalDate.now();
         //create two sample feedback requests by the same PDL and same requestee
-        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
+        FeedbackRequest feedbackReq = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), template.getId(), now, null, "pending", null);
 
-        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), now, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackReq);
         getFeedbackRequestRepository().save(feedbackReqTwo);
 
@@ -510,9 +512,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         LocalDate outOfRange = now.minusMonths(10);
 
         // create sample feedback requests with different send dates
-        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
-        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), withinLastFewMonths, null, "pending", null);
-        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), outOfRange, null, "pending", null);
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
+        FeedbackRequest feedbackReq = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), template.getId(), now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), outOfRange, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackReq);
         getFeedbackRequestRepository().save(feedbackReqTwo);
         getFeedbackRequestRepository().save(feedbackReqThree);
@@ -543,11 +546,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         LocalDate oldestDate = now.minusMonths(3);
         LocalDate withinLastFewMonths = now.minusMonths(2);
         LocalDate outOfRange = now.minusMonths(10);
-
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         // create sample feedback requests with different send dates
-        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
-        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(),  withinLastFewMonths, null, "pending", null);
-        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), outOfRange, null, "pending", null);
+        FeedbackRequest feedbackReq = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), template.getId(), now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), outOfRange, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackReq);
         getFeedbackRequestRepository().save(feedbackReqTwo);
         getFeedbackRequestRepository().save(feedbackReqThree);
@@ -580,9 +583,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         LocalDate withinLastFewMonths = now.minusMonths(2);
 
         // create sample feedback requests with different send dates
-        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
-        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberTwo.getId(), recipientTwo.getId(), withinLastFewMonths, null, "pending", null);
-        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), withinLastFewMonths, null, "pending", null);
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
+        FeedbackRequest feedbackReq = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), template.getId(), now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(pdlMemberProfile.getId(), memberTwo.getId(), recipientTwo.getId(), template.getId(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), withinLastFewMonths, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackReq);
         getFeedbackRequestRepository().save(feedbackReqTwo);
         getFeedbackRequestRepository().save(feedbackReqThree);
@@ -615,10 +619,11 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         LocalDate withinLastFewMonths = now.minusMonths(2);
         LocalDate outOfRange = now.minusMonths(10);
 
+        FeedbackTemplate template = getFeedbackTemplateRepository().save(createFeedbackTemplate(pdlMemberProfile.getId()));
         // create sample feedback requests with different send dates
-        FeedbackRequest feedbackReq = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), now, null, "pending", null);
-        FeedbackRequest feedbackReqTwo = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(),  withinLastFewMonths, null, "pending", null);
-        FeedbackRequest feedbackReqThree = new FeedbackRequest(UUID.randomUUID(), pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), outOfRange, null, "pending", null);
+        FeedbackRequest feedbackReq = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientOne.getId(), template.getId(), now, null, "pending", null);
+        FeedbackRequest feedbackReqTwo = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), withinLastFewMonths, null, "pending", null);
+        FeedbackRequest feedbackReqThree = new FeedbackRequest(pdlMemberProfile.getId(), memberOne.getId(), recipientTwo.getId(), template.getId(), outOfRange, null, "pending", null);
         getFeedbackRequestRepository().save(feedbackReq);
         getFeedbackRequestRepository().save(feedbackReqTwo);
         getFeedbackRequestRepository().save(feedbackReqThree);
@@ -785,7 +790,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = createSampleFeedbackRequest(admin, employeeMemberProfile, recipient);
         getFeedbackRequestRepository().save(feedbackReq);
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE );
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
         assertEquals(HttpStatus.OK, response.getStatus());
     }
@@ -797,7 +802,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = createSampleFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         getFeedbackRequestRepository().save(feedbackReq);
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE );
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", feedbackReq.getId())).basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -818,5 +823,4 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         assertUnauthorized(responseException);
     }
-
 }
