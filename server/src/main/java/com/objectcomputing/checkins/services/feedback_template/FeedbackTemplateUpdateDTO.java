@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 import io.micronaut.core.annotation.Introspected;
@@ -15,16 +14,8 @@ public class FeedbackTemplateUpdateDTO {
     private UUID id;
 
     @NotBlank
-    @Schema(description = "the updated title of the feedback template", required = true)
-    private String title;
-
-    @Nullable
-    @Schema(description = "the updated description of the feedback template")
-    private String description;
-
-    @NotBlank
-    @Schema(description = "UUID of person who last updated the feedback template")
-    private UUID updaterId;
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
+    private Boolean active;
 
     public UUID getId() {
         return id;
@@ -34,28 +25,11 @@ public class FeedbackTemplateUpdateDTO {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Nullable
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@Nullable String description) {
-        this.description = description;
-    }
-
-    public UUID getUpdaterId() {
-        return updaterId;
-    }
-
-    public void setUpdaterId(UUID updaterId) {
-        this.updaterId = updaterId;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

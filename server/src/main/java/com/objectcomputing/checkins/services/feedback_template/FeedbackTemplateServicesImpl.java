@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_template.template_question.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -67,6 +68,9 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         }
 
         feedbackTemplate.setCreatorId(originalTemplate.get().getCreatorId());
+        feedbackTemplate.setTitle(originalTemplate.get().getTitle());
+        feedbackTemplate.setDescription(originalTemplate.get().getDescription());
+        feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -83,12 +87,8 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        // delete all questions connected to the template
-        List<TemplateQuestion> questionsToDelete = templateQuestionServices.findByFields(id);
-        questionsToDelete.forEach((TemplateQuestion question) -> templateQuestionServices.delete(question.getId()));
-
         // delete the template itself
-        feedbackTemplateRepository.deleteById(id);
+        feedbackTemplateRepository.softDeleteById(Util.nullSafeUUIDToString(id));
         return true;
     }
 
@@ -106,7 +106,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return feedbackTemplate.get();
     }
 
-
     @Override
     public List<FeedbackTemplate> findByFields(@Nullable UUID creatorId, @Nullable String title) {
         if (!getIsPermitted()) {
@@ -114,24 +113,23 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         }
 
         List<FeedbackTemplate> templateList = new ArrayList<>();
-        // Filters only active templates by default
+
         if (title != null) {
             templateList.addAll(findByTitleLike(title));
             if (creatorId != null) {
-                templateList.retainAll(feedbackTemplateRepository.findByCreatorId(creatorId));
+                templateList.retainAll(feedbackTemplateRepository.findByCreatorIdAndActive(creatorId, true));
             }
         } else if (creatorId != null) {
-            templateList.addAll(feedbackTemplateRepository.findByCreatorId(creatorId));
+            templateList.addAll(feedbackTemplateRepository.findByCreatorIdAndActive(creatorId, true));
         } else {
             feedbackTemplateRepository.findAll().forEach(templateList::add);
         }
-
         return templateList;
     }
 
     protected List<FeedbackTemplate> findByTitleLike(String title) {
         String wildcard = "%" + title + "%";
-        return feedbackTemplateRepository.findByTitleLike(wildcard);
+        return feedbackTemplateRepository.findByTitleLikeAndActive(wildcard, true);
     }
 
     public boolean createIsPermitted() {
