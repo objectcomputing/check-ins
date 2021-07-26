@@ -17,7 +17,6 @@ import { createFeedbackRequest } from "../api/feedback";
 import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
-import { UPDATE_TOAST } from "../context/actions";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -91,7 +90,6 @@ const FeedbackRequestPage = () => {
   const csrf = selectCsrfToken(state)
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
-  const pathname = location.pathname;
 
 
   useEffect(()=> {
@@ -159,7 +157,7 @@ useEffect(() => {
             },
           });
           query.from = undefined;
-,          history.push({...location, search: queryString.stringify(query)});
+           history.push({...location, search: queryString.stringify(query)});
         return false;
       }
     }
@@ -298,7 +296,7 @@ const handleSubmit = () =>{
     });
       history.push("/checkins");
     }
-  }, [history, urlIsValid]);
+  }, [history, urlIsValid, dispatch]);
 
   useEffect(()=> {
     setReadyToProceed(canProceed());
