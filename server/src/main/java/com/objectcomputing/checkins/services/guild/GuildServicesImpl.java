@@ -3,10 +3,13 @@ package com.objectcomputing.checkins.services.guild;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
@@ -24,17 +27,20 @@ public class GuildServicesImpl implements GuildServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
+    private final EmailSender emailSender;
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
                             CurrentUserServices currentUserServices,
                             MemberProfileServices memberProfileServices,
-                             GuildMemberServices guildMemberServices) {
+                             GuildMemberServices guildMemberServices,
+                             EmailSender emailSender) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
+        this.emailSender = emailSender;
     }
 
     public GuildResponseDTO save(GuildCreateDTO guildDTO) {
@@ -79,7 +85,7 @@ public class GuildServicesImpl implements GuildServices {
     public GuildResponseDTO update(GuildUpdateDTO guildDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-
+        // if isAdmin or current user is a lead in the guild.
         if (isAdmin || (currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty())) {
             // Guild newGuildEntity = null;
@@ -92,29 +98,41 @@ public class GuildServicesImpl implements GuildServices {
                         throw new BadArgException("Guild must include at least one guild lead");
                     }
 
+                    // data used for email notifications when changes to membership occur
+                    List<MemberProfile> addedMembers = new ArrayList<>();
+                    List<MemberProfile> removedMembers = new ArrayList<>();
+                    // emails of guild leads for current guild excluding the guild lead performing the request
+                    Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
+                            .stream()
+                            .filter(lead -> !lead.getMemberid().equals(currentUser.getId()))
+                            .map(lead -> memberProfileServices.getById(lead.getMemberid()).getWorkEmail())
+                            .collect(Collectors.toSet());
+
                     Guild newGuildEntity  = guildsRepo.update(fromDTO(guildDTO));
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
-                    //add new members to the guild
-                    guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
+                    //add/update members to the guild
+                    guildDTO.getGuildMembers().forEach((updatedMember) -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberid().equals(updatedMember.getMemberId())).findFirst();
+                        MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(!first.isPresent()) {
-                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
+                            addedMembers.add(existingMember);
                         } else {
-                            ;
-                            MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.update(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                         }
                     });
 
-                    //delete any removed members from guild
-                    existingGuildMembers.stream().forEach((existingMember) -> {
-                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid())).findFirst().isPresent()) {
+                    // remove members from guild
+                    existingGuildMembers.forEach((existingMember) -> {
+                        if(guildDTO.getGuildMembers().stream().noneMatch((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid()))) {
                             guildMemberServices.delete(existingMember.getId());
+                            removedMembers.add(memberProfileServices.getById(existingMember.getMemberid()));
                         }
                     });
 
                     updated = fromEntity(newGuildEntity, newMembers);
+                    sendGuildMemberChangeNotification(addedMembers, removedMembers, updated.getName(), emailsOfGuildLeads);
+
                 } else {
                     throw new BadArgException(String.format("Guild ID %s does not exist, can't update.", guildDTO.getId()));
                 }
@@ -201,5 +219,49 @@ public class GuildServicesImpl implements GuildServices {
         }
         return new GuildMemberResponseDTO(guildMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
                 memberProfile.getId(), guildMember.isLead());
+    }
+
+
+    private void sendGuildMemberChangeNotification(List<MemberProfile> addedMembers, List<MemberProfile> removedMembers,
+                                                    String guildName, Set<String> emailsOfGuildLeads)
+    {
+        if (!System.getenv("MICRONAUT_ENVIRONMENTS").equals("local")) return;
+        if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
+            String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
+            String subject = "Membership Changes have been made to the " + guildName +" guild";
+            emailSender.sendEmail(subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
+        }
+        // Environment.GOOGLE_COMPUTE
+    }
+
+
+    private String constructEmailContent (List<MemberProfile> addedMembers, List<MemberProfile> removedMembers, String guildName){
+        String emailHtml = "<h3>Changes have been made to the " + guildName + " guild.</h3>";
+        if (!addedMembers.isEmpty()){
+            String addedMembersHtml = "<h4>The following members have been added:</h4><ul>";
+            for (MemberProfile member : addedMembers) {
+                String li = "<li>" + member.getFirstName() + " " + member.getLastName() + "</li>";
+                addedMembersHtml += li;
+            }
+            addedMembersHtml += "</ul>";
+
+            emailHtml += addedMembersHtml;
+        }
+
+        if (!removedMembers.isEmpty()){
+            String removedMembersHtml = "<h4>The following members have been removed:</h4><ul>";
+            for (MemberProfile member : removedMembers) {
+                String li = "<li>" + member.getFirstName() + " " + member.getLastName() + "</li>";
+                removedMembersHtml += li;
+            }
+            removedMembersHtml += "</ul>";
+
+            emailHtml += removedMembersHtml;
+        }
+
+        emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the app.";
+
+        return emailHtml;
+
     }
 }
