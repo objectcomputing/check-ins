@@ -6,12 +6,10 @@ import {green} from '@material-ui/core/colors';
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {Alert, AlertTitle} from "@material-ui/lab";
-import * as queryString from "query-string";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
-import {UPDATE_TOAST} from "../../context/actions";
+import {selectCsrfToken} from "../../context/selectors";
 import {getFeedbackRequestById} from "../../api/feedback";
 
 const useStyles = makeStyles({
@@ -66,28 +64,9 @@ const FeedbackSubmitForm = (props) => {
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
   const [isReviewing, setIsReviewing] = useState(false);
-  const location = useLocation();
-  const {state, dispatch} = useContext(AppContext);
-  const query = queryString.parse(location?.search);
-  const idQuery = query.id?.toString();
-  const currentUser = selectCurrentUser(state);
+  const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
 
-
-  const isIdValid = () => {
-    if (idQuery !== null && idQuery !== undefined) {
-      if (currentUser.id !== idQuery) {
-        history.push("/checkins");
-        dispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "You do not have Permission to Access this Request",
-          },
-        });
-      }
-    }
-  }
 
     useEffect(() => {
       const getRequestInformation = async (id) => {
