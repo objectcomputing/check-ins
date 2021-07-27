@@ -24,7 +24,7 @@ const FeedbackRequestSubcard = (props) => {
 
   const handleReminderNotification = async() => {
     if (csrf) {
-      let res = await sendReminderNotification("1234", ["jeffedwardbrown@gmail.com"], csrf);
+      let res = await sendReminderNotification("1234", ["example"], csrf);
       let reminderResponse =
         res &&
         res.payload &&
