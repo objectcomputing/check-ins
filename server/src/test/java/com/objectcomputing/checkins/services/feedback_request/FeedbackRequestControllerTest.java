@@ -109,22 +109,18 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     private void assertResponseEqualsEntity(FeedbackRequest feedbackRequest, FeedbackRequestResponseDTO dto) {
-        assertEquals(feedbackRequest.getId(), dto.getId());
+        // If the feedback request is newly created, then only the response should have an ID
+        if (feedbackRequest.getId() == null) {
+            assertNotNull(dto.getId());
+        } else {
+            assertEquals(feedbackRequest.getId(), dto.getId());
+        }
         assertEquals(feedbackRequest.getCreatorId(), dto.getCreatorId());
         assertEquals(feedbackRequest.getRequesteeId(), dto.getRequesteeId());
+        assertEquals(feedbackRequest.getTemplateId(), dto.getTemplateId());
         assertEquals(feedbackRequest.getSendDate(), dto.getSendDate());
         assertEquals(feedbackRequest.getDueDate(), dto.getDueDate());
-        assertEquals(feedbackRequest.getTemplateId(), dto.getTemplateId());
         assertEquals(feedbackRequest.getRecipientId(), dto.getRecipientId());
-    }
-
-    private void assertResponseEqualsCreate(FeedbackRequestResponseDTO entity, FeedbackRequestCreateDTO dto) {
-        assertEquals(entity.getCreatorId(), dto.getCreatorId());
-        assertEquals(entity.getRequesteeId(), dto.getRequesteeId());
-        assertEquals(entity.getSendDate(), dto.getSendDate());
-        assertEquals(entity.getStatus(), dto.getStatus());
-        assertEquals(entity.getDueDate(), dto.getDueDate());
-        assertEquals(entity.getRecipientId(), dto.getRecipientId());
     }
 
     @Test
@@ -147,7 +143,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        assertResponseEqualsCreate(response.getBody().get(), dto);
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
@@ -170,7 +166,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
-        assertResponseEqualsCreate(response.getBody().get(), dto);
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
