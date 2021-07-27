@@ -253,10 +253,7 @@ const handleSubmit = () =>{
                                },
                              });
                            }
-
               }
-
-
     }
 
     const urlIsValid = useCallback(() => {

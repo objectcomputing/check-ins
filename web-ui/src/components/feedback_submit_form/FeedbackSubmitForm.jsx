@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
+import queryString from 'query-string';
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -6,8 +7,11 @@ import {green} from '@material-ui/core/colors';
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
-import {useHistory} from "react-router-dom";
 import {Alert, AlertTitle} from "@material-ui/lab";
+import {useHistory, useLocation} from "react-router-dom";
+import {AppContext} from "../../context/AppContext";
+import {selectCurrentUser} from "../../context/selectors";
+import {UPDATE_TOAST} from "../../context/actions";
 
 const useStyles = makeStyles({
   announcement: {
@@ -58,10 +62,32 @@ const propTypes = {
 
 const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
-  const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const location = useLocation();
+  const {state, dispatch} = useContext(AppContext);
+  const query = queryString.parse(location?.search);
+  const idQuery = query.id?.toString();
+  const history = useHistory();
+  const currentUser = selectCurrentUser(state);
 
-    const [isReviewing, setIsReviewing] = useState(false);
+
+  const isIdValid = () => {
+    if (idQuery !== null && idQuery !== undefined) {
+      if (currentUser.id !== idQuery) {
+        history.push("/checkins");
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "You do not have Permission to Access this Request",
+          },
+        });
+      }
+
+    }
+
+  }
 
     return (
         <div className="submit-form">
