@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.Arrays;
 
 @Singleton
 public class MailJetSender implements EmailSender {
@@ -59,5 +60,19 @@ public class MailJetSender implements EmailSender {
         } catch(MailjetSocketTimeoutException e) {
             LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+        try {
+            sendEmail(subject, content, recipients);
+        } catch(Exception e){
+            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        } catch(Error e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        }
+        return true;
     }
 }

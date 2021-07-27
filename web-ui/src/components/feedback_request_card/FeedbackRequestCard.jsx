@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-
 import "./FeedbackRequestCard.css";
 
 const useStyles = makeStyles({
@@ -67,6 +66,7 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requesteeTitle: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
+  requestId:PropTypes.string.isRequired,
 }
 
 const FeedbackRequestCard = (props) => {
@@ -122,8 +122,8 @@ const FeedbackRequestCard = (props) => {
           <CardContent>
             <FeedbackRequestSubcard
               recipientName={"Jane Doe"}
-              recipientTitle={"Senior Engineer"}/>
-
+              recipientTitle={"Senior Engineer"}
+              />
             <FeedbackRequestSubcard
               recipientName={"Joe PDL"}
               recipientTitle={"PDL"}/>
