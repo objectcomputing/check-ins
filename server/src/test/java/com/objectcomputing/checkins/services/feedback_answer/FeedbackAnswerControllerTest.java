@@ -31,9 +31,9 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         createDefaultRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
-        FeedbackRequest feedbackRequest = createFeedbackRequest(sender, requestee, recipient);
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
         getFeedbackTemplateRepository().save(template);
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         TemplateQuestion question = saveTemplateQuestion(template, 1);
         return createFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
