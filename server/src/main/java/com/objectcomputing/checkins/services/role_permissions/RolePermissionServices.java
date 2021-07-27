@@ -11,7 +11,7 @@ public interface RolePermissionServices {
 
     RolePermission update(RolePermission permission);
 
-    Set<RolePermission> findByFields(RolePermissionType permission, UUID roleid);
+    Set<RolePermission> findByFields(PermissionType permission, UUID roleid);
 
     void delete(UUID id);
 }

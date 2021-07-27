@@ -14,11 +14,11 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface RolePermissionRepository extends CrudRepository<RolePermission, UUID> {
 
-    List<RolePermission> findByPermission(RolePermissionType permission);
+    List<RolePermission> findByPermission(PermissionType permission);
 
     List<RolePermission> findByRoleid(UUID uuid);
 
-    Optional<RolePermission> findByPermissionAndRoleid(RolePermissionType permission, UUID memberId);
+    Optional<RolePermission> findByPermissionAndRoleid(PermissionType permission, UUID memberId);
 
     @Override
     <S extends RolePermission> List<S> saveAll(@Valid @NotNull Iterable<S> entities);

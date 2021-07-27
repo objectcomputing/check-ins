@@ -84,7 +84,7 @@ public class RolePermissionController {
     /**
      * Get Permission based off id
      *
-     * @param id {@link RolePermissionType} of the role member entry
+     * @param id {@link PermissionType} of the role member entry
      * @return {@link RolePermission}
      */
     @Get("/{id}")
@@ -105,13 +105,13 @@ public class RolePermissionController {
     /**
      * Find role permissions that match all filled in parameters, return all results when given no params
      *
-     * @param permission     {@link RolePermissionType} of role
+     * @param permission     {@link PermissionType} of role
      * @param roleid {@link UUID} of member
      * @return {@link List < RolePermission > list of permissions}
      */
     @Get("/{?permission,roleid}")
     @Secured(RoleType.Constants.ADMIN_ROLE)
-    public Single<HttpResponse<Set<RolePermission>>> findRole(@Nullable RolePermissionType permission, @Nullable UUID roleid) {
+    public Single<HttpResponse<Set<RolePermission>>> findRole(@Nullable PermissionType permission, @Nullable UUID roleid) {
         return Single.fromCallable(() -> roleServices.findByFields(permission, roleid))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> (HttpResponse<Set<RolePermission>>) HttpResponse.ok(userRole))

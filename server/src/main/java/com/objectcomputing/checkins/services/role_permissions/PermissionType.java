@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.role_permissions;
 
-public enum RolePermissionType {
+public enum PermissionType {
     READCHECKIN,
     CREATECHECKIN,
     DELETECHECKIN,

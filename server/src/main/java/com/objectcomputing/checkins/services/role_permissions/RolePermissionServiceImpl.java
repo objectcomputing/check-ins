@@ -24,7 +24,7 @@ public class RolePermissionServiceImpl implements RolePermissionServices {
 
     public RolePermission save(@NotNull RolePermission permission) {
         final UUID memberId = permission.getRoleid();
-        final RolePermissionType permissionType = permission.getPermission();
+        final PermissionType permissionType = permission.getPermission();
         final UUID roleId = permission.getRoleid();
 
         if (permissionType == null || roleId == null) {
@@ -47,7 +47,7 @@ public class RolePermissionServiceImpl implements RolePermissionServices {
     public RolePermission update(@NotNull RolePermission permission) {
         final UUID id = permission.getId();
         final UUID roleId = permission.getRoleid();
-        final RolePermissionType roleType = permission.getPermission();
+        final PermissionType roleType = permission.getPermission();
 
         if (roleType == null || roleId == null) {
             throw new BadArgException(String.format("Invalid permission %s", permission));
@@ -60,7 +60,7 @@ public class RolePermissionServiceImpl implements RolePermissionServices {
         return rolepermissionRepo.update(permission);
     }
 
-    public Set<RolePermission> findByFields(RolePermissionType permission, UUID roleid) {
+    public Set<RolePermission> findByFields(PermissionType permission, UUID roleid) {
         Set<RolePermission> permissions = new HashSet<>();
         rolepermissionRepo.findAll().forEach(permissions::add);
 

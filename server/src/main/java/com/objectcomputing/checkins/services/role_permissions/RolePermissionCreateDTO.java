@@ -9,7 +9,7 @@ import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role_permissions.RolePermissionType.Constants.*;
+import static com.objectcomputing.checkins.services.role_permissions.PermissionType.Constants.*;
 
 @Introspected
 public class RolePermissionCreateDTO {
@@ -18,7 +18,7 @@ public class RolePermissionCreateDTO {
     @TypeDef(type = DataType.STRING)
     @Schema(description = "role this member has", required = true,
             allowableValues = {READCHECKIN_PERMISSION, CREATECHECKIN_PERMISSION, DELETECHECKIN_PERMISSION, UNASSIGNED_PERMISSION})
-    private RolePermissionType permission;
+    private PermissionType permission;
 
     @NotNull
     @Column(name = "roleid")
@@ -26,11 +26,11 @@ public class RolePermissionCreateDTO {
     @Schema(description = "id of the role this entry is associated with", required = true)
     private UUID roleid;
 
-    public RolePermissionType getRolePermission() {
+    public PermissionType getRolePermission() {
         return permission;
     }
 
-    public void setRolePermission(RolePermissionType permission) {
+    public void setRolePermission(PermissionType permission) {
         this.permission = permission;
     }
 

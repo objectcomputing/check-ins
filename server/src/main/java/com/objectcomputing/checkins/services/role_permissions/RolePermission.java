@@ -13,7 +13,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static com.objectcomputing.checkins.services.role_permissions.PermissionType.Constants.*;
+import static com.objectcomputing.checkins.services.role_permissions.PermissionType.Constants.UNASSIGNED_PERMISSION;
 
 @Entity
 @Table(name = "role_permissions")
@@ -28,9 +29,9 @@ public class RolePermission {
 
     @NotNull
     @Schema(description = "permission this role has", required = true,
-            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
+            allowableValues = {READCHECKIN_PERMISSION, CREATECHECKIN_PERMISSION, DELETECHECKIN_PERMISSION, UNASSIGNED_PERMISSION})
     @TypeDef(type = DataType.OBJECT)
-    private RolePermissionType permission;
+    private PermissionType permission;
 
     @NotNull
     @Column(name = "roleid")
@@ -38,11 +39,11 @@ public class RolePermission {
     @Schema(description = "id of the role this entry is associated with", required = true)
     private UUID roleid;
 
-    public RolePermission(RolePermissionType permission, UUID roleid) {
+    public RolePermission(PermissionType permission, UUID roleid) {
         this(null, permission, roleid);
     }
 
-    public RolePermission(UUID id, RolePermissionType permission, UUID roleid) {
+    public RolePermission(UUID id, PermissionType permission, UUID roleid) {
         this.id = id;
         this.permission = permission;
         this.roleid = roleid;
@@ -56,11 +57,11 @@ public class RolePermission {
         this.id = id;
     }
 
-    public RolePermissionType getPermission() {
+    public PermissionType getPermission() {
         return permission;
     }
 
-    public void setPermission(RolePermissionType permission) {
+    public void setPermission(PermissionType permission) {
         this.permission = permission;
     }
 

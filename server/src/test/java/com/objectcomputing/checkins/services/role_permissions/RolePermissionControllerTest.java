@@ -39,7 +39,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         Role authRole = createDefaultRole(RoleType.ADMIN, memberProfileOfUser);
 
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(authRole.getId());
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -59,9 +59,9 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfileOfUser = createADefaultMemberProfile();
         Role authRole = createDefaultRole(RoleType.ADMIN, memberProfileOfUser);
 
-        RolePermission alreadyExistingRole = createDefaultRolePermission(RolePermissionType.READCHECKIN, authRole);
+        RolePermission alreadyExistingRole = createDefaultRolePermission(PermissionType.READCHECKIN, authRole);
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(authRole.getId());
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -83,7 +83,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         Role authRole = createDefaultRole(RoleType.ADMIN, memberProfileOfUser);
 
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(UUID.randomUUID());
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -105,7 +105,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         Role authRole = createDefaultRole(RoleType.PDL, memberProfileDefault);
 
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(authRole.getId());
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -122,7 +122,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         Role role = createDefaultAdminRole(memberProfile);
 
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(role.getId());
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -161,7 +161,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         Role authRole = createDefaultAdminRole(memberProfileOfUser);
 
         RolePermissionCreateDTO rolepermissionCreateDTO = new RolePermissionCreateDTO();
-        rolepermissionCreateDTO.setRolePermission(RolePermissionType.READCHECKIN);
+        rolepermissionCreateDTO.setRolePermission(PermissionType.READCHECKIN);
         rolepermissionCreateDTO.setRoleid(uuid);
 
         final HttpRequest<RolePermissionCreateDTO> request = HttpRequest.POST("", rolepermissionCreateDTO)
@@ -181,7 +181,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role roleProfile = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, roleProfile);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, roleProfile);
         rolepermission.setPermission(null);
         rolepermission.setRoleid(null);
 
@@ -275,7 +275,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
 
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.CREATECHECKIN,role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.CREATECHECKIN,role);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?permission=%s&roleid=%s", rolepermission.getPermission(),
                 "")).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -293,7 +293,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
 
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.CREATECHECKIN,role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.CREATECHECKIN,role);
 
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?permission=%s&roleid=%s", "",
@@ -312,7 +312,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
 
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.CREATECHECKIN,role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.CREATECHECKIN,role);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?permission=%s&roleid=%s", "",
                 "")).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -344,7 +344,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         Role role = createDefaultAdminRole(unrelatedProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?id=%s", RolePermissionType.CREATECHECKIN))
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?id=%s", PermissionType.CREATECHECKIN))
         .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
         HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
 
@@ -362,7 +362,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
 
-        RolePermission updateExistingRolePermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, role);
+        RolePermission updateExistingRolePermission = createDefaultRolePermission(PermissionType.READCHECKIN, role);
 
         final HttpRequest<RolePermission> request = HttpRequest.PUT("", updateExistingRolePermission)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -381,7 +381,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
 
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, role);
 
         rolepermission.setRoleid(UUID.randomUUID());
 
@@ -431,7 +431,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role roleProfile = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = new RolePermission(UUID.randomUUID(), RolePermissionType.READCHECKIN, roleProfile.getId());
+        RolePermission rolepermission = new RolePermission(UUID.randomUUID(), PermissionType.READCHECKIN, roleProfile.getId());
 
         final HttpRequest<RolePermission> request = HttpRequest.PUT("", rolepermission)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -453,7 +453,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role roleProfile = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, roleProfile);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, roleProfile);
         rolepermission.setId(null);
 
         final HttpRequest<RolePermission> request = HttpRequest.PUT("", rolepermission)
@@ -474,7 +474,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
 
-        RolePermission rolepermission = new RolePermission(UUID.randomUUID(), RolePermissionType.READCHECKIN, authRole.getId());
+        RolePermission rolepermission = new RolePermission(UUID.randomUUID(), PermissionType.READCHECKIN, authRole.getId());
 
         final HttpRequest<RolePermission> request = HttpRequest.PUT("", rolepermission)
         .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -520,7 +520,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role roleProfile = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, roleProfile);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, roleProfile);
         rolepermission.setPermission(null);
 
         final HttpRequest<RolePermission> request = HttpRequest.PUT("", rolepermission)
@@ -561,7 +561,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, role);
 
         assertNotNull(findRolePermission(rolepermission));
 
@@ -579,7 +579,7 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Role role = createDefaultAdminRole(memberProfile);
-        RolePermission rolepermission = createDefaultRolePermission(RolePermissionType.READCHECKIN, role);
+        RolePermission rolepermission = createDefaultRolePermission(PermissionType.READCHECKIN, role);
 
         assertNotNull(findRolePermission(rolepermission));
 
