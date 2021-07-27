@@ -8,17 +8,18 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-width: 140px;
-  margin-right: 2em;
+  margin-right: 0.5em;
 }
 
 .response-card-recipient-info .avatar-photo {
   margin-right: 0.5em;
 }
 
-.response-box {
-  padding-top: 16px;
-  padding-bottom:16px;
+.response-card-recipient-info .responder-name {
+  min-width: 16ch;
+}
+
+.response-card .response-box {
   width: 100%;
 }
 
