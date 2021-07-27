@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -8,9 +8,6 @@ import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
 import {useHistory} from "react-router-dom";
 import {Alert, AlertTitle} from "@material-ui/lab";
-import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken} from "../../context/selectors";
-import {getFeedbackRequestById} from "../../api/feedback";
 
 const useStyles = makeStyles({
   announcement: {
@@ -64,26 +61,6 @@ const FeedbackSubmitForm = (props) => {
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
   const [isReviewing, setIsReviewing] = useState(false);
-  const {state} = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
-
-
-    useEffect(() => {
-      const getRequestInformation = async (id) => {
-        let res = await getFeedbackRequestById(id, csrf);
-        let data =
-            res.payload && res.payload.data && !res.error
-                ? res.payload.data
-                : null;
-        if (data) {
-          console.log(":) " + JSON.stringify(data))
-        }
-      }
-      if (csrf) {
-        let requestId = '1c9a89d4-eafe-11eb-9a03-0242ac130003'
-        getRequestInformation(requestId).then(r => console.log(r))
-      }
-    }, [csrf]);
 
     return (
         <div className="submit-form">
