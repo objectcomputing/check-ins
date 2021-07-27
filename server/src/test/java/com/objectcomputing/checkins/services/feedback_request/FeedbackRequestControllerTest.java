@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
@@ -102,9 +101,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     private void assertUnauthorized(HttpClientResponseException responseException) {
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        assertEquals("You are not authorized to do this operation", error);
+        assertEquals("You are not authorized to do this operation", responseException.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
@@ -230,6 +227,72 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidCreatorId() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createDefaultAdminRole(admin);
+
+        // Create feedback request with invalid creator ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setCreatorId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid creator ID", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidRecipientId() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createDefaultAdminRole(admin);
+
+        // Create feedback request with invalid recipient ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setRecipientId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid recipient ID", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithInvalidRequesteeId() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createDefaultAdminRole(admin);
+
+        // Create feedback request with invalid requestee ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setRequesteeId(UUID.randomUUID());
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Cannot save feedback request with invalid requestee ID", responseException.getMessage());
     }
 
     @Test
@@ -668,8 +731,9 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
-    void testUpdateStatusAndSubmitDateAuthorized() {
+    void testUpdateStatusAndSubmitDateAuthorizedByRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -686,6 +750,64 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.OK, response.getStatus());
         assertTrue(response.getBody().isPresent());
         assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+    }
+
+    @Test
+    void testUpdateStatusAuthorizedByCreator() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        feedbackReq.setStatus("canceled");
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackReq, response.getBody().get());
+    }
+
+    @Test
+    void testUpdateStatusNotAuthorized() {
+        MemberProfile pdl = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdl);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
+        MemberProfile recipient = createADefaultRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdl, requestee, recipient);
+        feedbackReq.setStatus("complete");
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(requestee.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
+    }
+
+    @Test
+    void testUpdateSubmitDateNotAuthorized() {
+        MemberProfile pdl = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdl);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
+        MemberProfile recipient = createADefaultRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdl, requestee, recipient);
+        feedbackReq.setSubmitDate(LocalDate.now());
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdl.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertUnauthorized(responseException);
     }
 
     @Test
