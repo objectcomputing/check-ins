@@ -33,13 +33,14 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
         getFeedbackTemplateRepository().save(template);
-        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         TemplateQuestion question = saveTemplateQuestion(template, 1);
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
 
     public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
-        return getFeedbackAnswerRepository().save(createSampleAnswer(sender, recipient));
+        FeedbackAnswer answer = createSampleAnswer(sender, recipient);
+        return getFeedbackAnswerRepository().save(answer);
     }
 
     FeedbackAnswerCreateDTO createDTO(FeedbackAnswer feedbackAnswer) {
@@ -109,6 +110,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = createSampleAnswer(sender, recipient);
         FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -125,6 +127,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         feedbackAnswer.setAnswer(":p");
         feedbackAnswer.setSentiment(1.0);
         FeedbackAnswerUpdateDTO dto = updateDTO(feedbackAnswer);
+
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking()
@@ -143,6 +146,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
         FeedbackAnswerUpdateDTO dto = updateDTO(feedbackAnswer);
+
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
@@ -156,6 +160,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
@@ -170,6 +175,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
@@ -185,6 +191,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", feedbackAnswer.getId()))
                 .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
