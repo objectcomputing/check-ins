@@ -13,6 +13,28 @@ exports[`renders the feedback submit form 1`] = `
       John Doe
     </b>
   </WithStyles(ForwardRef(Typography))>
+  <div
+    className="wrapper"
+  >
+    <Memo(ForwardRef(InfoIcon))
+      style={
+        Object {
+          "color": "#0d47a1",
+          "fontSize": "2vh",
+        }
+      }
+    >
+      info-icon
+    </Memo(ForwardRef(InfoIcon))>
+    <WithStyles(ForwardRef(Typography))
+      className="makeStyles-tip-2"
+    >
+      <b>
+        Tip of the day: 
+      </b>
+      Focus on the Issue - Not the Person.
+    </WithStyles(ForwardRef(Typography))>
+  </div>
   <FeedbackSubmitQuestion
     editable={true}
     key="1"
@@ -35,7 +57,7 @@ exports[`renders the feedback submit form 1`] = `
     className="submit-action-buttons"
   >
     <WithStyles(WithStyles(ForwardRef(Button)))
-      className="makeStyles-button-3"
+      className="makeStyles-button-4"
       color="primary"
       onClick={[Function]}
       variant="contained"
