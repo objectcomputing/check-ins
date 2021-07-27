@@ -1,13 +1,8 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import {Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import AvatarComponent from '../avatar/Avatar'
-import SentimentIcon from "../sentiment_icon/SentimentIcon";
+import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
 //note that request id will be in actual object, so you will need to get information out of request id, template id and state
 
 const useStylesCardContent = makeStyles({
@@ -91,57 +86,32 @@ const ViewFeedbackResponses = () => {
   useStylesCardContent();
 
   return (
-    <div className="page-container">
-      <Grid container spacing={3}>
-        <Grid item xs={12} className="text-center">
-          <Typography variant='h4'>View Feedback for Joe Johnson</Typography>
-        </Grid>
+    <div className="view-feedback-responses-page">
+      <Typography
+        variant='h4'
+        style={{textAlign: "center", marginBottom: "1em"}}>
+        View Feedback for <b>Joe Johnson</b>
+      </Typography>
 
-        {questions?.map((question) => {
-          return (
-            <Grid container item xs={11} spacing={1} key={`question-id-${question.id}`}>
-              <Typography className="question-text">Q{question.orderNum}: {question.questionContent}</Typography>
-              {responses?.map(answer => {
-                return answer.questionId === question.id ? (
-                  <Grid item xs={12} className="top-bottom-padding" key={`answer-id-${answer.id}`}>
-                    <Card className="response-card justify-center">
-                      <CardContent>
-                        <Grid container spacing={5}>
-                          <Grid item xs={12}>
-                            <Grid container
-                                  direction="row"
-                                  alignItems="center">
-                              <Grid item>
-                                <AvatarComponent className="avatar-photo" imageUrl="../../../public/default_profile.jpg"/>
-                              </Grid>
-                              <Grid item xs>
-                                <Typography className="responder-name">{answer.responderName}</Typography>
-                              </Grid>
-                              <Grid item xs={10}>
-                                <TextField
-                                  id="answer-disabled"
-                                  className="response-box"
-                                  multiline
-                                  defaultValue={answer.answer}
-                                  InputProps={{
-                                    readOnly: true,
-                                  }}
-                                  variant="filled"/>
-                              </Grid>
-                              <Grid item xs className="small-margin">
-                                <SentimentIcon sentimentScore={answer.sentiment}/>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </Grid>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ) : <React.Fragment key={`answer-id-${answer.id}`}/>
-              })}
-          </Grid>)
-        })}
-      </Grid>
+      {questions?.map((question) => {
+        return (
+          <div className="question-responses-container"
+               key={`question-id-${question.id}`}>
+            <Typography
+              className="question-text"
+              style={{marginBottom: "0.5em", fontWeight: "bold"}}>
+              Q{question.orderNum}: {question.questionContent}
+            </Typography>
+            {responses?.map(answer => {
+              return answer.questionId === question.id ? (
+                <FeedbackResponseCard
+                  responderName={answer.responderName}
+                  answer={answer.answer}
+                  sentiment={answer.sentiment}/>
+              ) : <React.Fragment key={`answer-id-${answer.id}`}/>
+            })}
+        </div>)
+      })}
     </div>
   );
 }
