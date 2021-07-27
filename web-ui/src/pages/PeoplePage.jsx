@@ -1,20 +1,16 @@
 import React, { useContext, useState } from "react";
 
 import MemberSummaryCard from "../components/member-directory/MemberSummaryCard";
-import { createMember } from "../api/member";
 import { AppContext } from "../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../context/actions";
 import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
 } from "../context/selectors";
 
-import { Button, TextField, Grid } from "@material-ui/core";
+import { TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import PersonIcon from "@material-ui/icons/Person";
 
 import "./PeoplePage.css";
-import MemberModal from "../components/member-directory/MemberModal";
 
 const useStyles = makeStyles({
   search: {
@@ -34,12 +30,11 @@ const useStyles = makeStyles({
 });
 
 const PeoplePage = () => {
-  const { state, dispatch } = useContext(AppContext);
-  const { csrf, memberProfiles, userProfile } = state;
+  const { state } = useContext(AppContext);
+  const { userProfile } = state;
 
   const classes = useStyles();
 
-  const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
 
   const isAdmin =
@@ -48,10 +43,6 @@ const PeoplePage = () => {
   const normalizedMembers = isAdmin
     ? selectNormalizedMembersAdmin(state, searchText)
     : selectNormalizedMembers(state, searchText);
-
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
 
   const createMemberCards = normalizedMembers.map((member, index) => {
     return (
@@ -76,43 +67,6 @@ const PeoplePage = () => {
               setSearchText(e.target.value);
             }}
           />
-          {isAdmin && (
-            <div className="add-member">
-              <Button startIcon={<PersonIcon />} onClick={handleOpen}>
-                Add Member
-              </Button>
-
-              <MemberModal
-                open={open}
-                onClose={handleClose}
-                onSave={async (member) => {
-                  if (
-                    member.location &&
-                    member.firstName &&
-                    member.lastName &&
-                    member.startDate &&
-                    member.title &&
-                    member.workEmail &&
-                    csrf
-                  ) {
-                    let res = await createMember(member, csrf);
-
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
-                    if (data) {
-                      dispatch({
-                        type: UPDATE_MEMBER_PROFILES,
-                        payload: [...memberProfiles, data],
-                      });
-                    }
-                    handleClose();
-                  }
-                }}
-              />
-            </div>
-          )}
         </Grid>
         <Grid item className={classes.members}>
           {createMemberCards}
