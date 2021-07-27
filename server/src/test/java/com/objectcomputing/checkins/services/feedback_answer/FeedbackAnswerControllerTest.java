@@ -33,7 +33,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
         getFeedbackTemplateRepository().save(template);
-        FeedbackRequest feedbackRequest = createFeedbackRequest(sender, requestee, recipient, template.getId());
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         TemplateQuestion question = saveTemplateQuestion(template, 1);
         return createFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
