@@ -88,9 +88,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     FeedbackTemplateUpdateDTO updateDTO(FeedbackTemplate feedbackTemplate) {
         FeedbackTemplateUpdateDTO dto = new FeedbackTemplateUpdateDTO();
         dto.setId(feedbackTemplate.getId());
-        dto.setTitle(feedbackTemplate.getTitle());
-        dto.setDescription(feedbackTemplate.getDescription());
-        dto.setUpdaterId(feedbackTemplate.getUpdaterId());
+        dto.setActive(feedbackTemplate.getActive());
         return dto;
     }
 
@@ -98,7 +96,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(content.getTitle(), dto.getTitle());
         assertEquals(content.getDescription(), dto.getDescription());
         assertEquals(content.getCreatorId(), dto.getCreatorId());
-        assertEquals(content.getUpdaterId(), dto.getUpdaterId());
+        assertEquals(content.getActive(), dto.getActive());
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {
@@ -161,10 +159,8 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
 
-        // Updated by an admin
-        template.setTitle("An Updated Title");
-        template.setDescription("An updated description");
-        template.setUpdaterId(admin.getId());
+        // Updated by an ad
+        template.setActive(false);
         final FeedbackTemplateUpdateDTO updateDTO = updateDTO(template);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
@@ -182,9 +178,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
 
         // Update by the creator
-        template.setTitle("An Updated Title");
-        template.setDescription("An updated description");
-        template.setUpdaterId(memberOne.getId());
+        template.setActive(false);
         final FeedbackTemplateUpdateDTO updateDTO = updateDTO(template);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
@@ -203,9 +197,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
 
         // Update by unauthorized user
-        template.setTitle("An Updated Title");
-        template.setDescription("An updated description");
-        template.setUpdaterId(nonCreator.getId());
+        template.setActive(false);
         final FeedbackTemplateUpdateDTO updateDTO = updateDTO(template);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
@@ -225,9 +217,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         // Update by creator
         final UUID nonexistentId = UUID.randomUUID();
         template.setId(nonexistentId);
-        template.setTitle("An Updated Title");
-        template.setDescription("An updated description");
-        template.setUpdaterId(memberOne.getId());
+        template.setActive(false);
         final FeedbackTemplateUpdateDTO updateDTO = updateDTO(template);
 
         final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
@@ -431,7 +421,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteValidAuthorized() {
         final MemberProfile memberOne = createADefaultMemberProfile();
-        final MemberProfile memberTwo = createASecondDefaultMemberProfile();
         final FeedbackTemplate template = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
 
         // Delete the template
@@ -440,15 +429,6 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
-
-        // Ensure that the user cannot get the deleted template
-        final HttpRequest<?> getRequest = HttpRequest.GET(String.format("/%s", template.getId()))
-                .basicAuth(memberTwo.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(getRequest, Map.class));
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("No feedback template with ID " + template.getId(), exception.getMessage());
     }
 
     @Test
@@ -463,11 +443,11 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
                 .basicAuth(memberOne.getWorkEmail(), MEMBER_ROLE);
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
 
-        // Ensure deleting the template also deletes all connected questions
+        // Ensure soft deleting the template does not delete connected questions
         List<TemplateQuestion> questions = getTemplateQuestionRepository().findByTemplateId(Util.nullSafeUUIDToString(template.getId()));
 
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(0, questions.size());
+        assertEquals(2, questions.size());
     }
 
     @Test

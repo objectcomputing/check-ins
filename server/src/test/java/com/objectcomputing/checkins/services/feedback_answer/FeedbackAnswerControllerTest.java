@@ -27,7 +27,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Client("/services/feedback/answers")
     HttpClient client;
 
-    public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
+    public FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         createDefaultRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
@@ -35,7 +35,11 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         getFeedbackTemplateRepository().save(template);
         FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         TemplateQuestion question = saveTemplateQuestion(template, 1);
-        return createFeedbackAnswer(question.getId(), feedbackRequest.getId());
+        return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
+    }
+
+    public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
+        return getFeedbackAnswerRepository().save(createSampleAnswer(sender, recipient));
     }
 
     FeedbackAnswerCreateDTO createDTO(FeedbackAnswer feedbackAnswer) {
@@ -73,7 +77,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
 
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackAnswerCreateDTO dto = createDTO(saveSampleAnswer(sender, recipient));
+        FeedbackAnswerCreateDTO dto = createDTO(createSampleAnswer(sender, recipient));
 
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
@@ -87,9 +91,9 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     void testPostAnswerByRecipient() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-
-        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        FeedbackAnswer feedbackAnswer = createSampleAnswer(sender, recipient);
         FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
+
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
@@ -103,7 +107,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     void testPostBySenderUnauthorized() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        FeedbackAnswer feedbackAnswer = createSampleAnswer(sender, recipient);
         FeedbackAnswerCreateDTO dto = createDTO(feedbackAnswer);
         final HttpRequest<?> request = HttpRequest.POST("", dto)
                 .basicAuth(sender.getWorkEmail(), RoleType.Constants.PDL_ROLE);
@@ -112,7 +116,6 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
 
         assertUnauthorized(exception);
     }
-
 
     @Test
     void testUpdateByRecipient() {

@@ -132,7 +132,7 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplate}
      */
     private FeedbackTemplate fromDTO(FeedbackTemplateUpdateDTO dto) {
-        return new FeedbackTemplate(dto.getId(), dto.getTitle(), dto.getDescription(), dto.getUpdaterId());
+        return new FeedbackTemplate(dto.getId(), dto.getActive());
     }
 
     /**
@@ -147,8 +147,7 @@ public class FeedbackTemplateController {
         dto.setDescription(feedbackTemplate.getDescription());
         dto.setCreatorId(feedbackTemplate.getCreatorId());
         dto.setDateCreated(feedbackTemplate.getDateCreated());
-        dto.setUpdaterId(feedbackTemplate.getUpdaterId());
-        dto.setDateUpdated(feedbackTemplate.getDateUpdated());
+        dto.setActive(feedbackTemplate.getActive());
         return dto;
     }
 

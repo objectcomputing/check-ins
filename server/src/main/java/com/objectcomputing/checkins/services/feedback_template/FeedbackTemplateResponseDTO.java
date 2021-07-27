@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.UUID;
 
-
 @Introspected
 public class FeedbackTemplateResponseDTO {
 
@@ -33,12 +32,8 @@ public class FeedbackTemplateResponseDTO {
     private LocalDate dateCreated;
 
     @NotBlank
-    @Schema(description = "UUID of person who last updated the feedback template")
-    private UUID updaterId;
-
-    @Nullable
-    @Schema(description = "date the template was last updated")
-    private LocalDate dateUpdated;
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
+    private Boolean active;
 
     public UUID getId() {
         return id;
@@ -82,20 +77,11 @@ public class FeedbackTemplateResponseDTO {
         this.dateCreated = dateCreated;
     }
 
-    public UUID getUpdaterId() {
-        return updaterId;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setUpdaterId(UUID updaterId) {
-        this.updaterId = updaterId;
-    }
-
-    @Nullable
-    public LocalDate getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(@Nullable LocalDate dateUpdated) {
-        this.dateUpdated = dateUpdated;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
