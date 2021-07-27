@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -60,8 +60,57 @@ const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const location = useLocation();
+  const {state, dispatch} = useContext(AppContext);
+  const query = queryString.parse(location?.search);
+  const idQuery = query.id?.toString();
+  const currentUser = selectCurrentUser(state);
 
-    const [isReviewing, setIsReviewing] = useState(false);
+
+  const isIdValid = () => {
+    if (idQuery !== null && idQuery !== undefined) {
+      if (currentUser.id !== idQuery) {
+        history.push("/checkins");
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "You do not have Permission to Access this Request",
+          },
+        });
+      }
+    }
+  }
+
+    useEffect(() => {
+      const getRequestInformation = async (id) => {
+        let res = await getFeedbackRequestById(id, csrf);
+        let data =
+            res.payload && res.payload.data && !res.error
+                ? res.payload.data
+                : null;
+        if (data) {
+          console.log(":) " + JSON.stringify(data))
+        }
+      }
+      if (csrf) {
+        let requestId = '1c9a89d4-eafe-11eb-9a03-0242ac130003'
+        getRequestInformation(requestId).then(r => console.log(r))
+      }
+      //   console.log("ID Query changed" + idQuery)
+      //   if (currentUser.id !== idQuery) {
+      //     history.push("/checkins");
+      //     dispatch({
+      //       type: UPDATE_TOAST,
+      //       payload: {
+      //         severity: "error",
+      //         toast: "You do not have Permission to Access this Request",
+      //       },
+      //     });
+      //   }
+      // idRef.current = idQuery;
+    }, [csrf]);
 
     return (
         <div className="submit-form">
@@ -69,7 +118,7 @@ const FeedbackSubmitForm = (props) => {
           {isReviewing ?
             <Alert className={classes.warning} severity="warning">
               <AlertTitle>Notice!</AlertTitle>
-              Feedback is not anonymous, and can be seen by more than just the feedback Requester.
+              Feedback is not anonymous, and can be seen by more than just the feedback requester.
               <strong> Be mindful of your answers, for you never know who will see it!</strong>
             </Alert> : null
           }
