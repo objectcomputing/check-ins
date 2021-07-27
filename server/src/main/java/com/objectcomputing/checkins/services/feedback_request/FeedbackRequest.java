@@ -4,6 +4,7 @@ import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.jetbrains.annotations.Nls;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -45,6 +46,12 @@ public class FeedbackRequest {
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
+    @Column(name = "template_id")
+    @NotBlank
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the template the feedback request references", required = true)
+    private UUID templateId;
+
     @Column(name="send_date")
     @NotBlank
     @Schema(description = "date request was sent", required = true)
@@ -66,44 +73,28 @@ public class FeedbackRequest {
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
-    public FeedbackRequest(@NotNull UUID creatorId,
-                           @NotNull UUID requesteeId,
-                           @NotNull UUID recipientId,
-                           @NotNull LocalDate sendDate,
+    public FeedbackRequest(UUID creatorId,
+                           UUID requesteeId,
+                           UUID recipientId,
+                           UUID templateId,
+                           LocalDate sendDate,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status,
+                           String status,
                            @Nullable LocalDate submitDate) {
         this.id = null;
         this.creatorId = creatorId;
         this.requesteeId = requesteeId;
         this.recipientId = recipientId;
+        this.templateId = templateId;
         this.sendDate = sendDate;
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@NotNull UUID id,
-                           @NotNull UUID creatorId,
-                           @NotNull UUID requesteeId,
-                           @NotNull UUID recipientId,
-                           @NotNull LocalDate sendDate,
+    public FeedbackRequest(UUID id,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status,
-                           @Nullable LocalDate submitDate) {
-        this.id = id;
-        this.creatorId = creatorId;
-        this.requesteeId = requesteeId;
-        this.recipientId = recipientId;
-        this.sendDate = sendDate;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.submitDate = submitDate;
-    }
-
-    public FeedbackRequest(@NotNull UUID id,
-                           @Nullable LocalDate dueDate,
-                           @NotNull String status,
+                           String status,
                            @Nullable LocalDate submitDate) {
         this.id = id;
         this.dueDate = dueDate;
@@ -143,6 +134,15 @@ public class FeedbackRequest {
 
     public void setRecipientId(UUID recipientId) {
         this.recipientId = recipientId;
+    }
+
+
+    public UUID getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(UUID templateId) {
+        this.templateId = templateId;
     }
 
     public LocalDate getSendDate() {
@@ -189,6 +189,7 @@ public class FeedbackRequest {
                 && Objects.equals(creatorId, that.creatorId)
                 && Objects.equals(requesteeId, that.requesteeId)
                 && Objects.equals(recipientId, that.recipientId)
+                && Objects.equals(templateId, that.templateId)
                 && Objects.equals(sendDate, that.sendDate)
                 && Objects.equals(dueDate, that.dueDate)
                 && Objects.equals(status, that.status)
@@ -197,7 +198,7 @@ public class FeedbackRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, dueDate, status, submitDate);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate);
     }
 
     @Override
@@ -207,6 +208,7 @@ public class FeedbackRequest {
                 ", creatorId=" + creatorId +
                 ", recipientId=" + recipientId +
                 ", requesteeId=" + requesteeId +
+                ", templateId='" + templateId +
                 ", sendDate=" + sendDate +
                 ", dueDate=" + dueDate +
                 ", status='" + status +
