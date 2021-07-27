@@ -6,8 +6,13 @@ import {green} from '@material-ui/core/colors';
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {Alert, AlertTitle} from "@material-ui/lab";
+import * as queryString from "query-string";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken, selectCurrentUser} from "../../context/selectors";
+import {UPDATE_TOAST} from "../../context/actions";
+import {getFeedbackRequestById} from "../../api/feedback";
 
 const useStyles = makeStyles({
   announcement: {
@@ -66,6 +71,7 @@ const FeedbackSubmitForm = (props) => {
   const query = queryString.parse(location?.search);
   const idQuery = query.id?.toString();
   const currentUser = selectCurrentUser(state);
+  const csrf = selectCsrfToken(state);
 
 
   const isIdValid = () => {
@@ -98,18 +104,6 @@ const FeedbackSubmitForm = (props) => {
         let requestId = '1c9a89d4-eafe-11eb-9a03-0242ac130003'
         getRequestInformation(requestId).then(r => console.log(r))
       }
-      //   console.log("ID Query changed" + idQuery)
-      //   if (currentUser.id !== idQuery) {
-      //     history.push("/checkins");
-      //     dispatch({
-      //       type: UPDATE_TOAST,
-      //       payload: {
-      //         severity: "error",
-      //         toast: "You do not have Permission to Access this Request",
-      //       },
-      //     });
-      //   }
-      // idRef.current = idQuery;
     }, [csrf]);
 
     return (
