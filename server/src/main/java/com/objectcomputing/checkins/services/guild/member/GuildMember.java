@@ -26,16 +26,16 @@ public class GuildMember {
     private UUID id;
 
     @NotNull
-    @Column(name = "guildid")
+    @Column(name = "guildId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the guild this entry is associated with", required = true)
-    private UUID guildid;
+    private UUID guildId;
 
     @NotNull
-    @Column(name = "memberid")
+    @Column(name = "memberId")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
+    private UUID memberId;
 
     @Nullable
     @Column(name = "lead")
@@ -43,14 +43,14 @@ public class GuildMember {
             nullable = true)
     private Boolean lead;
 
-    public GuildMember(UUID guildid, UUID memberid, Boolean lead) {
-        this(null, guildid, memberid, lead);
+    public GuildMember(UUID guildId, UUID memberId, Boolean lead) {
+        this(null, guildId, memberId, lead);
     }
 
-    public GuildMember(UUID id, UUID guildid, UUID memberid, Boolean lead) {
+    public GuildMember(UUID id, UUID guildId, UUID memberId, Boolean lead) {
         this.id = id;
-        this.guildid = guildid;
-        this.memberid = memberid;
+        this.guildId = guildId;
+        this.memberId = memberId;
         this.lead = lead;
     }
 
@@ -62,20 +62,20 @@ public class GuildMember {
         this.id = id;
     }
 
-    public UUID getGuildid() {
-        return guildid;
+    public UUID getGuildId() {
+        return guildId;
     }
 
-    public void setGuildid(UUID guildid) {
-        this.guildid = guildid;
+    public void setGuildId(UUID guildId) {
+        this.guildId = guildId;
     }
 
-    public UUID getMemberid() {
-        return memberid;
+    public UUID getMemberId() {
+        return memberId;
     }
 
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
     }
 
     public boolean isLead() {
@@ -92,22 +92,22 @@ public class GuildMember {
         if (o == null || getClass() != o.getClass()) return false;
         GuildMember that = (GuildMember) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(guildid, that.guildid) &&
-                Objects.equals(memberid, that.memberid) &&
+                Objects.equals(guildId, that.guildId) &&
+                Objects.equals(memberId, that.memberId) &&
                 Objects.equals(lead, that.lead);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, guildid, memberid, lead);
+        return Objects.hash(id, guildId, memberId, lead);
     }
 
     @Override
     public String toString() {
         return "GuildMember{" +
                 "id=" + id +
-                ", guildid=" + guildid +
-                ", memberid=" + memberid +
+                ", guildId=" + guildId +
+                ", memberId=" + memberId +
                 ", lead=" + isLead() +
                 '}';
     }

@@ -1,14 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { debounce } from "lodash/function";
 import { AppContext } from "../context/AppContext";
-import { selectCurrentUser } from "../context/selectors";
+import {
+  selectCurrentUser,
+  selectMyGuilds,
+  selectUserProfile,
+} from "../context/selectors";
 import {
   UPDATE_GUILD,
   UPDATE_USER_BIO,
   UPDATE_TOAST,
 } from "../context/actions";
-import { getGuildsForMember, updateGuild } from "../api/guild";
+import { addGuildMember, deleteGuildMember } from "../api/guild";
 import { updateMember } from "../api/member";
 import { getEmployeeHours } from "../api/hours";
 import Profile from "../components/profile/Profile";
@@ -34,38 +38,30 @@ const storeMember = debounce(realStoreMember, 1500);
 
 const ProfilePage = () => {
   const { state, dispatch } = useContext(AppContext);
-  const userProfile = selectCurrentUser(state);
+  const memberProfile = selectCurrentUser(state);
+  const userProfile = selectUserProfile(state);
 
   const { csrf, guilds } = state;
-  const { id, bioText, pdlId } = userProfile;
+  const { id, bioText, pdlId } = memberProfile;
+  const { firstName, lastName, name } = userProfile;
 
   const [bio, setBio] = useState();
-  const [myGuilds, setMyGuilds] = useState([]);
   const [myHours, setMyHours] = useState(null);
 
-  useEffect(() => {
-    async function getMyGuilds() {
-      let res = await getGuildsForMember(id, csrf);
-      let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      if (data) setMyGuilds(data);
-    }
-    if (csrf && id) {
-      getMyGuilds();
-    }
-  }, [csrf, id, guilds]);
+  const myGuilds = selectMyGuilds(state);
+  console.log({ myGuilds });
 
   useEffect(() => {
     async function getHours() {
-      let res = await getEmployeeHours(csrf, userProfile?.employeeId);
+      let res = await getEmployeeHours(csrf, memberProfile?.employeeId);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data && data.length > 0) setMyHours(data[0]);
     }
-    if (csrf && userProfile?.employeeId) {
+    if (csrf && memberProfile?.employeeId) {
       getHours();
     }
-  }, [csrf, userProfile]);
+  }, [csrf, memberProfile]);
 
   useEffect(() => {
     async function updateBio() {
@@ -87,71 +83,76 @@ const ProfilePage = () => {
     }
     const { value } = e.target;
     setBio(value);
-    storeMember({ ...userProfile, bioText: value }, csrf);
+    storeMember({ ...memberProfile, bioText: value }, csrf);
     updateProfile(value);
   };
 
-  const addOrDeleteGuildMember = async (newVal) => {
-    if (!csrf) {
-      return;
-    }
-    if (newVal.length > 3) {
-      window.snackDispatch({
-        type: UPDATE_TOAST,
-        payload: {
-          severity: "error",
-          toast:
-            "You must contact the guild leader in order to be added to more guilds",
-        },
-      });
-      return;
-    }
-    if (newVal.length > myGuilds.length) {
-      const index = newVal.length - 1;
-      const newId = newVal[index].id;
-      if (myGuilds.some((guild) => guild.id === newId)) return;
-      newVal.filter((guild) => !myGuilds.includes(guild.id));
-      newVal[index].guildMembers = [
-        ...new Set(newVal[index].guildMembers),
-        {
-          memberId: userProfile.id,
-          guildId: newVal[index].id,
-          name: `${userProfile.firstName} ${userProfile.lastName}`,
-          lead: false,
-        },
-      ];
-      let res = await updateGuild(newVal[index], csrf);
-      let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      if(data) {
-        dispatch({ type: UPDATE_GUILD, payload: data });
-        setMyGuilds(newVal);
+  const addOrDeleteGuildMember = useCallback(
+    async (newVal) => {
+      if (!csrf) {
+        return;
       }
-    } else {
-      const guildToEdit = myGuilds.find((guild) =>
-        newVal.every((newGuild) => newGuild.id !== guild.id)
-      );
-      const guildMembers = guildToEdit.guildMembers.filter(
-        (member) => member.memberId !== userProfile.id
-      );
-      if (!guildMembers.some((member) => member.lead === true)) {
+      if (newVal.length > 3) {
         window.snackDispatch({
           type: UPDATE_TOAST,
           payload: {
             severity: "error",
-            toast: "Guild must have at least one lead",
+            toast:
+              "You must contact the guild leader in order to be added to more guilds",
           },
         });
         return;
       }
-      guildToEdit.guildMembers = guildMembers;
-      let res = await updateGuild(guildToEdit, csrf);
-      let data =
-        res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      dispatch({ type: UPDATE_GUILD, payload: data });
-      setMyGuilds(newVal);
-    }
-  };
+      const myGuildsSet = new Set(myGuilds?.map((guild) => guild.id));
+      const newValSet = new Set(newVal?.map((val) => val.id));
+
+      const newInSet1 = new Set(
+        [...myGuildsSet].filter((x) => !newValSet.has(x))
+      );
+      const newInSet2 = new Set(
+        [...newValSet].filter((x) => !myGuildsSet.has(x))
+      );
+
+      for (const guildId of newInSet2.values()) {
+        let res = await addGuildMember(id, false, guildId, csrf);
+        const match = newVal.find((guild) => guild.id === guildId);
+        let data =
+          res.payload && res.payload.data && !res.error
+            ? res.payload.data
+            : null;
+        if (data) {
+          data.firstName = firstName;
+          data.lastName = lastName;
+          data.name = name;
+          const guildMembers = match.guildMembers;
+          const newGuildMembers = guildMembers
+            ? [...guildMembers, data]
+            : [data];
+          const newGuild = { ...match };
+          newGuild.guildMembers = newGuildMembers;
+          dispatch({ type: UPDATE_GUILD, payload: newGuild });
+        }
+      }
+
+      for (const guildId of newInSet1.values()) {
+        const match = myGuilds.find((guild) => guild.id === guildId);
+        if (match) {
+          const { guildMembers } = match;
+          const memberToDelete = guildMembers.find(
+            (member) => member.memberId === id
+          );
+          await deleteGuildMember(memberToDelete.id, csrf);
+          const newGuildMembers = match.guildMembers.filter(
+            (member) => member.memberId !== id
+          );
+          let newGuild = { ...match };
+          newGuild.guildMembers = newGuildMembers;
+          dispatch({ type: UPDATE_GUILD, payload: newGuild });
+        }
+      }
+    },
+    [guilds]
+  );
 
   return (
     <div className="Profile">

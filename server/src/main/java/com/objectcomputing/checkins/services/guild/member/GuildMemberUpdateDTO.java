@@ -55,11 +55,11 @@ public class GuildMemberUpdateDTO {
         this.guildId = guildId;
     }
 
-    public UUID getMemberid() {
+    public UUID getMemberId() {
         return memberId;
     }
 
-    public void setMemberid(UUID memberId) {
+    public void setMemberId(UUID memberId) {
         this.memberId = memberId;
     }
 }

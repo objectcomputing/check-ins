@@ -6,16 +6,22 @@ import {
   SET_CSRF,
   SET_ROLES,
   UPDATE_GUILDS,
+  UPDATE_GUILD_MEMBERS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_TERMINATED_MEMBERS,
   UPDATE_SKILLS,
   UPDATE_TEAMS,
 } from "./actions";
-import { getCurrentUser, getAllMembers, getAllRoles, getAllTerminatedMembers } from "../api/member";
+import {
+  getCurrentUser,
+  getAllMembers,
+  getAllRoles,
+  getAllTerminatedMembers,
+} from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
-import { getAllGuilds } from "../api/guild";
+import { getAllGuilds, getAllGuildMembers } from "../api/guild";
 import { getSkills } from "../api/skill";
 import { getAllTeams } from "../api/team";
 import axios from "axios";
@@ -24,11 +30,12 @@ const AppContext = React.createContext();
 
 const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const userProfile = state && state.userProfile ? state.userProfile : undefined;
+  const userProfile =
+    state && state.userProfile ? state.userProfile : undefined;
   const memberProfile =
     userProfile && userProfile.memberProfile
-    ? userProfile.memberProfile
-    : undefined;
+      ? userProfile.memberProfile
+      : undefined;
 
   const id = memberProfile ? memberProfile.id : undefined;
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;
