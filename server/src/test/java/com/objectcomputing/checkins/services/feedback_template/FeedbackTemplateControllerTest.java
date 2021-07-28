@@ -138,6 +138,21 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     }
 
     @Test
+    void testPostInvalidCreator() {
+        MemberProfile admin = createADefaultMemberProfile();
+        createDefaultAdminRole(admin);
+        FeedbackTemplate feedbackTemplate = createFeedbackTemplate(UUID.randomUUID());
+        FeedbackTemplateCreateDTO createDTO = createDTO(feedbackTemplate);
+
+        final HttpRequest<?> request = HttpRequest.POST("", createDTO)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Creator ID is invalid", exception.getMessage());
+    }
+
+    @Test
     void testPostDeniedByUnauthorized() {
         MemberProfile memberOne = createADefaultMemberProfile();
         FeedbackTemplate feedbackTemplate = createFeedbackTemplate(memberOne.getId());
@@ -207,6 +222,24 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
 
         assertEquals("You are not authorized to do this operation", exception.getMessage());
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+    }
+
+    @Test
+    void testUpdateWithNullId() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final FeedbackTemplate template = saveDefaultFeedbackTemplate(memberOne.getId());
+        // Update by creator
+        template.setId(null);
+        template.setActive(false);
+        final FeedbackTemplateUpdateDTO updateDTO = updateDTO(template);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", updateDTO)
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals("Attempted to update template with null ID", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
     }
 
     @Test

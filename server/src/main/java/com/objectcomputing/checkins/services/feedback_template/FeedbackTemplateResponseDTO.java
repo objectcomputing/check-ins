@@ -23,7 +23,7 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "description of the feedback template")
     private String description;
 
-    @Nullable
+    @NotBlank
     @Schema(description = "ID of person who created the feedback template", required = true)
     private UUID creatorId;
 
@@ -60,12 +60,11 @@ public class FeedbackTemplateResponseDTO {
         this.description = description;
     }
 
-    @Nullable
     public UUID getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(@Nullable UUID creatorId) {
+    public void setCreatorId(UUID creatorId) {
         this.creatorId = creatorId;
     }
 

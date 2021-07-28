@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.feedback_template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
-import com.objectcomputing.checkins.services.feedback_template.template_question.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
@@ -19,35 +18,21 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private final FeedbackTemplateRepository feedbackTemplateRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private final TemplateQuestionServices templateQuestionServices;
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
                                         MemberProfileServices memberProfileServices,
-                                        CurrentUserServices currentUserServices,
-                                        TemplateQuestionServices templateQuestionServices) {
+                                        CurrentUserServices currentUserServices) {
         this.feedbackTemplateRepository = feedbackTemplateRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
-        this.templateQuestionServices = templateQuestionServices;
     }
 
     @Override
     public FeedbackTemplate save(FeedbackTemplate feedbackTemplate) {
-
-        if (feedbackTemplate == null) {
-            throw new BadArgException("Feedback template object is null and cannot be saved");
-        } else if (feedbackTemplate.getId() != null) {
-            throw new BadArgException("Attempted to save template with non-auto-populated ID");
-        }
-
         try {
             memberProfileServices.getById(feedbackTemplate.getCreatorId());
         } catch (NotFoundException e) {
             throw new BadArgException("Creator ID is invalid");
-        }
-
-        if (!createIsPermitted()) {
-            throw new PermissionException("You are not authorized to do this operation");
         }
 
         return feedbackTemplateRepository.save(feedbackTemplate);
@@ -56,9 +41,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     @Override
     public FeedbackTemplate update(FeedbackTemplate feedbackTemplate) {
 
-        if (feedbackTemplate == null) {
-            throw new BadArgException("Feedback template object is null and cannot be updated");
-        } else if (feedbackTemplate.getId() == null) {
+       if (feedbackTemplate.getId() == null) {
             throw new BadArgException("Attempted to update template with null ID");
         }
 
@@ -99,43 +82,15 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
             throw new NotFoundException("No feedback template with ID " + id);
         }
 
-        if (!getIsPermitted()) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
 
         return feedbackTemplate.get();
     }
 
     @Override
     public List<FeedbackTemplate> findByFields(@Nullable UUID creatorId, @Nullable String title) {
-        if (!getIsPermitted()) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
-
-        List<FeedbackTemplate> templateList = new ArrayList<>();
-
-        if (title != null) {
-            templateList.addAll(findByTitleLike(title));
-            if (creatorId != null) {
-                templateList.retainAll(feedbackTemplateRepository.findByCreatorIdAndActive(creatorId, true));
-            }
-        } else if (creatorId != null) {
-            templateList.addAll(feedbackTemplateRepository.findByCreatorIdAndActive(creatorId, true));
-        } else {
-            feedbackTemplateRepository.findAll().forEach(templateList::add);
-        }
-        return templateList;
+        return feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
     }
 
-    protected List<FeedbackTemplate> findByTitleLike(String title) {
-        String wildcard = "%" + title + "%";
-        return feedbackTemplateRepository.findByTitleLikeAndActive(wildcard, true);
-    }
-
-    public boolean createIsPermitted() {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return currentUserId != null;
-    }
 
     public boolean updateIsPermitted(UUID creatorId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
@@ -143,9 +98,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return isAdmin || currentUserId.equals(creatorId);
     }
 
-    public boolean getIsPermitted() {
-        return createIsPermitted();
-    }
 
     public boolean deleteIsPermitted(UUID creatorId) {
         return updateIsPermitted(creatorId);

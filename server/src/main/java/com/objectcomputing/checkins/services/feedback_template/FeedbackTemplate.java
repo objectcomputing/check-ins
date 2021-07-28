@@ -24,6 +24,7 @@ public class FeedbackTemplate {
     @Schema(description = "unique id of the feedback template ", required = true)
     private UUID id;
 
+
     @Column(name = "title")
     @NotBlank
     @TypeDef(type = DataType.STRING)
@@ -44,7 +45,6 @@ public class FeedbackTemplate {
 
     @Column(name = "date_created")
     @DateCreated
-    @NotBlank
     @TypeDef(type = DataType.DATE)
     @Schema(description = "date the template was created", required = true)
     private LocalDate dateCreated;
@@ -62,7 +62,7 @@ public class FeedbackTemplate {
      * @param description An optional description of the template
      * @param creatorId The {@link UUID} of the user who created the template
      */
-    public FeedbackTemplate(@NotBlank String title, @Nullable String description, @NotBlank UUID creatorId) {
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId) {
         this.id = null;
         this.title = title;
         this.description = description;
@@ -76,7 +76,7 @@ public class FeedbackTemplate {
      * @param id The existing {@link UUID} of the template
      * @param active Whether or not the template is allowed to be used for a feedback request
      */
-    public FeedbackTemplate(@NotBlank UUID id, @NotBlank Boolean active) {
+    public FeedbackTemplate(UUID id, Boolean active) {
         this.id = id;
         this.active = active;
     }

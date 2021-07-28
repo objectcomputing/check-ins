@@ -6,6 +6,7 @@ import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 import io.reactivex.annotations.NonNull;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -14,10 +15,6 @@ import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTemplate, UUID> {
-
-    List<FeedbackTemplate> findByTitleLikeAndActive(String title, Boolean active);
-
-    List<FeedbackTemplate> findByCreatorIdAndActive(UUID id, Boolean active);
 
     @Query(value = "UPDATE feedback_templates SET active = false WHERE id = :id")
     Optional<FeedbackTemplate> softDeleteById(@NotNull String id);
@@ -29,5 +26,15 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
     <S extends FeedbackTemplate> S update(@Valid @NotNull @NonNull S entity);
 
     Optional<FeedbackTemplate> findById(@NonNull UUID id);
+
+    @Query(value = "SELECT * " +
+            "FROM feedback_templates " +
+            "WHERE (active = true)" +
+            "AND (:creatorId IS NULL OR creator_id = :creatorId) " +
+            "AND (:title IS NULL OR title LIKE CONCAT('%',:title,'%'))"
+            , nativeQuery = true)
+    List<FeedbackTemplate> searchByValues(@Nullable String creatorId, @Nullable String title);
+
+
 
 }

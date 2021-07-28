@@ -1,16 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Introspected
