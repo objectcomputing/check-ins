@@ -45,7 +45,7 @@ const sampleFeedbackRequests = [
     id: 1,
     requestee: "Slim Jim",
     requesteeTitle: "Member",
-    template: "Dev Template 1"
+    template: "Dev Template 1",
   },
   {
     id: 2,
@@ -71,6 +71,8 @@ const ViewFeedbackPage = () => {
   useEffect(() => {
     setFeedbackRequests(sampleFeedbackRequests);
   }, []);
+
+
 
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
