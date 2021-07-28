@@ -203,11 +203,11 @@ const handleSubmit = () =>{
     let feedbackRequest = {}
     let fromArray = fromQuery.split(',')
     if (fromArray.length === 1 ) {
-        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:"6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
         sendFeedbackRequest(feedbackRequest)
     } else if (fromArray.length > 1) {
         for (const recipient of fromArray) {
-           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: "6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
            sendFeedbackRequest(feedbackRequest)
         }
       }
