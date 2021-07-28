@@ -66,7 +66,6 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requesteeTitle: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
-  requestId:PropTypes.string.isRequired,
 }
 
 const FeedbackRequestCard = (props) => {
