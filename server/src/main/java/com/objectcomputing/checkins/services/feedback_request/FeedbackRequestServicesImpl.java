@@ -188,7 +188,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
-        if(sendDate.isBefore(today)){
+        final boolean isAdmin = currentUserServices.isAdmin();
+        final UUID currentUsersId = currentUserServices.getCurrentUser().getId();
+        final UUID requesteePdlId = memberProfileServices.getById(requesteeId).getPdlId();
+
+        if(isAdmin || currentUsersId.equals(requesteePdlId) || sendDate.isBefore(today) ){
             return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
         }
         else{
