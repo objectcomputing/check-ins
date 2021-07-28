@@ -32,7 +32,7 @@ exports[`renders the feedback submit form 1`] = `
       <b>
         Tip of the day: 
       </b>
-      Recommend a solution.
+      Be specific.
     </WithStyles(ForwardRef(Typography))>
   </div>
   <FeedbackSubmitQuestion
