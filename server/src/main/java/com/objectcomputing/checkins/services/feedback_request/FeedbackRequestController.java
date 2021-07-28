@@ -108,7 +108,6 @@ public class FeedbackRequestController {
      *
      * @param creatorId The {@link UUID} of the creator of the request
      * @param requesteeId The {@link UUID} of the requestee
-     * @param templateId The {@link UUID} of the feedback template
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
@@ -129,6 +128,7 @@ public class FeedbackRequestController {
         dto.setCreatorId(feedbackRequest.getCreatorId());
         dto.setRequesteeId(feedbackRequest.getRequesteeId());
         dto.setRecipientId(feedbackRequest.getRecipientId());
+        dto.setTemplateId(feedbackRequest.getTemplateId());
         dto.setSendDate(feedbackRequest.getSendDate());
         dto.setDueDate(feedbackRequest.getDueDate());
         dto.setStatus(feedbackRequest.getStatus());
@@ -142,6 +142,7 @@ public class FeedbackRequestController {
                 dto.getCreatorId(),
                 dto.getRequesteeId(),
                 dto.getRecipientId(),
+                dto.getTemplateId(),
                 dto.getSendDate(),
                 dto.getDueDate(),
                 dto.getStatus(),

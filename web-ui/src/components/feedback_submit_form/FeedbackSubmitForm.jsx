@@ -82,8 +82,7 @@ const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
-
-    const [isReviewing, setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
 
     return (
         <div className="submit-form">
