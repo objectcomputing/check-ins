@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": undefined,
+      },
+    }
+  }
+>
+  <ViewFeedbackResponses />
+</ContextProvider>
+`;

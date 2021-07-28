@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": undefined,
+      },
+    }
+  }
+>
+  <FeedbackResponseCard
+    answer="I love opossums. I have rehabilitated baby opossums for 25 years, and I intend to do so until my last day!"
+    responderName="Job Johnson"
+    sentiment={0.8}
+  />
+</ContextProvider>
+`;

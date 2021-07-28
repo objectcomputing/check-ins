@@ -433,22 +433,41 @@ INSERT INTO feedback_requests
 VALUES
 ('d62b5c09-7ff9-4b0a-bfee-7f467470a7ef', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2020-07-07', null, null, 'pending');
 
-INSERT INTO feedback_requests
-(id, creator_id, requestee_id, recipient_id, send_date, due_date, submit_date, status)
+INSERT INTO template_questions
+(id, question, template_id, question_number)
 VALUES
 ('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2020-07-07', null, null, 'pending');
 
-INSERT INTO frozen_templates
-(id, title, description, template_creator_id, request_id)
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
 VALUES
 ('b3199c2b-4f86-4e13-ab5b-d658b8523115', 'Frozen template 1', 'This is the description', '2559a257-ae84-4076-9ed4-3820c427beeb', 'ab7b21d4-f88c-4494-9b0b-8541636025eb');
 
-INSERT INTO frozen_template_questions
-(id, frozen_template_id, question, question_number)
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
 VALUES
 ('190a1602-c97e-43e4-a0dc-5a88697b42f6', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'What are this team member''s top strengths (include examples where possible)?', '1');
 
-INSERT INTO frozen_template_questions
-(id, frozen_template_id, question, question_number)
+
+INSERT INTO template_questions
+(id, question, template_id, question_number)
+VALUES
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated)
+VALUES
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2021-04-04', null, null);
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('d62b5c09-7ff9-4b0a-bfee-7f467470a7ef', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '2cb80a06-e723-482f-af9b-6b9516cabfcd', '2021-07-07', null, null, 'pending');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('8fdf6aa3-4d4b-4c6d-ad16-66895192a63c', 'b3199c2b-4f86-4e13-ab5b-d658b8523115', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '2');
+

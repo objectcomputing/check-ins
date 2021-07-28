@@ -4,29 +4,34 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
 public class FeedbackRequestResponseDTO {
 
-    @NotNull
+    @NotBlank
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
+    @NotBlank
+    @Schema(description = "id of the template the feedback request references", required = true)
+    private UUID templateId;
+
+    @NotBlank
     @Schema(description = "date request was sent")
     private LocalDate sendDate;
 
@@ -34,7 +39,7 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "completion status of request", required = true)
     private String status;
 
@@ -75,6 +80,13 @@ public class FeedbackRequestResponseDTO {
         this.requesteeId = requesteeId;
     }
 
+    public UUID getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(UUID templateId) {
+        this.templateId = templateId;
+    }
 
     public LocalDate getSendDate() {
         return sendDate;

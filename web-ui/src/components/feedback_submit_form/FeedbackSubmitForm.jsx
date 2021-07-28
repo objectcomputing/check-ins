@@ -7,6 +7,7 @@ import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQu
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
 import {useHistory} from "react-router-dom";
+import {Alert, AlertTitle} from "@material-ui/lab";
 
 const useStyles = makeStyles({
   announcement: {
@@ -15,6 +16,11 @@ const useStyles = makeStyles({
       fontSize: "22px"
     }
   },
+
+  warning: {
+    marginTop: "20px"
+  },
+
   button: {
     margin: "3em 1em 1em 1em"
   }
@@ -54,12 +60,18 @@ const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
-
-    const [isReviewing, setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
 
     return (
         <div className="submit-form">
           <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{props.requesteeName}</b></Typography>
+          {isReviewing ?
+            <Alert className={classes.warning} severity="warning">
+              <AlertTitle>Notice!</AlertTitle>
+              Feedback is not anonymous, and can be seen by more than just the feedback requester.
+              <strong> Be mindful of your answers, for you never know who will see it!</strong>
+            </Alert> : null
+          }
           {sampleQuestions.map((sampleQuestion) => (
               <FeedbackSubmitQuestion
                   key={sampleQuestion.id}
