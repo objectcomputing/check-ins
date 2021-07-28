@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
@@ -27,19 +26,25 @@ public class GuildServicesImpl implements GuildServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private final GuildMemberServices guildMemberServices;
-    private final EmailSender emailSender;
+    private EmailSender emailSender;
+    private final Environment environment;
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
-                            CurrentUserServices currentUserServices,
-                            MemberProfileServices memberProfileServices,
+                             CurrentUserServices currentUserServices,
+                             MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
-                             EmailSender emailSender) {
+                             EmailSender emailSender, Environment environment) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
+        this.emailSender = emailSender;
+        this.environment = environment;
+    }
+
+    public void setEmailSender (EmailSender emailSender){
         this.emailSender = emailSender;
     }
 
@@ -85,7 +90,6 @@ public class GuildServicesImpl implements GuildServices {
     public GuildResponseDTO update(GuildUpdateDTO guildDTO) {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         boolean isAdmin = currentUserServices.isAdmin();
-        // if isAdmin or current user is a lead in the guild.
         if (isAdmin || (currentUser != null &&
                 !guildMemberServices.findByFields(guildDTO.getId(), currentUser.getId(), true).isEmpty())) {
             // Guild newGuildEntity = null;
@@ -98,10 +102,10 @@ public class GuildServicesImpl implements GuildServices {
                         throw new BadArgException("Guild must include at least one guild lead");
                     }
 
-                    // data used for email notifications when changes to membership occur
+                    // track membership changes for email notification
                     List<MemberProfile> addedMembers = new ArrayList<>();
                     List<MemberProfile> removedMembers = new ArrayList<>();
-                    // emails of guild leads for current guild excluding the guild lead performing the request
+                    // emails of guild leads excluding the one making the change request
                     Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
                             .stream()
                             .filter(lead -> !lead.getMemberid().equals(currentUser.getId()))
@@ -110,7 +114,7 @@ public class GuildServicesImpl implements GuildServices {
 
                     Guild newGuildEntity  = guildsRepo.update(fromDTO(guildDTO));
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
-                    //add/update members to the guild
+
                     guildDTO.getGuildMembers().forEach((updatedMember) -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberid().equals(updatedMember.getMemberId())).findFirst();
                         MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
@@ -122,17 +126,14 @@ public class GuildServicesImpl implements GuildServices {
                         }
                     });
 
-                    // remove members from guild
                     existingGuildMembers.forEach((existingMember) -> {
                         if(guildDTO.getGuildMembers().stream().noneMatch((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid()))) {
                             guildMemberServices.delete(existingMember.getId());
                             removedMembers.add(memberProfileServices.getById(existingMember.getMemberid()));
                         }
                     });
-
                     updated = fromEntity(newGuildEntity, newMembers);
-                    sendGuildMemberChangeNotification(addedMembers, removedMembers, updated.getName(), emailsOfGuildLeads);
-
+                    sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeads);
                 } else {
                     throw new BadArgException(String.format("Guild ID %s does not exist, can't update.", guildDTO.getId()));
                 }
@@ -223,17 +224,15 @@ public class GuildServicesImpl implements GuildServices {
 
 
     private void sendGuildMemberChangeNotification(List<MemberProfile> addedMembers, List<MemberProfile> removedMembers,
-                                                    String guildName, Set<String> emailsOfGuildLeads)
-    {
-        if (!System.getenv("MICRONAUT_ENVIRONMENTS").equals("local")) return;
+                                                    String guildName, Set<String> emailsOfGuildLeads) {
+        // don't send emails in local environment
+        if (environment.getActiveNames().contains("local")) return;
         if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
             String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
             String subject = "Membership Changes have been made to the " + guildName +" guild";
             emailSender.sendEmail(subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
         }
-        // Environment.GOOGLE_COMPUTE
     }
-
 
     private String constructEmailContent (List<MemberProfile> addedMembers, List<MemberProfile> removedMembers, String guildName){
         String emailHtml = "<h3>Changes have been made to the " + guildName + " guild.</h3>";
@@ -259,7 +258,7 @@ public class GuildServicesImpl implements GuildServices {
             emailHtml += removedMembersHtml;
         }
 
-        emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the app.";
+        emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.";
 
         return emailHtml;
 
