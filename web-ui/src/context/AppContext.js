@@ -6,7 +6,6 @@ import {
   SET_CSRF,
   SET_ROLES,
   UPDATE_GUILDS,
-  UPDATE_GUILD_MEMBERS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_MEMBER_PROFILES,
   UPDATE_TERMINATED_MEMBERS,
@@ -21,7 +20,7 @@ import {
 } from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
-import { getAllGuilds, getAllGuildMembers } from "../api/guild";
+import { getAllGuilds } from "../api/guild";
 import { getSkills } from "../api/skill";
 import { getAllTeams } from "../api/team";
 import axios from "axios";
