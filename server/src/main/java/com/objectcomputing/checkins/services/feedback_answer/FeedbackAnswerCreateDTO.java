@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
@@ -19,9 +21,21 @@ public class FeedbackAnswerCreateDTO {
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
+    @NotBlank
+    @Schema(description = "id of the request this question is linked to ", required = true)
+    private UUID requestId;
+
     @Nullable
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 
     public UUID getQuestionId() {
         return questionId;
@@ -31,12 +45,12 @@ public class FeedbackAnswerCreateDTO {
         this.questionId = questionId;
     }
 
-    public String getAnswer() {
-        return answer;
+    public UUID getRequestId() {
+        return requestId;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
     }
 
     @Nullable
