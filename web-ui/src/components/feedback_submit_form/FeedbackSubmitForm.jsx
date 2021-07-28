@@ -7,13 +7,22 @@ import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQu
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
 import {Alert, AlertTitle} from "@material-ui/lab";
+import InfoIcon from '@material-ui/icons/Info';
+import { blue } from "@material-ui/core/colors";
 import {useHistory} from "react-router-dom";
+
 
 const useStyles = makeStyles({
   announcement: {
     textAlign: "center",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "22px"
+    }
+  },
+
+  tip: {
+    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+      fontSize: "15px"
     }
   },
 
@@ -41,6 +50,19 @@ const sampleQuestions = [
   }
 ];
 
+const randomTip = [
+  'Take a Positive Approach.',
+  'Focus on the Issue - Not the Person.',
+  'Be Specific About What Needs to Change.',
+  'Be specific.',
+  'Explain the impact.',
+  'Provide a summary.',
+  'Recommend a solution.',
+  'Be sincere.',
+];
+
+const tip = randomTip[Math.floor(Math.random()*randomTip.length)];
+
 const ColorButton = withStyles({
   root: {
     color: "white",
@@ -65,11 +87,15 @@ const FeedbackSubmitForm = (props) => {
     return (
         <div className="submit-form">
           <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{props.requesteeName}</b></Typography>
+          <div className="wrapper">
+            <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
+            <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
+          </div>
           {isReviewing ?
             <Alert className={classes.warning} severity="warning">
               <AlertTitle>Notice!</AlertTitle>
-              Feedback is not anonymous, and can be seen by more than just the feedback requester.
-              <strong> Be mindful of your answers, for you never know who will see it!</strong>
+              Feedback is not anonymous, and can be seen by more than just the feedback Requester.
+              <strong> Be mindful of your answers.</strong>
             </Alert> : null
           }
           {sampleQuestions.map((sampleQuestion) => (
