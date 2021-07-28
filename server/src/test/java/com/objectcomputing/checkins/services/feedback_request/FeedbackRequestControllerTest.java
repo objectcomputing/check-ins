@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import java.util.*;
 
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -19,7 +18,6 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import jnr.a64asm.Mem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -910,14 +908,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         assertUnauthorized(responseException);
     }
+
     @Test
     void testRecipientGetBeforeSendDateNotAuthorized() {
-        LocalDate testDate = LocalDate.now().plusDays(1);
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        MemberProfile creator = createAnUnrelatedUser();
-        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), testDate, null, "pending", null);
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
         //get feedback request
@@ -930,16 +928,18 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
         assertEquals("You are not permitted to access this request before the send date.", responseException.getMessage());
     }
+
     @Test
     void testRecipientGetBeforeSendDateAsAdminAuthorized() {
-        LocalDate testDate = LocalDate.now().plusDays(1);
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        MemberProfile creator = createAnUnrelatedUser();
         MemberProfile adminUser = createAThirdDefaultMemberProfile();
-        Role admin = createDefaultAdminRole(adminUser);
-        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), testDate, null, "pending", null);
+        createDefaultAdminRole(adminUser);
+
+        // Save feedback request with send date in the future
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
         //get feedback request
@@ -949,17 +949,19 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         // the sendDate must be before the sent date unless its an admin
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
+
     @Test
     void testRecipientGetBeforeSendDateAsPdlAuthorized() {
-        LocalDate testDate = LocalDate.now().plusDays(1);
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
-        MemberProfile creator = createAnUnrelatedUser();
 
-
-        FeedbackRequest feedbackRequest = new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), testDate, null, "pending", null);
+        // Save feedback request with send date in the future
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
         getFeedbackRequestRepository().save(feedbackRequest);
 
         //get feedback request
@@ -967,8 +969,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
-        // the sendDate must be before the sent date unless its an admin or the pdl who cretaed it.
+        // the sendDate must be before the sent date unless its an admin or the pdl who created it.
         assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
 }

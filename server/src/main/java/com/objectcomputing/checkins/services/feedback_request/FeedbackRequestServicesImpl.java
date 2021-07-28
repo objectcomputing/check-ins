@@ -120,7 +120,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public Boolean delete(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback request with id " + id);
         }
 
@@ -135,7 +135,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     @Override
     public FeedbackRequest getById(UUID id) {
         final Optional<FeedbackRequest> feedbackReq = feedbackReqRepository.findById(id);
-        if (!feedbackReq.isPresent()) {
+        if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
         final LocalDate sendDate = feedbackReq.get().getSendDate();
@@ -178,16 +178,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
-        final boolean isAdmin = currentUserServices.isAdmin();
-        final UUID currentUsersId = currentUserServices.getCurrentUser().getId();
-        final UUID requesteePdlId = memberProfileServices.getById(requesteeId).getPdlId();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-        if(isAdmin || currentUsersId.equals(requesteePdlId) || sendDate.isBefore(today) ){
-            return createIsPermitted(requesteeId) || currentUserServices.getCurrentUser().getId().equals(recipientId);
-        }
-        else{
+        // The recipient can only access the feedback request after it has been sent
+        if (sendDate.isAfter(today) && currentUserId.equals(recipientId)) {
             throw new PermissionException("You are not permitted to access this request before the send date.");
         }
+
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {
