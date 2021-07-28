@@ -112,6 +112,14 @@ public class FeedbackAnswer {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FeedbackAnswer that = (FeedbackAnswer) o;
+        return Objects.equals(id, that.id) && Objects.equals(answer, that.answer) && Objects.equals(questionId, that.questionId) && Objects.equals(requestId, that.requestId) && Objects.equals(sentiment, that.sentiment);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(id, answer, questionId, requestId, sentiment);
     }
