@@ -34,10 +34,6 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     @Override
     public FeedbackAnswer save(FeedbackAnswer feedbackAnswer) {
 
-        if (feedbackAnswer.getId() != null) {
-            throw new BadArgException("Attempted to save feedback answer with non-auto-populated ID");
-        }
-
         // Ensure that related question exists
         templateQuestionServices.getById(feedbackAnswer.getQuestionId());
 
