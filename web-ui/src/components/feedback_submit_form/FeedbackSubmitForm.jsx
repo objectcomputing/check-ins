@@ -6,10 +6,10 @@ import {green} from '@material-ui/core/colors';
 import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
-import {useHistory} from "react-router-dom";
 import {Alert, AlertTitle} from "@material-ui/lab";
 import InfoIcon from '@material-ui/icons/Info';
 import { blue } from "@material-ui/core/colors";
+import {useHistory} from "react-router-dom";
 
 
 const useStyles = makeStyles({
@@ -80,9 +80,9 @@ const propTypes = {
 
 const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
-  const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
   const [isReviewing, setIsReviewing] = useState(false);
+  const history = useHistory();
 
     return (
         <div className="submit-form">
