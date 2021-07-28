@@ -60,8 +60,7 @@ const FeedbackSubmitForm = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
-
-    const [isReviewing, setIsReviewing] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
 
     return (
         <div className="submit-form">
@@ -69,7 +68,7 @@ const FeedbackSubmitForm = (props) => {
           {isReviewing ?
             <Alert className={classes.warning} severity="warning">
               <AlertTitle>Notice!</AlertTitle>
-              Feedback is not anonymous, and can be seen by more than just the feedback Requester.
+              Feedback is not anonymous, and can be seen by more than just the feedback requester.
               <strong> Be mindful of your answers, for you never know who will see it!</strong>
             </Alert> : null
           }
