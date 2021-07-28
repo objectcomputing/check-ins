@@ -6,6 +6,7 @@ import {
   ADD_GUILD,
   DELETE_MEMBER_PROFILE,
   DELETE_MEMBER_SKILL,
+  DELETE_ROLE,
   DELETE_SKILL,
   MY_PROFILE_UPDATE,
   SET_CSRF,
@@ -19,6 +20,7 @@ import {
   UPDATE_SKILLS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
+  UPDATE_ROLES,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
@@ -32,6 +34,7 @@ export const initialState = {
   memberProfiles: [],
   terminatedMembers: [],
   memberSkills: [],
+  roles: [],
   skills: [],
   teams: [],
   guilds: [],
@@ -148,6 +151,12 @@ export const reducer = (state, action) => {
       break;
     case SET_ROLES:
       state.roles = action.payload;
+      break;
+    case DELETE_ROLE:
+      state.roles = state.roles.filter((role) => role.id !== action.payload);
+      break;
+    case UPDATE_ROLES:
+      state.roles = [...state.roles, action.payload];
       break;
     case ADD_GUILD:
       state.guilds = [...state.guilds, action.payload];

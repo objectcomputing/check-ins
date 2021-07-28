@@ -6,46 +6,53 @@ exports[`renders correctly 1`] = `
     className="admin-container"
   >
     <div
-      className="user-page"
+      className="roles-content"
     >
       <div
-        className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3"
+        className="roles"
       >
         <div
-          className="MuiGrid-root makeStyles-search-1 MuiGrid-item MuiGrid-grid-xs-12"
+          className="roles-top"
         >
           <div
-            className="MuiFormControl-root MuiTextField-root makeStyles-searchInput-2"
+            className="roles-top-left"
           >
-            <label
-              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
-              data-shrink={false}
-            >
-              Select employees...
-            </label>
+            <h2>
+              Roles
+            </h2>
             <div
-              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
-              onClick={[Function]}
+              className="MuiFormControl-root MuiTextField-root role-search"
             >
-              <input
-                aria-invalid={false}
-                autoFocus={false}
-                className="MuiInputBase-input MuiInput-input"
-                disabled={false}
-                onAnimationStart={[Function]}
-                onBlur={[Function]}
-                onChange={[Function]}
-                onFocus={[Function]}
-                placeholder="Member Name"
-                required={false}
-                type="text"
-                value=""
-              />
+              <label
+                className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+                data-shrink={false}
+              >
+                Search Roles...
+              </label>
+              <div
+                className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+                onClick={[Function]}
+              >
+                <input
+                  aria-invalid={false}
+                  autoFocus={false}
+                  className="MuiInputBase-input MuiInput-input"
+                  disabled={false}
+                  onAnimationStart={[Function]}
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onFocus={[Function]}
+                  placeholder="Role Name"
+                  required={false}
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
         </div>
         <div
-          className="MuiGrid-root makeStyles-members-3 MuiGrid-item"
+          className="roles-bot"
         />
       </div>
     </div>
@@ -80,7 +87,7 @@ exports[`renders correctly 1`] = `
       </span>
     </button>
     <button
-      className="MuiButtonBase-root MuiButton-root MuiButton-text button"
+      className="MuiButtonBase-root MuiButton-root MuiButton-text button-selected"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
@@ -106,7 +113,7 @@ exports[`renders correctly 1`] = `
       </span>
     </button>
     <button
-      className="MuiButtonBase-root MuiButton-root MuiButton-text button-selected"
+      className="MuiButtonBase-root MuiButton-root MuiButton-text button"
       disabled={false}
       onBlur={[Function]}
       onClick={[Function]}
