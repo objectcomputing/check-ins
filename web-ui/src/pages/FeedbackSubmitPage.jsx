@@ -39,7 +39,7 @@ const FeedbackSubmitPage = () => {
 
   
   useEffect(() => {
-    if (!requestQuery || requestQuery===undefined) {
+    if (!requestQuery) {
       history.push("/checkins");
       window.snackDispatch({
         type: UPDATE_TOAST,
@@ -69,9 +69,7 @@ const FeedbackSubmitPage = () => {
     if (csrf && currentUserId && requestQuery && !feedbackRequestFetched.current) {
       getFeedbackRequest(csrf).then((request) => {
         if (request) {
-          if (request.status.toLowerCase() === "submitted" || request.submitDate) {
-            setRequestSubmitted(true);
-          } else if (request.recipientId !== currentUserId) {
+          if (request.recipientId !== currentUserId) {
             history.push("/checkins");
             window.snackDispatch({
               type: UPDATE_TOAST,
@@ -80,6 +78,8 @@ const FeedbackSubmitPage = () => {
                 toast: "You are not authorized to perform this operation.",
               },
             });
+          } else if (request.status.toLowerCase() === "submitted" || request.submitDate) {
+            setRequestSubmitted(true);
           } else {
               setFeedbackRequest(request);
           }
