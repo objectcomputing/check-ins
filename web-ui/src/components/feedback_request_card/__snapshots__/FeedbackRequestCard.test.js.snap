@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="feedback-request-card"
+>
+  <div
+    className="MuiPaper-root MuiCard-root makeStyles-root-1 MuiPaper-elevation1 MuiPaper-rounded"
+  >
+    <div
+      className="has-padding-top"
+    >
+      <div
+        className="MuiCardContent-root"
+      >
+        <div
+          className="MuiGrid-root MuiGrid-container"
+        >
+          <div
+            className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"
+          >
+            <div
+              className="MuiGrid-root no-wrap MuiGrid-container MuiGrid-align-items-xs-center"
+            >
+              <div
+                className="MuiGrid-root MuiGrid-item"
+              >
+                <div
+                  className="MuiAvatar-root MuiAvatar-circle avatar"
+                >
+                  <img
+                    className="MuiAvatar-img"
+                    src="../../../public/default_profile.jpg"
+                  />
+                </div>
+              </div>
+              <div
+                className="MuiGrid-root small-margin MuiGrid-item MuiGrid-grid-xs-true"
+              >
+                <p
+                  className="MuiTypography-root person-name MuiTypography-body1"
+                >
+                  test
+                </p>
+                <p
+                  className="MuiTypography-root position-text MuiTypography-body1"
+                >
+                  test
+                </p>
+              </div>
+              <div
+                className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-4"
+              >
+                <p
+                  className="MuiTypography-root dark-gray-text MuiTypography-body1"
+                >
+                  test
+                </p>
+                <a
+                  className="response-link red-text"
+                  href="/"
+                  onClick={[Function]}
+                >
+                  View all responses
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiCardActions-root"
+    >
+      <button
+        aria-expanded={false}
+        aria-label="show more"
+        className="MuiButtonBase-root MuiIconButton-root makeStyles-expandClose-2"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="MuiIconButton-label"
+        >
+          <svg
+            aria-hidden={true}
+            className="MuiSvgIcon-root"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
