@@ -15,13 +15,13 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface GuildMemberRepository extends CrudRepository<GuildMember, UUID> {
 
-    List<GuildMember> findByGuildid(UUID guildid);
+    List<GuildMember> findByGuildId(UUID guildId);
 
-    List<GuildMember> findByMemberid(UUID uuid);
+    List<GuildMember> findByMemberId(UUID uuid);
 
     List<GuildMember> findByLead(Boolean aBoolean);
 
-    Optional<GuildMember> findByGuildidAndMemberid(@NotNull UUID guildMemberid, @NotNull UUID memberId);
+    Optional<GuildMember> findByGuildIdAndMemberId(@NotNull UUID guildMemberId, @NotNull UUID memberId);
 
     GuildMember save(@NotNull GuildMember entity);
 
@@ -30,7 +30,7 @@ public interface GuildMemberRepository extends CrudRepository<GuildMember, UUID>
             "WHERE guildid = :id ")
     void deleteByGuildId(@NotNull String id);
 
-    void deleteByMemberid(@NotNull @NonNull UUID id);
+    void deleteByMemberId(@NotNull @NonNull UUID id);
 
     @Query("SELECT * " +
             "FROM guild_member tm_ " +

@@ -64,7 +64,7 @@ public class GuildServicesImpl implements GuildServices {
                 .orElseThrow(() -> new NotFoundException("No such guild found"));
 
         List<GuildMemberResponseDTO> guildMembers = guildMemberRepo
-                .findByGuildid(guildId)
+                .findByGuildId(guildId)
                 .stream()
                 .filter(guildMember -> {
                     LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
@@ -131,7 +131,7 @@ public class GuildServicesImpl implements GuildServices {
         Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
-            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildid(foundGuild.getId()).stream().filter(guildMember -> {
+            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
                 LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());

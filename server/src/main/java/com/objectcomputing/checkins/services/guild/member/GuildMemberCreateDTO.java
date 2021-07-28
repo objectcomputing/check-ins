@@ -35,11 +35,11 @@ public class GuildMemberCreateDTO {
         this.lead = lead;
     }
 
-    public UUID getGuildid() {
+    public UUID getGuildId() {
         return guildId;
     }
 
-    public void setGuildid(UUID guildId) {
+    public void setGuildId(UUID guildId) {
         this.guildId = guildId;
     }
 

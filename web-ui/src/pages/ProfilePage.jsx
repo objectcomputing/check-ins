@@ -49,7 +49,6 @@ const ProfilePage = () => {
   const [myHours, setMyHours] = useState(null);
 
   const myGuilds = selectMyGuilds(state);
-  console.log({ myGuilds });
 
   useEffect(() => {
     async function getHours() {

@@ -40,7 +40,7 @@ export const getGuildsForMember = async (id, cookie) => {
     url: guildUrl,
     responseType: "json",
     params: {
-      memberid: id,
+      memberId: id,
     },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },
@@ -70,7 +70,7 @@ export const addGuildMember = async (id, isLead, guildId, cookie) => {
     method: "post",
     url: guildMemberUrl,
     responseType: "json",
-    data: { memberid: id, lead: isLead, guildid: guildId },
+    data: { memberId: id, lead: isLead, guildId: guildId },
     headers: { "X-CSRF-Header": cookie },
   });
 };

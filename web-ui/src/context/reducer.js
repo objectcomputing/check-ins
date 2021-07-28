@@ -164,13 +164,10 @@ export const reducer = (state, action) => {
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
       break;
     case UPDATE_GUILD:
-      console.log("UPDATE GUILD,", action);
       const { id } = action.payload;
       const idx = state.guilds.findIndex((guild) => guild.id === id);
-      console.log("first", state.guilds[idx]);
       state.guilds[idx] = action.payload;
       state.guilds = [...state.guilds];
-      console.log("second", state.guilds[idx]);
       break;
     case UPDATE_GUILDS:
       state.guilds = action.payload;
