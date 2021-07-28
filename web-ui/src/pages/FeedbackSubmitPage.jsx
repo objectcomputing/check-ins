@@ -1,15 +1,16 @@
 import React, {useContext, useEffect, useRef} from "react";
 import { useState } from 'react'
-import queryString from "query-string";
 import "./FeedbackRequestPage.css";
 import FeedbackSubmissionTips from "../components/feedback_submission_tips/FeedbackSubmissionTips";
 import FeedbackSubmitForm from "../components/feedback_submit_form/FeedbackSubmitForm";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import {selectCsrfToken, selectCurrentUser, selectProfile} from "../context/selectors";
 import {AppContext} from "../context/AppContext";
 import {getFeedbackRequestById} from "../api/feedback";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from "@material-ui/core/styles";
+import {UPDATE_TOAST} from "../context/actions";
+import * as queryString from "query-string";
 
 const useStyles = makeStyles({
   announcement: {
@@ -26,10 +27,10 @@ const FeedbackSubmitPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId = selectCurrentUser(state)?.id;
   const location = useLocation();
+  const history = useHistory();
   const query = queryString.parse(location?.search);
   const requestQuery = query.request?.toString();
   const classes = useStyles();
-
   const [showTips, setShowTips] = useState(true);
   const [feedbackRequest, setFeedbackRequest] = useState(null);
   const [requestee, setRequestee] = useState(null);
@@ -38,6 +39,17 @@ const FeedbackSubmitPage = () => {
 
   
   useEffect(() => {
+    if (!requestQuery) {
+      history.push("/checkins");
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "No request present",
+        },
+      });
+
+    }
     async function getFeedbackRequest(cookie) {
       if (!currentUserId || !cookie || feedbackRequestFetched.current) {
         return null;
@@ -57,15 +69,33 @@ const FeedbackSubmitPage = () => {
     if (csrf && currentUserId && requestQuery && !feedbackRequestFetched.current) {
       getFeedbackRequest(csrf).then((request) => {
         if (request) {
-          if (request.status.toLowerCase() === "submitted" || request.submitDate) {
+          if (request.recipientId !== currentUserId) {
+            history.push("/checkins");
+            window.snackDispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: "error",
+                toast: "You are not authorized to perform this operation.",
+              },
+            });
+          } else if (request.status.toLowerCase() === "submitted" || request.submitDate) {
             setRequestSubmitted(true);
           } else {
-            setFeedbackRequest(request);
+              setFeedbackRequest(request);
           }
+        } else {
+          history.push("/checkins");
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Can't find feedback request with that ID",
+            },
+          });
         }
       });
     }
-  }, [csrf, currentUserId, requestQuery]);
+  }, [csrf, currentUserId, requestQuery, history]);
 
   useEffect(() => {
     if (feedbackRequest) {
@@ -92,5 +122,4 @@ const FeedbackSubmitPage = () => {
     </div>
   );
 };
-
 export default FeedbackSubmitPage;
