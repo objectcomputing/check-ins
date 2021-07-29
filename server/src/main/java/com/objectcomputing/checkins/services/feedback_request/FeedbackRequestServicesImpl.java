@@ -103,6 +103,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
         feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
+        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
 
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());

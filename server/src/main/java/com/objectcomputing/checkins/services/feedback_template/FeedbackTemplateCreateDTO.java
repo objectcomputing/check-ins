@@ -1,14 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionCreateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Introspected
@@ -25,6 +21,10 @@ public class FeedbackTemplateCreateDTO {
     @NotBlank
     @Schema(description = "UUID of person who created the feedback template", required = true)
     private UUID creatorId;
+
+    @NotBlank
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
+    private Boolean active;
 
     public String getTitle() {
         return title;
@@ -49,5 +49,13 @@ public class FeedbackTemplateCreateDTO {
 
     public void setCreatorId(UUID creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
