@@ -13,8 +13,6 @@ plugins {
     id "idea"
     id "groovy"
     id "jacoco"
-    id "com.palantir.docker" version "0.27.0"
-    id "com.palantir.docker-run" version "0.27.0"
 }
 
 
@@ -29,8 +27,6 @@ repositories {
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
 }
-
-
 
 configurations {
     // for dependencies that are needed for development only
@@ -174,15 +170,4 @@ appengine {
         promote = true
         project = 'oci-intern-2019'
     }
-}
-
-docker {
-    name 'server-image'
-    files 'check-ins-server.jar'
-}
-
-dockerRun {
-    name 'server-container'
-    image 'server-image'
-    clean true
 }

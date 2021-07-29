@@ -25,6 +25,8 @@ plugins {
     id "jacoco"
     id "java"
     id "org.sonarqube" version "3.0"
+    id "com.palantir.docker" version "0.27.0"
+    id "com.palantir.docker-run" version "0.27.0"
 }
 
 sonarqube {
@@ -33,9 +35,20 @@ sonarqube {
     }
 }
 
+docker {
+    name 'server-image'
+    files 'check-ins-server.jar'
+}
+
+dockerRun {
+    name 'check-ins-server'
+    image 'server-image'
+    clean true
+}
+
 project(":server") {
     assemble {
-        dependsOn ":web-ui:assemble"
+        dependsOn ":web-ui:assemble", "docker", "dockerRun"
     }
     sonarqube {
         properties {
