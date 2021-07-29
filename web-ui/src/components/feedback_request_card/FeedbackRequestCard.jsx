@@ -80,7 +80,7 @@ const FeedbackRequestCard = (props) => {
   useStylesCardContent();
   const [expanded, setExpanded] = React.useState(false);
 
-  const handleExpandClick = () => {u
+  const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
@@ -124,7 +124,7 @@ const FeedbackRequestCard = (props) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            {props?.responses?.map((response, index) => (
+            {props?.responses?.map((response) => (
               <FeedbackRequestSubcard
                 key={response.id}
                 request={response}
