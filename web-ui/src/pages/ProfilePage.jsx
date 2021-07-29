@@ -123,7 +123,7 @@ const ProfilePage = () => {
       let res = await updateGuild(newVal[index], csrf);
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
-      if(data) {
+      if (data) {
         dispatch({ type: UPDATE_GUILD, payload: data });
         setMyGuilds(newVal);
       }
