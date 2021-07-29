@@ -5,10 +5,8 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
-import com.objectcomputing.checkins.services.frozen_template.FrozenTemplate;
-import com.objectcomputing.checkins.services.frozen_template.FrozenTemplateServices;
-import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestion;
-import com.objectcomputing.checkins.services.frozen_template_questions.FrozenTemplateQuestionServices;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
 import javax.inject.Singleton;
@@ -20,28 +18,24 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
 
     private final FeedbackAnswerRepository feedbackAnswerRepository;
     private final CurrentUserServices currentUserServices;
-    private final FrozenTemplateQuestionServices frozenTemplateQServices;
+    private final TemplateQuestionServices templateQuestionServices;
     private final FeedbackRequestServices feedbackRequestServices;
-    private final FrozenTemplateServices frozenTemplateServices;
 
     public FeedbackAnswerServicesImpl(FeedbackAnswerRepository feedbackAnswerRepository,
                                       CurrentUserServices currentUserServices,
-                                      FrozenTemplateQuestionServices frozenTemplateQServices,
-                                      FeedbackRequestServices feedbackRequestServices,
-                                      FrozenTemplateServices frozenTemplateServices) {
+                                      TemplateQuestionServices templateQuestionServices,
+                                      FeedbackRequestServices feedbackRequestServices) {
         this.feedbackAnswerRepository = feedbackAnswerRepository;
         this.currentUserServices = currentUserServices;
-        this.frozenTemplateQServices = frozenTemplateQServices;
+        this.templateQuestionServices = templateQuestionServices;
         this.feedbackRequestServices = feedbackRequestServices;
-        this.frozenTemplateServices = frozenTemplateServices;
     }
 
     @Override
     public FeedbackAnswer save(FeedbackAnswer feedbackAnswer) {
 
-        if (feedbackAnswer.getId() != null) {
-            throw new BadArgException("Attempted to save feedback answer with non-auto-populated ID");
-        }
+        // Ensure that related question exists
+        templateQuestionServices.getById(feedbackAnswer.getQuestionId());
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
@@ -62,6 +56,7 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         }
 
         feedbackAnswer.setQuestionId(updatedFeedbackAnswer.getQuestionId());
+        feedbackAnswer.setRequestId(updatedFeedbackAnswer.getRequestId());
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!updateIsPermitted(relatedFeedbackRequest)) {
@@ -79,7 +74,6 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         }
 
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer.get());
-        boolean permitted = getIsPermitted(relatedFeedbackRequest);
 
         if (getIsPermitted(relatedFeedbackRequest)) {
             return feedbackAnswer.get();
@@ -89,26 +83,12 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {
-        FrozenTemplateQuestion question;
         FeedbackRequest feedbackRequest;
+
         try {
-            question = frozenTemplateQServices.getById(feedbackAnswer.getQuestionId());
+            feedbackRequest = feedbackRequestServices.getById(feedbackAnswer.getRequestId());
         } catch (NotFoundException e) {
-            throw new BadArgException("Attempted to save answer with invalid question ID " + feedbackAnswer.getQuestionId());
-        }
-
-        FrozenTemplate template;
-
-        try {
-            template = frozenTemplateServices.getById(question.getFrozenTemplateId());
-        } catch(NotFoundException e) {
-            throw new BadArgException("Attempted to save answer with invalid template attached");
-        }
-
-        try {
-            feedbackRequest = feedbackRequestServices.getById(template.getRequestId());
-        } catch (NotFoundException e) {
-            throw new BadArgException("Attempted to save answer with nonexistent request ID " + template.getRequestId());
+            throw new BadArgException("Attempted to save answer with nonexistent request ID " + feedbackAnswer.getRequestId());
         }
 
         return feedbackRequest;

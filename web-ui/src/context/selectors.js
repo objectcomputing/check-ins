@@ -66,6 +66,11 @@ export const selectCurrentMembers = createSelector(
       .sort((a, b) => a.lastName.localeCompare(b.lastName))
 );
 
+export const selectCurrentMemberIds = createSelector(
+    selectCurrentMembers,
+    (members) => members.map((member) => member.id)
+);
+
 export const selectProfileMap = createSelector(
   selectCurrentMembers,
   (currentMembers) => {

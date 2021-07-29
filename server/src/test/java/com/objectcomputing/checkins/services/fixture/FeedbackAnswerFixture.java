@@ -6,8 +6,8 @@ import java.util.UUID;
 
 public interface FeedbackAnswerFixture extends RepositoryFixture {
 
-    default FeedbackAnswer createFeedbackAnswer(UUID questionId) {
-        return getFeedbackAnswerRepository().save(new FeedbackAnswer("I am doing just fine", questionId, 0.5));
+    default FeedbackAnswer createSampleFeedbackAnswer(UUID questionId, UUID requestId) {
+        return new FeedbackAnswer("I am doing just fine", questionId, requestId, 0.5);
     }
 
 }

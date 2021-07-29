@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+Array [
+  <hr
+    className="MuiDivider-root person-divider"
+  />,
+  <div
+    className="MuiGrid-root person-row MuiGrid-container MuiGrid-spacing-xs-6"
+  >
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"
+    >
+      <div
+        className="MuiGrid-root no-wrap MuiGrid-container MuiGrid-align-items-xs-center"
+      >
+        <div
+          className="MuiGrid-root MuiGrid-item"
+        >
+          <div
+            className="MuiAvatar-root MuiAvatar-circle avatar"
+          >
+            <img
+              className="MuiAvatar-img"
+              src="../../../public/default_profile.jpg"
+            />
+          </div>
+        </div>
+        <div
+          className="MuiGrid-root small-margin MuiGrid-item MuiGrid-grid-xs-true"
+        >
+          <p
+            className="MuiTypography-root person-name MuiTypography-body1"
+          >
+            test
+          </p>
+          <p
+            className="MuiTypography-root position-text MuiTypography-body1"
+          >
+            test
+          </p>
+        </div>
+        <div
+          className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-4"
+        >
+          <p
+            className="MuiTypography-root MuiTypography-body1"
+          >
+            Submitted 5/22
+          </p>
+          <a
+            className="response-link"
+            href="/"
+            onClick={[Function]}
+          >
+            View response
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;

@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.DateCreated;
-import io.micronaut.data.annotation.DateUpdated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +24,7 @@ public class FeedbackTemplate {
     @Schema(description = "unique id of the feedback template ", required = true)
     private UUID id;
 
+
     @Column(name = "title")
     @NotBlank
     @TypeDef(type = DataType.STRING)
@@ -45,23 +45,15 @@ public class FeedbackTemplate {
 
     @Column(name = "date_created")
     @DateCreated
-    @NotBlank
     @TypeDef(type = DataType.DATE)
     @Schema(description = "date the template was created", required = true)
     private LocalDate dateCreated;
 
-    @Column(name = "updater_id")
-    @Nullable
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "UUID of person who last updated the feedback template")
-    private UUID updaterId;
-
-    @Column(name = "date_updated")
-    @DateUpdated
-    @Nullable
-    @TypeDef(type = DataType.DATE)
-    @Schema(description = "date the template was last updated")
-    private LocalDate dateUpdated;
+    @Column(name = "active")
+    @NotBlank
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
+    private Boolean active;
 
     /**
      * Constructs a new {@link FeedbackTemplate} to save
@@ -70,27 +62,23 @@ public class FeedbackTemplate {
      * @param description An optional description of the template
      * @param creatorId The {@link UUID} of the user who created the template
      */
-    public FeedbackTemplate(@NotBlank String title, @Nullable String description, @NotBlank UUID creatorId) {
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.creatorId = creatorId;
-        this.updaterId = null;
+        this.active = true;
     }
 
     /**
      * Constructs a {@link FeedbackTemplate} to update
      *
      * @param id The existing {@link UUID} of the template
-     * @param title The updated title of the template
-     * @param description The optional updated description of the template
-     * @param updaterId The {@link UUID} of the user who most recently updated the template
+     * @param active Whether or not the template is allowed to be used for a feedback request
      */
-    public FeedbackTemplate(@NotBlank UUID id, @NotBlank String title, @Nullable String description, @Nullable UUID updaterId) {
+    public FeedbackTemplate(UUID id, Boolean active) {
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.updaterId = updaterId;
+        this.active = active;
     }
 
     public FeedbackTemplate () {}
@@ -136,22 +124,12 @@ public class FeedbackTemplate {
         this.dateCreated = dateCreated;
     }
 
-    @Nullable
-    public UUID getUpdaterId() {
-        return updaterId;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setUpdaterId(@Nullable UUID updaterId) {
-        this.updaterId = updaterId;
-    }
-
-    @Nullable
-    public LocalDate getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(@Nullable LocalDate dateUpdated) {
-        this.dateUpdated = dateUpdated;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Override
@@ -164,13 +142,12 @@ public class FeedbackTemplate {
                 Objects.equals(description, that.description) &&
                 Objects.equals(creatorId, that.creatorId) &&
                 Objects.equals(dateCreated, that.dateCreated) &&
-                Objects.equals(updaterId, that.updaterId) &&
-                Objects.equals(dateUpdated, that.dateUpdated);
+                Objects.equals(active, that.active);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, creatorId, dateCreated, updaterId, dateUpdated);
+        return Objects.hash(id, title, description, creatorId, dateCreated, active);
     }
 
     @Override
@@ -181,8 +158,7 @@ public class FeedbackTemplate {
                 ", description='" + description +
                 ", creatorId=" + creatorId +
                 ", dateCreated=" + dateCreated +
-                ", updaterId=" + updaterId +
-                ", dateUpdated=" + dateUpdated +
+                ", active=" + active +
                 '}';
     }
 }

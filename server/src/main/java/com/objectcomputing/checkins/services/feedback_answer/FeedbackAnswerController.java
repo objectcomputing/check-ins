@@ -82,7 +82,7 @@ public class FeedbackAnswerController {
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {
-        return new FeedbackAnswer(dto.getAnswer(), dto.getQuestionId(), dto.getSentiment());
+        return new FeedbackAnswer(dto.getAnswer(), dto.getQuestionId(), dto.getRequestId(), dto.getSentiment());
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerUpdateDTO dto) {
@@ -94,6 +94,7 @@ public class FeedbackAnswerController {
         dto.setId(feedbackAnswer.getId());
         dto.setAnswer(feedbackAnswer.getAnswer());
         dto.setQuestionId(feedbackAnswer.getQuestionId());
+        dto.setRequestId(feedbackAnswer.getRequestId());
         dto.setSentiment(feedbackAnswer.getSentiment());
         return dto;
     }

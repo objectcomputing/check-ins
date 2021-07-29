@@ -26,8 +26,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private EmailSender emailSender;
-    private String notificationSubject;
-    private String notificationContent;
+    private final String notificationSubject;
+    private final String notificationContent;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
@@ -47,26 +47,22 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
-        if (feedbackRequest == null) {
-            throw new BadArgException("Cannot validate members; feedback request does not exist");
-        }
-
         try {
             memberProfileServices.getById(feedbackRequest.getCreatorId());
         } catch (NotFoundException e) {
-            throw new BadArgException("The creator ID is invalid");
+            throw new BadArgException("Cannot save feedback request with invalid creator ID");
         }
 
         try {
             memberProfileServices.getById(feedbackRequest.getRecipientId());
         } catch (NotFoundException e) {
-            throw new BadArgException("The recipient ID is invalid");
+            throw new BadArgException("Cannot save feedback request with invalid recipient ID");
         }
 
         try {
             memberProfileServices.getById(feedbackRequest.getRequesteeId());
         } catch (NotFoundException e) {
-            throw new BadArgException("The requestee ID is invalid");
+            throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
     }
 
@@ -78,8 +74,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         if (feedbackRequest.getId() != null) {
-            throw new BadArgException(String.format("Found unexpected id %s for feedback request, please try updating instead.",
-                    feedbackRequest.getId()));
+            throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
@@ -106,15 +101,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
         feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
         feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
+        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
         feedbackRequest.setSendDate(originalFeedback.getSendDate());
+        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
 
-        boolean statusUpdateAttempted = !originalFeedback.getStatus().equals(feedbackRequest.getStatus());
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        if (statusUpdateAttempted && !updateStatusIsPermitted(feedbackRequest)) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
         if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
@@ -123,9 +116,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         return feedbackReqRepository.update(feedbackRequest);
-
-}
-
+    }
 
     @Override
     public Boolean delete(UUID id) {
@@ -148,10 +139,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-
+        final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID recipientId = feedbackReq.get().getRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId)) {
+        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -186,17 +177,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL);
     }
 
-    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
-    }
+    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
+        LocalDate today = LocalDate.now();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
-    private boolean updateStatusIsPermitted(FeedbackRequest feedbackRequest) {
-        boolean isAdmin = currentUserServices.isAdmin();
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
-        return isAdmin
-                || currentUserId.equals(feedbackRequest.getRecipientId())
-                || currentUserId.equals(feedbackRequest.getCreatorId());
+        // The recipient can only access the feedback request after it has been sent
+        if (sendDate.isAfter(today) && currentUserId.equals(recipientId)) {
+            throw new PermissionException("You are not permitted to access this request before the send date.");
+        }
+
+        return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
     }
 
     private boolean updateDueDateIsPermitted(FeedbackRequest feedbackRequest) {

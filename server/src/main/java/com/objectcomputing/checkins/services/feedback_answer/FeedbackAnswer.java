@@ -42,16 +42,23 @@ public class FeedbackAnswer {
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
+    @Column(name = "request_id")
+    @NotBlank
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "id of the request this question is linked to ", required = true)
+    private UUID requestId;
+
     @Column(name = "sentiment")
     @Nullable
     @TypeDef(type = DataType.DOUBLE)
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
 
-    public FeedbackAnswer(String answer, UUID questionId, @Nullable Double sentiment) {
+    public FeedbackAnswer(String answer, UUID questionId, UUID requestId, @Nullable Double sentiment) {
         this.id = null;
         this.questionId = questionId;
         this.answer = answer;
+        this.requestId = requestId;
         this.sentiment = sentiment;
     }
 
@@ -71,6 +78,14 @@ public class FeedbackAnswer {
         this.id = id;
     }
 
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     public UUID getQuestionId() {
         return questionId;
     }
@@ -79,12 +94,12 @@ public class FeedbackAnswer {
         this.questionId = questionId;
     }
 
-    public String getAnswer() {
-        return answer;
+    public UUID getRequestId() {
+        return requestId;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
     }
 
     @Nullable
@@ -101,24 +116,22 @@ public class FeedbackAnswer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FeedbackAnswer that = (FeedbackAnswer) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(questionId, that.questionId) &&
-                Objects.equals(answer, that.answer) &&
-                Objects.equals(sentiment, that.sentiment);
+        return Objects.equals(id, that.id) && Objects.equals(answer, that.answer) && Objects.equals(questionId, that.questionId) && Objects.equals(requestId, that.requestId) && Objects.equals(sentiment, that.sentiment);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, questionId, answer, sentiment);
+        return Objects.hash(id, answer, questionId, requestId, sentiment);
     }
 
     @Override
     public String toString() {
         return "FeedbackAnswer{" +
                 "id=" + id +
-                ", questionId='" + questionId + '\'' +
-                ", answer='" + answer + '\'' +
-                ", sentiment='" + sentiment + '\'' +
+                ", answer='" + answer +
+                ", questionId=" + questionId +
+                ", requestId=" + requestId +
+                ", sentiment=" + sentiment +
                 '}';
     }
 }

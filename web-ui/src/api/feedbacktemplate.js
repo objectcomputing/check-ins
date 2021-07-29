@@ -60,7 +60,7 @@ export const createTemplateQuestions = async (questions, cookie) => {
 
 export const getFeedbackTemplate = async (feedbackTemplateId, cookie) => {
   return resolve({
-    url: `${feedbackTemplateUrl}/?id=${feedbackTemplateId}`,
+    url: `${feedbackTemplateUrl}/${feedbackTemplateId}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });

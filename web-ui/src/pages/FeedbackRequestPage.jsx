@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, {useContext, useCallback, useEffect, useState} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -14,8 +14,9 @@ import SelectDate from "../components/feedback_date_selector/SelectDate";
 import "./FeedbackRequestPage.css";
 import {AppContext} from "../context/AppContext";
 import { createFeedbackRequest } from "../api/feedback";
-import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMembers} from "../context/selectors";
+import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
+import {getFeedbackTemplate} from "../api/feedbacktemplate";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -76,18 +77,24 @@ const FeedbackRequestPage = () => {
   const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
-  const query = queryString.parse(location?.search);
-  const stepQuery = query.step?.toString();
-  const templateQuery = query.template?.toString();
-  const fromQuery = query.from?.toString();
-  const sendQuery = query.send?.toString();
-  const dueQuery = query.due?.toString();
-  const sendDate = query.send?.toString();
-  const forQuery = query.for?.toString();
+  const [query, setQuery] = useState(null);
+  const stepQuery = query?.step?.toString();
+  const templateQuery = query?.template?.toString();
+  const fromQuery = query?.from?.toString();
+  const sendQuery = query?.send?.toString();
+  const dueQuery = query?.due?.toString();
+  const sendDate = query?.send?.toString();
+  const forQuery = query?.for?.toString();
   const requestee = selectProfile(state, forQuery);
-  const memberList = selectCurrentMembers(state);
-  const memberIds = memberList.map((member) => member.id);
+  const memberIds = selectCurrentMemberIds(state);
   const csrf = selectCsrfToken(state)
+  const [readyToProceed, setReadyToProceed] = useState(false);
+  const [templateIsValid, setTemplateIsValid] = useState();
+
+
+  useEffect(()=> {
+    setQuery(queryString.parse(location?.search));
+  }, [location.search])
 
 
   const getStep = useCallback(() => {
@@ -102,9 +109,40 @@ const FeedbackRequestPage = () => {
     return !!forQuery;
   }, [forQuery])
 
-  const hasTemplate = useCallback(() => {
-    return !!templateQuery;
-  }, [templateQuery])
+
+useEffect(() => {
+  async function isTemplateValid() {
+      if (!templateQuery || !csrf) {
+        return false;
+      }
+      let res = await getFeedbackTemplate(templateQuery, csrf);
+      let templateResponse =
+          res.payload &&
+          res.payload.data &&
+          res.payload.status === 200 &&
+          !res.error
+              ? res.payload.data
+              : null
+      if (templateResponse === null) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "The Id for the template you selected does not exist.",
+          },
+        });
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    isTemplateValid().then((isValid) => {
+      setTemplateIsValid(isValid);
+    });
+  }, [csrf, templateQuery]);
+
 
   const hasFrom = useCallback(() => {
     if (fromQuery) {
@@ -119,7 +157,7 @@ const FeedbackRequestPage = () => {
             },
           });
           query.from = undefined;
-          history.push({...location, search: queryString.stringify(query)});
+           history.push({...location, search: queryString.stringify(query)});
         return false;
       }
     }
@@ -145,28 +183,31 @@ const FeedbackRequestPage = () => {
   }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
-    switch (activeStep) {
-      case 1:
-        return hasFor() && hasTemplate();
-      case 2:
-        return hasFor() && hasTemplate() && hasFrom();
-      case 3:
-        const dueQueryValid = dueQuery ? isValidDate(dueQuery) :  true;
-        return hasFor() && hasTemplate() && hasFrom() && hasSend() && dueQueryValid;
-      default:
-        return false;
+    if(query) {
+      switch (activeStep) {
+        case 1:
+          return hasFor() && templateIsValid
+        case 2:
+          return hasFor() && templateIsValid && hasFrom();
+        case 3:
+          const dueQueryValid = dueQuery ? isValidDate(dueQuery) : true;
+          return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
+        default:
+          return false;
+      }
     }
-  }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend, dueQuery, isValidDate]);
+    return false;
+  }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
 const handleSubmit = () =>{
     let feedbackRequest = {}
     let fromArray = fromQuery.split(',')
     if (fromArray.length === 1 ) {
-        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:"6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
         sendFeedbackRequest(feedbackRequest)
     } else if (fromArray.length > 1) {
         for (const recipient of fromArray) {
-           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: "6b72840f-7e18-43cc-a923-15dec8ef77f4", sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
+           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
            sendFeedbackRequest(feedbackRequest)
         }
       }
@@ -212,26 +253,26 @@ const handleSubmit = () =>{
                                },
                              });
                            }
-
               }
-
-
     }
 
     const urlIsValid = useCallback(() => {
-      switch (activeStep) {
-        case 1:
-          return hasFor();
-        case 2:
-          return hasFor() && hasTemplate();
-        case 3:
-          return hasFor() && hasTemplate() && hasFrom();
-        case 4:
-          return hasFor() && hasTemplate() && hasFrom() && hasSend();
-        default:
-          return false;
+      if(query) {
+        switch (activeStep) {
+          case 1:
+            return hasFor();
+          case 2:
+            return hasFor() && templateIsValid
+          case 3:
+            return hasFor() && templateIsValid && hasFrom();
+          case 4:
+            return hasFor() && templateIsValid && hasFrom() && hasSend();
+          default:
+            return false;
+        }
       }
-    }, [activeStep, hasFor, hasTemplate, hasFrom, hasSend]);
+      return true;
+    }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
   
   const handleQueryChange = (key, value) => {
     let newQuery = {
@@ -241,16 +282,23 @@ const handleSubmit = () =>{
     history.push({ ...location, search: queryString.stringify(newQuery) });
   }
 
-  if (!urlIsValid()) {
-    dispatch({
+  useEffect(()=> {
+    if (!urlIsValid()) {
+      dispatch({
       type: UPDATE_TOAST,
       payload: {
         severity: "error",
         toast: "An error has occurred with the URL",
       },
     });
-    history.push("/checkins");
-  }
+      history.push("/checkins");
+    }
+  }, [history, urlIsValid, dispatch]);
+
+  useEffect(()=> {
+    setReadyToProceed(canProceed());
+  }, [canProceed])
+
 
   return (
     <div className="feedback-request-page">
@@ -262,7 +310,7 @@ const handleSubmit = () =>{
             Back
           </Button>
           <Button className={classes.actionButtons} onClick={onNextClick}
-            variant="contained" disabled={!canProceed()} color="primary">
+            variant="contained" disabled={!readyToProceed} color="primary">
             {activeStep === steps.length ? "Submit" : "Next"}
           </Button>
         </div>
