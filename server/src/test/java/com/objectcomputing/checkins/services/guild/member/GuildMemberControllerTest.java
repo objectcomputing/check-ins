@@ -110,8 +110,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("guildMember.guildid: must not be null", errorList.get(0));
-        assertEquals("guildMember.memberid: must not be null", errorList.get(1));
+        assertEquals("guildMember.guildId: must not be null", errorList.get(0));
+        assertEquals("guildMember.memberId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 
@@ -377,8 +377,8 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
         List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
                 .stream().sorted().collect(Collectors.toList());
-        assertEquals("guildMember.guildid: must not be null", errorList.get(0));
-        assertEquals("guildMember.memberid: must not be null", errorList.get(1));
+        assertEquals("guildMember.guildId: must not be null", errorList.get(0));
+        assertEquals("guildMember.memberId: must not be null", errorList.get(1));
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
