@@ -398,31 +398,31 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         assertEquals(request.getPath(), href);
     }
 
-    @Test
-    void testUpdateNonExistingRolePermissionType() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role roleToUpdate = createDefaultAdminRole(memberProfile);
-
-        Map<String, String> rolepermission = new HashMap<>();
-        rolepermission.put("id", roleToUpdate.getId().toString());
-        rolepermission.put("permission", "ROLE_DOES_NOT_EXIST");
-        rolepermission.put("roleid", roleToUpdate.getMemberid().toString());
-
-        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", rolepermission)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertTrue(error.contains("not one of the values accepted for Enum class"));
-        assertEquals(request.getPath(), href);
-    }
+//    @Test
+//    void testUpdateNonExistingRolePermissionType() {
+//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        Role roleToUpdate = createDefaultAdminRole(memberProfile);
+//
+//        Map<String, String> rolepermission = new HashMap<>();
+//        rolepermission.put("id", roleToUpdate.getId().toString());
+//        rolepermission.put("permission", "ROLE_DOES_NOT_EXIST");
+//        rolepermission.put("roleid", roleToUpdate.getMemberid().toString());
+//
+//        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", rolepermission)
+//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+//                client.toBlocking().exchange(request, Map.class));
+//
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        String error = Objects.requireNonNull(body).get("message").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//
+//        assertTrue(error.contains("not one of the values accepted for Enum class"));
+//        assertEquals(request.getPath(), href);
+//    }
 
     @Test
     void testUpdateNonExistingRolePermission() {

@@ -25,12 +25,6 @@ public class RoleCreateDTO {
     @Schema(description = "description of the role", nullable = true)
     private String description;
 
-    @NotNull
-    @Column(name = "memberid")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
-
     public RoleType getRole() {
         return role;
     }
@@ -47,11 +41,4 @@ public class RoleCreateDTO {
         this.description = description;
     }
 
-    public UUID getMemberid() {
-        return memberid;
-    }
-
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
-    }
 }

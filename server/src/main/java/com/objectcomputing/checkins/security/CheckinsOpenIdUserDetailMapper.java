@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.annotation.Replaces;
@@ -32,14 +33,16 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
     private final TokenConfiguration tokenConfiguration;
+    private final RoleServices roleServices;
 
     public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
                                           RoleRepository roleRepository,
-                                          TokenConfiguration tokenConfiguration) {
+                                          TokenConfiguration tokenConfiguration, RoleServices roleServices) {
         LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
         this.tokenConfiguration = tokenConfiguration;
+        this.roleServices = roleServices;
     }
 
     @NonNull
@@ -83,7 +86,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) -> {
                         LOG.info("MemberProfile of the user: {}", memberProfile);
-                        roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
+                        roles.addAll(roleServices.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
                                 .collect(Collectors.toList()));

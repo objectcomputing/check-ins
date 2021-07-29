@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleResponseDTO;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
@@ -93,7 +94,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         // try to delete user - default behavior
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
-        Set<Role> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
+        Set<RoleResponseDTO> userRoles = (memberProfile != null) ? roleServices.findByRoleAndMemberid(RoleType.PDL, id) : Collections.emptySet();
 
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");

@@ -43,21 +43,14 @@ public class Role {
     @Schema(description = "description of the role")
     private String description;
 
-    public Role(RoleType role, @Nullable String description, UUID memberid) {
-        this(null, role, description, memberid);
+    public Role(RoleType role, @Nullable String description) {
+        this(null, role, description);
     }
 
-    @NotNull
-    @Column(name = "memberid")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
-
-    public Role(UUID id, RoleType role, @Nullable String description, UUID memberid) {
+    public Role(UUID id, RoleType role, @Nullable String description) {
         this.id = id;
         this.role = role;
         this.description = description;
-        this.memberid = memberid;
     }
 
     public UUID getId() {
@@ -84,14 +77,6 @@ public class Role {
         this.description = description;
     }
 
-    public UUID getMemberid() {
-        return memberid;
-    }
-
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,13 +84,12 @@ public class Role {
         Role that = (Role) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(role, that.role) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(memberid, that.memberid);
+                Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, role, description, memberid);
+        return Objects.hash(id, role, description);
     }
 
     @Override
@@ -114,7 +98,6 @@ public class Role {
                 "id=" + id +
                 ", role=" + role +
                 ", description='" + description + '\'' +
-                ", memberid=" + memberid +
                 '}';
     }
 }

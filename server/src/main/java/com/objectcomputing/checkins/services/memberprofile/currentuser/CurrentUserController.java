@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -24,11 +25,13 @@ public class CurrentUserController {
 
     private final CurrentUserServices currentUserServices;
     private final RoleRepository roleRepository;
+    private final RoleServices roleServices;
 
     public CurrentUserController(CurrentUserServices currentUserServices,
-                                 RoleRepository roleRepository) {
+                                 RoleRepository roleRepository,RoleServices roleServices) {
         this.currentUserServices = currentUserServices;
         this.roleRepository = roleRepository;
+        this.roleServices = roleServices;
     }
 
     /**
@@ -51,7 +54,7 @@ public class CurrentUserController {
         String lastName = name.substring(name.indexOf(' ') + 1).trim();
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getId()).stream()
+        List<String> roles = roleServices.findByMemberid(user.getId()).stream()
                 .map(role -> role.getRole().toString()).collect(Collectors.toList());
 
         return HttpResponse

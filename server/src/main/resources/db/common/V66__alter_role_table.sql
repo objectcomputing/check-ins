@@ -1,0 +1,2 @@
+ALTER TABLE role
+DROP COLUMN memberid;
