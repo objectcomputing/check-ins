@@ -21,6 +21,10 @@ public interface GuildMemberFixture extends RepositoryFixture{
         return dtoFromEntity(createDefaultGuildMember(guildEntity, memberProfile), memberProfile);
     }
 
+    default GuildUpdateDTO.GuildMemberUpdateDTO guildMemberUpdateDTOFromNonExistingMember(MemberProfile memberProfile, Boolean lead){
+        return new GuildUpdateDTO.GuildMemberUpdateDTO(null, memberProfile.getId(), lead);
+    }
+
     default GuildCreateDTO.GuildMemberCreateDTO createDefaultGuildMemberDto(MemberProfile memberProfile, Boolean lead) {
         return new GuildCreateDTO.GuildMemberCreateDTO(memberProfile.getId(), lead);
     }

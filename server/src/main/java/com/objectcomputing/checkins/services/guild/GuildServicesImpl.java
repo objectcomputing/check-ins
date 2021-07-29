@@ -243,10 +243,8 @@ public class GuildServicesImpl implements GuildServices {
                 addedMembersHtml += li;
             }
             addedMembersHtml += "</ul>";
-
             emailHtml += addedMembersHtml;
         }
-
         if (!removedMembers.isEmpty()){
             String removedMembersHtml = "<h4>The following members have been removed:</h4><ul>";
             for (MemberProfile member : removedMembers) {
@@ -254,13 +252,9 @@ public class GuildServicesImpl implements GuildServices {
                 removedMembersHtml += li;
             }
             removedMembersHtml += "</ul>";
-
             emailHtml += removedMembersHtml;
         }
-
         emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.";
-
         return emailHtml;
-
     }
 }
