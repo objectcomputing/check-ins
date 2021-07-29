@@ -54,6 +54,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setTitle(originalTemplate.get().getTitle());
         feedbackTemplate.setDescription(originalTemplate.get().getDescription());
         feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
+        feedbackTemplate.setIsAdHoc(originalTemplate.get().getIsAdHoc());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");

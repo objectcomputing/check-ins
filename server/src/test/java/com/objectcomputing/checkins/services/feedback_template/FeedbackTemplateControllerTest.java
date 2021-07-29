@@ -77,6 +77,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setTitle(feedbackTemplate.getTitle());
         dto.setDescription(feedbackTemplate.getDescription());
         dto.setCreatorId(feedbackTemplate.getCreatorId());
+        dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
         return dto;
     }
 
@@ -97,6 +98,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(content.getDescription(), dto.getDescription());
         assertEquals(content.getCreatorId(), dto.getCreatorId());
         assertEquals(content.getActive(), dto.getActive());
+        assertEquals(content.getIsAdHoc(), dto.getIsAdHoc());
     }
 
     void assertUnauthorized(HttpClientResponseException exception) {

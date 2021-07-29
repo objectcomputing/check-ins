@@ -35,6 +35,10 @@ public class FeedbackTemplateResponseDTO {
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
+    @NotBlank
+    @Schema(description = "whether the template is an ad-hoc template", required = true)
+    private Boolean isAdHoc;
+
     public UUID getId() {
         return id;
     }
@@ -83,4 +87,13 @@ public class FeedbackTemplateResponseDTO {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public Boolean getIsAdHoc() {
+        return isAdHoc;
+    }
+
+    public void setIsAdHoc(Boolean adHoc) {
+        isAdHoc = adHoc;
+    }
+
 }
