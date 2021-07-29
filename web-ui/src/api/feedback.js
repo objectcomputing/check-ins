@@ -1,10 +1,9 @@
 import { resolve } from "./api.js";
+import {getFeedbackTemplateWithQuestions} from './feedbacktemplate.js'
 
 const feedbackSuggestionURL = "/services/feedback/suggestions";
-const feedbackRequestURL = "/services/feedback/requests"
-const frozenTemplateURL = "/services/feedback/frozen-templates"
-const questionsURL = "/services/feedback/frozen-template-questions"
-const answerURL = "/services/feedback/answers"
+const feedbackRequestURL = "/services/feedback/requests";
+const answerURL = "/services/feedback/answers";
 
 export const getFeedbackSuggestion = async (id, cookie) => {
   return resolve({
@@ -32,28 +31,6 @@ export const getFeedbackRequestById = async (id, cookie) => {
   });
 };
 
-export const getFrozenTemplateByRequestId = async (requestId, cookie) => {
-  return resolve({
-    url: `${frozenTemplateURL}`,
-    responseType: "json",
-    params: {
-      requestId: requestId
-    },
-    headers: { "X-CSRF-Header": cookie }
-  });
-
-}
-export const getQuestionsByFrozenTemplateId = async(frozenTemplateId, cookie) => {
-  return resolve({
-    url: `${questionsURL}`,
-    params: {
-      templateId: frozenTemplateId
-    },
-    responseType: "json",
-    headers: { "X-CSRF-Header": cookie }
-  });
-}
-
 export const getAnswersByQuestionId = async(questionId, cookie) => {
   return resolve({
     url: `${answerURL}`,
@@ -66,16 +43,15 @@ export const getAnswersByQuestionId = async(questionId, cookie) => {
 
 }
 export const getQuestionsByRequestId = async (requestId, cookie) => {
-
-  const frozenTemplateReq = getFrozenTemplateByRequestId(requestId, cookie);
-  const questionsReq = frozenTemplateReq.then((frozenTemplateRes) => {
-    if (frozenTemplateRes.payload && frozenTemplateRes.payload.data && !frozenTemplateRes.error ) {
-      return getQuestionsByFrozenTemplateId(frozenTemplateRes.payload.data.id, cookie);
+  const requestReq = getFeedbackRequestById(requestId, cookie);
+  let getFeedbackReq = requestReq.then((requestRes) => {
+    if (requestRes.payload && requestRes.payload.data && !requestRes.error ) {
+      return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie)
     }
   });
 
-  return Promise.all([frozenTemplateReq, questionsReq]).then(([frozenTemplateRes, questionsRes ]) => {
-    return questionsRes;
+  return Promise.all([requestReq, getFeedbackReq]).then(([requestRes, getFeedbackRes]) => {
+    return getFeedbackRes;
   });
 
 }

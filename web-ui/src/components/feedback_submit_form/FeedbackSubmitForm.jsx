@@ -78,13 +78,11 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
   useEffect(() => {
     async function getQuestions(requestId, cookie) {
       if (!requestId) return;
-      const res = await getQuestionsByRequestId(requestId, cookie)
-      let questionsList = res && res.payload && res.payload.data && !res.error ? res.payload.data : [];
-      console.log(questionsList)
+      const res = await getQuestionsByRequestId(requestId, cookie);
+      let questionsList = res.questions ? res.questions : [];
       return questionsList;
     }
     if (csrf) {
-      let requestId = 'ab7b21d4-f88c-4494-9b0b-8541636025eb'
       getQuestions(requestId, csrf).then((questionsList) => {
         setQuestions(questionsList);
       });
@@ -101,17 +99,17 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
         {isReviewing ?
           <Alert className={classes.warning} severity="warning">
             <AlertTitle>Notice!</AlertTitle>
-            Feedback is not anonymous, and can be seen by more than just the feedback Requester.
+            Feedback is not anonymous, and can be seen by more than just the feedback requester.
             <strong> Be mindful of your answers.</strong>
           </Alert> : null
         }
         {questions.map((question) => (
-            <FeedbackSubmitQuestion
-                key={question.id}
-                question={question.question}
-                questionNumber={question.questionNumber}
-                editable={!isReviewing}
-            />
+          <FeedbackSubmitQuestion
+              key={question.id}
+              question={question.question}
+              questionNumber={question.questionNumber}
+              editable={!isReviewing}
+          />
         ))}
         <div className="submit-action-buttons">
           {isReviewing ?
