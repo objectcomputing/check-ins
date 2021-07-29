@@ -18,11 +18,16 @@ Array [
           className="MuiGrid-root MuiGrid-item"
         >
           <div
-            className="MuiAvatar-root MuiAvatar-circle avatar"
+            className="MuiAvatar-root MuiAvatar-circle"
+            style={
+              Object {
+                "marginRight": "1em",
+              }
+            }
           >
             <img
               className="MuiAvatar-img"
-              src="../../../public/default_profile.jpg"
+              src="http://localhost:8080/services/member-profiles/member-photos/undefined"
             />
           </div>
         </div>
@@ -31,14 +36,10 @@ Array [
         >
           <p
             className="MuiTypography-root person-name MuiTypography-body1"
-          >
-            test
-          </p>
+          />
           <p
             className="MuiTypography-root position-text MuiTypography-body1"
-          >
-            test
-          </p>
+          />
         </div>
         <div
           className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-4"
@@ -46,14 +47,14 @@ Array [
           <p
             className="MuiTypography-root MuiTypography-body1"
           >
-            Submitted 5/22
+            Submitted July 08, 2020
           </p>
           <a
             className="response-link"
             href="/"
             onClick={[Function]}
           >
-            View response
+             View response 
           </a>
         </div>
       </div>
