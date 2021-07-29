@@ -139,10 +139,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackReq.isEmpty()) {
             throw new NotFoundException("No feedback req with id " + id);
         }
-
+        final LocalDate sendDate = feedbackReq.get().getSendDate();
         final UUID requesteeId = feedbackReq.get().getRequesteeId();
         final UUID recipientId = feedbackReq.get().getRecipientId();
-        if (!getIsPermitted(requesteeId, recipientId)) {
+        if (!getIsPermitted(requesteeId, recipientId, sendDate)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
@@ -177,8 +177,15 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL);
     }
 
-    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId) {
-        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
+        LocalDate today = LocalDate.now();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
+
+        // The recipient can only access the feedback request after it has been sent
+        if (sendDate.isAfter(today) && currentUserId.equals(recipientId)) {
+            throw new PermissionException("You are not permitted to access this request before the send date.");
+        }
+
         return createIsPermitted(requesteeId) || currentUserId.equals(recipientId);
     }
 

@@ -909,4 +909,70 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertUnauthorized(responseException);
     }
 
+    @Test
+    void testRecipientGetBeforeSendDateNotAuthorized() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        getFeedbackRequestRepository().save(feedbackRequest);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        // the sendDate must be before the sent date
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+        assertEquals("You are not permitted to access this request before the send date.", responseException.getMessage());
+    }
+
+    @Test
+    void testRecipientGetBeforeSendDateAsAdminAuthorized() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        MemberProfile adminUser = createAThirdDefaultMemberProfile();
+        createDefaultAdminRole(adminUser);
+
+        // Save feedback request with send date in the future
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        getFeedbackRequestRepository().save(feedbackRequest);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(adminUser.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // the sendDate must be before the sent date unless its an admin
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
+    @Test
+    void testRecipientGetBeforeSendDateAsPdlAuthorized() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+
+        // Save feedback request with send date in the future
+        FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.now().plusDays(1));
+        getFeedbackRequestRepository().save(feedbackRequest);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("%s", feedbackRequest.getId()))
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // the sendDate must be before the sent date unless its an admin or the pdl who created it.
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
+    }
+
 }
