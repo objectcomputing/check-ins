@@ -29,8 +29,7 @@ import java.util.*;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfileFixture, RoleFixture, GuildMemberFixture {
@@ -81,6 +80,60 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
                 "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been added:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "billm@objectcomputing.com"
         );
+    }
+
+    @Test
+    void testEmailSentToGuildLeadWhenGuildMembersRemoved() {
+        // create a guild and guild lead
+        Guild guildEntity = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildLead = createLeadGuildMember(guildEntity, memberProfile);
+
+        // Create and add a member to the guild
+        createDefaultGuildMember(guildEntity, createADefaultMemberProfileWithBirthDay());
+
+        // Create an admin to request the changes
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
+        // create a guildUpdateDTO from existing guild
+        GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
+        // only include the guild lead in the request (effectively removes the guild member)
+        requestBody.setGuildMembers(Collections.singletonList(updateDefaultGuildMemberDto(guildLead, guildLead.isLead())));
+
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+        client.toBlocking().exchange(request, GuildResponseDTO.class);
+
+        verify(emailSender).sendEmail(
+                "Membership Changes have been made to the Ninja guild",
+                "<h3>Changes have been made to the Ninja guild.</h3><h4>The following members have been removed:</h4><ul><li>Bill Charles</li></ul><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
+                "billm@objectcomputing.com"
+        );
+    }
+
+    @Test
+    void testNoEmailSentWhenGuildLeadMakesChanges() {
+        // create a guild and guild lead
+        Guild guildEntity = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildLead = createLeadGuildMember(guildEntity, memberProfile);
+
+        // create member and a DTO for the request to add them to the guild
+        MemberProfile newMember = createADefaultMemberProfileWithBirthDay();
+        GuildUpdateDTO.GuildMemberUpdateDTO newMemberDTO = guildMemberUpdateDTOFromNonExistingMember(newMember, false);
+
+        // create a guildUpdateDTO from existing guild
+        GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
+        // create list of existing admin and new member and add it to the request
+        List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
+        newAndExistingMembers.add(newMemberDTO);
+        newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
+        requestBody.setGuildMembers(newAndExistingMembers);
+
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfile.getWorkEmail(), ADMIN_ROLE);
+        client.toBlocking().exchange(request, GuildResponseDTO.class);
+
+        verify(emailSender, never()).sendEmail(anyString(), anyString(), anyString());
     }
 
     @Test
