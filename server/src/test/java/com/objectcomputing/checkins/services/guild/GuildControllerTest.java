@@ -66,7 +66,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         // create a guildUpdateDTO from existing guild
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        // create list of existing admin and new member and add it to the request
+        // create list of existing guild lead and new member and add it to the request
         List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
         newAndExistingMembers.add(newMemberDTO);
         newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
@@ -124,7 +124,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         // create a guildUpdateDTO from existing guild
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
-        // create list of existing admin and new member and add it to the request
+        // create list of existing guild lead and new member and add it to the request
         List<GuildUpdateDTO.GuildMemberUpdateDTO> newAndExistingMembers = new ArrayList<>();
         newAndExistingMembers.add(newMemberDTO);
         newAndExistingMembers.add(updateDefaultGuildMemberDto(guildLead, guildLead.isLead()));
