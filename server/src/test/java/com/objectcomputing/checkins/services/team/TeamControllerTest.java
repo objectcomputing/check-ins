@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.team;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -25,7 +26,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TeamControllerTest extends TestContainersSuite implements TeamFixture, MemberProfileFixture, TeamMemberFixture {
+class TeamControllerTest extends TestContainersSuite implements TeamFixture, MemberProfileFixture, RoleFixture, TeamMemberFixture {
 
     @Inject
     @Client("/services/teams")
@@ -226,6 +227,9 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testUpdateTeamSuccess() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team teamEntity = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -234,7 +238,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         newMember.setLead(true);
         requestBody.setTeamMembers(Collections.singletonList(newMember));
 
-        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<TeamResponseDTO> response = client.toBlocking().exchange(request, TeamResponseDTO.class);
 
         assertEntityDTOEqual(teamEntity, response.body());
@@ -279,13 +283,16 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
 
     @Test
     void testUpdateTeamNotExist() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team teamEntity = createDefaultTeam();
         UUID requestId = UUID.randomUUID();
         TeamUpdateDTO requestBody = new TeamUpdateDTO(requestId.toString(), teamEntity.getName(), teamEntity.getDescription());
         requestBody.setTeamMembers(new ArrayList<>());
 
         final MutableHttpRequest<TeamUpdateDTO> request = HttpRequest.PUT("", requestBody)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -324,6 +331,8 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         Team teamEntity = createDefaultTeam();
         // create members
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         //add members to team
         createDefaultTeamMember(teamEntity, memberProfileOfAdmin);
 

@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.agenda_item.AgendaItemRepository;
 import com.objectcomputing.checkins.services.checkin_notes.CheckinNoteRepository;
 import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepository;
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
+import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
@@ -20,6 +21,7 @@ import com.objectcomputing.checkins.services.pulseresponse.PulseResponseReposito
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTagRepository;
@@ -30,6 +32,7 @@ import com.objectcomputing.checkins.services.team.member.TeamMemberRepository;
 import io.micronaut.runtime.server.EmbeddedServer;
 import com.objectcomputing.checkins.services.survey.SurveyRepository;
 import com.objectcomputing.checkins.services.employee_hours.EmployeeHoursRepository;
+import com.objectcomputing.checkins.services.opportunities.OpportunitiesRepository;
 
 
 public interface RepositoryFixture {
@@ -61,6 +64,10 @@ public interface RepositoryFixture {
 
     default RoleRepository getRoleRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(RoleRepository.class);
+    }
+
+    default RolePermissionRepository getRolePermissionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RolePermissionRepository.class);
     }
 
     default PulseResponseRepository getPulseResponseRepository() {
@@ -145,7 +152,16 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(SettingsRepository.class);
     }
 
+    default OpportunitiesRepository getOpportunitiesRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(OpportunitiesRepository.class);
+    }
+
     default GuildMemberHistoryRepository getGuildMemberHistoryRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(GuildMemberHistoryRepository.class);
+
+    }
+
+    default DemographicsRepository getDemographicsRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(DemographicsRepository.class);
     }
 }
