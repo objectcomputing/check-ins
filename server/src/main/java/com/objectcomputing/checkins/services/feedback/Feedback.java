@@ -8,7 +8,7 @@ import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -39,13 +39,13 @@ public class Feedback {
     )
     private String content;
 
-    @Column(name = "sentTo")
+    @Column(name = "sentto")
     @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile to whom the feedback was sent", required = true)
     private UUID sentTo;
 
-    @Column(name = "sentBy")
+    @Column(name = "sentby")
     @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of member profile who created the feedback", required = true)
@@ -57,13 +57,13 @@ public class Feedback {
     @Schema(description = "whether the feedback is public or private", required = true)
     private Boolean confidential;
 
-    @Column(name = "createdOn")
+    @Column(name = "createdon")
     @DateCreated
     @Nullable
     @Schema(description = "date when the feedback was created", required = true)
     private LocalDateTime createdOn;
 
-    @Column(name = "updatedOn")
+    @Column(name = "updatedon")
     @DateUpdated
     @Nullable
     @Schema(description = "date of the latest update to the feedback", required = true)

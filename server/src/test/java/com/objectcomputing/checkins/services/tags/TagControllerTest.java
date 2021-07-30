@@ -2,7 +2,10 @@ package com.objectcomputing.checkins.services.tags;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TagFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -24,7 +27,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TagControllerTest extends TestContainersSuite implements TagFixture {
+public class TagControllerTest extends TestContainersSuite implements TagFixture, RoleFixture, MemberProfileFixture {
 
     @Inject
     @Client("/services/tags")
@@ -32,11 +35,14 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
 
     @Test
     void testCreateATag() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         String generatedString = RandomStringUtils.randomAlphabetic(10);
         TagCreateDTO tagCreateDTO = new TagCreateDTO();
         tagCreateDTO.setName(generatedString);
 
-        final HttpRequest<TagCreateDTO> request = HttpRequest.POST("", tagCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<TagCreateDTO> request = HttpRequest.POST("", tagCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Tag> response = client.toBlocking().exchange(request, Tag.class);
 
         Tag tag = response.body();
@@ -48,10 +54,13 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
 
     @Test
     void deleteTagAsAdmin() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Tag tag = createADefaultTag();
         String name = "";
 
-        final HttpRequest<Object> request = HttpRequest.DELETE(tag.getId().toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.DELETE(tag.getId().toString()).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -119,11 +128,13 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
 
     @Test
     public void testPUTUpdateTag() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         String name = null;
         Tag tag = createADefaultTag();
 
-        final HttpRequest<?> request = HttpRequest.PUT("/", tag).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.PUT("/", tag).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Tag> response = client.toBlocking().exchange(request, Tag.class);
 
         assertEquals(tag, response.body());

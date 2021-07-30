@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
