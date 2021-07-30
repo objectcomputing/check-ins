@@ -4,13 +4,12 @@ import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_recipient_card/FeedbackRecipientCard";
 import {AppContext} from "../../context/AppContext";
 import {selectProfile, selectCsrfToken, selectNormalizedMembers} from "../../context/selectors";
-import {useHistory, useLocation} from "react-router-dom";
-import queryString from "query-string";
 import {getFeedbackSuggestion} from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
 import Typography from "@material-ui/core/Typography";
 import {TextField, Grid, InputAdornment} from "@material-ui/core";
 import {Search} from "@material-ui/icons";
+import PropTypes from "prop-types";
 
 
 const useStyles = makeStyles({
@@ -39,16 +38,17 @@ const useStyles = makeStyles({
   },
 });
 
-const FeedbackRecipientSelector = () => {
+const propTypes = {
+  changeQuery: PropTypes.func.isRequired,
+  fromQuery: PropTypes.array.isRequired
+}
+
+const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
   const { state } = useContext(AppContext);
   const classes = useStyles();
   const csrf = selectCsrfToken(state);
   const userProfile = selectCurrentUser(state);
   const {id} = userProfile;
-  const history = useHistory();
-  const location = useLocation();
-  const parsed = queryString.parse(location?.search);
-  let from = parsed.from;
   const searchTextUpdated = useRef(false)
   const hasRenewedFromURL = useRef(false)
   const [searchText, setSearchText] = useState("");
@@ -58,8 +58,8 @@ const FeedbackRecipientSelector = () => {
   useEffect(() => {
     if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
       let normalizedMembers = selectNormalizedMembers(state, searchText);
-      if (from !== undefined) {
-        let selectedMembers = profiles.filter(profile => from.includes(profile.id));
+      if (fromQuery !== undefined) {
+        let selectedMembers = profiles.filter(profile => fromQuery.includes(profile.id));
         let filteredNormalizedMembers = normalizedMembers.filter(member => {
           return !selectedMembers.some(selectedMember => {
             return selectedMember.id === member.id
@@ -72,20 +72,20 @@ const FeedbackRecipientSelector = () => {
       }
       searchTextUpdated.current = true
     }
-  }, [searchText, profiles, from, state])
+  }, [searchText, profiles, fromQuery, state])
 
   useEffect(() => {
     function bindFromURL() {
-      if (!hasRenewedFromURL.current && from !== null && from !== undefined) {
+      if (!hasRenewedFromURL.current && fromQuery !== null && fromQuery !== undefined) {
         let profileCopy = profiles;
         if (typeof from === 'string') {
-          let newProfile = {id: from}
+          let newProfile = {id: fromQuery}
         if (profiles.filter(member => member.id === newProfile.id).length === 0) {
           profileCopy.push(newProfile)
         }
-      } else if (Array.isArray(from)) {
-          for (let i = 0; i < from.length; ++i) {
-           let newProfile = {id: from[i]}
+      } else if (Array.isArray(fromQuery)) {
+          for (let i = 0; i < fromQuery.length; ++i) {
+           let newProfile = {id: fromQuery[i]}
             if (profiles.filter(member => member.id === newProfile.id).length === 0) {
               profileCopy.push(newProfile)
             }
@@ -125,23 +125,22 @@ const FeedbackRecipientSelector = () => {
   },[id, csrf, searchText]);
 
   const cardClickHandler = (id) => {
-    if(!Array.isArray(from)) {
-        from = from ? [from] : [];
+    if(!Array.isArray(fromQuery)) {
+        fromQuery = fromQuery ? [fromQuery] : [];
     }
-    if(from.includes(id)) {
-      from.splice(from.indexOf(id), 1);
+    if(fromQuery.includes(id)) {
+      fromQuery.splice(fromQuery.indexOf(id), 1);
     }
-    else from.push(id);
+    else fromQuery.push(id);
 
-    parsed.from = from;
-    history.push({...location, search: queryString.stringify(parsed)});
+    changeQuery("from", fromQuery);
     hasRenewedFromURL.current = false;
   }
 
   const getSelectedCards = () => {
     if (profiles) {
       // Get all the selected templates
-      const selected = profiles.filter((profile) => from && from.includes(profile.id));
+      const selected = profiles.filter((profile) => fromQuery && fromQuery.includes(profile.id));
       const title = (
         <Typography style={{fontWeight: "bold", color: "#454545", marginBottom: "1em"}} variant="h5">
           {selected.length} recipient{selected.length === 1 ? "" : "s"} selected
@@ -207,7 +206,7 @@ const FeedbackRecipientSelector = () => {
       <div className="selectable-recipients-container">
         {profiles ?
           <div className="recipient-card-container">
-            {profiles.filter((profile) => !from || !from.includes(profile.id)).map((profile) => (
+            {profiles.filter((profile) => !fromQuery || !fromQuery.includes(profile.id)).map((profile) => (
               <FeedbackRecipientCard
                 key={profile.id}
                 recipientProfile = {selectProfile(state, profile.id)}
@@ -220,5 +219,7 @@ const FeedbackRecipientSelector = () => {
     </Grid>
   );
 };
+
+FeedbackRecipientSelector.propTypes = propTypes;
 
 export default FeedbackRecipientSelector;

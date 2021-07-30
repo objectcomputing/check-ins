@@ -91,11 +91,9 @@ const FeedbackRequestPage = () => {
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
 
-
   useEffect(()=> {
     setQuery(queryString.parse(location?.search));
   }, [location.search])
-
 
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
@@ -330,8 +328,8 @@ const handleSubmit = () =>{
       </div>
       <div className="current-step-content">
         {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
-        {activeStep === 2 && <FeedbackRecipientSelector />}
-        {activeStep === 3 && <SelectDate />}
+        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={fromQuery} />}
+        {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={sendQuery} dueDateQuery={dueQuery}/>}
       </div>
     </div>
   );
