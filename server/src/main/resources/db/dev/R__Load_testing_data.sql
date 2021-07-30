@@ -12,11 +12,9 @@ delete from questions;
 delete from role;
 delete from team_member;
 delete from team;
-delete from frozen_template_questions;
-delete from frozen_templates;
+delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
-delete from feedback_requests;
 delete from member_profile;
 
 INSERT INTO member_profile
