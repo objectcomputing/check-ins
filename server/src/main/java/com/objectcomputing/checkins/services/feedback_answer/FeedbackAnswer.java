@@ -31,7 +31,7 @@ public class FeedbackAnswer {
             read = "pgp_sym_decrypt(answer::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
-    @NotBlank
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the content of the answer", required = true)
     private String answer;

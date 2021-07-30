@@ -13,7 +13,7 @@ import java.util.UUID;
 @Introspected
 public class FeedbackAnswerCreateDTO {
 
-    @NotBlank
+    @Nullable
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 

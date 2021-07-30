@@ -55,3 +55,32 @@ export const getQuestionsByRequestId = async (requestId, cookie) => {
   });
 
 }
+
+export const updateSingleAnswer=(answer, cookie) => {
+  return resolve({
+    url: answerURL,
+    method: "put",
+    responseType: "json",
+    params: {
+      data: answer
+    },
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+export const saveAllAnswers=(answers, cookie) => {
+  const answerReqs = [];
+  answers.forEach((answer) => {
+    answerReqs.push(resolve({
+      method: "post",
+      url: answerURL,
+      responseType: "json",
+      data: answer,
+      headers: { "X-CSRF-Header": cookie }
+    }));
+  });
+
+  Promise.all(answerReqs).then((res) => {
+    return res;
+  });
+}

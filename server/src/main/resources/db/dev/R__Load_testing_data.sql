@@ -13,8 +13,8 @@ delete from role;
 delete from team_member;
 delete from team;
 delete from template_questions;
-delete from feedback_templates;
 delete from feedback_requests;
+delete from feedback_templates;
 delete from member_profile;
 
 INSERT INTO member_profile

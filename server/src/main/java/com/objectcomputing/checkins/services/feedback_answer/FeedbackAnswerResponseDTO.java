@@ -15,7 +15,7 @@ public class FeedbackAnswerResponseDTO {
     @Schema(description = "unique id of the feedback answer", required = true)
     private UUID id;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 

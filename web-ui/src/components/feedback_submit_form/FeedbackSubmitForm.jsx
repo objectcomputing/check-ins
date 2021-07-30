@@ -12,7 +12,8 @@ import { blue } from "@material-ui/core/colors";
 import {useHistory} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
-import {getQuestionsByRequestId} from "../../api/feedback";
+import {getQuestionsByRequestId, saveAllAnswers} from "../../api/feedback";
+import TextField from "@material-ui/core/TextField";
 
 
 const useStyles = makeStyles({
@@ -74,17 +75,34 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([])
 
   useEffect(() => {
+
     async function getQuestions(requestId, cookie) {
       if (!requestId) return;
       const res = await getQuestionsByRequestId(requestId, cookie);
       let questionsList = res.questions ? res.questions : [];
       return questionsList;
     }
+
+    async function saveAnswersList(questionList, cookie) {
+    let answers= []
+    for (let i = 0; i < questionList.length; ++i) {
+      let newAnswer = {answer:null, questionId: questionList[i].id, requestId: requestId, sentiment: null}
+      answers.push(newAnswer)
+    }
+    const res = await saveAllAnswers(answers, cookie)
+    console.log(res);
+    }
     if (csrf) {
       getQuestions(requestId, csrf).then((questionsList) => {
         setQuestions(questionsList);
+        //save empty answers
+        saveAnswersList(questionsList, csrf).then((answerList)=> {
+        console.log("answer list " + JSON.stringify(answerList))
+        setAnswers(answerList)
+        })
       });
     }
   }, [requestId, csrf]);
@@ -103,13 +121,27 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
             <strong> Be mindful of your answers.</strong>
           </Alert> : null
         }
-        {questions.map((question) => (
-          <FeedbackSubmitQuestion
-              key={question.id}
-              question={question.question}
-              questionNumber={question.questionNumber}
-              editable={!isReviewing}
-          />
+        {questions.map((question, index) => (
+//           <FeedbackSubmitQuestion
+//               key={question.id}
+//               question={question.question}
+//               questionNumber={question.questionNumber}
+//               editable={!isReviewing}
+//           />
+      <div className="feedback-submit-question" key = {question.id}>
+      <Typography variant="body1"><b>Q{question.questionNumber}:</b> {question.question}</Typography>
+      <TextField
+        className="fullWidth"
+        variant="outlined"
+        placeholder="Type your answer..."
+        multiline
+        rowsMax={20}
+        InputProps={{
+          readOnly: {isReviewing}
+        }}
+      />
+    </div>
+
         ))}
         <div className="submit-action-buttons">
           {isReviewing ?
