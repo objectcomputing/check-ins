@@ -8,7 +8,7 @@ import io.micronaut.data.repository.CrudRepository;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
@@ -18,7 +18,7 @@ public interface RoleRepository extends CrudRepository<Role, UUID> {
 
     List<Role> findByMemberid(UUID uuid);
 
-    Optional<Role> findByRoleAndMemberid(RoleType role, UUID memberId);
+    Set<Role> findByRoleAndMemberid(RoleType role, UUID memberId);
 
     void deleteByRoleAndMemberid(RoleType role, UUID memberId);
 

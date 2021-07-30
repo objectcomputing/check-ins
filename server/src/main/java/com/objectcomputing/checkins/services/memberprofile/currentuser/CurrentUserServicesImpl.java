@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.security.authentication.Authentication;
@@ -19,13 +20,13 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
 
     private final MemberProfileRepository memberProfileRepo;
     private final SecurityService securityService;
-    private final RoleServices roleServices;
+    private final RoleRepository roleRepository;
 
     public CurrentUserServicesImpl(MemberProfileRepository memberProfileRepository,
-                                   RoleServices roleServices,
+                                   RoleRepository roleRepository,
                                    SecurityService securityService) {
         this.memberProfileRepo = memberProfileRepository;
-        this.roleServices = roleServices;
+        this.roleRepository = roleRepository;
         this.securityService = securityService;
     }
 
@@ -70,7 +71,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
-        roleServices.save(new Role(RoleType.MEMBER, createdMember.getId()));
+        roleRepository.save(new Role(RoleType.MEMBER, createdMember.getId()));
 
         return createdMember;
     }

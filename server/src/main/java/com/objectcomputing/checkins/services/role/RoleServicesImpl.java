@@ -2,23 +2,27 @@ package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.*;
+
+import java.util.*;
 
 @Singleton
 public class RoleServicesImpl implements RoleServices {
 
     private final RoleRepository roleRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberProfileServices memberServices;
 
     public RoleServicesImpl(RoleRepository roleRepo,
-                            MemberProfileRepository memberRepo) {
+                            MemberProfileServices memberServices) {
         this.roleRepo = roleRepo;
-        this.memberRepo = memberRepo;
+        this.memberServices = memberServices;
     }
 
     public Role save(@NotNull Role role) {
@@ -29,9 +33,9 @@ public class RoleServicesImpl implements RoleServices {
             throw new BadArgException(String.format("Invalid role %s", role));
         } else if (role.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for role", role.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
+        } else if (memberServices.getById(memberId).equals(null)) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (roleRepo.findByRoleAndMemberid(roleType, role.getMemberid()).isPresent()) {
+        } else if (!roleRepo.findByRoleAndMemberid(roleType, role.getMemberid()).isEmpty()) {
             throw new BadArgException(String.format("Member %s already has role %s", memberId, roleType));
         }
 
@@ -51,7 +55,7 @@ public class RoleServicesImpl implements RoleServices {
             throw new BadArgException(String.format("Invalid role %s", role));
         } else if (id == null || roleRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate role to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
+        } else if (memberServices.getById(memberId).equals(null)) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         }
 

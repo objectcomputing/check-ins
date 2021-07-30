@@ -35,7 +35,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-        roleCreateDTO.setRole(RoleType.MEMBER);
+        roleCreateDTO.setRole(RoleType.ADMIN);
         roleCreateDTO.setMemberid(memberProfile.getId());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
@@ -135,7 +135,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
+        assertEquals(String.format("No member profile for id %s", role.getMemberid()), error);
         assertEquals(request.getPath(), href);
     }
 
@@ -266,7 +266,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         String error = Objects.requireNonNull(body).get("message").asText();
         String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 
-        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
+        assertEquals(String.format("No member profile for id %s", role.getMemberid()), error);
         assertEquals(request.getPath(), href);
     }
 

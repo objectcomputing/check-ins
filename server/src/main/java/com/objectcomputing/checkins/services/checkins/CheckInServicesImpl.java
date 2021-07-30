@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
@@ -29,15 +30,15 @@ public class CheckInServicesImpl implements CheckInServices {
     private final CheckInRepository checkinRepo;
     private final MemberProfileRepository memberRepo;
     private final CurrentUserServices currentUserServices;
-    private final RoleServices roleServices;
+    private final RoleRepository roleRepository;
 
     public CheckInServicesImpl(CheckInRepository checkinRepo,
                                MemberProfileRepository memberRepo,
-                               CurrentUserServices currentUserServices, RoleServices roleServices) {
+                               CurrentUserServices currentUserServices, RoleRepository roleRepository) {
         this.checkinRepo = checkinRepo;
         this.memberRepo = memberRepo;
         this.currentUserServices = currentUserServices;
-        this.roleServices = roleServices;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new NotFoundException(String.format("Checkin %s not found", checkinId));
         });
 
-        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
+        Set<Role> memberRoles = roleRepository.findByRoleAndMemberid(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
 
         LOG.debug("Member is Admin: {}", isAdmin);

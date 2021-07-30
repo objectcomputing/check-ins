@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
@@ -27,20 +28,20 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
     private static final Logger LOG = LoggerFactory.getLogger(MemberProfileServicesImpl.class);
     private final MemberProfileRepository memberProfileRepository;
     private final CurrentUserServices currentUserServices;
-    private final RoleServices roleServices;
+    private final RoleRepository roleRepository;
     private final CheckInServices checkInServices;
     private final MemberSkillServices memberSkillServices;
     private final TeamMemberServices teamMemberServices;
 
     public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
                                      CurrentUserServices currentUserServices,
-                                     RoleServices roleServices,
+                                     RoleRepository roleRepository,
                                      CheckInServices checkInServices,
                                      MemberSkillServices memberSkillServices,
                                      TeamMemberServices teamMemberServices) {
         this.memberProfileRepository = memberProfileRepository;
         this.currentUserServices = currentUserServices;
-        this.roleServices = roleServices;
+        this.roleRepository = roleRepository;
         this.checkInServices = checkInServices;
         this.memberSkillServices = memberSkillServices;
         this.teamMemberServices = teamMemberServices;
@@ -93,7 +94,7 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
         // try to delete user - default behavior
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
-        Set<Role> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
+        Set<Role> userRoles = (memberProfile != null) ? roleRepository.findByRoleAndMemberid(RoleType.PDL, id) : Collections.emptySet();
 
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
