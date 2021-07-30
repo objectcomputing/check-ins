@@ -9,6 +9,8 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.stream.Collectors;
 
@@ -29,6 +31,8 @@ public class FeedbackTemplateController {
     private final FeedbackTemplateServices feedbackTemplateServices;
     private final EventLoopGroup eventLoopGroup;
     private final ExecutorService executorService;
+
+    private final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateController.class);
 
     public FeedbackTemplateController(FeedbackTemplateServices feedbackTemplateServices,
                                       EventLoopGroup eventLoopGroup,
@@ -79,7 +83,22 @@ public class FeedbackTemplateController {
      */
     @Delete("/{id}")
     public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
+        LOG.info("ID: {}", id);
         return Single.fromCallable(() -> feedbackTemplateServices.delete(id))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
+     * Delete all ad-hoc feedback templates that are created by a specific member
+     * @param creatorId The {@link UUID} of the creator of the ad-hoc template(s)
+     * @return {@link FeedbackTemplateResponseDTO}
+     */
+    @Delete("/{?creatorId}")
+    public Single<? extends HttpResponse<?>> deleteByCreatorId(@Nullable UUID creatorId) {
+        LOG.info("creatorId: {}", creatorId);
+        return Single.fromCallable(() -> feedbackTemplateServices.setAdHocInactiveByCreator(creatorId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(success -> (HttpResponse<?>) HttpResponse.ok())
                 .subscribeOn(Schedulers.from(executorService));

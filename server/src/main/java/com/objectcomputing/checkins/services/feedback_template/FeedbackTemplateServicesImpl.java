@@ -6,6 +6,8 @@ import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -18,6 +20,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     private final FeedbackTemplateRepository feedbackTemplateRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
+    private final Logger LOG = LoggerFactory.getLogger(FeedbackTemplateServicesImpl.class);
 
     public FeedbackTemplateServicesImpl(FeedbackTemplateRepository feedbackTemplateRepository,
                                         MemberProfileServices memberProfileServices,
@@ -64,7 +67,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public Boolean delete(@NotNull UUID id) {
+    public Boolean delete(UUID id) {
         final FeedbackTemplate template = getById(id);
 
         if (!deleteIsPermitted(template.getCreatorId())) {
@@ -73,6 +76,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
 
         // delete the template itself
         feedbackTemplateRepository.softDeleteById(Util.nullSafeUUIDToString(id));
+
         return true;
     }
 
@@ -83,7 +87,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
             throw new NotFoundException("No feedback template with ID " + id);
         }
 
-
         return feedbackTemplate.get();
     }
 
@@ -92,6 +95,17 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         return feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
     }
 
+    @Override
+    public Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
+        LOG.info("called set ad hoc inactive");
+        if (!updateIsPermitted(creatorId)) {
+            LOG.info("made it into throw check");
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+        LOG.info("soft delete ad hoc now going to happen :) ");
+        feedbackTemplateRepository.setAdHocInactiveByCreator(Util.nullSafeUUIDToString(creatorId));
+        return true;
+    }
 
     public boolean updateIsPermitted(UUID creatorId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();

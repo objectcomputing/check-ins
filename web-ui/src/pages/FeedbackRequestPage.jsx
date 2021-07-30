@@ -17,6 +17,7 @@ import { createFeedbackRequest } from "../api/feedback";
 import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
+import {softDeleteAdHocTemplates} from "../api/feedbacktemplate";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -199,12 +200,15 @@ useEffect(() => {
     return false;
   }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
+
+
 const handleSubmit = () =>{
-    let feedbackRequest = {}
-    let fromArray = fromQuery.split(',')
-    if (fromArray.length === 1 ) {
+    let feedbackRequest = {};
+    let fromArray = fromQuery.split(',');
+    if (fromArray.length === 1) {
         feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
         sendFeedbackRequest(feedbackRequest)
+
     } else if (fromArray.length > 1) {
         for (const recipient of fromArray) {
            feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
@@ -230,31 +234,39 @@ const handleSubmit = () =>{
     history.push({ ...location, search: queryString.stringify(query) });
   }, [activeStep, query, location, history]);
 
-    const sendFeedbackRequest = async(feedbackRequest) => {
-          if (csrf) {
-                    let res = await createFeedbackRequest(feedbackRequest, csrf);
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
-                           if (data) {
-                            const newLocation = {
-                              pathname: "/feedback/request/confirmation",
-                              search: queryString.stringify(query),
-                            }
-                            history.push(newLocation)
-                           }
-                           else if(res.error || data === null) {
-                             dispatch({
-                               type: UPDATE_TOAST,
-                               payload: {
-                                 severity: "error",
-                                 toast: "An error has occurred while submitting your request.",
-                               },
-                             });
-                           }
-              }
+  const softDeleteAdHoc = async (creatorId) => {
+    if (csrf) {
+      let res = await softDeleteAdHocTemplates(creatorId, csrf);
+      console.log("soft delete ad hoc result :" + res)
     }
+  }
+
+  const sendFeedbackRequest = async(feedbackRequest) => {
+    if (csrf) {
+      let res = await createFeedbackRequest(feedbackRequest, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        // If the request was successful, set created ad-hoc templates to inactive
+        await softDeleteAdHoc(currentUserId);
+        const newLocation = {
+          pathname: "/feedback/request/confirmation",
+          search: queryString.stringify(query),
+        };
+        history.push(newLocation);
+      } else if(res.error || data === null) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "An error has occurred while submitting your request.",
+          },
+        });
+      }
+    }
+  }
 
     const urlIsValid = useCallback(() => {
       if(query) {

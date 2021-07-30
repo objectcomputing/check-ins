@@ -12,11 +12,9 @@ delete from questions;
 delete from role;
 delete from team_member;
 delete from team;
-delete from frozen_template_questions;
-delete from frozen_templates;
+delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
-delete from feedback_requests;
 delete from member_profile;
 
 INSERT INTO member_profile
@@ -409,9 +407,9 @@ VALUES
 ('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, creator_id, title, description, date_created, active, is_ad_hoc)
 VALUES
-('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null);
+('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', true, false);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
@@ -424,9 +422,9 @@ VALUES
 ('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, creator_id, title, description, date_created, active, is_ad_hoc)
 VALUES
-('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2020-04-04', null, null);
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2020-04-04', true, false);
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
