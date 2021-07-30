@@ -28,23 +28,23 @@ public class PulseResponse {
     @Schema(description = "the id of the pulse_response", required = true)
     private UUID id;
 
-    @Column(name="submissionDate")
+    @Column(name="submissiondate")
     @NotNull
     @Schema(description = "date for submissionDate", required = true)
     private LocalDate submissionDate;
 
-    @Column(name="updatedDate")
+    @Column(name="updateddate")
     @NotNull
     @Schema(description = "date for updatedDate", required = true)
     private LocalDate updatedDate;
 
-    @Column(name="teamMemberId")
+    @Column(name="teammemberid")
     @TypeDef(type=DataType.STRING)
     @NotNull
     @Schema(description = "id of the teamMember this entry is associated with", required = true)
     private UUID teamMemberId;
 
-    @Column(name="internalFeelings")
+    @Column(name="internalfeelings")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(internalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -53,7 +53,7 @@ public class PulseResponse {
     @Schema(description = "description of internalfeelings", required = true)
     private String internalFeelings;
 
-    @Column(name="externalFeelings")
+    @Column(name="externalfeelings")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(externalFeelings::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
