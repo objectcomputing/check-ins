@@ -515,4 +515,66 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
         assertEquals("You are not authorized to do this operation", exception.getMessage());
     }
+
+    @Test
+    void testDeleteByCreatorIdAuthorizedByAdmin() {
+        final MemberProfile admin = createADefaultMemberProfile();
+        createDefaultAdminRole(admin);
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteByCreatorIdAuthorizedByCreator() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteByCreatorIdUnauthorized() {
+        final MemberProfile memberOne = createADefaultMemberProfile();
+        final MemberProfile unrelatedUser = createAnUnrelatedUser();
+
+        // Save two ad-hoc feedback templates
+        final FeedbackTemplate templateOne = createFeedbackTemplate(memberOne.getId());
+        templateOne.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateOne);
+        final FeedbackTemplate templateTwo = createAnotherFeedbackTemplate(memberOne.getId());
+        templateTwo.setIsAdHoc(true);
+        getFeedbackTemplateRepository().save(templateTwo);
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+                .basicAuth(unrelatedUser.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("You are not authorized to do this operation", exception.getMessage());
+    }
 }
