@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.demographics;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.TypeDef;

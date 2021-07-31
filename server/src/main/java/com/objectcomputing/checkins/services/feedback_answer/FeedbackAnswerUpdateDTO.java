@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.micronaut.core.annotation.Nullable;
