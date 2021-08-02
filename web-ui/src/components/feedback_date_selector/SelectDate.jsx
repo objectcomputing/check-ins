@@ -20,7 +20,7 @@ pickerContain: {
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
-  sendDateQuery: PropTypes.string.isRequired,
+  sendDateQuery: PropTypes.string,
   dueDateQuery: PropTypes.string
 };
 
@@ -64,9 +64,6 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
           value={sendDate}
           minDate={dateUtils.date()}
           onChange={handleSendDateChange}
-          KeyboardButtonProps={{
-           'aria-label': 'change date',
-          }}
         />
         <DatePicker
           className= {classes.picker}
@@ -81,9 +78,6 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
           minDateMessage="Due date must not be prior to the send date"
           clearable={true}
           onChange={handleDueDateChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change date',
-          }}
         />
       </div>
     </React.Fragment>);

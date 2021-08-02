@@ -78,20 +78,20 @@ const FeedbackRequestPage = () => {
   const location = useLocation();
   const history = useHistory();
   const [query, setQuery] = useState({});
-  const stepQuery = query?.step?.toString();
-  const templateQuery = query?.template?.toString();
-  const fromQuery = query?.from ? query?.from : [];
-  const sendQuery = query?.send?.toString();
-  const dueQuery = query?.due?.toString();
-  const sendDate = query?.send?.toString();
-  const forQuery = query?.for?.toString();
+  const stepQuery = query.step?.toString();
+  const templateQuery = query.template?.toString();
+  const fromQuery = query.from ? query.from : [];
+  const sendQuery = query.send?.toString();
+  const dueQuery = query.due?.toString();
+  const sendDate = query.send?.toString();
+  const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
   const memberIds = selectCurrentMemberIds(state);
   const csrf = selectCsrfToken(state)
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
 
-  useEffect(()=> {
+  useEffect(() => {
     setQuery(queryString.parse(location?.search));
   }, [location.search])
 
@@ -149,7 +149,7 @@ const FeedbackRequestPage = () => {
   }, [csrf, templateQuery]);
 
   const hasFrom = useCallback(() => {
-    let from = query?.from;
+    let from = query.from;
     if (from) {
       from = Array.isArray(from) ? from : [from];
       for (let recipientId of from) {
