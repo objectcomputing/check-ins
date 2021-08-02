@@ -66,6 +66,10 @@ const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requesteeTitle: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
+  sendDate: PropTypes.any.isRequired,
+  dueDate: PropTypes.any,
+  submitted: PropTypes.string.isRequired,
+  submitDate: PropTypes.any,
 }
 
 const FeedbackRequestCard = (props) => {
@@ -78,6 +82,35 @@ const FeedbackRequestCard = (props) => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const DueDate = (props) => {
+    if(props.dueDate) {
+      return (
+        <Typography className="dark-gray-text">{props.dueDate.toString()}</Typography>
+      )
+    }else {
+      return (
+        <Typography className="dark-gray-text">No due date</Typography>
+      )
+    }
+  }
+
+  const Submitted = (props) => {
+    if(props.submitted === "submitted") {
+      return (
+        <Typography>Submitted {props.submitDate.toString()}</Typography>
+      )
+    }else{
+      return (
+        <Typography>{props.submitted}</Typography>
+      )
+    }
+  }
+
+  const Overdue = (props) => {
+    let today = new Date();
+    if(today )
+  }
 
   return (
     <div className="feedback-request-card">
@@ -100,6 +133,9 @@ const FeedbackRequestCard = (props) => {
                   </Grid>
                   <Grid item xs={4} className="align-end">
                     <Typography className="dark-gray-text">{props.templateName}</Typography>
+                    <Typography className="dark-gray-text">{props.sendDate.toString()}</Typography>
+                    <DueDate/>
+                    <Submitted/>
                     <Link to="" className="response-link red-text">View all responses</Link>
                   </Grid>
                 </Grid>

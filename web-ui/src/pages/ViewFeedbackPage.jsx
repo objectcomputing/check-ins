@@ -106,7 +106,13 @@ const ViewFeedbackPage = () => {
         key={request.id}
         requesteeName={request.requestee}
         requesteeTitle={request.requesteeTitle}
-        templateName={request.template}/>
+        templateName={request.template}
+        sendDate={request.sendDate}
+        dueDate={request.dueDate}
+        submitted={request.status}
+        submittedDate={request.submitDate}
+
+      />
     ))
   }, [searchText, feedbackRequests, classes.notFoundMessage]);
 
