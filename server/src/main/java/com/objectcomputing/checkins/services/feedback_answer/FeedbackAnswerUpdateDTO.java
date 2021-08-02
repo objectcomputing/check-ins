@@ -1,9 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.micronaut.core.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class FeedbackAnswerUpdateDTO {
 
     @Nullable
     @Schema(description = "the sentiment of the answer")
-    private double sentiment;
+    private Double sentiment;
 
     public UUID getId() {
         return id;
