@@ -20,7 +20,7 @@ pickerContain: {
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
-  sendDateQuery: PropTypes.string,
+  sendDateQuery: PropTypes.string.isRequired,
   dueDateQuery: PropTypes.string
 };
 
@@ -29,7 +29,7 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
     const hasPushedInitialValues = useRef(false);
     let todayDate = new Date();
     const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "yyyy-MM-dd") : todayDate;
-    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery.due?.toString(), "yyyy-MM-dd") : null;
+    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery?.toString(), "yyyy-MM-dd") : null;
 
     useEffect(() => {
       if (!hasPushedInitialValues.current && sendDate !== null && sendDate !== undefined && dueDate !== undefined) {
@@ -42,8 +42,8 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
     });
 
     const handleDueDateChange = useCallback((date) => {
-      const dueDate = date ? dateUtils.format(date, "yyyy-MM-dd") : undefined;
-      changeQuery("due", dueDate);
+      const dueDate = date ? dateUtils.format(date, "yyyy-MM-dd") : null;
+      changeQuery("due", dueDate ? dueDate : undefined);
     },[changeQuery]);
 
     const handleSendDateChange = useCallback((date) => {
