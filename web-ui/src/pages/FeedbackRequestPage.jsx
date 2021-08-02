@@ -80,7 +80,8 @@ const FeedbackRequestPage = () => {
   const [query, setQuery] = useState(null);
   const stepQuery = query?.step?.toString();
   const templateQuery = query?.template?.toString();
-  const fromQuery = query?.from?.toString();
+  const fromQuery = query?.from ? query?.from : [];
+  console.log(fromQuery);
   const sendQuery = query?.send?.toString();
   const dueQuery = query?.due?.toString();
   const sendDate = query?.send?.toString();
