@@ -1,4 +1,4 @@
-.create-new-issue {
+.create-new-issue-modal {
   position: absolute;
   min-width: 400px;
   max-width: 600px;
@@ -10,12 +10,12 @@
   border: 2px solid #fff;
 }
 
-.create-new-issue h2 {
+.create-new-issue-modal h2 {
   margin-block-end: 0rem;
   margin-left: 0.5rem;
 }
 
-.create-new-issue-actions {
+.create-new-issue-modal-actions {
   margin-top: 1rem;
   width: calc(100% - 1rem);
   display: flex;
@@ -23,15 +23,15 @@
   justify-content: flex-end;
 }
 
-.create-new-issue .MuiTextField-root.fullWidth {
+.create-new-issue-modal .MuiTextField-root.fullWidth {
   width: calc(100% - 1rem);
 }
 
-.create-new-issue .MuiTextField-root.halfWidth {
+.create-new-issue-modal .MuiTextField-root.halfWidth {
   width: calc(50% - 0.5rem);
 }
 
-.create-new-issue .MuiTextField-root {
+.create-new-issue-modal .MuiTextField-root {
   margin: 0.5rem;
   width: 25ch;
 }
@@ -52,7 +52,7 @@
   flex-direction: column;
 }
 
-.error-boundary .message-section .create-new-issue {
+.error-boundary .message-section .create-new-issue-button {
   display: flex;
   background-color: white;
   border-radius: 5px;
@@ -77,6 +77,6 @@
 
 .error-boundary .message-section .error {
   -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: white;
+  -webkit-text-stroke-color: black;
   color: red;
 }
