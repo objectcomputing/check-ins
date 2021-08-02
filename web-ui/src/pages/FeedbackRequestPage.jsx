@@ -77,11 +77,10 @@ const FeedbackRequestPage = () => {
   const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
-  const [query, setQuery] = useState(null);
+  const [query, setQuery] = useState({});
   const stepQuery = query?.step?.toString();
   const templateQuery = query?.template?.toString();
   const fromQuery = query?.from ? query?.from : [];
-  console.log(fromQuery);
   const sendQuery = query?.send?.toString();
   const dueQuery = query?.due?.toString();
   const sendDate = query?.send?.toString();
@@ -96,6 +95,14 @@ const FeedbackRequestPage = () => {
     setQuery(queryString.parse(location?.search));
   }, [location.search])
 
+  const handleQueryChange = useCallback((key, value) => {
+    let newQuery = {
+      ...query,
+      [key]: value
+    }
+    history.push({ ...location, search: queryString.stringify(newQuery) });
+  }, [history, location, query]);
+
   const getStep = useCallback(() => {
     if (!stepQuery || stepQuery < 1 || !/^\d+$/.test(stepQuery))
       return 1;
@@ -108,8 +115,7 @@ const FeedbackRequestPage = () => {
     return !!forQuery;
   }, [forQuery])
 
-
-useEffect(() => {
+  useEffect(() => {
   async function isTemplateValid() {
       if (!templateQuery || !csrf) {
         return false;
@@ -142,11 +148,11 @@ useEffect(() => {
     });
   }, [csrf, templateQuery]);
 
-
   const hasFrom = useCallback(() => {
-    if (fromQuery) {
-      const recipientList = fromQuery.split(",");
-      for (let recipientId of recipientList) {
+    let from = query?.from;
+    if (from) {
+      from = Array.isArray(from) ? from : [from];
+      for (let recipientId of from) {
         if (!memberIds.includes(recipientId)) {
           dispatch({
             type: UPDATE_TOAST,
@@ -155,16 +161,14 @@ useEffect(() => {
               toast: "Member ID in URL is invalid",
             },
           });
-          query.from = undefined;
-           history.push({...location, search: queryString.stringify(query)});
-        return false;
+          handleQueryChange("from", undefined);
+          return false;
+        }
       }
+      return true;
     }
-    return true;
-  }
-  return false;
-  }, [fromQuery, memberIds, history, location, query, dispatch])
-
+    return false;
+  }, [memberIds, query, dispatch, handleQueryChange]);
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
@@ -198,19 +202,22 @@ useEffect(() => {
     return false;
   }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
-const handleSubmit = () =>{
-    let feedbackRequest = {}
-    let fromArray = fromQuery.split(',')
-    if (fromArray.length === 1 ) {
-        feedbackRequest = { id : null, creatorId: currentUserId, requesteeId:forQuery, recipientId: fromQuery, templateId:templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
-        sendFeedbackRequest(feedbackRequest)
-    } else if (fromArray.length > 1) {
-        for (const recipient of fromArray) {
-           feedbackRequest = { id : null, creatorId: currentUserId, requesteeId: forQuery, recipientId: recipient, templateId: templateQuery, sendDate: sendDate, dueDate: dueQuery, status: "Pending", submitDate: null}
-           sendFeedbackRequest(feedbackRequest)
-        }
-      }
+  const handleSubmit = () => {
+    for (const recipient of fromQuery) {
+       const feedbackRequest = {
+         id: null,
+         creatorId: currentUserId,
+         requesteeId: forQuery,
+         recipientId: recipient,
+         templateId: templateQuery,
+         sendDate: sendDate,
+         dueDate: dueQuery,
+         status: "pending",
+         submitDate: null
+       };
+       sendFeedbackRequest(feedbackRequest);
     }
+  }
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
@@ -229,57 +236,49 @@ const handleSubmit = () =>{
     history.push({ ...location, search: queryString.stringify(query) });
   }, [activeStep, query, location, history]);
 
-    const sendFeedbackRequest = async(feedbackRequest) => {
-          if (csrf) {
-                    let res = await createFeedbackRequest(feedbackRequest, csrf);
-                    let data =
-                      res.payload && res.payload.data && !res.error
-                        ? res.payload.data
-                        : null;
-                           if (data) {
-                            const newLocation = {
-                              pathname: "/feedback/request/confirmation",
-                              search: queryString.stringify(query),
-                            }
-                            history.push(newLocation)
-                           }
-                           else if(res.error || data === null) {
-                             dispatch({
-                               type: UPDATE_TOAST,
-                               payload: {
-                                 severity: "error",
-                                 toast: "An error has occurred while submitting your request.",
-                               },
-                             });
-                           }
-              }
-    }
-
-    const urlIsValid = useCallback(() => {
-      if(query) {
-        switch (activeStep) {
-          case 1:
-            return hasFor();
-          case 2:
-            return hasFor() && templateIsValid
-          case 3:
-            return hasFor() && templateIsValid && hasFrom();
-          case 4:
-            return hasFor() && templateIsValid && hasFrom() && hasSend();
-          default:
-            return false;
+  const sendFeedbackRequest = async(feedbackRequest) => {
+    if (csrf) {
+      let res = await createFeedbackRequest(feedbackRequest, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        const newLocation = {
+          pathname: "/feedback/request/confirmation",
+          search: queryString.stringify(query),
         }
+        history.push(newLocation)
       }
-      return true;
-    }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
-  
-  const handleQueryChange = (key, value) => {
-    let newQuery = {
-      ...query,
-      [key]: value
+      else if(res.error || data === null) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "An error has occurred while submitting your request.",
+          },
+        });
+      }
     }
-    history.push({ ...location, search: queryString.stringify(newQuery) });
   }
+
+  const urlIsValid = useCallback(() => {
+    if(query) {
+      switch (activeStep) {
+        case 1:
+          return hasFor();
+        case 2:
+          return hasFor() && templateIsValid
+        case 3:
+          return hasFor() && templateIsValid && hasFrom();
+        case 4:
+          return hasFor() && templateIsValid && hasFrom() && hasSend();
+        default:
+          return false;
+      }
+    }
+    return true;
+  }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
 
   useEffect(()=> {
     if (!urlIsValid()) {
@@ -297,7 +296,6 @@ const handleSubmit = () =>{
   useEffect(()=> {
     setReadyToProceed(canProceed());
   }, [canProceed])
-
 
   return (
     <div className="feedback-request-page">
@@ -329,7 +327,7 @@ const handleSubmit = () =>{
       </div>
       <div className="current-step-content">
         {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={templateQuery} />}
-        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={fromQuery} />}
+        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={Array.isArray(fromQuery) ? fromQuery : [fromQuery]} />}
         {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={sendQuery} dueDateQuery={dueQuery}/>}
       </div>
     </div>

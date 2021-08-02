@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
-  fromQuery: PropTypes.arrayOf(PropTypes.string).isRequired
+  fromQuery: PropTypes.array.isRequired
 }
 
 const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
