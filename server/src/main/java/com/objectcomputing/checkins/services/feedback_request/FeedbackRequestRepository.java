@@ -1,12 +1,12 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -17,9 +17,9 @@ import java.util.UUID;
 public interface FeedbackRequestRepository extends CrudRepository<FeedbackRequest, UUID> {
 
     @Override
-    <S extends FeedbackRequest> S save(@Valid @NotNull @Nonnull S entity);
+    <S extends FeedbackRequest> S save(@Valid @NotNull @NonNull S entity);
     @Override
-    <S extends FeedbackRequest> S update(@NotNull @Nonnull S entity);
+    <S extends FeedbackRequest> S update(@NotNull @NonNull S entity);
 
     @Query(value = "SELECT * " +
             "FROM feedback_requests " +

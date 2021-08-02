@@ -679,7 +679,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final FeedbackRequest feedbackReqThree = saveFeedbackRequest(pdlMemberProfile, memberOne, recipientTwo, outOfRange);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?oldestDate=%s", oldestDate))
-                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<List<FeedbackRequestResponseDTO>> response = client.toBlocking()
                 .exchange(request, Argument.listOf(FeedbackRequestResponseDTO.class));
 
@@ -836,6 +836,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile admin = createASecondDefaultMemberProfile();
+        createDefaultAdminRole(admin);
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("complete");
