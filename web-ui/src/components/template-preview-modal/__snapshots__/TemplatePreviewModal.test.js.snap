@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the template preview modal component. 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "dispatch": [Function],
+      "state": Object {
+        "checkins": Array [],
+        "csrf": undefined,
+        "guilds": Array [],
+        "index": 0,
+        "memberProfiles": Array [],
+        "memberSkills": Array [],
+        "roles": Array [],
+        "skills": Array [],
+        "teams": Array [],
+        "terminatedMembers": Array [],
+        "toast": Object {
+          "severity": "",
+          "toast": "",
+        },
+        "userProfile": undefined,
+      },
+    }
+  }
+>
+  <TemplatePreviewModal
+    open={true}
+    template={
+      Object {
+        "description": "Make a survey with a few questions",
+        "id": "97b0a312-e5dd-46f4-a600-d8be2ad925bb",
+        "title": "Survey 1",
+      }
+    }
+  />
+</ContextProvider>
+`;
