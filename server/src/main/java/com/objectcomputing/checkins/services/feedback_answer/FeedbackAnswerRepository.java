@@ -3,9 +3,9 @@ package com.objectcomputing.checkins.services.feedback_answer;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
-import org.jetbrains.annotations.NotNull;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)

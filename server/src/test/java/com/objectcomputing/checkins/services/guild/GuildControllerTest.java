@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.guild.member.GuildMember;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberUpdateDTO;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GuildControllerTest extends TestContainersSuite implements GuildFixture,
-        MemberProfileFixture, GuildMemberFixture {
+        MemberProfileFixture, RoleFixture, GuildMemberFixture {
 
     @Inject
     @Client("/services/guilds")
@@ -228,12 +229,15 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         MemberProfile memberProfile = createADefaultMemberProfile();
         GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
         GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
         newMember.setLead(true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
-        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
 
         assertEntityDTOEqual(guildEntity, response.body());
@@ -249,12 +253,15 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         String newName = "New Name";
         guildEntity.setName(newName);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
 
         GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
         requestBody.setGuildMembers(Collections.singletonList(newMember));
 
-        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
 
         assertEntityDTOEqual(guildEntity, response.body());
@@ -304,8 +311,11 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         GuildUpdateDTO requestBody = new GuildUpdateDTO(requestId.toString(), guildEntity.getName(), guildEntity.getDescription());
         requestBody.setGuildMembers(new ArrayList<>());
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final MutableHttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -344,6 +354,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Guild guildEntity = createDefaultGuild();
         // create members
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
         //add members to guild
         createDefaultGuildMember(guildEntity, memberProfileOfAdmin);
 

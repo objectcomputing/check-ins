@@ -5,8 +5,8 @@ import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.core.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -32,7 +32,7 @@ public interface TeamMemberRepository extends CrudRepository<TeamMember, UUID> {
             "WHERE teamId = :id ")
     void deleteByTeamId(@NotNull String id);
 
-    void deleteByMemberId(@NotNull @Nonnull UUID id);
+    void deleteByMemberId(@NotNull @NonNull UUID id);
 
     @Query("SELECT * " +
             "FROM team_member tm_ " +

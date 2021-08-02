@@ -1,7 +1,10 @@
 package com.objectcomputing.checkins.services.skills;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SkillFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -25,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SkillControllerTest extends TestContainersSuite implements SkillFixture {
+public class SkillControllerTest extends TestContainersSuite implements SkillFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/skills")
@@ -195,10 +198,13 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     void testUpdateSkillAsAdmin() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Skill> request = HttpRequest.
-                PUT("/", skill).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                PUT("/", skill).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 
@@ -224,12 +230,15 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     public void testPUTUpdateNonexistentSkill() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         SkillCreateDTO skillCreateDTO = new SkillCreateDTO();
         skillCreateDTO.setName("reincarnation");
         skillCreateDTO.setPending(true);
 
         final HttpRequest<SkillCreateDTO> request = HttpRequest.
-                PUT("/", skillCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                PUT("/", skillCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -253,10 +262,13 @@ public class SkillControllerTest extends TestContainersSuite implements SkillFix
     @Test
     void deleteSkillAsAdmin() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         Skill skill = createADefaultSkill();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", skill.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                DELETE(String.format("/%s", skill.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Skill> response = client.toBlocking().exchange(request, Skill.class);
 

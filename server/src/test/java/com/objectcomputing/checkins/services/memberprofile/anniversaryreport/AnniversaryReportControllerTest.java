@@ -3,6 +3,8 @@ package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -25,7 +27,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AnniversaryReportControllerTest extends TestContainersSuite implements MemberProfileFixture {
+public class AnniversaryReportControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/reports/anniversaries")
@@ -37,9 +39,11 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
 
     @Test
     public void testGETFindByMonthReturnsEmptyBody() throws UnsupportedEncodingException {
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
@@ -48,39 +52,34 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
 
     @Test
     public void testGETFindByMonthNotAuthorized() throws UnsupportedEncodingException {
+        MemberProfile memberProfile = createAnUnrelatedUser();
+        createDefaultRole(RoleType.MEMBER, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException thrown = assertThrows(HttpClientResponseException.class,
-                () -> client.toBlocking().exchange(request, Map.class));
+                () -> {
+                        var response = client.toBlocking().exchange(request);
+                        response.getStatus();
+                    });
 
         assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
     }
 
     @Test
-    public void testGETFindByValueName() throws UnsupportedEncodingException {
+    public void testGETFindByNoValue() {
+
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", encodeValue(memberProfile.getStartDate().getMonth().toString()))).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET("").basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
-        assertEquals(1, response.body().size());
-        assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    public void testGETFindByNoValue() throws UnsupportedEncodingException {
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        final HttpRequest<Object> request = HttpRequest.GET("").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
-
-        final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
-
-        assertEquals(memberProfile.getId(), response.body().get(0).getUserId());
+        assertEquals(memberProfileOfAdmin.getId(), response.body().get(0).getUserId());
+        assertEquals(memberProfile.getId(), response.body().get(1).getUserId());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 }

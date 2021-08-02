@@ -26,19 +26,19 @@ public class CheckIn {
     @Schema(description = "id of the checkin", required = true)
     private UUID id;
 
-    @Column(name="teamMemberId")
+    @Column(name="teammemberid")
     @NotNull
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of team member", required = true)
     private UUID teamMemberId;
 
-    @Column(name="pdlId")
+    @Column(name="pdlid")
     @NotNull
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of pdl", required = true)
     private UUID pdlId;
 
-    @Column(name="checkInDate")
+    @Column(name="checkindate")
     @Schema(description = "date of checkin")
     private LocalDateTime checkInDate;
 
