@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
-  fromQuery: PropTypes.array.isRequired
+  fromQuery: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.string]).isRequired
 }
 
 const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
@@ -52,11 +52,10 @@ const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
   const searchTextUpdated = useRef(false)
   const hasRenewedFromURL = useRef(false)
   const [searchText, setSearchText] = useState("");
-  const [profiles, setProfiles] = useState([])
-
+  const [profiles, setProfiles] = useState([]);
 
   useEffect(() => {
-    if (!searchTextUpdated.current && searchText.length !== 0  && searchText !== "" && searchText) {
+    if (!searchTextUpdated.current && searchText.length !== 0 && searchText !== "" && searchText) {
       let normalizedMembers = selectNormalizedMembers(state, searchText);
       if (fromQuery !== undefined) {
         let selectedMembers = profiles.filter(profile => fromQuery.includes(profile.id));
@@ -78,7 +77,7 @@ const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
     function bindFromURL() {
       if (!hasRenewedFromURL.current && fromQuery !== null && fromQuery !== undefined) {
         let profileCopy = profiles;
-        if (typeof from === 'string') {
+        if (typeof fromQuery === 'string') {
           let newProfile = {id: fromQuery}
         if (profiles.filter(member => member.id === newProfile.id).length === 0) {
           profileCopy.push(newProfile)

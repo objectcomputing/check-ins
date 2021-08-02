@@ -19,6 +19,12 @@ import SkillReportPage from "../../pages/SkillReportPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
 import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
 import { selectIsAdmin } from '../../context/selectors';
+import FeedbackRequestConfirmation from "../feedback_request_confirmation/FeedbackRequestConfirmation";
+import FeedbackRequestPage from "../../pages/FeedbackRequestPage";
+import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
+import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackResponses";
+import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
+import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 
 
 export default function Routes() {
@@ -84,6 +90,24 @@ export default function Routes() {
               <GroupIcon fontSize="large" />
             </Header>
             <AdminPage />
+          </Route>
+          <Route exact path="/feedback/request/confirmation">
+            <FeedbackRequestConfirmation />
+          </Route>
+          <Route path="/feedback/request">
+            <FeedbackRequestPage />
+          </Route>
+          <Route exact path="/feedback/view">
+            <ViewFeedbackPage />
+          </Route>
+          <Route exact path="/feedback/view/responses">
+            <ViewFeedbackResponses />
+          </Route>
+          <Route exact path="/feedback/submit/confirmation">
+            <FeedbackSubmitConfirmation />
+          </Route>
+          <Route path="/feedback/submit">
+            <FeedbackSubmitPage />
           </Route>
         </Switch>
         )
