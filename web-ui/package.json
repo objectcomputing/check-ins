@@ -33,6 +33,7 @@
     "@material-ui/utils": "^4.10.2",
     "@nivo/core": "^0.70.1",
     "@nivo/radar": "^0.70.1",
+    "@octokit/core": "^3.5.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
     "@testing-library/user-event": "^12.1.6",
