@@ -133,7 +133,7 @@ const FeedbackRequestPage = () => {
           type: UPDATE_TOAST,
           payload: {
             severity: "error",
-            toast: "The Id for the template you selected does not exist.",
+            toast: "The ID for the template you selected does not exist.",
           },
         });
         return false;
@@ -186,7 +186,7 @@ const FeedbackRequestPage = () => {
   }, [sendQuery, isValidDate, dueQuery]);
 
   const canProceed = useCallback(() => {
-    if(query) {
+    if (query && Object.keys(query).length > 0) {
       switch (activeStep) {
         case 1:
           return hasFor() && templateIsValid
@@ -263,7 +263,7 @@ const FeedbackRequestPage = () => {
   }
 
   const urlIsValid = useCallback(() => {
-    if(query) {
+    if (query && Object.keys(query).length > 0) {
       switch (activeStep) {
         case 1:
           return hasFor();
