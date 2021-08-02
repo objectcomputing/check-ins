@@ -12,7 +12,11 @@ import { blue } from "@material-ui/core/colors";
 import {useHistory} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
-import {getAllAnswersFromQuestionList, getQuestionsByRequestId, saveAllAnswers} from "../../api/feedback";
+import {
+  getAllAnswersFromRequestAndQuestionId,
+  saveAllAnswers,
+  saveAnswer,
+} from "../../api/feedback";
 import TextField from "@material-ui/core/TextField";
 
 
@@ -95,7 +99,12 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
       if (!questionsList || questionsList === undefined) {
         return;
       }
-      const res = await getAllAnswersFromQuestionList(questionsList, csrf)
+      const res = await getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
+      return res;
+    }
+    async function saveSingleAnswer(answer) {
+      const res = await saveAnswer(answer, csrf);
+      console.log("save single answer res " + JSON.stringify(res))
       return res;
     }
 
@@ -113,7 +122,14 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
       getQuestions(requestId, csrf).then((questionsList) => {
         setQuestions(questionsList)
         getAnswers(questionsList).then((answerList)=> {
-        console.log("answer list " + JSON.stringify(answerList))
+          for (let i = 0; i < answerList.length; ++i) {
+            if (answerList[i] && answerList[i] == {} && !answerList[i].error) {
+              let newAnswer = {answer:null, questionId: questionsList[i].id, requestId: requestId, sentiment: null}
+              const res = saveSingleAnswer(newAnswer, csrf).then(() => {
+                  console.log("save single answer res " + JSON.stringify(res));
+              })
+            }
+          }
         })
       });
     }

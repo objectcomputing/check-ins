@@ -2,11 +2,13 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.RoleType;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -17,7 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +41,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
+
 
     public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         FeedbackAnswer answer = createSampleAnswer(sender, recipient);
@@ -207,25 +212,69 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId()))
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
-        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+        final HttpResponse<List<FeedbackAnswerResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackAnswerResponseDTO.class));
 
         assertTrue(response.getBody().isPresent());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get().get(0));
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdAuthorizedRequestOnly() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createDefaultRole(RoleType.PDL, sender);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
+        MemberProfile templateCreator = createADefaultSupervisor();
+        FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
+        getFeedbackTemplateRepository().save(template);
+        TemplateQuestion question = saveTemplateQuestion(template, 1);
+        TemplateQuestion questionTwo = saveAnotherTemplateQuestion(template, 2);
+        FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
+        FeedbackAnswer answerOne = new FeedbackAnswer("Sample answer 1", question.getId(), feedbackRequest.getId(), 0.5);
+        getFeedbackAnswerRepository().save(answerOne);
+        FeedbackAnswer answerTwo = new FeedbackAnswer("Sample answer 2", questionTwo.getId(), feedbackRequest.getId(), 0.5);
+        getFeedbackAnswerRepository().save(answerTwo);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?requestId=%s", answerOne.getRequestId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackAnswerResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackAnswerResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(answerOne, response.getBody().get().get(0));
+        assertContentEqualsResponse(answerTwo, response.getBody().get().get(1));
     }
 
     @Test
     void testGetByRequestAndQuestionIdUnauthorized() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile random = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId()))
+                .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertUnauthorized(exception);
+
 
     }
 
     @Test
     void testGetByRequestAndQuestionIdRequestNotExists() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        UUID random = UUID.randomUUID();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), random))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+        assertEquals("Cannot find attached request for search", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
 
     }
 
-    @Test
-    void testGetByRequestAndQuestionIdNull() {
-
-    }
 }

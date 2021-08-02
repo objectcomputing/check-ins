@@ -9,8 +9,11 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
+import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,10 +90,8 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
     }
 
     @Override
-    public FeedbackAnswer findByValues(UUID questionId, UUID requestId) {
-        if (questionId == null || requestId == null) {
-            throw new BadArgException("Question ID and request ID must be present for find");
-        }
+    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        List<FeedbackAnswer> response = new ArrayList<>();
         FeedbackRequest feedbackRequest;
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         try {
@@ -99,7 +100,8 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
             throw new NotFoundException("Cannot find attached request for search");
         }
         if (currentUserId.equals(feedbackRequest.getCreatorId()) || currentUserId.equals(feedbackRequest.getRecipientId()) || currentUserServices.isAdmin()) {
-            return feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId));
+            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
+            return response;
         }
 
         throw new PermissionException("You are not authorized to do that operation");

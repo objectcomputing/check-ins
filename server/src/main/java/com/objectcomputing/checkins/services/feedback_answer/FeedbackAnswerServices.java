@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
 import java.util.UUID;
+import java.util.List;
+import javax.annotation.Nullable;
 
 public interface FeedbackAnswerServices {
 
@@ -10,5 +12,5 @@ public interface FeedbackAnswerServices {
 
     FeedbackAnswer getById(UUID id);
 
-    FeedbackAnswer findByValues(UUID questionId, UUID requestId);
+    List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId);
 }

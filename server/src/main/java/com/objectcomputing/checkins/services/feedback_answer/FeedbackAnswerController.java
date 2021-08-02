@@ -96,13 +96,14 @@ public class FeedbackAnswerController {
      * @return {@link FeedbackAnswerResponseDTO}
      */
     @Get("/{?questionId,requestId}")
-    public Single<HttpResponse<FeedbackAnswerResponseDTO>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+    public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(savedAnswer -> (HttpResponse<FeedbackAnswerResponseDTO>) HttpResponse
-                        .ok(fromEntity(savedAnswer))
-                        .headers(headers -> headers.location(URI.create("/feedback_answer/" +  savedAnswer.getId()))))
-                .subscribeOn(Schedulers.from(executorService));
+                .map(feedbackAnswers -> {
+                    List<FeedbackAnswerResponseDTO> dtoList = feedbackAnswers.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackAnswerResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {

@@ -44,11 +44,11 @@ export const getAnswerByRequestAndQuestionId = async (requestId, questionId, coo
 
 }
 
-export const getAllAnswersFromRequestAndQuestionId = async (questions, cookie) => {
+export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions, cookie) => {
   let answerReqs = []
   for (let i = 0; i < questions.length; ++i) {
     console.log("Question element: " + JSON.stringify(questions[i]))
-    answerReqs.push(getAnswerByQuestionId(questions[i].id, cookie))
+    answerReqs.push(getAnswerByRequestAndQuestionId(requestId, questions[i].id, cookie))
   }
 
   return Promise.all([answerReqs]).then(([answerRes]) => {
@@ -57,17 +57,32 @@ export const getAllAnswersFromRequestAndQuestionId = async (questions, cookie) =
 
 }
 
-export const getQuestionsByRequestId = async (requestId, cookie) => {
-  const requestReq = getFeedbackRequestById(requestId, cookie);
-  let getFeedbackReq = requestReq.then((requestRes) => {
-    if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
-      return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie)
-    }
+export const saveAnswer = async (answer, cookie) => {
+  return resolve({
+    url: answerURL,
+    method: "post",
+    responseType: "json",
+    params: {
+      data: answer
+    },
+    headers: { "X-CSRF-Header": cookie }
   });
+}
 
-  return Promise.all([requestReq, getFeedbackReq]).then(([requestRes, getFeedbackRes]) => {
-    return getFeedbackRes;
-  });
+export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions, cookie) => {
+  let answerReqs = []
+  for (let i = 0; i < questions.length; ++i) {
+    console.log("Question element: " + JSON.stringify(questions[i]))
+    answerReqs.push(getAnswerByRequestAndQuestionId(requestId, questions[i].id, cookie))
+  }
+
+  return Promise.all([answerReqs]).then(([answerRes]) => {
+    for (let i = 0; i < answerRes.length; ++i) {
+      let element = answerRes[i];
+      console.log("Answer res element " + element);
+    }
+    return answerRes
+  })
 
 }
 

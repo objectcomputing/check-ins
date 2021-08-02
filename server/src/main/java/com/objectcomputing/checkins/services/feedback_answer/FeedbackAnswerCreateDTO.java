@@ -17,7 +17,7 @@ public class FeedbackAnswerCreateDTO {
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "id of the feedback question the answer is linked to", required = true)
     private UUID questionId;
 
