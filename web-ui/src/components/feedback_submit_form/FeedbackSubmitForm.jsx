@@ -12,7 +12,7 @@ import { blue } from "@material-ui/core/colors";
 import {useHistory} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
-import {getQuestionsByRequestId, saveAllAnswers} from "../../api/feedback";
+import {getAllAnswersFromQuestionList, getQuestionsByRequestId, saveAllAnswers} from "../../api/feedback";
 import TextField from "@material-ui/core/TextField";
 
 
@@ -77,13 +77,26 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([])
 
-  useEffect(() => {
+  //get all questions X
+  //get all answers--if answer is not available for a certain question, set answer to be null answer object and save so 
+  //that it has a set ID??
+  //populate page with answers-->map answer to text box
+  //on change for each textbox
 
+  useEffect(() => {
     async function getQuestions(requestId, cookie) {
       if (!requestId) return;
       const res = await getQuestionsByRequestId(requestId, cookie);
       let questionsList = res.questions ? res.questions : [];
       return questionsList;
+    }
+
+    async function getAnswers(questionsList) {
+      if (!questionsList || questionsList === undefined) {
+        return;
+      }
+      const res = await getAllAnswersFromQuestionList(questionsList, csrf)
+      return res;
     }
 
     async function saveAnswersList(questionList, cookie) {
@@ -95,13 +108,12 @@ const FeedbackSubmitForm = ({requesteeName, requestId}) => {
     const res = await saveAllAnswers(answers, cookie)
     console.log(res);
     }
+
     if (csrf) {
       getQuestions(requestId, csrf).then((questionsList) => {
-        setQuestions(questionsList);
-        //save empty answers
-        saveAnswersList(questionsList, csrf).then((answerList)=> {
+        setQuestions(questionsList)
+        getAnswers(questionsList).then((answerList)=> {
         console.log("answer list " + JSON.stringify(answerList))
-        setAnswers(answerList)
         })
       });
     }

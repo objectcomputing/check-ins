@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
 import java.util.Optional;
@@ -40,6 +41,9 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
+        }
+        if (feedbackAnswer.getId() != null) {
+            return update(feedbackAnswer);
         }
 
         return feedbackAnswerRepository.save(feedbackAnswer);
@@ -80,6 +84,26 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } else {
             throw new PermissionException("You are not authorized to do this operation :(");
         }
+    }
+
+    @Override
+    public FeedbackAnswer findByValues(UUID questionId, UUID requestId) {
+        if (questionId == null || requestId == null) {
+            throw new BadArgException("Question ID and request ID must be present for find");
+        }
+        FeedbackRequest feedbackRequest;
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        try {
+            feedbackRequest = feedbackRequestServices.getById(requestId);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Cannot find attached request for search");
+        }
+        if (currentUserId.equals(feedbackRequest.getCreatorId()) || currentUserId.equals(feedbackRequest.getRecipientId()) || currentUserServices.isAdmin()) {
+            return feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId));
+        }
+
+        throw new PermissionException("You are not authorized to do that operation");
+
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {

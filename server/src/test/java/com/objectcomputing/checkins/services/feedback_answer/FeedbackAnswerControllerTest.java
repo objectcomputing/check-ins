@@ -199,4 +199,33 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
 
         assertUnauthorized(exception);
     }
+
+    @Test
+    void testGetByRequestAndQuestionIdAuthorized() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackAnswerResponseDTO> response = client.toBlocking().exchange(request, FeedbackAnswerResponseDTO.class);
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get());
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdUnauthorized() {
+
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdRequestNotExists() {
+
+    }
+
+    @Test
+    void testGetByRequestAndQuestionIdNull() {
+
+    }
 }

@@ -9,4 +9,6 @@ public interface FeedbackAnswerServices {
     FeedbackAnswer update(FeedbackAnswer feedbackAnswer);
 
     FeedbackAnswer getById(UUID id);
+
+    FeedbackAnswer findByValues(UUID questionId, UUID requestId);
 }
