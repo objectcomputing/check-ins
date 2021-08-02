@@ -72,9 +72,9 @@ const ErrorFallback = ({ error }) => {
           <TextField
             required
             id="new-issue-body"
-            label="Body"
+            label="Issue Description"
             className="fullWidth"
-            placeholder="Issue Description"
+            placeholder="Where/how did you encounter the issue?"
             value={body}
             onChange={(e) => setBody(e.target.value)}
           />
