@@ -178,7 +178,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         GuildMember guildMemberEntity = createDefaultGuildMember(guildEntity, memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", guildMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", guildMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(GuildResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
@@ -194,7 +194,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         GuildMember guildMemberEntity = createDefaultGuildMember(guildEntity, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s&memberid=%s", guildEntity.getName(),
-                guildMemberEntity.getMemberid())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                guildMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<Set<GuildResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(GuildResponseDTO.class));
 
         assertEntityDTOEqual(Set.of(guildEntity), response.body());
