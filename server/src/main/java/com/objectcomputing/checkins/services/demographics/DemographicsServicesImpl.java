@@ -6,8 +6,8 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.core.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
