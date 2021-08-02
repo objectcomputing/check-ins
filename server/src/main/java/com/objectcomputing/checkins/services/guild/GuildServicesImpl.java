@@ -64,14 +64,14 @@ public class GuildServicesImpl implements GuildServices {
                 .orElseThrow(() -> new NotFoundException("No such guild found"));
 
         List<GuildMemberResponseDTO> guildMembers = guildMemberRepo
-                .findByGuildid(guildId)
+                .findByGuildId(guildId)
                 .stream()
                 .filter(guildMember -> {
-                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberid()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
 
         return fromEntity(foundGuild, guildMembers);
     }
@@ -96,7 +96,7 @@ public class GuildServicesImpl implements GuildServices {
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
                     //add new members to the guild
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
-                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberid().equals(updatedMember.getMemberId())).findFirst();
+                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         if(!first.isPresent()) {
                             MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
@@ -109,7 +109,7 @@ public class GuildServicesImpl implements GuildServices {
 
                     //delete any removed members from guild
                     existingGuildMembers.stream().forEach((existingMember) -> {
-                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid())).findFirst().isPresent()) {
+                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
                         }
                     });
@@ -131,13 +131,13 @@ public class GuildServicesImpl implements GuildServices {
         Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
-            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildid(foundGuild.getId()).stream().filter(guildMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
 
             for (GuildMember foundMember : foundMembers) {
-                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberid())));
+                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
             }
         }
         return foundGuilds;

@@ -21,7 +21,6 @@ import {
   UPDATE_GUILD,
   UPDATE_GUILDS,
   UPDATE_ROLES,
-  UPDATE_GUILD_MEMBERS,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
@@ -168,16 +167,13 @@ export const reducer = (state, action) => {
       const { id } = action.payload;
       const idx = state.guilds.findIndex((guild) => guild.id === id);
       state.guilds[idx] = action.payload;
+      state.guilds = [...state.guilds];
       break;
     case UPDATE_GUILDS:
       state.guilds = action.payload;
       //sort by name
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    case UPDATE_GUILD_MEMBERS:
-      state.guildMembers
-        ? (state.guildMembers = [...state.guildMembers, action.payload])
-        : (state.guildMembers = action.payload);
+      state.guilds = [...state.guilds];
       break;
     default:
   }
