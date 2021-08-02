@@ -5,6 +5,7 @@ import { createBrowserHistory } from "history";
 
 import Routes from "./components/routes/Routes";
 import Menu from "./components/menu/Menu";
+import ErrorFallback from "./pages/ErrorBoundaryPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
 
@@ -16,14 +17,6 @@ import "./App.css";
 const customHistory = createBrowserHistory();
 
 function App() {
-  const ErrorFallback = ({ error }) => {
-    return (
-      <div role="alert">
-        <p>Something went wrong :/</p>
-        <pre style={{ color: "red" }}>{error.message}</pre>
-      </div>
-    );
-  };
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <Router history={customHistory}>
