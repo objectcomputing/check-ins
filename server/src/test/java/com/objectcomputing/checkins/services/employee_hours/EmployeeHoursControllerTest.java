@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.EmployeeHoursFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -27,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, EmployeeHoursFixture {
+public class EmployeeHoursControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, EmployeeHoursFixture {
 
     @Inject
     @Client("/services/employee/hours")
@@ -43,7 +44,10 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
 
-        final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(ADMIN_ROLE,ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
+        final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         final HttpResponse<EmployeeHoursResponseDTO> response = client.toBlocking().exchange(request, EmployeeHoursResponseDTO.class);
 
         EmployeeHoursResponseDTO employeeHoursResponseDTO = response.body();
@@ -61,7 +65,10 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
                 .addPart("file","test.csv",new MediaType("text/csv"),file)
                 .build();
 
-        final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(ADMIN_ROLE,ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
+        final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -87,9 +94,11 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
     void testFindAllRecordsWithAdminRole() {
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         createEmployeeHours();
-        final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(user.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<Set<EmployeeHours>> response = client.toBlocking().exchange(request, Argument.setOf(EmployeeHours.class));
         response.body();
         response.getStatus();

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.survey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.SurveyFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, SurveyFixture {
+public class SurveyControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, SurveyFixture {
 
     @Inject
     @Client("/services/surveys")
@@ -35,6 +36,9 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     public void testCreateASurvey(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
@@ -43,7 +47,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
         surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
 
-        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Survey> response = client.toBlocking().exchange(request,Survey.class);
 
         Survey surveyResponseResponse = response.body();
@@ -75,13 +79,16 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testCreateSurveyForNonExistingMember(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
         surveyResponseCreateDTO.setName("Name");
         surveyResponseCreateDTO.setDescription("Description");
         surveyResponseCreateDTO.setCreatedOn(LocalDate.now());
         surveyResponseCreateDTO.setCreatedBy(UUID.randomUUID());
 
-        HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -110,6 +117,9 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testCreateASurveyForInvalidDate() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         SurveyCreateDTO surveyResponseCreateDTO = new SurveyCreateDTO();
         surveyResponseCreateDTO.setName("Name");
@@ -117,7 +127,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
         surveyResponseCreateDTO.setCreatedOn(LocalDate.of(1965,11,12));
         surveyResponseCreateDTO.setCreatedBy(memberProfile.getId());
 
-        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<SurveyCreateDTO> request = HttpRequest.POST("",surveyResponseCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -131,12 +141,13 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     public void testGETFindByValueName() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", surveyResponse.getName())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?name=%s", surveyResponse.getName())).basicAuth(user.getWorkEmail(),ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
         assertEquals(Set.of(surveyResponse), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -145,13 +156,14 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     public void testGetFindByCreatedBy() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
-
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
         assertEquals(Set.of(surveyResponse), response.body());
         assertEquals(HttpStatus.OK,response.getStatus());
@@ -160,12 +172,14 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     public void testGetFindAll() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(user.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
@@ -176,11 +190,14 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testFindSurveyAllParams(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s", surveyResponse.getCreatedBy())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(Set.of(surveyResponse), response.body());
@@ -190,8 +207,10 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testSurveyDoesNotExist() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s",UUID.randomUUID())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?createdBy=%s",UUID.randomUUID())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(Set.of(), response.body());
@@ -201,12 +220,15 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateSurvey(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Survey> response = client.toBlocking().exchange(request, Survey.class);
 
         assertEquals(surveyResponse, response.body());
@@ -216,13 +238,16 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateNonExistingSurvey(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
         surveyResponse.setId(UUID.randomUUID());
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -237,13 +262,16 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateNotExistingMemberSurvey(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
         surveyResponse.setCreatedBy(UUID.randomUUID());
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -258,13 +286,16 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateNotMemberSurveyWithoutId(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
         surveyResponse.setId(null);
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -292,7 +323,7 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateANullSurvey() {
-        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<String> request = HttpRequest.PUT("","").basicAuth(ADMIN_ROLE, ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
@@ -307,13 +338,16 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void testUpdateInvalidDateSurvey(){
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
         surveyResponse.setCreatedOn(LocalDate.of(1965,12,11));
 
         final HttpRequest<Survey> request = HttpRequest.PUT("", surveyResponse)
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -402,11 +436,14 @@ public class SurveyControllerTest extends TestContainersSuite implements MemberP
 
     @Test
     void deleteTeamByMember() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         Survey surveyResponse  = createADefaultSurvey(memberProfile);
 
-        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", surveyResponse.getId())).basicAuth(ADMIN_ROLE,ADMIN_ROLE);
+        final HttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", surveyResponse.getId())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<Survey>> response = client.toBlocking().exchange(request, Argument.setOf(Survey.class));
 
         assertEquals(HttpStatus.OK,response.getStatus());

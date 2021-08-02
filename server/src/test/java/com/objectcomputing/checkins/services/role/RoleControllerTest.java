@@ -302,7 +302,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         Role authRole = createDefaultAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, memberProfile.getId());
+        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, "role description", memberProfile.getId());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
@@ -344,7 +344,7 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
         Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
 
-        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, UUID.randomUUID());
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, "role description", UUID.randomUUID());
 
         final HttpRequest<Role> request = HttpRequest.PUT("", r)
                 .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());

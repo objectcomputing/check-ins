@@ -31,7 +31,7 @@ public class BirthDayServicesImpl implements BirthDayServices{
         if (month != null) {
             memberProfiles = memberProfiles
                     .stream()
-                    .filter(member -> month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
+                    .filter(member -> member.getBirthDate() != null && month.equalsIgnoreCase(member.getBirthDate().getMonth().name()) && member.getTerminationDate() == null)
                     .collect(Collectors.toList());
         }
 

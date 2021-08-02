@@ -25,13 +25,13 @@ public class CheckinDocument {
     @Schema(description = "the id of the checkin_document", required = true)
     private UUID id;
 
-    @Column(name="checkinsId")
+    @Column(name="checkinsid")
     @NotNull
     @TypeDef(type=DataType.STRING)
     @Schema(description = "id of the checkIn this entry is associated with", required = true)
     private UUID checkinsId;
 
-    @Column(name="uploadDocId", unique = true)
+    @Column(name="uploaddocid", unique = true)
     @NotNull
     @Schema(description = "id of the uploaded document", required = true)
     private String uploadDocId;

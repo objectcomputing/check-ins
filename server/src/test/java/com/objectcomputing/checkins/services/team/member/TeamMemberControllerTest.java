@@ -4,6 +4,7 @@ package com.objectcomputing.checkins.services.team.member;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TeamFixture;
 import com.objectcomputing.checkins.services.fixture.TeamMemberFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
@@ -26,7 +27,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMI
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
 
-class TeamMemberControllerTest extends TestContainersSuite implements TeamFixture, MemberProfileFixture, TeamMemberFixture {
+class TeamMemberControllerTest extends TestContainersSuite implements TeamFixture, MemberProfileFixture, RoleFixture, TeamMemberFixture {
 
     @Inject
     @Client("/services/teams/members")
@@ -289,13 +290,16 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testUpdateTeamMemberByAdmin() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), true);
-        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
         TeamMember result = response.body();
@@ -462,13 +466,16 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testDeleteTeamMemberAsAdmin() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         TeamMember teamMember = createDefaultTeamMember(team, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
@@ -563,6 +570,9 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testMemberHistoryTableIsCreatedWhenTeamMemberIsUpdated() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -571,7 +581,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         long numHistoryRows = getMemberHistoryRepository().count();
 
         TeamMemberUpdateDTO teamMemberUpdateDTO = new TeamMemberUpdateDTO(teamMember.getId(), teamMember.getTeamId(), teamMember.getMemberId(), true);
-        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth("test@test.com", ADMIN_ROLE);
+        final MutableHttpRequest<TeamMemberUpdateDTO> request = HttpRequest.PUT("", teamMemberUpdateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
         assertEquals(numHistoryRows + 1, getMemberHistoryRepository().count());
@@ -592,6 +602,9 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
 
     @Test
     void testMemberHistoryTableIsCreatedWhenTeamMemberIsRemoved() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -600,7 +613,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
         long numHistoryRows = getMemberHistoryRepository().count();
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", teamMember.getId())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                DELETE(String.format("/%s", teamMember.getId())).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<TeamMember> response = client.toBlocking().exchange(request, TeamMember.class);
 
