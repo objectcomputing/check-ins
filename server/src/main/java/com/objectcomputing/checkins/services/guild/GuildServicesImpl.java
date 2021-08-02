@@ -75,14 +75,14 @@ public class GuildServicesImpl implements GuildServices {
                 .orElseThrow(() -> new NotFoundException("No such guild found"));
 
         List<GuildMemberResponseDTO> guildMembers = guildMemberRepo
-                .findByGuildid(guildId)
+                .findByGuildId(guildId)
                 .stream()
                 .filter(guildMember -> {
-                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+                    LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                     return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
                 })
                 .map(guildMember ->
-                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberid()))).collect(Collectors.toList());
+                        fromMemberEntity(guildMember, memberProfileServices.getById(guildMember.getMemberId()))).collect(Collectors.toList());
 
         return fromEntity(foundGuild, guildMembers);
     }
@@ -108,16 +108,16 @@ public class GuildServicesImpl implements GuildServices {
                     // emails of guild leads excluding the one making the change request
                     Set<String> emailsOfGuildLeads = guildMemberServices.findByFields(guildDTO.getId(), null, true)
                             .stream()
-                            .filter(lead -> !lead.getMemberid().equals(currentUser.getId()))
-                            .map(lead -> memberProfileServices.getById(lead.getMemberid()).getWorkEmail())
+                            .filter(lead -> !lead.getMemberId().equals(currentUser.getId()))
+                            .map(lead -> memberProfileServices.getById(lead.getMemberId()).getWorkEmail())
                             .collect(Collectors.toSet());
 
                     Guild newGuildEntity  = guildsRepo.update(fromDTO(guildDTO));
                     Set<GuildMember> existingGuildMembers = guildMemberServices.findByFields(guildDTO.getId(), null, null);
-
-                    guildDTO.getGuildMembers().forEach((updatedMember) -> {
-                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberid().equals(updatedMember.getMemberId())).findFirst();
-                        MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
+                  
+                    //add new members to the guild
+                    guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
+                        Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
                         if(!first.isPresent()) {
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                             addedMembers.add(existingMember);
@@ -126,10 +126,11 @@ public class GuildServicesImpl implements GuildServices {
                         }
                     });
 
-                    existingGuildMembers.forEach((existingMember) -> {
-                        if(guildDTO.getGuildMembers().stream().noneMatch((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberid()))) {
+                    //delete any removed members from guild
+                    existingGuildMembers.stream().forEach((existingMember) -> {
+                        if(!guildDTO.getGuildMembers().stream().filter((updatedTeamMember) -> updatedTeamMember.getMemberId().equals(existingMember.getMemberId())).findFirst().isPresent()) {
                             guildMemberServices.delete(existingMember.getId());
-                            removedMembers.add(memberProfileServices.getById(existingMember.getMemberid()));
+                            removedMembers.add(memberProfileServices.getById(existingMember.getMemberId()));
                         }
                     });
                     updated = fromEntity(newGuildEntity, newMembers);
@@ -150,13 +151,13 @@ public class GuildServicesImpl implements GuildServices {
         Set<GuildResponseDTO> foundGuilds = guildsRepo.search(name, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (GuildResponseDTO foundGuild : foundGuilds) {
-            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildid(foundGuild.getId()).stream().filter(guildMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberid()).getTerminationDate();
+            Set<GuildMember> foundMembers = guildMemberRepo.findByGuildId(foundGuild.getId()).stream().filter(guildMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(guildMember.getMemberId()).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
 
             for (GuildMember foundMember : foundMembers) {
-                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberid())));
+                foundGuild.getGuildMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
             }
         }
         return foundGuilds;

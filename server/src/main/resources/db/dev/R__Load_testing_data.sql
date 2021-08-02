@@ -11,6 +11,7 @@ delete from member_skills;
 delete from pulse_response;
 delete from questions;
 delete from role;
+delete from role_permissions;
 delete from team_member;
 delete from team;
 delete from member_profile;
@@ -219,6 +220,21 @@ INSERT INTO role(
     id, role, memberid)
 VALUES
     ('a0ac5d7a-4b8e-11eb-b393-b35b67f02ab6', 'PDL', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+
+INSERT INTO role_permissions
+    (id, permission, roleid)
+VALUES
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d21', 'READCHECKIN', 'e8a4fff8-e984-4e59-be84-a713c9fa8d23');
+
+INSERT INTO role_permissions
+    (id, permission, roleid)
+VALUES
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9d1', 'CREATECHECKIN', '58199639-e670-4702-bba0-8fc63457cd02');
+
+INSERT INTO role_permissions
+    (id, permission, roleid)
+VALUES
+    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c51', 'DELETECHECKIN', 'a0ac5d7a-4b8e-11eb-b393-b35b67f02ab6');
 
 INSERT INTO team
     (id, name, description)
