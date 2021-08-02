@@ -11,7 +11,6 @@ import "./ErrorBoundaryPage.css";
 
 const ErrorFallback = ({ error }) => {
   const { state } = useContext(AppContext);
-  const csrf = selectCsrfToken(state);
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -87,7 +86,7 @@ const ErrorFallback = ({ error }) => {
             </Button>
             <Button
               onClick={() => {
-                let res = await createGitIssue();
+                let res = createGitIssue();
                 console.log({ res });
                 if (!res.error && res.status === 201) {
                   window.snackDispatch({
