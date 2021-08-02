@@ -4,6 +4,7 @@ import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js'
 const feedbackSuggestionURL = "/services/feedback/suggestions";
 const feedbackRequestURL = "/services/feedback/requests";
 const answerURL = "/services/feedback/answers";
+const questionAndAnswerURL = "/services/feedback/questions-and-answers"
 
 export const getFeedbackSuggestion = async (id, cookie) => {
   return resolve({
@@ -33,7 +34,7 @@ export const getFeedbackRequestById = async (id, cookie) => {
 
 export const getAnswerByRequestAndQuestionId = async (requestId, questionId, cookie) => {
   return resolve({
-    url: `${answerURL}`,
+    url: `${questionAndAnswerURL}`,
     responseType: "json",
     params: {
       questionId: questionId,
@@ -46,43 +47,40 @@ export const getAnswerByRequestAndQuestionId = async (requestId, questionId, coo
 
 export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions, cookie) => {
   let answerReqs = []
-  for (let i = 0; i < questions.length; ++i) {
-    console.log("Question element: " + JSON.stringify(questions[i]))
-    answerReqs.push(getAnswerByRequestAndQuestionId(requestId, questions[i].id, cookie))
-  }
+  questions.forEach((question) => {
+    answerReqs.push(resolve({
+      url: `${questionAndAnswerURL}`,
+      responseType: "json",
+      params: {
+        questionId: question.id,
+        requestId: requestId,
+      },
+      headers: { "X-CSRF-Header": cookie }
+    }));
+  });
 
-  return Promise.all([answerReqs]).then(([answerRes]) => {
-    return answerRes
-  })
-
-}
-
-export const saveAnswer = async (answer, cookie) => {
-  return resolve({
-    url: answerURL,
-    method: "post",
-    responseType: "json",
-    params: {
-      data: answer
-    },
-    headers: { "X-CSRF-Header": cookie }
+  return Promise.all(answerReqs).then((res) => {
+    let finalReturn = []
+    res.forEach((questionAnswerPair) => {
+      if (questionAnswerPair && questionAnswerPair.payload && questionAnswerPair.payload.data && !questionAnswerPair.error) {
+        finalReturn.push(questionAnswerPair.payload.data)
+      }
+    })
+    return finalReturn;
   });
 }
 
-export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions, cookie) => {
-  let answerReqs = []
-  for (let i = 0; i < questions.length; ++i) {
-    console.log("Question element: " + JSON.stringify(questions[i]))
-    answerReqs.push(getAnswerByRequestAndQuestionId(requestId, questions[i].id, cookie))
-  }
-
-  return Promise.all([answerReqs]).then(([answerRes]) => {
-    for (let i = 0; i < answerRes.length; ++i) {
-      let element = answerRes[i];
-      console.log("Answer res element " + element);
+export const getQuestionsByRequestId = async (requestId, cookie) => {
+  const requestReq = getFeedbackRequestById(requestId, cookie);
+  let getFeedbackReq = requestReq.then((requestRes) => {
+    if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
+      return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie)
     }
-    return answerRes
-  })
+  });
+
+  return Promise.all([requestReq, getFeedbackReq]).then(([requestRes, getFeedbackRes]) => {
+    return getFeedbackRes;
+  });
 
 }
 
@@ -91,9 +89,7 @@ export const updateSingleAnswer = (answer, cookie) => {
     url: answerURL,
     method: "put",
     responseType: "json",
-    params: {
-      data: answer
-    },
+    data: answer,
     headers: { "X-CSRF-Header": cookie }
   });
 }

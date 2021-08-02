@@ -48,11 +48,12 @@ public class FeedbackAnswerResponseDTO {
         this.questionId = questionId;
     }
 
+    @Nullable
     public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(@Nullable String answer) {
         this.answer = answer;
     }
 

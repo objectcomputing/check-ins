@@ -45,11 +45,12 @@ public class FeedbackAnswerCreateDTO {
         this.questionId = questionId;
     }
 
+    @Nullable
     public UUID getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(UUID requestId) {
+    public void setRequestId(@Nullable UUID requestId) {
         this.requestId = requestId;
     }
 
