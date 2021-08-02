@@ -13,7 +13,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -52,7 +52,7 @@ public class RoleController {
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
                                              HttpRequest<RoleCreateDTO> request) {
-        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getMemberid())))
+        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription(), role.getMemberid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse

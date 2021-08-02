@@ -8,7 +8,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -154,7 +154,7 @@ public class AgendaItemServicesImpl implements AgendaItemServices {
         agendaItemRepository.deleteById(id);
     }
 
-    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+    private void validate(boolean isError, String message, Object... args) {
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }

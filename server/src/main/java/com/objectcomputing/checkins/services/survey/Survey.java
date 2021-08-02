@@ -46,12 +46,12 @@ public class Survey {
     @Schema(description = "description of Description", required = true)
     private String description;
 
-    @Column(name="createdOn")
+    @Column(name="createdon")
     @NotNull
     @Schema(description = "date for createdOn", required = true)
     private LocalDate createdOn;
 
-    @Column(name="createdBy")
+    @Column(name="createdby")
     @TypeDef(type=DataType.STRING)
     @NotNull
     @Schema(description = "id of the teamMember this entry is associated with", required = true)

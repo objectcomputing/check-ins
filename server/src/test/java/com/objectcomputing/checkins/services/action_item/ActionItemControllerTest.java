@@ -7,6 +7,7 @@ import com.objectcomputing.checkins.services.checkins.CheckIn;
 import com.objectcomputing.checkins.services.fixture.ActionItemFixture;
 import com.objectcomputing.checkins.services.fixture.CheckInFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, CheckInFixture, ActionItemFixture {
+class ActionItemControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, CheckInFixture, ActionItemFixture {
 
     @Inject
     @Client("/services/action-items")
@@ -312,6 +313,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testDeleteAnActionItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        createDefaultAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -476,14 +478,15 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     @Test
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileForAdmin = createADefaultMemberProfileForPdl(memberProfile);
+        createDefaultAdminRole(memberProfileForAdmin);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForAdmin);
 
         ActionItem actionItem = createADefaultActionItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileForAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<ActionItem>> response = client.toBlocking().exchange(request, Argument.setOf(ActionItem.class));
 
         assertEquals(Set.of(actionItem), response.body());

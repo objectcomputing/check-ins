@@ -12,7 +12,7 @@ import io.micronaut.security.authentication.*;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +58,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
             for (String curRole : roles) {
                 RoleType roleType = RoleType.valueOf(curRole);
                 if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getId()).isEmpty()) {
-                    roleRepository.save(new Role(roleType, memberProfile.getId()));
+                    roleRepository.save(new Role(roleType, "role description", memberProfile.getId()));
                 }
             }
         } else {

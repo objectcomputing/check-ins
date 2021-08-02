@@ -33,6 +33,7 @@ public class EntityTag {
 
     @NotNull
     @Column(name = "type")
+    @TypeDef(type = DataType.STRING)
     @Schema(description = "the type of the entity being tagged", required = true)
     private EntityType type;
 

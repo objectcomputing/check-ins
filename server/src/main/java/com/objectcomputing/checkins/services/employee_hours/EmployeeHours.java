@@ -25,34 +25,34 @@ public class EmployeeHours {
     private UUID id;
 
     @NotNull
-    @Column(name="employeeId")
+    @Column(name="employeeid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "employee id", required = true)
     private String employeeId;
 
 
     @NotNull
-    @Column(name="contributionHours")
+    @Column(name="contributionhours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="contibution hours of employee", required=true)
     private float contributionHours;
 
-    @Column(name="billableHours")
+    @Column(name="billablehours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="billable hours of employee")
     private float billableHours;
 
-    @Column(name="ptoHours")
+    @Column(name="ptohours")
     @TypeDef(type = DataType.FLOAT)
     @Schema(description ="PTO hours of employee")
     private float ptoHours;
 
-    @Column(name="updatedDate")
+    @Column(name="updateddate")
     @NotNull
     @Schema(description = "date for updatedDate", required = true)
     private LocalDate updatedDate;
 
-    @Column(name="targetHours")
+    @Column(name="targethours")
     @NotNull
     @Schema(description = "Target hours for an employee", required = true)
     private float targetHours;
