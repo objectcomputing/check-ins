@@ -8,8 +8,10 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,6 +82,16 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } else {
             throw new PermissionException("You are not authorized to do this operation :(");
         }
+    }
+
+    @Override
+    public List<FeedbackAnswer> findByValues(UUID questionId, UUID requestId) {
+        final FeedbackRequest feedbackRequest = feedbackRequestServices.getById(requestId);
+        if (!getIsPermitted(feedbackRequest)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        return feedbackAnswerRepository.findByValues(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId));
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {

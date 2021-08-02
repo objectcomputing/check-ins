@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
+import {getQuestionsAndAnswers} from "../../api/feedbackanswer";
+import queryString from "query-string";
+import {useLocation} from "react-router-dom";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
 //note that request id will be in actual object, so you will need to get information out of request id, template id and state
 
 const useStylesCardContent = makeStyles({
@@ -84,6 +89,25 @@ let responses = [
 
 const ViewFeedbackResponses = () => {
   useStylesCardContent();
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const location = useLocation();
+  const [query, setQuery] = useState({});
+
+  useEffect(() => {
+    setQuery(queryString.parse(location?.search));
+  }, [location.search]);
+
+  useEffect(() => {
+    async function retrieveQuestionsAndAnswers(requests, cookie) {
+      let res = await getQuestionsAndAnswers(requests, cookie);
+      return res.payload && res.payload.data && !res.error
+        ? data
+        : null;
+    }
+
+    retrieveQuestionsAndAnswers(query.request, csrf);
+  }, []);
 
   return (
     <div className="view-feedback-responses-page">

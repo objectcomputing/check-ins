@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -13,8 +14,10 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/answers")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -79,6 +82,22 @@ public class FeedbackAnswerController {
                         .ok(fromEntity(savedAnswer))
                         .headers(headers -> headers.location(URI.create("/feedback_answer/" +  savedAnswer.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
+     * Get all answers associated with a specific request ID
+     * @param requestId The {@link UUID} of the feedback request
+     * @return list of {@link FeedbackAnswerResponseDTO}
+     */
+    @Get("/{?questionId,requestId}")
+    public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(answers -> {
+                    List<FeedbackAnswerResponseDTO> dtoList = answers.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackAnswerResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {
