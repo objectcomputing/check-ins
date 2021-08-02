@@ -93,7 +93,7 @@ const FeedbackRequestPage = () => {
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
-  }, [location.search])
+  }, [location.search]);
 
   const handleQueryChange = useCallback((key, value) => {
     let newQuery = {
