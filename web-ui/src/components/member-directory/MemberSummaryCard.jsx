@@ -19,7 +19,7 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import { isPast } from "date-fns/esm";
+import isPast from 'date-fns/isPast'
 
 const useStyles = makeStyles(() => ({
   header: {
