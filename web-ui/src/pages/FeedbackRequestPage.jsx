@@ -87,7 +87,7 @@ const FeedbackRequestPage = () => {
   const forQuery = query.for?.toString();
   const requestee = selectProfile(state, forQuery);
   const memberIds = selectCurrentMemberIds(state);
-  const csrf = selectCsrfToken(state)
+  const csrf = selectCsrfToken(state);
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
 
