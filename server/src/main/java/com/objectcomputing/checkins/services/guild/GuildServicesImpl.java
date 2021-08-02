@@ -118,6 +118,7 @@ public class GuildServicesImpl implements GuildServices {
                     //add new members to the guild
                     guildDTO.getGuildMembers().stream().forEach((updatedMember) -> {
                         Optional<GuildMember> first = existingGuildMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
+                        MemberProfile existingMember = memberProfileServices.getById(updatedMember.getMemberId());
                         if(!first.isPresent()) {
                             newMembers.add(fromMemberEntity(guildMemberServices.save(fromMemberDTO(updatedMember, newGuildEntity.getId())), existingMember));
                             addedMembers.add(existingMember);
