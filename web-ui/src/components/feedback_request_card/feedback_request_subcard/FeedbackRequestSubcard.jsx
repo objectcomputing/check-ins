@@ -25,6 +25,8 @@ const FeedbackRequestSubcard = (props) => {
   const csrf = selectCsrfToken(state);
   const recipient = selectProfile(state, props.request?.recipientId);
   const submitDate = props.request?.submitDate ? dateFns.format(new Date(props.request.submitDate.join("-")), "LLLL dd, yyyy") : null;
+  const dueDate = props.request?.dueDate ? dateFns.format(new Date(props.request.dueDate.join("-")), "LLLL dd, yyyy"): null;
+  const sendDate = dateFns.format(new Date(props.request.sendDate.join("-")), "LLLL dd, yyyy");
 
   const handleReminderNotification = async() => {
     if (csrf) {
@@ -75,7 +77,11 @@ const FeedbackRequestSubcard = (props) => {
               <Typography className="person-name">{recipient?.name}</Typography>
               <Typography className="position-text">{recipient?.title}</Typography>
             </Grid>
+            <Grid>
+              <Typography>Sent on {sendDate}</Typography>
+            </Grid>
             <Grid item xs={4} className="align-end">
+              <Typography>{props.request?.dueDate ? `Due on ${dueDate}` : "No due date"}</Typography>
               <Typography>{props.request?.submitDate ? `Submitted ${submitDate}` : "Not submitted"}</Typography>
               {props.request && !props.request.submitDate &&
                 <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
