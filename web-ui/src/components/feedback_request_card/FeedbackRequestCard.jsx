@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@material-ui/core/Card';
-import { Typography } from '@material-ui/core';
+import {Avatar, Typography} from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import AvatarComponent from '../avatar/Avatar';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,6 +12,9 @@ import Grid from '@material-ui/core/Grid';
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import "./FeedbackRequestCard.css";
+import {selectProfile} from "../../context/selectors";
+import {AppContext} from "../../context/AppContext";
+import { getAvatarURL } from "../../api/api.js";
 
 const useStyles = makeStyles({
   root: {
@@ -63,17 +65,16 @@ const useStylesText = makeStyles({
 }, { name: "MuiTypography" })
 
 const propTypes = {
-  requesteeName: PropTypes.string.isRequired,
-  requesteeTitle: PropTypes.string.isRequired,
+  requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
-  sendDate: PropTypes.any.isRequired,
-  dueDate: PropTypes.any,
-  submitted: PropTypes.string.isRequired,
-  submitDate: PropTypes.any,
-}
+  responses: PropTypes.arrayOf(PropTypes.object).isRequired
+};
 
 const FeedbackRequestCard = (props) => {
   const classes = useStyles();
+  const {state} = useContext(AppContext);
+  const requesteeProfile = selectProfile(state, props.requesteeId);
+  const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
   useStylesCardActions();
   useStylesText();
   useStylesCardContent();
@@ -109,9 +110,10 @@ const FeedbackRequestCard = (props) => {
 
   const Overdue = (props) => {
     let today = new Date();
-    if(today )
-  }
+    if(today ) {
 
+    }
+  }
   return (
     <div className="feedback-request-card">
       <Card className={classes.root}>
@@ -125,11 +127,11 @@ const FeedbackRequestCard = (props) => {
                   className="no-wrap"
                 >
                   <Grid item>
-                    <AvatarComponent imageUrl="../../../public/default_profile.jpg"/>
+                    <Avatar style={{marginRight: "1em"}} src={avatarURL}/>
                   </Grid>
                   <Grid item xs className="small-margin">
-                    <Typography className="person-name" >{props.requesteeName}</Typography>
-                    <Typography className="position-text">{props.requesteeTitle}</Typography>
+                    <Typography className="person-name" >{requesteeProfile?.name}</Typography>
+                    <Typography className="position-text">{requesteeProfile?.title}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
                     <Typography className="dark-gray-text">{props.templateName}</Typography>
@@ -155,13 +157,12 @@ const FeedbackRequestCard = (props) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <FeedbackRequestSubcard
-              recipientName={"Jane Doe"}
-              recipientTitle={"Senior Engineer"}
+            {props?.responses?.map((response) => (
+              <FeedbackRequestSubcard
+                key={response.id}
+                request={response}
               />
-            <FeedbackRequestSubcard
-              recipientName={"Joe PDL"}
-              recipientTitle={"PDL"}/>
+            ))}
           </CardContent>
         </Collapse>
       </Card>

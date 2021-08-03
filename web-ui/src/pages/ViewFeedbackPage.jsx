@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Search from "@material-ui/icons/Search";
@@ -9,6 +9,10 @@ import FeedbackRequestCard from '../components/feedback_request_card/FeedbackReq
 import Typography from "@material-ui/core/Typography";
 
 import "./ViewFeedbackPage.css";
+import {getFeedbackRequestsByCreator} from "../api/feedback";
+import {AppContext} from "../context/AppContext";
+import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
+import {getFeedbackTemplate} from "../api/feedbacktemplate";
 
 const useStyles = makeStyles({
   pageTitle: {
@@ -40,39 +44,76 @@ const useStyles = makeStyles({
   }
 });
 
-const sampleFeedbackRequests = [
-  {
-    id: 1,
-    requestee: "Slim Jim",
-    requesteeTitle: "Member",
-    template: "Dev Template 1",
-  },
-  {
-    id: 2,
-    requestee: "John Doe",
-    requesteeTitle: "Engineer",
-    template: "Sample Template"
-  },
-  {
-    id: 3,
-    requestee: "Bill PDL",
-    requesteeTitle: "Marketing",
-    template: "Ad Hoc",
-  }
-];
-
 const ViewFeedbackPage = () => {
 
   const classes = useStyles();
   const [feedbackRequests, setFeedbackRequests] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const {state} = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+  const currentUserId =  selectCurrentUserId(state);
+  const gotRequests = useRef(false);
 
   useEffect(() => {
-    setFeedbackRequests(sampleFeedbackRequests);
-  }, []);
+    const getFeedbackRequests = async(creatorId) => {
+      if (csrf) {
+        let res = await getFeedbackRequestsByCreator(creatorId, csrf);
+        return res && res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      }
+    }
+    const getTemplateInfo = async(templateId) => {
+      if (csrf) {
+        let res = await getFeedbackTemplate(templateId, csrf);
+        return res && res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      }
+    }
+
+    if (!currentUserId || gotRequests.current) return;
 
 
+    const getRequestAndTemplateInfo = async (currentUserId) => {
+      //get feedback requests
+      const feedbackRequests = await getFeedbackRequests(currentUserId);
+      //use returned feedback request information to then get template information, bind request
+      //and associated template info together
+      for (let i = 0; i < feedbackRequests.length; i++) {
+        feedbackRequests[i].templateInfo = await getTemplateInfo(feedbackRequests[i].templateId);
+      }
+      return feedbackRequests;
+    }
+
+    getRequestAndTemplateInfo(currentUserId).then(requestList => {
+      if (requestList) {
+        let groups = [];
+        for (let i = 0; i < requestList.length; i++) {
+          let request = requestList[i];
+          let filterTemp = groups.filter(element => element.requesteeId === request.requesteeId && element.templateId === request.templateId);
+          //if top level organizational element does not already exist, create one
+          if (filterTemp.length === 0) {
+            const requesteeName = selectProfile(state, request.requesteeId)?.name;
+            let newElement = {
+              requesteeId: request.requesteeId,
+              requesteeName: requesteeName ? requesteeName : "",
+              templateId: request.templateId,
+              responses: [request],
+              templateInfo: request.templateInfo
+            };
+            groups.push(newElement);
+          } else {
+            //else, push response into existing responses array of top level elements
+            const existingGroup = groups.findIndex((element) => element.requesteeId === filterTemp[0].requesteeId && element.templateId === filterTemp[0].templateId);
+            groups[existingGroup].responses.push(request);
+          }
+        }
+        setFeedbackRequests(groups);
+      }
+    });
+  }, [currentUserId, csrf, state]);
 
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
@@ -88,10 +129,12 @@ const ViewFeedbackPage = () => {
       let filtered = feedbackRequests;
       queryList.forEach((query) => {
         if (query.trim()) {
-          filtered = filtered.filter((request) => (
-            request.requestee?.toLowerCase().includes(query.trim().toLowerCase()) ||
-            request.template?.toLowerCase().includes(query.trim().toLowerCase())
-          ));
+          filtered = filtered?.filter((request) => {
+            const requestee = request?.requesteeName;
+            const template = request?.templateInfo.title;
+            return requestee.toLowerCase().includes(query.trim().toLowerCase()) ||
+            template?.toLowerCase().includes(query.trim().toLowerCase())
+          });
         }
       });
       if (filtered.length === 0) {
@@ -101,19 +144,13 @@ const ViewFeedbackPage = () => {
       }
     }
 
-    return requestsToDisplay.map((request) => (
+    return requestsToDisplay?.map((request) => (
       <FeedbackRequestCard
-        key={request.id}
-        requesteeName={request.requestee}
-        requesteeTitle={request.requesteeTitle}
-        templateName={request.template}
-        sendDate={request.sendDate}
-        dueDate={request.dueDate}
-        submitted={request.status}
-        submittedDate={request.submitDate}
-
-      />
-    ))
+        key={`${request?.requesteeId}-${request?.templateId}`}
+        requesteeId={request?.requesteeId}
+        templateName={request?.templateInfo.title}
+        responses={request?.responses}/>
+      ));
   }, [searchText, feedbackRequests, classes.notFoundMessage]);
 
   return (
