@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.private_notes;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
 

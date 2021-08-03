@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.settings;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 

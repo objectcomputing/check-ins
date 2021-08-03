@@ -14,6 +14,7 @@ export const getFeedbackSuggestion = async (id, cookie) => {
   });
 };
 
+
 export const createFeedbackRequest = async (feedbackRequest, cookie) => {
   return resolve({
     method: "post",
@@ -108,5 +109,16 @@ export const saveAllAnswers = (answers, cookie) => {
 
  return Promise.all(answerReqs).then((res) => {
     return res;
+  });
+}
+
+export const getFeedbackRequestsByCreator = async(creatorId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      creatorId: creatorId
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
   });
 }

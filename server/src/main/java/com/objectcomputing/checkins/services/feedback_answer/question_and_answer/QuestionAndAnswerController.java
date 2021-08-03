@@ -1,7 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerResponseDTO;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -12,13 +10,11 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/questions-and-answers")
 @Secured(SecurityRule.IS_AUTHENTICATED)

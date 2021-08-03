@@ -124,9 +124,8 @@ const TeamSkillReportPage = () => {
   const selectedMembersCopy = selectedMembers.map((member) => ({ ...member }));
   let searchResultsCopy = searchResults.map((result) => ({ ...result }));
   const filteredResults = searchResultsCopy.filter((result) => {
-    result.name = result.name.split(" ")[0];
     return selectedMembersCopy.some((member) => {
-      return result.name === member.firstName;
+      return result.name === member.name;
     });
   });
 
@@ -155,7 +154,6 @@ const TeamSkillReportPage = () => {
   const chartData = Object.values(skillMap);
 
   for (const member of selectedMembersCopy) {
-    member.name = member.name.split(" ")[0];
     for (const data of chartData) {
       if (!data[member.name]) {
         data[member.name] = 0;

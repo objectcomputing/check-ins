@@ -1,11 +1,9 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
-import com.mailjet.client.resource.Template;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
@@ -16,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.memberprofile.birthday;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.anniversaryreport.AnniversaryReportResponseDTO;
 import io.micronaut.core.type.Argument;
@@ -24,7 +25,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture {
+public class BirthDayControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/reports/birthdays")
@@ -33,9 +34,12 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     @Test
     public void testGETFindByValueNameOfTheMonth() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", memberProfile.getStartDate().getMonth().toString())).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                GET(String.format("/?month=%s", memberProfile.getStartDate().getMonth().toString())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<BirthDayResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(BirthDayResponseDTO.class));
 
