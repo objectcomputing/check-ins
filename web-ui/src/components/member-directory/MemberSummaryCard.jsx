@@ -19,7 +19,6 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import isPast from 'date-fns/isPast'
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -43,30 +42,6 @@ const MemberSummaryCard = ({ member }) => {
   const pdlProfile = selectProfileMap(state)[pdlId];
 
   const classes = useStyles();
-
-  // if the current user is an admin, show the alert icon if the user has a termination date
-  // if the current user is not an admin, only show the alert icon if they have a termination date and it is past the present day
-  const decideAvatar = () => {
-    if (isAdmin){
-      return terminationDate?
-        (
-          <Avatar className={"large"}>
-            <PriorityHighIcon />
-          </Avatar>
-        )
-        :
-        (<Avatar className={"large"} src={getAvatarURL(workEmail)} />)
-    }
-    else {
-      return terminationDate && isPast(new Date(terminationDate)) ? 
-      (
-        <Avatar className={"large"}>
-          <PriorityHighIcon />
-        </Avatar>
-      ) : 
-      (<Avatar className={"large"} src={getAvatarURL(workEmail)} />)
-    }
-  }
   
   return (
     <Box display="flex" flexWrap="wrap">
@@ -88,7 +63,16 @@ const MemberSummaryCard = ({ member }) => {
               </Typography>
             }
             disableTypography
-            avatar={decideAvatar()}
+            avatar={isAdmin && terminationDate? 
+              (
+                <Avatar className={"large"}>
+                  <PriorityHighIcon />
+                </Avatar>
+              ) : 
+              (
+                <Avatar className={"large"} src={getAvatarURL(workEmail)} />
+              )
+            }
           />
         </Link>
         <CardContent>
