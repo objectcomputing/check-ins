@@ -106,7 +106,7 @@ export const saveAllAnswers = (answers, cookie) => {
     }));
   });
 
-  Promise.all(answerReqs).then((res) => {
+ return Promise.all(answerReqs).then((res) => {
     return res;
   });
 }

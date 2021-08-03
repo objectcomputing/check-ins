@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -12,6 +12,7 @@ import { blue } from "@material-ui/core/colors";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import {
   getAllAnswersFromRequestAndQuestionId,
   saveAllAnswers,
@@ -20,6 +21,7 @@ import {
   updateSingleAnswer
 } from "../../api/feedback";
 import TextField from "@material-ui/core/TextField";
+import { debounce } from "lodash/function";
 
 
 const useStyles = makeStyles({
@@ -77,26 +79,44 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const classes = useStyles();
-  const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${requestId}`);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
+  let currentlyBeingEdited = -1
 
-  const updateAnswer = async (answer) => {
+
+  const updateAnswer = debounce(async () => {
+    console.log("update " + questionAnswerPairs[currentlyBeingEdited].answer.answer.toString())
     if (csrf) {
-    const res = await updateSingleAnswer( answer, csrf)
-    console.log("res in update answer " + JSON.stringify(res))
-    return res;
+      const res = await updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
+      return res;
     }
+  }, 2000)
+
+  async function updateAllAnswers(){
+    let answers= [];
+    for (let i = 0; i < questionAnswerPairs.length; ++i) {
+      answers.push(questionAnswerPairs[i].answer)
+    }
+    const res = await saveAllAnswers(answers, csrf)
+    console.log(res);
   }
 
-  const onChangeHandler= (event, index) => {
-    console.log("on change handler fired " + event.target.value + " " + index)
+  const onSubmitHandler =() => {
+    updateAllAnswers().then((result) => {
+      console.log("Update all answers result" + JSON.stringify(result))
+      history.push(`/feedback/submit/confirmation/?request=${requestId}`)
+    })
+  }
+
+
+  const onChangeHandler = (event, index) => {
     let questionAnswerCopy = questionAnswerPairs;
     questionAnswerCopy[index].answer.answer = event.target.value;
-    console.log(questionAnswerCopy)
-    updateAnswer(questionAnswerCopy[index].answer);
+    updateAnswer();
     setQuestionAnswerPairs(questionAnswerCopy);
+    currentlyBeingEdited = index;
+
   }
 
   useEffect(() => {
@@ -120,16 +140,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
       }
       const res = await getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
       return res;
-    }
-
-    async function saveAnswersList(questionList, cookie) {
-      let answers = []
-      for (let i = 0; i < questionList.length; ++i) {
-        let newAnswer = { answer: "", questionId: questionList[i].id, requestId: requestId, sentiment: null }
-        answers.push(newAnswer)
-      }
-      const res = await saveAllAnswers(answers, cookie)
-      console.log(res);
     }
 
     if (csrf) {
@@ -163,8 +173,13 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
             className="fullWidth"
             variant="outlined"
             multiline
+            rows={10}
             rowsMax={20}
-            onChange={(e)=> onChangeHandler(e, index)}
+            InputProps={{
+              readOnly: isReviewing,
+            }}
+            onChange={(e) => onChangeHandler(e, index)}
+            defaultValue={questionAnswerPair.answer.answer}
           />
         </div>
 
@@ -181,7 +196,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
             </ColorButton>
             <Button
               className={classes.button}
-              onClick={handleClick}
+              onClick={onSubmitHandler}
               variant="contained"
               color="primary">
               Submit

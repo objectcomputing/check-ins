@@ -66,7 +66,7 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
         FeedbackAnswer returnedAnswer;
         if (list.isEmpty()) {
             FeedbackAnswer newAnswerObject = new FeedbackAnswer();
-            newAnswerObject.setAnswer("i love opossums");
+            newAnswerObject.setAnswer(null);
             newAnswerObject.setQuestionId(questionId);
             newAnswerObject.setRequestId(requestId);
             newAnswerObject.setSentiment(null);
