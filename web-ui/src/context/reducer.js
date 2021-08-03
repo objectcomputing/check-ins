@@ -42,7 +42,7 @@ export const initialState = {
     severity: "",
     toast: "",
   },
-  userProfile: undefined,
+  userProfile: {},
 };
 
 export const reducer = (state, action) => {
