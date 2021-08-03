@@ -62,6 +62,24 @@ export default function Routes() {
         <Header title="Member Profile" />
         <MemberProfilePage />
       </Route>
+      <Route exact path="/feedback/request/confirmation">
+        <FeedbackRequestConfirmation />
+      </Route>
+      <Route path="/feedback/request">
+        <FeedbackRequestPage />
+      </Route>
+      <Route exact path="/feedback/view">
+        <ViewFeedbackPage />
+      </Route>
+      <Route exact path="/feedback/view/responses">
+        <ViewFeedbackResponses />
+      </Route>
+      <Route exact path="/feedback/submit/confirmation">
+        <FeedbackSubmitConfirmation />
+      </Route>
+      <Route path="/feedback/submit">
+        <FeedbackSubmitPage />
+      </Route>
 
       {isAdmin && (
         <Switch>
