@@ -11,6 +11,7 @@ export const getFeedbackSuggestion = async (id, cookie) => {
   });
 };
 
+
 export const createFeedbackRequest = async (feedbackRequest, cookie) => {
   return resolve({
     method: "post",
@@ -24,6 +25,17 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({
     url: `${feedbackRequestURL}/${id}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+export const getFeedbackRequestsByCreator = async(creatorId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      creatorId: creatorId
+    },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });

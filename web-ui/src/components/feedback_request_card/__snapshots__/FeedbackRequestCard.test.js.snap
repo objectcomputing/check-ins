@@ -26,11 +26,16 @@ exports[`renders correctly 1`] = `
                 className="MuiGrid-root MuiGrid-item"
               >
                 <div
-                  className="MuiAvatar-root MuiAvatar-circle avatar"
+                  className="MuiAvatar-root MuiAvatar-circle"
+                  style={
+                    Object {
+                      "marginRight": "1em",
+                    }
+                  }
                 >
                   <img
                     className="MuiAvatar-img"
-                    src="../../../public/default_profile.jpg"
+                    src="http://localhost:8080/services/member-profiles/member-photos/undefined"
                   />
                 </div>
               </div>
@@ -39,14 +44,10 @@ exports[`renders correctly 1`] = `
               >
                 <p
                   className="MuiTypography-root person-name MuiTypography-body1"
-                >
-                  test
-                </p>
+                />
                 <p
                   className="MuiTypography-root position-text MuiTypography-body1"
-                >
-                  test
-                </p>
+                />
               </div>
               <div
                 className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-4"
@@ -54,7 +55,7 @@ exports[`renders correctly 1`] = `
                 <p
                   className="MuiTypography-root dark-gray-text MuiTypography-body1"
                 >
-                  test
+                  Sample Template
                 </p>
                 <a
                   className="response-link red-text"
