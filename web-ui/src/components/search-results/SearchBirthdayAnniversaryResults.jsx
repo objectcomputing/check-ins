@@ -20,11 +20,11 @@ const SearchBirthdayAnniversaryResults = ({
   anniversary,
   birthday
 }) => {
-  searchAnniversaryResults = searchAnniversaryResults.sort((a, b) => {
+  searchAnniversaryResults.sort((a, b) => {
     return a.tenure - b.tenure;
   });
 
-  searchBirthdayResults = searchBirthdayResults.sort((a, b) => {
+  searchBirthdayResults.sort((a, b) => {
     const adate=new Date(a.birthDay);
     const bdate=new Date(b.birthDay);
     return adate - bdate;
