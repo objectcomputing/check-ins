@@ -1,7 +1,10 @@
 import { resolve } from "./api.js";
+import { getFeedbackTemplateWithQuestions } from './feedbacktemplate.js'
 
 const feedbackSuggestionURL = "/services/feedback/suggestions";
-const feedbackRequestURL = "/services/feedback/requests"
+const feedbackRequestURL = "/services/feedback/requests";
+const answerURL = "/services/feedback/answers";
+const questionAndAnswerURL = "/services/feedback/questions-and-answers"
 
 export const getFeedbackSuggestion = async (id, cookie) => {
   return resolve({
@@ -26,5 +29,84 @@ export const getFeedbackRequestById = async (id, cookie) => {
     url: `${feedbackRequestURL}/${id}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
+  });
+};
+
+export const getAnswerByRequestAndQuestionId = async (requestId, questionId, cookie) => {
+  return resolve({
+    url: `${questionAndAnswerURL}`,
+    responseType: "json",
+    params: {
+      questionId: questionId,
+      requestId: requestId,
+    },
+    headers: { "X-CSRF-Header": cookie }
+  });
+
+}
+
+export const getAllAnswersFromRequestAndQuestionId = async (requestId, questions, cookie) => {
+  let answerReqs = []
+  questions.forEach((question) => {
+    answerReqs.push(resolve({
+      url: `${questionAndAnswerURL}`,
+      responseType: "json",
+      params: {
+        questionId: question.id,
+        requestId: requestId,
+      },
+      headers: { "X-CSRF-Header": cookie }
+    }));
+  });
+
+  return Promise.all(answerReqs).then((res) => {
+    let finalReturn = []
+    res.forEach((questionAnswerPair) => {
+      if (questionAnswerPair && questionAnswerPair.payload && questionAnswerPair.payload.data && !questionAnswerPair.error) {
+        finalReturn.push(questionAnswerPair.payload.data)
+      }
+    })
+    return finalReturn;
+  });
+}
+
+export const getQuestionsByRequestId = async (requestId, cookie) => {
+  const requestReq = getFeedbackRequestById(requestId, cookie);
+  let getFeedbackReq = requestReq.then((requestRes) => {
+    if (requestRes.payload && requestRes.payload.data && !requestRes.error) {
+      return getFeedbackTemplateWithQuestions(requestRes.payload.data.templateId, cookie)
+    }
+  });
+
+  return Promise.all([requestReq, getFeedbackReq]).then(([requestRes, getFeedbackRes]) => {
+    return getFeedbackRes;
+  });
+
+}
+
+export const updateSingleAnswer = (answer, cookie) => {
+  return resolve({
+    url: answerURL,
+    method: "put",
+    responseType: "json",
+    data: answer,
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
+export const saveAllAnswers = (answers, cookie) => {
+  const answerReqs = [];
+  answers.forEach((answer) => {
+    answerReqs.push(resolve({
+      method: "post",
+      url: answerURL,
+      responseType: "json",
+      data: answer,
+      headers: { "X-CSRF-Header": cookie }
+    }));
+  });
+
+ return Promise.all(answerReqs).then((res) => {
+    return res;
   });
 }

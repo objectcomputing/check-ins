@@ -16,7 +16,7 @@ public class FeedbackAnswerUpdateDTO {
     @Schema(description = "unique id of the feedback answer", required = true)
     private UUID id;
 
-    @NotBlank
+    @Nullable
     @Schema(description = "the content of the answer", required = true)
     private String answer;
 
@@ -32,11 +32,12 @@ public class FeedbackAnswerUpdateDTO {
         this.id = id;
     }
 
+    @Nullable
     public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(@Nullable String answer) {
         this.answer = answer;
     }
 

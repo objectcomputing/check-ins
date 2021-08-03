@@ -1,6 +1,8 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
 import io.micronaut.core.annotation.Nullable;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
+import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -14,6 +16,7 @@ import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -85,16 +88,19 @@ public class FeedbackAnswerController {
     }
 
     /**
-     * Get all answers associated with a specific request ID
-     * @param requestId The {@link UUID} of the feedback request
-     * @return list of {@link FeedbackAnswerResponseDTO}
+     * Search for all feedback requests that match the intersection of the provided values
+     * Any values that are null are not applied to the intersection
+     *
+     * @param questionId The attached {@link UUID} of the related question
+     * @param requestId The attached {@link UUID} of the request that corresponds with the answer
+     * @return {@link FeedbackAnswerResponseDTO}
      */
     @Get("/{?questionId,requestId}")
     public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
         return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(answers -> {
-                    List<FeedbackAnswerResponseDTO> dtoList = answers.stream()
+                .map(feedbackAnswers -> {
+                    List<FeedbackAnswerResponseDTO> dtoList = feedbackAnswers.stream()
                             .map(this::fromEntity).collect(Collectors.toList());
                     return (HttpResponse<List<FeedbackAnswerResponseDTO>>) HttpResponse.ok(dtoList);
                 }).subscribeOn(Schedulers.from(executorService));

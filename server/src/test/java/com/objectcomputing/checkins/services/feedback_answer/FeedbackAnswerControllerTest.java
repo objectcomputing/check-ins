@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.*;
@@ -204,6 +205,21 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     }
 
     @Test
+    void testGetByRequestAndQuestionIdAuthorized() {
+        MemberProfile sender = createADefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", feedbackAnswer.getQuestionId(), feedbackAnswer.getRequestId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackAnswerResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackAnswerResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertContentEqualsResponse(feedbackAnswer, response.getBody().get().get(0));
+    }
+
+    @Test
     void testGetByRequestAndQuestionIdAuthorizedRequestOnly() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
@@ -240,8 +256,9 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
                 .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-
         assertUnauthorized(exception);
+
+
     }
 
     @Test
@@ -254,8 +271,9 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
                 .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
-
-        assertEquals("No feedback req with id " + random, exception.getMessage());
+        assertEquals("Cannot find attached request for search", exception.getMessage());
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+
     }
+
 }
