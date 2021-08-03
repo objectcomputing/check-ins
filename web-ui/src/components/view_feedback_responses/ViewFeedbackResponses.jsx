@@ -8,6 +8,7 @@ import queryString from "query-string";
 import {useLocation} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
+import {UPDATE_TOAST} from "../../context/actions";
 //note that request id will be in actual object, so you will need to get information out of request id, template id and state
 
 const useStylesCardContent = makeStyles({
@@ -93,6 +94,7 @@ const ViewFeedbackResponses = () => {
   const csrf = selectCsrfToken(state);
   const location = useLocation();
   const [query, setQuery] = useState({});
+  const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -100,14 +102,27 @@ const ViewFeedbackResponses = () => {
 
   useEffect(() => {
     async function retrieveQuestionsAndAnswers(requests, cookie) {
+      requests = requests ? (Array.isArray(requests) ? requests : [requests]) : [];
       let res = await getQuestionsAndAnswers(requests, cookie);
-      return res.payload && res.payload.data && !res.error
-        ? data
+      return res && res.payload && res.payload.data && !res.error
+        ? res.payload.data
         : null;
     }
 
-    retrieveQuestionsAndAnswers(query.request, csrf);
-  }, []);
+    retrieveQuestionsAndAnswers(query.request, csrf).then((questionsAndAnswers) => {
+      if (questionsAndAnswers) {
+        setAnswers(questionsAndAnswers);
+      } else {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "Failed to retrieve questions and answers"
+          },
+        });
+      }
+    });
+  }, [csrf, query.request]);
 
   return (
     <div className="view-feedback-responses-page">

@@ -66,6 +66,14 @@ export const getFeedbackTemplate = async (feedbackTemplateId, cookie) => {
   });
 };
 
+export const getFeedbackQuestion = async (questionId, cookie) => {
+  return resolve({
+    url: `${templateQuestionsUrl}/${questionId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
 export const getQuestionsOnTemplate = async (templateId, cookie) => {
   return resolve({
     url: templateQuestionsUrl,

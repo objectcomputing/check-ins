@@ -10,10 +10,11 @@ delete from guild;
 delete from member_skills;
 delete from pulse_response;
 delete from questions;
-delete from role;
 delete from role_permissions;
+delete from role;
 delete from team_member;
 delete from team;
+delete from feedback_answers;
 delete from feedback_requests;
 delete from template_questions;
 delete from feedback_templates;
@@ -452,3 +453,13 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, null, 'pending');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('dbd2da2b-df0a-4e11-9fcd-ed0774a5fdea', PGP_SYM_ENCRYPT('They could be better at communicating with the client.','${aeskey}'), '89c8b612-fca8-4144-88cd-176ddfca35ad', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', -0.8);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('766a3a2c-88de-4487-b285-e3c667ffe0e6', PGP_SYM_ENCRYPT('Although their communication skills could be better, they embody the value of "all of us is better than any one of us" by being a great team player.','${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', -0.7);
