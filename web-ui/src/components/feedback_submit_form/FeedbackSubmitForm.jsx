@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import PropTypes from "prop-types";
 import { green } from '@material-ui/core/colors';
-import FeedbackSubmitQuestion from "../feedback_submit_question/FeedbackSubmitQuestion";
 import Button from "@material-ui/core/Button";
 import "./FeedbackSubmitForm.css";
 import { Alert, AlertTitle } from "@material-ui/lab";
@@ -12,12 +11,11 @@ import { blue } from "@material-ui/core/colors";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import { UPDATE_TOAST } from "../../context/actions";
 import {
   getAllAnswersFromRequestAndQuestionId,
   saveAllAnswers,
   getQuestionsByRequestId,
-  getAnswerByRequestAndQuestionId,
   updateSingleAnswer
 } from "../../api/feedback";
 import TextField from "@material-ui/core/TextField";
@@ -76,7 +74,7 @@ const propTypes = {
 }
 
 const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const classes = useStyles();
   const [isReviewing, setIsReviewing] = useState(false);
@@ -86,7 +84,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
 
 
   const updateAnswer = debounce(async () => {
-    console.log("update " + questionAnswerPairs[currentlyBeingEdited].answer.answer.toString())
     if (csrf) {
       const res = await updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
       return res;
@@ -99,12 +96,23 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
       answers.push(questionAnswerPairs[i].answer)
     }
     const res = await saveAllAnswers(answers, csrf)
-    console.log(res);
+    return res;
   }
 
   const onSubmitHandler =() => {
-    updateAllAnswers().then((result) => {
-      console.log("Update all answers result" + JSON.stringify(result))
+    updateAllAnswers().then((res) => {
+      for (let i = 0; i < res.length; ++i ) {
+        if (res[i].error) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: res[i].error,
+            },
+          });
+          return;
+        }
+      }
       history.push(`/feedback/submit/confirmation/?request=${requestId}`)
     })
   }
@@ -119,10 +127,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
 
   }
 
-  useEffect(() => {
-    console.log("question answer apirs : " + JSON.stringify(questionAnswerPairs))
-
-  }, [questionAnswerPairs])
 
 
 
@@ -145,7 +149,6 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
     if (csrf) {
       getQuestions(requestId, csrf).then((questionsList) => {
         getAnswers(questionsList).then((answers) => {
-          console.log("Answers " + JSON.stringify(answers))
           setQuestionAnswerPairs(answers)
         })
       });
