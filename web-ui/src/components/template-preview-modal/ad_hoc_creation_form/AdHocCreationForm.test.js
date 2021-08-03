@@ -3,7 +3,7 @@ import AdHocCreationForm from "./AdHocCreationForm";
 import { AppContextProvider } from "../../../context/AppContext";
 
 
-it("renders the feedback tips component.", () => {
+it("renders the feedback Ad Hoc creation component.", () => {
   shallowSnapshot(
     <AppContextProvider >
       <AdHocCreationForm/>
