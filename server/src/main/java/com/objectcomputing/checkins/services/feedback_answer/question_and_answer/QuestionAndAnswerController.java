@@ -7,12 +7,12 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 import java.net.URI;
 import java.util.List;

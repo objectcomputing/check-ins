@@ -3,7 +3,7 @@ import { chain } from "lodash";
 import {getFeedbackQuestion} from "./feedbacktemplate";
 
 const feedbackAnswerUrl = "/services/feedback/answers";
-const templateQuestionsUrl = "/services/feedback/template_questions";
+const questionsAndAnswersUrl = "/services/feedback/questions-and-answers";
 
 export const createFeedbackAnswer = async (feedbackAnswer, cookie) => {
   return resolve({
@@ -45,7 +45,28 @@ export const getAnswersFromRequest = async (feedbackRequestId, cookie) => {
 //   return Promise.all(feedbackRequests.map((request) => getFeedbackQuestion(request, cookie)));
 // }
 
+export const getQuestionAndAnswer = async (requestId, cookie) => {
+  return resolve({
+    url: questionsAndAnswersUrl,
+    params: {
+      requestId: requestId
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
+
 export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
+  const qnaReqs = feedbackRequests.map((request) => {
+    return getQuestionAndAnswer(request);
+  });
+
+  Promise.all(qnaReqs).then((qnaRes) => {
+    console.log(qnaRes);
+  });
+}
+
+export const getQuestionsAndAnswersLegacy = async (feedbackRequests, cookie) => {
 
   const answerReqs = feedbackRequests.map((request) => {
     return getAnswersFromRequest(request, cookie);
