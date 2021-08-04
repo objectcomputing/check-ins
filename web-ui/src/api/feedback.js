@@ -110,3 +110,14 @@ export const saveAllAnswers = (answers, cookie) => {
     return res;
   });
 }
+
+export const getFeedbackRequestsByCreator = async(creatorId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      creatorId: creatorId
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
