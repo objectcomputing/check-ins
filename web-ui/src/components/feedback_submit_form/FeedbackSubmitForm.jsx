@@ -139,7 +139,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
     }
 
     async function getAnswers(questionsList) {
-      if (!questionsList || questionsList === undefined) {
+      if (!questionsList) {
         return;
       }
       const res = await getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
