@@ -11,7 +11,6 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Named;
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -36,9 +35,7 @@ public class QuestionAndAnswerController {
     public Single<HttpResponse<QuestionAndAnswerServices.Tuple>> getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
         return Single.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(pair -> (HttpResponse<QuestionAndAnswerServices.Tuple>) HttpResponse
-                        .created((pair))
-                        .headers(headers -> headers.location(URI.create("/feedback-pair/"))))
+                .map(pair -> (HttpResponse<QuestionAndAnswerServices.Tuple>) HttpResponse.ok(pair))
                 .subscribeOn(Schedulers.from(executorService));
     }
 
