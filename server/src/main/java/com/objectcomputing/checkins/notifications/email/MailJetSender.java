@@ -30,19 +30,21 @@ public class MailJetSender implements EmailSender {
      * @param content {@link String} Contents of email
      */
     // emailAddressToBodiesMap is email, address, email body
-    public void sendEmail(String subject, String content) {
+    public void sendEmail(String subject, String content, String... recipients) {
         MailjetRequest request;
         MailjetResponse response;
         try {
+            JSONArray recipientList = new JSONArray();
+            for (String recipient: recipients){
+                recipientList.put(new JSONObject().put("Email", recipient));
+            }
             request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
                                             .put("Email", "kimberlinm@objectcomputing.com")
                                             .put("Name", "Michael Kimberlin"))
-                                    .put(Emailv31.Message.TO, new JSONArray()
-                                            .put(new JSONObject()
-                                                    .put("Email", "hr@objectcomputing.com")))
+                                    .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
             response = client.post(request);
