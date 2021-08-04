@@ -58,14 +58,13 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
       }
 
       return qna.payload.data.map((obj) => {
-        let thing = {
+        return {
           answer: {
             ...obj.answer,
             responder: obj.request.recipientId
           },
           ...obj.question
         }
-        return thing;
       });
     });
 
