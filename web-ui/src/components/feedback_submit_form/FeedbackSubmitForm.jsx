@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import PropTypes from "prop-types";
@@ -10,6 +10,9 @@ import {Alert, AlertTitle} from "@material-ui/lab";
 import InfoIcon from '@material-ui/icons/Info';
 import { blue } from "@material-ui/core/colors";
 import {useHistory} from "react-router-dom";
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
+import {getQuestionsByRequestId} from "../../api/feedback";
 
 
 const useStyles = makeStyles({
@@ -34,21 +37,6 @@ const useStyles = makeStyles({
     margin: "3em 1em 1em 1em"
   }
 });
-
-const sampleQuestions = [
-  {
-    id: 1,
-    question: "How are you doing today?"
-  },
-  {
-    id: 2,
-    question: "How is the project going?"
-  },
-  {
-    id: 3,
-    question: "What is your current role on the team?"
-  }
-];
 
 const randomTip = [
   'Take a Positive Approach.',
@@ -78,63 +66,80 @@ const propTypes = {
   requestId: PropTypes.string.isRequired,
 }
 
-const FeedbackSubmitForm = (props) => {
+const FeedbackSubmitForm = ({requesteeName, requestId}) => {
+  const {state} = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
   const classes = useStyles();
-  const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${props.requestId}`);
+  const handleClick = () => history.push(`/feedback/submit/confirmation/?request=${requestId}`);
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
+  const [questions, setQuestions] = useState([]);
 
-    return (
-        <div className="submit-form">
-          <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{props.requesteeName}</b></Typography>
-          <div className="wrapper">
-            <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
-            <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
-          </div>
+  useEffect(() => {
+    async function getQuestions(requestId, cookie) {
+      if (!requestId) return;
+      const res = await getQuestionsByRequestId(requestId, cookie);
+      let questionsList = res.questions ? res.questions : [];
+      return questionsList;
+    }
+    if (csrf) {
+      getQuestions(requestId, csrf).then((questionsList) => {
+        setQuestions(questionsList);
+      });
+    }
+  }, [requestId, csrf]);
+
+  return (
+      <div className="submit-form">
+        <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
+        <div className="wrapper">
+          <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
+          <Typography className={classes.tip}><b>Tip of the day: </b>{tip}</Typography>
+        </div>
+        {isReviewing ?
+          <Alert className={classes.warning} severity="warning">
+            <AlertTitle>Notice!</AlertTitle>
+            Feedback is not anonymous, and can be seen by more than just the feedback requester.
+            <strong> Be mindful of your answers.</strong>
+          </Alert> : null
+        }
+        {questions.map((question) => (
+          <FeedbackSubmitQuestion
+              key={question.id}
+              question={question.question}
+              questionNumber={question.questionNumber}
+              editable={!isReviewing}
+          />
+        ))}
+        <div className="submit-action-buttons">
           {isReviewing ?
-            <Alert className={classes.warning} severity="warning">
-              <AlertTitle>Notice!</AlertTitle>
-              Feedback is not anonymous, and can be seen by more than just the feedback Requester.
-              <strong> Be mindful of your answers.</strong>
-            </Alert> : null
-          }
-          {sampleQuestions.map((sampleQuestion) => (
-              <FeedbackSubmitQuestion
-                  key={sampleQuestion.id}
-                  question={sampleQuestion.question}
-                  questionNumber={sampleQuestion.id}
-                  editable={!isReviewing}
-              />
-          ))}
-          <div className="submit-action-buttons">
-            {isReviewing ?
-                <React.Fragment>
-                  <ColorButton
-                      className={classes.button}
-                      onClick={() => setIsReviewing(false)}
-                      variant="contained"
-                      color="primary">
-                    Edit
-                  </ColorButton>
-                  <Button
-                      className={classes.button}
-                      onClick={handleClick}
-                      variant="contained"
-                      color="primary">
-                    Submit
-                  </Button>
-                </React.Fragment> :
+              <React.Fragment>
                 <ColorButton
                     className={classes.button}
-                    onClick={() => setIsReviewing(true)}
+                    onClick={() => setIsReviewing(false)}
                     variant="contained"
                     color="primary">
-                  Review
+                  Edit
                 </ColorButton>
-            }
-          </div>
+                <Button
+                    className={classes.button}
+                    onClick={handleClick}
+                    variant="contained"
+                    color="primary">
+                  Submit
+                </Button>
+              </React.Fragment> :
+              <ColorButton
+                  className={classes.button}
+                  onClick={() => setIsReviewing(true)}
+                  variant="contained"
+                  color="primary">
+                Review
+              </ColorButton>
+          }
         </div>
-    );
+      </div>
+  );
 };
 
 FeedbackSubmitForm.propTypes = propTypes;
