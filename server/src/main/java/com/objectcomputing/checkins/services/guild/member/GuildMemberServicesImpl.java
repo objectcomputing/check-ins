@@ -44,6 +44,10 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         final UUID guildId = guildMember.getGuildId();
         final UUID memberId = guildMember.getMemberId();
         Optional<Guild> guild = guildRepo.findById(guildId);
+        MemberProfile currentUser = currentUserServices.getCurrentUser();
+
+        Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
+        boolean isLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
 
         if (guild.isEmpty()) {
             throw new BadArgException(String.format("Guild %s doesn't exist", guildId));
@@ -53,8 +57,14 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (guildMemberRepo.findByGuildIdAndMemberId(guildMember.getGuildId(), guildMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in guild %s", memberId, guildId));
-        } else if (!currentUserServices.isAdmin() && guildMember.isLead()) {
+        }
+        // only allow admins to create guild leads
+        else if (!currentUserServices.isAdmin() && guildMember.isLead()) {
             throw new BadArgException("You are not authorized to perform this operation");
+        }
+        // only admins and leads can add members to guilds unless a user adds themself
+        else if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead){
+            throw new PermissionException("You are not authorized to perform this operation");
         }
 
         GuildMember guildMemberSaved = guildMemberRepo.save(guildMember);
@@ -116,11 +126,11 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         MemberProfile currentUser = currentUserServices.getCurrentUser();
         GuildMember guildMember = guildMemberRepo.findById(id).orElse(null);
 
-        if (guildMember == null) throw new BadArgException(String.format("Unable to locate guildMember with id %s", id));
+        if (guildMember == null) throw new NotFoundException(String.format("Unable to locate guildMember with id %s", id));
 
         Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
         boolean isLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
-        // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild
+        // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
         if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead) {
             throw new PermissionException("You are not authorized to perform this operation");
         }
