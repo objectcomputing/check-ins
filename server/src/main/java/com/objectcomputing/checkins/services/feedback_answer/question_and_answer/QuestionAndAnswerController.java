@@ -1,7 +1,4 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
-
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerResponseDTO;
-import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -18,7 +15,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 @Controller("/services/feedback/questions-and-answers")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -36,7 +32,6 @@ public class QuestionAndAnswerController {
         this.executorService = executorService;
     }
 
-
     @Get("/{?requestId,questionId}")
     public Single<HttpResponse<QuestionAndAnswerServices.Tuple>> getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId) {
         return Single.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
@@ -44,6 +39,14 @@ public class QuestionAndAnswerController {
                 .map(pair -> (HttpResponse<QuestionAndAnswerServices.Tuple>) HttpResponse
                         .created((pair))
                         .headers(headers -> headers.location(URI.create("/feedback-pair/"))))
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+    @Get("/{requestId}")
+    public Single<HttpResponse<List<QuestionAndAnswerServices.Tuple>>> getAllQuestionsAndAnswers(@Nullable UUID requestId) {
+        return Single.fromCallable(() -> questionAndAnswerServices.getAllQuestionsAndAnswers(requestId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(answerPairs -> (HttpResponse<List<QuestionAndAnswerServices.Tuple>>) HttpResponse.ok(answerPairs))
                 .subscribeOn(Schedulers.from(executorService));
     }
 }

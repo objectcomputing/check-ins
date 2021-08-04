@@ -1,6 +1,5 @@
 import { resolve } from "./api.js";
 import { chain } from "lodash";
-import {getFeedbackQuestion} from "./feedbacktemplate";
 
 const feedbackAnswerUrl = "/services/feedback/answers";
 const questionsAndAnswersUrl = "/services/feedback/questions-and-answers";
@@ -34,23 +33,9 @@ export const getAnswersFromRequest = async (feedbackRequestId, cookie) => {
   });
 }
 
-// export const getAllAnswers = async (feedbackRequests, cookie) => {
-//
-//   console.log(feedbackRequests[0]);
-//   getAnswersFromRequest(feedbackRequests[0], cookie).then((res) => {
-//     console.log(res);
-//   })
-//
-//   console.log(feedbackRequests.map(request => getFeedbackQuestion(request, cookie)));
-//   return Promise.all(feedbackRequests.map((request) => getFeedbackQuestion(request, cookie)));
-// }
-
 export const getQuestionAndAnswer = async (requestId, cookie) => {
   return resolve({
-    url: questionsAndAnswersUrl,
-    params: {
-      requestId: requestId
-    },
+    url: `${questionsAndAnswersUrl}/${requestId}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie }
   });
@@ -58,66 +43,63 @@ export const getQuestionAndAnswer = async (requestId, cookie) => {
 
 export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
   const qnaReqs = feedbackRequests.map((request) => {
-    return getQuestionAndAnswer(request);
+    return getQuestionAndAnswer(request, cookie);
   });
 
-  Promise.all(qnaReqs).then((qnaRes) => {
-    console.log(qnaRes);
-  });
-}
+  return Promise.all(qnaReqs).then((qnaRes) => {
+    if (!qnaRes || qnaRes.error) {
+      return null;
+    }
 
-export const getQuestionsAndAnswersLegacy = async (feedbackRequests, cookie) => {
-
-  const answerReqs = feedbackRequests.map((request) => {
-    return getAnswersFromRequest(request, cookie);
-  });
-
-  Promise.all(answerReqs).then((responses) => {
-    return responses.map((res) => res.payload.data);
-  }).then(([answers]) => {
-    const questionsAndAnswers = chain(answers)
-      .groupBy("questionId")
-      .map((value, key) => ({ questionId: key, answers: value }))
-      .value();
-
-    const questionReqs = questionsAndAnswers.map((qna) => {
-      return getFeedbackQuestion(qna.questionId, cookie);
-    });
-
-    Promise.all(questionReqs).then((questionResponses) => {
-      console.log(questionResponses);
-      const questions = questionResponses.map((questionRes) => questionRes.payload.data);
-      console.log(questions);
-      for (let question of questions) {
-        console.log(question);
-        const qnaData = questionsAndAnswers.map((qna) => {
-
-        })
+    // Destructure question data to top of object
+    const questionsAndAnswers = qnaRes.map((qna) => {
+      if (!qna || !qna.payload || !qna.payload.data) {
+        return null;
       }
+
+      return qna.payload.data.map((obj) => {
+        let thing = {
+          answer: {
+            ...obj.answer,
+            responder: obj.request.recipientId
+          },
+          ...obj.question
+        }
+        return thing;
+      });
     });
 
+    // Destructure arrays of questions to prepare for grouping
+    const responses = [];
+    questionsAndAnswers.forEach((quesAndAns) => {
+      responses.push(...quesAndAns);
+    });
+
+    // Chain questions and answers so that questions are a top level, while answers are a property of the top level object
+    return chain(responses)
+      .groupBy("id")
+      .map((val, key) => {
+        // Obtain array of answers that are related to this question
+        let answersForThisQuestion = val.map((val) => {
+          return {
+            id: val.answer.id,
+            answer: val.answer.answer,
+            requestId: val.answer.requestId,
+            sentiment: val.answer.sentiment,
+            responder: val.answer.responder
+          }
+        });
+
+        // Map aforementioned array of answers to a top-level question object that they all share
+        const [questionInfo] = val;
+        return {
+          id: key,
+          question: questionInfo.question,
+          questionNumber: questionInfo.questionNumber,
+          templateId: questionInfo.templateId,
+          answers: answersForThisQuestion,
+        };
+      })
+      .value();
   });
-
-  // return Promise.all(answerReqs).then((res) => {
-  //   console.log(res);
-  //   const questionsAndAnswers = groupBy(res.payload.data, "questionId");
-  //   console.log(questionsAndAnswers);
-  //   return questionsAndAnswers;
-  // }).then((res) => {
-  //   console.log(res);
-  //   const questionReqs = [];
-    // for (let obj of res) {
-    //   const question = await getFeedbackQuestion(obj.templateId);
-    // }
-    // console.log(questionReqs);
-    //
-    // return Promise.all(questionReqs).then((questionsRes) => {
-    //   for (let question of questionsRes) {
-    //
-    //   }
-    // });
-  // }).catch((error) => {
-  //   console.error(error);
-  // });
-
 }

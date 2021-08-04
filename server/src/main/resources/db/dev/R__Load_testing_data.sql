@@ -454,6 +454,11 @@ INSERT INTO feedback_requests
 VALUES
 ('ab7b21d4-f88c-4494-9b0b-8541636025eb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, null, 'pending');
 
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('2dd2347a-c296-4986-b428-3fbf6a24ea1e', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '43ee8e79-b33d-44cd-b23c-e183894ebfef', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, null, 'pending');
+
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
@@ -462,4 +467,9 @@ VALUES
 INSERT INTO feedback_answers
 (id, answer, question_id, request_id, sentiment)
 VALUES
-('766a3a2c-88de-4487-b285-e3c667ffe0e6', PGP_SYM_ENCRYPT('Although their communication skills could be better, they embody the value of "all of us is better than any one of us" by being a great team player.','${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', -0.7);
+('766a3a2c-88de-4487-b285-e3c667ffe0e6', PGP_SYM_ENCRYPT('Although their communication skills could be better, they embody the value of "all of us is better than any one of us" by being a great team player.','${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', 0.1);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('e937b408-4583-4651-a1ab-1344d60ad9ef', PGP_SYM_ENCRYPT('They do an okay job of innovating courageously, but they do not work well with others', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '2dd2347a-c296-4986-b428-3fbf6a24ea1e', -0.7);
