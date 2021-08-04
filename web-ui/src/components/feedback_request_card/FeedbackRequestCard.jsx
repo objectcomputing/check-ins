@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@material-ui/core/Card';
@@ -67,22 +67,41 @@ const useStylesText = makeStyles({
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
-  responses: PropTypes.arrayOf(PropTypes.object).isRequired
+  responses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  sortType: PropTypes.oneOf(["sent_date", "submission_date", "recipient_name_alphabetical", "recipient_name_reverse_alphabetical"])
 };
 
-const FeedbackRequestCard = (props) => {
+const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType }) => {
   const classes = useStyles();
   const {state} = useContext(AppContext);
-  const requesteeProfile = selectProfile(state, props.requesteeId);
+  const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
   useStylesCardActions();
   useStylesText();
   useStylesCardContent();
   const [expanded, setExpanded] = React.useState(false);
+  const [sortedResponses, setSortedResponses] = useState(responses);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  // Sort the responses by either the send date or the submit date
+  useEffect(() => {
+    const responsesCopy = [...sortedResponses];
+    let sortMethod = null;
+    if (sortType === "sent_date") {
+      sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1: 1);
+    } else if (sortType === "submission_date") {
+      sortMethod = ((a, b) => (new Date(a.submitDate) > new Date(b.submitDate)) ? -1: 1);
+    } else if (sortType === "recipient_name_alphabetical") {
+      sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
+    } else if (sortType === "recipient_name_reverse_alphabetical") {
+      sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+    }
+    responsesCopy.sort(sortMethod);
+    setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType, responses]);
 
   return (
     <div className="feedback-request-card">
@@ -104,7 +123,7 @@ const FeedbackRequestCard = (props) => {
                     <Typography className="position-text">{requesteeProfile?.title}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
-                    <Typography className="dark-gray-text">{props.templateName}</Typography>
+                    <Typography className="dark-gray-text">{templateName}</Typography>
                     <Link to="" className="response-link red-text">View all responses</Link>
                   </Grid>
                 </Grid>
@@ -124,7 +143,7 @@ const FeedbackRequestCard = (props) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            {props?.responses?.map((response) => (
+            {sortedResponses?.map((response) => (
               <FeedbackRequestSubcard
                 key={response.id}
                 request={response}

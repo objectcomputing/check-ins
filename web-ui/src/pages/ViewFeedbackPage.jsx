@@ -54,6 +54,12 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
+  const [sortValue, setSortValue] = useState("sent_date")
+
+  const selectSortChangeHandler = (sortValue) => {
+    setSortValue(sortValue)
+
+  }
 
   useEffect(() => {
     const getFeedbackRequests = async(creatorId) => {
@@ -148,10 +154,13 @@ const ViewFeedbackPage = () => {
       <FeedbackRequestCard
         key={`${request?.requesteeId}-${request?.templateId}`}
         requesteeId={request?.requesteeId}
-        templateName={request?.templateInfo.title}
-        responses={request?.responses}/>
+        templateName={request?.templateInfo?.title}
+        responses={request?.responses}
+        sortType={sortValue}
+
+      />
       ));
-  }, [searchText, feedbackRequests, classes.notFoundMessage]);
+  }, [searchText, sortValue, feedbackRequests, classes.notFoundMessage]);
 
   return (
     <div className="view-feedback-page">
@@ -190,18 +199,24 @@ const ViewFeedbackPage = () => {
             </TextField>
           </FormControl>
 
-          <FormControl className={classes.textField}>
+          <FormControl
+            className={classes.textField}
+            value={sortValue}
+            >
             <TextField
               id="select-sort-method"
               select
               fullWidth
+              onChange={(e) => selectSortChangeHandler(e.target.value)}
+              defaultValue={"sent_date"}
               size="small"
               label="Sort by"
-              value={"sent_date"}
               variant="outlined"
             >
               <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
               <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
+              <MenuItem value={"recipient_name_alphabetical"}>Recipient name (A-Z)</MenuItem>
+              <MenuItem value={"recipient_name_reverse_alphabetical"}>Recipient name (Z-A)</MenuItem>
             </TextField>
           </FormControl>
         </div>
