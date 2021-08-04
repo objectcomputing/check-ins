@@ -966,9 +966,10 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                   </div>
                 </div>
               </div>
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                href="/feedback/view"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -996,7 +997,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                 <span
                   className="MuiTouchRipple-root"
                 />
-              </div>
+              </a>
               <div
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
@@ -1341,9 +1342,10 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                   </div>
                 </div>
               </div>
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                href="/feedback/view"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -1371,7 +1373,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                 <span
                   className="MuiTouchRipple-root"
                 />
-              </div>
+              </a>
               <div
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
@@ -1783,9 +1785,10 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                   </div>
                 </div>
               </div>
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                href="/feedback/view"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -1810,7 +1813,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-              </div>
+              </a>
             </nav>
           </div>
         </div>
@@ -2042,9 +2045,10 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                   </div>
                 </div>
               </div>
-              <div
+              <a
                 aria-disabled={false}
                 className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                href="/feedback/view"
                 onBlur={[Function]}
                 onClick={[Function]}
                 onDragLeave={[Function]}
@@ -2069,7 +2073,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                     FEEDBACK
                   </span>
                 </div>
-              </div>
+              </a>
             </nav>
           </div>
         </div>

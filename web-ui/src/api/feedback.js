@@ -55,3 +55,14 @@ export const getQuestionsByRequestId = async (requestId, cookie) => {
   });
 
 }
+
+export const getFeedbackRequestsByCreator = async(creatorId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      creatorId: creatorId
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}

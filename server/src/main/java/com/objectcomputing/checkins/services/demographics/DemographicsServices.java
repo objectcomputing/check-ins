@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.demographics;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
