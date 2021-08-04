@@ -38,7 +38,7 @@ export default function Routes() {
         </Header>
         <GuildsPage />
       </Route>
-      <Route exact path={["/home", "/"]}>
+      <Route exact path="/">
         <Header />
         <HomePage />
       </Route>
