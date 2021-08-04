@@ -238,11 +238,11 @@ const FeedbackRequestPage = () => {
     history.push({ ...location, search: queryString.stringify(query) });
   }, [activeStep, query, location, history]);
 
-  const softDeleteAdHoc = async (creatorId) => {
+  const softDeleteAdHoc = useCallback(async (creatorId) => {
     if (csrf) {
       await softDeleteAdHocTemplates(creatorId, csrf);
     }
-  }
+  }, [csrf]);
 
   const sendFeedbackRequest = async (feedbackRequest) => {
     if (csrf) {
@@ -289,18 +289,20 @@ const FeedbackRequestPage = () => {
     return true;
   }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!urlIsValid()) {
       dispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "error",
-        toast: "An error has occurred with the URL",
-      },
-    });
-      history.push("/checkins");
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "An error has occurred with the URL",
+        },
+      });
+      softDeleteAdHoc(currentUserId).then(() => {
+        history.push("/checkins");
+      });
     }
-  }, [history, urlIsValid, dispatch]);
+  }, [history, urlIsValid, dispatch, softDeleteAdHoc, currentUserId]);
 
   useEffect(()=> {
     setReadyToProceed(canProceed());
