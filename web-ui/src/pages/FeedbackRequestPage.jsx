@@ -204,7 +204,8 @@ const FeedbackRequestPage = () => {
   }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
   const handleSubmit = () => {
-    for (const recipient of fromQuery) {
+    const from = fromQuery ? (Array.isArray(fromQuery) ? fromQuery : [fromQuery]) : [];
+    for (const recipient of from) {
        const feedbackRequest = {
          id: null,
          creatorId: currentUserId,
@@ -239,12 +240,11 @@ const FeedbackRequestPage = () => {
 
   const softDeleteAdHoc = async (creatorId) => {
     if (csrf) {
-      let res = await softDeleteAdHocTemplates(creatorId, csrf);
-      console.log("soft delete ad hoc result :" + res)
+      await softDeleteAdHocTemplates(creatorId, csrf);
     }
   }
 
-  const sendFeedbackRequest = async(feedbackRequest) => {
+  const sendFeedbackRequest = async (feedbackRequest) => {
     if (csrf) {
       let res = await createFeedbackRequest(feedbackRequest, csrf);
       let data =

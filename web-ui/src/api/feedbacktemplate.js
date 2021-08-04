@@ -113,10 +113,7 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
 export const softDeleteAdHocTemplates = async (creatorId, cookie) => {
   return resolve({
     method: "delete",
-    url: feedbackTemplateUrl,
-    params: {
-      creatorId: creatorId,
-    },
+    url: `${feedbackTemplateUrl}/creator/${creatorId}`,
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });

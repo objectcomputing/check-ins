@@ -2,7 +2,7 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 public interface FeedbackTemplateServices {
 

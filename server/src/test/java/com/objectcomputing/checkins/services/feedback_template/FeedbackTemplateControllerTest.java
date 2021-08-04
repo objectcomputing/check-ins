@@ -530,7 +530,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         templateTwo.setIsAdHoc(true);
         getFeedbackTemplateRepository().save(templateTwo);
 
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
 
@@ -549,7 +549,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         templateTwo.setIsAdHoc(true);
         getFeedbackTemplateRepository().save(templateTwo);
 
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
                 .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpResponse<FeedbackTemplateResponseDTO> response = client.toBlocking().exchange(request, FeedbackTemplateResponseDTO.class);
 
@@ -569,7 +569,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         templateTwo.setIsAdHoc(true);
         getFeedbackTemplateRepository().save(templateTwo);
 
-        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/?creatorId=%s", memberOne.getId()))
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/creator/%s", memberOne.getId()))
                 .basicAuth(unrelatedUser.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
         final HttpClientResponseException exception = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
