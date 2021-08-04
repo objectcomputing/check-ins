@@ -168,7 +168,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return feedbackReqList;
     }
 
-    private boolean createIsPermitted(@NotNull UUID requesteeId) {
+    private boolean createIsPermitted(UUID requesteeId) {
         final boolean isAdmin = currentUserServices.isAdmin();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         final UUID requesteePDL = memberProfileServices.getById(requesteeId).getPdlId();
@@ -177,7 +177,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         return isAdmin || currentUserId.equals(requesteePDL);
     }
 
-    private boolean getIsPermitted(@NotNull UUID requesteeId, @NotNull UUID recipientId, LocalDate sendDate) {
+    private boolean getIsPermitted(UUID requesteeId, UUID recipientId, LocalDate sendDate) {
         LocalDate today = LocalDate.now();
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 

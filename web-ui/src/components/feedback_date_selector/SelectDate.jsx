@@ -1,11 +1,8 @@
 import React, {useCallback, useEffect, useRef} from "react";
-import {
-  DatePicker,
-} from '@material-ui/pickers';
+import {DatePicker} from '@material-ui/pickers';
 import { makeStyles } from "@material-ui/core/styles";
-import queryString from "query-string";
-import {useHistory, useLocation} from "react-router-dom";
 import DateFnsUtils from "@date-io/date-fns";
+import PropTypes from "prop-types";
 
 const dateUtils = new DateFnsUtils();
 
@@ -21,39 +18,38 @@ pickerContain: {
  }
 });
 
-const SelectDate = () =>{
+const propTypes = {
+  changeQuery: PropTypes.func.isRequired,
+  sendDateQuery: PropTypes.string,
+  dueDateQuery: PropTypes.string
+};
+
+const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
     const classes = useStyles();
-    const location = useLocation();
-    const history = useHistory();
     const hasPushedInitialValues = useRef(false);
-    const query = queryString.parse(location?.search);
     let todayDate = new Date();
-    const sendDate = query.send ? dateUtils.parse(query.send?.toString(), "yyyy-MM-dd"): todayDate ;
-    const dueDate = query.due ? dateUtils.parse(query.due?.toString(), "yyyy-MM-dd"): null;
+    const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "yyyy-MM-dd") : todayDate;
+    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery?.toString(), "yyyy-MM-dd") : null;
 
     useEffect(() => {
-    if (!hasPushedInitialValues.current && sendDate !== null && sendDate!== undefined && dueDate!==undefined) {
-      query.send = dateUtils.format(sendDate, "yyyy-MM-dd");
-      if (dueDate !== null) {
-              query.due = dateUtils.format(dueDate, "yyyy-MM-dd");
+      if (!hasPushedInitialValues.current && sendDate !== null && sendDate !== undefined && dueDate !== undefined) {
+        changeQuery("send", dateUtils.format(sendDate, "yyyy-MM-dd"));
+        if (dueDate !== null) {
+          changeQuery("due", dateUtils.format(dueDate, "yyyy-MM-dd"));
+        }
+        hasPushedInitialValues.current = true;
       }
-        history.push({...location, search: queryString.stringify(query)});
-        hasPushedInitialValues.current=true;
-    }
-    })
-
+    });
 
     const handleDueDateChange = useCallback((date) => {
-      query.due = date ? dateUtils.format(date, "yyyy-MM-dd") : undefined;
-      history.push({...location, search: queryString.stringify(query)});
-    },[location, history, query]);
+      const dueDate = date ? dateUtils.format(date, "yyyy-MM-dd") : null;
+      changeQuery("due", dueDate ? dueDate : undefined);
+    },[changeQuery]);
 
     const handleSendDateChange = useCallback((date) => {
-         query.send = dateUtils.format(date, "yyyy-MM-dd");
-        history.push({...location, search: queryString.stringify(query)});
-    },[location, history, query]);
-
-
+      const sendDate = dateUtils.format(date, "yyyy-MM-dd");
+      changeQuery("send", sendDate);
+    },[changeQuery]);
 
     return (
     <React.Fragment>
@@ -68,9 +64,6 @@ const SelectDate = () =>{
           value={sendDate}
           minDate={dateUtils.date()}
           onChange={handleSendDateChange}
-          KeyboardButtonProps={{
-           'aria-label': 'change date',
-          }}
         />
         <DatePicker
           className= {classes.picker}
@@ -85,11 +78,11 @@ const SelectDate = () =>{
           minDateMessage="Due date must not be prior to the send date"
           clearable={true}
           onChange={handleDueDateChange}
-          KeyboardButtonProps={{
-            'aria-label': 'change date',
-          }}
         />
       </div>
     </React.Fragment>);
 };
+
+SelectDate.propTypes = propTypes;
+
 export default SelectDate;

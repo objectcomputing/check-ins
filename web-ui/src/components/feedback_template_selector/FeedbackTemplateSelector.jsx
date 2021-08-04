@@ -21,7 +21,7 @@ const propTypes = {
   changeQuery: PropTypes.func
 };
 
-  const FeedbackTemplateSelector = ({query, changeQuery}) => {
+const FeedbackTemplateSelector = ({query, changeQuery}) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUser = selectCurrentUser(state);

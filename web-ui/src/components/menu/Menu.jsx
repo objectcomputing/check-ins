@@ -80,12 +80,7 @@ const reportsLinks = [
   ["/skills-reports", "Skills"],
   ["/team-skills-reports", "Team Skills"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
-]
-
-const feedbackLinks = [
-  ["/feedback/request", "REQUEST"],
-  ["/feedback/view", "VIEW"],
-]
+];
 
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
@@ -114,9 +109,6 @@ function Menu() {
   const [reportsOpen, setReportsOpen] = useState(
     isCollapsibleListOpen(reportsLinks, location.pathname)
     );
-  const [feedbackOpen, setFeedbackOpen] = useState(
-    isCollapsibleListOpen(feedbackLinks, location.pathname)
-  );
   const anchorRef = useRef(null);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -144,14 +136,9 @@ function Menu() {
     setDirectoryOpen(!directoryOpen);
   };
 
-  const toggleFeedback = () => {
-    setFeedbackOpen(!feedbackOpen);
-  };
-
   const closeSubMenus = () => {
     setReportsOpen(false);
     setDirectoryOpen(false);
-    setFeedbackOpen(false);
   };
 
   const isLinkSelected = (path) => {
@@ -216,20 +203,7 @@ function Menu() {
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-      {(isAdmin || isPDL) && (
-        <React.Fragment>
-          <ListItem
-            button
-            onClick={toggleFeedback}
-            className={classes.listItem}
-          >
-            <ListItemText primary="FEEDBACK" />
-          </ListItem>
-          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-            {createListJsx(feedbackLinks, true)}
-          </Collapse>
-        </React.Fragment>
-      )}
+      {(isAdmin || isPDL) && createLinkJsx("/feedback/view", "FEEDBACK", false)}
       {isAdmin && (
           <React.Fragment>
             <ListItem

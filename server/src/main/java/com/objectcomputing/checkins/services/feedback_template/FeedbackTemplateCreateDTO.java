@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
