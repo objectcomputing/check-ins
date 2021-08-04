@@ -10,8 +10,8 @@ delete from guild;
 delete from member_skills;
 delete from pulse_response;
 delete from questions;
-delete from role;
 delete from role_permissions;
+delete from role;
 delete from team_member;
 delete from team;
 delete from feedback_requests;
@@ -409,9 +409,9 @@ VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, creator_id, title, description, date_created, updater_id, date_updated, is_public)
 VALUES
-('18ef2032-c264-411e-a8e1-ddda9a714bae', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Q1 Feedback', 'Get feedback for quarter 1', '2021-06-06', null, null);
+('18ef2032-c264-411e-a8e1-ddda9a714bae', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Q1 Feedback', 'Get feedback for quarter 1', '2021-06-06', null, null, true);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
@@ -424,9 +424,9 @@ VALUES
 ('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, creator_id, title, description, date_created, updater_id, date_updated, is_public)
 VALUES
-('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null);
+('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null, true);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
@@ -439,9 +439,19 @@ VALUES
 ('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, creator_id, title, description, date_created, updater_id, date_updated, is_public)
 VALUES
-('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2020-04-04', null, null);
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2020-04-04', null, null, true);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated, is_public)
+VALUES
+('492e4f61-c7e3-4c30-a650-7ec74f2ba545', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'Private template', 'This template is private', '2020-06-07', null, null, false);
+
+INSERT INTO feedback_templates
+(id, creator_id, title, description, date_created, updater_id, date_updated, is_public)
+VALUES
+('c5d10880-f561-11eb-9a03-0242ac130003', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'Private template 2', 'This template is private 2', '2020-06-10', null, null, false);
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
