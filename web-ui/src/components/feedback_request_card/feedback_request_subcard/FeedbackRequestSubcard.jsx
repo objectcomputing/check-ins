@@ -13,6 +13,25 @@ import {Avatar, Tooltip} from "@material-ui/core";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import {getAvatarURL} from "../../../api/api";
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  redTypography: {
+    color: "#FF0000"
+    },
+
+  yellowTypography: {
+      color: "#EE8C00"
+    },
+
+  greenTypography: {
+      color: "#006400"
+    },
+
+  darkGrayTypography: {
+    color: "#333333"
+  }
+});
 
 const dateFns = new DateFnsAdapter();
 
@@ -23,6 +42,7 @@ const propTypes = {
 const FeedbackRequestSubcard = (props) => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
+  const classes = useStyles();
   const recipient = selectProfile(state, props.request?.recipientId);
   const submitDate = props.request?.submitDate ? dateFns.format(new Date(props.request.submitDate.join("-")), "LLLL dd, yyyy") : null;
   const dueDate = props.request?.dueDate ? dateFns.format(new Date(props.request.dueDate.join("-")), "LLLL dd, yyyy"): null;
@@ -60,6 +80,22 @@ const FeedbackRequestSubcard = (props) => {
     handleReminderNotification();
   }
 
+  const Submitted = (props) => {
+      if (props.dueDate) {
+        let today = new Date();
+        let due = new Date(props.dueDate[0], props.dueDate[1] - 1, props.dueDate[2]);
+        if ((!props.submitDate || props.submitDate === undefined) && today > due) {
+          return (
+            <Typography className={classes.redTypography}>Overdue</Typography>
+          )
+        }
+      }
+      if (props.submitDate) {
+        return <Typography className={classes.greenTypography}>Submitted {submitDate}</Typography>
+      } else
+        return <Typography className={classes.yellowTypography}>Not Submitted</Typography>
+    }
+
   return (
     <React.Fragment>
       <Divider className="person-divider"/>
@@ -77,12 +113,14 @@ const FeedbackRequestSubcard = (props) => {
               <Typography className="person-name">{recipient?.name}</Typography>
               <Typography className="position-text">{recipient?.title}</Typography>
             </Grid>
-            <Grid>
-              <Typography>Sent on {sendDate}</Typography>
+            <Grid item xs={3}>
+              <Typography className={classes.darkGrayTypography} variant= "body1">Sent on {sendDate}</Typography>
+              <Typography variant="body2">{props.request?.dueDate ? `Due on ${dueDate}` : "No due date"}</Typography>
             </Grid>
-            <Grid item xs={4} className="align-end">
-              <Typography>{props.request?.dueDate ? `Due on ${dueDate}` : "No due date"}</Typography>
-              <Typography>{props.request?.submitDate ? `Submitted ${submitDate}` : "Not submitted"}</Typography>
+            <Grid item xs={3}>
+              <Submitted dueDate={props.request?.dueDate} submitDate={props.request?.submitDate}/>
+            </Grid>
+            <Grid item xs={2} className="align-end">
               {props.request && !props.request.submitDate &&
                 <Tooltip title={"Send Reminder"} aria-label={"Send Reminder"}>
                   <IconButton
