@@ -113,6 +113,10 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
 export const getAllFeedbackTemplates = async (cookie) => {
   return resolve({
     url: feedbackTemplateUrl,
+    params: {
+      creatorId: null,
+      title: null
+    },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });

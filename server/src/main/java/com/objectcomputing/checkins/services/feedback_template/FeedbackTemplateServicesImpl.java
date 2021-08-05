@@ -7,7 +7,6 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
-
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -55,6 +54,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setTitle(originalTemplate.get().getTitle());
         feedbackTemplate.setDescription(originalTemplate.get().getDescription());
         feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
+        feedbackTemplate.setIsPublic(originalTemplate.get().getIsPublic());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -83,10 +83,6 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
             throw new NotFoundException("No feedback template with ID " + id);
         }
 
-        if (!feedbackTemplate.get().getIsPublic()) {
-            // TODO: Throw exception if not permitted to get private template
-        }
-
         return feedbackTemplate.get();
     }
 
@@ -97,7 +93,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         List <FeedbackTemplate> allTemplates =  feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
         return allTemplates
                 .stream()
-                .filter(template -> !template.getIsPublic() && !isAdmin && !template.getCreatorId().equals(currentUserId))
+                .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
                 .collect(Collectors.toList());
     }
 

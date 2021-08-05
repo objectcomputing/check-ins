@@ -93,6 +93,6 @@ public class FeedbackTemplateResponseDTO {
     }
 
     public void setIsPublic(Boolean isPublic) {
-        isPublic = isPublic;
+        this.isPublic = isPublic;
     }
 }
