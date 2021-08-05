@@ -1,17 +1,16 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,36 +26,36 @@ public class FeedbackRequest {
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
-    @Column(name = "creatorId")
+    @Column(name = "creator_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @Column(name = "requesteeId")
+    @Column(name = "requestee_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
-    @Column(name = "recipientId")
+    @Column(name = "recipient_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @Column(name = "templateId")
+    @Column(name = "template_id")
     @NotBlank
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the template attached to request", required = true)
+    @Schema(description = "id of the template the feedback request references", required = true)
     private UUID templateId;
 
-    @Column(name="sendDate")
+    @Column(name="send_date")
     @NotBlank
     @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
 
-    @Column(name="dueDate")
+    @Column(name="due_date")
     @Nullable
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
@@ -67,18 +66,18 @@ public class FeedbackRequest {
     @Schema(description = "completion status of request", required = true)
     private String status;
 
-    @Column(name = "submitDate")
+    @Column(name = "submit_date")
     @Nullable
     @Schema(description = "date the recipient submitted feedback for the request")
     private LocalDate submitDate;
 
-    public FeedbackRequest(@NotNull UUID creatorId,
-                           @NotNull UUID requesteeId,
-                           @NotNull UUID recipientId,
-                           @NotNull UUID templateId,
-                           @NotNull LocalDate sendDate,
+    public FeedbackRequest(UUID creatorId,
+                           UUID requesteeId,
+                           UUID recipientId,
+                           UUID templateId,
+                           LocalDate sendDate,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status,
+                           String status,
                            @Nullable LocalDate submitDate) {
         this.id = null;
         this.creatorId = creatorId;
@@ -91,29 +90,9 @@ public class FeedbackRequest {
         this.submitDate = submitDate;
     }
 
-    public FeedbackRequest(@NotNull UUID id,
-                           @NotNull UUID creatorId,
-                           @NotNull UUID requesteeId,
-                           @NotNull UUID recipientId,
-                           @NotNull UUID templateId,
-                           @NotNull LocalDate sendDate,
+    public FeedbackRequest(UUID id,
                            @Nullable LocalDate dueDate,
-                           @NotNull String status,
-                           @Nullable LocalDate submitDate) {
-        this.id = id;
-        this.creatorId = creatorId;
-        this.requesteeId = requesteeId;
-        this.recipientId = recipientId;
-        this.templateId = templateId;
-        this.sendDate = sendDate;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.submitDate = submitDate;
-    }
-
-    public FeedbackRequest(@NotNull UUID id,
-                           @Nullable LocalDate dueDate,
-                           @NotNull String status,
+                           String status,
                            @Nullable LocalDate submitDate) {
         this.id = id;
         this.dueDate = dueDate;
@@ -154,6 +133,7 @@ public class FeedbackRequest {
     public void setRecipientId(UUID recipientId) {
         this.recipientId = recipientId;
     }
+
 
     public UUID getTemplateId() {
         return templateId;
@@ -216,7 +196,7 @@ public class FeedbackRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creatorId, recipientId, requesteeId, templateId, sendDate, dueDate, status, submitDate);
+        return Objects.hash(id, creatorId, recipientId, requesteeId, sendDate, templateId, dueDate, status, submitDate);
     }
 
     @Override
@@ -226,7 +206,7 @@ public class FeedbackRequest {
                 ", creatorId=" + creatorId +
                 ", recipientId=" + recipientId +
                 ", requesteeId=" + requesteeId +
-                ", templateId=" + templateId +
+                ", templateId='" + templateId +
                 ", sendDate=" + sendDate +
                 ", dueDate=" + dueDate +
                 ", status='" + status +

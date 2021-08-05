@@ -61,16 +61,16 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         throw new NotFoundException("No active members in the system");
     }
 
-    private MemberProfile saveNewUser(@NotNull String firstName, @NotNull String lastName, @NotNull String workEmail) {
+    private MemberProfile saveNewUser(String firstName, String lastName, String workEmail) {
         MemberProfile emailProfile = memberProfileRepo.findByWorkEmail(workEmail).orElse(null);
         if (emailProfile != null) {
             throw new AlreadyExistsException(String.format("Email %s already exists in database", workEmail));
         }
 
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
-                "", workEmail, "", null, "", null, null, null));
+                "", workEmail, "", null, "", null, null, null, null, null));
 
-        roleServices.save(new Role(RoleType.MEMBER, createdMember.getId()));
+        roleServices.save(new Role(RoleType.MEMBER, "role description", createdMember.getId()));
 
         return createdMember;
     }

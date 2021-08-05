@@ -16,7 +16,6 @@
 .feedback-template-card .card-content {
   display: grid;
   grid-template-rows: 200px 30px;
-  padding-top: 0;
 }
 
 .feedback-template-card .template-details {
@@ -25,14 +24,15 @@
   text-align: center;
   padding-bottom: 0;
   margin-bottom: 0;
+  max-height: 200px;
 }
 
 .feedback-template-card .template-name {
   font-weight: bold;
   font-size: 30px;
   max-height: 90px;
-    padding-bottom: 0;
-    margin: 10px 0 10px 0;
+  padding-bottom: 0;
+  margin: 10px 0 10px 0;
 }
 
 .feedback-template-card .description {
@@ -42,6 +42,33 @@
 .feedback-template-card .creator {
   text-align: left;
   margin: 0;
+}
+
+@media(min-width: 321px) and (max-width: 820px) {
+  .feedback-template-card {
+    width: 100%;
+    padding: 0px;
+  }
+
+  .feedback-template-card .template-name {
+    font-size: large;
+    margin-top: 0;
+  }
+
+  .feedback-template-card .card-content {
+    padding: 0px 10px 10px 10px;
+    grid-template-rows: 110px 15px 15px;
+  }
+
+  .feedback-template-card .description {
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  .feedback-template-card .creator {
+    margin-top: 10px;
+  }
+
 }
 
 

@@ -4,7 +4,7 @@ import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -20,7 +20,7 @@ public interface EmployeeHoursRepository extends CrudRepository<EmployeeHours,UU
     <S extends EmployeeHours> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
 
     @Override
-    <S extends EmployeeHours> S save(@Valid @NotNull @Nonnull S entity);
+    <S extends EmployeeHours> S save(@Valid @NotNull @NonNull S entity);
 
 
 }

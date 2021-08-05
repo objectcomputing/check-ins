@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.PulseResponseFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.type.Argument;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, PulseResponseFixture {
+public class PulseResponseControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, PulseResponseFixture {
 
     @Inject
     @Client("/services/pulse-responses")
@@ -44,7 +45,7 @@ public class PulseResponseControllerTest extends TestContainersSuite implements 
         pulseResponseCreateDTO.setInternalFeelings("internalfeelings");
         pulseResponseCreateDTO.setExternalFeelings("externalfeelings");
 
-        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(MEMBER_ROLE,MEMBER_ROLE);
+        final HttpRequest<PulseResponseCreateDTO> request = HttpRequest.POST("",pulseResponseCreateDTO).basicAuth(memberProfile.getWorkEmail(),MEMBER_ROLE);
         final HttpResponse<PulseResponse> response = client.toBlocking().exchange(request,PulseResponse.class);
 
         PulseResponse pulseResponseResponse = response.body();

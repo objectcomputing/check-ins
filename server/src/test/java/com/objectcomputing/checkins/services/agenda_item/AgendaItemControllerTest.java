@@ -307,14 +307,15 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     @Test
     void testFindAllAgendaItemByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
+        MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfile);
+        createDefaultAdminRole(memberProfileOfUser);
 
-        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
+        CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileOfUser);
 
         AgendaItem agendaItem = createADefaultAgendaItem(checkIn, memberProfile);
 
         final HttpRequest<?> request = HttpRequest.GET("/")
-                .basicAuth(memberProfileForPDL.getWorkEmail(), ADMIN_ROLE);
+                .basicAuth(memberProfileOfUser.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<Set<AgendaItem>> response = client.toBlocking().exchange(request, Argument.setOf(AgendaItem.class));
 
         assertEquals(Set.of(agendaItem), response.body());
@@ -686,6 +687,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile memberProfileOfMrNobody = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfMrNobody);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 
@@ -749,6 +751,7 @@ public class AgendaItemControllerTest extends TestContainersSuite implements Mem
     void testDeleteAAgendaItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
+        createDefaultAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 

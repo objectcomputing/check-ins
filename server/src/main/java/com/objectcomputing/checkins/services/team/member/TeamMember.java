@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,13 +26,13 @@ public class TeamMember {
     private UUID id;
 
     @NotNull
-    @Column(name = "teamId")
+    @Column(name = "teamid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the team this entry is associated with", required = true)
     private UUID teamId;
 
     @NotNull
-    @Column(name = "memberId")
+    @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberId;

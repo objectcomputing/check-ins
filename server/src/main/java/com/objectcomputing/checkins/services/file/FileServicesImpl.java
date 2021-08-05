@@ -20,7 +20,7 @@ import io.micronaut.http.multipart.CompletedFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.*;
@@ -250,7 +250,7 @@ public class FileServicesImpl implements FileServices {
         }
     }
 
-    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+    private void validate(boolean isError, String message, Object... args) {
         if(isError) {
             throw new FileRetrievalException(String.format(message, args));
         }
@@ -264,7 +264,7 @@ public class FileServicesImpl implements FileServices {
         return drive.files().create(fileMetadata).setSupportsAllDrives(true).execute();
     }
 
-    private FileInfoDTO setFileInfo(@NotNull File file, @Nullable CheckinDocument cd) {
+    private FileInfoDTO setFileInfo(File file, CheckinDocument cd) {
         FileInfoDTO dto = new FileInfoDTO();
         dto.setFileId(file.getId());
         dto.setName(file.getName());

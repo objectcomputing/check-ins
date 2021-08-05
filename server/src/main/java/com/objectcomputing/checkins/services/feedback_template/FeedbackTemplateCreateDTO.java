@@ -1,13 +1,10 @@
 package com.objectcomputing.checkins.services.feedback_template;
 
-
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.UUID;
 
 @Introspected
@@ -18,47 +15,47 @@ public class FeedbackTemplateCreateDTO {
     private String title;
 
     @Nullable
-    @Schema(description = "description of the feedback template", required = false)
+    @Schema(description = "description of the feedback template")
     private String description;
 
-    @NotNull
-    @Schema(description = "ID of person who created the feedback template", required = true)
-    private UUID createdBy;
+    @NotBlank
+    @Schema(description = "UUID of person who created the feedback template", required = true)
+    private UUID creatorId;
 
-    @NotNull
-    @Schema(description = "whether the template can still be used", required = true)
+    @NotBlank
+    @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
-
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Nullable
     public String getDescription() {
         return description;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
+    public void setDescription(@Nullable String description) {
+        this.description = description;
+    }
+
+    public UUID getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(UUID creatorId) {
+        this.creatorId = creatorId;
     }
 
     public Boolean getActive() {
         return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

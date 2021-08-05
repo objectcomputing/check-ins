@@ -5,7 +5,7 @@ import io.micronaut.data.annotation.TypeDef;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,13 +27,13 @@ public class GuildMemberHistory {
     private UUID id;
 
     @NotNull
-    @Column(name = "guildId")
+    @Column(name = "guildid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the guild this entry is associated with", required = true)
     private UUID guildId;
 
     @NotNull
-    @Column(name = "memberId")
+    @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the guild member this entry is associated with", required = true)
     private UUID memberId;

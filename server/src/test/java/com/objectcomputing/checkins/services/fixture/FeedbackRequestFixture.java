@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.fixture;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+
 import java.time.LocalDate;
 
 import java.util.UUID;
@@ -10,13 +11,27 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
     /**
      * Creates a sample feedback request
      * @param creator The {@link MemberProfile} of the creator of the feedback request
+     * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @param recipient The {@link MemberProfile} of the member giving feedback
+     * @param templateId The UUID of the FeedbackTemplate
+     * @return The created {@link FeedbackRequest}
+     */
+    default FeedbackRequest createSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
+        LocalDate testDate = LocalDate.of(2010, 10, 8);
+        return new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null);
+    }
+
+    /**
+     * Saves a sample feedback request
+     * @param creator The {@link MemberProfile} of the creator of the feedback request
      * @param recipient The {@link MemberProfile} of the member giving feedback
      * @param requestee The {@link MemberProfile} of the requestee of the feedback request
+     * @param templateId The UUID of the FeedbackTemplate
      * @return The saved {@link FeedbackRequest}
      */
-    default FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
+    default FeedbackRequest saveSampleFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient, UUID templateId) {
         LocalDate testDate = LocalDate.of(2010, 10, 8);
-        return getFeedbackRequestRepository().save(new FeedbackRequest(UUID.randomUUID(), creator.getId(), requestee.getId(), recipient.getId(), UUID.randomUUID(), testDate, null, "pending", null));
+        return getFeedbackRequestRepository().save(new FeedbackRequest(creator.getId(), requestee.getId(), recipient.getId(), templateId, testDate, null, "pending", null));
     }
 
     default MemberProfile createADefaultRecipient() {
@@ -24,7 +39,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
                 null, "Parks Director", null, "Pawnee, Indiana",
                 "ron@objectcomputing.com", "mr-ron-swanson",
                 LocalDate.now(), "enjoys woodworking, breakfast meats, and saxophone jazz",
-                null, null,null));
+                null, null, null, false, false));
     }
 
     default MemberProfile createASecondDefaultRecipient() {
@@ -32,7 +47,7 @@ public interface FeedbackRequestFixture extends RepositoryFixture {
                 null, "Parks Deputy Director", null, "Pawnee, Indiana",
                 "leslie@objectcomputing.com", "ms-leslie-knope",
                 LocalDate.now(), "proud member of numerous action committees",
-                null, null, null));
+                null, null, null, false, false));
     }
 
 }
