@@ -18,15 +18,15 @@ const SearchBirthdayAnniversaryResults = ({
   searchBirthdayResults,
   searchAnniversaryResults,
   anniversary,
-  birthday
+  birthday,
 }) => {
   searchAnniversaryResults.sort((a, b) => {
     return a.tenure - b.tenure;
   });
 
   searchBirthdayResults.sort((a, b) => {
-    const adate=new Date(a.birthDay);
-    const bdate=new Date(b.birthDay);
+    const adate = new Date(a.birthDay);
+    const bdate = new Date(b.birthDay);
     return adate - bdate;
   });
 
@@ -36,7 +36,10 @@ const SearchBirthdayAnniversaryResults = ({
     if (searchBirthdayResults.length > 0) {
       return searchBirthdayResults.map((member) => {
         return (
-          <Card className={"member-birthday-anniversary-card"} key={`card-${member.userId}`}>
+          <Card
+            className={"member-birthday-anniversary-card"}
+            key={`card-${member.userId}`}
+          >
             <CardHeader
               title={
                 <Typography variant="h5" component="h2">

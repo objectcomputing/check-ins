@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 import AdminPage from "../../pages/AdminPage";
 
@@ -6,7 +6,6 @@ import { AppContext } from "../../context/AppContext";
 
 import GroupIcon from "@material-ui/icons/Group";
 import Header from "../header/Header";
-import ProfilePage from "../../pages/ProfilePage";
 import HomePage from "../../pages/HomePage";
 import TeamsPage from "../../pages/TeamsPage";
 import GuildsPage from "../../pages/GuildsPage";
@@ -18,7 +17,7 @@ import EditSkillsPage from "../../pages/EditSkillsPage";
 import SkillReportPage from "../../pages/SkillReportPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
 import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
-import { selectIsAdmin } from '../../context/selectors';
+import { selectIsAdmin } from "../../context/selectors";
 import FeedbackRequestConfirmation from "../feedback_request_confirmation/FeedbackRequestConfirmation";
 import FeedbackRequestPage from "../../pages/FeedbackRequestPage";
 import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
@@ -29,9 +28,9 @@ import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
-  
+
   const isAdmin = selectIsAdmin(state);
-  
+
   return (
     <Switch>
       <Route path="/teams">
@@ -46,7 +45,7 @@ export default function Routes() {
         </Header>
         <GuildsPage />
       </Route>
-      <Route path="/home">
+      <Route exact path="/">
         <Header />
         <HomePage />
       </Route>
@@ -128,14 +127,7 @@ export default function Routes() {
             <FeedbackSubmitPage />
           </Route>
         </Switch>
-        )
-      }
-    
-      <Route path="/">
-        <Header />
-        <ProfilePage />
-      </Route>
-
-  </Switch>
-  )
+      )}
+    </Switch>
+  );
 }

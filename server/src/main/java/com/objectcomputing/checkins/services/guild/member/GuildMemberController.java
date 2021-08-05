@@ -47,8 +47,8 @@ public class GuildMemberController {
     @Post()
     public HttpResponse<GuildMember> createMembers(@Body @Valid GuildMemberCreateDTO guildMember,
                                                   HttpRequest<GuildMemberResponseDTO> request) {
-        GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildid(),
-                guildMember.getMemberid(), guildMember.getLead()));
+        GuildMember newGuildMember = guildMemberServices.save(new GuildMember(guildMember.getGuildId(),
+                guildMember.getMemberId(), guildMember.getLead()));
         return HttpResponse
                 .created(newGuildMember)
                 .headers(headers -> headers.location(
@@ -63,7 +63,7 @@ public class GuildMemberController {
      */
     @Put()
     public HttpResponse<?> updateMembers(@Body @Valid GuildMemberUpdateDTO guildMember, HttpRequest<GuildMember> request) {
-        GuildMember updatedGuildMember = guildMemberServices.update(new GuildMember(guildMember.getId(), guildMember.getGuildid(), guildMember.getMemberid(), guildMember.getLead()));
+        GuildMember updatedGuildMember = guildMemberServices.update(new GuildMember(guildMember.getId(), guildMember.getGuildId(), guildMember.getMemberId(), guildMember.getLead()));
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(
