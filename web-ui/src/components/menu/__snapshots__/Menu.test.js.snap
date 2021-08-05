@@ -146,7 +146,7 @@ exports[`<Menu /> renders correctly 1`] = `
             <a
               aria-disabled={false}
               className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
-              href="/home"
+              href="/"
               onBlur={[Function]}
               onClick={[Function]}
               onDragLeave={[Function]}
@@ -375,7 +375,7 @@ exports[`<Menu /> renders correctly 1`] = `
             <a
               aria-disabled={false}
               className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
-              href="/home"
+              href="/"
               onBlur={[Function]}
               onClick={[Function]}
               onDragLeave={[Function]}

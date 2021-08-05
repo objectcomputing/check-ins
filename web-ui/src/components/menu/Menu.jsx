@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
   subListItem: {
     fontSize: "0.9rem",
-  }
+  },
 }));
 
 const directoryLinks = [
@@ -80,7 +80,7 @@ const reportsLinks = [
   ["/skills-reports", "Skills"],
   ["/team-skills-reports", "Team Skills"],
   ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
-]
+];
 
 const isCollapsibleListOpen = (linksArr, loc) => {
   for (let i = 0; i < linksArr.length; i++) {
@@ -156,7 +156,9 @@ function Menu() {
         onClick={
           isSubLink
             ? undefined
-            : () => { closeSubMenus(); }
+            : () => {
+                closeSubMenus();
+              }
         }
         selected={isLinkSelected(path)}
       >
@@ -187,21 +189,17 @@ function Menu() {
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createLinkJsx("/home", "HOME", false)}
+        {createLinkJsx("/", "HOME", false)}
         {isAdmin && createLinkJsx("/admin", "ADMIN", false)}
         {createLinkJsx("/checkins", "CHECK-INS", false)}
-        <ListItem
-            button
-            onClick={toggleDirectory}
-            className={classes.listItem}
-          >
-            <ListItemText primary="DIRECTORY" />
-          </ListItem>
+        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+          <ListItemText primary="DIRECTORY" />
+        </ListItem>
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-      
-      {isAdmin && (
+
+        {isAdmin && (
           <>
             <ListItem
               button
@@ -215,7 +213,7 @@ function Menu() {
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
           </>
-      )}
+        )}
       </List>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 import AdminPage from "../../pages/AdminPage";
 
@@ -6,7 +6,6 @@ import { AppContext } from "../../context/AppContext";
 
 import GroupIcon from "@material-ui/icons/Group";
 import Header from "../header/Header";
-import ProfilePage from "../../pages/ProfilePage";
 import HomePage from "../../pages/HomePage";
 import TeamsPage from "../../pages/TeamsPage";
 import GuildsPage from "../../pages/GuildsPage";
@@ -18,14 +17,13 @@ import EditSkillsPage from "../../pages/EditSkillsPage";
 import SkillReportPage from "../../pages/SkillReportPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
 import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
-import { selectIsAdmin } from '../../context/selectors';
-
+import { selectIsAdmin } from "../../context/selectors";
 
 export default function Routes() {
   const { state } = useContext(AppContext);
-  
+
   const isAdmin = selectIsAdmin(state);
-  
+
   return (
     <Switch>
       <Route path="/teams">
@@ -40,7 +38,7 @@ export default function Routes() {
         </Header>
         <GuildsPage />
       </Route>
-      <Route path="/home">
+      <Route exact path="/">
         <Header />
         <HomePage />
       </Route>
@@ -86,14 +84,7 @@ export default function Routes() {
             <AdminPage />
           </Route>
         </Switch>
-        )
-      }
-    
-      <Route path="/">
-        <Header />
-        <ProfilePage />
-      </Route>
-
-  </Switch>
-  )
+      )}
+    </Switch>
+  );
 }
