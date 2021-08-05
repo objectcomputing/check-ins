@@ -10,6 +10,7 @@ export const selectCheckins = (state) => state.checkins;
 export const selectCsrfToken = (state) => state.csrf;
 export const selectMemberRoles = (state) => state.roles;
 export const selectTeams = (state) => state.teams;
+export const selectGuilds = (state) => state.guilds;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -297,4 +298,13 @@ export const selectNormalizedTeams = createSelector(
         .replace(/[\u0300-\u036f]/g, "");
       return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
+);
+
+export const selectMyGuilds = createSelector(
+  selectCurrentUserId,
+  selectGuilds,
+  (id, guilds) =>
+    guilds?.filter((guild) =>
+      guild.guildMembers?.some((member) => member.memberId === id)
+    )
 );

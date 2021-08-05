@@ -12,7 +12,12 @@ import {
   UPDATE_SKILLS,
   UPDATE_TEAMS,
 } from "./actions";
-import { getCurrentUser, getAllMembers, getAllRoles, getAllTerminatedMembers } from "../api/member";
+import {
+  getCurrentUser,
+  getAllMembers,
+  getAllRoles,
+  getAllTerminatedMembers,
+} from "../api/member";
 import { getMemberSkills } from "../api/memberskill";
 import { BASE_API_URL } from "../api/api";
 import { getAllGuilds } from "../api/guild";
@@ -24,11 +29,12 @@ const AppContext = React.createContext();
 
 const AppContextProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const userProfile = state && state.userProfile ? state.userProfile : undefined;
+  const userProfile =
+    state && state.userProfile ? state.userProfile : undefined;
   const memberProfile =
     userProfile && userProfile.memberProfile
-    ? userProfile.memberProfile
-    : undefined;
+      ? userProfile.memberProfile
+      : undefined;
 
   const id = memberProfile ? memberProfile.id : undefined;
   const pdlId = memberProfile ? memberProfile.pdlId : undefined;

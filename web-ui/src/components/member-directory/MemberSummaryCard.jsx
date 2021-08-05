@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
-import { selectProfileMap } from "../../context/selectors";
+import { selectIsAdmin, selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
 import { Card, CardHeader } from "@material-ui/core";
@@ -19,6 +19,7 @@ import {
   Typography,
 } from "@material-ui/core";
 
+
 const useStyles = makeStyles(() => ({
   header: {
     cursor: "pointer",
@@ -27,6 +28,7 @@ const useStyles = makeStyles(() => ({
 
 const MemberSummaryCard = ({ member }) => {
   const { state } = useContext(AppContext);
+  const isAdmin = selectIsAdmin(state);
   const {
     location,
     name,
@@ -40,7 +42,7 @@ const MemberSummaryCard = ({ member }) => {
   const pdlProfile = selectProfileMap(state)[pdlId];
 
   const classes = useStyles();
-
+  
   return (
     <Box display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
@@ -61,13 +63,14 @@ const MemberSummaryCard = ({ member }) => {
               </Typography>
             }
             disableTypography
-            avatar={
-              !terminationDate ? (
-                <Avatar className={"large"} src={getAvatarURL(workEmail)} />
-              ) : (
+            avatar={isAdmin && terminationDate? 
+              (
                 <Avatar className={"large"}>
                   <PriorityHighIcon />
                 </Avatar>
+              ) : 
+              (
+                <Avatar className={"large"} src={getAvatarURL(workEmail)} />
               )
             }
           />
