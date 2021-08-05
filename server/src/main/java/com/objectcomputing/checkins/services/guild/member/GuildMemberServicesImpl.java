@@ -129,9 +129,14 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         if (guildMember == null) throw new NotFoundException(String.format("Unable to locate guildMember with id %s", id));
 
         Set<GuildMember> guildLeads = this.findByFields(guildMember.getGuildId(), null, true);
-        boolean isLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
+        boolean currentUserIsLead = guildLeads.stream().anyMatch(o -> o.getMemberId().equals(currentUser.getId()));
+
+        // don't allow guild lead to be removed if they are the only lead
+        if (guildMember.isLead() && guildLeads.size() == 1){
+            throw new BadArgException("At least one guild lead must be present in the guild at all times");
+        }
         // if the current user is not an admin, is not the same as the member in the request, and is not a lead in the guild -> don't delete
-        if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !isLead) {
+        if (!currentUserServices.isAdmin() && !guildMember.getMemberId().equals(currentUser.getId()) && !currentUserIsLead) {
             throw new PermissionException("You are not authorized to perform this operation");
         }
 

@@ -23,7 +23,6 @@ public interface MemberProfileFixture extends RepositoryFixture {
                 memberProfile.getId(), null,null,null,null));
     }
 
-    // this user is not connected to other users in the system
     default MemberProfile createAnUnrelatedUser() {
         return getMemberProfileRepository().save(new MemberProfile("Nobody", null, " Really",
                 null, "Comedic Relief", null, "New York, New York",

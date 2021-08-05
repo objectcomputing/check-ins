@@ -488,7 +488,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     }
 
     @Test
-    void testMemberRemovesThemselfFromGuild() {
+    void testMemberCanRemoveThemselfFromGuild() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -503,7 +503,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     }
 
     @Test
-    void testDeleteGuildMemberWithUnrelatedUser() {
+    void testDeleteGuildMemberWithUnrelatedUserThrowsException() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
