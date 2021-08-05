@@ -67,10 +67,6 @@ const useStylesText = makeStyles({
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
-  sendDate: PropTypes.string.isRequired,
-  dueDate: PropTypes.any,
-  submitted: PropTypes.string.isRequired,
-  submitDate: PropTypes.any,
   responses: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 

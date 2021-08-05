@@ -83,8 +83,8 @@ const FeedbackRequestSubcard = (props) => {
   const Submitted = (props) => {
       if (props.dueDate) {
         let today = new Date();
-        let due = new Date(props.dueDate[0], props.dueDate[1] - 1, props.dueDate[2]);
-        if ((!props.submitDate || props.submitDate === undefined) && today > due) {
+        let due = new Date(props.dueDate);
+        if ((!props.submitDate) && today > due) {
           return (
             <Typography className={classes.redTypography}>Overdue</Typography>
           )
@@ -95,6 +95,8 @@ const FeedbackRequestSubcard = (props) => {
       } else
         return <Typography className={classes.yellowTypography}>Not Submitted</Typography>
     }
+
+    Submitted.propTypes = {submitDate: PropTypes.arrayOf(PropTypes.string)};
 
   return (
     <React.Fragment>
