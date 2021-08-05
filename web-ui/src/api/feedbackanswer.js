@@ -75,7 +75,7 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
     });
 
     // Chain questions and answers so that questions are a top level, while answers are a property of the top level object
-    return chain(responses)
+    let finalReturnResult =  chain(responses)
       .groupBy("id")
       .map((val, key) => {
         // Obtain array of answers that are related to this question
@@ -99,6 +99,9 @@ export const getQuestionsAndAnswers = async (feedbackRequests, cookie) => {
           answers: answersForThisQuestion,
         };
       })
-      .value();
+      .value()
+      .reverse();
+
+      return finalReturnResult;
   });
 }
