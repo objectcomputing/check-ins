@@ -38,7 +38,7 @@ public class QuestionAndAnswerController {
         return Single.fromCallable(() -> questionAndAnswerServices.getQuestionAndAnswer(requestId, questionId))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(pair -> (HttpResponse<QuestionAndAnswerServices.Tuple>) HttpResponse
-                        .created((pair))
+                        .ok((pair))
                         .headers(headers -> headers.location(URI.create("/feedback-pair/"))))
                 .subscribeOn(Schedulers.from(executorService));
     }

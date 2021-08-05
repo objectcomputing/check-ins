@@ -25,6 +25,16 @@ export const createFeedbackRequest = async (feedbackRequest, cookie) => {
   });
 };
 
+export const updateFeedbackRequest = async (feedbackRequest, cookie) => {
+  return resolve({
+    method: "put",
+    url: feedbackRequestURL,
+    responseType: "json",
+    data: feedbackRequest,
+    headers: { "X-CSRF-Header": cookie },
+  });
+};
+
 export const getFeedbackRequestById = async (id, cookie) => {
   return resolve({
     url: `${feedbackRequestURL}/${id}`,
@@ -95,11 +105,11 @@ export const updateSingleAnswer = (answer, cookie) => {
   });
 }
 
-export const saveAllAnswers = (answers, cookie) => {
+export const updateAllAnswers = (answers, cookie) => {
   const answerReqs = [];
   answers.forEach((answer) => {
     answerReqs.push(resolve({
-      method: "post",
+      method: "put",
       url: answerURL,
       responseType: "json",
       data: answer,

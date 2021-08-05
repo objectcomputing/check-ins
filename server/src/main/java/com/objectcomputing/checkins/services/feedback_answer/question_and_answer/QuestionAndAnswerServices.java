@@ -1,10 +1,13 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
+
 import java.util.UUID;
 
 public interface QuestionAndAnswerServices {
 
-    class Tuple<TemplateQuestion, FeedbackAnswer> {
+    class Tuple {
         public TemplateQuestion question;
         public FeedbackAnswer answer;
 

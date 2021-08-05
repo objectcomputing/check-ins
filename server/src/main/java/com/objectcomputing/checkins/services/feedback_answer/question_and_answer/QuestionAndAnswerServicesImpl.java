@@ -10,12 +10,10 @@ import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestSer
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.UUID;
+
 
 @Singleton
 public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices {
@@ -23,7 +21,6 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
     private final CurrentUserServices currentUserServices;
     private final TemplateQuestionServices templateQuestionServices;
     private final FeedbackRequestServices feedbackRequestServices;
-    private final Logger LOG = LoggerFactory.getLogger(QuestionAndAnswerServicesImpl.class);
 
     public QuestionAndAnswerServicesImpl(FeedbackAnswerServices feedbackAnswerServices,
                                          CurrentUserServices currentUserServices,
@@ -58,17 +55,14 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
 
         List<FeedbackAnswer> list;
         list = feedbackAnswerServices.findByValues(questionId, requestId);
-
-        LOG.info("The list {} ", list);
         FeedbackAnswer returnedAnswer;
-        if (list.isEmpty()) {
+        if (list.size() == 0) {
             FeedbackAnswer newAnswerObject = new FeedbackAnswer();
             newAnswerObject.setAnswer(null);
             newAnswerObject.setQuestionId(questionId);
             newAnswerObject.setRequestId(requestId);
             newAnswerObject.setSentiment(null);
             returnedAnswer = feedbackAnswerServices.save(newAnswerObject);
-            LOG.info("Returned answer {} ", returnedAnswer);
         }
         else {
             returnedAnswer = list.get(0);
