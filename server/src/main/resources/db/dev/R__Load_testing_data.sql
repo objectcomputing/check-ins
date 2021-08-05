@@ -10,8 +10,8 @@ delete from guild;
 delete from member_skills;
 delete from pulse_response;
 delete from questions;
-delete from role;
 delete from role_permissions;
+delete from role;
 delete from team_member;
 delete from team;
 delete from feedback_requests;
@@ -416,12 +416,12 @@ VALUES
 INSERT INTO template_questions
 (id, question, template_id, question_number)
 VALUES
-('d6d05f53-682c-4c37-be32-8aab5f89767f', 'What are this team member''s top strengths (include examples where possible)?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
 VALUES
-('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
 
 INSERT INTO feedback_templates
 (id, creator_id, title, description, date_created, updater_id, date_updated)
@@ -431,12 +431,12 @@ VALUES
 INSERT INTO template_questions
 (id, question, template_id, question_number)
 VALUES
-('89c8b612-fca8-4144-88cd-176ddfca35ad', 'What can this team member improve on that would help them increase their effectiveness (include examples where possible)?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
 VALUES
-('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
 
 INSERT INTO feedback_templates
 (id, creator_id, title, description, date_created, updater_id, date_updated)

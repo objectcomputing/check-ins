@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_template.template_question;
 
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -24,10 +26,19 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
     @Override
     Optional<TemplateQuestion> findById(@NonNull UUID id);
 
-    @Query(value = "SELECT * from template_questions WHERE template_id = :templateId ORDER BY question_number")
+    @Query(value = "SELECT id, " +
+            "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
+            "template_id," +
+            "question_number " +
+            "FROM template_questions " +
+            "WHERE  (:templateId ORDER BY question_number) ",
+            nativeQuery = true)
     List<TemplateQuestion> findByTemplateId(String templateId);
 
-    @Query(value = "SELECT * " +
+    @Query(value = "SELECT id, " +
+            "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
+            "template_id," +
+            "question_number " +
             "FROM template_questions " +
             "WHERE (question_number = :questionNumber) " +
             "AND (template_id = :templateId)", nativeQuery = true)
