@@ -1,8 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_answer;
 
 import io.micronaut.core.annotation.Nullable;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
-import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.scheduling.TaskExecutors;
@@ -11,12 +9,10 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;

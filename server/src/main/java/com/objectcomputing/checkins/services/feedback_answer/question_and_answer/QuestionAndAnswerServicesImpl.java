@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 @Singleton
 public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices {
     private final FeedbackAnswerServices feedbackAnswerServices;
@@ -64,9 +65,8 @@ public class QuestionAndAnswerServicesImpl implements QuestionAndAnswerServices 
 
         List<FeedbackAnswer> list;
         list = feedbackAnswerServices.findByValues(questionId, requestId);
-
         FeedbackAnswer returnedAnswer;
-        if (list.isEmpty()) {
+        if (list.size() == 0) {
             FeedbackAnswer newAnswerObject = new FeedbackAnswer();
             newAnswerObject.setAnswer(null);
             newAnswerObject.setQuestionId(questionId);
