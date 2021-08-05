@@ -142,6 +142,7 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
       }
     }
 
+
     return templatesToDisplay.map((template) => (
       <TemplateCard
         key={template.id}
@@ -149,6 +150,7 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
         creatorId={template.creatorId}
         description={template.description}
         isAdHoc={template.isAdHoc}
+        isPublic={template.isPublic}
         isSelected={query === template.id}
         questions={template.questions}
         expanded={preview.open}

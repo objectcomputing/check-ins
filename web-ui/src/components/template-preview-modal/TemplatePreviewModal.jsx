@@ -105,6 +105,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
     if (createAdHoc) {
       submittedTemplate.title = newAdHocData.title;
       submittedTemplate.description = newAdHocData.description;
+      submittedTemplate.isPublic = newAdHocData.isPublic;
       submittedQuestion = newAdHocData.question;
     }
     onSubmit(submittedTemplate, submittedQuestion);

@@ -25,15 +25,21 @@ const AdHocCreationForm = (props) => {
   const [title, setTitle] = useState("Ad Hoc");
   const [description, setDescription] = useState("");
   const [question, setQuestion] = useState("");
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
 
   useEffect(() => {
     props.onFormChange({
       title: title,
       description: description,
       question: question,
+      isPublic: isPublic,
     }); // eslint-disable-next-line
   }, [title, description, question]);
+
+  const onPublicClick = () => {
+    setIsPublic(!isPublic)
+    console.log(isPublic)
+  }
 
   return (
     <React.Fragment>
@@ -72,7 +78,7 @@ const AdHocCreationForm = (props) => {
             icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
             checkedIcon={<CheckBoxIcon fontSize="small" />}
             name="checkedI"
-            onClick={setIsPublic(!isPublic)}
+            onClick={onPublicClick}
           />
         }
         label="Make template public?"
