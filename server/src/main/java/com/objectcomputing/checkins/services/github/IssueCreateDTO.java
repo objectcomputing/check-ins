@@ -7,15 +7,15 @@ import javax.validation.constraints.NotBlank;
 import java.sql.Array;
 
 @Introspected
-public class GithubRequestDTO {
+public class IssueCreateDTO {
 
     @NotBlank
     @Schema(title = "The title of the new Github issue", required = true)
     private String title;
 
     @NotBlank
-    @Schema(description = "The description of the issue", required = true)
-    private String description;
+    @Schema(title = "The description of the issue", required = true)
+    private String body;
 
     private String[] labels = {"bug"};
 
@@ -27,12 +27,12 @@ public class GithubRequestDTO {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBody() {
+        return body;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBody(String description) {
+        this.body = description;
     }
 
     public String[] getLabels() {
