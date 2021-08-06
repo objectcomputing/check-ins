@@ -2,8 +2,14 @@ package com.objectcomputing.checkings.gcp.chat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.chat.v1.HangoutsChat;
 import com.google.api.services.chat.v1.model.Message;
 import com.google.api.services.chat.v1.model.Thread;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.pubsub.v1.PubsubMessage;
 import io.micronaut.gcp.pubsub.annotation.PubSubListener;
 import io.micronaut.gcp.pubsub.annotation.Subscription;
@@ -11,6 +17,14 @@ import io.micronaut.gcp.pubsub.annotation.Subscription;
 
 @PubSubListener
 public class GoogleChatBot {
+
+    static final String BOT_NAME = "Check-Ins";
+    static final String CHAT_BOT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
+    private final GoogleCredentials credentials;
+
+    public GoogleChatBot(GoogleCredentials credentials) {
+        this.credentials = credentials;
+    }
 
     @Subscription("projects/oci-intern-2019/subscriptions/checkins-chat-bot")
     public void onMessage(PubsubMessage pubsubMessage) {
@@ -47,18 +61,18 @@ public class GoogleChatBot {
             // Send the reply message via chat API.
             String spaceName = chatEvent.at("/space/name").asText();
             System.out.println(String.format("spaceName = %s", spaceName));
-//            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault().createScoped(
-//                    CHAT_BOT_SCOPE
-//            );
-//            HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
-//            HangoutsChat chatService = new HangoutsChat.Builder(
-//                    GoogleNetHttpTransport.newTrustedTransport(),
-//                    JacksonFactory.getDefaultInstance(),
-//                    requestInitializer)
-//                    .setApplicationName(BOT_NAME)
-//                    .build();
-//
-//            chatService.spaces().messages().create(spaceName, reply).execute();
+            GoogleCredentials credentials = this.credentials.createScoped(
+                    CHAT_BOT_SCOPE
+            );
+            HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
+            HangoutsChat chatService = new HangoutsChat.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(),
+                    JacksonFactory.getDefaultInstance(),
+                    requestInitializer)
+                    .setApplicationName(BOT_NAME)
+                    .build();
+
+            chatService.spaces().messages().create(spaceName, reply).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
