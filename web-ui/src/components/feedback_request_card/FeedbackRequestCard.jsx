@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useCallback, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@material-ui/core/Card';
@@ -15,6 +15,7 @@ import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
+import {DateRange} from "../../pages/ViewFeedbackPage";
 
 const useStyles = makeStyles({
   root: {
@@ -46,7 +47,7 @@ const useStylesCardContent = makeStyles({
       paddingBottom: 0,
     }
   }
-}, { name: "MuiCardContent" })
+}, { name: "MuiCardContent" });
 
 const useStylesCardActions = makeStyles({
   root: {
@@ -54,7 +55,7 @@ const useStylesCardActions = makeStyles({
     maxHeight: "30px",
   },
 
-}, { name: 'MuiCardActions' })
+}, { name: 'MuiCardActions' });
 
 const useStylesText = makeStyles({
   body1: {
@@ -67,13 +68,14 @@ const useStylesText = makeStyles({
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
-  responses: PropTypes.arrayOf(PropTypes.object).isRequired
+  responses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  dateRange: PropTypes.oneOf([DateRange.THREE_MONTHS, DateRange.SIX_MONTHS, DateRange.ONE_YEAR, DateRange.ALL_TIME]).isRequired
 };
 
-const FeedbackRequestCard = (props) => {
+const FeedbackRequestCard = ({ requesteeId, templateName, responses, dateRange }) => {
   const classes = useStyles();
   const {state} = useContext(AppContext);
-  const requesteeProfile = selectProfile(state, props.requesteeId);
+  const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
   useStylesCardActions();
   useStylesText();
@@ -83,6 +85,27 @@ const FeedbackRequestCard = (props) => {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const withinDateRange = useCallback((requestDate) => {
+    let oldestDate = new Date();
+    switch (dateRange) {
+      case DateRange.THREE_MONTHS:
+        oldestDate.setMonth(oldestDate.getMonth() - 3);
+        break;
+      case DateRange.SIX_MONTHS:
+        oldestDate.setMonth(oldestDate.getMonth() - 6);
+        break;
+      case DateRange.ONE_YEAR:
+        oldestDate.setFullYear(oldestDate.getFullYear() - 1);
+        break;
+      case DateRange.ALL_TIME:
+        return true;
+      default:
+        oldestDate.setMonth(oldestDate.getMonth() - 3);
+    }
+
+    return requestDate >= oldestDate;
+  }, [dateRange]);
 
   return (
     <div className="feedback-request-card">
@@ -104,7 +127,7 @@ const FeedbackRequestCard = (props) => {
                     <Typography className="position-text">{requesteeProfile?.title}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
-                    <Typography className="dark-gray-text">{props.templateName}</Typography>
+                    <Typography className="dark-gray-text">{templateName}</Typography>
                     <Link to="" className="response-link red-text">View all responses</Link>
                   </Grid>
                 </Grid>
@@ -124,11 +147,10 @@ const FeedbackRequestCard = (props) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            {props?.responses?.map((response) => (
-              <FeedbackRequestSubcard
-                key={response.id}
-                request={response}
-              />
+            {responses?.map((response) => (
+              (response && withinDateRange(response.sendDate))
+                ? <FeedbackRequestSubcard key={response.id} request={response}/>
+                : null
             ))}
           </CardContent>
         </Collapse>

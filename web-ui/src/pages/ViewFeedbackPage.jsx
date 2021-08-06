@@ -44,7 +44,7 @@ const useStyles = makeStyles({
   }
 });
 
-const DateRange = {
+export const DateRange = {
   THREE_MONTHS: "3mo",
   SIX_MONTHS: "6mo",
   ONE_YEAR: "1yr",
