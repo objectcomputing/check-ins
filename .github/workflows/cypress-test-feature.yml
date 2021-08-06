@@ -20,6 +20,8 @@ jobs:
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Gradle package
+        run: ./gradlew assemble
       - name: Gradle docker run
         run: ./gradlew dockerRun
       - name: Sleep for 30 seconds
