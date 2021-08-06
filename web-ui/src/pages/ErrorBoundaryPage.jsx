@@ -71,7 +71,7 @@ const ErrorFallback = ({ error }) => {
           color="primary"
           onClick={() => setOpen(true)}
         >
-          Create New Issue
+          Create New GitHub Issue
         </Button>
         {link !== "" && (
           <h3 className="link">
@@ -85,7 +85,6 @@ const ErrorFallback = ({ error }) => {
             required
             id="new-issue-title"
             label="Title"
-            className="fullWidth"
             placeholder="Issue Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -97,7 +96,7 @@ const ErrorFallback = ({ error }) => {
             value={body}
             onChange={handleBodyChange}
           />
-          <div className="create-new-issue-modal-actions halfWidth">
+          <div className="create-new-issue-modal-actions">
             <Button onClick={close} color="secondary">
               Cancel
             </Button>
