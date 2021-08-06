@@ -34,9 +34,9 @@ function App() {
               >
                 <Routes />
               </div>
-              <SnackBarWithContext />
             </div>
           </ErrorBoundary>
+          <SnackBarWithContext />
         </AppContextProvider>
       </Router>
     </MuiPickersUtilsProvider>

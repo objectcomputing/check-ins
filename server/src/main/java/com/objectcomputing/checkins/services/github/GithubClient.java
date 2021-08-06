@@ -22,7 +22,7 @@ public class GithubClient {
         HttpRequest<?> req = HttpRequest.POST(baseURL + "repos/oci-labs/check-ins/issues", requestDTO)
                 .header(USER_AGENT, "Micronaut HTTP Client")
                 .header(ACCEPT, "application/vnd.github.v3+json, application/json")
-                .header(AUTHORIZATION, "token " + System.getenv("GITHUB_TOKEN"));
+                .header(AUTHORIZATION, "token " + System.getenv("GIT_HUB_TOKEN"));
 
         return httpClient.retrieve(req, IssueResponseDTO.class);
     }
