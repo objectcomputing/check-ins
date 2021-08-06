@@ -1,0 +1,3 @@
+rootProject.name="check-ins-server"
+include ":web-ui"
+project(":web-ui").projectDir = file("../web-ui")

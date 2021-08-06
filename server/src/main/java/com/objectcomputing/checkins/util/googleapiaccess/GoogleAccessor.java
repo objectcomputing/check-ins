@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
+@Requires(notEnv = "integration")
 @Singleton
 public class GoogleAccessor {
 

@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @Requires(notEnv = Environment.TEST)
+@Requires(notEnv = "integration")
 @Singleton
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {
 

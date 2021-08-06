@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Requires(notEnv = Environment.TEST)
+@Requires(notEnv = "integration")
 @Singleton
 public class GoogleAuthenticator {
 

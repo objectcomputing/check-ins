@@ -1,3 +1,4 @@
 rootProject.name="check-ins"
 include "web-ui"
-include "server"
+include "check-ins-server"
+project(":check-ins-server").projectDir = file("server")
