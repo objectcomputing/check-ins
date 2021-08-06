@@ -24,8 +24,6 @@ jobs:
         run: ./gradlew assemble
       - name: Gradle docker run
         run: ./gradlew dockerRun
-      - name: Show docker images
-      - run: docker images
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
