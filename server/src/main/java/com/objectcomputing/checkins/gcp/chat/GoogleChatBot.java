@@ -3,6 +3,7 @@ package com.objectcomputing.checkings.gcp.chat;
 import io.micronaut.gcp.pubsub.annotation.PubSubListener;
 import io.micronaut.gcp.pubsub.annotation.Subscription;
 
+
 @PubSubListener
 public class GoogleChatBot {
     /**

@@ -44,7 +44,6 @@ public class GoogleAuthenticator {
         GoogleCredentials credentials = GoogleCredentials.fromStream(in);
 
         if (credentials == null) {
-            credentials = GoogleCredentials.getApplicationDefault();
             throw new FileNotFoundException("Credentials not found while using Google default credentials");
         }
 

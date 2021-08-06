@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.util.googleapiaccess;
 
 import com.google.api.services.admin.directory.Directory;
+import com.google.api.services.chat.v1.HangoutsChat;
 import com.google.api.services.drive.Drive;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -30,6 +31,8 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
 
     private Directory directory;
 
+    private HangoutsChat hangoutsChat;
+
     public Drive getDrive() {
         return drive;
     }
@@ -38,12 +41,15 @@ public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEv
         return directory;
     }
 
+    public HangoutsChat getHangoutsChat() { return hangoutsChat; }
+
     @Async
     @Override
     public void onApplicationEvent(ServerStartupEvent event) {
         try {
             this.drive = googleAccessor.accessGoogleDrive();
             this.directory = googleAccessor.accessGoogleDirectory();
+            this.hangoutsChat = googleAccessor.accessGoogleChat();
         } catch (IOException e) {
             LOG.error("An error occurred while initializing Google Drive access.", e);
         }
