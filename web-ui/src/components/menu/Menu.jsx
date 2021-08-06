@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
   subListItem: {
     fontSize: "0.9rem",
-  }
+  },
 }));
 
 const directoryLinks = [
@@ -159,7 +159,9 @@ function Menu() {
         onClick={
           isSubLink
             ? undefined
-            : () => { closeSubMenus(); }
+            : () => {
+                closeSubMenus();
+              }
         }
         selected={isLinkSelected(path)}
       >
@@ -190,15 +192,11 @@ function Menu() {
       </div>
 
       <List component="nav" className={classes.listStyle}>
-        {createLinkJsx("/home", "HOME", false)}
+        {createLinkJsx("/", "HOME", false)}
         {isAdmin && createLinkJsx("/admin", "ADMIN", false)}
         {createLinkJsx("/checkins", "CHECK-INS", false)}
-        <ListItem
-            button
-            onClick={toggleDirectory}
-            className={classes.listItem}
-          >
-            <ListItemText primary="DIRECTORY" />
+        <ListItem button onClick={toggleDirectory} className={classes.listItem}>
+          <ListItemText primary="DIRECTORY" />
         </ListItem>
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}

@@ -88,7 +88,9 @@ const FeedbackRequestSubcard = (props) => {
                   </IconButton>
                 </Tooltip>
               }
-              {props.request.submitDate ? <Link to="" className="response-link"> View response </Link> : null}
+              {props.request.submitDate && props.request.id
+                ? <Link to={`/feedback/view/responses/?request=${props.request.id}`} className="response-link">View response</Link>
+                : null}
             </Grid>
           </Grid>
         </Grid>
