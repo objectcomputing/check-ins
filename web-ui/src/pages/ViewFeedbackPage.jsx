@@ -44,6 +44,13 @@ const useStyles = makeStyles({
   }
 });
 
+const DateRange = {
+  THREE_MONTHS: "3mo",
+  SIX_MONTHS: "6mo",
+  ONE_YEAR: "1yr",
+  ALL_TIME: "all"
+};
+
 const ViewFeedbackPage = () => {
 
   const classes = useStyles();
@@ -54,6 +61,7 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
+  const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
   useEffect(() => {
     const getFeedbackRequests = async(creatorId) => {
@@ -173,20 +181,21 @@ const ViewFeedbackPage = () => {
               ),
             }}
           />
-          <FormControl className={classes.textField}>
+          <FormControl className={classes.textField} value={dateRange}>
             <TextField
               id="select-time"
               select
               fullWidth
               size="small"
               label="Show requests sent within"
-              value={"3mo"}
+              onChange={(e) => setDateRange(e.target.value)}
+              defaultValue={dateRange}
               variant="outlined"
             >
-              <MenuItem value={"3mo"}>Past 3 months</MenuItem>
-              <MenuItem value={"6mo"}>Past 6 months</MenuItem>
-              <MenuItem value={"1yr"}>Past year</MenuItem>
-              <MenuItem value={"all"}>All time</MenuItem>
+              <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
+              <MenuItem value={DateRange.SIX_MONTHS}>Past 6 months</MenuItem>
+              <MenuItem value={DateRange.ONE_YEAR}>Past year</MenuItem>
+              <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
             </TextField>
           </FormControl>
 
