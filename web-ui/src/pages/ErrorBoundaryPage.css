@@ -23,6 +23,15 @@
   justify-content: flex-end;
 }
 
+.link {
+  color: white;
+}
+
+.link a {
+  color: white;
+  cursor: pointer;
+}
+
 .create-new-issue-modal .MuiTextField-root.fullWidth {
   width: calc(100% - 1rem);
 }
@@ -59,7 +68,7 @@
   color: black;
   cursor: pointer;
   font-weight: bolder;
-  margin: 1rem;
+  margin-top: 1rem;
   width: 35%;
 }
 

@@ -1,40 +1,56 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
-import { Octokit } from "@octokit/core";
+import { AppContext } from "../context/AppContext";
 import { UPDATE_TOAST } from "../context/actions";
+import { selectCsrfToken } from "../context/selectors";
+import { newGitHubIssue } from "../api/github";
+import MarkdownNote from "../components/markdown-note/MarkdownNote";
 
 import { Button, Modal, TextField } from "@material-ui/core";
 
 import "./ErrorBoundaryPage.css";
 
 const ErrorFallback = ({ error }) => {
+  const { state } = useContext(AppContext);
+  const csrf = selectCsrfToken(state);
+
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [link, setLink] = useState("");
 
   const close = () => {
     setOpen(false);
   };
 
-  const octokit = new Octokit({
-    // need to generate personal access token with no expiration date or perhaps register as OAuth. This token expires in 1 day
-    auth: "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",
-  });
-
-  const createGitIssue = async () => {
-    let res = await octokit.request("POST /repos/oci-labs/check-ins/issues", {
-      title: title,
-      body: body,
-    });
-    if (res.status === 201) {
+  const createNewGitIssue = async () => {
+    if (body === "" || title === "") {
       window.snackDispatch({
         type: UPDATE_TOAST,
         payload: {
-          severity: "success",
-          toast: `New issue ${title} created! Gratzie &#128512`,
+          severity: "error",
+          toast: "Must have a Body and a Title",
+        },
+      });
+      return;
+    }
+    let res = await newGitHubIssue(body, title, csrf);
+    if (res && res.payload) {
+      setLink(res.payload.data[0].html_url);
+      window.snackDispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: !res.error ? "success" : "error",
+          toast: !res.error
+            ? `New issue ${title} created! Gratzie &#128512`
+            : res.error.message,
         },
       });
     }
+  };
+
+  const handleBodyChange = (content) => {
+    setBody(content);
   };
 
   return (
@@ -57,6 +73,11 @@ const ErrorFallback = ({ error }) => {
         >
           Create New Issue
         </Button>
+        {link !== "" && (
+          <h3 className="link">
+            Check out your issue here! &nbsp; <a href={link}>{link}</a>
+          </h3>
+        )}
       </div>
       <Modal open={open} onClose={close}>
         <div className="create-new-issue-modal">
@@ -69,14 +90,12 @@ const ErrorFallback = ({ error }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <TextField
+          <MarkdownNote
             required
-            id="new-issue-body"
-            label="Issue Description"
-            className="fullWidth"
-            placeholder="Where/how did you encounter the issue?"
+            placeholder="Issue Description"
+            style={{ height: "175px", marginBottom: "30px" }}
             value={body}
-            onChange={(e) => setBody(e.target.value)}
+            onChange={handleBodyChange}
           />
           <div className="create-new-issue-modal-actions halfWidth">
             <Button onClick={close} color="secondary">
@@ -84,7 +103,7 @@ const ErrorFallback = ({ error }) => {
             </Button>
             <Button
               onClick={() => {
-                createGitIssue();
+                createNewGitIssue();
                 close();
               }}
               color="primary"
