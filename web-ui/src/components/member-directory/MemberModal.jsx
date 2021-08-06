@@ -35,10 +35,16 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
     setMember({ ...editedMember, startDate: new Date() });
   }
 
+  const birthDay =
+    editedMember && editedMember.birthDay
+      ? new Date(editedMember.birthDay)
+      : null;
+
   const terminationDate =
     editedMember && editedMember.terminationDate
       ? new Date(editedMember.terminationDate)
       : null;
+
   const startDate = new Date(editedMember.startDate);
 
   const onPdlChange = (event, newValue) => {
@@ -126,6 +132,24 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
             setMember({ ...editedMember, location: e.target.value })
           }
         />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            className="halfWidth"
+            margin="normal"
+            id="bday-datepicker-dialog"
+            required
+            label="Member Birthday"
+            format="MM/dd/yyyy"
+            value={birthDay}
+            openTo="year"
+            onChange={(date) => {
+              setMember({ ...editedMember, birthDay: date });
+            }}
+            KeyboardButtonProps={{
+              "aria-label": "Change Date",
+            }}
+          />
+        </MuiPickersUtilsProvider>
         <TextField
           id="member-employeeId-input"
           label="EmployeeId"

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.Arrays;
 
 @Singleton
 public class MailJetSender implements EmailSender {
@@ -29,20 +30,22 @@ public class MailJetSender implements EmailSender {
      * @param subject, {@link String} Subject of email
      * @param content {@link String} Contents of email
      */
-    // emailAddressToBodiesMap is email, address, email body
-    public void sendEmail(String subject, String content) {
+    @Override
+    public void sendEmail(String subject, String content, String... recipients) {
         MailjetRequest request;
         MailjetResponse response;
         try {
+            JSONArray recipientList = new JSONArray();
+            for (String recipient: recipients){
+                recipientList.put(new JSONObject().put("Email", recipient));
+            }
             request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
                                             .put("Email", "kimberlinm@objectcomputing.com")
                                             .put("Name", "Michael Kimberlin"))
-                                    .put(Emailv31.Message.TO, new JSONArray()
-                                            .put(new JSONObject()
-                                                    .put("Email", "hr@objectcomputing.com")))
+                                    .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
             response = client.post(request);
@@ -57,5 +60,19 @@ public class MailJetSender implements EmailSender {
         } catch(MailjetSocketTimeoutException e) {
             LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+        try {
+            sendEmail(subject, content, recipients);
+        } catch(Exception e){
+            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        } catch(Error e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        }
+        return true;
     }
 }

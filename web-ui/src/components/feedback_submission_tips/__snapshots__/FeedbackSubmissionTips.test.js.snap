@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the feedback tips component. 1`] = `
+<div
+  className="sbi-tips-page"
+>
+  <div
+    className="header"
+  >
+    <h2
+      className="MuiTypography-root makeStyles-title-1 MuiTypography-h2"
+    >
+      <b>
+        Feedback Tips
+      </b>
+    </h2>
+    <div
+      className="makeStyles-button-2"
+    >
+      <button
+        className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="MuiButton-label"
+        >
+          Next
+        </span>
+      </button>
+    </div>
+  </div>
+  <h5
+    className="MuiTypography-root makeStyles-announcement-3 MuiTypography-h5"
+  >
+    <b>
+      SBI is a common approach to providing constructive and fair feedback 
+    </b>
+  </h5>
+  <div
+    className="submission-tips"
+  >
+    <div
+      className="sbi-info"
+    >
+      <div
+        className="sbi-circle"
+      >
+        S
+      </div>
+      <div
+        className="sbi-title-and-description"
+      >
+        <h3
+          className="MuiTypography-root sbi-info-title MuiTypography-h3"
+        >
+          Situation
+        </h3>
+        <p
+          className="MuiTypography-root sbi-info-description MuiTypography-body1"
+        >
+          Describe the situation; be specific about when and where it occurred.
+        </p>
+      </div>
+    </div>
+    <div
+      className="sbi-info"
+    >
+      <div
+        className="sbi-circle"
+      >
+        B
+      </div>
+      <div
+        className="sbi-title-and-description"
+      >
+        <h3
+          className="MuiTypography-root sbi-info-title MuiTypography-h3"
+        >
+          Behavior
+        </h3>
+        <p
+          className="MuiTypography-root sbi-info-description MuiTypography-body1"
+        >
+          Describe the observable behavior; don't assume you know what the other person was thinking.
+        </p>
+      </div>
+    </div>
+    <div
+      className="sbi-info"
+    >
+      <div
+        className="sbi-circle"
+      >
+        I
+      </div>
+      <div
+        className="sbi-title-and-description"
+      >
+        <h3
+          className="MuiTypography-root sbi-info-title MuiTypography-h3"
+        >
+          Impact
+        </h3>
+        <p
+          className="MuiTypography-root sbi-info-description MuiTypography-body1"
+        >
+          Describe what you thought and felt as a result of that behavior.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

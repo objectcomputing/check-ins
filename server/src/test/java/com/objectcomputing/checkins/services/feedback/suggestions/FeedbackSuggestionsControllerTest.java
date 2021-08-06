@@ -36,7 +36,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
 
     void assertContentEqualsEntity(FeedbackSuggestionDTO ideal, FeedbackSuggestionDTO actualResponse) {
         assertEquals(ideal.getReason(), actualResponse.getReason());
-        assertEquals(ideal.getProfileId(), actualResponse.getProfileId());
+        assertEquals(ideal.getId(), actualResponse.getId());
     }
     @Test
     void testGetRecsIfPdl() {
@@ -134,7 +134,7 @@ class FeedbackSuggestionsControllerTest extends TestContainersSuite implements M
         createDefaultRole(RoleType.ADMIN, supervisor);
         MemberProfile requestee = createASupervisedAndPDLUser(supervisor, pdlProfile);
         MemberProfile requesteeTeamLead = createAnUnrelatedUser();
-        MemberProfile teamMemberofRequestee = createASecondMemberProfile();
+        MemberProfile teamMemberofRequestee = createASecondDefaultMemberProfile();
         createLeadTeamMember(team, requesteeTeamLead);
         createDefaultTeamMember(team, requestee);
         createDefaultTeamMember(team, teamMemberofRequestee);

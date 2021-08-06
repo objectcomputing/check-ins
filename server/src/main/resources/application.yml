@@ -78,6 +78,9 @@ check-ins:
         scopeForChatApi: "https://www.googleapis.com/auth/chat.bot"
     feedback:
       max-suggestions: 6
+      notifications:
+        subject: "Feedback request"
+        content: "You have received a feedback request. Please go to the "
 ---
 flyway:
   enabled: enabled

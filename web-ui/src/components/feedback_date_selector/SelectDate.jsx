@@ -1,11 +1,8 @@
-import React, {useCallback} from "react";
-import {
-  DatePicker,
-} from '@material-ui/pickers';
+import React, {useCallback, useEffect, useRef} from "react";
+import {DatePicker} from '@material-ui/pickers';
 import { makeStyles } from "@material-ui/core/styles";
-import queryString from "query-string";
-import {useHistory, useLocation} from "react-router-dom";
 import DateFnsUtils from "@date-io/date-fns";
+import PropTypes from "prop-types";
 
 const dateUtils = new DateFnsUtils();
 
@@ -21,58 +18,71 @@ pickerContain: {
  }
 });
 
-const SelectDate = () =>{
-    const classes = useStyles();
-    const location = useLocation();
-    const history = useHistory();
-    const query = queryString.parse(location?.search);
+const propTypes = {
+  changeQuery: PropTypes.func.isRequired,
+  sendDateQuery: PropTypes.string,
+  dueDateQuery: PropTypes.string
+};
 
-    const sendDate = query.send && dateUtils.parse(query.send?.toString(), "yyyy-MM-dd");
-    const dueDate = query.due && dateUtils.parse(query.due?.toString(), "yyyy-MM-dd");
+const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
+    const classes = useStyles();
+    const hasPushedInitialValues = useRef(false);
+    let todayDate = new Date();
+    const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "yyyy-MM-dd") : todayDate;
+    const dueDate = dueDateQuery ? dateUtils.parse(dueDateQuery?.toString(), "yyyy-MM-dd") : null;
+
+    useEffect(() => {
+      if (!hasPushedInitialValues.current && sendDate !== null && sendDate !== undefined && dueDate !== undefined) {
+        changeQuery("send", dateUtils.format(sendDate, "yyyy-MM-dd"));
+        if (dueDate !== null) {
+          changeQuery("due", dateUtils.format(dueDate, "yyyy-MM-dd"));
+        }
+        hasPushedInitialValues.current = true;
+      }
+    });
 
     const handleDueDateChange = useCallback((date) => {
-        query.due = dateUtils.format(date, "yyyy-MM-dd");
-        history.push({...location, search: queryString.stringify(query)});
-    },[location, history, query]);
+      const dueDate = date ? dateUtils.format(date, "yyyy-MM-dd") : null;
+      changeQuery("due", dueDate ? dueDate : undefined);
+    },[changeQuery]);
 
     const handleSendDateChange = useCallback((date) => {
-         query.send = dateUtils.format(date, "yyyy-MM-dd");
-        history.push({...location, search: queryString.stringify(query)});
-    },[location, history, query]);
+      const sendDate = dateUtils.format(date, "yyyy-MM-dd");
+      changeQuery("send", sendDate);
+    },[changeQuery]);
 
     return (
     <React.Fragment>
       <div className={classes.pickerContain}>
-           <DatePicker
-           className= {classes.picker}
-                   disableToolbar
-                   format="MM/dd/yyyy"
-                   margin="normal"
-                   id="set-send-date"
-                   label="Send Date:"
-                   value={sendDate}
-                   minDate={dateUtils.date()}
-                   onChange={handleSendDateChange}
-                   KeyboardButtonProps={{
-                     'aria-label': 'change date',
-                   }}
-                 />
-                <DatePicker
-                className= {classes.picker}
-                    disableToolbar
-                    format="MM/dd/yyyy"
-                    margin="normal"
-                    id="set-due-date"
-                    label="Due Date:"
-                    emptyLabel="No due date"
-                    value={dueDate}
-                    minDate={dateUtils.date()}
-                    onChange={handleDueDateChange}
-                    KeyboardButtonProps={{
-                       'aria-label': 'change date',
-                    }}
-                 />
-                 </div>
+        <DatePicker
+          className= {classes.picker}
+          disableToolbar
+          format="MM/dd/yyyy"
+          margin="normal"
+          id="set-send-date"
+          label="Send Date:"
+          value={sendDate}
+          minDate={dateUtils.date()}
+          onChange={handleSendDateChange}
+        />
+        <DatePicker
+          className= {classes.picker}
+          disableToolbar
+          format="MM/dd/yyyy"
+          margin="normal"
+          id="set-due-date"
+          label="Due Date:"
+          emptyLabel="No due date"
+          value={dueDate}
+          minDate={sendDate}
+          minDateMessage="Due date must not be prior to the send date"
+          clearable={true}
+          onChange={handleDueDateChange}
+        />
+      </div>
     </React.Fragment>);
 };
+
+SelectDate.propTypes = propTypes;
+
 export default SelectDate;

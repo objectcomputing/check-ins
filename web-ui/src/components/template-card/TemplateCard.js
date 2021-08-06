@@ -1,25 +1,18 @@
 import "./TemplateCard.css";
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import PropTypes from "prop-types";
 import IconButton from '@material-ui/core/IconButton';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-
 import "./TemplateCard.css"
 import {withStyles} from "@material-ui/core/styles";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import {green} from "@material-ui/core/colors";
 import {CardHeader} from "@material-ui/core";
-
-const propTypes = {
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    creator: PropTypes.string.isRequired,
-    isAdHoc: PropTypes.bool,
-    onClick: PropTypes.func,
-    onCardClick: PropTypes.func
-}
+import {AppContext} from "../../context/AppContext";
+import {selectCsrfToken} from "../../context/selectors";
+import {getMember} from "../../api/member";
 
 const cutText = (text, maxCharacters) => {
     if (!text) {
@@ -33,17 +26,18 @@ const cutText = (text, maxCharacters) => {
 }
 
 const templateCardHeaderStyles = ({ palette, breakpoints }) => {
-    const space = 24;
+    const space = 8;
     return {
         root: {
             minWidth: 256,
         },
         header: {
-            padding: `4px ${space}px 0`,
+            padding: `1px ${space}px 0`,
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'row',
             justifyContent: 'space-between',
+            maxHeight: '30px',
         },
     };
 };
@@ -65,22 +59,57 @@ const TemplateCardHeader = withStyles(templateCardHeaderStyles, {
     </div>
 ));
 
+const propTypes = {
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    creatorId: PropTypes.string.isRequired,
+    isAdHoc: PropTypes.bool,
+    onPreviewClick: PropTypes.func,
+    onCardClick: PropTypes.func
+}
+
 const TemplateCard = (props) => {
 
-    const handleClick = (e) => {
+    const { state } = useContext(AppContext);
+    const csrf = selectCsrfToken(state);
+    const [creatorName, setCreatorName] = useState("");
+
+
+    const handlePreviewClick = (e) => {
         e.stopPropagation();
-        props.onClick(e);
+        props.onPreviewClick(e);
     }
+
+    // Get name of the template creator
+    useEffect(() => {
+        async function getCreatorName() {
+            if (props.creatorId) {
+                let res = await getMember(props.creatorId, csrf);
+                let creatorProfile =
+                  res.payload && res.payload.data && !res.error
+                    ? res.payload.data
+                    : null
+                setCreatorName(creatorProfile ? creatorProfile.name : "");
+            }
+        }
+        if (csrf) {
+            getCreatorName();
+        }
+    }, [props.creatorId, csrf]);
 
     return (
         <Card onClick={props.onCardClick} className='feedback-template-card'>
-            <CardHeader component={TemplateCardHeader} selected={props.selected} allowPreview={!props.isAdHoc} onPreview={handleClick}/>
+            <CardHeader
+              component={TemplateCardHeader}
+              selected={props.isSelected}
+              allowPreview
+              onPreview={handlePreviewClick}/>
             <CardContent className="card-content">
                 <div className="template-details">
                     <h3 className="template-name">{cutText(props.title, 20)}</h3>
                     <p className="description">{cutText(props.description, 90)}</p>
                 </div>
-                <p className="creator">Created by: <b>{props.creator}</b></p>
+                <p className="creator">Created by: <b>{creatorName}</b></p>
             </CardContent>
         </Card>
     );

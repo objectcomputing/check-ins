@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.EntityTagFixture;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.fixture.TagFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.tags.entityTag.EntityTag;
@@ -27,7 +28,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EntityTagControllerTest extends TestContainersSuite implements EntityTagFixture, TagFixture, MemberProfileFixture {
+public class EntityTagControllerTest extends TestContainersSuite implements EntityTagFixture, TagFixture, MemberProfileFixture, RoleFixture {
 
     @Inject
     @Client("/services/entity-tags")
@@ -36,6 +37,8 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
 
     @Test
     void testCreateAEntityTag() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         Tag tag = createADefaultTag() ;
@@ -46,7 +49,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
         entityTagCreateDTO.setTagId(tag.getId());
         entityTagCreateDTO.setType(type);
 
-            final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+            final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
             final HttpResponse<EntityTag> response = client.toBlocking().exchange(request, EntityTag.class);
 
         EntityTag entityTag = response.body();
@@ -97,13 +100,15 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
 
     @Test
     void createAEntityTagForNonExistingTag() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         EntityTagCreateDTO entityTagCreateDTO = new EntityTagCreateDTO();
         entityTagCreateDTO.setEntityId(UUID.randomUUID());
         entityTagCreateDTO.setType(EntityType.TEAM);
         entityTagCreateDTO.setTagId(UUID.randomUUID());
 
-        final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -118,6 +123,8 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
 
     @Test
     void createAEntityTagForExistingTag() {
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
 
@@ -126,7 +133,7 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
         entityTagCreateDTO.setType(EntityType.SKILL);
         entityTagCreateDTO.setTagId(UUID.randomUUID());
 
-        final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<EntityTagCreateDTO> request = HttpRequest.POST("", entityTagCreateDTO).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -142,11 +149,14 @@ public class EntityTagControllerTest extends TestContainersSuite implements Enti
     @Test
     void deleteEntityTagAsAdmin() {
 
+        MemberProfile user = createAnUnrelatedUser();
+        createDefaultAdminRole(user);
+
         MemberProfile memberProfile = createADefaultMemberProfile();
         Tag tag = createADefaultTag();
         EntityType type = EntityType.SKILL;
 
-        final HttpRequest<Object> request = HttpRequest.DELETE(memberProfile.getId().toString()).basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+        final HttpRequest<Object> request = HttpRequest.DELETE(memberProfile.getId().toString()).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());

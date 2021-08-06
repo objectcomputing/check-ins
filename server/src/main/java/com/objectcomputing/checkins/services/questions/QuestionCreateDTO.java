@@ -3,7 +3,7 @@ package com.objectcomputing.checkins.services.questions;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.annotation.Nonnull;
+import io.micronaut.core.annotation.NonNull;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ public class QuestionCreateDTO {
         return text;
     }
 
-    public void setText(@Nonnull String text) {
+    public void setText(@NonNull String text) {
         this.text = text;
     }
 

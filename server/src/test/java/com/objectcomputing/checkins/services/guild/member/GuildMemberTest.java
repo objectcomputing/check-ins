@@ -27,8 +27,8 @@ class GuildMemberTest {
         final UUID memberId = UUID.randomUUID();
         final boolean lead = true;
         GuildMember guildMember = new GuildMember(guildId, memberId, lead);
-        assertEquals(guildId, guildMember.getGuildid());
-        assertEquals(memberId, guildMember.getMemberid());
+        assertEquals(guildId, guildMember.getGuildId());
+        assertEquals(memberId, guildMember.getMemberId());
         assertEquals(lead, guildMember.isLead());
     }
 
@@ -40,8 +40,8 @@ class GuildMemberTest {
         final boolean lead = true;
         GuildMember guildMember = new GuildMember(id, guildId, memberId, lead);
         assertEquals(id, guildMember.getId());
-        assertEquals(guildId, guildMember.getGuildid());
-        assertEquals(memberId, guildMember.getMemberid());
+        assertEquals(guildId, guildMember.getGuildId());
+        assertEquals(memberId, guildMember.getMemberId());
         assertEquals(guildMember.isLead(), lead);
 
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
@@ -57,8 +57,8 @@ class GuildMemberTest {
         final boolean lead = true;
         GuildMember guildMember = new GuildMember(id, guildId, memberId, lead);
 
-        guildMember.setGuildid(null);
-        guildMember.setMemberid(null);
+        guildMember.setGuildId(null);
+        guildMember.setMemberId(null);
 
         Set<ConstraintViolation<GuildMember>> violations = validator.validate(guildMember);
         assertEquals(2, violations.size());

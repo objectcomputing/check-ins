@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.notifications.email;
 
 public interface EmailSender {
-    public void sendEmail(String subject, String content);
+    void sendEmail(String subject, String content, String... recipients);
+
+    boolean sendEmailReceivesStatus(String subject, String content, String... recipients);
 }

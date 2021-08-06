@@ -1,0 +1,22 @@
+.view-feedback-responses-page {
+    margin-top: 8vh;
+    margin-left: 3em;
+    margin-right: 3em;
+}
+
+.question-responses-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2em;
+}
+
+.feedback-response-card {
+    margin-bottom: 16px;
+}
+
+@media screen and (max-width: 800px) {
+    .view-feedback-responses-page {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+}
