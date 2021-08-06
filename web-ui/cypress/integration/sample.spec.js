@@ -1,16 +1,16 @@
 
 describe("make a feedback request", () => {
 
-  before( () => {
-    const email = "sharmag@objectcomputing.com";
-    const role = "SUPER";
-    cy.loginByCsrf(email, role).then((res) => {
-      expect(res.status).to.eq(200);
-    });
-  });
+  // before( () => {
+  //   const email = "sharmag@objectcomputing.com";
+  //   const role = "SUPER";
+  //   cy.loginByCsrf(email, role).then((res) => {
+  //     expect(res.status).to.eq(200);
+  //   });
+  // });
 
   it("navigates to the homepage", () => {
-    cy.visit("localhost:3000");
+    cy.visit("localhost:8080");
     cy.get("a[href*='/checkins']").last().click();
     cy.url().should("include", "/checkins");
 
