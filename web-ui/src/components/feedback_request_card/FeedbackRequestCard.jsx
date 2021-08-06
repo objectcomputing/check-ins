@@ -90,14 +90,22 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType })
   useEffect(() => {
     const responsesCopy = [...sortedResponses];
     let sortMethod = null;
-    if (sortType === "sent_date") {
-      sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1: 1);
-    } else if (sortType === "submission_date") {
-      sortMethod = ((a, b) => (new Date(a.submitDate) > new Date(b.submitDate)) ? -1: 1);
-    } else if (sortType === "recipient_name_alphabetical") {
-      sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
-    } else if (sortType === "recipient_name_reverse_alphabetical") {
-      sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+    switch (sortType) {
+      case "sent_date":
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
+      case "submission_date":
+        sortMethod = ((a, b) => (new Date(a.submitDate) > new Date(b.submitDate)) ? -1 : 1);
+        break;
+      case "recipient_name_alphabetical":
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
+        break;
+      case "recipient_name_reverse_alphabetical":
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+        break;
+      default:
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
     }
     responsesCopy.sort(sortMethod);
     setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +127,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType })
                     <Avatar style={{marginRight: "1em"}} src={avatarURL}/>
                   </Grid>
                   <Grid item xs className="small-margin">
-                    <Typography className="person-name" >{requesteeProfile?.name}</Typography>
+                    <Typography className="person-name">{requesteeProfile?.name}</Typography>
                     <Typography className="position-text">{requesteeProfile?.title}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
