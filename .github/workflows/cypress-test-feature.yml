@@ -28,6 +28,12 @@ jobs:
         run: docker images
       - name: Run docker container
         run: ./gradlew dockerRun
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: web-ui
+          build: yarn build
+          start: yarn start
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
