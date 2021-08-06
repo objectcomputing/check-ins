@@ -15,6 +15,7 @@ import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
+import { SortOption } from "../../pages/ViewFeedbackPage";
 
 const useStyles = makeStyles({
   root: {
@@ -54,7 +55,7 @@ const useStylesCardActions = makeStyles({
     maxHeight: "30px",
   },
 
-}, { name: 'MuiCardActions' })
+}, { name: 'MuiCardActions' });
 
 const useStylesText = makeStyles({
   body1: {
@@ -62,13 +63,18 @@ const useStylesText = makeStyles({
       fontSize: "0.7rem",
     },
   }
-}, { name: "MuiTypography" })
+}, { name: "MuiTypography" });
 
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
   responses: PropTypes.arrayOf(PropTypes.object).isRequired,
-  sortType: PropTypes.oneOf(["sent_date", "submission_date", "recipient_name_alphabetical", "recipient_name_reverse_alphabetical"])
+  sortType: PropTypes.oneOf([
+    SortOption.SENT_DATE,
+    SortOption.SUBMISSION_DATE,
+    SortOption.RECIPIENT_NAME_ALPHABETICAL,
+    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL
+  ])
 };
 
 const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType }) => {
@@ -89,18 +95,18 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType })
   // Sort the responses by either the send date or the submit date
   useEffect(() => {
     const responsesCopy = [...sortedResponses];
-    let sortMethod = null;
+    let sortMethod;
     switch (sortType) {
-      case "sent_date":
+      case SortOption.SENT_DATE:
         sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
         break;
-      case "submission_date":
+      case SortOption.SUBMISSION_DATE:
         sortMethod = ((a, b) => (new Date(a.submitDate) > new Date(b.submitDate)) ? -1 : 1);
         break;
-      case "recipient_name_alphabetical":
+      case SortOption.RECIPIENT_NAME_ALPHABETICAL:
         sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
         break;
-      case "recipient_name_reverse_alphabetical":
+      case SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL:
         sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
         break;
       default:

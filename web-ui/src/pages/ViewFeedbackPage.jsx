@@ -44,6 +44,13 @@ const useStyles = makeStyles({
   }
 });
 
+export const SortOption = {
+  SENT_DATE: "sent_date",
+  SUBMISSION_DATE: "submission_date",
+  RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
+};
+
 const ViewFeedbackPage = () => {
 
   const classes = useStyles();
@@ -54,7 +61,7 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
-  const [sortValue, setSortValue] = useState("sent_date")
+  const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
 
   const selectSortChangeHandler = (sortValue) => {
     setSortValue(sortValue)
@@ -208,15 +215,15 @@ const ViewFeedbackPage = () => {
               select
               fullWidth
               onChange={(e) => selectSortChangeHandler(e.target.value)}
-              defaultValue={"sent_date"}
+              defaultValue={SortOption.SENT_DATE}
               size="small"
               label="Sort by"
               variant="outlined"
             >
-              <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
-              <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
-              <MenuItem value={"recipient_name_alphabetical"}>Recipient name (A-Z)</MenuItem>
-              <MenuItem value={"recipient_name_reverse_alphabetical"}>Recipient name (Z-A)</MenuItem>
+              <MenuItem value={SortOption.SUBMISSION_DATE}>Date feedback was submitted</MenuItem>
+              <MenuItem value={SortOption.SENT_DATE}>Date request was sent</MenuItem>
+              <MenuItem value={SortOption.RECIPIENT_NAME_ALPHABETICAL}>Recipient name (A-Z)</MenuItem>
+              <MenuItem value={SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL}>Recipient name (Z-A)</MenuItem>
             </TextField>
           </FormControl>
         </div>
