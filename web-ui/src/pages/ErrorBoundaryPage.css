@@ -15,8 +15,12 @@
   margin-left: 0.5rem;
 }
 
+.create-new-issue-modal .quill {
+  margin-bottom: 0px;
+}
+
 .create-new-issue-modal-actions {
-  margin-top: 1rem;
+  margin-top: 2rem;
   width: calc(100% - 1rem);
   display: flex;
   flex-direction: row;
@@ -32,17 +36,9 @@
   cursor: pointer;
 }
 
-.create-new-issue-modal .MuiTextField-root.fullWidth {
-  width: calc(100% - 1rem);
-}
-
-.create-new-issue-modal .MuiTextField-root.halfWidth {
-  width: calc(50% - 0.5rem);
-}
-
 .create-new-issue-modal .MuiTextField-root {
-  margin: 0.5rem;
-  width: 25ch;
+  margin-bottom: 0.5rem;
+  width: 100%;
 }
 
 .error-boundary {
@@ -52,8 +48,14 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 0;
+  padding: 1rem;
   margin: 0;
+}
+
+@media (max-width: 550px) {
+  .error-boundary {
+    background-size: auto;
+  }
 }
 
 .error-boundary .message-section {
