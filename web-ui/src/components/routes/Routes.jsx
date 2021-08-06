@@ -7,7 +7,6 @@ import { AppContext } from "../../context/AppContext";
 
 import GroupIcon from "@material-ui/icons/Group";
 import Header from "../header/Header";
-import ProfilePage from "../../pages/ProfilePage";
 import HomePage from "../../pages/HomePage";
 import TeamsPage from "../../pages/TeamsPage";
 import GuildsPage from "../../pages/GuildsPage";
@@ -40,7 +39,7 @@ export default function Routes() {
         </Header>
         <GuildsPage />
       </Route>
-      <Route path="/home">
+      <Route exact path="/">
         <Header />
         <HomePage />
       </Route>
@@ -87,11 +86,6 @@ export default function Routes() {
           </Route>
         </Switch>
       )}
-
-      <Route path="/">
-        <Header />
-        <ProfilePage />
-      </Route>
     </Switch>
   );
 }
