@@ -22,10 +22,12 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Gradle docker run
+      - name: Build docker image
         run: ./gradlew dockerBuild
       - name: Docker images
         run: docker images
+      - name: Run docker container
+        run: ./gradlew dockerRun
       - name: Sleep for 30 seconds
         uses: jakejarvis/wait-action@master
         with:
