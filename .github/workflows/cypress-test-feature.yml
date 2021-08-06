@@ -1,6 +1,6 @@
 name: Cypress Test - Feature / Bug
 on:
-  pull_request:
+  push:
     branches:
       - 'feature-934/implementing-cypress-in-the-development-environment'
 jobs:
