@@ -42,13 +42,33 @@ Array [
           />
         </div>
         <div
-          className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-4"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
         >
           <p
-            className="MuiTypography-root MuiTypography-body1"
+            className="MuiTypography-root makeStyles-darkGrayTypography-4 MuiTypography-body1"
           >
-            Submitted July 08, 2020
+            Sent on 
+            July 07, 2020
           </p>
+          <p
+            className="MuiTypography-root MuiTypography-body2"
+          >
+            No due date
+          </p>
+        </div>
+        <div
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
+        >
+          <p
+            className="MuiTypography-root makeStyles-greenTypography-3 MuiTypography-body1"
+          >
+            Submitted 
+            July 08, 2020
+          </p>
+        </div>
+        <div
+          className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-2"
+        >
           <a
             className="response-link"
             href="/feedback/view/responses/?request=c15961e4-6e9b-42cd-8140-ece9efe2445c"

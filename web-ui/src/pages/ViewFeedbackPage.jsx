@@ -157,7 +157,6 @@ const ViewFeedbackPage = () => {
         templateName={request?.templateInfo?.title}
         responses={request?.responses}
         sortType={sortValue}
-
       />
       ));
   }, [searchText, sortValue, feedbackRequests, classes.notFoundMessage]);

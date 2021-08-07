@@ -456,7 +456,7 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
-('d62b5c09-7ff9-4b0a-bfee-7f467470a7ef', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '18ef2032-c264-411e-a8e1-ddda9a714bae', '2020-07-07', null, null, 'pending');
+('d62b5c09-7ff9-4b0a-bfee-7f467470a7ef', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '1b4f99da-ef70-4a76-9b37-8bb783b749ad', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', '18ef2032-c264-411e-a8e1-ddda9a714bae', '2020-07-07', '2021-08-01', null, 'pending');
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
