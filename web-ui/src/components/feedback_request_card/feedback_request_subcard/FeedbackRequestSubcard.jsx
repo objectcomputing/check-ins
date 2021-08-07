@@ -24,6 +24,7 @@ const FeedbackRequestSubcard = (props) => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const recipient = selectProfile(state, props.request?.recipientId);
+  // const sendDate = props.request?.sendDate ? dateFns.format(new Date(props.request.sendDate.join("-")), "LLLL dd, yyyy") : null;
   const submitDate = props.request?.submitDate ? dateFns.format(new Date(props.request.submitDate.join("-")), "LLLL dd, yyyy") : null;
 
   const handleReminderNotification = async() => {
