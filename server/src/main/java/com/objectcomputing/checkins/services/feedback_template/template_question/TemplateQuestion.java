@@ -27,7 +27,7 @@ public class TemplateQuestion {
 
     @Column(name = "question")
     @ColumnTransformer(
-            read = "pgp_sym_decrypt(answer::bytea,'${aes.key}')",
+            read = "pgp_sym_decrypt(question::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
     @NotBlank
