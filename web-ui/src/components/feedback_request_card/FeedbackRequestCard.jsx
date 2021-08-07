@@ -15,7 +15,6 @@ import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
-import { SortOption } from "../../pages/ViewFeedbackPage";
 
 const useStyles = makeStyles({
   root: {
@@ -65,6 +64,13 @@ const useStylesText = makeStyles({
   }
 }, { name: "MuiTypography" });
 
+const SortOption = {
+  SENT_DATE: "sent_date",
+  SUBMISSION_DATE: "submission_date",
+  RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
+};
+
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
@@ -101,7 +107,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType })
         sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
         break;
       case SortOption.SUBMISSION_DATE:
-        sortMethod = ((a, b) => (new Date(a.submitDate) > new Date(b.submitDate)) ? -1 : 1);
+        sortMethod = ((a, b) => (!a.submitDate || (new Date(a.submitDate) > new Date(b.submitDate))) ? -1 : 1);
         break;
       case SortOption.RECIPIENT_NAME_ALPHABETICAL:
         sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);

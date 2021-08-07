@@ -7,7 +7,6 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from "@material-ui/core/TextField";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@material-ui/core/Typography";
-
 import "./ViewFeedbackPage.css";
 import {getFeedbackRequestsByCreator} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
@@ -44,7 +43,7 @@ const useStyles = makeStyles({
   }
 });
 
-export const SortOption = {
+const SortOption = {
   SENT_DATE: "sent_date",
   SUBMISSION_DATE: "submission_date",
   RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
@@ -62,11 +61,6 @@ const ViewFeedbackPage = () => {
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
-
-  const selectSortChangeHandler = (sortValue) => {
-    setSortValue(sortValue)
-
-  }
 
   useEffect(() => {
     const getFeedbackRequests = async(creatorId) => {
@@ -87,7 +81,6 @@ const ViewFeedbackPage = () => {
     }
 
     if (!currentUserId || gotRequests.current) return;
-
 
     const getRequestAndTemplateInfo = async (currentUserId) => {
       //get feedback requests
@@ -214,7 +207,7 @@ const ViewFeedbackPage = () => {
               id="select-sort-method"
               select
               fullWidth
-              onChange={(e) => selectSortChangeHandler(e.target.value)}
+              onChange={(e) => setSortValue(e.target.value)}
               defaultValue={SortOption.SENT_DATE}
               size="small"
               label="Sort by"
@@ -234,4 +227,5 @@ const ViewFeedbackPage = () => {
     </div>
   )
 }
+
 export default ViewFeedbackPage;
