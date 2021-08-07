@@ -104,8 +104,8 @@ public class FeedbackTemplateResponseDTO {
         return isAdHoc;
     }
 
-    public void setIsAdHoc(Boolean adHoc) {
-        isAdHoc = adHoc;
+    public void setIsAdHoc(Boolean isAdHoc) {
+        this.isAdHoc = isAdHoc;
     }
 
 }

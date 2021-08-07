@@ -73,6 +73,7 @@ public class FeedbackTemplate {
      * @param description An optional description of the template
      * @param creatorId The {@link UUID} of the user who created the template
      * @param isPublic Whether the template is public or private
+     * @param isAdHoc Whether the template is an ad-hoc template
      */
     public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc) {
         this.id = null;
@@ -158,8 +159,8 @@ public class FeedbackTemplate {
         return isAdHoc;
     }
 
-    public void setIsAdHoc(Boolean adHoc) {
-        isAdHoc = adHoc;
+    public void setIsAdHoc(Boolean isAdHoc) {
+        this.isAdHoc = isAdHoc;
     }
 
     @Override
@@ -173,7 +174,8 @@ public class FeedbackTemplate {
                 Objects.equals(creatorId, that.creatorId) &&
                 Objects.equals(dateCreated, that.dateCreated) &&
                 Objects.equals(active, that.active) &&
-                Objects.equals(isPublic, that.isPublic);
+                Objects.equals(isPublic, that.isPublic) &&
+                Objects.equals(isAdHoc, that.isAdHoc);
     }
 
     @Override
