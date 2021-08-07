@@ -86,6 +86,19 @@ public class FeedbackTemplateController {
     }
 
     /**
+     * Delete all ad-hoc feedback templates that are created by a specific member
+     * @param creatorId The {@link UUID} of the creator of the ad-hoc template(s)
+     * @return {@link FeedbackTemplateResponseDTO}
+     */
+    @Delete("/creator/{creatorId}")
+    public Single<? extends HttpResponse<?>> deleteByCreatorId(@Nullable UUID creatorId) {
+        return Single.fromCallable(() -> feedbackTemplateServices.setAdHocInactiveByCreator(creatorId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(success -> (HttpResponse<?>) HttpResponse.ok())
+                .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
      * Get feedback template by ID
      *
      * @param id {@link UUID} ID of the requested feedback template
@@ -123,7 +136,7 @@ public class FeedbackTemplateController {
      * @return {@link FeedbackTemplate}
      */
     private FeedbackTemplate fromDTO(FeedbackTemplateCreateDTO dto) {
-        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatorId(), dto.getIsPublic());
+        return new FeedbackTemplate(dto.getTitle(), dto.getDescription(), dto.getCreatorId(), dto.getIsPublic(), dto.getIsAdHoc());
     }
 
     /**
@@ -149,6 +162,7 @@ public class FeedbackTemplateController {
         dto.setDateCreated(feedbackTemplate.getDateCreated());
         dto.setActive(feedbackTemplate.getActive());
         dto.setIsPublic(feedbackTemplate.getIsPublic());
+        dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
         return dto;
     }
 

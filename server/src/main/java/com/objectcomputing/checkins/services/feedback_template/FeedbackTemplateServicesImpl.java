@@ -8,7 +8,6 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +54,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setDescription(originalTemplate.get().getDescription());
         feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
         feedbackTemplate.setIsPublic(originalTemplate.get().getIsPublic());
+        feedbackTemplate.setIsAdHoc(originalTemplate.get().getIsAdHoc());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -64,7 +64,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
     }
 
     @Override
-    public Boolean delete(@NotNull UUID id) {
+    public Boolean delete(UUID id) {
         final FeedbackTemplate template = getById(id);
 
         if (!deleteIsPermitted(template.getCreatorId())) {
@@ -95,6 +95,15 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
                 .stream()
                 .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId) {
+        if (!updateIsPermitted(creatorId)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+        feedbackTemplateRepository.setAdHocInactiveByCreator(Util.nullSafeUUIDToString(creatorId));
+        return true;
     }
 
     public boolean updateIsPermitted(UUID creatorId) {

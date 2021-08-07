@@ -19,6 +19,9 @@ public interface FeedbackTemplateRepository extends CrudRepository<FeedbackTempl
     @Query(value = "UPDATE feedback_templates SET active = false WHERE id = :id")
     Optional<FeedbackTemplate> softDeleteById(@NotNull String id);
 
+    @Query("UPDATE feedback_templates SET active = false WHERE is_ad_hoc = true AND creator_id = :creatorId")
+    void setAdHocInactiveByCreator(@Nullable String creatorId);
+
     @Override
     <S extends FeedbackTemplate> S save(@Valid @NotNull @NonNull S entity);
 
