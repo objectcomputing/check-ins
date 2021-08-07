@@ -1,0 +1,9 @@
+--drop table if exists member_history_rale;
+--
+--CREATE TABLE member_history_rale(
+--    memberId varchar REFERENCES member_profile(id),
+--    raleId varchar REFERENCES rale(id),
+--    change varchar,
+--    dateTime date
+--
+--);

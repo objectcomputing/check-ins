@@ -1,0 +1,12 @@
+--ALTER TABLE member_history_rale
+--ADD COLUMN id varchar PRIMARY KEY;
+--
+--ALTER TABLE member_history_rale
+--RENAME COLUMN dateTime TO date;
+--
+--ALTER TABLE member_history_rale
+--DROP CONSTRAINT member_history_raleid_fkey;
+--
+--ALTER TABLE member_history_rale
+--ADD COLUMN raleName varchar;
+--

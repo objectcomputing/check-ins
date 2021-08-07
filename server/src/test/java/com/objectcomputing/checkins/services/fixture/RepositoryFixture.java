@@ -16,6 +16,8 @@ import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
+import com.objectcomputing.checkins.services.rale.RaleRepository;
+import com.objectcomputing.checkins.services.rale.member.RaleMemberRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import com.objectcomputing.checkins.services.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
@@ -95,6 +97,14 @@ public interface RepositoryFixture {
 
     default TeamMemberRepository getTeamMemberRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TeamMemberRepository.class);
+    }
+
+    default RaleRepository getRaleRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RaleRepository.class);
+    }
+
+    default RaleMemberRepository getRaleMemberRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RaleMemberRepository.class);
     }
 
     default QuestionRepository getQuestionRepository() {

@@ -1,0 +1,135 @@
+//package com.objectcomputing.checkins.services.rale.member;
+//
+//import io.micronaut.data.annotation.AutoPopulated;
+//import io.micronaut.data.annotation.TypeDef;
+//import io.micronaut.data.model.DataType;
+//import io.swagger.v3.oas.annotations.media.Schema;
+//
+//import io.micronaut.core.annotation.Nullable;
+//import javax.persistence.Column;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
+//import javax.persistence.Table;
+//import javax.validation.constraints.NotNull;
+//import java.time.LocalDateTime;
+//import java.util.Objects;
+//import java.util.UUID;
+//
+//
+//@Entity
+//@Table(name = "member_history_rale")
+//public class MemberHistory {
+//
+//    @Id
+//    @Column(name = "id")
+//    @AutoPopulated
+//    @TypeDef(type = DataType.STRING)
+//    @Schema(description = "id of this member to Member history entry", required = true)
+//    private UUID id;
+//
+//    @NotNull
+//    @Column(name = "raleid")
+//    @TypeDef(type = DataType.STRING)
+//    @Schema(description = "id of the rale this entry is associated with", required = true)
+//    private UUID raleId;
+//
+//    @NotNull
+//    @Column(name = "memberid")
+//    @TypeDef(type = DataType.STRING)
+//    @Schema(description = "id of the member this entry is associated with", required = true)
+//    private UUID memberId;
+//
+//    @Nullable
+//    @Column(name = "change")
+//    @Schema(description = "The type of change that is occurring to the rale member.", required = true)
+//    private String change;
+//
+//    @Nullable
+//    @Column(name = "date")
+//    @Schema(description = "The date of the latest change to the rale member.", required = true)
+//    private LocalDateTime date;
+//
+//    public MemberHistory(@NotNull UUID raleId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
+//        this.raleId = raleId;
+//        this.memberId = memberId;
+//        this.change = change;
+//        this.date = date;
+//    }
+//    public MemberHistory(@NotNull UUID Id, @NotNull UUID raleId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {
+//        this.id = id;
+//        this.raleId = raleId;
+//        this.memberId = memberId;
+//        this.change = change;
+//        this.date = date;
+//    }
+//
+//    public UUID getId() {
+//        return id;
+//    }
+//
+//    public void setId(UUID id) {
+//        this.id = id;
+//    }
+//
+//    public UUID getRaleId() {
+//        return raleId;
+//    }
+//
+//    public void setRaleId(UUID raleId) {
+//        this.raleId = raleId;
+//    }
+//
+//    public UUID getMemberId() {
+//        return memberId;
+//    }
+//
+//    public void setMemberId(UUID memberId) {
+//        this.memberId = memberId;
+//    }
+//
+//    @Nullable
+//    public String getChange() {
+//        return change;
+//    }
+//
+//    public void setChange(@Nullable String change) {
+//        this.change = change;
+//    }
+//
+//    @Nullable
+//    public LocalDateTime getDate() {
+//        return date;
+//    }
+//
+//    public void setDate(@Nullable LocalDateTime date) {
+//        this.date = date;
+//    }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        MemberHistory that = (MemberHistory) o;
+//        return Objects.equals(id, that.id) &&
+//                Objects.equals(raleId, that.raleId) &&
+//                Objects.equals(memberId, that.memberId) &&
+//                Objects.equals(change, that.change) &&
+//                Objects.equals(date, that.date);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, raleId, memberId, change, date);
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "MemberHistory{" +
+//                "id=" + id +
+//                "raleId=" + raleId +
+//                ", memberId=" + memberId +
+//                ", change='" + change + '\'' +
+//                ", date=" + date +
+//                '}';
+//    }
+//}
