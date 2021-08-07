@@ -28,16 +28,17 @@ public interface TemplateQuestionRepository extends CrudRepository<TemplateQuest
 
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
-            "template_id," +
+            "template_id, " +
             "question_number " +
             "FROM template_questions " +
-            "WHERE  (:templateId ORDER BY question_number) ",
+            "WHERE (template_id = :templateId) " +
+            "ORDER BY question_number",
             nativeQuery = true)
     List<TemplateQuestion> findByTemplateId(String templateId);
 
     @Query(value = "SELECT id, " +
             "PGP_SYM_DECRYPT(cast(question as bytea),'${aes.key}') as question, " +
-            "template_id," +
+            "template_id, " +
             "question_number " +
             "FROM template_questions " +
             "WHERE (question_number = :questionNumber) " +
