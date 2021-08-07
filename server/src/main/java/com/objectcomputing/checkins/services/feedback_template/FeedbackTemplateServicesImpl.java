@@ -7,10 +7,10 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.core.annotation.Nullable;
-
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
@@ -54,6 +54,7 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
         feedbackTemplate.setTitle(originalTemplate.get().getTitle());
         feedbackTemplate.setDescription(originalTemplate.get().getDescription());
         feedbackTemplate.setDateCreated(originalTemplate.get().getDateCreated());
+        feedbackTemplate.setIsPublic(originalTemplate.get().getIsPublic());
 
         if (!updateIsPermitted(originalTemplate.get().getCreatorId())) {
             throw new PermissionException("You are not authorized to do this operation");
@@ -82,22 +83,25 @@ public class FeedbackTemplateServicesImpl implements FeedbackTemplateServices {
             throw new NotFoundException("No feedback template with ID " + id);
         }
 
-
         return feedbackTemplate.get();
     }
 
     @Override
     public List<FeedbackTemplate> findByFields(@Nullable UUID creatorId, @Nullable String title) {
-        return feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        boolean isAdmin = currentUserServices.isAdmin();
+        List <FeedbackTemplate> allTemplates =  feedbackTemplateRepository.searchByValues(Util.nullSafeUUIDToString(creatorId), title);
+        return allTemplates
+                .stream()
+                .filter(template -> template.getIsPublic() || isAdmin || template.getCreatorId().equals(currentUserId))
+                .collect(Collectors.toList());
     }
-
 
     public boolean updateIsPermitted(UUID creatorId) {
         UUID currentUserId = currentUserServices.getCurrentUser().getId();
         boolean isAdmin = currentUserServices.isAdmin();
         return isAdmin || currentUserId.equals(creatorId);
     }
-
 
     public boolean deleteIsPermitted(UUID creatorId) {
         return updateIsPermitted(creatorId);
