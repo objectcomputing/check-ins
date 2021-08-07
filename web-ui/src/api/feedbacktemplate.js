@@ -110,9 +110,22 @@ export const getFeedbackTemplateWithQuestions = async (templateId, cookie) => {
   });
 }
 
+export const softDeleteAdHocTemplates = async (creatorId, cookie) => {
+  return resolve({
+    method: "delete",
+    url: `${feedbackTemplateUrl}/creator/${creatorId}`,
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie },
+  });
+}
+
 export const getAllFeedbackTemplates = async (cookie) => {
   return resolve({
     url: feedbackTemplateUrl,
+    params: {
+      creatorId: null,
+      title: null
+    },
     responseType: "json",
     headers: { "X-CSRF-Header": cookie },
   });

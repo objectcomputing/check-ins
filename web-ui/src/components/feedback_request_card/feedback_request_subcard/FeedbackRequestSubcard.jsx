@@ -127,7 +127,9 @@ const FeedbackRequestSubcard = ({ request }) => {
                   </IconButton>
                 </Tooltip>
               }
-              {request.submitDate ? <Link to="" className="response-link">View response</Link> : null}
+              {request && request.submitDate && request.id
+                ? <Link to={`/feedback/view/responses/?request=${request.id}`} className="response-link">View response</Link>
+                : null}
             </Grid>
           </Grid>
         </Grid>

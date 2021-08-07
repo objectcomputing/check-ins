@@ -409,9 +409,9 @@ VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
 VALUES
-('18ef2032-c264-411e-a8e1-ddda9a714bae', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', 'Q1 Feedback', 'Get feedback for quarter 1', '2021-06-06', null, null);
+('18ef2032-c264-411e-a8e1-ddda9a714bae', 'Q1 Feedback', 'Get feedback for quarter 1', '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '2021-06-06', true, true, false);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
@@ -424,9 +424,9 @@ VALUES
 ('47f997ca-0045-4147-afcb-0c9ed0b44978', 'In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?', '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
 VALUES
-('97b0a312-e5dd-46f4-a600-d8be2ad925bb', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', 'Survey 1', 'Make a survey with a few questions', '2021-05-05', null, null);
+('97b0a312-e5dd-46f4-a600-d8be2ad925bb', 'Survey 1', 'Make a survey with a few questions', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2021-05-05', true, true, false);
 
 INSERT INTO template_questions
 (id, question, template_id, question_number)
@@ -439,9 +439,19 @@ VALUES
 ('afa7e2cb-366a-4c16-a205-c0d493b80d85', 'In what ways does this team member represent OCI''s values?', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
 
 INSERT INTO feedback_templates
-(id, creator_id, title, description, date_created, updater_id, date_updated)
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
 VALUES
-('2cb80a06-e723-482f-af9b-6b9516cabfcd', '2559a257-ae84-4076-9ed4-3820c427beeb', 'Sample Template', 'This template does not have any questions on it', '2020-04-04', null, null);
+('2cb80a06-e723-482f-af9b-6b9516cabfcd', 'Empty Template', 'This template does not have any questions on it', '2559a257-ae84-4076-9ed4-3820c427beeb', '2020-04-04', true, true, false);
+
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
+VALUES
+('492e4f61-c7e3-4c30-a650-7ec74f2ba545', 'Private Template', 'This template is private', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '2020-06-07', true, false, false);
+
+INSERT INTO feedback_templates
+(id, title, description, creator_id, date_created, active, is_public, is_ad_hoc)
+VALUES
+('c5d10880-f561-11eb-9a03-0242ac130003', 'Private Template 2', 'This template is private', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '2020-06-10', true, false, false);
 
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
@@ -456,4 +466,19 @@ VALUES
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
-('c15961e4-6e9b-42cd-8140-ece9efe2445c', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, '2020-07-08', 'submitted');
+('c15961e4-6e9b-42cd-8140-ece9efe2445c', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498' , 'b2d35288-7f1e-4549-aa2b-68396b162490', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, '2020-07-08', 'submitted');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('e2e24336-0615-4564-af29-d0f7b3ac3db9', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '8fa673c0-ca19-4271-b759-41cb9db2e83a', '6884ab96-2275-4af9-89d8-ad84254d8759', '18ef2032-c264-411e-a8e1-ddda9a714bae', '2018-12-24', '2018-12-25', null, 'sent');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('09fbdaf2-f554-11eb-9a03-0242ac130003', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-07', null, '2020-07-07', 'submitted' );
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('82d9db7c-f554-11eb-9a03-0242ac130003', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', 'b2d35288-7f1e-4549-aa2b-68396b162490', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9','97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2020-07-05', null, '2020-07-10', 'submitted' );
