@@ -77,6 +77,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         dto.setTitle(feedbackTemplate.getTitle());
         dto.setDescription(feedbackTemplate.getDescription());
         dto.setCreatorId(feedbackTemplate.getCreatorId());
+        dto.setIsPublic(feedbackTemplate.getIsPublic());
         dto.setIsAdHoc(feedbackTemplate.getIsAdHoc());
         return dto;
     }
@@ -98,6 +99,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
         assertEquals(content.getDescription(), dto.getDescription());
         assertEquals(content.getCreatorId(), dto.getCreatorId());
         assertEquals(content.getActive(), dto.getActive());
+        assertEquals(content.getIsPublic(), dto.getIsPublic());
         assertEquals(content.getIsAdHoc(), dto.getIsAdHoc());
     }
 
@@ -451,6 +453,71 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(exception);
+    }
+
+    @Test
+    void testGetPrivateTemplateByAdmin() {
+        final MemberProfile admin = createADefaultMemberProfile();
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+        createDefaultAdminRole(admin);
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getBody().get().size());
+        assertContentEqualsEntity(privateTemplate, response.getBody().get().get(0));
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testGetPrivateTemplateByCreator() {
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(memberOne.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(2, response.getBody().get().size());
+        assertContentEqualsEntity(privateTemplate, response.getBody().get().get(0));
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(1));
+    }
+
+    @Test
+    void testGetPrivateTemplateNotPermitted() {
+        final MemberProfile memberOne = createASecondDefaultMemberProfile();
+        final MemberProfile random = createAnUnrelatedUser();
+
+        final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
+        privateTemplate.setIsPublic(false);
+        getFeedbackTemplateRepository().save(privateTemplate);
+        final FeedbackTemplate publicTemplate = saveAnotherDefaultFeedbackTemplate(memberOne.getId());
+
+        final HttpRequest<?> request = HttpRequest.GET("/")
+                .basicAuth(random.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<List<FeedbackTemplateResponseDTO>> response = client.toBlocking()
+                .exchange(request, Argument.listOf(FeedbackTemplateResponseDTO.class));
+
+        assertTrue(response.getBody().isPresent());
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertEquals(1, response.getBody().get().size());
+        assertContentEqualsEntity(publicTemplate, response.getBody().get().get(0));
     }
 
     @Test

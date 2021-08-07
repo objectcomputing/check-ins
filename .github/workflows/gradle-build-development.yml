@@ -76,6 +76,8 @@ jobs:
             --set-env-vars "AUTH_PROVIDER_X509_CERT_URL=${{ secrets.SA_AUTH_PROVIDER_X509_CERT_URL }}" \
             --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
             --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
+            --set-env-vars "MJ_APIKEY_PUBLIC=${{ secrets.MJ_APIKEY_PUBLIC }}" \
+            --set-env-vars "MJ_APIKEY_PRIVATE=${{ secrets.MJ_APIKEY_PRIVATE }}" \
             --platform "managed" \
             --max-instances 4 \
             --allow-unauthenticated

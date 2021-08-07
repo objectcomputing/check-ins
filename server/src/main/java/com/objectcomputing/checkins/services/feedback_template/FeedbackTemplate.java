@@ -54,6 +54,12 @@ public class FeedbackTemplate {
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
+    @Column(name = "is_public")
+    @NotBlank
+    @TypeDef(type = DataType.BOOLEAN)
+    @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
+    private Boolean isPublic;
+
     @Column(name = "is_ad_hoc")
     @NotBlank
     @TypeDef(type = DataType.BOOLEAN)
@@ -66,13 +72,15 @@ public class FeedbackTemplate {
      * @param title The title of the template
      * @param description An optional description of the template
      * @param creatorId The {@link UUID} of the user who created the template
+     * @param isPublic Whether the template is public or private
      */
-    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isAdHoc) {
+    public FeedbackTemplate(String title, @Nullable String description, UUID creatorId, Boolean isPublic, Boolean isAdHoc) {
         this.id = null;
         this.title = title;
         this.description = description;
         this.creatorId = creatorId;
         this.active = true;
+        this.isPublic = isPublic;
         this.isAdHoc = isAdHoc;
     }
 
@@ -138,6 +146,14 @@ public class FeedbackTemplate {
         this.active = active;
     }
 
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
     public Boolean getIsAdHoc() {
         return isAdHoc;
     }
@@ -150,13 +166,19 @@ public class FeedbackTemplate {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FeedbackTemplate template = (FeedbackTemplate) o;
-        return Objects.equals(id, template.id) && Objects.equals(title, template.title) && Objects.equals(description, template.description) && Objects.equals(creatorId, template.creatorId) && Objects.equals(dateCreated, template.dateCreated) && Objects.equals(active, template.active) && Objects.equals(isAdHoc, template.isAdHoc);
+        FeedbackTemplate that = (FeedbackTemplate) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(creatorId, that.creatorId) &&
+                Objects.equals(dateCreated, that.dateCreated) &&
+                Objects.equals(active, that.active) &&
+                Objects.equals(isPublic, that.isPublic);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, creatorId, dateCreated, active, isAdHoc);
+        return Objects.hash(id, title, description, creatorId, dateCreated, active, isPublic, isAdHoc);
     }
 
     @Override
@@ -168,6 +190,7 @@ public class FeedbackTemplate {
                 ", creatorId=" + creatorId +
                 ", dateCreated=" + dateCreated +
                 ", active=" + active +
+                ", isPublic=" + isPublic +
                 ", isAdHoc=" + isAdHoc +
                 '}';
     }

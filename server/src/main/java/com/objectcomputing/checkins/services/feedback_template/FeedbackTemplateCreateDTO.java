@@ -2,8 +2,6 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.data.annotation.TypeDef;
-import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
@@ -27,6 +25,10 @@ public class FeedbackTemplateCreateDTO {
     @NotBlank
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
+
+    @NotBlank
+    @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
+    private Boolean isPublic;
 
     @NotBlank
     @Schema(description = "whether the template is an ad-hoc template", required = true)
@@ -63,6 +65,14 @@ public class FeedbackTemplateCreateDTO {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
     }
 
     public Boolean getIsAdHoc() {

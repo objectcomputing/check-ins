@@ -51,10 +51,10 @@ Array [
           </p>
           <a
             className="response-link"
-            href="/"
+            href="/feedback/view/responses/?request=c15961e4-6e9b-42cd-8140-ece9efe2445c"
             onClick={[Function]}
           >
-             View response 
+            View response
           </a>
         </div>
       </div>
