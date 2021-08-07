@@ -32,4 +32,5 @@ public interface GuildFixture extends MemberProfileFixture, RepositoryFixture{
     default Guild entityFromDTO(GuildUpdateDTO dto) {
         return new Guild(dto.getId(), dto.getName(), dto.getDescription());
     }
+
 }

@@ -24,6 +24,7 @@ const FeedbackRequestSubcard = (props) => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const recipient = selectProfile(state, props.request?.recipientId);
+  // const sendDate = props.request?.sendDate ? dateFns.format(new Date(props.request.sendDate.join("-")), "LLLL dd, yyyy") : null;
   const submitDate = props.request?.submitDate ? dateFns.format(new Date(props.request.submitDate.join("-")), "LLLL dd, yyyy") : null;
 
   const handleReminderNotification = async() => {
@@ -87,7 +88,9 @@ const FeedbackRequestSubcard = (props) => {
                   </IconButton>
                 </Tooltip>
               }
-              {props.request.submitDate ? <Link to="" className="response-link"> View response </Link> : null}
+              {props.request.submitDate && props.request.id
+                ? <Link to={`/feedback/view/responses/?request=${props.request.id}`} className="response-link">View response</Link>
+                : null}
             </Grid>
           </Grid>
         </Grid>
