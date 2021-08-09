@@ -23,7 +23,7 @@ jobs:
       - name: Gradle package
         run: ./gradlew assemble
       - name: Start postgres DB
-        run: docker compose up
+        run: docker-compose up
       - name: Build docker image
         run: ./gradlew dockerBuild
       - name: Docker images
