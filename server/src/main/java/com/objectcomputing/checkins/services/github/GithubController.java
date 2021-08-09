@@ -11,7 +11,9 @@ import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.reactivestreams.Publisher;
 
+
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 @Controller("/services/github-issue")
@@ -30,13 +32,11 @@ public class GithubController {
      * Create and save a new github issue
      *
      * @param request, {@link IssueCreateDTO}
-     * @return {@link HttpResponse < GithubRequestDTO >}
+     * @return {@link HttpResponse < IssueResponseDTO >}
      */
-
     @Post
-    Publisher<IssueResponseDTO> sendIssue(@Body @Valid IssueCreateDTO request) {
+    Publisher<IssueResponseDTO> sendIssue(@Body @Valid @NotNull IssueCreateDTO request) {
         return githubClient.sendIssue(request);
     }
-
 
 }

@@ -26,5 +26,4 @@ public class GithubClient {
 
         return httpClient.retrieve(req, IssueResponseDTO.class);
     }
-
 }
