@@ -84,6 +84,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         // Create a member and add him to guild
         MemberProfile memberProfileOfUser = createAnUnrelatedUser();
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfileOfUser.getId(), false);
+
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(memberProfileOfGuildmate.getWorkEmail(), MEMBER_ROLE);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -94,7 +95,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
         assertEquals(request.getPath(), href);
         assertEquals("You are not authorized to perform this operation", error);
-        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
     }
 
     @Test
@@ -487,20 +488,37 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
     }
 
     @Test
-    void testDeleteGuildMemberWithoutAdminPrivilege() {
+    void testMemberCanRemoveThemselfFromGuild() {
         Guild guild = createDefaultGuild();
         MemberProfile memberProfile = createADefaultMemberProfile();
 
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
-                DELETE(String.format("/%s", guildMember.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testDeleteGuildMemberWithUnrelatedUserThrowsException() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        MemberProfile unrelatedUser = createAnUnrelatedUser();
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(unrelatedUser.getWorkEmail(), MEMBER_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         assertNotNull(responseException.getResponse());
         assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+
     }
 
     @Test
