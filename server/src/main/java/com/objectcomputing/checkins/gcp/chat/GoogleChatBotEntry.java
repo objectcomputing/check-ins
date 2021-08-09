@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 import java.util.UUID;
 
 public class GoogleChatBotEntry {
@@ -31,11 +32,6 @@ public class GoogleChatBotEntry {
     @Schema(description = "id of the member that the chatbot sends messages to ", required = true)
     private UUID memberId;
 
-
-    //remove person if they deactivate
-    //delete chat bot databse entry
-    //create chat bot database entry
-    //find by member id to repo
     public GoogleChatBotEntry(UUID id, String spaceId, UUID memberId) {
         this.id = id;
         this.spaceId = spaceId;
@@ -49,4 +45,48 @@ public class GoogleChatBotEntry {
         this.memberId = memberId;
 
     }
+
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getSpaceId() {
+        return spaceId;
+    }
+
+    public void setSpaceId(String spaceId) {
+        this.spaceId = spaceId;
+    }
+
+    public UUID getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GoogleChatBotEntry that = (GoogleChatBotEntry) o;
+        return id.equals(that.id) && spaceId.equals(that.spaceId) && memberId.equals(that.memberId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, spaceId, memberId);
+    }
+
+    //remove person if they deactivate
+    //delete chat bot databse entry
+    //create chat bot database entry
+    //find by member id to repo
+
 }
