@@ -4,7 +4,6 @@ import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
-import java.sql.Array;
 
 @Introspected
 public class IssueCreateDTO {
