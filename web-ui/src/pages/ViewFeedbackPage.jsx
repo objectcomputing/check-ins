@@ -129,10 +129,6 @@ const ViewFeedbackPage = () => {
     });
   }, [currentUserId, csrf, state]);
 
-  useEffect(() => {
-    console.log(dateRange);
-  }, [dateRange]);
-
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
       return null;

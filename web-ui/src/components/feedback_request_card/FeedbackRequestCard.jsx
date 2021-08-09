@@ -15,6 +15,7 @@ import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles({
   root: {
@@ -131,6 +132,32 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
     return requestDate >= oldestDate;
   }, [dateRange]);
 
+  const noRequestsMessage = useCallback(() => {
+    let message;
+    switch (dateRange) {
+      case DateRange.THREE_MONTHS:
+        message = "No requests in the past 3 months";
+        break;
+      case DateRange.SIX_MONTHS:
+        message = "No requests in the past 6 months";
+        break;
+      case DateRange.ONE_YEAR:
+        message = "No requests in the past year";
+        break;
+      default:
+        message = "No requests";
+    }
+
+    return (
+      <React.Fragment>
+        <Divider/>
+        <div style={{padding: "12px 12px", textAlign: "center", backgroundColor: "#ececec"}}>
+          <Typography variant="body1">{message}</Typography>
+        </div>
+      </React.Fragment>
+    );
+  }, [dateRange]);
+
   // Sort the responses by either the send date or the submit date
   useEffect(() => {
     let responsesCopy = [...responses];
@@ -155,8 +182,8 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
         break;
     }
     responsesCopy.sort(sortMethod);
-    setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortType, dateRange, responses]);
+    setSortedResponses(responsesCopy);
+  }, [state, sortType, dateRange, responses, withinDateRange]);
 
   return (
     <div className="feedback-request-card">
@@ -197,10 +224,13 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
           </IconButton>
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            {sortedResponses?.map((response) => (
-              <FeedbackRequestSubcard key={response.id} request={response}/>
-            ))}
+          <CardContent style={{padding: 0}}>
+            {sortedResponses && sortedResponses.length
+              ? sortedResponses.map((response) => (
+                <FeedbackRequestSubcard key={response.id} request={response}/>
+              ))
+              : noRequestsMessage()
+            }
           </CardContent>
         </Collapse>
       </Card>
