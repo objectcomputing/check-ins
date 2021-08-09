@@ -152,9 +152,9 @@ const FeedbackRequestPage = () => {
   const hasFrom = useCallback(() => {
     let from = query.from;
     if (from) {
-      from = Array.isArray(from) ? from : [from];
-      for (let recipientId of from) {
-        if (!memberIds.includes(recipientId)) {
+      from = Array.isArray(from);
+      if(from.length === 1) {
+        if (!memberIds.includes(from.recipientId)) {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -165,11 +165,47 @@ const FeedbackRequestPage = () => {
           handleQueryChange("from", undefined);
           return false;
         }
+        if(from.recipientId === currentUserId) {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: "Cannot send feedback request to the requestee",
+            },
+          });
+          from.splice(from.indexOf(from.recipientId), 1)
+        }
+        return false;
+      }
+      if(from.length > 1) {
+        for (let recipientId of from) {
+          if (!memberIds.includes(recipientId)) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: "error",
+                toast: "Member ID in URL is invalid",
+              },
+            });
+            handleQueryChange("from", undefined);
+            return false;
+          }
+          if(recipientId === currentUserId) {
+            dispatch({
+              type: UPDATE_TOAST,
+              payload: {
+                severity: "error",
+                toast: "Cannot send feedback request to the requestee",
+              },
+            });
+            from.splice(from.indexOf(recipientId), 1)
+          }
+        }
       }
       return true;
     }
     return false;
-  }, [memberIds, query, dispatch, handleQueryChange]);
+  }, [memberIds, query, dispatch, handleQueryChange, currentUserId, fromQuery]);
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
