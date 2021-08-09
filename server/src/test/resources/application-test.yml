@@ -37,3 +37,4 @@ flyway:
 ---
 aes:
   key: BOGUS_TEST_KEY
+

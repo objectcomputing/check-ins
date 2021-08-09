@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.gcp.chat.GoogleChatBot;
+import com.objectcomputing.checkins.notifications.all_types.NotificationSender;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -22,34 +23,31 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
-    public static final String submitURL = "https://checkins.objectcomputing.com/feedback/submit?requestId=";
+    public static final String submitURL = "https://checkins.objectcomputing.com/feedback/submit?request=";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
-    private EmailSender emailSender;
     private final String notificationSubject;
     private final String notificationContent;
-    private GoogleChatBot googleChatBot;
+    private NotificationSender notificationSender;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
-                                       MemberProfileServices memberProfileServices, EmailSender emailSender,
+                                       MemberProfileServices memberProfileServices,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
-                                       GoogleChatBot googleChatBot) {
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent, NotificationSender notificationSender
+                                      ) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
-        this.emailSender = emailSender;
         this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
-        this.googleChatBot = googleChatBot;
+        this.notificationSender = notificationSender;
     }
 
-    public void setEmailSender(EmailSender emailSender) {
-        this.emailSender = emailSender;
+    public void setNotificationSender(NotificationSender sender) {
+        this.notificationSender = sender;
     }
-    public void setGoogleChatBot(GoogleChatBot googleChatBot) {this.googleChatBot = googleChatBot;}
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
         try {
@@ -83,12 +81,8 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        String newContent =  notificationContent + "<a href=\""+submitURL+storedRequest.getId()+"\">Check-Ins application</a>.";
-        String googleChatContent = "You have received a feedback request. Please go to your unique link at " + submitURL+storedRequest.getId() + " to complete this request.";
-        emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
-        if (googleChatBot != null) {
-            googleChatBot.sendChat(googleChatContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
-        }
+        String newContent = "You have received a feedback request. Please go to your unique link at " + submitURL+storedRequest.getId() + " to complete this request.";
+        notificationSender.sendNotification(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         return storedRequest;
     }
 

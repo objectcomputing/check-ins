@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.objectcomputing.checkins.gcp.chat.GoogleChatBot;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
+import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.fixture.*;
@@ -12,7 +13,10 @@ import java.util.*;
 
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.env.Environment;
 import io.micronaut.core.type.Argument;
+import io.micronaut.gcp.credentials.GoogleCredentialsConfiguration;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -20,6 +24,8 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -38,19 +44,19 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Client("/services/feedback/requests")
     HttpClient client;
 
-    private final EmailSender emailSender = mock(EmailSender.class);
 
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
+    private GoogleCredentialsConfiguration credentialsConfiguration;
+
+    @BeforeEach
+    void setCredentials() {
+        credentialsConfiguration.setEncodedKey("ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAib2NpLWludGVybi0yMDE5IiwKICAicHJpdmF0ZV9rZXlfaWQiOiAiZTUzMTNlZTA2MjMxYjMwZTlmMzEyOGMzZjZmYWE1ZDI4NGZkZWUwMCIsCiAgInByaXZhdGVfa2V5IjogIi0tLS0tQkVHSU4gUFJJVkFURSBLRVktLS0tLVxuTUlJRXZnSUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2d3Z2dTa0FnRUFBb0lCQVFDNXVqK2txSkZkWTVXY1xuT0tKa2QrV0p6ZGN1VEtyeGdJeDBpUVcwWjV2VERLbS85Ky9aWmJoL2R6NGlJNktIbEhwVVVvdElOQU5rWkhjY1xuTkw5ZExLZWJpUUdwQzBFcGtqWXNpK2l5STFlN3hldWltMkxDOGpUTmJZeHRHMk9iOTR1R0lKV1R6UDZ3SnhyTlxuUFFBSnpicXpVQVFTbjlLZVFOYVFPMEpwVzBkcWtENEhVTklrUFc3L3l1Szl3SFVHUVlTWUU1MWlMWlh2YW1DNFxuRkdtOTMvdUs3bVRVZldTS1g3cVo1UjNUeGRUUSt5dGxXdERjTnp1N2JDRS9ZdFpFWWtOUjlpWVhDbjdTVVoxQVxuejV5QU1zYm5sbE9NbjJTUFBrbUlNRDY3UXJJQTl3akhBSG1XcXh1YU1aeXpmU2hyNTlEUUc5STlCbFUvTGpmelxuSGF1TWwwWTFBZ01CQUFFQ2dnRUFPMVJ2YzBLMEdTQ3dVTlRZcjM2TGtXOXpqMk5IY2xsdHhPWm1yNkF2YTRhT1xualhmL0l6UDI4YVVlY0pwd2w1NExTL2VJYmRyTHdKekZYZm5OcmM2UGhrU0locjlGSkNvRWEwdVFYS09rcWFQS1xucDhtNmpXc0JDaVMyS0w2SW5mREFuZXEzelp5OU9YbHNldWJESmQ2V0J5VUhBQW9WSnArd3l5ZGJDanZ4L3V5alxua0l5RDVqc1VtRWMvYzdDWmVvMlRJTHdUUFpjUnlpeXB1WUpDZmhiTmtyNy9IMUxKdWdkQkpnRmhuTmx0cytGVlxuRzl1dUo3N1dRd3VYR2JnSFo4eS9SSkxYZUVQSlF6UEdRaEVCczE1TzFub1hqcTZraFZCdEJGYi9EckNrMndoeFxuRkc2eTFGSmpvcnBkOStIQmwzWHJSVW8xL0lwSnpBUC94ZmhXZFJUbCt3S0JnUUQ1Q2owUXd0dkI4TnhsZ2RWT1xuUThoOFViY1MyQXg5LzJWSDVJNjYvY3hSVEpYdFlrWExSUHp2V05MRS9kcnF4cVlHUnVDQWhnR1FYL2xTVFVXYlxuUWRKWUxhU3VjQ0VTQ3U1L2I2TFYyRGZGaGd2NTJMZzZnOTVpcTdTS0c4NFpMemFDYWNHcHhTZzc4YllzbEhFdFxuV0hkdEZ6RlVvZ3RzaTJrdzVUWm9TeWFGQXdLQmdRQys2d296SnpOb1FrOUNVR1RPV1Y5SElxakZZb3lvcS9XUlxua0ZLL0tZUDZQcTVWWE5zY2dycGpKMXlqRWJaVHNXS3M2a2RsYUJTOU90elJTaTNNUi9rR0ZSbGU2ZE9jR2ZzaFxuTitydjMwNWVGQWl0aERZUnVzRis3UVB1NTgvNGFudVFRSXlDK2lrZ1pGUkdlY1ViZnZReFUvcmF2OWFSdTVScFxuVm1ickRMaVdad0tCZ1FDU0pjd0lWaElaRW55RXBWakVnVXJhaWluaHlTQXJvUUdTMnpKWDBqRmhWSXgzcnNBK1xudGRHcHRIcWNXRTFza2Y5RWw3dVFNUlFoNGZDeXQ5NHRhc2RDTUNjQXA1VUF2YUdRNzdhandDdWFvenZMOTc3RlxudURWOXVqNU0vbHhJczBoTjZEcGFvdlVsbUlmTVNhRFJkNlUrUStvVFBMVnZrYkM5blFYODFuMVllUUtCZ0hzcVxuR0RkdDE2MHY4Zi9lNjFsdnNKYXNsbUpZTkZQd000a0hxVW9ubHp2T1NodEp2eFVDaFFuSWIrdkhWbTlocFQzV1xuR2Q4aXFSWjJyZFBhM2ZiR2k3RlAxVUUwNmMzdnVPSHlOLzh0ZVZvWjVJdEVHcm1QV0pyd2ZyUVdHa1d4TkN1WVxuYU0xcVl6UEJaZGpkWDdwZ1NWcTFTY1RyTTVwcWY5RUE2MzVCZzZlTEFvR0JBT0hUeDBHNnRGKzZvaHA5Z2hUT1xuWHFUMktUNjJBYWpRV2piN0NEN3RDT0NNdEhOQktITlBjOFdOdDRFWUNHNXd4bHNYOC9DZit3WHhNNFVnWi9IZ1xubUFnajhLV3dNS0QzUUlDL2tZVmR4dWtrckI2bk00ZnFydU1wVGZFTmoraVR3UXI2OUlaV1Vmb0dLVDdHWUEvOFxuSlFFMkxZZk9NcndpODNrSFU4QUZnbVg3XG4tLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tXG4iLAogICJjbGllbnRfZW1haWwiOiAiaHItZmlsZS11cGxvYWRAb2NpLWludGVybi0yMDE5LmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwMTIxMzc4OTEwODI5MTkxNzAyOSIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvaHItZmlsZS11cGxvYWQlNDBvY2ktaW50ZXJuLTIwMTkuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iCn0K");
+        credentialsConfiguration.setLocation("../");
+    }
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
 
-    @BeforeEach
-    void resetMocks() {
-        Mockito.reset(emailSender);
-        feedbackRequestServicesImpl.setEmailSender(emailSender);
-        feedbackRequestServicesImpl.setGoogleChatBot(null);
-    }
 
     private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {
         FeedbackTemplate template = createFeedbackTemplate(creator.getId());
@@ -186,7 +192,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
+//        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
     }
 
     @Test
