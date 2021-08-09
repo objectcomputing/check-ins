@@ -14,7 +14,6 @@ export const getFeedbackSuggestion = async (id, cookie) => {
   });
 };
 
-
 export const createFeedbackRequest = async (feedbackRequest, cookie) => {
   return resolve({
     method: "post",
