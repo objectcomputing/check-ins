@@ -129,6 +129,9 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
         oldestDate.setMonth(oldestDate.getMonth() - 3);
     }
 
+    if (Array.isArray(requestDate)) {
+      requestDate = new Date(requestDate);
+    }
     return requestDate >= oldestDate;
   }, [dateRange]);
 
