@@ -8,8 +8,8 @@ import java.util.UUID;
 public interface QuestionAndAnswerServices {
 
     class Tuple {
-        public TemplateQuestion question;
-        public FeedbackAnswer answer;
+        private TemplateQuestion question;
+        private FeedbackAnswer answer;
 
         public TemplateQuestion getQuestion() {
             return question;
