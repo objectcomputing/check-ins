@@ -78,12 +78,13 @@ const FeedbackRequestPage = () => {
   const currentUserId = memberProfile?.id;
   const location = useLocation();
   const history = useHistory();
-  const memberIds = selectCurrentMemberIds(state);
   const csrf = selectCsrfToken(state);
   const [query, setQuery] = useState({});
+  const queryLoaded = useRef(false);
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();
   const [requestee, setRequestee] = useState({});
+  const [memberIds, setMemberIds] = useState([]);
 
   const handleQueryChange = useCallback((key, value) => {
     let newQuery = {
@@ -99,46 +100,12 @@ const FeedbackRequestPage = () => {
     else return parseInt(query.step);
   }, [query.step]);
 
-  const activeStep = getStep();
-
   const hasFor = useCallback(() => {
     return !!query.for;
   }, [query.for]);
 
-  useEffect(() => {
-    async function isTemplateValid() {
-      if (!query.template || !csrf) {
-        return false;
-      }
-      let res = await getFeedbackTemplate(query.template, csrf);
-      let templateResponse =
-          res.payload &&
-          res.payload.data &&
-          res.payload.status === 200 &&
-          !res.error
-              ? res.payload.data
-              : null
-      if (templateResponse === null) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "The ID for the template you selected does not exist.",
-          },
-        });
-        return false;
-      }
-      else {
-        return true;
-      }
-    }
-
-    isTemplateValid().then((isValid) => {
-      setTemplateIsValid(isValid);
-    });
-  }, [csrf, query.template]);
-
   const hasFrom = useCallback(() => {
+    if (!memberIds.length) return true;
     let from = query.from;
     if (from) {
       from = Array.isArray(from) ? from : [from];
@@ -177,20 +144,20 @@ const FeedbackRequestPage = () => {
 
   const canProceed = useCallback(() => {
     if (query && Object.keys(query).length > 0) {
-      switch (activeStep) {
-        case 1:
-          return hasFor() && templateIsValid;
-        case 2:
-          return hasFor() && templateIsValid && hasFrom();
-        case 3:
-          const dueQueryValid = query.due ? isValidDate(query.due) : true;
-          return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
-        default:
-          return false;
+      const activeStep = getStep();
+      if (activeStep === 1) {
+        return hasFor() && templateIsValid;
+      } else if (activeStep === 2) {
+        return hasFor() && templateIsValid && hasFrom();
+      } else if (activeStep === 3) {
+        const dueQueryValid = query.due ? isValidDate(query.due) : true;
+        return hasFor() && templateIsValid && hasFrom() && hasSend() && dueQueryValid;
+      } else {
+        return false;
       }
     }
     return false;
-  }, [activeStep, hasFor, hasFrom, hasSend, isValidDate, query, templateIsValid]);
+  }, [hasFor, hasFrom, hasSend, isValidDate, query, templateIsValid, getStep]);
 
   const handleSubmit = () => {
     const from = query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : [];
@@ -212,6 +179,7 @@ const FeedbackRequestPage = () => {
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
+    const activeStep = getStep();
     if (activeStep === steps.length) {
       handleSubmit();
       return;
@@ -219,13 +187,14 @@ const FeedbackRequestPage = () => {
     query.step = `${activeStep + 1}`;
     history.push({...location, search: queryString.stringify(query)});
 
-  }, [canProceed, activeStep, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
+  }, [canProceed, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
+    const activeStep = getStep();
     if (activeStep === 1) return;
     query.step = `${activeStep - 1}`;
     history.push({ ...location, search: queryString.stringify(query) });
-  }, [activeStep, query, location, history]);
+  }, [query, location, history, getStep]);
 
   const softDeleteAdHoc = useCallback(async (creatorId) => {
     if (csrf) {
@@ -262,35 +231,72 @@ const FeedbackRequestPage = () => {
 
   const urlIsValid = useCallback(() => {
     if (query) {
-      switch (activeStep) {
-        case 1:
-          return hasFor();
-        case 2:
-          return hasFor() && templateIsValid;
-        case 3:
-          return hasFor() && templateIsValid && hasFrom();
-        case 4:
-          return hasFor() && templateIsValid && hasFrom() && hasSend();
-        default:
-          return false;
+      const activeStep = getStep();
+      if (activeStep === 1) {
+        return hasFor();
+      } else if (activeStep === 2) {
+        return hasFor() && templateIsValid;
+      } else if (activeStep === 3) {
+        return hasFor() && templateIsValid && hasFrom();
+      } else {
+        return false;
       }
     }
-    return true;
-  }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
+    return false;
+  }, [hasFor, hasFrom, query, templateIsValid, getStep]);
+
+  useEffect(() => {
+    const members = selectCurrentMemberIds(state);
+    if (members) {
+      setMemberIds(members);
+    }
+  }, [state]);
 
   useEffect(() => {
     const params = queryString.parse(location?.search);
-    console.log(params);
-    console.log(query);
     setQuery(params);
   }, [location.search]);
 
   useEffect(() => {
-    console.log(query);
-  }, [query]);
+    async function isTemplateValid() {
+      if (!query.template || !csrf) {
+        return false;
+      }
+      let res = await getFeedbackTemplate(query.template, csrf);
+      let templateResponse =
+        res.payload &&
+        res.payload.data &&
+        res.payload.status === 200 &&
+        !res.error
+          ? res.payload.data
+          : null
+      if (templateResponse === null) {
+        window.snackDispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "The ID for the template you selected does not exist.",
+          },
+        });
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    if (queryLoaded.current && csrf) {
+      isTemplateValid().then((isValid) => {
+        setTemplateIsValid(isValid);
+      });
+    } else {
+      queryLoaded.current = true;
+    }
+  }, [csrf, query, queryLoaded]);
 
   useEffect(() => {
-    console.log(query);
+    if (!queryLoaded.current || templateIsValid === undefined) return;
+
     if (query.for) {
       setRequestee(selectProfile(state, query.for));
     }
@@ -306,29 +312,30 @@ const FeedbackRequestPage = () => {
         history.push("/checkins");
       });
     }
-  }, [state, query, currentUserId, dispatch, softDeleteAdHoc, urlIsValid]);
+  }, [history, state, query, currentUserId, dispatch, softDeleteAdHoc, urlIsValid, templateIsValid]);
 
   useEffect(() => {
     setReadyToProceed(canProceed());
   }, [canProceed]);
 
   return (
+    queryLoaded.current &&
     <div className="feedback-request-page">
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
-          <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
+          <Button className={classes.actionButtons} onClick={onBackClick} disabled={getStep() <= 1}
             variant="contained">
             Back
           </Button>
           <Button className={classes.actionButtons} onClick={onNextClick}
             variant="contained" disabled={!readyToProceed} color="primary">
-            {activeStep === steps.length ? "Submit" : "Next"}
+            {getStep() === steps.length ? "Submit" : "Next"}
           </Button>
         </div>
       </div>
       <div className={classes.stepContainer}>
-        <Stepper activeStep={activeStep - 1} className={classes.root}>
+        <Stepper activeStep={getStep() - 1} className={classes.root}>
           {steps.map((label) => {
             const stepProps = {};
             const labelProps = {};
@@ -341,9 +348,9 @@ const FeedbackRequestPage = () => {
         </Stepper>
       </div>
       <div className="current-step-content">
-        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
-        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
-        {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
+        {getStep() === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
+        {getStep() === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
+        {getStep() === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
       </div>
     </div>
   );
