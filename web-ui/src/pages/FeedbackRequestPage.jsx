@@ -321,7 +321,6 @@ const FeedbackRequestPage = () => {
   }, [canProceed]);
 
   return (
-    queryLoaded.current &&
     <div className="feedback-request-page">
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
