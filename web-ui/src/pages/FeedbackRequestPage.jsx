@@ -17,6 +17,7 @@ import { createFeedbackRequest } from "../api/feedback";
 import {selectProfile, selectCsrfToken, selectCurrentUser, selectCurrentMemberIds} from "../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
+import {softDeleteAdHocTemplates} from "../api/feedbacktemplate";
 
 const dateUtils = new DateFnsUtils();
 const useStyles = makeStyles((theme) => ({
@@ -203,7 +204,8 @@ const FeedbackRequestPage = () => {
   }, [activeStep, hasFor, hasFrom, hasSend, dueQuery, isValidDate, query, templateIsValid]);
 
   const handleSubmit = () => {
-    for (const recipient of fromQuery) {
+    const from = fromQuery ? (Array.isArray(fromQuery) ? fromQuery : [fromQuery]) : [];
+    for (const recipient of from) {
        const feedbackRequest = {
          id: null,
          creatorId: currentUserId,
@@ -236,7 +238,13 @@ const FeedbackRequestPage = () => {
     history.push({ ...location, search: queryString.stringify(query) });
   }, [activeStep, query, location, history]);
 
-  const sendFeedbackRequest = async(feedbackRequest) => {
+  const softDeleteAdHoc = useCallback(async (creatorId) => {
+    if (csrf) {
+      await softDeleteAdHocTemplates(creatorId, csrf);
+    }
+  }, [csrf]);
+
+  const sendFeedbackRequest = async (feedbackRequest) => {
     if (csrf) {
       let res = await createFeedbackRequest(feedbackRequest, csrf);
       let data =
@@ -244,13 +252,14 @@ const FeedbackRequestPage = () => {
           ? res.payload.data
           : null;
       if (data) {
+        // If the request was successful, set created ad-hoc templates to inactive
+        await softDeleteAdHoc(currentUserId);
         const newLocation = {
           pathname: "/feedback/request/confirmation",
           search: queryString.stringify(query),
         }
         history.push(newLocation)
-      }
-      else if(res.error || data === null) {
+      } else if(res.error || data === null) {
         dispatch({
           type: UPDATE_TOAST,
           payload: {
@@ -280,18 +289,20 @@ const FeedbackRequestPage = () => {
     return true;
   }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
 
-  useEffect(()=> {
+  useEffect(() => {
     if (!urlIsValid()) {
       dispatch({
-      type: UPDATE_TOAST,
-      payload: {
-        severity: "error",
-        toast: "An error has occurred with the URL",
-      },
-    });
-      history.push("/checkins");
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: "An error has occurred with the URL",
+        },
+      });
+      softDeleteAdHoc(currentUserId).then(() => {
+        history.push("/checkins");
+      });
     }
-  }, [history, urlIsValid, dispatch]);
+  }, [history, urlIsValid, dispatch, softDeleteAdHoc, currentUserId]);
 
   useEffect(()=> {
     setReadyToProceed(canProceed());

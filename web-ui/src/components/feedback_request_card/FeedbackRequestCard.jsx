@@ -1,4 +1,4 @@
-import React, {useCallback, useContext} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@material-ui/core/Card';
@@ -63,16 +63,29 @@ const useStylesText = makeStyles({
       fontSize: "0.7rem",
     },
   }
-}, { name: "MuiTypography" })
+}, { name: "MuiTypography" });
+
+const SortOption = {
+  SENT_DATE: "sent_date",
+  SUBMISSION_DATE: "submission_date",
+  RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
+};
 
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
   responses: PropTypes.arrayOf(PropTypes.object).isRequired,
+  sortType: PropTypes.oneOf([
+    SortOption.SENT_DATE,
+    SortOption.SUBMISSION_DATE,
+    SortOption.RECIPIENT_NAME_ALPHABETICAL,
+    SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL
+  ]),
   dateRange: PropTypes.oneOf([DateRange.THREE_MONTHS, DateRange.SIX_MONTHS, DateRange.ONE_YEAR, DateRange.ALL_TIME]).isRequired
 };
 
-const FeedbackRequestCard = ({ requesteeId, templateName, responses, dateRange }) => {
+const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, dateRange }) => {
   const classes = useStyles();
   const {state} = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
@@ -81,10 +94,36 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, dateRange }
   useStylesText();
   useStylesCardContent();
   const [expanded, setExpanded] = React.useState(false);
+  const [sortedResponses, setSortedResponses] = useState(responses);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  // Sort the responses by either the send date or the submit date
+  useEffect(() => {
+    const responsesCopy = [...sortedResponses];
+    let sortMethod;
+    switch (sortType) {
+      case SortOption.SENT_DATE:
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
+      case SortOption.SUBMISSION_DATE:
+        sortMethod = ((a, b) => (!a.submitDate || (new Date(a.submitDate) > new Date(b.submitDate))) ? -1 : 1);
+        break;
+      case SortOption.RECIPIENT_NAME_ALPHABETICAL:
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
+        break;
+      case SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL:
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+        break;
+      default:
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
+    }
+    responsesCopy.sort(sortMethod);
+    setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType, responses]);
 
   const withinDateRange = useCallback((requestDate) => {
     let oldestDate = new Date();
@@ -123,7 +162,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, dateRange }
                     <Avatar style={{marginRight: "1em"}} src={avatarURL}/>
                   </Grid>
                   <Grid item xs className="small-margin">
-                    <Typography className="person-name" >{requesteeProfile?.name}</Typography>
+                    <Typography className="person-name">{requesteeProfile?.name}</Typography>
                     <Typography className="position-text">{requesteeProfile?.title}</Typography>
                   </Grid>
                   <Grid item xs={4} className="align-end">
@@ -147,7 +186,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, dateRange }
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            {responses?.map((response) => (
+            {sortedResponses?.map((response) => (
               (response && withinDateRange(response.sendDate))
                 ? <FeedbackRequestSubcard key={response.id} request={response}/>
                 : null

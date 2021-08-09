@@ -7,7 +7,6 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from "@material-ui/core/TextField";
 import FeedbackRequestCard from '../components/feedback_request_card/FeedbackRequestCard';
 import Typography from "@material-ui/core/Typography";
-
 import "./ViewFeedbackPage.css";
 import {getFeedbackRequestsByCreator} from "../api/feedback";
 import {AppContext} from "../context/AppContext";
@@ -44,6 +43,13 @@ const useStyles = makeStyles({
   }
 });
 
+const SortOption = {
+  SENT_DATE: "sent_date",
+  SUBMISSION_DATE: "submission_date",
+  RECIPIENT_NAME_ALPHABETICAL: "recipient_name_alphabetical",
+  RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
+};
+
 export const DateRange = {
   THREE_MONTHS: "3mo",
   SIX_MONTHS: "6mo",
@@ -61,6 +67,7 @@ const ViewFeedbackPage = () => {
   const csrf = selectCsrfToken(state);
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
+  const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
   const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
   useEffect(() => {
@@ -82,7 +89,6 @@ const ViewFeedbackPage = () => {
     }
 
     if (!currentUserId || gotRequests.current) return;
-
 
     const getRequestAndTemplateInfo = async (currentUserId) => {
       //get feedback requests
@@ -156,10 +162,12 @@ const ViewFeedbackPage = () => {
       <FeedbackRequestCard
         key={`${request?.requesteeId}-${request?.templateId}`}
         requesteeId={request?.requesteeId}
-        templateName={request?.templateInfo.title}
-        responses={request?.responses}/>
+        templateName={request?.templateInfo?.title}
+        responses={request?.responses}
+        sortType={sortValue}
+      />
       ));
-  }, [searchText, feedbackRequests, classes.notFoundMessage]);
+  }, [searchText, sortValue, feedbackRequests, classes.notFoundMessage]);
 
   return (
     <div className="view-feedback-page">
@@ -199,18 +207,24 @@ const ViewFeedbackPage = () => {
             </TextField>
           </FormControl>
 
-          <FormControl className={classes.textField}>
+          <FormControl
+            className={classes.textField}
+            value={sortValue}
+            >
             <TextField
               id="select-sort-method"
               select
               fullWidth
+              onChange={(e) => setSortValue(e.target.value)}
+              defaultValue={SortOption.SENT_DATE}
               size="small"
               label="Sort by"
-              value={"sent_date"}
               variant="outlined"
             >
-              <MenuItem value={"submission_date"}>Date feedback was submitted</MenuItem>
-              <MenuItem value={"sent_date"}>Date request was sent</MenuItem>
+              <MenuItem value={SortOption.SUBMISSION_DATE}>Date feedback was submitted</MenuItem>
+              <MenuItem value={SortOption.SENT_DATE}>Date request was sent</MenuItem>
+              <MenuItem value={SortOption.RECIPIENT_NAME_ALPHABETICAL}>Recipient name (A-Z)</MenuItem>
+              <MenuItem value={SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL}>Recipient name (Z-A)</MenuItem>
             </TextField>
           </FormControl>
         </div>
@@ -221,4 +235,5 @@ const ViewFeedbackPage = () => {
     </div>
   )
 }
+
 export default ViewFeedbackPage;

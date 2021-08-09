@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.services.feedback_template;
 
 import java.util.List;
 import java.util.UUID;
+import io.micronaut.core.annotation.Nullable;
 
 public interface FeedbackTemplateServices {
 
@@ -14,5 +15,7 @@ public interface FeedbackTemplateServices {
     FeedbackTemplate getById(UUID id);
 
     List<FeedbackTemplate> findByFields(UUID creatorId, String title);
+
+    Boolean setAdHocInactiveByCreator(@Nullable UUID creatorId);
 
 }

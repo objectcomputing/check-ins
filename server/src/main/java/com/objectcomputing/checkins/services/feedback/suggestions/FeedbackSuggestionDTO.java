@@ -1,10 +1,9 @@
 package com.objectcomputing.checkins.services.feedback.suggestions;
 
-import com.sun.istack.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
-import javax.validation.constraints.NotNull;
 
 public class FeedbackSuggestionDTO {
 
