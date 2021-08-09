@@ -50,7 +50,7 @@ const SortOption = {
   RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
 };
 
-export const DateRange = {
+const DateRange = {
   THREE_MONTHS: "3mo",
   SIX_MONTHS: "6mo",
   ONE_YEAR: "1yr",
@@ -129,6 +129,10 @@ const ViewFeedbackPage = () => {
     });
   }, [currentUserId, csrf, state]);
 
+  useEffect(() => {
+    console.log(dateRange);
+  }, [dateRange]);
+
   const getFilteredFeedbackRequests = useCallback(() => {
     if (feedbackRequests === undefined) {
       return null;
@@ -165,9 +169,10 @@ const ViewFeedbackPage = () => {
         templateName={request?.templateInfo?.title}
         responses={request?.responses}
         sortType={sortValue}
+        dateRange={dateRange}
       />
       ));
-  }, [searchText, sortValue, feedbackRequests, classes.notFoundMessage]);
+  }, [searchText, sortValue, dateRange, feedbackRequests, classes.notFoundMessage]);
 
   return (
     <div className="view-feedback-page">
@@ -189,7 +194,10 @@ const ViewFeedbackPage = () => {
               ),
             }}
           />
-          <FormControl className={classes.textField} value={dateRange}>
+          <FormControl
+            className={classes.textField}
+            value={dateRange}
+          >
             <TextField
               id="select-time"
               select
@@ -197,7 +205,7 @@ const ViewFeedbackPage = () => {
               size="small"
               label="Show requests sent within"
               onChange={(e) => setDateRange(e.target.value)}
-              defaultValue={dateRange}
+              defaultValue={DateRange.THREE_MONTHS}
               variant="outlined"
             >
               <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
@@ -210,15 +218,15 @@ const ViewFeedbackPage = () => {
           <FormControl
             className={classes.textField}
             value={sortValue}
-            >
+          >
             <TextField
               id="select-sort-method"
               select
               fullWidth
-              onChange={(e) => setSortValue(e.target.value)}
-              defaultValue={SortOption.SENT_DATE}
               size="small"
               label="Sort by"
+              onChange={(e) => setSortValue(e.target.value)}
+              defaultValue={SortOption.SENT_DATE}
               variant="outlined"
             >
               <MenuItem value={SortOption.SUBMISSION_DATE}>Date feedback was submitted</MenuItem>

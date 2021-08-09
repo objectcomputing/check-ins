@@ -15,7 +15,6 @@ import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
-import {DateRange} from "../../pages/ViewFeedbackPage";
 
 const useStyles = makeStyles({
   root: {
@@ -72,6 +71,13 @@ const SortOption = {
   RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
 };
 
+const DateRange = {
+  THREE_MONTHS: "3mo",
+  SIX_MONTHS: "6mo",
+  ONE_YEAR: "1yr",
+  ALL_TIME: "all"
+};
+
 const propTypes = {
   requesteeId: PropTypes.string.isRequired,
   templateName: PropTypes.string.isRequired,
@@ -81,8 +87,12 @@ const propTypes = {
     SortOption.SUBMISSION_DATE,
     SortOption.RECIPIENT_NAME_ALPHABETICAL,
     SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL
-  ]),
-  dateRange: PropTypes.oneOf([DateRange.THREE_MONTHS, DateRange.SIX_MONTHS, DateRange.ONE_YEAR, DateRange.ALL_TIME]).isRequired
+  ]).isRequired,
+  dateRange: PropTypes.oneOf([
+    DateRange.THREE_MONTHS,
+    DateRange.SIX_MONTHS,
+    DateRange.ONE_YEAR,
+    DateRange.ALL_TIME]).isRequired
 };
 
 const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, dateRange }) => {
@@ -99,31 +109,6 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-
-  // Sort the responses by either the send date or the submit date
-  useEffect(() => {
-    const responsesCopy = [...sortedResponses];
-    let sortMethod;
-    switch (sortType) {
-      case SortOption.SENT_DATE:
-        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
-        break;
-      case SortOption.SUBMISSION_DATE:
-        sortMethod = ((a, b) => (!a.submitDate || (new Date(a.submitDate) > new Date(b.submitDate))) ? -1 : 1);
-        break;
-      case SortOption.RECIPIENT_NAME_ALPHABETICAL:
-        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
-        break;
-      case SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL:
-        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
-        break;
-      default:
-        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
-        break;
-    }
-    responsesCopy.sort(sortMethod);
-    setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortType, responses]);
 
   const withinDateRange = useCallback((requestDate) => {
     let oldestDate = new Date();
@@ -145,6 +130,33 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
 
     return requestDate >= oldestDate;
   }, [dateRange]);
+
+  // Sort the responses by either the send date or the submit date
+  useEffect(() => {
+    let responsesCopy = [...responses];
+    responsesCopy = responsesCopy.filter((response) => withinDateRange(response.sendDate));
+
+    let sortMethod;
+    switch (sortType) {
+      case SortOption.SENT_DATE:
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
+      case SortOption.SUBMISSION_DATE:
+        sortMethod = ((a, b) => (!a.submitDate || (new Date(a.submitDate) > new Date(b.submitDate))) ? -1 : 1);
+        break;
+      case SortOption.RECIPIENT_NAME_ALPHABETICAL:
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? 1 : -1);
+        break;
+      case SortOption.RECIPIENT_NAME_REVERSE_ALPHABETICAL:
+        sortMethod = ((a, b) => (selectProfile(state, a.recipientId).name > selectProfile(state, b.recipientId).name) ? -1 : 1);
+        break;
+      default:
+        sortMethod = ((a, b) => (new Date(a.sendDate) > new Date(b.sendDate)) ? -1 : 1);
+        break;
+    }
+    responsesCopy.sort(sortMethod);
+    setSortedResponses(responsesCopy); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType, dateRange, responses]);
 
   return (
     <div className="feedback-request-card">
@@ -187,9 +199,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             {sortedResponses?.map((response) => (
-              (response && withinDateRange(response.sendDate))
-                ? <FeedbackRequestSubcard key={response.id} request={response}/>
-                : null
+              <FeedbackRequestSubcard key={response.id} request={response}/>
             ))}
           </CardContent>
         </Collapse>
