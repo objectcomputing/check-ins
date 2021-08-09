@@ -15,7 +15,7 @@
 
 .input-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 360px 260px 260px;
     align-items: center;
     grid-column-gap: 1em;
 }
@@ -30,7 +30,7 @@
     }
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1200px) {
     .input-row {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr 1fr;
