@@ -6,11 +6,15 @@ import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "gcp_entries")
 public class GoogleChatBotEntry {
 //space name, activation status,
     @Id

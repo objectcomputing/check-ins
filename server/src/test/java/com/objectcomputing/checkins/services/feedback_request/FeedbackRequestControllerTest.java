@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.objectcomputing.checkins.gcp.chat.GoogleChatBot;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
@@ -40,15 +42,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
-
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
-
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
 
     @BeforeEach
     void resetMocks() {
         Mockito.reset(emailSender);
         feedbackRequestServicesImpl.setEmailSender(emailSender);
+        feedbackRequestServicesImpl.setGoogleChatBot(null);
     }
 
     private FeedbackRequest createFeedbackRequest(MemberProfile creator, MemberProfile requestee, MemberProfile recipient) {

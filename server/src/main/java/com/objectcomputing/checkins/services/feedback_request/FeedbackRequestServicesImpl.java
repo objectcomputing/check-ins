@@ -3,6 +3,7 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.gcp.chat.GoogleChatBot;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
@@ -28,23 +29,27 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     private EmailSender emailSender;
     private final String notificationSubject;
     private final String notificationContent;
+    private GoogleChatBot googleChatBot;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices, EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
+                                       GoogleChatBot googleChatBot) {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.emailSender = emailSender;
         this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
+        this.googleChatBot = googleChatBot;
     }
 
     public void setEmailSender(EmailSender emailSender) {
         this.emailSender = emailSender;
     }
+    public void setGoogleChatBot(GoogleChatBot googleChatBot) {this.googleChatBot = googleChatBot;}
 
     private void validateMembers(FeedbackRequest feedbackRequest) {
         try {
@@ -79,7 +84,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         String newContent =  notificationContent + "<a href=\""+submitURL+storedRequest.getId()+"\">Check-Ins application</a>.";
+        String googleChatContent = "You have received a feedback request. Please go to your unique link at " + submitURL+storedRequest.getId() + " to complete this request.";
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        if (googleChatBot != null) {
+            googleChatBot.sendChat(googleChatContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
+        }
         return storedRequest;
     }
 

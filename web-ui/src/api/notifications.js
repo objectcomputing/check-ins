@@ -5,7 +5,7 @@ let testEmailURL = "https://checkins.objectcomputing.com/feedback/submit?request
 
 export const sendReminderNotification = async (feedbackRequestId, recipients, cookie) => {
   let subject = "Please fill out your OCI feedback request!"
-  let content = "Please go to " + testEmailURL + feedbackRequestId + " to complete this feedback request. Thanks!"
+  let content = "Go to " + testEmailURL + feedbackRequestId + " to complete this feedback request. Thanks!"
   return resolve({
     method: "post",
     url: emailURL,
