@@ -85,6 +85,7 @@ const FeedbackRequestPage = () => {
   const [templateIsValid, setTemplateIsValid] = useState();
   const [requestee, setRequestee] = useState({});
   const [memberIds, setMemberIds] = useState([]);
+  const [activeStep, setActiveStep] = useState(1);
 
   const handleQueryChange = useCallback((key, value) => {
     let newQuery = {
@@ -101,8 +102,9 @@ const FeedbackRequestPage = () => {
   }, [query.step]);
 
   const hasFor = useCallback(() => {
-    return !!query.for;
-  }, [query.for]);
+    if (!memberIds.length) return true;
+    return !!query.for && memberIds.includes(query.for);
+  }, [query.for, memberIds]);
 
   const hasFrom = useCallback(() => {
     if (!memberIds.length) return true;
@@ -144,7 +146,6 @@ const FeedbackRequestPage = () => {
 
   const canProceed = useCallback(() => {
     if (query && Object.keys(query).length > 0) {
-      const activeStep = getStep();
       if (activeStep === 1) {
         return hasFor() && templateIsValid;
       } else if (activeStep === 2) {
@@ -157,7 +158,34 @@ const FeedbackRequestPage = () => {
       }
     }
     return false;
-  }, [hasFor, hasFrom, hasSend, isValidDate, query, templateIsValid, getStep]);
+  }, [hasFor, hasFrom, hasSend, isValidDate, query, templateIsValid, activeStep]);
+
+  const sendFeedbackRequest = async (feedbackRequest) => {
+    if (csrf) {
+      let res = await createFeedbackRequest(feedbackRequest, csrf);
+      let data =
+        res.payload && res.payload.data && !res.error
+          ? res.payload.data
+          : null;
+      if (data) {
+        // If the request was successful, set created ad-hoc templates to inactive
+        await softDeleteAdHoc(currentUserId);
+        const newLocation = {
+          pathname: "/feedback/request/confirmation",
+          search: queryString.stringify(query),
+        }
+        history.push(newLocation)
+      } else if (res.error || data === null) {
+        dispatch({
+          type: UPDATE_TOAST,
+          payload: {
+            severity: "error",
+            toast: "An error has occurred while submitting your request.",
+          },
+        });
+      }
+    }
+  }
 
   const handleSubmit = () => {
     const from = query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : [];
@@ -179,7 +207,6 @@ const FeedbackRequestPage = () => {
 
   const onNextClick = useCallback(() => {
     if (!canProceed()) return;
-    const activeStep = getStep();
     if (activeStep === steps.length) {
       handleSubmit();
       return;
@@ -190,11 +217,10 @@ const FeedbackRequestPage = () => {
   }, [canProceed, steps.length, query, location, history]);     // eslint-disable-line react-hooks/exhaustive-deps
 
   const onBackClick = useCallback(() => {
-    const activeStep = getStep();
     if (activeStep === 1) return;
     query.step = `${activeStep - 1}`;
     history.push({ ...location, search: queryString.stringify(query) });
-  }, [query, location, history, getStep]);
+  }, [query, location, history, activeStep]);
 
   const softDeleteAdHoc = useCallback(async (creatorId) => {
     if (csrf) {
@@ -202,36 +228,8 @@ const FeedbackRequestPage = () => {
     }
   }, [csrf]);
 
-  const sendFeedbackRequest = async (feedbackRequest) => {
-    if (csrf) {
-      let res = await createFeedbackRequest(feedbackRequest, csrf);
-      let data =
-        res.payload && res.payload.data && !res.error
-          ? res.payload.data
-          : null;
-      if (data) {
-        // If the request was successful, set created ad-hoc templates to inactive
-        await softDeleteAdHoc(currentUserId);
-        const newLocation = {
-          pathname: "/feedback/request/confirmation",
-          search: queryString.stringify(query),
-        }
-        history.push(newLocation)
-      } else if(res.error || data === null) {
-        dispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast: "An error has occurred while submitting your request.",
-          },
-        });
-      }
-    }
-  }
-
   const urlIsValid = useCallback(() => {
     if (query) {
-      const activeStep = getStep();
       if (activeStep === 1) {
         return hasFor();
       } else if (activeStep === 2) {
@@ -243,7 +241,11 @@ const FeedbackRequestPage = () => {
       }
     }
     return false;
-  }, [hasFor, hasFrom, query, templateIsValid, getStep]);
+  }, [hasFor, hasFrom, query, templateIsValid, activeStep]);
+
+  useEffect(() => {
+    setActiveStep(getStep());
+  }, [query.step, getStep]);
 
   useEffect(() => {
     const members = selectCurrentMemberIds(state);
@@ -324,18 +326,18 @@ const FeedbackRequestPage = () => {
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
-          <Button className={classes.actionButtons} onClick={onBackClick} disabled={getStep() <= 1}
+          <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
             variant="contained">
             Back
           </Button>
           <Button className={classes.actionButtons} onClick={onNextClick}
             variant="contained" disabled={!readyToProceed} color="primary">
-            {getStep() === steps.length ? "Submit" : "Next"}
+            {activeStep === steps.length ? "Submit" : "Next"}
           </Button>
         </div>
       </div>
       <div className={classes.stepContainer}>
-        <Stepper activeStep={getStep() - 1} className={classes.root}>
+        <Stepper activeStep={activeStep - 1} className={classes.root}>
           {steps.map((label) => {
             const stepProps = {};
             const labelProps = {};
@@ -348,9 +350,9 @@ const FeedbackRequestPage = () => {
         </Stepper>
       </div>
       <div className="current-step-content">
-        {getStep() === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
-        {getStep() === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
-        {getStep() === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
+        {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
+        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
+        {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
       </div>
     </div>
   );
