@@ -279,7 +279,6 @@ const FeedbackRequestPage = () => {
   }, [activeStep, hasFor, hasFrom, hasSend, query, templateIsValid]);
 
   useEffect(() => {
-    queryLoaded.current = false;
     const params = queryString.parse(location?.search);
     console.log(params);
     console.log(query);
@@ -292,7 +291,6 @@ const FeedbackRequestPage = () => {
 
   useEffect(() => {
     console.log(query);
-    queryLoaded.current = true;
     if (query.for) {
       setRequestee(selectProfile(state, query.for));
     }
