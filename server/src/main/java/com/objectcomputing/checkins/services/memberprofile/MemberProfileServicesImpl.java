@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.member_skill.MemberSkillServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleResponseDTO;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
@@ -26,24 +27,25 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberProfileServicesImpl.class);
     private final MemberProfileRepository memberProfileRepository;
-    private final CurrentUserServices currentUserServices;
-    private final RoleServices roleServices;
-    private final CheckInServices checkInServices;
-    private final MemberSkillServices memberSkillServices;
-    private final TeamMemberServices teamMemberServices;
+//    private final CurrentUserServices currentUserServices;
+//    private final RoleServices roleServices;
+//    private final CheckInServices checkInServices;
+//    private final MemberSkillServices memberSkillServices;
+//    private final TeamMemberServices teamMemberServices;
 
-    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository,
-                                     CurrentUserServices currentUserServices,
-                                     RoleServices roleServices,
-                                     CheckInServices checkInServices,
-                                     MemberSkillServices memberSkillServices,
-                                     TeamMemberServices teamMemberServices) {
+    public MemberProfileServicesImpl(MemberProfileRepository memberProfileRepository
+//                                     CurrentUserServices currentUserServices,
+//                                     RoleServices roleServices
+//                                     CheckInServices checkInServices,
+//                                     MemberSkillServices memberSkillServices,
+//                                     TeamMemberServices teamMemberServices
+    ) {
         this.memberProfileRepository = memberProfileRepository;
-        this.currentUserServices = currentUserServices;
-        this.roleServices = roleServices;
-        this.checkInServices = checkInServices;
-        this.memberSkillServices = memberSkillServices;
-        this.teamMemberServices = teamMemberServices;
+//        this.currentUserServices = currentUserServices;
+//        this.roleServices = roleServices;
+//        this.checkInServices = checkInServices;
+//        this.memberSkillServices = memberSkillServices;
+//        this.teamMemberServices = teamMemberServices;
     }
 
     @Override
@@ -87,24 +89,24 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
 
     @Override
     public Boolean deleteProfile(@NotNull UUID id) {
-        if (!currentUserServices.isAdmin()) {
-            throw new PermissionException("Requires admin privileges");
-        }
+//        if (!currentUserServices.isAdmin()) {
+//            throw new PermissionException("Requires admin privileges");
+//        }
 
         // try to delete user - default behavior
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
-        Set<Role> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
+//        Set<RoleResponseDTO> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
 
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");
-        } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
-        } else if (!userRoles.isEmpty()) {
-            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
+//        } else if (!checkInServices.findByFields(id, null, null).isEmpty()) {
+//            throw new BadArgException(String.format("User %s cannot be deleted since Checkin record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+//        } else if (!memberSkillServices.findByFields(id, null).isEmpty()) {
+//            throw new BadArgException(String.format("User %s cannot be deleted since MemberSkill record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+//        } else if (!teamMemberServices.findByFields(null, id, null).isEmpty()) {
+//            throw new BadArgException(String.format("User %s cannot be deleted since TeamMember record(s) exist", MemberProfileUtils.getFullName(memberProfile)));
+//        } else if (!userRoles.isEmpty()) {
+//            throw new BadArgException(String.format("User %s cannot be deleted since user has PDL role", MemberProfileUtils.getFullName(memberProfile)));
         }
 
         // Update PDL ID for all associated members before termination

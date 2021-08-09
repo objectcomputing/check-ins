@@ -1,4 +1,4 @@
-//package com.objectcomputing.checkins.services.rale.member;
+//package com.objectcomputing.checkins.services.role.member;
 //
 //import io.micronaut.data.annotation.AutoPopulated;
 //import io.micronaut.data.annotation.TypeDef;
@@ -30,7 +30,7 @@
 //    @NotNull
 //    @Column(name = "raleid")
 //    @TypeDef(type = DataType.STRING)
-//    @Schema(description = "id of the rale this entry is associated with", required = true)
+//    @Schema(description = "id of the role this entry is associated with", required = true)
 //    private UUID raleId;
 //
 //    @NotNull
@@ -41,12 +41,12 @@
 //
 //    @Nullable
 //    @Column(name = "change")
-//    @Schema(description = "The type of change that is occurring to the rale member.", required = true)
+//    @Schema(description = "The type of change that is occurring to the role member.", required = true)
 //    private String change;
 //
 //    @Nullable
 //    @Column(name = "date")
-//    @Schema(description = "The date of the latest change to the rale member.", required = true)
+//    @Schema(description = "The date of the latest change to the role member.", required = true)
 //    private LocalDateTime date;
 //
 //    public MemberHistory(@NotNull UUID raleId, @NotNull UUID memberId, @Nullable String change, @Nullable LocalDateTime date) {

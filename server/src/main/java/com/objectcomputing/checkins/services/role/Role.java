@@ -1,120 +1,115 @@
-//package com.objectcomputing.checkins.services.role;
-//
-//import io.micronaut.core.annotation.Nullable;
-//import io.micronaut.data.annotation.AutoPopulated;
-//import io.micronaut.data.annotation.TypeDef;
-//import io.micronaut.data.jdbc.annotation.ColumnTransformer;
-//import io.micronaut.data.model.DataType;
-//import io.swagger.v3.oas.annotations.media.Schema;
-//
-//import javax.persistence.Column;
-//import javax.persistence.Entity;
-//import javax.persistence.Id;
-//import javax.persistence.Table;
-//import javax.validation.constraints.NotNull;
-//import java.util.Objects;
-//import java.util.UUID;
-//
-//import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
-//
-//@Entity
-//@Table(name = "role")
-//public class Role {
-//
-//    @Id
-//    @Column(name = "id")
-//    @AutoPopulated
-//    @TypeDef(type = DataType.STRING)
-//    @Schema(description = "id of this member to role entry", required = true)
-//    private UUID id;
-//
-//    @NotNull
-//    @Schema(description = "role this member has", required = true,
-//            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
-//    @TypeDef(type = DataType.OBJECT)
+package com.objectcomputing.checkins.services.role;
+
+import io.micronaut.data.annotation.AutoPopulated;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
+import io.micronaut.data.model.DataType;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import io.micronaut.core.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.UUID;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+
+@Entity
+@Table(name = "role")
+public class Role {
+    @Id
+    @Column(name = "id")
+    @AutoPopulated
+    @TypeDef(type = DataType.STRING)
+    @Schema(description = "the id of the role", required = true)
+    private UUID id;
+
+    @NotBlank
+    @Column(name = "role", unique = true)
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(role::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+
+    @NotNull
+    @Schema(description = "role this member has", required = true,
+            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
+    @TypeDef(type = DataType.OBJECT)
+    private RoleType role;
+//    @Schema(description = "name of the role")
 //    private RoleType role;
-//
-//    @Nullable
-//    @Column(name = "description")
-//    @ColumnTransformer(
-//            read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
-//            write = "pgp_sym_encrypt(?,'${aes.key}') "
-//    )
-//    @Schema(description = "description of the role")
-//    private String description;
-//
-//    public Role(RoleType role, @Nullable String description, UUID memberid) {
-//        this(null, role, description, memberid);
-//    }
-//
-//    @NotNull
-//    @Column(name = "memberid")
-//    @TypeDef(type = DataType.STRING)
-//    @Schema(description = "id of the member this entry is associated with", required = true)
-//    private UUID memberid;
-//
-//    public Role(UUID id, RoleType role, @Nullable String description, UUID memberid) {
-//        this.id = id;
-//        this.role = role;
-//        this.description = description;
-//        this.memberid = memberid;
-//    }
-//
-//    public UUID getId() {
-//        return id;
-//    }
-//
-//    public void setId(UUID id) {
-//        this.id = id;
-//    }
-//
-//    public RoleType getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(RoleType role) {
-//        this.role = role;
-//    }
-//
-//    public String getDescription() {
-//        return this.description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
-//
-//    public UUID getMemberid() {
-//        return memberid;
-//    }
-//
-//    public void setMemberid(UUID memberid) {
-//        this.memberid = memberid;
-//    }
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Role that = (Role) o;
-//        return Objects.equals(id, that.id) &&
-//                Objects.equals(role, that.role) &&
-//                Objects.equals(description, that.description) &&
-//                Objects.equals(memberid, that.memberid);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id, role, description, memberid);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "Role{" +
-//                "id=" + id +
-//                ", role=" + role +
-//                ", description='" + description + '\'' +
-//                ", memberid=" + memberid +
-//                '}';
-//    }
-//}
+
+    
+    
+    @Nullable
+    @Column(name = "description")
+    @ColumnTransformer(
+            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "description of the role", nullable = true)
+    private String description;
+
+    public Role(RoleType role, @Nullable String description) {
+        this(null, role, description);
+    }
+
+    public Role(UUID id, RoleType role, @Nullable String description) {
+        this.id = id;
+        this.role = role;
+        this.description = description;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public RoleType getRole() {
+        return role;
+    }
+
+    public void setRole(RoleType role) {
+        this.role = role;
+    }
+
+    @Nullable
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(@Nullable String description) {
+        this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) &&
+                Objects.equals(role, role.role) &&
+                Objects.equals(description, role.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, role, description);
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + role + '\'' +
+                ", description='" + description +
+                '}';
+    }
+}

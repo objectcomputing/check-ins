@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.rale.member;
+package com.objectcomputing.checkins.services.role.member;
 
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -15,21 +15,21 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "rale_member")
-public class RaleMember {
+@Table(name = "role_member")
+public class RoleMember {
 
     @Id
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to rale entry", required = true)
+    @Schema(description = "id of this member to role entry", required = true)
     private UUID id;
 
     @NotNull
-    @Column(name = "raleid")
+    @Column(name = "roleid")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the rale this entry is associated with", required = true)
-    private UUID raleId;
+    @Schema(description = "id of the role this entry is associated with", required = true)
+    private UUID roleId;
 
     @NotNull
     @Column(name = "memberid")
@@ -43,13 +43,13 @@ public class RaleMember {
             nullable = true)
     private Boolean lead;
 
-    public RaleMember(UUID raleId, UUID memberId, Boolean lead) {
-        this(null, raleId, memberId, lead);
+    public RoleMember(UUID roleId, UUID memberId, Boolean lead) {
+        this(null, roleId, memberId, lead);
     }
 
-    public RaleMember(UUID id, UUID raleId, UUID memberId, Boolean lead) {
+    public RoleMember(UUID id, UUID roleId, UUID memberId, Boolean lead) {
         this.id = id;
-        this.raleId = raleId;
+        this.roleId = roleId;
         this.memberId = memberId;
         this.lead = lead;
     }
@@ -62,12 +62,12 @@ public class RaleMember {
         this.id = id;
     }
 
-    public UUID getRaleId() {
-        return raleId;
+    public UUID getRoleId() {
+        return roleId;
     }
 
-    public void setRaleId(UUID raleId) {
-        this.raleId = raleId;
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
     }
 
     public UUID getMemberId() {
@@ -90,23 +90,23 @@ public class RaleMember {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RaleMember that = (RaleMember) o;
+        RoleMember that = (RoleMember) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(raleId, that.raleId) &&
+                Objects.equals(roleId, that.roleId) &&
                 Objects.equals(memberId, that.memberId) &&
                 Objects.equals(lead, that.lead);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, raleId, memberId, lead);
+        return Objects.hash(id, roleId, memberId, lead);
     }
 
     @Override
     public String toString() {
-        return "RaleMember{" +
+        return "RoleMember{" +
                 "id=" + id +
-                ", raleId=" + raleId +
+                ", roleId=" + roleId +
                 ", memberId=" + memberId +
                 ", lead=" + isLead() +
                 '}';

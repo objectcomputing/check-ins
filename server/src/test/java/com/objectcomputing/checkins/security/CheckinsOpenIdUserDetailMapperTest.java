@@ -34,28 +34,28 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
     }
 
 
-    @Test
-    void testCreateAuthenticationResponse() {
-        CheckinsOpenIdUserDetailMapper checkinsOpenIdUserDetailMapper = (CheckinsOpenIdUserDetailMapper) openIdUserDetailsMapper;
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
-        for (String role : roles) {
-            createDefaultRole(RoleType.valueOf(role), memberProfile);
-        }
-        String provider = "Test";
-        OpenIdTokenResponse openIdTokenResponse = new OpenIdTokenResponse();
-        OpenIdClaims openIdClaims = new JWTOpenIdClaims(
-                new JWTClaimsSet.Builder().
-                        claim("email", memberProfile.getWorkEmail())
-                        .claim("sub", MemberProfileUtils.getFullName(memberProfile))
-                        .build());
-        AuthenticationResponse auth = checkinsOpenIdUserDetailMapper.createAuthenticationResponse(provider,
-                openIdTokenResponse, openIdClaims, null);
-
-        assertNotNull(auth);
-        UserDetails userDetails = auth.getUserDetails().orElse(null);
-        assertNotNull(userDetails);
-        assertEquals(MemberProfileUtils.getFullName(memberProfile), userDetails.getUsername());
-        assertEquals(roles, userDetails.getRoles());
-    }
+//    @Test
+//    void testCreateAuthenticationResponse() {
+//        CheckinsOpenIdUserDetailMapper checkinsOpenIdUserDetailMapper = (CheckinsOpenIdUserDetailMapper) openIdUserDetailsMapper;
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
+//        for (String role : roles) {
+//            createDefaultRole(RoleType.valueOf(role), memberProfile);
+//        }
+//        String provider = "Test";
+//        OpenIdTokenResponse openIdTokenResponse = new OpenIdTokenResponse();
+//        OpenIdClaims openIdClaims = new JWTOpenIdClaims(
+//                new JWTClaimsSet.Builder().
+//                        claim("email", memberProfile.getWorkEmail())
+//                        .claim("sub", MemberProfileUtils.getFullName(memberProfile))
+//                        .build());
+//        AuthenticationResponse auth = checkinsOpenIdUserDetailMapper.createAuthenticationResponse(provider,
+//                openIdTokenResponse, openIdClaims, null);
+//
+//        assertNotNull(auth);
+//        UserDetails userDetails = auth.getUserDetails().orElse(null);
+//        assertNotNull(userDetails);
+//        assertEquals(MemberProfileUtils.getFullName(memberProfile), userDetails.getUsername());
+//        assertEquals(roles, userDetails.getRoles());
+//    }
 }

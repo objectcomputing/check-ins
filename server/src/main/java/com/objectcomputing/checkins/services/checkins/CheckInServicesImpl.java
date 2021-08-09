@@ -6,6 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.Role;
+import com.objectcomputing.checkins.services.role.RoleResponseDTO;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.Util;
@@ -51,7 +52,7 @@ public class CheckInServicesImpl implements CheckInServices {
             throw new NotFoundException(String.format("Checkin %s not found", checkinId));
         });
 
-        Set<Role> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
+        Set<RoleResponseDTO> memberRoles = roleServices.findByFields(RoleType.ADMIN, memberTryingToGainAccess.getId());
         boolean isAdmin = !memberRoles.isEmpty();
 
         LOG.debug("Member is Admin: {}", isAdmin);

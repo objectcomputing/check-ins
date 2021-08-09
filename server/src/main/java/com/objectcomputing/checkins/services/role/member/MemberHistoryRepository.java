@@ -1,4 +1,4 @@
-//package com.objectcomputing.checkins.services.rale.member;
+//package com.objectcomputing.checkins.services.role.member;
 //
 //import io.micronaut.data.jdbc.annotation.JdbcRepository;
 //import io.micronaut.data.model.query.builder.sql.Dialect;

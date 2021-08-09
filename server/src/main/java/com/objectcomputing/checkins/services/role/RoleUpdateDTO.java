@@ -1,7 +1,5 @@
-package com.objectcomputing.checkins.services.rale;
+package com.objectcomputing.checkins.services.role;
 
-import com.objectcomputing.checkins.services.rale.member.RaleMemberResponseDTO;
-import com.objectcomputing.checkins.services.rale.member.RaleMemberUpdateDTO;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -15,40 +13,40 @@ import java.util.UUID;
 import static com.objectcomputing.checkins.util.Util.nullSafeUUIDFromString;
 
 @Introspected
-public class RaleUpdateDTO {
+public class RoleUpdateDTO {
     @NotNull
     private UUID id;
 
     @NotBlank
-    @Schema(required = true, description = "name of the rale")
-    private RaleType rale;
+    @Schema(required = true, description = "name of the role")
+    private RoleType role;
 
     @Nullable
-    @Schema(description = "description of the rale")
+    @Schema(description = "description of the role")
     private String description;
 
-    @Schema(description = "members of this rale")
-    private List<RaleMemberUpdateDTO> raleMembers;
+    @Schema(description = "members of this role")
+    private List<RoleMemberUpdateDTO> roleMembers;
 
-    public RaleUpdateDTO(UUID id, RaleType rale, @Nullable String description) {
+    public RoleUpdateDTO(UUID id, RoleType role, @Nullable String description) {
         this.id = id;
-        this.rale = rale;
+        this.role = role;
         this.description = description;
     }
 
-    public RaleUpdateDTO(String id, RaleType rale, String description) {
-        this(nullSafeUUIDFromString(id), rale, description);
+    public RoleUpdateDTO(String id, RoleType role, String description) {
+        this(nullSafeUUIDFromString(id), role, description);
     }
 
-    public RaleUpdateDTO() {
+    public RoleUpdateDTO() {
         id = UUID.randomUUID();
     }
 
     @Override
     public String toString() {
-        return "RaleUpdateDTO{" +
+        return "RoleUpdateDTO{" +
                 "id=" + id +
-                ", name='" + rale + '\'' +
+                ", name='" + role + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
@@ -57,23 +55,23 @@ public class RaleUpdateDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RaleUpdateDTO updateDTO = (RaleUpdateDTO) o;
+        RoleUpdateDTO updateDTO = (RoleUpdateDTO) o;
         return Objects.equals(id, updateDTO.id) &&
-                Objects.equals(rale, updateDTO.rale) &&
+                Objects.equals(role, updateDTO.role) &&
                 Objects.equals(description, updateDTO.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rale, description);
+        return Objects.hash(id, role, description);
     }
 
-    public List<RaleMemberUpdateDTO> getRaleMembers() {
-        return raleMembers;
+    public List<RoleMemberUpdateDTO> getRoleMembers() {
+        return roleMembers;
     }
 
-    public void setRaleMembers(List<RaleMemberUpdateDTO> raleMembers) {
-        this.raleMembers = raleMembers;
+    public void setRoleMembers(List<RoleMemberUpdateDTO> roleMembers) {
+        this.roleMembers = roleMembers;
     }
 
     public UUID getId() {
@@ -84,12 +82,12 @@ public class RaleUpdateDTO {
         this.id = id;
     }
 
-    public RaleType getRale() {
-        return rale;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRale(RaleType rale) {
-        this.rale = rale;
+    public void setRole(RoleType role) {
+        this.role = role;
     }
 
     @Nullable
@@ -102,7 +100,7 @@ public class RaleUpdateDTO {
     }
 
     @Introspected
-    public static class RaleMemberUpdateDTO {
+    public static class RoleMemberUpdateDTO {
         @Schema(description = "ID of the entity to update")
         private UUID id;
 
@@ -111,16 +109,16 @@ public class RaleUpdateDTO {
         private Boolean lead;
 
         @NotNull
-        @Schema(description = "Member who is on this rale")
+        @Schema(description = "Member who is on this role")
         private UUID memberId;
 
         @NotNull
-        @Schema(description = "Rale to which the member belongs")
-        private UUID raleId;
+        @Schema(description = "Role to which the member belongs")
+        private UUID roleId;
 
-        public RaleMemberUpdateDTO(UUID id, UUID raleId, UUID memberId, Boolean lead) {
+        public RoleMemberUpdateDTO(UUID id, UUID roleId, UUID memberId, Boolean lead) {
             this.id = id;
-            this.raleId = raleId;
+            this.roleId = roleId;
             this.memberId = memberId;
             this.lead = lead;
         }
@@ -149,12 +147,12 @@ public class RaleUpdateDTO {
             this.memberId = memberId;
         }
 
-        public UUID getRaleId() {
-            return raleId;
+        public UUID getRoleId() {
+            return roleId;
         }
 
-        public void setRaleId(UUID raleId) {
-            this.raleId = raleId;
+        public void setRoleId(UUID roleId) {
+            this.roleId = roleId;
         }
     }
 }

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.micronaut.context.annotation.Replaces;
@@ -31,14 +32,17 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
     private static final Logger LOG = LoggerFactory.getLogger(CheckinsOpenIdUserDetailMapper.class);
     private final MemberProfileRepository memberProfileRepository;
     private final RoleRepository roleRepository;
+    private final RoleServices roleServices;
     private final TokenConfiguration tokenConfiguration;
 
     public CheckinsOpenIdUserDetailMapper(MemberProfileRepository memberProfileRepository,
                                           RoleRepository roleRepository,
+                                          RoleServices roleServices,
                                           TokenConfiguration tokenConfiguration) {
         LOG.info("Creating an instance of CheckinsOpenIdUserDetailMapper using the constructor");
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
+        this.roleServices = roleServices;
         this.tokenConfiguration = tokenConfiguration;
     }
 
@@ -83,7 +87,7 @@ public class CheckinsOpenIdUserDetailMapper implements OpenIdUserDetailsMapper {
         memberProfileRepository.findByWorkEmail(openIdClaims.getEmail())
                 .ifPresent((memberProfile) -> {
                         LOG.info("MemberProfile of the user: {}", memberProfile);
-                        roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
+                        roles.addAll(roleServices.findByMemberid(memberProfile.getId())
                                 .stream()
                                 .map(role -> role.getRole().toString())
                                 .collect(Collectors.toList()));

@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import io.micronaut.context.annotation.Replaces;
 import io.micronaut.security.oauth2.endpoint.token.response.JWTOpenIdClaims;
 import io.micronaut.security.token.Claims;
@@ -21,11 +22,13 @@ public class CheckinsRolesFinder implements RolesFinder {
 
     private MemberProfileRepository memberProfileRepository;
     private RoleRepository roleRepository;
+    private RoleServices roleServices;
 
     @Inject
-    public CheckinsRolesFinder(MemberProfileRepository memberProfileRepository, RoleRepository roleRepository) {
+    public CheckinsRolesFinder(MemberProfileRepository memberProfileRepository, RoleRepository roleRepository, RoleServices roleServices) {
         this.memberProfileRepository = memberProfileRepository;
         this.roleRepository = roleRepository;
+        this.roleServices = roleServices;
     }
 
     @NotNull
@@ -34,7 +37,7 @@ public class CheckinsRolesFinder implements RolesFinder {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.get(JWTOpenIdClaims.CLAIMS_EMAIL).toString())
                 .ifPresent((memberProfile) -> {
-                    roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
+                    roles.addAll(roleServices.findByMemberid(memberProfile.getId())
                             .stream()
                             .map(role -> role.getRole().toString())
                             .collect(Collectors.toList()));

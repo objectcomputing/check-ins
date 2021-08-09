@@ -1,6 +1,6 @@
-package com.objectcomputing.checkins.services.rale;
+package com.objectcomputing.checkins.services.role;
 
-import com.objectcomputing.checkins.services.rale.member.RaleMemberResponseDTO;
+import com.objectcomputing.checkins.services.role.member.RoleMemberResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -12,39 +12,39 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Introspected
-public class RaleResponseDTO {
+public class RoleResponseDTO {
     @NotNull
     private UUID id;
 
     @NotBlank
-    @Schema(required = true, description = "name of the rale")
-    private RaleType rale;
+    @Schema(required = true, description = "name of the role")
+    private RoleType role;
 
     @Nullable
-    @Schema(description = "description of the rale")
+    @Schema(description = "description of the role")
     private String description;
 
-    List<RaleMemberResponseDTO> raleMembers;
+    List<RoleMemberResponseDTO> roleMembers;
 
-    public RaleResponseDTO(UUID id, RaleType rale, @Nullable String description) {
+    public RoleResponseDTO(UUID id, RoleType role, @Nullable String description) {
         this.id = id;
-        this.rale = rale;
+        this.role = role;
         this.description = description;
     }
 
-    public RaleResponseDTO(String id, RaleType rale, @Nullable String description) {
-        this(UUID.fromString(id), rale, description);
+    public RoleResponseDTO(String id, RoleType role, @Nullable String description) {
+        this(UUID.fromString(id), role, description);
     }
 
-    public RaleResponseDTO() {
+    public RoleResponseDTO() {
         id = UUID.randomUUID();
     }
 
     @Override
     public String toString() {
-        return "RaleResponseDTO{" +
+        return "RoleResponseDTO{" +
                 "id=" + id +
-                ", rale='" + rale + '\'' +
+                ", role='" + role + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
@@ -53,26 +53,26 @@ public class RaleResponseDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RaleResponseDTO that = (RaleResponseDTO) o;
+        RoleResponseDTO that = (RoleResponseDTO) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(rale, that.rale) &&
+                Objects.equals(role, that.role) &&
                 Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rale, description);
+        return Objects.hash(id, role, description);
     }
 
-    public List<RaleMemberResponseDTO> getRaleMembers() {
-        if (raleMembers == null) {
-            raleMembers = new ArrayList<>();
+    public List<RoleMemberResponseDTO> getRoleMembers() {
+        if (roleMembers == null) {
+            roleMembers = new ArrayList<>();
         }
-        return raleMembers;
+        return roleMembers;
     }
 
-    public void setRaleMembers(List<RaleMemberResponseDTO> raleMembers) {
-        this.raleMembers = raleMembers;
+    public void setRoleMembers(List<RoleMemberResponseDTO> roleMembers) {
+        this.roleMembers = roleMembers;
     }
 
     public UUID getId() {
@@ -83,12 +83,12 @@ public class RaleResponseDTO {
         this.id = id;
     }
 
-    public RaleType getRale() {
-        return rale;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRale(RaleType rale) {
-        this.rale = rale;
+    public void setRole(RoleType role) {
+        this.role = role;
     }
 
     @Nullable

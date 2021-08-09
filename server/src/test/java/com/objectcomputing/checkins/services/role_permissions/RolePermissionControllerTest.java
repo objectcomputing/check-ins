@@ -398,31 +398,31 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         assertEquals(request.getPath(), href);
     }
 
-    @Test
-    void testUpdateNonExistingRolePermissionType() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role roleToUpdate = createDefaultAdminRole(memberProfile);
-
-        Map<String, String> rolepermission = new HashMap<>();
-        rolepermission.put("id", roleToUpdate.getId().toString());
-        rolepermission.put("permission", "ROLE_DOES_NOT_EXIST");
-        rolepermission.put("roleid", roleToUpdate.getMemberid().toString());
-
-        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", rolepermission)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertTrue(error.contains("not one of the values accepted for Enum class"));
-        assertEquals(request.getPath(), href);
-    }
+//    @Test
+//    void testUpdateNonExistingRolePermissionType() {
+//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//        Role roleToUpdate = createDefaultAdminRole(memberProfile);
+//
+//        Map<String, String> rolepermission = new HashMap<>();
+//        rolepermission.put("id", roleToUpdate.getId().toString());
+//        rolepermission.put("permission", "ROLE_DOES_NOT_EXIST");
+//        rolepermission.put("roleid", roleToUpdate.getMemberid().toString());
+//
+//        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", rolepermission)
+//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+//                client.toBlocking().exchange(request, Map.class));
+//
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        String error = Objects.requireNonNull(body).get("message").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//
+//        assertTrue(error.contains("not one of the values accepted for Enum class"));
+//        assertEquals(request.getPath(), href);
+//    }
 
     @Test
     void testUpdateNonExistingRolePermission() {
@@ -592,22 +592,22 @@ class RolePermissionControllerTest extends TestContainersSuite implements Member
         assertEquals("Forbidden", responseException.getMessage());
     }
 
-    @Test
-    void deleteRoleNonExisting() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
-        UUID uuid = UUID.randomUUID();
-
-        assertNull(findRoleById(uuid));
-
-        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertNull(findRoleById(uuid));
-    }
+//    @Test
+//    void deleteRoleNonExisting() {
+//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//
+//        UUID uuid = UUID.randomUUID();
+//
+//        assertNull(findRoleById(uuid));
+//
+//        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
+//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+//        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+//
+//        assertEquals(HttpStatus.OK, response.getStatus());
+//        assertNull(findRoleById(uuid));
+//    }
 
     @Test
     void deleteRolePermissionBadId() {

@@ -16,9 +16,8 @@ import com.objectcomputing.checkins.services.private_notes.PrivateNoteRepository
 import com.objectcomputing.checkins.services.pulseresponse.PulseResponseRepository;
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
-import com.objectcomputing.checkins.services.rale.RaleRepository;
-import com.objectcomputing.checkins.services.rale.member.RaleMemberRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.member.RoleMemberRepository;
 import com.objectcomputing.checkins.services.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -99,12 +98,16 @@ public interface RepositoryFixture {
         return getEmbeddedServer().getApplicationContext().getBean(TeamMemberRepository.class);
     }
 
-    default RaleRepository getRaleRepository() {
-        return getEmbeddedServer().getApplicationContext().getBean(RaleRepository.class);
+    default RoleMemberRepository getRoleMemberRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RoleMemberRepository.class);
     }
 
-    default RaleMemberRepository getRaleMemberRepository() {
-        return getEmbeddedServer().getApplicationContext().getBean(RaleMemberRepository.class);
+    default RoleRepository getRaleRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RoleRepository.class);
+    }
+
+    default RoleMemberRepository getRaleMemberRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(RoleMemberRepository.class);
     }
 
     default QuestionRepository getQuestionRepository() {

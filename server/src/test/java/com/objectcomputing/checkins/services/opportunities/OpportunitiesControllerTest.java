@@ -7,8 +7,6 @@ import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
 
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.opportunities.Opportunities;
-import com.objectcomputing.checkins.services.opportunities.OpportunitiesCreateDTO;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;

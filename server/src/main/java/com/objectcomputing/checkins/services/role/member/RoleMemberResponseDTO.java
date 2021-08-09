@@ -1,4 +1,4 @@
-package com.objectcomputing.checkins.services.rale.member;
+package com.objectcomputing.checkins.services.role.member;
 
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 
 @Introspected
-public class RaleMemberResponseDTO {
+public class RoleMemberResponseDTO {
 
     @Schema(description = "id of the entry", required = true)
     private UUID id;
@@ -24,10 +24,10 @@ public class RaleMemberResponseDTO {
             nullable = true)
     private Boolean lead;
 
-    private UUID raleId;
+    private UUID roleId;
     private UUID memberId;
 
-    public RaleMemberResponseDTO(UUID id, String firstName, String lastName, UUID memberId, Boolean lead) {
+    public RoleMemberResponseDTO(UUID id, String firstName, String lastName, UUID memberId, Boolean lead) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -36,8 +36,8 @@ public class RaleMemberResponseDTO {
         this.lead = lead;
     }
 
-    public RaleMemberResponseDTO(UUID raleId, UUID memberId, Boolean lead) {
-        this.raleId = raleId;
+    public RoleMemberResponseDTO(UUID roleId, UUID memberId, Boolean lead) {
+        this.roleId = roleId;
         this.memberId = memberId;
         this.lead = lead;
     }
@@ -50,12 +50,12 @@ public class RaleMemberResponseDTO {
         this.memberId = memberId;
     }
 
-    public UUID getRaleId() {
-        return raleId;
+    public UUID getRoleId() {
+        return roleId;
     }
 
-    public void setRaleId(UUID raleId) {
-        this.raleId = raleId;
+    public void setRoleId(UUID roleId) {
+        this.roleId = roleId;
     }
 
     public UUID getId() {

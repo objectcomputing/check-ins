@@ -1,151 +1,274 @@
-//package com.objectcomputing.checkins.services.role;
-//
-//
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.objectcomputing.checkins.services.TestContainersSuite;
-//import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
-//import com.objectcomputing.checkins.services.fixture.RoleFixture;
-//import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-//import io.micronaut.core.type.Argument;
-//import io.micronaut.http.HttpRequest;
-//import io.micronaut.http.HttpResponse;
-//import io.micronaut.http.HttpStatus;
-//import io.micronaut.http.MutableHttpRequest;
-//import io.micronaut.http.client.HttpClient;
-//import io.micronaut.http.client.annotation.Client;
-//import io.micronaut.http.client.exceptions.HttpClientResponseException;
-//import org.junit.jupiter.api.Test;
-//
-//import javax.inject.Inject;
-//import java.util.*;
-//import java.util.stream.Collectors;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
-//
-//    @Inject
-//    @Client("/services/roles")
-//    HttpClient client;
-//
+package com.objectcomputing.checkins.services.role;
+
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.services.TestContainersSuite;
+import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.RoleFixture;
+import com.objectcomputing.checkins.services.fixture.RoleMemberFixture;
+import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.role.member.RoleMember;
+import io.micronaut.core.type.Argument;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+import java.util.*;
+
+import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class RoleControllerTest extends TestContainersSuite implements RoleFixture, MemberProfileFixture, RoleMemberFixture {
+
+    @Inject
+    @Client("/services/roles")
+    HttpClient client;
+
+    @Test
+    void testCreateARole() {
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole(RoleType.ADMIN);
+        roleCreateDTO.setDescription("description");
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        roleCreateDTO.setRoleMembers(List.of(new RoleCreateDTO.RoleMemberCreateDTO(memberProfile.getId(), true)));
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+        final HttpResponse<RoleResponseDTO> response = client.toBlocking().exchange(request, RoleResponseDTO.class);
+
+        RoleResponseDTO roleEntity = response.body();
+
+        assertEquals(roleCreateDTO.getDescription(), roleEntity.getDescription());
+        assertEquals(roleCreateDTO.getRole(), roleEntity.getRole());
+        assertEquals(HttpStatus.CREATED, response.getStatus());
+        assertEquals(String.format("%s/%s", request.getPath(), roleEntity.getId()), response.getHeaders().get("location"));
+
+    }
+
+    @Test
+    void testCreateRoleNoLeads() {
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole(RoleType.ADMIN);
+        roleCreateDTO.setDescription("description");
+        roleCreateDTO.setRoleMembers(new ArrayList<>());
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Role must include at least one role lead", errors.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals(request.getPath(), href.asText());
+    }
+
+    @Test
+    void testCreateAnInvalidRole() {
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("role.role: must not be null", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testCreateANullRole() {
+
+        final HttpRequest<String> request = HttpRequest.POST("", "").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Required Body [role] not specified", errors.asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
+    void testCreateARoleWithExistingName() {
+
+        Role roleEntity = createDefaultRole();
+
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setDescription("test");
+        roleCreateDTO.setRole(roleEntity.getRole());
+        roleCreateDTO.setRoleMembers(new ArrayList<>());
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        roleCreateDTO.setRoleMembers(List.of(new RoleCreateDTO.RoleMemberCreateDTO(memberProfile.getId(), true)));
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        String error = Objects.requireNonNull(body).get("message").asText();
+        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+
+        assertEquals(request.getPath(), href);
+        assertEquals(String.format("Role with name %s already exists", roleCreateDTO.getRole()), error);
+    }
+
+    @Test
+    void testReadRole() {
+        Role roleEntity = createDefaultRole() ;
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", roleEntity.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<RoleResponseDTO> response = client.toBlocking().exchange(request, RoleResponseDTO.class);
+
+        assertEntityDTOEqual(roleEntity, response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+    }
+
+    @Test
+    void testReadRoleNotFound() {
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Role.class));
+
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
+    }
+
+    @Test
+    void testFindAllRoles() {
+
+        Role roleEntity = createDefaultRole();
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/")).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<RoleResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(RoleResponseDTO.class));
+
+        assertEntityDTOEqual(Set.of(roleEntity), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
+    @Test
+    void testFindByName() {
+        Role roleEntity = createDefaultRole() ;
+
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", roleEntity.getRole())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+        final HttpResponse<Set<RoleResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(RoleResponseDTO.class));
+
+        assertEntityDTOEqual(Set.of(roleEntity), response.body());
+        assertEquals(HttpStatus.OK, response.getStatus());
+
+    }
+
 //    @Test
-//      void testCreateARole() {
+//    void testFindByMemberId() {
 //        MemberProfile memberProfile = createADefaultMemberProfile();
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//        Role roleEntity = createDefaultRole();
 //
-//        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-//        roleCreateDTO.setRole(RoleType.MEMBER);
-//        roleCreateDTO.setMemberid(memberProfile.getId());
+//        RoleMember roleMemberEntity = createDefaultRoleMember(roleEntity, memberProfile);
 //
-//        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
+//        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", roleMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+//        final HttpResponse<Set<RoleResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(RoleResponseDTO.class));
 //
-//        Role role = response.body();
-//        assertNotNull(role);
-//        assertEquals(roleCreateDTO.getMemberid(), role.getMemberid());
-//        assertEquals(roleCreateDTO.getRole(), role.getRole());
-//        assertEquals(HttpStatus.CREATED, response.getStatus());
-//        assertEquals(String.format("%s/%s", request.getPath(), role.getId()), response.getHeaders().get("location"));
+//        assertEntityDTOEqual(Set.of(roleEntity), response.body());
+//        assertEquals(HttpStatus.OK, response.getStatus());
+//
 //    }
 //
 //    @Test
-//    void testCreateARoleAlreadyExists() {
+//    void testFindRoles() {
 //        MemberProfile memberProfile = createADefaultMemberProfile();
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
+//        Role roleEntity = createDefaultRole();
 //
-//        Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfile);
-//        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-//        roleCreateDTO.setRole(alreadyExistingRole.getRole());
-//        roleCreateDTO.setMemberid(alreadyExistingRole.getMemberid());
+//        RoleMember roleMemberEntity = createDefaultRoleMember(roleEntity, memberProfile);
 //
-//        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
+//        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", roleEntity.getRole(),
+//                roleMemberEntity.getMemberId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+//        final HttpResponse<Set<RoleResponseDTO>> response = client.toBlocking().exchange(request, Argument.setOf(RoleResponseDTO.class));
+//
+//        assertEntityDTOEqual(Set.of(roleEntity), response.body());
+//        assertEquals(HttpStatus.OK, response.getStatus());
+//
+//    }
+//
+//    @Test
+//    void testUpdatePermissionDenied() {
+//        Role roleEntity = createDefaultRole();
+//        MemberProfile memberProfile = createADefaultMemberProfile();
+//
+//        RoleUpdateDTO requestBody = updateFromEntity(roleEntity);
+//        RoleUpdateDTO.RoleMemberUpdateDTO newMember = updateDefaultRoleMemberDto(roleEntity, memberProfile, true);
+//        newMember.setLead(true);
+//        requestBody.setRoleMembers(Collections.singletonList(newMember));
+//
+//        final HttpRequest<RoleUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
+//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Map.class));
 //
 //        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
 //        String error = Objects.requireNonNull(body).get("message").asText();
 //        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
 //
-//        assertEquals(String.format("Member %s already has role %s", roleCreateDTO.getMemberid(), roleCreateDTO.getRole()),
-//                error);
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testCreateForbidden() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
-//
-//        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-//        roleCreateDTO.setRole(RoleType.MEMBER);
-//        roleCreateDTO.setMemberid(UUID.randomUUID());
-//
-//        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, String.class));
-//
 //        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-//        assertEquals("Forbidden", responseException.getMessage());
+//        assertEquals(request.getPath(), href);
+//        assertEquals("You are not authorized to perform this operation", error);
 //    }
 //
 //    @Test
-//    void testCreateAnInvalidRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
+//    void testUpdateRoleSuccess() {
+//        MemberProfile user = createAnUnrelatedUser();
+//        createDefaultAdminRole(user);
 //
-//        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+//        Role roleEntity = createDefaultRole();
+//        MemberProfile memberProfile = createADefaultMemberProfile();
 //
-//        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+//        RoleUpdateDTO requestBody = updateFromEntity(roleEntity);
+//        RoleUpdateDTO.RoleMemberUpdateDTO newMember = updateDefaultRoleMemberDto(roleEntity, memberProfile, true);
+//        newMember.setLead(true);
+//        requestBody.setRoleMembers(Collections.singletonList(newMember));
+//
+//        final HttpRequest<RoleUpdateDTO> request = HttpRequest.PUT("/", requestBody).basicAuth(user.getWorkEmail(), ADMIN_ROLE);
+//        final HttpResponse<RoleResponseDTO> response = client.toBlocking().exchange(request, RoleResponseDTO.class);
+//
+//        assertEntityDTOEqual(roleEntity, response.body());
+//        assertEquals(HttpStatus.OK, response.getStatus());
+//        assertEquals(String.format("%s/%s", request.getPath(), roleEntity.getId()), response.getHeaders().get("location"));
+//    }
+//
+//    @Test
+//    void testUpdateRoleNullName() {
+//        Role roleEntity = createDefaultRole();
+//
+//        RoleUpdateDTO requestBody = new RoleUpdateDTO(roleEntity.getId(), null, null);
+//        requestBody.setRoleMembers(new ArrayList<>());
+//
+//        final HttpRequest<RoleUpdateDTO> request = HttpRequest.PUT("", requestBody)
+//                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
 //        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
 //                () -> client.toBlocking().exchange(request, Map.class));
 //
 //        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+//        JsonNode errors = Objects.requireNonNull(body).get("message");
 //        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-//        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-//                .stream().sorted().collect(Collectors.toList());
-//        assertEquals("role.memberid: must not be null", errorList.get(0));
-//        assertEquals("role.role: must not be null", errorList.get(1));
+//        assertEquals("role.role: must not be blank", errors.asText());
 //        assertEquals(request.getPath(), href.asText());
 //        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 //    }
 //
 //    @Test
-//    void testCreateNonExistingMember() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        RoleCreateDTO role = new RoleCreateDTO();
-//        role.setMemberid(UUID.randomUUID());
-//        role.setRole(RoleType.MEMBER);
-//
-//
-//        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testCreateANullRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
-//
-//        final HttpRequest<String> request = HttpRequest.POST("", "")
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+//    void testUpdateANullRole() {
+//        final HttpRequest<String> request = HttpRequest.PUT("", "").basicAuth(PDL_ROLE, PDL_ROLE);
 //        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
 //                () -> client.toBlocking().exchange(request, Map.class));
 //
@@ -157,312 +280,116 @@
 //        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
 //    }
 //
-//    @Test
-//    void testReadRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//
-//        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
-//
-//        assertEquals(role, response.body());
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//    }
 //
 //    @Test
-//    void testReadRoleNotFound() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
+//    void testUpdateRoleNotExist() {
+//        MemberProfile user = createAnUnrelatedUser();
+//        createDefaultAdminRole(user);
 //
-//        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID()))
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Role.class));
+//        Role roleEntity = createDefaultRole();
+//        UUID requestId = UUID.randomUUID();
+//        RoleUpdateDTO requestBody = new RoleUpdateDTO(requestId.toString(), roleEntity.getRole(), roleEntity.getDescription());
+//        requestBody.setRoleMembers(new ArrayList<>());
 //
-//        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
-//    }
-//
-//    @Test
-//    void testFindRoles() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
-//                createDefaultRole(RoleType.PDL, memberProfile));
-//
-//        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getId()))
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-//        final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
-//
-//        assertEquals(roles, response.body());
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//    }
-//
-//    @Test
-//    void testFindRolesAllParams() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//
-//        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getRole(),
-//                role.getMemberid())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
-//
-//        assertEquals(Set.of(role), response.body());
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//    }
-//
-//    @Test
-//    void testFindRolesDoesNotExist() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role role = createDefaultAdminRole(unrelatedProfile);
-//
-//        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.PDL))
-//                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-//        HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
-//
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertEquals(Set.of(), response.body());
-//    }
-//
-//    @Test
-//    void testUpdateRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//
-//        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
-//
-//        assertEquals(role, response.body());
-//        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertEquals(String.format("%s/%s", request.getPath(), role.getId()), response.getHeaders().get("location"));
-//    }
-//
-//    @Test
-//    void testUpdateNonExistingMember() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//
-//        role.setMemberid(UUID.randomUUID());
-//
-//        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testUpdateNonExistingRoleType() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role roleToUpdate = createDefaultAdminRole(memberProfile);
-//
-//        Map<String, String> role = new HashMap<>();
-//        role.put("id", roleToUpdate.getId().toString());
-//        role.put("role", "ROLE_DOES_NOT_EXIST");
-//        role.put("memberid", roleToUpdate.getMemberid().toString());
-//
-//        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertTrue(error.contains("not one of the values accepted for Enum class"));
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testUpdateNonExistingRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, "role description", memberProfile.getId());
-//
-//        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertEquals(String.format("Unable to locate role to update with id %s", role.getId()), error);
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testUpdateWithoutId() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
-//        role.setId(null);
-//
-//        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String error = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//
-//        assertEquals("Unable to locate role to update with id null", error);
-//        assertEquals(request.getPath(), href);
-//    }
-//
-//    @Test
-//    void testUpdateForbidden() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
-//
-//        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, "role description", UUID.randomUUID());
-//
-//        final HttpRequest<Role> request = HttpRequest.PUT("", r)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+//        final MutableHttpRequest<RoleUpdateDTO> request = HttpRequest.PUT("", requestBody)
+//                .basicAuth(user.getWorkEmail(), ADMIN_ROLE);
 //        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, String.class));
+//                client.toBlocking().exchange(request, Map.class));
 //
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        String error = Objects.requireNonNull(body).get("message").asText();
+//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
+//
+//        assertEquals(String.format("Role ID %s does not exist, can't update.", requestId), error);
+//        assertEquals(request.getPath(), href);
+//    }
+//
+//    @Test
+//    void deleteRoleByMember() {
+//        // setup role
+//        Role roleEntity = createDefaultRole();
+//        // create members
+//        MemberProfile memberProfileofRoleLeadEntity = createADefaultMemberProfile();
+//        MemberProfile memberProfileOfRoleMember = createADefaultMemberProfileForPdl(memberProfileofRoleLeadEntity);
+//        //add members to role
+//        createLeadRoleMember(roleEntity, memberProfileofRoleLeadEntity);
+//        createDefaultRoleMember(roleEntity, memberProfileOfRoleMember);
+//
+//        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", roleEntity.getId())).basicAuth(memberProfileOfRoleMember.getWorkEmail(), MEMBER_ROLE);
+//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+//                () -> client.toBlocking().exchange(request, Map.class));
+//
+//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+//        JsonNode errors = Objects.requireNonNull(body).get("message");
+//        assertEquals("You are not authorized to perform this operation", errors.asText());
 //        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
-//        assertEquals("Forbidden", responseException.getMessage());
 //    }
 //
 //    @Test
-//    void testUpdateAnInvalidRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//    void deleteRoleByAdmin() {
+//        // setup role
+//        Role roleEntity = createDefaultRole();
+//        // create members
+//        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+//        createDefaultAdminRole(memberProfileOfAdmin);
 //
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//        role.setMemberid(null);
-//        role.setRole(null);
+//        //add members to role
+//        createDefaultRoleMember(roleEntity, memberProfileOfAdmin);
 //
-//        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
-//        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-//        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-//                .stream().sorted().collect(Collectors.toList());
-//        assertEquals("role.memberid: must not be null", errorList.get(0));
-//        assertEquals("role.role: must not be null", errorList.get(1));
-//        assertEquals(request.getPath(), href.asText());
-//        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//    }
-//
-//    @Test
-//    void testUpdateANullRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        final HttpRequest<String> request = HttpRequest.PUT("", "")
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String errors = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//        assertEquals("Required Body [role] not specified", errors);
-//        assertEquals(request.getPath(), href);
-//        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//    }
-//
-//    @Test
-//    void deleteRole() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        MemberProfile memberProfile = createADefaultMemberProfile();
-//        Role role = createDefaultAdminRole(memberProfile);
-//
-//        assertNotNull(findRole(role));
-//
-//        final MutableHttpRequest<Object> request = HttpRequest.DELETE(role.getId().toString())
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+//        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", roleEntity.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+//        final HttpResponse response = client.toBlocking().exchange(request);
 //
 //        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertNull(findRole(role));
 //    }
 //
 //    @Test
-//    void deleteRoleNonExisting() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
+//    void deleteRoleByRoleLead() {
+//        // setup role
+//        Role roleEntity = createDefaultRole();
+//        // create members
+//        MemberProfile memberProfileofRoleLeadEntity = createADefaultMemberProfile();
+//        //add members to role
+//        createLeadRoleMember(roleEntity, memberProfileofRoleLeadEntity);
+//        // createDefaultRoleMember(role, memberProfileOfRoleMember);
 //
-//        UUID uuid = UUID.randomUUID();
-//
-//        assertNull(findRoleById(uuid));
-//
-//        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+//        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", roleEntity.getId())).basicAuth(memberProfileofRoleLeadEntity.getWorkEmail(), MEMBER_ROLE);
+//        final HttpResponse response = client.toBlocking().exchange(request);
 //
 //        assertEquals(HttpStatus.OK, response.getStatus());
-//        assertNull(findRoleById(uuid));
 //    }
-//
-//    @Test
-//    void deleteRoleBadId() {
-//        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-//        Role authRole = createDefaultAdminRole(unrelatedProfile);
-//
-//        String uuid = "Bill-Nye-The-Science-Guy";
-//
-//        final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid)
-//                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
-//                () -> client.toBlocking().exchange(request, Map.class));
-//
-//        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-//        String errors = Objects.requireNonNull(body).get("message").asText();
-//        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-//        assertTrue(errors.contains(String.format("Failed to convert argument [id] for value [%s]", uuid)));
-//        assertEquals(request.getPath(), href);
-//        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-//    }
-//
-//    @Test
-//    void deleteRoleUnauthorized() {
-//        UUID uuid = UUID.randomUUID();
-//
-//        final HttpRequest<UUID> request = HttpRequest.DELETE(uuid.toString());
-//        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-//                client.toBlocking().exchange(request, String.class));
-//
-//        assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
-//        assertEquals("Unauthorized", responseException.getMessage());
-//    }
-//}
+
+    @Test
+    void deleteRoleByUnrelatedUser() {
+        // setup role
+        Role roleEntity = createDefaultRole();
+        // create members
+        MemberProfile user = createAnUnrelatedUser();
+
+        final MutableHttpRequest<?> request = HttpRequest.DELETE(String.format("/%s", roleEntity.getId())).basicAuth(user.getWorkEmail(), MEMBER_ROLE);
+
+        //throw error
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode errors = Objects.requireNonNull(body).get("message");
+        assertEquals("You are not authorized to perform this operation", errors.asText());
+        assertEquals(HttpStatus.FORBIDDEN, responseException.getStatus());
+    }
+
+    private void assertEntityDTOEqual(Collection<Role> entities, Collection<RoleResponseDTO> dtos) {
+        assertEquals(entities.size(), dtos.size());
+        Iterator<Role> iEntity = entities.iterator();
+        Iterator<RoleResponseDTO> iDTO = dtos.iterator();
+        while (iEntity.hasNext() && iDTO.hasNext()) {
+            assertEntityDTOEqual(iEntity.next(), iDTO.next());
+        }
+    }
+
+    private void assertEntityDTOEqual(Role entity, RoleResponseDTO dto) {
+        assertEquals(entity.getId(), dto.getId());
+        assertEquals(entity.getRole(), dto.getRole());
+        assertEquals(entity.getDescription(), dto.getDescription());
+    }
+}
+
