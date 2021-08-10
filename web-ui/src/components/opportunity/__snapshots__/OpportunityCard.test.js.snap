@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="MuiPaper-root MuiCard-root opportunity MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        <div
+          className="opportunity-header"
+        >
+          <h3
+            className="MuiTypography-root MuiTypography-h4"
+          >
+            Hip hop artist
+          </h3>
+        </div>
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiCardContent-root opportunity-card"
+  >
+    Looking for someone to spit some hot fire
+    <br />
+    <a
+      href="www.google.com"
+    />
+    <br />
+    Expires on Wed Jan 02 2030 00:00:00 GMT-0600 (Central Standard Time)
+    <br />
+  </div>
+</div>
+`;
