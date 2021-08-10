@@ -1,16 +1,20 @@
 
 describe("make a feedback request", () => {
 
-  // before( () => {
-  //   const email = "sharmag@objectcomputing.com";
-  //   const role = "SUPER";
-  //   cy.loginByCsrf(email, role).then((res) => {
-  //     expect(res.status).to.eq(200);
-  //   });
-  // });
+  before( () => {
+    const email = "sharmag@objectcomputing.com";
+    const role = "SUPER";
+    cy.loginByCsrf(email, role).then((res) => {
+      expect(res.status).to.eq(200);
+    });
+  });
 
   it("assert true", () => {
     expect(true).to.equal(true);
+  });
+
+  it("navigates to the homepage", () => {
+    cy.visit("localhost:8080");
   });
 
   // it("navigates to the homepage", () => {
