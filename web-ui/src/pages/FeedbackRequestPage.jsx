@@ -110,9 +110,9 @@ const FeedbackRequestPage = () => {
     if (!memberIds.length) return true;
     let from = query.from;
     if (from) {
-      from = Array.isArray(from);
-      if(from.length === 1) {
-        if (!memberIds.includes(from.recipientId)) {
+      from = Array.isArray(from) ? from : [from];
+      for (let recipientId of from) {
+        if (!memberIds.includes(recipientId)) {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -123,31 +123,6 @@ const FeedbackRequestPage = () => {
           handleQueryChange("from", undefined);
           return false;
         }
-        if(from.recipientId === currentUserId) {
-          dispatch({
-            type: UPDATE_TOAST,
-            payload: {
-              severity: "error",
-              toast: "Cannot send feedback request to the requestee",
-            },
-          });
-          from.splice(from.indexOf(from.recipientId), 1)
-        }
-        return false;
-      }
-      if(from.length > 1) {
-        for (let recipientId of from) {
-          if (!memberIds.includes(recipientId)) {
-            dispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: "error",
-                toast: "Member ID in URL is invalid",
-              },
-            });
-            handleQueryChange("from", undefined);
-            return false;
-          }
           if(recipientId === currentUserId) {
             dispatch({
               type: UPDATE_TOAST,
@@ -156,14 +131,15 @@ const FeedbackRequestPage = () => {
                 toast: "Cannot send feedback request to the requestee",
               },
             });
-            from.splice(from.indexOf(recipientId), 1)
+            //handleQueryChange("from", undefined);
+            from.splice(from.indexOf(currentUserId), 1);
+            return false;
           }
         }
-      }
       return true;
     }
-    return false;
-  }, [memberIds, query, dispatch, handleQueryChange, currentUserId, fromQuery]);
+      return false;
+  }, [memberIds, query, dispatch, handleQueryChange, currentUserId]);
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();
