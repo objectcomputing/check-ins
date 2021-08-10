@@ -181,46 +181,46 @@ public class RoleServicesImpl implements RoleServices {
 //    }
 
     @Override
-//    public List<RoleResponseDTO> findByMemberid(UUID uuid) {
-//        return null;
-//    }
-
-    public List<RoleResponseDTO> findByMemberid(UUID memberid) {
-        Set<RoleResponseDTO> foundRoles = rolesRepo.search(null, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
-        //TODO: revisit this in a way that will allow joins.
-        for (RoleResponseDTO foundRole : foundRoles) {
-            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
-                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
-            }).collect(Collectors.toSet());
-
-            for (RoleMember foundMember : foundMembers) {
-                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
-            }
-        }
-        return (List<RoleResponseDTO>) foundRoles;
+    public List<RoleResponseDTO> findByMemberid(UUID uuid) {
+        return null;
     }
 
-//    @Override
-//    public Optional<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
-//        return Optional.empty();
+//    public List<RoleResponseDTO> findByMemberid(UUID memberid) {
+//        Set<RoleResponseDTO> foundRoles = rolesRepo.search(null, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
+//        //TODO: revisit this in a way that will allow joins.
+//        for (RoleResponseDTO foundRole : foundRoles) {
+//            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
+//                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
+//                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+//            }).collect(Collectors.toSet());
+//
+//            for (RoleMember foundMember : foundMembers) {
+//                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+//            }
+//        }
+//        return (List<RoleResponseDTO>) foundRoles;
 //    }
+
     @Override
-    public List<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
-        Set<RoleResponseDTO> foundRoles = rolesRepo.search(role, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
-        //TODO: revisit this in a way that will allow joins.
-        for (RoleResponseDTO foundRole : foundRoles) {
-            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
-                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
-                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
-            }).collect(Collectors.toSet());
-
-            for (RoleMember foundMember : foundMembers) {
-                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
-            }
-        }
-        return (List<RoleResponseDTO>) foundRoles;
+    public Optional<Object> findByRoleAndMemberid(RoleType role, UUID memberId) {
+        return Optional.empty();
     }
+//    @Override
+//    public List<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
+//        Set<RoleResponseDTO> foundRoles = rolesRepo.search(role, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
+//        //TODO: revisit this in a way that will allow joins.
+//        for (RoleResponseDTO foundRole : foundRoles) {
+//            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
+//                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
+//                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+//            }).collect(Collectors.toSet());
+//
+//            for (RoleMember foundMember : foundMembers) {
+//                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+//            }
+//        }
+//        return (List<RoleResponseDTO>) foundRoles;
+//    }
 
     @Override
     public void deleteByRoleAndMemberid(RoleType role, UUID memberId) {

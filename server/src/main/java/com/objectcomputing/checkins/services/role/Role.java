@@ -30,10 +30,10 @@ public class Role {
 
     @NotBlank
     @Column(name = "role", unique = true)
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(role::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
+//    @ColumnTransformer(
+//            read = "pgp_sym_decrypt(role::bytea,'${aes.key}')",
+//            write = "pgp_sym_encrypt(?,'${aes.key}') "
+//    )
 
     @NotNull
     @Schema(description = "role this member has", required = true,
@@ -47,10 +47,10 @@ public class Role {
     
     @Nullable
     @Column(name = "description")
-    @ColumnTransformer(
-            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
-            write = "pgp_sym_encrypt(?,'${aes.key}') "
-    )
+//    @ColumnTransformer(
+//            read = "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+//            write = "pgp_sym_encrypt(?,'${aes.key}') "
+//    )
     @Schema(description = "description of the role", nullable = true)
     private String description;
 

@@ -97,145 +97,145 @@ VALUES
 
 
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2559a257-ae84-4076-9ed4-3820c427beeb');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6884ab96-2275-4af9-89d8-ad84254d8759');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2559a257-ae84-4076-9ed4-3820c427beeb');
-
-INSERT INTO member_roles
-    (roleid, memberid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+    ('4cfbe142-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
 INSERT INTO role_member
-    (roleid, memberid)
+    (id, roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('4cfbe41c-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '2559a257-ae84-4076-9ed4-3820c427beeb');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
+    ('4cfbe7dc-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '802cb1f5-a255-4236-8719-773fa53d79d9');
+    ('4cfbe8c2-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6884ab96-2275-4af9-89d8-ad84254d8759');
+    ('4cfbe98a-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '6884ab96-2275-4af9-89d8-ad84254d8759');
 
-INSERT INTO member_roles
-(roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+    ('4cfbea52-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
+    ('4cfbeb06-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2559a257-ae84-4076-9ed4-3820c427beeb');
+    ('4cfbebc4-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2559a257-ae84-4076-9ed4-3820c427beeb');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '802cb1f5-a255-4236-8719-773fa53d79d9');
+    ('4cfbec8c-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
+    ('4cfbefca-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
+    ('4cfbf092-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+    ('4cfbf146-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '802cb1f5-a255-4236-8719-773fa53d79d9');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+    ('4cfbf20e-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '6884ab96-2275-4af9-89d8-ad84254d8759');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6884ab96-2275-4af9-89d8-ad84254d8759');
+    ('4cfbf2cc-f9fc-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1b4f99da-ef70-4a76-9b37-8bb783b749ad');
+    ('4cfbf394-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'b2d35288-7f1e-4549-aa2b-68396b162490');
+    ('f473cca0-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2559a257-ae84-4076-9ed4-3820c427beeb');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+    ('f473ceda-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '802cb1f5-a255-4236-8719-773fa53d79d9');
 
-INSERT INTO member_roles
-    (roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+    ('f473cfde-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
-INSERT INTO member_roles(
-    roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+    ('f473d0a6-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6207b3fd-042d-49aa-9e28-dcc04f537c2d');
 
-INSERT INTO member_roles(
-    roleid, memberid)
+INSERT INTO role_member
+    (id, roleid, memberid)
 VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+    ('f473d164-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d8d0-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d222-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '6884ab96-2275-4af9-89d8-ad84254d8759');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d2e0-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '1b4f99da-ef70-4a76-9b37-8bb783b749ad');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d542-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', 'b2d35288-7f1e-4549-aa2b-68396b162490');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d600-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '43ee8e79-b33d-44cd-b23c-e183894ebfef');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d6b4-f9fc-11eb-9a03-0242ac130003','8bda2ae9-58c1-4843-a0d5-d0952621f9df', '8fa673c0-ca19-4271-b759-41cb9db2e83a');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('f473d768-f9fc-11eb-9a03-0242ac130003','e8a4fff8-e984-4e59-be84-a713c9fa8d23', '066b186f-1425-45de-89f2-4ddcc6ebe237');
+
+INSERT INTO role_member
+    (id, roleid, memberid)
+VALUES
+    ('8c049ae0-f9fd-11eb-9a03-0242ac130003','d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '066b186f-1425-45de-89f2-4ddcc6ebe237');
 
 INSERT INTO team
     (id, name, description)

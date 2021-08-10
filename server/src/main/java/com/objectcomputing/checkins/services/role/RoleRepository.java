@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -27,12 +28,18 @@ public interface RoleRepository extends CrudRepository<Role, UUID> {
     @Override
     <S extends Role> S save(@Valid @NotNull @NonNull S entity);
 
-    @Query(value = "SELECT t_.id, PGP_SYM_DECRYPT(cast(t_.role as bytea),'${aes.key}') as role, PGP_SYM_DECRYPT(cast(description as bytea),'${aes.key}') as description  " +
+    @Query(value = "SELECT t_.id, t_.role, t_.description " +
             "FROM role t_ " +
             "LEFT JOIN role_member tm_ " +
-            "   ON t_.id = tm_.roleid " +
-            "WHERE (:role IS NULL OR PGP_SYM_DECRYPT(cast(t_.role as bytea),'${aes.key}') = :role) " +
+            "ON t_.id = tm_.roleid " +
+            "WHERE (t_.role = :role) " +
             "AND (:memberid IS NULL OR tm_.memberid = :memberid) ")
-    List<Role> search(@Nullable RoleType role, @Nullable String memberid);
+    Set<Role> search(@Nullable RoleType role, @Nullable String memberid);
 
 }
+//
+//    SELECT t_.id, t_.role, t_.description
+//        FROM role t_ LEFT JOIN role_member tm_
+//        ON t_.id = tm_.roleid
+//        WHERE ('PDL' IS NULL OR t_.role = 'PDL')
+//        AND ('43423423423423423' IS NULL OR tm_.memberid = '43423423423423423')
