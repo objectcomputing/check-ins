@@ -9,7 +9,7 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import PropTypes from "prop-types";
 import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
@@ -107,7 +107,6 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
   useStylesText();
   useStylesCardContent();
   const history = useHistory();
-  const location = useLocation();
   const [expanded, setExpanded] = React.useState(false);
   const [sortedResponses, setSortedResponses] = useState(responses);
 
