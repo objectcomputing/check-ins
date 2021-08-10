@@ -26,6 +26,14 @@ public class FeedbackTemplateCreateDTO {
     @Schema(description = "whether or not the template is allowed to be used for a feedback request", required = true)
     private Boolean active;
 
+    @NotBlank
+    @Schema(description = "whether the template is accessible to everyone or just the creator", required = true)
+    private Boolean isPublic;
+
+    @NotBlank
+    @Schema(description = "whether the template is an ad-hoc template", required = true)
+    private Boolean isAdHoc;
+
     public String getTitle() {
         return title;
     }
@@ -58,4 +66,21 @@ public class FeedbackTemplateCreateDTO {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public Boolean getIsAdHoc() {
+        return isAdHoc;
+    }
+
+    public void setIsAdHoc(Boolean isAdHoc) {
+        this.isAdHoc = isAdHoc;
+    }
+
 }

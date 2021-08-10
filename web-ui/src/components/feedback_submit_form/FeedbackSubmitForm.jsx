@@ -14,12 +14,16 @@ import { selectCsrfToken } from "../../context/selectors";
 import { UPDATE_TOAST } from "../../context/actions";
 import {
   getAllAnswersFromRequestAndQuestionId,
-  saveAllAnswers,
+  updateAllAnswers,
   getQuestionsByRequestId,
-  updateSingleAnswer
+  updateSingleAnswer,
+  updateFeedbackRequest
 } from "../../api/feedback";
 import TextField from "@material-ui/core/TextField";
 import { debounce } from "lodash/function";
+import DateFnsUtils from "@date-io/date-fns";
+
+const dateUtils = new DateFnsUtils();
 
 
 const useStyles = makeStyles({
@@ -71,9 +75,10 @@ const ColorButton = withStyles({
 const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requestId: PropTypes.string.isRequired,
+  request: PropTypes.any.isRequired,
 }
 
-const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
+const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const classes = useStyles();
@@ -85,22 +90,30 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
 
   const updateAnswer = debounce(async () => {
     if (csrf) {
-      const res = await updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
+      const res = updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
       return res;
     }
   }, 2000)
 
-  async function updateAllAnswers(){
+
+  async function updateRequestSubmit() {
+    request.status = "submitted"
+    request.submitDate = dateUtils.format(new Date(), "yyyy-MM-dd")
+    const res = await updateFeedbackRequest(request, csrf);
+    return res;
+  }
+
+  async function updateAllAnswersSubmit(){
     let answers= [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
       answers.push(questionAnswerPairs[i].answer)
     }
-    const res = await saveAllAnswers(answers, csrf)
+    const res = await updateAllAnswers(answers, csrf)
     return res;
   }
 
   const onSubmitHandler =() => {
-    updateAllAnswers().then((res) => {
+    updateAllAnswersSubmit().then((res) => {
       for (let i = 0; i < res.length; ++i ) {
         if (res[i].error) {
           dispatch({
@@ -110,10 +123,28 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
               toast: res[i].error,
             },
           });
-          return;
+          return false;
         }
       }
-      history.push(`/feedback/submit/confirmation/?request=${requestId}`)
+      return true;
+    }).then((resTwo) => {
+      if (resTwo === false) {
+        return;
+      }
+      updateRequestSubmit().then((res) => {
+        if (res && res.payload && res.payload.data && !res.error) {
+         history.push(`/feedback/submit/confirmation/?request=${requestId}`)
+        } else {
+          dispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast: res.error,
+            },
+          });
+        }
+      })
+
     })
   }
 
@@ -121,10 +152,9 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
   const onChangeHandler = (event, index) => {
     let questionAnswerCopy = questionAnswerPairs;
     questionAnswerCopy[index].answer.answer = event.target.value;
-    updateAnswer();
-    setQuestionAnswerPairs(questionAnswerCopy);
     currentlyBeingEdited = index;
-
+    setQuestionAnswerPairs(questionAnswerCopy);
+    updateAnswer();
   }
 
 
@@ -142,7 +172,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId }) => {
       if (!questionsList) {
         return;
       }
-      const res = await getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
+      const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
       return res;
     }
 

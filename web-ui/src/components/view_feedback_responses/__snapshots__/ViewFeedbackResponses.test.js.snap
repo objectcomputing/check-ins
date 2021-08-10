@@ -20,7 +20,7 @@ exports[`renders correctly 1`] = `
           "severity": "",
           "toast": "",
         },
-        "userProfile": undefined,
+        "userProfile": Object {},
       },
     }
   }

@@ -35,17 +35,17 @@ public class MailJetSender implements EmailSender {
         MailjetRequest request;
         MailjetResponse response;
         try {
-            var recipientsList = new JSONArray();
-            for(String currentRecipient: recipients) {
-                recipientsList.put(new JSONObject().put("Email", currentRecipient));
+            JSONArray recipientList = new JSONArray();
+            for (String recipient: recipients){
+                recipientList.put(new JSONObject().put("Email", recipient));
             }
             request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Name", "Michael Kimberlin")
-                                            .put("Email", "kimberlinm@objectcomputing.com"))
-                                    .put(Emailv31.Message.TO, recipientsList)
+                                            .put("Email", "kimberlinm@objectcomputing.com")
+                                            .put("Name", "Michael Kimberlin"))
+                                    .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
             response = client.post(request);
