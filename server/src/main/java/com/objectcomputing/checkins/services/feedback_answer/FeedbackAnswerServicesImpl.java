@@ -9,7 +9,6 @@ import com.objectcomputing.checkins.services.feedback_template.template_question
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import java.util.List;
-
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.ArrayList;

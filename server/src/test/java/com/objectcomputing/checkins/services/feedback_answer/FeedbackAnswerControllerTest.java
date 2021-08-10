@@ -2,7 +2,6 @@ package com.objectcomputing.checkins.services.feedback_answer;
 
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
-import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestResponseDTO;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.fixture.*;
@@ -41,7 +40,6 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
         FeedbackRequest feedbackRequest = saveSampleFeedbackRequest(sender, requestee, recipient, template.getId());
         return createSampleFeedbackAnswer(question.getId(), feedbackRequest.getId());
     }
-
 
     public FeedbackAnswer saveSampleAnswer(MemberProfile sender, MemberProfile recipient) {
         FeedbackAnswer answer = createSampleAnswer(sender, recipient);

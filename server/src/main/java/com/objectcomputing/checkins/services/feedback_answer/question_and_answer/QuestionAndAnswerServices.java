@@ -1,15 +1,32 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
 
+import java.util.List;
+import java.util.UUID;
+
 import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswer;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
-
-import java.util.UUID;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
+import io.micronaut.core.annotation.Nullable;
 
 public interface QuestionAndAnswerServices {
 
     class Tuple {
-        private TemplateQuestion question;
-        private FeedbackAnswer answer;
+        public TemplateQuestion question;
+        public FeedbackAnswer answer;
+        public FeedbackRequest request;
+
+        public Tuple(TemplateQuestion question, FeedbackAnswer answer) {
+            this.question = question;
+            this.answer = answer;
+        }
+
+        public Tuple(TemplateQuestion question, FeedbackAnswer answer, FeedbackRequest request) {
+            this.question = question;
+            this.answer = answer;
+            this.request = request;
+        }
+
+        public Tuple() {}
 
         public TemplateQuestion getQuestion() {
             return question;
@@ -27,13 +44,17 @@ public interface QuestionAndAnswerServices {
             return answer;
         }
 
-        public Tuple(TemplateQuestion question, FeedbackAnswer answer) {
-            this.question = question;
-            this.answer = answer;
+        public FeedbackRequest getRequest() {
+            return request;
         }
-        public Tuple() {}
+
+        public void setRequest(FeedbackRequest request) {
+            this.request = request;
+        }
     }
 
-    Tuple getQuestionAndAnswer(UUID requestId, UUID questionId);
+    List<Tuple> getAllQuestionsAndAnswers(UUID requestId);
+
+    Tuple getQuestionAndAnswer(@Nullable UUID requestId, @Nullable UUID questionId);
 
 }
