@@ -6,9 +6,7 @@ import {
   selectCurrentMembers,
 } from "../../context/selectors";
 
-import { Button } from "@material-ui/core";
-import Modal from "@material-ui/core/Modal";
-import TextField from "@material-ui/core/TextField";
+import { Button, Modal, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import "./EditGuildModal.css";
 
@@ -20,22 +18,35 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
   const currentMembers = selectCurrentMembers(state);
   const guildMembers = guild?.guildMembers;
 
-  const findExistingMember = useCallback((member) => guildMembers?.find((current) => current.memberId === member.memberId), [guildMembers]);
+  const findExistingMember = useCallback(
+    (member) =>
+      guildMembers?.find((current) => current.memberId === member.memberId),
+    [guildMembers]
+  );
 
-  useEffect(() => { if(open && guild.id !== editedGuild.id) setGuild(guild); }, [open, guild, editedGuild]);
+  useEffect(() => {
+    if (open && guild.id !== editedGuild.id) setGuild(guild);
+  }, [open, guild, editedGuild]);
 
   useEffect(() => {
     if (
       currentUser?.id &&
       (editedGuild.guildMembers === undefined ||
         editedGuild.guildMembers.length === 0 ||
-        editedGuild.guildMembers.filter(member => member.lead === true).length === 0)
+        editedGuild.guildMembers.filter((member) => member.lead === true)
+          .length === 0)
     ) {
       setGuild({
         ...editedGuild,
-        guildMembers: [...new Set(editedGuild?.guildMembers?.filter(member => member.lead === false && member.memberId !== currentUser.id)),
+        guildMembers: [
+          ...new Set(
+            editedGuild?.guildMembers?.filter(
+              (member) =>
+                member.lead === false && member.memberId !== currentUser.id
+            )
+          ),
           {
-            id: findExistingMember({memberId: currentUser.id})?.id,
+            id: findExistingMember({ memberId: currentUser.id })?.id,
             name: `${currentUser.firstName} ${currentUser.lastName}`,
             memberId: currentUser.id,
             guildId: editedGuild.id,
@@ -79,10 +90,10 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       ...editedGuild,
       guildMembers: [...extantMembers, ...newValue].map((member) => {
         const existing = findExistingMember(member);
-        if(existing) {
-            return {...member, id: existing.id};
+        if (existing) {
+          return { ...member, id: existing.id };
         } else {
-            return member;
+          return member;
         }
       }),
     });
@@ -111,10 +122,10 @@ const EditGuildModal = ({ guild = {}, open, onSave, onClose, headerText }) => {
       ...editedGuild,
       guildMembers: [...extantLeads, ...newValue].map((member) => {
         const existing = findExistingMember(member);
-        if(existing) {
-            return {...member, id: existing.id};
+        if (existing) {
+          return { ...member, id: existing.id };
         } else {
-            return member;
+          return member;
         }
       }),
     });
