@@ -70,11 +70,14 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
     if (!currentUserId || !csrf) {
       return;
     }
+    // User creates a new ad-hoc template
     if (submittedTemplate && submittedQuestion && preview.createAdHoc) {
       const newFeedbackTemplate = {
         title: submittedTemplate.title,
         description: submittedTemplate.description,
         creatorId: currentUserId,
+        active: true,
+        isAdHoc: true,
       };
 
       const newTemplateQuestion = {

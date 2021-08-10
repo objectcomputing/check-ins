@@ -69,13 +69,14 @@ exports[`renders correctly 1`] = `
       </div>
       <div
         className="MuiFormControl-root makeStyles-textField-2"
+        value="3mo"
       >
         <div
           className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
         >
           <label
-            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-marginDense MuiInputLabel-outlined MuiFormLabel-filled"
-            data-shrink={true}
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-marginDense MuiInputLabel-outlined"
+            data-shrink={false}
             htmlFor="select-time"
             id="select-time-label"
           >
@@ -124,7 +125,7 @@ exports[`renders correctly 1`] = `
               className="PrivateNotchedOutline-root-6 MuiOutlinedInput-notchedOutline"
             >
               <legend
-                className="PrivateNotchedOutline-legendLabelled-8 PrivateNotchedOutline-legendNotched-9"
+                className="PrivateNotchedOutline-legendLabelled-8"
               >
                 <span>
                   Show requests sent within
@@ -136,13 +137,14 @@ exports[`renders correctly 1`] = `
       </div>
       <div
         className="MuiFormControl-root makeStyles-textField-2"
+        value="sent_date"
       >
         <div
           className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
         >
           <label
-            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-marginDense MuiInputLabel-outlined MuiFormLabel-filled"
-            data-shrink={true}
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-marginDense MuiInputLabel-outlined"
+            data-shrink={false}
             htmlFor="select-sort-method"
             id="select-sort-method-label"
           >
@@ -191,7 +193,7 @@ exports[`renders correctly 1`] = `
               className="PrivateNotchedOutline-root-6 MuiOutlinedInput-notchedOutline"
             >
               <legend
-                className="PrivateNotchedOutline-legendLabelled-8 PrivateNotchedOutline-legendNotched-9"
+                className="PrivateNotchedOutline-legendLabelled-8"
               >
                 <span>
                   Sort by
