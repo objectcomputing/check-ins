@@ -38,8 +38,6 @@ jobs:
         run: ./gradlew assemble
       - name: Build docker image
         run: ./gradlew dockerBuild
-      - name: Docker images
-        run: docker images
       - name: Run docker container
         run: ./gradlew dockerRun
       - name: Cypress run
