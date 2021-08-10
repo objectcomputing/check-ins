@@ -6,6 +6,20 @@ on:
 jobs:
   cypress:
     runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: postgres:11.6
+        env:
+          POSTGRES_DB: checkinsdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Set up Node 14
@@ -22,8 +36,6 @@ jobs:
         run: chmod +x gradlew
       - name: Gradle package
         run: ./gradlew assemble
-      - name: Start postgres DB
-        run: docker-compose up
       - name: Build docker image
         run: ./gradlew dockerBuild
       - name: Docker images
