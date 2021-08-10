@@ -1,4 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_answer.question_and_answer;
+
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -9,7 +10,6 @@ import io.micronaut.security.rules.SecurityRule;
 import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-
 import javax.inject.Named;
 import java.util.List;
 import java.util.UUID;
