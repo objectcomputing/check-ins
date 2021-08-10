@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {FormControlLabel, TextField, Tooltip} from "@material-ui/core";
 import Checkbox from '@material-ui/core/Checkbox';
-import {withStyles} from '@material-ui/core/styles'
 import PropTypes from "prop-types";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
@@ -9,16 +8,6 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 const propTypes = {
   onFormChange: PropTypes.func
 }
-
-const BlueCheckbox = withStyles({
-  root: {
-    color: '#0000ff',
-    '&$checked': {
-      color: '#0000ff',
-    },
-  },
-  checked: {},
-})((props) => <Checkbox color="default" {...props} />);
 
 const AdHocCreationForm = (props) => {
 
@@ -35,11 +24,6 @@ const AdHocCreationForm = (props) => {
       isPublic: isPublic,
     }); // eslint-disable-next-line
   }, [title, description, question]);
-
-  const onPublicClick = () => {
-    setIsPublic(!isPublic)
-    console.log(isPublic)
-  }
 
   return (
     <React.Fragment>
@@ -72,20 +56,23 @@ const AdHocCreationForm = (props) => {
         onChange={(event) => {
           setQuestion(event.target.value);
         }}/>
-      <FormControlLabel
-        control={
-          <BlueCheckbox
-            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-            checkedIcon={<CheckBoxIcon fontSize="small" />}
-            name="checkedI"
-            onClick={onPublicClick}
-          />
-        }
-        label="Make template public?"
-      />
-      <Tooltip title="Check this box if you want the template to be accessed by the public" placement="left" arrow>
-        <HelpOutlineIcon style={{color: "gray"}}/>
-      </Tooltip>
+      <div className="public-checkbox-container">
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+              checkedIcon={<CheckBoxIcon fontSize="small" />}
+              name="publicChecked"
+              onClick={() => setIsPublic(!isPublic)}
+            />
+          }
+          label="Make template public"
+        />
+        <Tooltip title="Private templates can only be used by you and admins. Public templates can be used by anyone." placement="bottom" arrow>
+          <HelpOutlineIcon style={{color: "gray"}}/>
+        </Tooltip>
+      </div>
     </React.Fragment>
   );
 }
