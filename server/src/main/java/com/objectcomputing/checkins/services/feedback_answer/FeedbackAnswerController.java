@@ -9,12 +9,15 @@ import io.netty.channel.EventLoopGroup;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 @Controller("/services/feedback/answers")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -79,6 +82,25 @@ public class FeedbackAnswerController {
                         .ok(fromEntity(savedAnswer))
                         .headers(headers -> headers.location(URI.create("/feedback_answer/" +  savedAnswer.getId()))))
                 .subscribeOn(Schedulers.from(executorService));
+    }
+
+    /**
+     * Search for all feedback requests that match the intersection of the provided values
+     * Any values that are null are not applied to the intersection
+     *
+     * @param questionId The attached {@link UUID} of the related question
+     * @param requestId The attached {@link UUID} of the request that corresponds with the answer
+     * @return {@link FeedbackAnswerResponseDTO}
+     */
+    @Get("/{?questionId,requestId}")
+    public Single<HttpResponse<List<FeedbackAnswerResponseDTO>>> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        return Single.fromCallable(() -> feedbackAnswerServices.findByValues(questionId, requestId))
+                .observeOn(Schedulers.from(eventLoopGroup))
+                .map(feedbackAnswers -> {
+                    List<FeedbackAnswerResponseDTO> dtoList = feedbackAnswers.stream()
+                            .map(this::fromEntity).collect(Collectors.toList());
+                    return (HttpResponse<List<FeedbackAnswerResponseDTO>>) HttpResponse.ok(dtoList);
+                }).subscribeOn(Schedulers.from(executorService));
     }
 
     private FeedbackAnswer fromDTO(FeedbackAnswerCreateDTO dto) {
