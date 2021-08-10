@@ -112,7 +112,7 @@ const FeedbackRequestPage = () => {
     if (from) {
       from = Array.isArray(from) ? from : [from];
       for (let recipientId of from) {
-        if (!memberIds.includes(recipientId)) {
+        if (!memberIds.includes(recipientId) || from.includes(currentUserId)) {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -123,22 +123,10 @@ const FeedbackRequestPage = () => {
           handleQueryChange("from", undefined);
           return false;
         }
-          if(recipientId === currentUserId) {
-            dispatch({
-              type: UPDATE_TOAST,
-              payload: {
-                severity: "error",
-                toast: "Cannot send feedback request to the requestee",
-              },
-            });
-            //handleQueryChange("from", undefined);
-            from.splice(from.indexOf(currentUserId), 1);
-            return false;
-          }
-        }
+      }
       return true;
     }
-      return false;
+    return false;
   }, [memberIds, query, dispatch, handleQueryChange, currentUserId]);
 
   const isValidDate = useCallback((dateString) => {
