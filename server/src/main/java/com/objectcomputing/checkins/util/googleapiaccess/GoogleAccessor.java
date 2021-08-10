@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Requires(notEnv = Environment.TEST)
+//@Requires(notEnv = Environment.TEST)
 @Singleton
 public class GoogleAccessor {
 

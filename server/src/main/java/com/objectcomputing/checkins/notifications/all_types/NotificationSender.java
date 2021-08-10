@@ -11,12 +11,20 @@ import javax.inject.Singleton;
 
 @Singleton
 public class NotificationSender implements NotificationSenderInterface {
-    private final EmailSender emailSender;
-    private final GoogleChatBot googleChatBot;
+    private EmailSender emailSender;
+    private GoogleChatBot googleChatBot;
     private static final Logger LOG = LoggerFactory.getLogger(NotificationSender.class);
 
     public NotificationSender(EmailSender emailSender, GoogleChatBot googleChatBot) {
         this.emailSender = emailSender;
+        this.googleChatBot = googleChatBot;
+    }
+
+    public void setEmailSender(EmailSender emailSender) {
+        this.emailSender = emailSender;
+    }
+
+    public void setGoogleChatBot(GoogleChatBot googleChatBot) {
         this.googleChatBot = googleChatBot;
     }
 

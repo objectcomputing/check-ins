@@ -29,6 +29,7 @@ datasources:
     username: postgres
     password: "postgres"
 ---
+
 credentials:
   roles:
     SUPER:
@@ -49,3 +50,4 @@ flyway:
       locations:
         - "classpath:db/common"
         - "classpath:db/dev"
+

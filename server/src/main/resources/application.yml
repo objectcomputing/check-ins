@@ -72,6 +72,7 @@ check-ins:
     name: "OCI Check-ins"
     google-api:
       delegated-user: ${ GSUITE_SUPER_ADMIN }
+
       scopes:
         scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
@@ -105,6 +106,7 @@ service-account-credentials:
   client_x509_cert_url: ${ CLIENT_X509_CERT_URL }
   oauth_client_id: ${ OAUTH_CLIENT_ID }
   oauth_client_secret: ${ OAUTH_CLIENT_SECRET }
+
 ---
 ehcache:
   caches:

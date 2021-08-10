@@ -15,7 +15,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
-@Requires(notEnv = Environment.TEST)
+//@Requires(notEnv = Environment.TEST)
 @Singleton
 public class GoogleApiAccess implements ApplicationEventListener<ServerStartupEvent> {
 
