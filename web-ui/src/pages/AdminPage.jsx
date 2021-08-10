@@ -11,7 +11,7 @@ const AdminPage = () => {
   const [roles, setRoles] = useState(true);
   const [users, setUsers] = useState(false);
 
-  // add commented out code back in when 'Permissions' is ready
+  // uncomment when 'Permissions' is ready
   // const handlePermissions = () => {
   //   setPermissions(true);
   //   setRoles(false);
@@ -33,6 +33,7 @@ const AdminPage = () => {
         {permissions ? <div /> : roles ? <Roles /> : users && <UserPage />}
       </div>
       <div className="bottom-nav">
+        {/* uncomment when 'Permissions' is ready */}
         {/* <Button
           className={permissions ? "button-selected" : "button"}
           onClick={handlePermissions}
