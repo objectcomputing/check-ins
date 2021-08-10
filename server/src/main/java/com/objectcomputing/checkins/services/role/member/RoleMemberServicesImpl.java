@@ -48,8 +48,6 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
             throw new BadArgException(String.format("Role %s doesn't exist", roleId));
         }
 
-        Set<RoleMember> roleLeads = this.findByFields(roleId, null, true);
-
         if (roleMember.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for role member", roleMember.getId()));
         } else if (memberRepo.findById(memberId).isEmpty()) {
@@ -82,23 +80,19 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
             throw new BadArgException(String.format("Role %s doesn't exist", roleId));
         }
 
-        Set<RoleMember> roleLeads = this.findByFields(roleId, null, true);
-
         if (id == null || roleMemberRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate roleMember to update with id %s", id));
         } else if (memberRepo.findById(memberId).isEmpty()) {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (roleMemberRepo.findByRoleIdAndMemberId(roleMember.getRoleId(), roleMember.getMemberId()).isEmpty()) {
             throw new BadArgException(String.format("Member %s is not part of role %s", memberId, roleId));
-//        } else if (!isAdmin && roleLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
-//            throw new BadArgException("You are not authorized to perform this operation");
         }
 
         RoleMember roleMemberUpdate = roleMemberRepo.update(roleMember);
         return roleMemberUpdate;
     }
 
-    public Set<RoleMember> findByFields(@Nullable UUID roleId, @Nullable UUID memberId, @Nullable Boolean lead) {
+    public Set<RoleMember> findByFields(@Nullable UUID roleId, @Nullable UUID memberId) {
         Set<RoleMember> roleMembers = new HashSet<>();
         roleMemberRepo.findAll().forEach(roleMembers::add);
 
@@ -107,9 +101,6 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
         }
         if (memberId != null) {
             roleMembers.retainAll(roleMemberRepo.findByMemberId(memberId));
-        }
-        if (lead != null) {
-            roleMembers.retainAll(roleMemberRepo.findByLead(lead));
         }
 
         return roleMembers;
@@ -121,7 +112,7 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
 
         RoleMember roleMember = roleMemberRepo.findById(id).orElse(null);
         if (roleMember != null) {
-            Set<RoleMember> roleLeads = this.findByFields(roleMember.getRoleId(), null, true);
+            Set<RoleMember> roleLeads = this.findByFields(roleMember.getRoleId(), null);
 
 //            if (!isAdmin && roleLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
 //                throw new PermissionException("You are not authorized to perform this operation");
@@ -141,7 +132,6 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
 
         List<RoleMember> roleMembers = roleMemberRepo.findByRoleId(id);
         if (roleMembers != null) {
-            List<RoleMember> roleLeads = roleMembers.stream().filter((member) -> member.isLead()).collect(Collectors.toList());
 
 //            if (!isAdmin && roleLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
 //                throw new PermissionException("You are not authorized to perform this operation");

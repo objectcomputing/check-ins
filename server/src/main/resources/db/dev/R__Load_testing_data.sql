@@ -142,7 +142,7 @@ INSERT INTO member_roles
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498');
 
-INSERT INTO member_roles
+INSERT INTO role_member
     (roleid, memberid)
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d');

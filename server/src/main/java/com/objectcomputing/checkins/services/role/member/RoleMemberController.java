@@ -38,7 +38,7 @@ public class RoleMemberController {
     public HttpResponse<RoleMember> createMembers(@Body @Valid RoleMemberCreateDTO roleMember,
                                                   HttpRequest<RoleMemberResponseDTO> request) {
         RoleMember newRoleMember = roleMemberServices.save(new RoleMember(roleMember.getRoleId(),
-                roleMember.getMemberId(), roleMember.getLead()));
+                roleMember.getMemberId()));
         return HttpResponse
                 .created(newRoleMember)
                 .headers(headers -> headers.location(
@@ -53,7 +53,7 @@ public class RoleMemberController {
      */
     @Put()
     public HttpResponse<?> updateMembers(@Body @Valid RoleMemberUpdateDTO roleMember, HttpRequest<RoleMember> request) {
-        RoleMember updatedRoleMember = roleMemberServices.update(new RoleMember(roleMember.getId(), roleMember.getRoleId(), roleMember.getMemberId(), roleMember.getLead()));
+        RoleMember updatedRoleMember = roleMemberServices.update(new RoleMember(roleMember.getId(), roleMember.getRoleId(), roleMember.getMemberId()));
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(
@@ -78,14 +78,12 @@ public class RoleMemberController {
      *
      * @param roleId   {@link UUID} of role
      * @param memberId {@link UUID} of member
-     * @param lead,    is lead of the role
      * @return {@link List < Role > list of roles}
      */
-    @Get("/{?roleId,memberId,lead}")
+    @Get("/{?roleId,memberId}")
     public Set<RoleMember> findRoleMembers(@Nullable UUID roleId,
-                                           @Nullable UUID memberId,
-                                           @Nullable Boolean lead) {
-        return roleMemberServices.findByFields(roleId, memberId, lead);
+                                           @Nullable UUID memberId) {
+        return roleMemberServices.findByFields(roleId, memberId);
     }
 
     /**

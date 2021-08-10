@@ -9,10 +9,6 @@ import java.util.UUID;
 @Introspected
 public class RoleMemberCreateDTO {
 
-    @Schema(description = "whether member is lead or not represented by true or false respectively",
-            nullable = true)
-    private Boolean lead;
-
     @NotNull
     @Schema(description = "Role to which the member belongs")
     private UUID roleId;
@@ -21,18 +17,9 @@ public class RoleMemberCreateDTO {
     @Schema(description = "Member who is on this role")
     private UUID memberId;
 
-    public RoleMemberCreateDTO(UUID roleId, UUID memberId, Boolean lead) {
+    public RoleMemberCreateDTO(UUID roleId, UUID memberId) {
         this.roleId = roleId;
         this.memberId = memberId;
-        this.lead = lead;
-    }
-
-    public Boolean getLead() {
-        return lead;
-    }
-
-    public void setLead(Boolean lead) {
-        this.lead = lead;
     }
 
     public UUID getRoleId() {

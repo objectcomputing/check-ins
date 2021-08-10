@@ -20,8 +20,6 @@ public interface RoleMemberRepository extends CrudRepository<RoleMember, UUID> {
 
     List<RoleMember> findByMemberId(UUID uuid);
 
-    List<RoleMember> findByLead(Boolean aBoolean);
-
     Optional<RoleMember> findByRoleIdAndMemberId(@NotNull UUID roleMemberId, @NotNull UUID memberId);
 
     @Override
@@ -37,7 +35,6 @@ public interface RoleMemberRepository extends CrudRepository<RoleMember, UUID> {
     @Query("SELECT * " +
             "FROM role_member rm_ " +
             "WHERE (:roleId IS NULL OR rm_.roleId = :roleId) " +
-            "AND (:memberId IS NULL OR rm_.memberId = :memberId) " +
-            "AND (:lead IS NULL OR rm_.lead = :lead) ")
-    List<RoleMember> search(@Nullable String roleId, @Nullable String memberId, @Nullable Boolean lead);
+            "AND (:memberId IS NULL OR rm_.memberId = :memberId)")
+    List<RoleMember> search(@Nullable String roleId, @Nullable String memberId);
 }

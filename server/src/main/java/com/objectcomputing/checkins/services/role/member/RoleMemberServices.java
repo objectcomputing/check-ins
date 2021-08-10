@@ -13,7 +13,7 @@ public interface RoleMemberServices {
 
     void delete(UUID id);
 
-    Set<RoleMember> findByFields(UUID roleId, UUID memberId, Boolean lead);
+    Set<RoleMember> findByFields(UUID roleId, UUID memberId);
 
     void deleteByRole(UUID id);
 }

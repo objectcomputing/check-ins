@@ -13,15 +13,15 @@ import com.objectcomputing.checkins.services.role.member.RoleMemberUpdateDTO;
 
 public interface RoleMemberFixture extends RepositoryFixture{
     default RoleMember createDefaultRoleMember(Role roleEntity, MemberProfile memberProfile) {
-        return getRoleMemberRepository().save(new RoleMember(null, roleEntity.getId(), memberProfile.getId(), false));
+        return getRoleMemberRepository().save(new RoleMember(null, roleEntity.getId(), memberProfile.getId()));
     }
 
     default RoleMember createLeadRoleMember(Role roleEntity, MemberProfile memberProfile) {
-        return getRoleMemberRepository().save(new RoleMember(null, roleEntity.getId(), memberProfile.getId(), true));
+        return getRoleMemberRepository().save(new RoleMember(null, roleEntity.getId(), memberProfile.getId()));
     }
 
     default RoleCreateDTO.RoleMemberCreateDTO createDefaultRoleMemberDto(MemberProfile memberProfile, Boolean lead) {
-        return new RoleCreateDTO.RoleMemberCreateDTO(memberProfile.getId(), lead);
+        return new RoleCreateDTO.RoleMemberCreateDTO(memberProfile.getId());
     }
 
     default RoleUpdateDTO.RoleMemberUpdateDTO updateDefaultRoleMemberDto(Role entity, MemberProfile memberProfile, Boolean lead) {
@@ -29,12 +29,12 @@ public interface RoleMemberFixture extends RepositoryFixture{
     }
 
     default RoleMemberCreateDTO createDefaultRoleMemberDto(Role roleEntity, MemberProfile memberProfile, Boolean lead) {
-        return new RoleMemberCreateDTO(roleEntity.getId(), memberProfile.getId(), true);
+        return new RoleMemberCreateDTO(roleEntity.getId(), memberProfile.getId());
     }
 
     default RoleMemberResponseDTO dtoFromEntity(RoleMember memberEntity, MemberProfile memberProfile) {
         return new RoleMemberResponseDTO(memberEntity.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
-                memberProfile.getId(), memberEntity.isLead());
+                memberProfile.getId());
     }
 }
 

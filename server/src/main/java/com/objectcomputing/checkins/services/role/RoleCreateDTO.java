@@ -85,25 +85,12 @@ public class RoleCreateDTO {
     @Introspected
     public static class RoleMemberCreateDTO {
 
-        @Schema(description = "whether member is lead or not represented by true or false respectively",
-                nullable = true)
-        private Boolean lead;
-
         @NotNull
         @Schema(description = "Member who is on this role")
         private UUID memberId;
 
-        public RoleMemberCreateDTO(UUID memberId, Boolean lead) {
+        public RoleMemberCreateDTO(UUID memberId) {
             this.memberId = memberId;
-            this.lead = lead;
-        }
-
-        public Boolean getLead() {
-            return lead;
-        }
-
-        public void setLead(Boolean lead) {
-            this.lead = lead;
         }
 
         public UUID getMemberId() {

@@ -2,10 +2,8 @@ package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
-import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
-import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.services.role.member.*;
 
 import javax.inject.Singleton;
@@ -41,9 +39,8 @@ public class RoleServicesImpl implements RoleServices {
             if (!rolesRepo.search(roleDTO.getRole(), null).isEmpty()) {
                 throw new BadArgException(String.format("Role with name %s already exists", roleDTO.getRole()));
             } else {
-                if (roleDTO.getRoleMembers() == null ||
-                        roleDTO.getRoleMembers().stream().noneMatch(RoleCreateDTO.RoleMemberCreateDTO::getLead)) {
-                    throw new BadArgException("Role must include at least one role lead");
+                if (roleDTO.getRoleMembers() == null ) {
+                    throw new BadArgException("Role must include at least one role member");
                 }
                 newRoleEntity = rolesRepo.save(fromDTO(roleDTO));
                 for (RoleCreateDTO.RoleMemberCreateDTO memberDTO : roleDTO.getRoleMembers()) {
@@ -61,7 +58,7 @@ public class RoleServicesImpl implements RoleServices {
                 .orElseThrow(() -> new NotFoundException("No such role found"));
 
         List<RoleMemberResponseDTO> roleMembers = roleMemberServices
-                .findByFields(roleId, null, null)
+                .findByFields(roleId, null)
                 .stream()
                 .filter(roleMember -> {
                     LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
@@ -86,13 +83,13 @@ public class RoleServicesImpl implements RoleServices {
                 if (roleDTO.getId() != null && rolesRepo.findById(roleDTO.getId()).isPresent()) {
                     if (roleDTO.getRoleMembers() == null ||
                             roleDTO.getRoleMembers().stream().noneMatch(RoleUpdateDTO.RoleMemberUpdateDTO::getLead)) {
-                        throw new BadArgException("Role must include at least one role lead");
+                        throw new BadArgException("Role must include at least one role member");
                     }
 
 
                     Role newRoleEntity = rolesRepo.update(fromDTO(roleDTO));
 
-                    Set<RoleMember> existingRoleMembers = roleMemberServices.findByFields(roleDTO.getId(), null, null);
+                    Set<RoleMember> existingRoleMembers = roleMemberServices.findByFields(roleDTO.getId(), null);
                     //add any new members & updates
                     roleDTO.getRoleMembers().stream().forEach((updatedMember) -> {
                         Optional<RoleMember> first = existingRoleMembers.stream().filter((existing) -> existing.getMemberId().equals(updatedMember.getMemberId())).findFirst();
@@ -127,7 +124,7 @@ public class RoleServicesImpl implements RoleServices {
         Set<RoleResponseDTO> foundRoles = rolesRepo.search(role, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
         //TODO: revisit this in a way that will allow joins.
         for (RoleResponseDTO foundRole : foundRoles) {
-            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null, null).stream().filter(roleMember -> {
+            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
                 LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
                 return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
             }).collect(Collectors.toSet());
@@ -157,14 +154,72 @@ public class RoleServicesImpl implements RoleServices {
         return null;
     }
 
-    @Override
-    public List<RoleResponseDTO> findByMemberid(UUID uuid) {
-        return null;
-    }
+//    public Set<Role> findByRole(RoleType role) {
+//        Set<Role> roles = new HashSet<>();
+//        rolesRepo.findAll().forEach(roles::add);
+//
+//        if (role != null) {
+//            roles.retainAll(rolesRepo.findByRole(role));
+//        }
+//
+//        return roles;
+//    }
+//    public List<RoleResponseDTO> findByFields(RoleType role) {
+//        Set<RoleResponseDTO> foundRoles = rolesRepo.search(null, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
+//        //TODO: revisit this in a way that will allow joins.
+//        for (RoleResponseDTO foundRole : foundRoles) {
+//            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
+//                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
+//                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+//            }).collect(Collectors.toSet());
+//
+//            for (RoleMember foundMember : foundMembers) {
+//                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+//            }
+//        }
+//        return (List<RoleResponseDTO>) foundRoles;
+//    }
 
     @Override
-    public Optional<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
-        return Optional.empty();
+//    public List<RoleResponseDTO> findByMemberid(UUID uuid) {
+//        return null;
+//    }
+
+    public List<RoleResponseDTO> findByMemberid(UUID memberid) {
+        Set<RoleResponseDTO> foundRoles = rolesRepo.search(null, nullSafeUUIDToString(memberid)).stream().map(this::fromEntity).collect(Collectors.toSet());
+        //TODO: revisit this in a way that will allow joins.
+        for (RoleResponseDTO foundRole : foundRoles) {
+            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
+                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+            }).collect(Collectors.toSet());
+
+            for (RoleMember foundMember : foundMembers) {
+                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+            }
+        }
+        return (List<RoleResponseDTO>) foundRoles;
+    }
+
+//    @Override
+//    public Optional<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
+//        return Optional.empty();
+//    }
+    @Override
+    public List<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId) {
+        Set<RoleResponseDTO> foundRoles = rolesRepo.search(role, nullSafeUUIDToString(memberId)).stream().map(this::fromEntity).collect(Collectors.toSet());
+        //TODO: revisit this in a way that will allow joins.
+        for (RoleResponseDTO foundRole : foundRoles) {
+            Set<RoleMember> foundMembers = roleMemberServices.findByFields(foundRole.getId(), null).stream().filter(roleMember -> {
+                LocalDate terminationDate = memberProfileServices.getById(roleMember.getMemberId()).getTerminationDate();
+                return terminationDate == null || !LocalDate.now().plusDays(1).isAfter(terminationDate);
+            }).collect(Collectors.toSet());
+
+            for (RoleMember foundMember : foundMembers) {
+                foundRole.getRoleMembers().add(fromMemberEntity(foundMember, memberProfileServices.getById(foundMember.getMemberId())));
+            }
+        }
+        return (List<RoleResponseDTO>) foundRoles;
     }
 
     @Override
@@ -180,11 +235,11 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     private RoleMember fromMemberDTO(RoleCreateDTO.RoleMemberCreateDTO memberDTO, UUID roleId) {
-        return new RoleMember(null, roleId, memberDTO.getMemberId(), memberDTO.getLead());
+        return new RoleMember(null, roleId, memberDTO.getMemberId());
     }
 
     private RoleMember fromMemberDTO(RoleUpdateDTO.RoleMemberUpdateDTO memberDTO, UUID roleId) {
-        return new RoleMember(memberDTO.getId(), roleId, memberDTO.getMemberId(), memberDTO.getLead());
+        return new RoleMember(memberDTO.getId(), roleId, memberDTO.getMemberId());
     }
 
     private RoleResponseDTO fromEntity(Role entity) {
@@ -212,6 +267,6 @@ public class RoleServicesImpl implements RoleServices {
             return null;
         }
         return new RoleMemberResponseDTO(roleMember.getId(), memberProfile.getFirstName(), memberProfile.getLastName(),
-                memberProfile.getId(), roleMember.isLead());
+                memberProfile.getId());
     }
 }

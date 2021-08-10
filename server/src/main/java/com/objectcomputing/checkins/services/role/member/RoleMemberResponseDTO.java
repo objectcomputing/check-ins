@@ -22,24 +22,21 @@ public class RoleMemberResponseDTO {
 
     @Schema(description = "whether member is lead or not represented by true or false respectively",
             nullable = true)
-    private Boolean lead;
 
     private UUID roleId;
     private UUID memberId;
 
-    public RoleMemberResponseDTO(UUID id, String firstName, String lastName, UUID memberId, Boolean lead) {
+    public RoleMemberResponseDTO(UUID id, String firstName, String lastName, UUID memberId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.name = firstName + ' ' + lastName;
         this.memberId = memberId;
-        this.lead = lead;
     }
 
-    public RoleMemberResponseDTO(UUID roleId, UUID memberId, Boolean lead) {
+    public RoleMemberResponseDTO(UUID roleId, UUID memberId) {
         this.roleId = roleId;
         this.memberId = memberId;
-        this.lead = lead;
     }
 
     public UUID getMemberId() {
@@ -90,11 +87,4 @@ public class RoleMemberResponseDTO {
         this.name = name;
     }
 
-    public Boolean isLead() {
-        return lead;
-    }
-
-    public void setLead(Boolean lead) {
-        this.lead = lead;
-    }
 }

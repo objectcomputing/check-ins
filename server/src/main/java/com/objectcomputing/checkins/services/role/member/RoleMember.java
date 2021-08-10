@@ -37,21 +37,14 @@ public class RoleMember {
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberId;
 
-    @Nullable
-    @Column(name = "lead")
-    @Schema(description = "whether member is lead or not represented by true or false respectively",
-            nullable = true)
-    private Boolean lead;
-
-    public RoleMember(UUID roleId, UUID memberId, Boolean lead) {
-        this(null, roleId, memberId, lead);
+    public RoleMember(UUID roleId, UUID memberId) {
+        this(null, roleId, memberId);
     }
 
-    public RoleMember(UUID id, UUID roleId, UUID memberId, Boolean lead) {
+    public RoleMember(UUID id, UUID roleId, UUID memberId) {
         this.id = id;
         this.roleId = roleId;
         this.memberId = memberId;
-        this.lead = lead;
     }
 
     public UUID getId() {
@@ -78,14 +71,6 @@ public class RoleMember {
         this.memberId = memberId;
     }
 
-    public boolean isLead() {
-        return lead != null && lead;
-    }
-
-    public void setLead(boolean lead) {
-        this.lead = lead;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,13 +78,12 @@ public class RoleMember {
         RoleMember that = (RoleMember) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(roleId, that.roleId) &&
-                Objects.equals(memberId, that.memberId) &&
-                Objects.equals(lead, that.lead);
+                Objects.equals(memberId, that.memberId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, roleId, memberId, lead);
+        return Objects.hash(id, roleId, memberId);
     }
 
     @Override
@@ -108,7 +92,6 @@ public class RoleMember {
                 "id=" + id +
                 ", roleId=" + roleId +
                 ", memberId=" + memberId +
-                ", lead=" + isLead() +
                 '}';
     }
 }
