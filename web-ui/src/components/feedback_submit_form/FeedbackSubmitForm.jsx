@@ -90,7 +90,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
 
   const updateAnswer = debounce(async () => {
     if (csrf) {
-      const res = await updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
+      const res = updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
       return res;
     }
   }, 2000)
@@ -101,8 +101,8 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
     request.submitDate = dateUtils.format(new Date(), "yyyy-MM-dd")
     const res = await updateFeedbackRequest(request, csrf);
     return res;
-
   }
+
   async function updateAllAnswersSubmit(){
     let answers= [];
     for (let i = 0; i < questionAnswerPairs.length; ++i) {
@@ -172,7 +172,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       if (!questionsList) {
         return;
       }
-      const res = await getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
+      const res = getAllAnswersFromRequestAndQuestionId(requestId, questionsList, csrf)
       return res;
     }
 
