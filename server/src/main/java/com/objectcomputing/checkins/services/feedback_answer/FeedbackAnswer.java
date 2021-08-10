@@ -26,7 +26,7 @@ public class FeedbackAnswer {
     @Schema(description = "unique id of the feedback answer", required = true)
     private UUID id;
 
-    @Column(name="answer")
+    @Column(name = "answer")
     @ColumnTransformer(
             read = "pgp_sym_decrypt(answer::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
