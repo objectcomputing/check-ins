@@ -93,7 +93,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       const res = updateSingleAnswer(questionAnswerPairs[currentlyBeingEdited].answer, csrf)
       return res;
     }
-  }, 2000)
+  }, 1000)
 
 
   async function updateRequestSubmit() {
