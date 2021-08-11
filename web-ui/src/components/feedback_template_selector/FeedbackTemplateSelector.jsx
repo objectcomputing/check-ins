@@ -78,6 +78,7 @@ const FeedbackTemplateSelector = ({query, changeQuery}) => {
         creatorId: currentUserId,
         active: true,
         isAdHoc: true,
+        isPublic: false
       };
 
       const newTemplateQuestion = {
