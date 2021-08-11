@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {TextField, Typography} from '@material-ui/core';
+import {Checkbox, TextField, Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
@@ -7,10 +7,13 @@ import {getQuestionsAndAnswers} from "../../api/feedbackanswer";
 import queryString from "query-string";
 import {useLocation} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken} from "../../context/selectors";
+import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {UPDATE_TOAST} from "../../context/actions";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import {Group as GroupIcon, Search as SearchIcon} from "@material-ui/icons";
+import {Autocomplete} from "@material-ui/lab";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
 const useStyles = makeStyles({
   root: {
@@ -22,6 +25,9 @@ const useStyles = makeStyles({
     color: "gray",
     marginTop: "3em",
     textAlign: "center"
+  },
+  popupIndicator: {
+    transform: "none"
   }
 }, {name: "MuiCardContent"});
 
@@ -34,18 +40,19 @@ const ViewFeedbackResponses = () => {
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filteredResponders, setFilteredResponders] = useState([]);
+  const [responderOptions, setResponderOptions] = useState(["beep"]);
 
   const getFilteredResponses = useCallback(() => {
     if (!questionsAndAnswers) {
-      return null
+      return null;
     } else if (questionsAndAnswers.length === 0) {
-      return <Typography className={classes.notFoundMessage} variant="h5">No responses found</Typography>
+      return <Typography className={classes.notFoundMessage} variant="h5">No responses found</Typography>;
     }
 
     let responsesToDisplay = [];
 
     if (responsesToDisplay.length === 0) {
-      return <Typography className={classes.notFoundMessage} variant="h5">No matching responses</Typography>
+      return <Typography className={classes.notFoundMessage} variant="h5">No matching responses</Typography>;
     }
 
   }, [questionsAndAnswers]);
@@ -66,7 +73,6 @@ const ViewFeedbackResponses = () => {
 
     retrieveQuestionsAndAnswers(query.request, csrf).then((res) => {
       if (res) {
-        console.log(res);
         setQuestionsAndAnswers(res);
       } else {
         window.snackDispatch({
@@ -79,6 +85,20 @@ const ViewFeedbackResponses = () => {
       }
     });
   }, [csrf, query.request]);
+
+  // Sets the options for filtering by responders
+  useEffect(() => {
+    let allResponders = [];
+    questionsAndAnswers.forEach(({ answers }) => {
+      const responders = answers.map((answer) => answer.responder);
+      allResponders.push(...responders);
+    });
+    allResponders = [...(new Set(allResponders))]  // Remove duplicate responders
+
+    allResponders = allResponders.map((responderId) => selectProfile(state, responderId).name);
+
+    setResponderOptions(allResponders);
+  }, [state, questionsAndAnswers]);
 
   return (
     <div className="view-feedback-responses-page">
@@ -98,11 +118,33 @@ const ViewFeedbackResponses = () => {
             endAdornment: <InputAdornment style={{color: "gray"}} position="end"><SearchIcon/></InputAdornment>
           }}
         />
-        <TextField
-          label="Filter responders"
-          InputProps={{
-            endAdornment: <InputAdornment style={{color: "gray"}} position="end"><GroupIcon/></InputAdornment>
-          }}
+        <Autocomplete
+          classes={{popupIndicator: classes.popupIndicator}}
+          multiple
+          options={responderOptions}
+          getOptionLabel={(responder) => responder}
+          popupIcon={<GroupIcon/>}
+          style={{width: "500px"}}
+          renderOption={(option, { selected }) => (
+            <React.Fragment>
+              <Checkbox
+                icon={<CheckBoxOutlineBlankIcon fontSize="small"/>}
+                checkedIcon={<CheckBoxIcon fontSize="small"/>}
+                color="primary"
+                style={{marginRight: 8}}
+                checked={selected}
+              />
+              {option}
+            </React.Fragment>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              label="Filter recipients"
+              helperText={`Showing responses from 3/${responderOptions.length} recipient${responderOptions.length === 1 ? "" : "s"}`}
+            />
+          )}
         />
       </div>
 
