@@ -7,6 +7,12 @@ Array [
   />,
   <div
     className="MuiGrid-root person-row MuiGrid-container MuiGrid-spacing-xs-6"
+    style={
+      Object {
+        "paddingLeft": "16px",
+        "paddingRight": "16px",
+      }
+    }
   >
     <div
       className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"

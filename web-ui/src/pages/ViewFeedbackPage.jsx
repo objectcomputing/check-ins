@@ -50,6 +50,13 @@ const SortOption = {
   RECIPIENT_NAME_REVERSE_ALPHABETICAL: "recipient_name_reverse_alphabetical"
 };
 
+const DateRange = {
+  THREE_MONTHS: "3mo",
+  SIX_MONTHS: "6mo",
+  ONE_YEAR: "1yr",
+  ALL_TIME: "all"
+};
+
 const ViewFeedbackPage = () => {
 
   const classes = useStyles();
@@ -61,6 +68,7 @@ const ViewFeedbackPage = () => {
   const currentUserId =  selectCurrentUserId(state);
   const gotRequests = useRef(false);
   const [sortValue, setSortValue] = useState(SortOption.SENT_DATE);
+  const [dateRange, setDateRange] = useState(DateRange.THREE_MONTHS);
 
   useEffect(() => {
     const getFeedbackRequests = async(creatorId) => {
@@ -157,9 +165,10 @@ const ViewFeedbackPage = () => {
         templateName={request?.templateInfo?.title}
         responses={request?.responses}
         sortType={sortValue}
+        dateRange={dateRange}
       />
       ));
-  }, [searchText, sortValue, feedbackRequests, classes.notFoundMessage]);
+  }, [searchText, sortValue, dateRange, feedbackRequests, classes.notFoundMessage]);
 
   return (
     <div className="view-feedback-page">
@@ -181,35 +190,39 @@ const ViewFeedbackPage = () => {
               ),
             }}
           />
-          <FormControl className={classes.textField}>
+          <FormControl
+            className={classes.textField}
+            value={dateRange}
+          >
             <TextField
               id="select-time"
               select
               fullWidth
               size="small"
               label="Show requests sent within"
-              value={"3mo"}
+              onChange={(e) => setDateRange(e.target.value)}
+              defaultValue={DateRange.THREE_MONTHS}
               variant="outlined"
             >
-              <MenuItem value={"3mo"}>Past 3 months</MenuItem>
-              <MenuItem value={"6mo"}>Past 6 months</MenuItem>
-              <MenuItem value={"1yr"}>Past year</MenuItem>
-              <MenuItem value={"all"}>All time</MenuItem>
+              <MenuItem value={DateRange.THREE_MONTHS}>Past 3 months</MenuItem>
+              <MenuItem value={DateRange.SIX_MONTHS}>Past 6 months</MenuItem>
+              <MenuItem value={DateRange.ONE_YEAR}>Past year</MenuItem>
+              <MenuItem value={DateRange.ALL_TIME}>All time</MenuItem>
             </TextField>
           </FormControl>
 
           <FormControl
             className={classes.textField}
             value={sortValue}
-            >
+          >
             <TextField
               id="select-sort-method"
               select
               fullWidth
-              onChange={(e) => setSortValue(e.target.value)}
-              defaultValue={SortOption.SENT_DATE}
               size="small"
               label="Sort by"
+              onChange={(e) => setSortValue(e.target.value)}
+              defaultValue={SortOption.SENT_DATE}
               variant="outlined"
             >
               <MenuItem value={SortOption.SUBMISSION_DATE}>Date feedback was submitted</MenuItem>

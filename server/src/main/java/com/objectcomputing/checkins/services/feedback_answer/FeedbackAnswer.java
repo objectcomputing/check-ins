@@ -31,7 +31,7 @@ public class FeedbackAnswer {
             read = "pgp_sym_decrypt(answer::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}')"
     )
-    @NotBlank
+    @Nullable
     @TypeDef(type = DataType.STRING)
     @Schema(description = "the content of the answer", required = true)
     private String answer;
@@ -54,7 +54,7 @@ public class FeedbackAnswer {
     @Schema(description = "the sentiment of the answer")
     private Double sentiment;
 
-    public FeedbackAnswer(String answer, UUID questionId, UUID requestId, @Nullable Double sentiment) {
+    public FeedbackAnswer(@Nullable String answer, UUID questionId, UUID requestId, @Nullable Double sentiment) {
         this.id = null;
         this.questionId = questionId;
         this.answer = answer;
@@ -62,7 +62,7 @@ public class FeedbackAnswer {
         this.sentiment = sentiment;
     }
 
-    public FeedbackAnswer(UUID id, String answer, @Nullable Double sentiment) {
+    public FeedbackAnswer(UUID id, @Nullable String answer, @Nullable Double sentiment) {
         this.id = id;
         this.answer = answer;
         this.sentiment = sentiment;
@@ -78,11 +78,12 @@ public class FeedbackAnswer {
         this.id = id;
     }
 
+    @Nullable
     public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer) {
+    public void setAnswer(@Nullable String answer) {
         this.answer = answer;
     }
 

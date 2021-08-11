@@ -5,11 +5,13 @@ import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequest;
 import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestServices;
-import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestion;
 import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-
+import com.objectcomputing.checkins.util.Util;
+import java.util.List;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +42,9 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         FeedbackRequest relatedFeedbackRequest = getRelatedFeedbackRequest(feedbackAnswer);
         if (!createIsPermitted(relatedFeedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
+        }
+        if (feedbackAnswer.getId() != null) {
+            return update(feedbackAnswer);
         }
 
         return feedbackAnswerRepository.save(feedbackAnswer);
@@ -80,6 +85,25 @@ public class FeedbackAnswerServicesImpl implements FeedbackAnswerServices {
         } else {
             throw new PermissionException("You are not authorized to do this operation :(");
         }
+    }
+
+    @Override
+    public List<FeedbackAnswer> findByValues(@Nullable UUID questionId, @Nullable UUID requestId) {
+        List<FeedbackAnswer> response = new ArrayList<>();
+        FeedbackRequest feedbackRequest;
+        UUID currentUserId = currentUserServices.getCurrentUser().getId();
+        try {
+            feedbackRequest = feedbackRequestServices.getById(requestId);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Cannot find attached request for search");
+        }
+        if (currentUserId.equals(feedbackRequest.getCreatorId()) || currentUserId.equals(feedbackRequest.getRecipientId()) || currentUserServices.isAdmin()) {
+            response.addAll(feedbackAnswerRepository.getByQuestionIdAndRequestId(Util.nullSafeUUIDToString(questionId), Util.nullSafeUUIDToString(requestId)));
+            return response;
+        }
+
+        throw new PermissionException("You are not authorized to do that operation");
+
     }
 
     public FeedbackRequest getRelatedFeedbackRequest(FeedbackAnswer feedbackAnswer) {

@@ -95,7 +95,7 @@ const FeedbackRequestSubcard = ({ request }) => {
   return (
     <React.Fragment>
       <Divider className="person-divider"/>
-      <Grid container spacing={6} className="person-row">
+      <Grid container spacing={6} style={{paddingLeft: "16px", paddingRight: "16px"}} className="person-row">
         <Grid item xs={12}>
           <Grid
             container
