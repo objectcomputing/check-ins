@@ -37,5 +37,39 @@ exports[`renders the confirmation message 1`] = `
       Sent to: 
     </b>
   </h6>
+  <a
+    href="/"
+    onClick={[Function]}
+    style={
+      Object {
+        "marginTop": "4em",
+        "textDecoration": "none",
+      }
+    }
+  >
+    <button
+      className="MuiButtonBase-root MuiButton-root MuiButton-outlined"
+      disabled={false}
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="button"
+    >
+      <span
+        className="MuiButton-label"
+      >
+        Return home
+      </span>
+    </button>
+  </a>
 </div>
 `;
