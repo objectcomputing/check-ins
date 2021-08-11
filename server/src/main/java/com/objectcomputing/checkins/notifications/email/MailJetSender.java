@@ -43,8 +43,8 @@ public class MailJetSender implements EmailSender {
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Email", "kimberlinm@objectcomputing.com")
-                                            .put("Name", "Michael Kimberlin"))
+                                            .put("Email", "julia.smith@wustl.edu")
+                                            .put("Name", "Check-Ins Demo"))
                                     .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));

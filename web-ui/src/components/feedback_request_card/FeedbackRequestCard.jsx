@@ -209,7 +209,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
                   </Grid>
                   <Grid item xs={4} className="align-end">
                     <Typography className="dark-gray-text">{templateName}</Typography>
-                    <Link to="" className="response-link red-text">View all responses</Link>
+{/*                     <Link to="" className="response-link red-text">View all responses</Link> */}
                   </Grid>
                 </Grid>
               </Grid>

@@ -4,10 +4,11 @@ import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
 import {getQuestionsAndAnswers} from "../../api/feedbackanswer";
+import {getFeedbackRequestById} from "../../api/feedback"
 import queryString from "query-string";
 import {useLocation} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
-import {selectCsrfToken} from "../../context/selectors";
+import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {UPDATE_TOAST} from "../../context/actions";
 
 const useStylesCardContent = makeStyles({
@@ -25,6 +26,7 @@ const ViewFeedbackResponses = () => {
   const location = useLocation();
   const [query, setQuery] = useState({});
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
+  const [requestInfo, setRequestInfo] = useState({});
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -40,7 +42,30 @@ const ViewFeedbackResponses = () => {
       return;
     }
 
+    async function retrieveRequestInfo(requests, cookie) {
+       requests = requests ? (Array.isArray(requests) ? requests : [requests]) : [];
+       let requestId = requests[0]
+       return await getFeedbackRequestById(requestId, cookie);
+
+    }
+
+  retrieveRequestInfo(query.request, csrf).then((res) => {
+      console.log("request res " + JSON.stringify(res));
+      if (res && res.payload && res.payload.data && !res.error) {
+           setRequestInfo(res.payload.data);
+
+      } else {
+       window.snackDispatch({
+                type: UPDATE_TOAST,
+                payload: {
+                  severity: "error",
+                  toast: "Failed to retrieve request information"
+                },
+              });
+      }
+  })
     retrieveQuestionsAndAnswers(query.request, csrf).then((res) => {
+
       if (res) {
         setQuestionsAndAnswers(res);
       } else {
@@ -58,10 +83,10 @@ const ViewFeedbackResponses = () => {
   return (
     <div className="view-feedback-responses-page">
       <Typography
-        variant='h4'
-        style={{textAlign: "center", marginBottom: "1em"}}>
-        View Feedback for <b>Joe Johnson</b>
-      </Typography>
+         variant='h4'
+         style={{textAlign: "center", marginBottom: "1em"}}>
+          <b>View Feedback for {selectProfile(state, requestInfo?.requesteeId)?.name} </b>
+       </Typography>
 
       {questionsAndAnswers.map((question) => {
         return (

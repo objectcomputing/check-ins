@@ -85,6 +85,21 @@ INSERT INTO member_profile
 VALUES
 ('066b186f-1425-45de-89f2-4ddcc6ebe237', PGP_SYM_ENCRYPT('Joe','${aeskey}'), PGP_SYM_ENCRYPT('Warner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('warnerj@objectcomputing.com','${aeskey}'), '123123413', '2012-09-29', PGP_SYM_ENCRYPT('Engineer of Supreme Ability','${aeskey}'), null);
 
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia','${aeskey}'),  PGP_SYM_ENCRYPT('Smith','${aeskey}'), PGP_SYM_ENCRYPT('Intern','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('smithj@objectcomputing.com','${aeskey}'), '010101010', '2021-05-22', PGP_SYM_ENCRYPT('Local creature in discovery room','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1998-07-07');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('2dee821c-de32-4d9c-9ecb-f73e5903d17a', PGP_SYM_ENCRYPT('Faux','${aeskey}'),  PGP_SYM_ENCRYPT('Freddy','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing@objectcomputing.com','${aeskey}'), '010101011', '2021-05-22', PGP_SYM_ENCRYPT('Test user 1','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
+
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+VALUES
+('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Unreal','${aeskey}'),  PGP_SYM_ENCRYPT('Ulysses','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
+
 INSERT INTO role
 (id, role, memberid)
 VALUES
@@ -355,7 +370,6 @@ INSERT INTO checkin_notes
 VALUES
 ('e5449026-cd9a-4bed-a648-fe3ad9382831', 'ff52e697-55a1-4a89-a13f-f3d6fb8f6b3d', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3', PGP_SYM_ENCRYPT('Jesses note','${aeskey}'));
 
-
 INSERT INTO private_notes
 (id, checkinid, createdbyid, description)
 VALUES
@@ -429,6 +443,7 @@ INSERT INTO feedback_templates
 VALUES
 ('97b0a312-e5dd-46f4-a600-d8be2ad925bb', 'Survey 1', 'Make a survey with a few questions', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2021-05-05', true, true, false);
 
+
 INSERT INTO template_questions
 (id, question, template_id, question_number)
 VALUES
@@ -480,21 +495,6 @@ INSERT INTO feedback_requests
 VALUES
 ('e2e24336-0615-4564-af29-d0f7b3ac3db9', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '8fa673c0-ca19-4271-b759-41cb9db2e83a', '6884ab96-2275-4af9-89d8-ad84254d8759', '18ef2032-c264-411e-a8e1-ddda9a714bae', '2018-12-24', '2018-12-25', null, 'sent');
 
-INSERT INTO feedback_answers
-(id, answer, question_id, request_id, sentiment)
-VALUES
-('dbd2da2b-df0a-4e11-9fcd-ed0774a5fdea', PGP_SYM_ENCRYPT('They could be better at communicating with the client.','${aeskey}'), '89c8b612-fca8-4144-88cd-176ddfca35ad', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', -0.8);
-
-INSERT INTO feedback_answers
-(id, answer, question_id, request_id, sentiment)
-VALUES
-('766a3a2c-88de-4487-b285-e3c667ffe0e6', PGP_SYM_ENCRYPT('Although their communication skills could be better, they embody the value of "all of us is better than any one of us" by being a great team player.','${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', 'ab7b21d4-f88c-4494-9b0b-8541636025eb', 0.1);
-
-INSERT INTO feedback_answers
-(id, answer, question_id, request_id, sentiment)
-VALUES
-('e937b408-4583-4651-a1ab-1344d60ad9ef', PGP_SYM_ENCRYPT('They do an okay job of innovating courageously, but they do not work well with others', '${aeskey}'), 'afa7e2cb-366a-4c16-a205-c0d493b80d85', '2dd2347a-c296-4986-b428-3fbf6a24ea1e', -0.7);
-
 INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
@@ -509,3 +509,120 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('e2af1c96-a593-48c2-b9e0-a00193a070c7', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '8fa673c0-ca19-4271-b759-41cb9db2e83a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', '2021-08-02', 'submitted');
+
+
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('d09031be-fac1-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2020-08-01', '2020-08-05', '2020-08-02', 'submitted');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('dbd2da2b-df0a-4e11-9fcd-ed0774a5fdea', PGP_SYM_ENCRYPT('They have strong engineering and verbal skills, but could be better at being tactful with client requests..','${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f', 'd09031be-fac1-11eb-9a03-0242ac130003', 0.5);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('766a3a2c-88de-4487-b285-e3c667ffe0e6', PGP_SYM_ENCRYPT('While they do a good job of innovating courageously, like I said, their presence sometimes impacts client relations.','${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'd09031be-fac1-11eb-9a03-0242ac130003', -0.2);
+
+
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('b5596a80-fac3-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '1b4f99da-ef70-4a76-9b37-8bb783b749ad','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-02-15', '2020-02-25', '2020-02-20', 'submitted');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('94550858-facd-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They have done a great job on this project, but could have spoken to the client a litle more about their options.', '${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f', 'b5596a80-fac3-11eb-9a03-0242ac130003', 0.7);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('98e0c286-facd-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('I have few complaints except the aforementioned need to communicate more with the client', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'b5596a80-fac3-11eb-9a03-0242ac130003', 0.2);
+
+
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('ab2da7fc-fac2-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', '2dee821c-de32-4d9c-9ecb-f73e5903d17a', '67dc3a3b-5bfa-4759-997a-fb6bac98dcf3' ,'18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', null, 'pending');
+
+
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('b1f60cfa-fac2-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-07-22', '2021-07-31', '2021-07-29', 'submitted');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('b481d3b2-face-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('I like their gumption!!', '${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f','b1f60cfa-fac2-11eb-9a03-0242ac130003', 0.7);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('c38e5fba-face-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very fun to work with :)', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'b1f60cfa-fac2-11eb-9a03-0242ac130003', 0.8);
+
+
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('e238dd00-fac4-11eb-9a03-0242ac130003', '59b790d2-fabc-11eb-9a03-0242ac130003', 'dfe2f986-fac0-11eb-9a03-0242ac130003', '43ee8e79-b33d-44cd-b23c-e183894ebfef','97b0a312-e5dd-46f4-a600-d8be2ad925bb', '2021-03-22', '2021-04-01', '2021-04-01', 'submitted');
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('87f11eb4-fad0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('This team member could do better with their understanding of React', '${aeskey}'), 'd6d05f53-682c-4c37-be32-8aab5f89767f','e238dd00-fac4-11eb-9a03-0242ac130003', 0.3);
+
+INSERT INTO feedback_answers
+(id, answer, question_id, request_id, sentiment)
+VALUES
+('8c13ffa2-fad0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('They are very good at working on a team--all of us is better than any one of us', '${aeskey}'), '47f997ca-0045-4147-afcb-0c9ed0b44978', 'e238dd00-fac4-11eb-9a03-0242ac130003', 0.6);
+
+
+
+--INSERT INTO template_questions
+--(id, question, template_id, question_number)
+--VALUES
+--('d6d05f53-682c-4c37-be32-8aab5f89767f', PGP_SYM_ENCRYPT('What are this team member''s top strengths (include examples where possible)?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 1);
+--
+--INSERT INTO template_questions
+--(id, question, template_id, question_number)
+--VALUES
+--('47f997ca-0045-4147-afcb-0c9ed0b44978', PGP_SYM_ENCRYPT('In what ways are this team member''s contributions impacting the objectives of the organization, their project, or their team?','${aeskey}'), '18ef2032-c264-411e-a8e1-ddda9a714bae', 2);
+
+
+
+--INSERT INTO template_questions
+--(id, question, template_id, question_number)
+--VALUES
+--('89c8b612-fca8-4144-88cd-176ddfca35ad', PGP_SYM_ENCRYPT('What can this team member improve on that would help them increase their effectiveness (include examples where possible)?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 1);
+--
+--INSERT INTO template_questions
+--(id, question, template_id, question_number)
+--VALUES
+--('afa7e2cb-366a-4c16-a205-c0d493b80d85', PGP_SYM_ENCRYPT('In what ways does this team member represent OCI values?','${aeskey}'), '97b0a312-e5dd-46f4-a600-d8be2ad925bb', 2);
+
+
+
+
+--INSERT INTO member_profile
+--(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+--VALUES
+--('59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Julia','${aeskey}'),  PGP_SYM_ENCRYPT('Smith','${aeskey}'), PGP_SYM_ENCRYPT('Intern','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('smithj@objectcomputing.com','${aeskey}'), '010101010', '2021-05-22', PGP_SYM_ENCRYPT('Local creature in discovery room','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1998-07-07');
+--
+--INSERT INTO member_profile
+--(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+--VALUES
+--('2dee821c-de32-4d9c-9ecb-f73e5903d17a', PGP_SYM_ENCRYPT('Test','${aeskey}'),  PGP_SYM_ENCRYPT('User','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing@objectcomputing.com','${aeskey}'), '010101011', '2021-05-22', PGP_SYM_ENCRYPT('Test user 1','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
+--
+--INSERT INTO member_profile
+--(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid, birthDate)
+--VALUES
+--('dfe2f986-fac0-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('Test','${aeskey}'),  PGP_SYM_ENCRYPT('User 2','${aeskey}'), PGP_SYM_ENCRYPT('Test Engineer 2','${aeskey}'), '59b790d2-fabc-11eb-9a03-0242ac130003', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('testing2@objectcomputing.com','${aeskey}'), '010101012', '2021-05-22', PGP_SYM_ENCRYPT('Test user 2','${aeskey}'), '6207b3fd-042d-49aa-9e28-dcc04f537c2d', '1950-01-01');
