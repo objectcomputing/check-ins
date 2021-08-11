@@ -38,6 +38,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     private final EmailSender emailSender = mock(EmailSender.class);
 
+    private final String submitURL = "http://localhost:3000/feedback/submit?request=";
+
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
 
@@ -185,7 +187,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
+        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to your unique link at " + submitURL + response.getBody().get().getId()+ " to complete this request.", recipient.getWorkEmail());
     }
 
     @Test
