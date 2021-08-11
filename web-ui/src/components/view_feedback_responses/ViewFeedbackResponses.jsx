@@ -40,7 +40,8 @@ const ViewFeedbackResponses = () => {
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filteredResponders, setFilteredResponders] = useState([]);
-  const [responderOptions, setResponderOptions] = useState(["beep"]);
+  const [responderOptions, setResponderOptions] = useState([]);
+  const [selectedResponders, setSelectedResponders] = useState([]);
 
   const getFilteredResponses = useCallback(() => {
     if (!questionsAndAnswers) {
@@ -95,10 +96,12 @@ const ViewFeedbackResponses = () => {
     });
     allResponders = [...(new Set(allResponders))]  // Remove duplicate responders
 
-    allResponders = allResponders.map((responderId) => selectProfile(state, responderId).name);
-
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
+
+  useEffect(() => {
+    setSelectedResponders(responderOptions);
+  }, [responderOptions]);
 
   return (
     <div className="view-feedback-responses-page">
@@ -121,11 +124,14 @@ const ViewFeedbackResponses = () => {
         <Autocomplete
           classes={{popupIndicator: classes.popupIndicator}}
           multiple
+          disableCloseOnSelect
           options={responderOptions}
-          getOptionLabel={(responder) => responder}
+          getOptionLabel={(responderId) => selectProfile(state, responderId).name}
           popupIcon={<GroupIcon/>}
           style={{width: "500px"}}
-          renderOption={(option, { selected }) => (
+          value={selectedResponders}
+          onChange={(event, value) => setSelectedResponders(value)}
+          renderOption={(responderId, { selected }) => (
             <React.Fragment>
               <Checkbox
                 icon={<CheckBoxOutlineBlankIcon fontSize="small"/>}
@@ -134,7 +140,7 @@ const ViewFeedbackResponses = () => {
                 style={{marginRight: 8}}
                 checked={selected}
               />
-              {option}
+              {selectProfile(state, responderId).name}
             </React.Fragment>
           )}
           renderInput={(params) => (
@@ -142,7 +148,7 @@ const ViewFeedbackResponses = () => {
               {...params}
               variant="standard"
               label="Filter recipients"
-              helperText={`Showing responses from 3/${responderOptions.length} recipient${responderOptions.length === 1 ? "" : "s"}`}
+              helperText={`Showing responses from ${selectedResponders.length}/${responderOptions.length} recipient${responderOptions.length === 1 ? "" : "s"}`}
             />
           )}
         />
