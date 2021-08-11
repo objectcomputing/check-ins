@@ -50,7 +50,6 @@ const ViewFeedbackResponses = () => {
     }
 
   retrieveRequestInfo(query.request, csrf).then((res) => {
-      console.log("request res " + JSON.stringify(res));
       if (res && res.payload && res.payload.data && !res.error) {
            setRequestInfo(res.payload.data);
 

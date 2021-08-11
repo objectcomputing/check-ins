@@ -9,13 +9,15 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import { Link } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import PropTypes from "prop-types";
 import "./FeedbackRequestCard.css";
 import {selectProfile} from "../../context/selectors";
 import {AppContext} from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 import Divider from "@material-ui/core/Divider";
+import Button from "@material-ui/core/Button";
+import queryString from "query-string";
 
 const useStyles = makeStyles({
   root: {
@@ -104,6 +106,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
   useStylesCardActions();
   useStylesText();
   useStylesCardContent();
+  const history = useHistory();
   const [expanded, setExpanded] = React.useState(false);
   const [sortedResponses, setSortedResponses] = useState(responses);
 
@@ -161,6 +164,16 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
     );
   }, [dateRange]);
 
+  const handleViewAllResponsesClick = () => {
+    if (sortedResponses.length === 0) return;
+    const requestIds = sortedResponses.map((response) => response.id);
+    const params = {
+      request: requestIds
+    };
+
+    history.push(`/feedback/view/responses/?${queryString.stringify(params)}`);
+  }
+
   // Sort the responses by either the send date or the submit date
   useEffect(() => {
     let responsesCopy = [...responses];
@@ -209,7 +222,13 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
                   </Grid>
                   <Grid item xs={4} className="align-end">
                     <Typography className="dark-gray-text">{templateName}</Typography>
-{/*                     <Link to="" className="response-link red-text">View all responses</Link> */}
+                    <Button
+                      className="response-link red-text"
+                      onClick={handleViewAllResponsesClick}
+                      disabled={sortedResponses.length === 0}
+                    >
+                      View all responses
+                    </Button>
                   </Grid>
                 </Grid>
               </Grid>
