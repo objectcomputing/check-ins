@@ -1,13 +1,15 @@
 import React from "react";
 
+import { format } from "date-fns";
 import { Card, CardContent, CardHeader, Typography } from "@material-ui/core";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 
 const OpportunityCard = ({ opportunity }) => {
-  console.log({ opportunity });
   const { description, expiresOn, name, pending, url } = opportunity;
   return (
     <Card className="opportunity" key={name}>
       <CardHeader
+        avatar={<AssignmentIcon />}
         title={
           <div className="opportunity-header">
             <Typography variant="h4" component="h3">
@@ -19,9 +21,11 @@ const OpportunityCard = ({ opportunity }) => {
       <CardContent className="opportunity-card">
         {description || ""}
         <br />
-        {url ? `More Information` && <a href={url} /> : null}
+        {url ? <a href={url}>More Information</a> : null}
         <br />
-        {expiresOn ? `Expires on ${new Date(expiresOn)}` : null}
+        {expiresOn
+          ? `Expires on ${format(new Date(expiresOn), "MM/dd/yyy")}`
+          : null}
         <br />
         {pending ? `Pending: ${pending}` : null}
       </CardContent>
