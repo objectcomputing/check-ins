@@ -3,26 +3,19 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.testing.json.MockJsonFactory;
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.services.drive.Drive;
-import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.OAuth2Credentials;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.pubsub.v1.PubsubMessage;
 import com.objectcomputing.checkins.gcp.chat.GoogleChatBot;
 import com.objectcomputing.checkins.notifications.all_types.NotificationSender;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.security.GoogleServiceConfiguration;
-import com.objectcomputing.checkins.services.TestContainersSuite;
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocument;
-import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentServices;
-import com.objectcomputing.checkins.services.checkins.CheckIn;
-import com.objectcomputing.checkins.services.checkins.CheckInServices;
 import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplate;
-import com.objectcomputing.checkins.services.file.FileServicesImpl;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -32,11 +25,9 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.env.Environment;
 import io.micronaut.core.type.Argument;
 import io.micronaut.gcp.GoogleCloudConfiguration;
-import io.micronaut.gcp.credentials.GoogleCredentialsConfiguration;
+import io.micronaut.gcp.pubsub.annotation.PubSubListener;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -45,10 +36,8 @@ import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.multipart.CompletedFileUpload;
-import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.test.annotation.MicronautTest;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,10 +66,6 @@ public class FeedbackRequestControllerTest {
     HttpClient client;
 
 
-    private final NotificationSender notificationSender = mock(NotificationSender.class);
-    private final EmailSender emailSender = mock(EmailSender.class);
-    private final GoogleChatBot googleChatBot= mock(GoogleChatBot.class);
-
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
     private RepositoryFixture repositoryFixture;
@@ -88,7 +73,6 @@ public class FeedbackRequestControllerTest {
     private FeedbackTemplateFixture feedbackTemplateFixture;
     private FeedbackRequestFixture feedbackRequestFixture;
     private RoleFixture roleFixture;
-
 
     final static JsonFactory jsonFactory = new MockJsonFactory();
 
@@ -99,46 +83,16 @@ public class FeedbackRequestControllerTest {
     private Map mockAttributes;
 
     @Mock
-    private Drive drive;
+    private PubsubMessage pubsubMessage;
 
     @Mock
-    private Drive.Files files;
+    private MessageReceiver messageReceiver;
 
     @Mock
-    private Drive.Files.List list;
-
-    @Mock
-    private Drive.Files.Get get;
-
-    @Mock
-    private Drive.Files.Delete delete;
-
-    @Mock
-    private Drive.Files.Create create;
-
-    @Mock
-    private Drive.Files.Update update;
-
-    @Mock
-    private CompletedFileUpload fileToUpload;
-
-    @Mock
-    private MemberProfile testMemberProfile;
-
-    @Mock
-    private CheckIn testCheckIn;
-
-    @Mock
-    private CheckinDocument testCd;
+    private Publisher publisher;
 
     @Mock
     private InputStream mockInputStream;
-
-    @Mock
-    private CheckInServices checkInServices;
-
-    @Mock
-    private CheckinDocumentServices checkinDocumentServices;
 
     @Mock
     private GoogleApiAccess mockGoogleApiAccess;
@@ -152,6 +106,8 @@ public class FeedbackRequestControllerTest {
     @Mock
     private CompletedFileUpload completedFileUpload;
 
+    @Mock
+    private MemberProfile testMemberProfile;
 
     @Mock
     private GoogleServiceConfiguration googleServiceConfiguration;
@@ -168,32 +124,28 @@ public class FeedbackRequestControllerTest {
     @Mock
     private GoogleCredentials credentials;
 
+    @Mock
+    private NotificationSender notificationSender;
+
+    @Mock
+    private EmailSender emailSender;
+
+    @Mock
+    private GoogleChatBot googleChatBot;
+
     @InjectMocks
     private FeedbackRequestServicesImpl feedbackRequestServices;
 
     @BeforeAll
     void initMocks() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
     void resetMocks() {
         Mockito.reset(authentication);
         Mockito.reset(mockAttributes);
-        Mockito.reset(drive);
-        Mockito.reset(files);
-        Mockito.reset(list);
-        Mockito.reset(get);
-        Mockito.reset(delete);
-        Mockito.reset(create);
-        Mockito.reset(update);
-        Mockito.reset(fileToUpload);
-        Mockito.reset(testMemberProfile);
-        Mockito.reset(testCheckIn);
-        Mockito.reset(testCd);
         Mockito.reset(mockInputStream);
-        Mockito.reset(checkInServices);
-        Mockito.reset(checkinDocumentServices);
         Mockito.reset(mockGoogleApiAccess);
         Mockito.reset(currentUserServices);
         Mockito.reset(memberProfileServices);
@@ -202,19 +154,22 @@ public class FeedbackRequestControllerTest {
         Mockito.reset(oAuth2Credentials);
         Mockito.reset(credentialsProvider);
         Mockito.reset(credentials);
+        Mockito.reset(testMemberProfile);
         Mockito.reset(googleCloudConfiguration);
+        Mockito.reset(messageReceiver);
+        Mockito.reset(publisher);
+        Mockito.reset(pubsubMessage);
         Mockito.reset(emailSender);
         Mockito.reset(googleChatBot);
         Mockito.reset(notificationSender);
+        googleChatBot.setCredentials(credentials);
         notificationSender.setEmailSender(emailSender);
         notificationSender.setGoogleChatBot(googleChatBot);
-        feedbackRequestServicesImpl.setNotificationSender(notificationSender);
-
+        feedbackRequestServices.setNotificationSender(notificationSender);
         when(authentication.getAttributes()).thenReturn(mockAttributes);
         when(mockAttributes.get("email")).thenReturn(mockAttributes);
         when(mockAttributes.toString()).thenReturn("test.email");
         when(currentUserServices.findOrSaveUser(any(), any(), any())).thenReturn(testMemberProfile);
-        when(googleServiceConfiguration.getDirectory_id()).thenReturn("testDirectoryId");
     }
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
@@ -307,6 +262,8 @@ public class FeedbackRequestControllerTest {
                 .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
         final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
 
+        verify(notificationSender).sendNotification(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
+
         //assert that content of some feedback request equals the test
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertTrue(response.getBody().isPresent());
@@ -355,7 +312,7 @@ public class FeedbackRequestControllerTest {
 
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-//        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
+        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to the <a href=\"https://checkins.objectcomputing.com/feedback/submit?requestId="+response.getBody().get().getId()+"\">Check-Ins application</a>.", recipient.getWorkEmail());
     }
 
     @Test
