@@ -4,6 +4,12 @@
     margin-right: 3em;
 }
 
+.view-feedback-responses-page .responses-filter-container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 3em;
+}
+
 .question-responses-container {
     display: flex;
     flex-direction: column;
