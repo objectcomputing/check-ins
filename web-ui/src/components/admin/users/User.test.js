@@ -1,6 +1,6 @@
 import React from "react";
 import User from "./User";
-import { AppContextProvider } from "../../context/AppContext";
+import { AppContextProvider } from "../../../context/AppContext";
 
 it("renders correctly", () => {
   snapshot(
