@@ -91,9 +91,13 @@ const ViewFeedbackResponses = () => {
   useEffect(() => {
     let responsesToDisplay = [...questionsAndAnswers];
 
-    // Filter based on selected responders
     responsesToDisplay = responsesToDisplay.map((response) => {
-      const filteredAnswers = response.answers.filter((answer) => selectedResponders.includes(answer.responder));
+      // Filter based on selected responders
+      let filteredAnswers = response.answers.filter((answer) => selectedResponders.includes(answer.responder));
+      if (searchText.trim()) {
+        // Filter based on search text
+        filteredAnswers = filteredAnswers.filter(({answer}) => answer.toLowerCase().includes(searchText.trim().toLowerCase()));
+      }
       return {...response, answers: filteredAnswers}
     });
 
