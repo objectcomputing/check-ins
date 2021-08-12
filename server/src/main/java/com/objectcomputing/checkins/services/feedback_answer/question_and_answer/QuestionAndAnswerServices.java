@@ -11,9 +11,9 @@ import io.micronaut.core.annotation.Nullable;
 public interface QuestionAndAnswerServices {
 
     class Tuple {
-        public TemplateQuestion question;
-        public FeedbackAnswer answer;
-        public FeedbackRequest request;
+        private TemplateQuestion question;
+        private FeedbackAnswer answer;
+        private FeedbackRequest request;
 
         public Tuple(TemplateQuestion question, FeedbackAnswer answer) {
             this.question = question;
