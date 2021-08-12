@@ -107,14 +107,15 @@ const ViewFeedbackResponses = () => {
     <div className="view-feedback-responses-page">
       <Typography
         variant='h4'
-        style={{textAlign: "center", marginBottom: "1em"}}>
+        style={{textAlign: "center", marginBottom: "0.5em"}}>
         View Feedback for <b>Joe Johnson</b>
       </Typography>
       <div className="responses-filter-container">
         <TextField
-          style={{marginRight: "3em"}}
+          style={{marginRight: "3em", width: "350px"}}
           label="Search responses..."
           placeholder="Enter a keyword or phrase"
+          helperText=" "
           value={searchText}
           onChange={(event) => setSearchText(event.target.value)}
           InputProps={{
@@ -128,7 +129,7 @@ const ViewFeedbackResponses = () => {
           options={responderOptions}
           getOptionLabel={(responderId) => selectProfile(state, responderId).name}
           popupIcon={<GroupIcon/>}
-          style={{width: "500px"}}
+          style={{minWidth: "500px"}}
           value={selectedResponders}
           onChange={(event, value) => setSelectedResponders(value)}
           renderOption={(responderId, { selected }) => (

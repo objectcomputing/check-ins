@@ -7,7 +7,9 @@
 .view-feedback-responses-page .responses-filter-container {
     display: flex;
     flex-direction: row;
+    align-items: flex-end;
     margin-bottom: 3em;
+    height: 100px;
 }
 
 .question-responses-container {
