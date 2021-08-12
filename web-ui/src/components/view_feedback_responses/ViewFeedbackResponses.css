@@ -12,6 +12,13 @@
     height: 100px;
 }
 
+.view-feedback-responses-page .no-responses-found {
+    background-color: #dcdcdc;
+    text-align: center;
+    border-radius: 4px;
+    padding: 10px;
+}
+
 .question-responses-container {
     display: flex;
     flex-direction: column;

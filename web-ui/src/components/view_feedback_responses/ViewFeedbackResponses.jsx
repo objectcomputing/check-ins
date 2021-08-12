@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Checkbox, TextField, Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
@@ -39,24 +39,9 @@ const ViewFeedbackResponses = () => {
   const [query, setQuery] = useState({});
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filteredResponders, setFilteredResponders] = useState([]);
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
-
-  const getFilteredResponses = useCallback(() => {
-    if (!questionsAndAnswers) {
-      return null;
-    } else if (questionsAndAnswers.length === 0) {
-      return <Typography className={classes.notFoundMessage} variant="h5">No responses found</Typography>;
-    }
-
-    let responsesToDisplay = [];
-
-    if (responsesToDisplay.length === 0) {
-      return <Typography className={classes.notFoundMessage} variant="h5">No matching responses</Typography>;
-    }
-
-  }, [questionsAndAnswers]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -102,6 +87,19 @@ const ViewFeedbackResponses = () => {
   useEffect(() => {
     setSelectedResponders(responderOptions);
   }, [responderOptions]);
+
+  useEffect(() => {
+    let responsesToDisplay = [...questionsAndAnswers];
+
+    // Filter based on selected responders
+    responsesToDisplay = responsesToDisplay.map((response) => {
+      const filteredAnswers = response.answers.filter((answer) => selectedResponders.includes(answer.responder));
+      return {...response, answers: filteredAnswers}
+    });
+
+    setFilteredQuestionsAndAnswers(responsesToDisplay);
+
+  }, [questionsAndAnswers, searchText, selectedResponders]);
 
   return (
     <div className="view-feedback-responses-page">
@@ -154,8 +152,7 @@ const ViewFeedbackResponses = () => {
           )}
         />
       </div>
-
-      {questionsAndAnswers.map((question) => {
+      {filteredQuestionsAndAnswers.map((question) => {
         return (
           <div className="question-responses-container"
                key={`question-id-${question.id}`}>
@@ -164,13 +161,16 @@ const ViewFeedbackResponses = () => {
               style={{marginBottom: "0.5em", fontWeight: "bold"}}>
               Q{question.questionNumber}: {question.question}
             </Typography>
-            {question?.answers?.map(answer =>
-              <FeedbackResponseCard
-                key={answer.id}
-                responderId={answer.responder}
-                answer={answer.answer}
-                sentiment={answer.sentiment}/>
-              )}
+            {question?.answers.length === 0
+              ? <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>
+              : question?.answers.map(answer =>
+                <FeedbackResponseCard
+                  key={answer.id}
+                  responderId={answer.responder}
+                  answer={answer.answer}
+                  sentiment={answer.sentiment}/>
+              )
+            }
           </div>
         )
       })}
