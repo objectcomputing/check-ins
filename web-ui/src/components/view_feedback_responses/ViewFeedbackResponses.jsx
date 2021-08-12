@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Checkbox, TextField, Typography} from '@material-ui/core';
+import {Avatar, Checkbox, Chip, TextField, Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
@@ -14,6 +14,7 @@ import {Group as GroupIcon, Search as SearchIcon} from "@material-ui/icons";
 import {Autocomplete} from "@material-ui/lab";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import {getAvatarURL} from "../../api/api";
 
 const useStyles = makeStyles({
   root: {
@@ -154,6 +155,18 @@ const ViewFeedbackResponses = () => {
               helperText={`Showing responses from ${selectedResponders.length}/${responderOptions.length} recipient${responderOptions.length === 1 ? "" : "s"}`}
             />
           )}
+          renderTags={(value, getTagProps) =>
+            value.map((responderId, index) => {
+              const profile = selectProfile(state, responderId);
+              return (
+                <Chip
+                  avatar={<Avatar alt={`${profile.name}'s avatar`} className="large" src={getAvatarURL(profile.workEmail)}/>}
+                  label={profile.name}
+                  {...getTagProps({ index })}
+                />
+              )
+            })
+          }
         />
       </div>
       {filteredQuestionsAndAnswers.map((question) => {
