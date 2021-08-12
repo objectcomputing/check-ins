@@ -29,6 +29,21 @@ const useStyles = makeStyles({
   },
   popupIndicator: {
     transform: "none"
+  },
+  searchField: {
+    marginRight: "3em",
+    width: "350px",
+    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+      marginRight: 0,
+      width: "100%"
+    }
+  },
+  responderField: {
+    minWidth: "500px",
+    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+      minWidth: 0,
+      width: "100%"
+    }
   }
 }, {name: "MuiCardContent"});
 
@@ -123,7 +138,7 @@ const ViewFeedbackResponses = () => {
       </Typography>
       <div className="responses-filter-container">
         <TextField
-          style={{marginRight: "3em", width: "350px"}}
+          className={classes.searchField}
           label="Search responses..."
           placeholder="Enter a keyword or phrase"
           helperText=" "
@@ -134,13 +149,13 @@ const ViewFeedbackResponses = () => {
           }}
         />
         <Autocomplete
+          className={classes.responderField}
           classes={{popupIndicator: classes.popupIndicator}}
           multiple
           disableCloseOnSelect
           options={responderOptions}
           getOptionLabel={(responderId) => selectProfile(state, responderId).name}
           popupIcon={<GroupIcon/>}
-          style={{minWidth: "500px"}}
           value={selectedResponders}
           onChange={(event, value) => setSelectedResponders(value)}
           renderOption={(responderId, { selected }) => (
