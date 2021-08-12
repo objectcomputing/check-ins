@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Avatar, Checkbox, Chip, TextField, Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
@@ -43,6 +43,7 @@ const ViewFeedbackResponses = () => {
   const [responderOptions, setResponderOptions] = useState([]);
   const [selectedResponders, setSelectedResponders] = useState([]);
   const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
+  const retrievedQuestionsAndAnswers = useRef(false);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -85,6 +86,7 @@ const ViewFeedbackResponses = () => {
     setResponderOptions(allResponders);
   }, [state, questionsAndAnswers]);
 
+  // Populate all responders as selected by default
   useEffect(() => {
     setSelectedResponders(responderOptions);
   }, [responderOptions]);
@@ -104,7 +106,13 @@ const ViewFeedbackResponses = () => {
 
     setFilteredQuestionsAndAnswers(responsesToDisplay);
 
-  }, [questionsAndAnswers, searchText, selectedResponders]);
+  }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!retrievedQuestionsAndAnswers.current && filteredQuestionsAndAnswers.length > 0) {
+      retrievedQuestionsAndAnswers.current = true;
+    }
+  }, [filteredQuestionsAndAnswers]);
 
   return (
     <div className="view-feedback-responses-page">
@@ -178,9 +186,8 @@ const ViewFeedbackResponses = () => {
               style={{marginBottom: "0.5em", fontWeight: "bold"}}>
               Q{question.questionNumber}: {question.question}
             </Typography>
-            {question?.answers.length === 0
-              ? <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>
-              : question?.answers.map(answer =>
+            {question.answers.length === 0 && retrievedQuestionsAndAnswers.current && <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>}
+            {question.answers.length > 0 && question.answers.map(answer =>
                 <FeedbackResponseCard
                   key={answer.id}
                   responderId={answer.responder}
