@@ -59,6 +59,7 @@ const SentimentIcon = (props) => {
     const [sentimentIcon, buttonStyle] = getSentimentStyles(sentimentScore, selectedSentiment === sentimentScore);
     return (
       <IconButton
+        key={sentimentScore}
         onClick={() => setSelectedSentiment(sentimentScore)}
         style={buttonStyle}
       >
