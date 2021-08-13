@@ -17,8 +17,9 @@ import PropTypes from "prop-types";
 import {getQuestionsOnTemplate} from "../../api/feedbacktemplate";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
-import {ListItemAvatar} from "@material-ui/core";
+import {ListItemAvatar, Tooltip} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
+import {Group as GroupIcon, Person as PersonIcon} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -133,9 +134,15 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
         <AdHocCreationForm onFormChange={(form) => setNewAdHocData(form)}/> :
         <React.Fragment>
           <Typography variant="h6">{template?.description}</Typography>
-          <Typography style={{color: "gray"}}>
-            <em>Created by {creatorName}</em>
-          </Typography>
+          <div className="template-details-container">
+            <Typography style={{color: "gray", marginRight: "1em"}}>
+              <em>Created by {creatorName}</em>
+            </Typography>
+            {template?.isPublic
+              ? <Tooltip title="This template is public. It can be used by anyone." placement="right" arrow><GroupIcon style={{color: "gray"}}/></Tooltip>
+              : <Tooltip title="This template is private. It can be used by only you and admins" placement="right" arrow><PersonIcon style={{color: "gray"}}/></Tooltip>
+            }
+          </div>
           {templateQuestions && templateQuestions.length === 0 &&
             <Typography variant="h5" style={{marginTop: "1em"}}>
               This template has no questions

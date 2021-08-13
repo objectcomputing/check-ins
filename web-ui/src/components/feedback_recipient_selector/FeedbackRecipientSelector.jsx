@@ -66,13 +66,14 @@ const FeedbackRecipientSelector = ({changeQuery, fromQuery, forQuery}) => {
           });
         });
         let newProfiles = selectedMembers.concat(filteredNormalizedMembers)
+        newProfiles.splice(newProfiles.indexOf(userProfile.id), 1)
         setProfiles(newProfiles);
       } else {
         setProfiles(normalizedMembers)
       }
       searchTextUpdated.current = true
     }
-  }, [searchText, profiles, fromQuery, state])
+  }, [searchText, profiles, fromQuery, state, userProfile])
 
   useEffect(() => {
     function bindFromURL() {

@@ -112,7 +112,7 @@ const FeedbackRequestPage = () => {
     if (from) {
       from = Array.isArray(from) ? from : [from];
       for (let recipientId of from) {
-        if (!memberIds.includes(recipientId)) {
+        if (!memberIds.includes(recipientId) || from.includes(currentUserId)) {
           dispatch({
             type: UPDATE_TOAST,
             payload: {
@@ -127,7 +127,7 @@ const FeedbackRequestPage = () => {
       return true;
     }
     return false;
-  }, [memberIds, query, dispatch, handleQueryChange]);
+  }, [memberIds, query, dispatch, handleQueryChange, currentUserId]);
 
   const isValidDate = useCallback((dateString) => {
     let today = new Date();

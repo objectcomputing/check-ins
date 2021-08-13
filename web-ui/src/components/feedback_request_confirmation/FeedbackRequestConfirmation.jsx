@@ -4,11 +4,12 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectProfile } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
-import { useLocation } from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import queryString from 'query-string';
 import DateFnsUtils from "@date-io/date-fns";
 import "./FeedbackRequestConfirmation.css";
 import { green } from "@material-ui/core/colors";
+import Button from "@material-ui/core/Button";
 
 const dateUtils = new DateFnsUtils();
 
@@ -31,7 +32,7 @@ const useStyles = makeStyles({
 let today = new Date();
 today = dateUtils.format(today, "yyyy-MM-dd");
 
-const FeedbackRequestConfirmation = (props) => {
+const FeedbackRequestConfirmation = () => {
   const classes = useStyles();
   const { state } = useContext(AppContext);
   const location = useLocation();
@@ -70,6 +71,9 @@ const FeedbackRequestConfirmation = (props) => {
           `${selectProfile(state, member)?.name}${index === recipientInfo.length - 1 ? "" : ', '}`
         )}
       </Typography>
+      <Link style={{marginTop: "4em", textDecoration: "none"}} to="/">
+        <Button variant="outlined">Return home</Button>
+      </Link>
     </div>
   );
 }

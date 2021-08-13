@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {TextField} from "@material-ui/core";
 import PropTypes from "prop-types";
-
 const propTypes = {
   onFormChange: PropTypes.func
 }
@@ -33,7 +32,7 @@ const AdHocCreationForm = (props) => {
         }}/>
       <TextField
         label="Description"
-        placeholder="Ask a single question"
+        placeholder="Give a brief description of the template (optional)"
         fullWidth
         margin="normal"
         value={description}

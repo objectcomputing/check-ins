@@ -11,7 +11,6 @@ import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 
 import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 
