@@ -29,7 +29,7 @@ public class MemberProfile {
     private UUID id;
 
     @NotBlank
-    @Column(name = "firstName")
+    @Column(name = "firstname")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(firstName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -38,7 +38,7 @@ public class MemberProfile {
     private String firstName;
 
     @Nullable
-    @Column(name = "middleName")
+    @Column(name = "middlename")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(middleName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -47,7 +47,7 @@ public class MemberProfile {
     private String middleName;
 
     @NotBlank
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(lastName::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -73,7 +73,7 @@ public class MemberProfile {
     @Schema(description = "employee's title at the company")
     private String title ;
 
-    @Column(name="pdlId")
+    @Column(name="pdlid")
     @TypeDef(type=DataType.STRING)
     @Nullable
     @Schema(description = "employee's professional development lead")
@@ -89,7 +89,7 @@ public class MemberProfile {
     private String location;
 
     @NotNull
-    @Column(name="workEmail")
+    @Column(name="workemail")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(workEmail::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -97,17 +97,17 @@ public class MemberProfile {
     @Schema(description = "employee's OCI email. Typically last name + first initial @ObjectComputing.com", required = true)
     private String workEmail;
 
-    @Column(name="employeeId")
+    @Column(name="employeeid")
     @Nullable
     @Schema(description = "unique identifier for this employee")
     private String employeeId;
 
-    @Column(name="startDate")
+    @Column(name="startdate")
     @Schema(description = "employee's date of hire")
     @Nullable
     private LocalDate startDate;
 
-    @Column(name="bioText")
+    @Column(name="biotext")
     @ColumnTransformer(
             read =  "pgp_sym_decrypt(bioText::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
@@ -122,15 +122,25 @@ public class MemberProfile {
     @Schema(description = "id of the supervisor this member is associated with", nullable = true)
     private UUID supervisorid;
 
-    @Column(name="terminationDate")
+    @Column(name="terminationdate")
     @Schema(description = "employee's date of termination")
     @Nullable
     private LocalDate terminationDate;
 
-    @Column(name="birthDate")
+    @Column(name="birthdate")
     @Schema(description = "employee's birthdate")
     @Nullable
     private LocalDate birthDate;
+
+    @Column(name="voluntary", columnDefinition = "boolean default false")
+    @Schema(description = "termination was voluntary")
+    @Nullable
+    private Boolean voluntary;
+
+    @Column(name="excluded", columnDefinition = "boolean default false")
+    @Schema(description = "employee is excluded from retention reports")
+    @Nullable
+    private Boolean excluded;
 
     public MemberProfile(@NotBlank String firstName,
                          @Nullable String middleName,
@@ -145,9 +155,11 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate,
-                         @Nullable LocalDate birthDate) {
+                         @Nullable LocalDate birthDate,
+                         @Nullable Boolean voluntary,
+                         @Nullable Boolean excluded) {
         this(null, firstName, middleName, lastName, suffix, title, pdlId, location, workEmail,
-                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
+                employeeId, startDate, bioText, supervisorid, terminationDate,birthDate, voluntary, excluded);
     }
 
     public MemberProfile(UUID id,
@@ -164,7 +176,9 @@ public class MemberProfile {
                          @Nullable String bioText,
                          @Nullable UUID supervisorid,
                          @Nullable LocalDate terminationDate,
-                         @Nullable LocalDate birthDate) {
+                         @Nullable LocalDate birthDate,
+                         @Nullable Boolean voluntary,
+                         @Nullable Boolean excluded) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -179,7 +193,9 @@ public class MemberProfile {
         this.bioText = bioText;
         this.supervisorid = supervisorid;
         this.terminationDate = terminationDate;
-        this.birthDate=birthDate;
+        this.birthDate = birthDate;
+        this.voluntary = voluntary;
+        this.excluded = excluded;
     }
 
     public MemberProfile() {
@@ -308,6 +324,24 @@ public class MemberProfile {
         this.birthDate = birthDate;
     }
 
+    @Nullable
+    public Boolean getVoluntary() {
+        return voluntary;
+    }
+
+    public void setVoluntary(@Nullable Boolean voluntary) {
+        this.voluntary = voluntary;
+    }
+
+    @Nullable
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(@Nullable Boolean excluded) {
+        this.excluded = excluded;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -327,13 +361,16 @@ public class MemberProfile {
                 Objects.equals(bioText, that.bioText) &&
                 Objects.equals(supervisorid, that.supervisorid) &&
                 Objects.equals(terminationDate, that.terminationDate) &&
-                Objects.equals(birthDate, that.birthDate);
+                Objects.equals(birthDate, that.birthDate) &&
+                Objects.equals(voluntary, that.voluntary) &&
+                Objects.equals(excluded, that.excluded);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, middleName, lastName, suffix, title, pdlId, location,
-                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate);
+                workEmail, employeeId, startDate, bioText, supervisorid, terminationDate,birthDate,
+                voluntary, excluded);
     }
 
     @Override
@@ -351,6 +388,8 @@ public class MemberProfile {
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
                 ", birthDate=" + birthDate +
+                ", voluntary=" + voluntary +
+                ", excluded=" + excluded +
                 '}';
     }
 }

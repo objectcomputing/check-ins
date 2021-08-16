@@ -7,7 +7,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -133,7 +133,7 @@ public class FeedbackServicesImpl implements FeedbackServices {
         return result;
     }
 
-    private boolean isPermitted(@NotNull UUID ownerId) {
+    private boolean isPermitted(UUID ownerId) {
         final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         return currentUserServices.isAdmin() || currentUserId.equals(ownerId);
     }

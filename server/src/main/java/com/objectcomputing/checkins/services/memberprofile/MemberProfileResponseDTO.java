@@ -76,6 +76,14 @@ public class MemberProfileResponseDTO {
     @Schema(description = "Birth date of employee", nullable = true)
     private LocalDate birthDay;
 
+    @Nullable
+    @Schema(description = "The employee termination was voluntary", nullable = true)
+    private Boolean voluntary;
+
+    @Nullable
+    @Schema(description = "The employee is excluded from retention reports", nullable = true)
+    private Boolean excluded;
+
     public UUID getId() {
         return id;
     }
@@ -211,6 +219,24 @@ public class MemberProfileResponseDTO {
 
     public void setBirthDay(@Nullable LocalDate birthDay) { this.birthDay = birthDay;}
 
+    @Nullable
+    public Boolean getVoluntary() {
+        return voluntary;
+    }
+
+    public void setVoluntary(@Nullable Boolean voluntary) {
+        this.voluntary = voluntary;
+    }
+
+    @Nullable
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(@Nullable Boolean excluded) {
+        this.excluded = excluded;
+    }
+
     @Override
     public String toString() {
         return "MemberProfileResponseDTO{" +
@@ -230,6 +256,8 @@ public class MemberProfileResponseDTO {
                 ", supervisorid=" + supervisorid +
                 ", terminationDate=" + terminationDate +
                 ", birthDay=" + birthDay +
+                ", voluntary=" + voluntary +
+                ", excluded=" + excluded +
                 '}';
     }
 }

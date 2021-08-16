@@ -52,7 +52,7 @@ public class RoleController {
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
                                              HttpRequest<RoleCreateDTO> request) {
-        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getMemberid())))
+        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription(), role.getMemberid())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse

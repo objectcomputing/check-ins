@@ -63,8 +63,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Test
     public void testDeleteThrowsExceptionWhenUserDoesNotExist() {
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE("/01b7d769-9fa2-43ff-95c7-f3b950a27bf9")
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
@@ -85,8 +88,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         createADefaultCheckIn(memberProfileOfMember, memberProfileOfPDL);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request));
@@ -107,8 +113,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         Skill testSkill = createADefaultSkill();
         createMemberSkill(memberProfileOfMember, testSkill, "Pro", LocalDate.now());
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request));
@@ -129,8 +138,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         Team testTeam = createDefaultTeam();
         createDefaultTeamMember(testTeam, memberProfileOfMember);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request));
@@ -149,8 +161,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         createDefaultRole(RoleType.PDL, memberProfileOfPDL);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfPDL.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request));
@@ -168,8 +183,11 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
+        MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
+        createDefaultAdminRole(memberProfileOfAdmin);
+
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
-                .basicAuth(ADMIN_ROLE, ADMIN_ROLE);
+                .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<?> response = client.toBlocking().exchange(request);
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -537,18 +555,6 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(1, response.body().size());
         assertProfilesEqual(memberProfile, Objects.requireNonNull(response.body().get(0)));
-    }
-
-    @Test
-    public void testMemberProfileWithPreviousTerminationDateReturnsNothingIfNotAdmin() {
-        MemberProfile memberProfile = createAPastTerminatedMemberProfile();
-
-        final HttpResponse<List <MemberProfileResponseDTO >> response = client
-                .toBlocking()
-                .exchange(HttpRequest.GET("/?terminated=true").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(0, response.body().size());
     }
 
 }

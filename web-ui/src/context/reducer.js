@@ -6,6 +6,7 @@ import {
   ADD_GUILD,
   DELETE_MEMBER_PROFILE,
   DELETE_MEMBER_SKILL,
+  DELETE_ROLE,
   DELETE_SKILL,
   MY_PROFILE_UPDATE,
   SET_CSRF,
@@ -13,12 +14,13 @@ import {
   UPDATE_CHECKIN,
   UPDATE_CHECKINS,
   UPDATE_MEMBER_PROFILES,
+  UPDATE_TERMINATED_MEMBERS,
   UPDATE_MEMBER_SKILLS,
   UPDATE_SKILL,
   UPDATE_SKILLS,
   UPDATE_GUILD,
   UPDATE_GUILDS,
-  UPDATE_GUILD_MEMBERS,
+  UPDATE_ROLES,
   UPDATE_TEAMS,
   UPDATE_TEAM_MEMBERS,
   UPDATE_TOAST,
@@ -30,7 +32,9 @@ export const initialState = {
   csrf: undefined,
   index: 0,
   memberProfiles: [],
+  terminatedMembers: [],
   memberSkills: [],
+  roles: [],
   skills: [],
   teams: [],
   guilds: [],
@@ -38,7 +42,7 @@ export const initialState = {
     severity: "",
     toast: "",
   },
-  userProfile: undefined,
+  userProfile: {},
 };
 
 export const reducer = (state, action) => {
@@ -117,6 +121,9 @@ export const reducer = (state, action) => {
     case UPDATE_MEMBER_PROFILES:
       state.memberProfiles = action.payload;
       break;
+    case UPDATE_TERMINATED_MEMBERS:
+      state.terminatedMembers = action.payload;
+      break;
     case UPDATE_TEAM_MEMBERS:
       state.teamMembers
         ? (state.teamMembers = [...state.teamMembers, action.payload])
@@ -145,6 +152,12 @@ export const reducer = (state, action) => {
     case SET_ROLES:
       state.roles = action.payload;
       break;
+    case DELETE_ROLE:
+      state.roles = state.roles.filter((role) => role.id !== action.payload);
+      break;
+    case UPDATE_ROLES:
+      state.roles = [...state.roles, action.payload];
+      break;
     case ADD_GUILD:
       state.guilds = [...state.guilds, action.payload];
       //sort by name
@@ -154,16 +167,13 @@ export const reducer = (state, action) => {
       const { id } = action.payload;
       const idx = state.guilds.findIndex((guild) => guild.id === id);
       state.guilds[idx] = action.payload;
+      state.guilds = [...state.guilds];
       break;
     case UPDATE_GUILDS:
       state.guilds = action.payload;
       //sort by name
       state.guilds.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    case UPDATE_GUILD_MEMBERS:
-      state.guildMembers
-        ? (state.guildMembers = [...state.guildMembers, action.payload])
-        : (state.guildMembers = action.payload);
+      state.guilds = [...state.guilds];
       break;
     default:
   }

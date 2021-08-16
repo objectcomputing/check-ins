@@ -44,7 +44,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         return combineToNewSkill(skillDTO);
     }
 
-    private Skill combineWithExistingSkill(@NotNull Skill existingSkill, @NotNull @Valid CombineSkillsDTO skillsDTO) {
+    private Skill combineWithExistingSkill(Skill existingSkill, CombineSkillsDTO skillsDTO) {
         Set<UUID> memberIds = new HashSet<>();
         for (UUID id : skillsDTO.getSkillsToCombine()) {
             Set<MemberSkill> memberSkills = memberSkillServices.findByFields(null, id);
@@ -59,7 +59,7 @@ public class CombineSkillServicesImpl implements CombineSkillServices {
         return skillServices.update(existingSkill);
     }
 
-    private Skill combineToNewSkill(@NotNull @Valid CombineSkillsDTO skillDTO) {
+    private Skill combineToNewSkill(CombineSkillsDTO skillDTO) {
         Skill newSkill = new Skill(skillDTO.getName(), skillDTO.getDescription());
         Skill returnSkill = skillServices.save(newSkill);
 

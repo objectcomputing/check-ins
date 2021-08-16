@@ -26,13 +26,13 @@ public class TeamMember {
     private UUID id;
 
     @NotNull
-    @Column(name = "teamId")
+    @Column(name = "teamid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the team this entry is associated with", required = true)
     private UUID teamId;
 
     @NotNull
-    @Column(name = "memberId")
+    @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberId;

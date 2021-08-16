@@ -153,7 +153,7 @@ public class PrivateNoteServicesImpl implements PrivateNoteServices {
         return privateNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
-    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+    private void validate(boolean isError, String message, Object... args) {
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }
