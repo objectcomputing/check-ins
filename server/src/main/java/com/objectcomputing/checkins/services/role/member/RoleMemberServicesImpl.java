@@ -23,7 +23,6 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
     private final RoleMemberRepository roleMemberRepo;
     private final MemberProfileRepository memberRepo;
 //    private final CurrentUserServices currentUserServices;
-//    private final MemberHistoryRepository memberHistoryRepository;
     public RoleMemberServicesImpl(RoleRepository roleRepo,
                                   RoleMemberRepository roleMemberRepo,
                                   MemberProfileRepository memberRepo
@@ -53,7 +52,7 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
             throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         } else if (roleMemberRepo.findByRoleIdAndMemberId(roleMember.getRoleId(), roleMember.getMemberId()).isPresent()) {
             throw new BadArgException(String.format("Member %s already exists in role %s", memberId, roleId));
-//        } else if (!isAdmin && roleLeads.size() > 0 && roleLeads.stream().noneMatch(o -> o.getMemberId().equals(currentUser.getId()))) {
+//        } else if (!isAdmin) {
 //            throw new BadArgException("You are not authorized to perform this operation");
         }
 
