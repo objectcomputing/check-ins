@@ -12,11 +12,12 @@ const AdminPage = () => {
   const [roles, setRoles] = useState(true);
   const [users, setUsers] = useState(false);
 
-  const handlePermissions = () => {
-    setPermissions(true);
-    setRoles(false);
-    setUsers(false);
-  };
+  // uncomment when 'Permissions' is ready
+  // const handlePermissions = () => {
+  //   setPermissions(true);
+  //   setRoles(false);
+  //   setUsers(false);
+  // };
   const handleRoles = () => {
     setPermissions(false);
     setRoles(true);
@@ -33,12 +34,13 @@ const AdminPage = () => {
         {permissions ? <div /> : roles ? <Roles /> : users && <UserPage />}
       </div>
       <div className="bottom-nav">
-        <Button
+        {/* uncomment when 'Permissions' is ready */}
+        {/* <Button
           className={permissions ? "button-selected" : "button"}
           onClick={handlePermissions}
         >
           <h3>Permissions</h3>
-        </Button>
+        </Button> */}
         <Button
           className={roles ? "button-selected" : "button"}
           onClick={handleRoles}
