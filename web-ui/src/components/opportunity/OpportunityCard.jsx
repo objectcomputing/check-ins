@@ -1,10 +1,16 @@
 import React from "react";
 
+import { selectIsAdmin } from "../../context/selectors";
+import { AppContext } from "../../context/AppContext";
+
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, Typography } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 
 const OpportunityCard = ({ opportunity }) => {
+  const { state } = useContext(AppContext);
+  const isAdmin = selectIsAdmin(state);
+
   const { description, expiresOn, name, pending, url } = opportunity;
   return (
     <Card className="opportunity" key={name}>
@@ -27,7 +33,7 @@ const OpportunityCard = ({ opportunity }) => {
           ? `Expires on ${format(new Date(expiresOn), "MM/dd/yyy")}`
           : null}
         <br />
-        {pending ? `Pending: ${pending}` : null}
+        {isAdmin && pending ? `Pending: ${pending}` : null}
       </CardContent>
     </Card>
   );
