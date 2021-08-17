@@ -1,7 +1,6 @@
 package com.objectcomputing.checkins.services.role;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,17 +17,12 @@ public interface RoleServices {
 
 
 
-    List<RoleResponseDTO> findByRole(RoleType role);
+    Set<RoleResponseDTO> findByRole(RoleType role);
 
-    List<RoleResponseDTO> findByMemberid(UUID uuid);
+    Set<RoleResponseDTO> findByMemberid(UUID uuid);
 
-    Optional<Object> findByRoleAndMemberid(RoleType role, UUID memberId);
+    List<RoleResponseDTO> findByRoleAndMemberid(RoleType role, UUID memberId);
 
     void deleteByRoleAndMemberid(RoleType role, UUID memberId);
 
-//    @Override
-//    <S extends RoleResponseDTO> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
-//
-//    @Override
-//    <S extends RoleResponseDTO> S save(@Valid @NotNull @NonNull S entity);
 }

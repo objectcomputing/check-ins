@@ -24,7 +24,6 @@ public class RoleMemberServicesImpl implements RoleMemberServices {
     private final MemberProfileRepository memberRepo;
 //    private final CurrentUserServices currentUserServices;
 //    private final MemberHistoryRepository memberHistoryRepository;
-
     public RoleMemberServicesImpl(RoleRepository roleRepo,
                                   RoleMemberRepository roleMemberRepo,
                                   MemberProfileRepository memberRepo
