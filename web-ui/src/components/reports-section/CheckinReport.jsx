@@ -41,7 +41,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
         style={{ textDecoration: "none" }}
         to={`/checkins/${member.id}/${checkin.id}`}
       >
-        <div className="checkin-link">
+        <div className="checkin-report-link">
           <Typography>{dateString}</Typography>
           <Chip
             color={checkin.completed ? "secondary" : "primary"}
@@ -58,6 +58,7 @@ const CheckinsReport = ({ closed, pdl, planned }) => {
     );
   };
   const TeamMemberMap = () => {
+  
     const filtered =
       members &&
       members.filter((member) => {
