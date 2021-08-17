@@ -2,18 +2,18 @@
   flex-direction: column;
 }
 
-.checkin-link {
+.checkin-report-link {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
-.checkin-link .MuiChip-colorPrimary {
+.checkin-report-link .MuiChip-colorPrimary {
   height: 1.5rem;
   margin-left: 0.5rem;
 }
 
-.checkin-link .MuiChip-colorSecondary {
+.checkin-report-link .MuiChip-colorSecondary {
   height: 1.5rem;
   margin-left: 0.5rem;
 }
