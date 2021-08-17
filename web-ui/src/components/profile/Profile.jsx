@@ -73,8 +73,8 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
   // Get Checkin PDL's name
   useEffect(() => {
     async function getCheckinPDLName() {
-      if (pdlId) {
-        let res = await getMember(pdlId, csrf);
+      if (checkinPdlId) {
+        let res = await getMember(checkinPdlId, csrf);
         let checkinPdlProfile =
           res.payload.data && !res.error ? res.payload.data : undefined;
         setCheckinPdl(checkinPdlProfile ? checkinPdlProfile.name : "");
