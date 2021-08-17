@@ -1,5 +1,8 @@
 import React from "react";
+
 import OpportunityCard from "./OpportunityCard";
+
+import { AppContextProvider } from "../../context/AppContext";
 
 const opportunity = {
   description: "Looking for someone to spit some hot fire",
@@ -9,5 +12,9 @@ const opportunity = {
   url: "www.google.com",
 };
 it("renders correctly", () => {
-  snapshot(<OpportunityCard opportunity={opportunity} />);
+  snapshot(
+    <AppContextProvider>
+      <OpportunityCard opportunity={opportunity} />
+    </AppContextProvider>
+  );
 });
