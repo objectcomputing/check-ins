@@ -116,6 +116,7 @@ const CheckinsPage = () => {
           <Profile
             memberId={selectedProfile?.id || currentUserId}
             pdlId={selectedProfile ? selectedProfile.pdlId : null}
+            checkinPdlId={currentCheckin ? currentCheckin.pdlId : null}
           />
           <div className={classes.navigate}>
             <CheckinsHistory
