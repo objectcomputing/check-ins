@@ -238,20 +238,20 @@ INSERT INTO member_roles(
 VALUES
     ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c56', '066b186f-1425-45de-89f2-4ddcc6ebe237');
 
-INSERT INTO role_permissions
-    (id, permission, roleid)
-VALUES
-    ('e8a4fff8-e984-4e59-be84-a713c9fa8d21', 'READCHECKIN', 'e8a4fff8-e984-4e59-be84-a713c9fa8d23');
-
-INSERT INTO role_permissions
-    (id, permission, roleid)
-VALUES
-    ('8bda2ae9-58c1-4843-a0d5-d0952621f9d1', 'CREATECHECKIN', '58199639-e670-4702-bba0-8fc63457cd02');
-
-INSERT INTO role_permissions
-    (id, permission, roleid)
-VALUES
-    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c51', 'DELETECHECKIN', 'a0ac5d7a-4b8e-11eb-b393-b35b67f02ab6');
+--INSERT INTO role_permissions
+--    (id, permission, roleid)
+--VALUES
+--    ('e8a4fff8-e984-4e59-be84-a713c9fa8d21', 'READCHECKIN', 'e8a4fff8-e984-4e59-be84-a713c9fa8d23');
+--
+--INSERT INTO role_permissions
+--    (id, permission, roleid)
+--VALUES
+--    ('8bda2ae9-58c1-4843-a0d5-d0952621f9d1', 'CREATECHECKIN', '58199639-e670-4702-bba0-8fc63457cd02');
+--
+--INSERT INTO role_permissions
+--    (id, permission, roleid)
+--VALUES
+--    ('d03f5f0b-e29c-4cf4-9ea4-6baa09405c51', 'DELETECHECKIN', 'a0ac5d7a-4b8e-11eb-b393-b35b67f02ab6');
 
 INSERT INTO team
     (id, name, description)
@@ -421,3 +421,37 @@ INSERT INTO pulse_response
 (id, submissiondate, updateddate, teammemberid, internalfeelings, externalfeelings)
 VALUES
 ('cda41eed-70ea-4d3f-a9d7-cd0c5158eb5f', '2021-01-29', '2021-02-02', '8fa673c0-ca19-4271-b759-41cb9db2e83a',  PGP_SYM_ENCRYPT('Feeling pretty happy','${aeskey}'), PGP_SYM_ENCRYPT('Feeling really good','${aeskey}'));
+
+
+
+
+insert into permissions
+    (id, permission)
+values
+    ('439ad8a8-500f-4f3f-963b-a86437d5820a', 'CAN_CREATE_ORGANIZATION_MEMBERS');
+
+insert into permissions
+    (id, permission)
+values
+    ('0f299d11-df47-406f-a426-8e3160eaeb21', 'CAN_DELETE_ORGANIZATION_MEMBERS');
+
+
+
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '439ad8a8-500f-4f3f-963b-a86437d5820a');
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('e8a4fff8-e984-4e59-be84-a713c9fa8d23', '0f299d11-df47-406f-a426-8e3160eaeb21');
+
+
+
+insert into role_permissions
+    (roleid, permissionid)
+values
+    ('8bda2ae9-58c1-4843-a0d5-d0952621f9df', '439ad8a8-500f-4f3f-963b-a86437d5820a');
+
