@@ -1,5 +1,5 @@
 import React from "react";
-import { getAvatarURL } from "../../api/api.js";
+import { getAvatarURL } from "../../../api/api.js";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
