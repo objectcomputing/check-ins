@@ -85,6 +85,11 @@ INSERT INTO member_profile
 VALUES
 ('066b186f-1425-45de-89f2-4ddcc6ebe237', PGP_SYM_ENCRYPT('Joe','${aeskey}'), PGP_SYM_ENCRYPT('Warner','${aeskey}'), PGP_SYM_ENCRYPT('Software Engineer','${aeskey}'), '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('warnerj@objectcomputing.com','${aeskey}'), '123123413', '2012-09-29', PGP_SYM_ENCRYPT('Engineer of Supreme Ability','${aeskey}'), null);
 
+INSERT INTO member_profile
+(id, firstName, lastName, title, pdlid, location, workEmail, employeeid, startdate, biotext, supervisorid)
+VALUES
+('aba9d6d8-0f8d-4b0f-9eca-209a62ee2dae', PGP_SYM_ENCRYPT('Michael','${aeskey}'), PGP_SYM_ENCRYPT('Pieper','${aeskey}'), PGP_SYM_ENCRYPT('Intern','${aeskey}'), null, PGP_SYM_ENCRYPT('St. Louis','${aeskey}'), PGP_SYM_ENCRYPT('pieperm@objectcomputing.com','${aeskey}'), '123123414', '2021-05-17', PGP_SYM_ENCRYPT('Interning and learning a lot','${aeskey}'), null);
+
 INSERT INTO role
 (id, role, memberid)
 VALUES
@@ -509,3 +514,18 @@ INSERT INTO feedback_requests
 (id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
 VALUES
 ('e2af1c96-a593-48c2-b9e0-a00193a070c7', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498', '8fa673c0-ca19-4271-b759-41cb9db2e83a', '43ee8e79-b33d-44cd-b23c-e183894ebfef','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-01', '2021-08-05', '2021-08-02', 'submitted');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('3444fbbc-3daf-4343-a3b2-8eef64a387de', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2559a257-ae84-4076-9ed4-3820c427beeb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-08-10', '2021-08-20', '2021-08-15', 'submitted');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('7cc1d9a8-233b-4d02-9286-95e16e61cf35', '01b7d769-9fa2-43ff-95c7-f3b950a27bf9', '2559a257-ae84-4076-9ed4-3820c427beeb', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-07-24', '2021-09-30', null, 'sent');
+
+INSERT INTO feedback_requests
+(id, creator_id, requestee_id, recipient_id, template_id, send_date, due_date, submit_date, status)
+VALUES
+('4fc07d87-55ff-4f5b-8c81-fae070deec65', '2c1b77e2-e2fc-46d1-92f2-beabbd28ee3d', '066b186f-1425-45de-89f2-4ddcc6ebe237', '7a6a2d4e-e435-4ec9-94d8-f1ed7c779498','18ef2032-c264-411e-a8e1-ddda9a714bae', '2021-05-05', null, '2021-05-17', 'submitted');

@@ -131,3 +131,14 @@ export const getFeedbackRequestsByCreator = async(creatorId, cookie) => {
     headers: { "X-CSRF-Header": cookie }
   });
 }
+
+export const getFeedbackRequestsByRecipient = async(recipientId, cookie) => {
+  return resolve({
+    url: feedbackRequestURL,
+    params: {
+      recipientId: recipientId
+    },
+    responseType: "json",
+    headers: { "X-CSRF-Header": cookie }
+  });
+}
