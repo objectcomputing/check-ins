@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import Roles from "../components/admin/Roles";
 import { Button } from "@material-ui/core";
 
-import "./UserPage";
 import "./AdminPage.css";
-import UserPage from "./UserPage";
+import UserPage from "../components/admin/User";
 
 const AdminPage = () => {
   const [permissions, setPermissions] = useState(false);
