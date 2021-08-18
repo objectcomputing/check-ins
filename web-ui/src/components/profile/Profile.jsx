@@ -38,18 +38,21 @@ const useStyles = makeStyles((theme) => ({
   },
   smallAvatar: {
     marginRight: "16px",
-  }
+  },
 }));
 
-const Profile = ({memberId, pdlId}) => {
+const Profile = ({ memberId, pdlId, checkinPdlId }) => {
   const classes = useStyles();
   const { state } = useContext(AppContext);
   const { csrf } = state;
   const userProfile = selectProfileMap(state)[memberId];
 
-  const { workEmail, name, title, location, supervisorid } = userProfile ? userProfile : {};
+  const { workEmail, name, title, location, supervisorid } = userProfile
+    ? userProfile
+    : {};
 
   const [pdl, setPDL] = useState();
+  const [checkinPdl, setCheckinPdl] = useState();
   const [supervisor, setSupervisor] = useState();
 
   // Get PDL's name
@@ -66,6 +69,21 @@ const Profile = ({memberId, pdlId}) => {
       getPDLName();
     }
   }, [csrf, pdlId]);
+
+  // Get Checkin PDL's name
+  useEffect(() => {
+    async function getCheckinPDLName() {
+      if (checkinPdlId) {
+        let res = await getMember(checkinPdlId, csrf);
+        let checkinPdlProfile =
+          res.payload.data && !res.error ? res.payload.data : undefined;
+        setCheckinPdl(checkinPdlProfile ? checkinPdlProfile.name : "");
+      }
+    }
+    if (csrf) {
+      getCheckinPDLName();
+    }
+  }, [csrf, checkinPdlId]);
 
   // Get Supervisor's name
   useEffect(() => {
@@ -95,17 +113,26 @@ const Profile = ({memberId, pdlId}) => {
         <div>
           <div className={classes.header}>
             <Hidden smUp>
-              <Avatar className={classes.smallAvatar} src={getAvatarURL(workEmail)} />
+              <Avatar
+                className={classes.smallAvatar}
+                src={getAvatarURL(workEmail)}
+              />
             </Hidden>
             <div className={classes.title}>
               <Typography variant="h5" component="h2">
                 {name}
               </Typography>
-              <Typography color="textSecondary" component="h3">{title}</Typography>
+              <Typography color="textSecondary" component="h3">
+                {title}
+              </Typography>
             </div>
           </div>
           <Typography variant="body2" color="textSecondary" component="p">
-            <a href={`mailto:${workEmail}`} target="_blank" rel="noopener noreferrer">
+            <a
+              href={`mailto:${workEmail}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {workEmail}
             </a>
             <br />
@@ -113,7 +140,9 @@ const Profile = ({memberId, pdlId}) => {
             <br />
             Supervisor: {supervisor}
             <br />
-            PDL: {pdl}
+            Current PDL: {pdl}
+            <br />
+            {checkinPdl && `PDL @ time of Checkin: ${checkinPdl}`}
           </Typography>
         </div>
       </div>

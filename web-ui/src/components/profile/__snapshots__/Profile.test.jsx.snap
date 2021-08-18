@@ -35,7 +35,8 @@ exports[`renders correctly 1`] = `
         <br />
         Supervisor: 
         <br />
-        PDL: 
+        Current PDL: 
+        <br />
       </p>
     </div>
   </div>

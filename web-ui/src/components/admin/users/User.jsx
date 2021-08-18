@@ -1,20 +1,20 @@
 import React, { useContext, useState } from "react";
 
-import AdminMemberCard from "../components/member-directory/AdminMemberCard";
-import { createMember } from "../api/member";
-import { AppContext } from "../context/AppContext";
-import { UPDATE_MEMBER_PROFILES } from "../context/actions";
+import AdminMemberCard from "../../../components/member-directory/AdminMemberCard";
+import MemberModal from "../../../components/member-directory/MemberModal";
+import { createMember } from "../../../api/member";
+import { AppContext } from "../../../context/AppContext";
+import { UPDATE_MEMBER_PROFILES } from "../../../context/actions";
 import {
   selectNormalizedMembers,
   selectNormalizedMembersAdmin,
-} from "../context/selectors";
+} from "../../../context/selectors";
 
 import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 
-import "./UserPage.css";
-import MemberModal from "../components/member-directory/MemberModal";
+import "./User.css";
 
 const useStyles = makeStyles({
   search: {
