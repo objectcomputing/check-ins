@@ -52,8 +52,10 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
     : {};
 
   const [pdl, setPDL] = useState();
-  const [checkinPdl, setCheckinPdl] = useState();
-  const [supervisor, setSupervisor] = useState();
+  const [checkinPdl, setCheckinPdl] = useState("");
+  const [supervisor, setSupervisor] = useState("");
+
+  const areSamePdls = checkinPdl && pdl && checkinPdl === pdl;
 
   // Get PDL's name
   useEffect(() => {
@@ -142,7 +144,9 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             <br />
             Current PDL: {pdl}
             <br />
-            {checkinPdl && `PDL @ time of Checkin: ${checkinPdl}`}
+            {checkinPdl &&
+              !areSamePdls &&
+              `PDL @ time of Checkin: ${checkinPdl}`}
           </Typography>
         </div>
       </div>
