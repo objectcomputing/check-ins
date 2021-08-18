@@ -1,37 +1,39 @@
 .member-modal {
-    position: absolute;
-    min-width: 400px;
-    max-width: 600px;
-    background-color: #FFF;
-    top: 50%;
-    left: 50%;
-    padding: .5rem;
-    transform: translate(-50%, -50%);
-    border: 2px solid #FFF;
+  background-color: #fff;
+  border: 2px solid #fff;
+  height: 75%;
+  left: 50%;
+  max-width: 600px;
+  min-width: 400px;
+  overflow: scroll;
+  position: absolute;
+  padding: 0.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .member-modal h2 {
-    margin-block-end: 0rem;
-    margin-left: .5rem;
+  margin-block-end: 0rem;
+  margin-left: 0.5rem;
 }
 
 .member-modal-actions {
-    margin-top: 1rem;
-    width: calc(100% - 1rem);
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+  margin-top: 1rem;
+  width: calc(100% - 1rem);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .member-modal .MuiTextField-root.fullWidth {
-    width: calc(100% - 1rem);
+  width: calc(100% - 1rem);
 }
 
 .member-modal .MuiTextField-root.halfWidth {
-    width: calc(50% - .5rem);
+  width: calc(50% - 0.5rem);
 }
 
 .member-modal .MuiTextField-root {
-    margin: .5rem;
-    width: 25ch;
-  }
+  margin: 0.5rem;
+  width: 25ch;
+}

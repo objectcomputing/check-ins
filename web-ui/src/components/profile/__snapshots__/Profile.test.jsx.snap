@@ -34,9 +34,11 @@ exports[`renders correctly 1`] = `
         Location: 
         <br />
         Supervisor: 
+        
         <br />
         Current PDL: 
         <br />
+        
       </p>
     </div>
   </div>
