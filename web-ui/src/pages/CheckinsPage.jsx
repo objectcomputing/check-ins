@@ -115,7 +115,8 @@ const CheckinsPage = () => {
         <Grid item xs={12} sm={9}>
           <Profile
             memberId={selectedProfile?.id || currentUserId}
-            pdlId={currentCheckin ? currentCheckin.pdlId : null}
+            pdlId={selectedProfile ? selectedProfile.pdlId : null}
+            checkinPdlId={currentCheckin ? currentCheckin.pdlId : null}
           />
           <div className={classes.navigate}>
             <CheckinsHistory
