@@ -146,7 +146,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
             <br />
             {checkinPdl &&
               !areSamePdls &&
-              `PDL @ time of Checkin: ${checkinPdl}`}
+              `PDL @ Time of Check-In: ${checkinPdl}`}
           </Typography>
         </div>
       </div>
