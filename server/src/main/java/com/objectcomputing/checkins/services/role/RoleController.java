@@ -105,11 +105,11 @@ public class RoleController {
      * @param role     {@link RoleType} of role
      * @return {@link List < Role > list of roles}
      */
-    @Get("/{?role}")
-    public Single<HttpResponse<Role>> findRole(@Nullable RoleType role) {
+    @Get("/{role}")
+    public Single<HttpResponse<Role>> findRole(RoleType role) {
         return Single.fromCallable(() -> roleServices.findByRole(role)
                         .orElseThrow(
-                                () -> new NotFoundException("Unable able to find Role with name of : " + role.name())
+                                () -> new NotFoundException("Unable able to find Role with name of: " + role.name())
                         )
                 )
                 .observeOn(Schedulers.from(eventLoopGroup))
