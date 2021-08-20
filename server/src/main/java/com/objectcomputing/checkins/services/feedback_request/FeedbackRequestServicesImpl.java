@@ -3,12 +3,14 @@ package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.exceptions.BadArgException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.exceptions.PermissionException;
+import com.objectcomputing.checkins.gcp.postgres.GoogleCloudDatabaseSetup;
 import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 
 import javax.inject.Singleton;
 import java.time.LocalDate;
@@ -20,25 +22,30 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     public static final String FEEDBACK_REQUEST_NOTIFICATION_SUBJECT = "check-ins.application.feedback.notifications.subject";
     public static final String FEEDBACK_REQUEST_NOTIFICATION_CONTENT = "check-ins.application.feedback.notifications.content";
-    public static final String submitURL = "http://localhost:3000/feedback/submit?request=";
+    public static final String WEB_UI_URL = "ui-path.web_ui_url";
     private final FeedbackRequestRepository feedbackReqRepository;
     private final CurrentUserServices currentUserServices;
     private final MemberProfileServices memberProfileServices;
     private EmailSender emailSender;
     private final String notificationSubject;
     private final String notificationContent;
+    private final String webURL;
 
     public FeedbackRequestServicesImpl(FeedbackRequestRepository feedbackReqRepository,
                                        CurrentUserServices currentUserServices,
                                        MemberProfileServices memberProfileServices, EmailSender emailSender,
                                        @Property(name = FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject,
-                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent) {
+                                       @Property(name = FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent,
+                                       @Property(name = WEB_UI_URL) String webURL
+    )
+            {
         this.feedbackReqRepository = feedbackReqRepository;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.emailSender = emailSender;
         this.notificationContent = notificationContent;
         this.notificationSubject = notificationSubject;
+        this.webURL = webURL;
     }
 
     public void setEmailSender(EmailSender emailSender) {
@@ -77,7 +84,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
-        String newContent = "You have received a feedback request. Please go to your unique link at " + submitURL + storedRequest.getId() + " to complete this request.";
+        String newContent = "You have received a feedback request. Please go to your unique link at " + webURL + storedRequest.getId() + " to complete this request.";
 //        String newContent =  notificationContent + "<a href=\""+submitURL+storedRequest.getId()+"\">Check-Ins application</a>.";
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         return storedRequest;

@@ -38,7 +38,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     private final EmailSender emailSender = mock(EmailSender.class);
 
-    private final String submitURL = "http://localhost:3000/feedback/submit?request=";
+
+   // private final String submitURL = "http://localhost:3000/feedback/submit?request=";
 
     @Inject
     private FeedbackRequestServicesImpl feedbackRequestServicesImpl;
@@ -46,6 +47,8 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_SUBJECT) String notificationSubject;
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
+
+    @Property(name = "ui-path.web_ui_url") String submitURL;
 
     @BeforeEach
     void resetMocks() {

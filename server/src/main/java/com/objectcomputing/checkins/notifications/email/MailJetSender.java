@@ -7,22 +7,37 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.inject.Singleton;
-import java.util.Arrays;
+
+@Requires(property = MailJetSender.FROM_ADDRESS)
+@Requires(property = MailJetSender.FROM_NAME)
 
 @Singleton
-public class MailJetSender implements EmailSender {
+public class MailJetSender implements EmailSender{
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
+    public static final String FROM_ADDRESS = "mail-jet.from_address";
+    public static final String FROM_NAME = "mail-jet.from_name";
 
-    public MailJetSender(MailjetClient client) {
+    private final String fromAddress;
+    private final String fromName;
+
+    public MailJetSender(
+            MailjetClient client,
+            @Property(name = FROM_ADDRESS) String fromAddress,
+            @Property(name = FROM_NAME) String fromName
+    )
+    {
         this.client = client;
+        this.fromAddress = fromAddress;
+        this.fromName = fromName;
     }
 
     /**
@@ -32,6 +47,10 @@ public class MailJetSender implements EmailSender {
      */
     @Override
     public void sendEmail(String subject, String content, String... recipients) {
+
+        LOG.debug("address " + FROM_NAME);
+        LOG.debug("name + " + FROM_NAME);
+
         MailjetRequest request;
         MailjetResponse response;
         try {
@@ -43,8 +62,8 @@ public class MailJetSender implements EmailSender {
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Email", "julia.smith@wustl.edu")
-                                            .put("Name", "Check-Ins Demo"))
+                                            .put("Email", fromAddress)
+                                            .put("Name", fromName))
                                     .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
