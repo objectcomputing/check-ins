@@ -90,10 +90,8 @@ public class MemberProfileServicesImpl implements MemberProfileServices {
         if (!currentUserServices.isAdmin()) {
             throw new PermissionException("Requires admin privileges");
         }
-
-        // try to delete user - default behavior
         MemberProfile memberProfile = memberProfileRepository.findById(id).orElse(null);
-        Set<Role> userRoles = (memberProfile != null) ? roleServices.findByFields(RoleType.PDL, id) : Collections.emptySet();
+        Set<Role> userRoles = (memberProfile != null) ? roleServices.findUserRoles(memberProfile.getId()) : Collections.emptySet();
 
         if (memberProfile == null) {
             throw new NotFoundException("No member profile for id");

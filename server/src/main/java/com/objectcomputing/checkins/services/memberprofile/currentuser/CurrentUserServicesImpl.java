@@ -4,6 +4,7 @@ import com.objectcomputing.checkins.exceptions.AlreadyExistsException;
 import com.objectcomputing.checkins.exceptions.NotFoundException;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
@@ -26,7 +27,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
                                    SecurityService securityService) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
-        this.securityService = securityService;
+        this.securityService = securityService;;
     }
 
     @Override
@@ -70,7 +71,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
-        roleServices.save(new Role(RoleType.MEMBER, "role description", createdMember.getId()));
+        roleServices.save(new Role(RoleType.MEMBER, "role description"));
 
         return createdMember;
     }
