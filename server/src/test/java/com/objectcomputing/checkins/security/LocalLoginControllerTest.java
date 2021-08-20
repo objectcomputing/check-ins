@@ -53,7 +53,10 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
         assertNotNull(response);
-        assertTrue(response.contains("\"roles\":[\"ADMIN\",\"PDL\",\"MEMBER\"]"));
+        assertTrue(response.contains("\"roles\":"));
+        assertTrue(response.contains("\"ADMIN\""));
+        assertTrue(response.contains("\"PDL\""));
+        assertTrue(response.contains("\"MEMBER\""));
         assertTrue(response.contains("\"username\":\"ADMIN\""));
         assertTrue(response.contains("\"access_token\":\""));
     }
