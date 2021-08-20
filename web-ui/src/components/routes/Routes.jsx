@@ -24,6 +24,7 @@ import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
 import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackResponses";
 import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
 import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
+import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
 
 
 export default function Routes() {
@@ -78,6 +79,9 @@ export default function Routes() {
       </Route>
       <Route path="/feedback/submit">
         <FeedbackSubmitPage />
+      </Route>
+      <Route path="/feedback/received-requests">
+        <ReceivedRequestsPage />
       </Route>
 
       {isAdmin && (

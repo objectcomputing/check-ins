@@ -1,5 +1,5 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Typography} from '@material-ui/core';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {Avatar, Checkbox, Chip, TextField, Typography} from '@material-ui/core';
 import "./ViewFeedbackResponses.css";
 import {makeStyles} from '@material-ui/core/styles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
@@ -10,23 +10,57 @@ import {useLocation} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {UPDATE_TOAST} from "../../context/actions";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import {Group as GroupIcon, Search as SearchIcon} from "@material-ui/icons";
+import {Autocomplete} from "@material-ui/lab";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import {getAvatarURL} from "../../api/api";
 
-const useStylesCardContent = makeStyles({
+const useStyles = makeStyles({
   root: {
     '&:last-child': {
       paddingBottom: '16px',
+    }
+  },
+  notFoundMessage: {
+    color: "gray",
+    marginTop: "3em",
+    textAlign: "center"
+  },
+  popupIndicator: {
+    transform: "none"
+  },
+  searchField: {
+    marginRight: "3em",
+    width: "350px",
+    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+      marginRight: 0,
+      width: "100%"
+    }
+  },
+  responderField: {
+    minWidth: "500px",
+    ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
+      minWidth: 0,
+      width: "100%"
     }
   }
 }, {name: "MuiCardContent"});
 
 const ViewFeedbackResponses = () => {
-  useStylesCardContent();
+  const classes = useStyles();
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const location = useLocation();
   const [query, setQuery] = useState({});
   const [questionsAndAnswers, setQuestionsAndAnswers] = useState([]);
   const [requestInfo, setRequestInfo] = useState({});
+  const [searchText, setSearchText] = useState("");
+  const [responderOptions, setResponderOptions] = useState([]);
+  const [selectedResponders, setSelectedResponders] = useState([]);
+  const [filteredQuestionsAndAnswers, setFilteredQuestionsAndAnswers] = useState([]);
+  const retrievedQuestionsAndAnswers = useRef(false);
 
   useEffect(() => {
     setQuery(queryString.parse(location?.search));
@@ -79,6 +113,46 @@ const ViewFeedbackResponses = () => {
     });
   }, [csrf, query.request]);
 
+  // Sets the options for filtering by responders
+  useEffect(() => {
+    let allResponders = [];
+    questionsAndAnswers.forEach(({ answers }) => {
+      const responders = answers.map((answer) => answer.responder);
+      allResponders.push(...responders);
+    });
+    allResponders = [...(new Set(allResponders))]  // Remove duplicate responders
+
+    setResponderOptions(allResponders);
+  }, [state, questionsAndAnswers]);
+
+  // Populate all responders as selected by default
+  useEffect(() => {
+    setSelectedResponders(responderOptions);
+  }, [responderOptions]);
+
+  useEffect(() => {
+    let responsesToDisplay = [...questionsAndAnswers];
+
+    responsesToDisplay = responsesToDisplay.map((response) => {
+      // Filter based on selected responders
+      let filteredAnswers = response.answers.filter((answer) => selectedResponders.includes(answer.responder));
+      if (searchText.trim()) {
+        // Filter based on search text
+        filteredAnswers = filteredAnswers.filter(({answer}) => answer.toLowerCase().includes(searchText.trim().toLowerCase()));
+      }
+      return {...response, answers: filteredAnswers}
+    });
+
+    setFilteredQuestionsAndAnswers(responsesToDisplay);
+
+  }, [searchText, selectedResponders]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!retrievedQuestionsAndAnswers.current && filteredQuestionsAndAnswers.length > 0) {
+      retrievedQuestionsAndAnswers.current = true;
+    }
+  }, [filteredQuestionsAndAnswers]);
+
   return (
     <div className="view-feedback-responses-page">
       <Typography
@@ -86,8 +160,63 @@ const ViewFeedbackResponses = () => {
          style={{textAlign: "center", marginBottom: "1em"}}>
           <b>View Feedback for {selectProfile(state, requestInfo?.requesteeId)?.name} </b>
        </Typography>
-
-      {questionsAndAnswers.map((question) => {
+      <div className="responses-filter-container">
+        <TextField
+          className={classes.searchField}
+          label="Search responses..."
+          placeholder="Enter a keyword or phrase"
+          helperText=" "
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          InputProps={{
+            endAdornment: <InputAdornment style={{color: "gray"}} position="end"><SearchIcon/></InputAdornment>
+          }}
+        />
+        <Autocomplete
+          className={classes.responderField}
+          classes={{popupIndicator: classes.popupIndicator}}
+          multiple
+          disableCloseOnSelect
+          options={responderOptions}
+          getOptionLabel={(responderId) => selectProfile(state, responderId).name}
+          popupIcon={<GroupIcon/>}
+          value={selectedResponders}
+          onChange={(event, value) => setSelectedResponders(value)}
+          renderOption={(responderId, { selected }) => (
+            <React.Fragment>
+              <Checkbox
+                icon={<CheckBoxOutlineBlankIcon fontSize="small"/>}
+                checkedIcon={<CheckBoxIcon fontSize="small"/>}
+                color="primary"
+                style={{marginRight: 8}}
+                checked={selected}
+              />
+              {selectProfile(state, responderId).name}
+            </React.Fragment>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              label="Filter recipients"
+              helperText={`Showing responses from ${selectedResponders.length}/${responderOptions.length} recipient${responderOptions.length === 1 ? "" : "s"}`}
+            />
+          )}
+          renderTags={(value, getTagProps) =>
+            value.map((responderId, index) => {
+              const profile = selectProfile(state, responderId);
+              return (
+                <Chip
+                  avatar={<Avatar alt={`${profile.name}'s avatar`} className="large" src={getAvatarURL(profile.workEmail)}/>}
+                  label={profile.name}
+                  {...getTagProps({ index })}
+                />
+              )
+            })
+          }
+        />
+      </div>
+      {filteredQuestionsAndAnswers.map((question) => {
         return (
           <div className="question-responses-container"
                key={`question-id-${question.id}`}>
@@ -96,13 +225,15 @@ const ViewFeedbackResponses = () => {
               style={{marginBottom: "0.5em", fontWeight: "bold"}}>
               Q{question.questionNumber}: {question.question}
             </Typography>
-            {question?.answers?.map(answer =>
-              <FeedbackResponseCard
-                key={answer.id}
-                responderId={answer.responder}
-                answer={answer.answer}
-                sentiment={answer.sentiment}/>
-              )}
+            {question.answers.length === 0 && retrievedQuestionsAndAnswers.current && <div className="no-responses-found"><Typography variant="body1" style={{color: "gray"}}>No matching responses found</Typography></div>}
+            {question.answers.length > 0 && question.answers.map(answer =>
+                <FeedbackResponseCard
+                  key={answer.id}
+                  responderId={answer.responder}
+                  answer={answer.answer}
+                  sentiment={answer.sentiment}/>
+              )
+            }
           </div>
         )
       })}

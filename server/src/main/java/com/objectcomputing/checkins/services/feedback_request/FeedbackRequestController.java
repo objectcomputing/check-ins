@@ -108,12 +108,13 @@ public class FeedbackRequestController {
      *
      * @param creatorId The {@link UUID} of the creator of the request
      * @param requesteeId The {@link UUID} of the requestee
+     * @param recipientId The {@link UUID} of the recipient
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
-    @Get("/{?creatorId,requesteeId,oldestDate}")
-    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
-        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, oldestDate))
+    @Get("/{?creatorId,requesteeId,recipientId,oldestDate}")
+    public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
+        return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(feedbackReqs -> {
                     List<FeedbackRequestResponseDTO> dtoList = feedbackReqs.stream()
