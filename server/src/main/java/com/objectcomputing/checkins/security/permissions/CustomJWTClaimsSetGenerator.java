@@ -31,20 +31,7 @@ public class CustomJWTClaimsSetGenerator extends JWTClaimsSetGenerator {
     protected void populateWithUserDetails(JWTClaimsSet.Builder builder, UserDetails userDetails) {
         super.populateWithUserDetails(builder, userDetails);
         if (userDetails instanceof ExtendedUserDetails) {
-            ExtendedUserDetails extended = (ExtendedUserDetails) userDetails;
-            List<Permission> permissions = extended.getPermissions();
-
-            // had to manually do the json serialization for some reason
-            try {
-                String json = new ObjectMapper().writeValueAsString(permissions);
-                builder.claim("permissions", json);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            // TODO figure out why id isn't included in each permission of the JWT (list of permissions does map to JSON entity?)
-//            builder.claim("permissions", ((ExtendedUserDetails)userDetails).getPermissions());
-//            System.out.println(builder.getClaims().get("permissions").toString());
-
+            builder.claim("permissions", ((ExtendedUserDetails)userDetails).getPermissions());
         }
     }
 }
