@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.permissions.PermissionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -37,6 +38,9 @@ public class CurrentUserControllerTest {
 
     @Mock
     RoleRepository roleRepository;
+
+    @Mock
+    PermissionRepository permissionRepository;
 
     @InjectMocks
     CurrentUserController currentUserController;
