@@ -12,7 +12,10 @@ public interface RoleFixture extends RepositoryFixture {
     }
 
     default Role createDefaultRole(RoleType type, MemberProfile memberProfile) {
-        return getRoleRepository().save(new Role(type, "role description", memberProfile.getId()));
+        Role role = getRoleRepository().save(new Role(type, "role description"));
+        getMemberRoleRepository().save(memberProfile.getId(), role.getId());
+
+        return role;
     }
 
     default Role findRole(Role role) {

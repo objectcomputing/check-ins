@@ -17,6 +17,7 @@ import com.objectcomputing.checkins.services.pulseresponse.PulseResponseReposito
 import com.objectcomputing.checkins.services.question_category.QuestionCategoryRepository;
 import com.objectcomputing.checkins.services.questions.QuestionRepository;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 import com.objectcomputing.checkins.services.role_permissions.RolePermissionRepository;
 import com.objectcomputing.checkins.services.settings.SettingsRepository;
 import com.objectcomputing.checkins.services.skills.SkillRepository;
@@ -144,5 +145,9 @@ public interface RepositoryFixture {
 
     default DemographicsRepository getDemographicsRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(DemographicsRepository.class);
+    }
+
+    default MemberRoleRepository getMemberRoleRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(MemberRoleRepository.class);
     }
 }
