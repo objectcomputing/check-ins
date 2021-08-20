@@ -1,23 +1,24 @@
 import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 
-import AdminPage from "../../pages/AdminPage";
-
 import { AppContext } from "../../context/AppContext";
 
-import GroupIcon from "@material-ui/icons/Group";
-import Header from "../header/Header";
-import HomePage from "../../pages/HomePage";
-import TeamsPage from "../../pages/TeamsPage";
-import GuildsPage from "../../pages/GuildsPage";
+import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
 import CheckinsPage from "../../pages/CheckinsPage";
 import CheckinsReportPage from "../../pages/CheckinsReportPage";
-import PeoplePage from "../../pages/PeoplePage";
-import MemberProfilePage from "../../pages/MemberProfilePage";
 import EditSkillsPage from "../../pages/EditSkillsPage";
+import GroupIcon from "@material-ui/icons/Group";
+import GuildsPage from "../../pages/GuildsPage";
+import Header from "../header/Header";
+import HomePage from "../../pages/HomePage";
+import MemberProfilePage from "../../pages/MemberProfilePage";
+import PeoplePage from "../../pages/PeoplePage";
+import Roles from "../admin/roles/Roles";
 import SkillReportPage from "../../pages/SkillReportPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
-import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
+import TeamsPage from "../../pages/TeamsPage";
+import Users from "../admin/users/Users";
+
 import { selectIsAdmin } from "../../context/selectors";
 
 export default function Routes() {
@@ -78,11 +79,13 @@ export default function Routes() {
             <Header title="Birthday & Anniversary Reports" />
             <BirthdayAnniversaryReportPage />
           </Route>
-          <Route path="/admin">
-            <Header title="Admin">
-              <GroupIcon fontSize="large" />
-            </Header>
-            <AdminPage />
+          <Route path="/admin/roles">
+            <Header title="Roles" />
+            <Roles />
+          </Route>
+          <Route path="/admin/users">
+            <Header title="Users" />
+            <Users />
           </Route>
         </Switch>
       )}

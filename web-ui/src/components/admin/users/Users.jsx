@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
-import AdminMemberCard from "../../../components/member-directory/AdminMemberCard";
-import MemberModal from "../../../components/member-directory/MemberModal";
+import AdminMemberCard from "../../member-directory/AdminMemberCard";
+import MemberModal from "../../member-directory/MemberModal";
 import { createMember } from "../../../api/member";
 import { AppContext } from "../../../context/AppContext";
 import { UPDATE_MEMBER_PROFILES } from "../../../context/actions";
@@ -14,7 +14,7 @@ import { Button, TextField, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 
-import "./User.css";
+import "./Users.css";
 
 const useStyles = makeStyles({
   search: {
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   },
 });
 
-const UserPage = () => {
+const Users = () => {
   const { state, dispatch } = useContext(AppContext);
   const { csrf, memberProfiles, userProfile } = state;
 
@@ -122,4 +122,4 @@ const UserPage = () => {
   );
 };
 
-export default UserPage;
+export default Users;

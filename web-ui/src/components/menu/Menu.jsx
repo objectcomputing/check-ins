@@ -75,6 +75,12 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
+const adminLinks = [
+  // ["/admin/permissions", "Permissions"],
+  ["/admin/roles", "Roles"],
+  ["/admin/users", "Users"],
+];
+
 const reportsLinks = [
   ["/checkins-reports", "Check-ins"],
   ["/skills-reports", "Skills"],
@@ -104,6 +110,9 @@ function Menu() {
   const [directoryOpen, setDirectoryOpen] = useState(
     isCollapsibleListOpen(directoryLinks, location.pathname)
   );
+  const [adminOpen, setAdminOpen] = useState(
+    isCollapsibleListOpen(adminLinks, location.pathname)
+  );
   const [reportsOpen, setReportsOpen] = useState(
     isCollapsibleListOpen(reportsLinks, location.pathname)
   );
@@ -131,6 +140,10 @@ function Menu() {
 
   const toggleDirectory = () => {
     setDirectoryOpen(!directoryOpen);
+  };
+
+  const toggleAdmin = () => {
+    setAdminOpen(!adminOpen);
   };
 
   const closeSubMenus = () => {
@@ -190,7 +203,23 @@ function Menu() {
 
       <List component="nav" className={classes.listStyle}>
         {createLinkJsx("/", "HOME", false)}
-        {isAdmin && createLinkJsx("/admin", "ADMIN", false)}
+        {
+          isAdmin && (
+            <>
+              <ListItem
+                button
+                onClick={toggleAdmin}
+                className={classes.listItem}
+              >
+                <ListItemText primary="ADMIN" />
+              </ListItem>
+              <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+                {createListJsx(adminLinks, true)}
+              </Collapse>
+            </>
+          )
+          // createLinkJsx("/admin", "ADMIN", false)
+        }
         {createLinkJsx("/checkins", "CHECK-INS", false)}
         <ListItem button onClick={toggleDirectory} className={classes.listItem}>
           <ListItemText primary="DIRECTORY" />
