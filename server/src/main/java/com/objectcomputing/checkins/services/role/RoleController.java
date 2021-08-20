@@ -52,7 +52,7 @@ public class RoleController {
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,
                                              HttpRequest<RoleCreateDTO> request) {
-        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription(), role.getMemberid())))
+        return Single.fromCallable(() -> roleServices.save(new Role(role.getRole(), role.getDescription())))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse
@@ -103,14 +103,17 @@ public class RoleController {
      * Find member roles that match all filled in parameters, return all results when given no params
      *
      * @param role     {@link RoleType} of role
-     * @param memberid {@link UUID} of member
      * @return {@link List < Role > list of roles}
      */
-    @Get("/{?role,memberid}")
-    public Single<HttpResponse<Set<Role>>> findRole(@Nullable RoleType role, @Nullable UUID memberid) {
-        return Single.fromCallable(() -> roleServices.findByFields(role, memberid))
+    @Get("/{?role}")
+    public Single<HttpResponse<Role>> findRole(@Nullable RoleType role) {
+        return Single.fromCallable(() -> roleServices.findByRole(role)
+                        .orElseThrow(
+                                () -> new NotFoundException("Unable able to find Role with name of : " + role.name())
+                        )
+                )
                 .observeOn(Schedulers.from(eventLoopGroup))
-                .map(userRole -> (HttpResponse<Set<Role>>) HttpResponse.ok(userRole))
+                .map(userRole -> (HttpResponse<Role>) HttpResponse.ok(userRole))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
 

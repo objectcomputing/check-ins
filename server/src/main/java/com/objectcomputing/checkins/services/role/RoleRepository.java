@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.role;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
@@ -9,18 +10,26 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface RoleRepository extends CrudRepository<Role, UUID> {
 
-    List<Role> findByRole(RoleType role);
+    @Query("SELECT * " +
+            "from role " +
+            "WHERE role.role = :role")
+    Optional<Role> findByRole(RoleType role);
 
-    List<Role> findByMemberid(UUID uuid);
+    @Query("SELECT DISTINCT role.id, role.role, role.description  " +
+            "FROM member_profile " +
+            "JOIN member_roles " +
+            "    ON member_profile.id = member_roles.memberid " +
+            "JOIN role " +
+            "    ON role.id = member_roles.roleid " +
+            "WHERE member_profile.id = :id")
+    Set<Role> findUserRoles(UUID id);
 
-    Optional<Role> findByRoleAndMemberid(RoleType role, UUID memberId);
-
-    void deleteByRoleAndMemberid(RoleType role, UUID memberId);
 
     @Override
     <S extends Role> List<S> saveAll(@Valid @NotNull Iterable<S> entities);
