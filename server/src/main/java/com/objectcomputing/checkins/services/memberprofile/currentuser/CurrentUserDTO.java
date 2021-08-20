@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import com.objectcomputing.checkins.services.permissions.Permission;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -24,6 +25,10 @@ public class CurrentUserDTO {
     @NotBlank
     @Schema(description = "full name of the user")
     private String name;
+
+    @Nullable
+    @Schema(description = "User's permissions")
+    private List<Permission> permissions;
 
     @Nullable
     @Schema(description = "User's roles")
@@ -65,6 +70,15 @@ public class CurrentUserDTO {
     }
 
     @Nullable
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(@Nullable List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    @Nullable
     public List<String> getRole() {
         return role;
     }
@@ -90,20 +104,17 @@ public class CurrentUserDTO {
         this.memberProfile = memberProfile;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CurrentUserDTO that = (CurrentUserDTO) o;
-        return firstName.equals(that.firstName) &&
-                lastName.equals(that.lastName) &&
-                Objects.equals(role, that.role) &&
-                Objects.equals(imageUrl, that.imageUrl) &&
-                memberProfile.equals(that.memberProfile);
+        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(name, that.name) && Objects.equals(permissions, that.permissions) && Objects.equals(role, that.role) && Objects.equals(imageUrl, that.imageUrl) && Objects.equals(memberProfile, that.memberProfile);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, role, imageUrl, memberProfile);
+        return Objects.hash(firstName, lastName, name, permissions, role, imageUrl, memberProfile);
     }
 }
