@@ -24,6 +24,15 @@ public class Permission {
     @Column(name = "permission")
     private String permission;
 
+    public Permission(UUID id, String permission) {
+        this.id = id;
+        this.permission = permission;
+    }
+
+    public Permission(String permission) {
+        this(null, permission);
+    }
+
     public UUID getId() {
         return id;
     }
