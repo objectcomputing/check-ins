@@ -24,7 +24,8 @@ public class MemberRoleServicesImpl implements MemberRoleServices {
 //    }
 
     public void removeMemberFromRoles(UUID memberid){
-        memberRoleRepository.removeMemberFromRoles(memberid);
+        // errors occurred when using UUID directly in query but string works
+        memberRoleRepository.removeMemberFromRoles(memberid.toString());
 
     }
 
