@@ -18,8 +18,8 @@ public interface RoleRepository extends CrudRepository<Role, UUID> {
 
     @Query("SELECT * " +
             "from role " +
-            "WHERE role.role = :role")
-    Optional<Role> findByRole(RoleType role);
+            "WHERE LOWER(role.role) = LOWER(:role)")
+    Optional<Role> findByRole(String role);
 
     @Query("SELECT DISTINCT role.id, role.role, role.description  " +
             "FROM member_profile " +

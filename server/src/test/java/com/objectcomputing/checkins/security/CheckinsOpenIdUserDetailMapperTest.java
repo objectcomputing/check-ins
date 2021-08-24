@@ -44,7 +44,7 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         MemberProfile memberProfile = createADefaultMemberProfile();
         List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
         for (String role : roles) {
-            createDefaultRole(RoleType.valueOf(role), memberProfile);
+            createAndAssignRole(RoleType.valueOf(role), memberProfile);
         }
         String provider = "Test";
         OpenIdTokenResponse openIdTokenResponse = new OpenIdTokenResponse();

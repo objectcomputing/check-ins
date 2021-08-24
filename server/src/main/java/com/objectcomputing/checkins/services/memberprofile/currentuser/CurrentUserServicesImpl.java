@@ -71,7 +71,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
         MemberProfile createdMember = memberProfileRepo.save(new MemberProfile(firstName, null, lastName, null, "", null,
                 "", workEmail, "", null, "", null, null, null, null, null));
 
-        roleServices.save(new Role(RoleType.MEMBER, "role description"));
+        roleServices.save(new Role(RoleType.MEMBER.name(), "role description"));
 
         return createdMember;
     }

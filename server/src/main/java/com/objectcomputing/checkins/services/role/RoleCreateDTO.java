@@ -8,34 +8,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 
 @Introspected
 public class RoleCreateDTO {
     @NotNull
     @Column(name = "role")
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "The name of the role", required = true,
-            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
-    private RoleType role;
+    @Schema(description = "The name of the role", required = true)
+    private String role;
 
     @Nullable
     @Schema(description = "description of the role", nullable = true)
     private String description;
 
-    @NotNull
-    @Column(name = "memberid")
-    @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of the member this entry is associated with", required = true)
-    private UUID memberid;
-
-    public RoleType getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(RoleType role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
@@ -45,13 +36,5 @@ public class RoleCreateDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public UUID getMemberid() {
-        return memberid;
-    }
-
-    public void setMemberid(UUID memberid) {
-        this.memberid = memberid;
     }
 }

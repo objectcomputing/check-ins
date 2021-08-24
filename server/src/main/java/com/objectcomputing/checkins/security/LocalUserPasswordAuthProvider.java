@@ -6,9 +6,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import com.objectcomputing.checkins.services.permissions.Permission;
 import com.objectcomputing.checkins.services.permissions.PermissionServices;
 import com.objectcomputing.checkins.services.role.*;
-import com.objectcomputing.checkins.services.role.member_roles.MemberRole;
-import com.objectcomputing.checkins.services.role.member_roles.MemberRoleId;
-import com.objectcomputing.checkins.services.role.member_roles.MemberRoleService;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
@@ -18,9 +16,7 @@ import org.reactivestreams.Publisher;
 
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,10 +28,10 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
     private final UsersStore usersStore;
     private final PermissionServices permissionServices;
     private final RoleServices roleServices;
-    private final MemberRoleService memberRoleServices;
+    private final MemberRoleServices memberRoleServices;
 
     public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices,
-                                         UsersStore usersStore, PermissionServices permissionServices, RoleServices roleServices, MemberRoleService memberRoleServices) {
+                                         UsersStore usersStore, PermissionServices permissionServices, RoleServices roleServices, MemberRoleServices memberRoleServices) {
         this.currentUserServices = currentUserServices;
         this.usersStore = usersStore;
         this.permissionServices = permissionServices;
@@ -57,17 +53,16 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
             }
 
           // remove a user from the roles they currently have (as assigned in test data)
-            memberRoleServices.removeMemberFromRoles(memberProfile.getId().toString());
+            memberRoleServices.removeMemberFromRoles(memberProfile.getId());
 
             // add the roles based on role override / configuration properties
             for (String curRole : roles) {
-                RoleType roleType = RoleType.valueOf(curRole);
                 // if no role is found then create and save it
-                Role currentRole = roleServices.findByRole(roleType).orElse(null);
+                Role currentRole = roleServices.findByRole(curRole).orElse(null);
                 if (currentRole == null){
-                    currentRole = roleServices.save(new Role(null, roleType, "description"));
+                    currentRole = roleServices.save(new Role(null, curRole, "description"));
                 }
-                memberRoleServices.save(memberProfile.getId(), currentRole.getId());
+                memberRoleServices.saveByIds(memberProfile.getId(), currentRole.getId());
             }
         }
 
@@ -75,7 +70,7 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         List<String> permissionsAsString = permissions.stream().map(o -> o.getPermission()).collect(Collectors.toList());
 
         Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
-        List<String> rolesAsString = userRoles.stream().map(o -> o.getRole().toString()).collect(Collectors.toList());
+        List<String> rolesAsString = userRoles.stream().map(o -> o.getRole()).collect(Collectors.toList());
 
         return Flowable.just(new ExtendedUserDetails(email, rolesAsString, permissionsAsString));
     }

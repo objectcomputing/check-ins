@@ -1,11 +1,10 @@
 package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -14,19 +13,23 @@ import java.util.UUID;
 public class RoleServicesImpl implements RoleServices {
 
     private final RoleRepository roleRepo;
+    private final MemberRoleRepository memberRoleRepo;
 
-    public RoleServicesImpl(RoleRepository roleRepo) {
+    public RoleServicesImpl(RoleRepository roleRepo, MemberRoleRepository memberRoleRepo) {
         this.roleRepo = roleRepo;
+        this.memberRoleRepo = memberRoleRepo;
     }
 
     public Role save(@NotNull Role role) {
 
-        final RoleType roleType = role.getRole();
+        final String roleType = role.getRole();
 
         if (roleType == null) {
             throw new BadArgException(String.format("Invalid role %s", role));
         } else if (role.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for role", role.getId()));
+        } else if (roleRepo.findByRole(roleType).isPresent()){
+            throw new BadArgException(String.format("Role with name %s already exists in database", role.getRole()));
         }
 
         return roleRepo.save(role);
@@ -38,7 +41,7 @@ public class RoleServicesImpl implements RoleServices {
 
     public Role update(@NotNull Role role) {
         final UUID id = role.getId();
-        final RoleType roleType = role.getRole();
+        final String roleType = role.getRole();
 
         if (roleType == null) {
             throw new BadArgException(String.format("Invalid role %s", role));
@@ -55,10 +58,11 @@ public class RoleServicesImpl implements RoleServices {
     }
 
     public void delete(@NotNull UUID id) {
+        memberRoleRepo.removeAllByRoleId(id);
         roleRepo.deleteById(id);
     }
 
-    public Optional<Role> findByRole(RoleType roleType) {
+    public Optional<Role> findByRole(String roleType) {
         return roleRepo.findByRole(roleType);
     }
 }

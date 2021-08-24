@@ -15,7 +15,7 @@ public interface RoleServices {
     void delete(UUID id);
 
 
-    Optional<Role> findByRole(RoleType role);
+    Optional<Role> findByRole(String role);
 
     Set<Role> findUserRoles(UUID memberId);
 

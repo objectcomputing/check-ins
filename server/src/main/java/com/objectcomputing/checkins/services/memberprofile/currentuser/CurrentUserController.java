@@ -63,7 +63,7 @@ public class CurrentUserController {
         List<Permission> permissions = permissionServices.findUserPermissions(user.getId());
 
         Set<Role> roles = roleServices.findUserRoles(user.getId());
-        List<String> rolesAsString = roles.stream().map(o -> o.getRole().toString()).collect(Collectors.toList());
+        List<String> rolesAsString = roles.stream().map(o -> o.getRole()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()

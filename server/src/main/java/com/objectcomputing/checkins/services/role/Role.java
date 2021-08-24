@@ -7,15 +7,11 @@ import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.objectcomputing.checkins.services.role.RoleType.Constants.*;
 
 @Entity
 @Table(name = "role")
@@ -29,10 +25,8 @@ public class Role {
     private UUID id;
 
     @NotNull
-    @Schema(description = "The name of the role", required = true,
-            allowableValues = {ADMIN_ROLE, PDL_ROLE, MEMBER_ROLE})
-    @TypeDef(type = DataType.OBJECT)
-    private RoleType role;
+    @Schema(description = "The name of the role", required = true)
+    private String role;
 
     @Nullable
     @Column(name = "description")
@@ -43,12 +37,12 @@ public class Role {
     @Schema(description = "description of the role")
     private String description;
 
-    public Role(RoleType role, @Nullable String description) {
+    public Role(String role, @Nullable String description) {
         this(null, role, description);
     }
 
 
-    public Role(UUID id, RoleType role, @Nullable String description) {
+    public Role(UUID id, String role, @Nullable String description) {
         this.id = id;
         this.role = role;
         this.description = description;
@@ -62,11 +56,11 @@ public class Role {
         this.id = id;
     }
 
-    public RoleType getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(RoleType role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
