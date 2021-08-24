@@ -47,7 +47,6 @@ public class RoleController {
      * @param role, {@link RoleCreateDTO}
      * @return {@link HttpResponse <Role>}
      */
-
     @Post()
     @Secured(RoleType.Constants.ADMIN_ROLE)
     public Single<HttpResponse<Role>> create(@Body @Valid RoleCreateDTO role,

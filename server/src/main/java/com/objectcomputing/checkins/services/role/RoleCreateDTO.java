@@ -19,7 +19,7 @@ public class RoleCreateDTO {
     private String role;
 
     @Nullable
-    @Schema(description = "description of the role", nullable = true)
+    @Schema(description = "The description of the role", nullable = true)
     private String description;
 
     public String getRole() {

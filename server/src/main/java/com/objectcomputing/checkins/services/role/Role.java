@@ -21,7 +21,7 @@ public class Role {
     @Column(name = "id")
     @AutoPopulated
     @TypeDef(type = DataType.STRING)
-    @Schema(description = "id of this member to role entry", required = true)
+    @Schema(description = "id of the role", required = true)
     private UUID id;
 
     @NotNull
@@ -34,7 +34,7 @@ public class Role {
             read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
             write = "pgp_sym_encrypt(?,'${aes.key}') "
     )
-    @Schema(description = "description of the role")
+    @Schema(description = "The description of the role")
     private String description;
 
     public Role(String role, @Nullable String description) {
