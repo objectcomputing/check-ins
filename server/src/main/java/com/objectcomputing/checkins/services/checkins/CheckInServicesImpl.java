@@ -52,9 +52,9 @@ public class CheckInServicesImpl implements CheckInServices {
         });
 
         boolean isAdmin = false;
-        if (roleServices.findByRole(RoleType.ADMIN).isPresent()){
+        if (roleServices.findByRole(RoleType.ADMIN.name()).isPresent()){
             isAdmin = roleServices.findUserRoles(memberTryingToGainAccess.getId())
-                    .contains(roleServices.findByRole(RoleType.ADMIN).get());
+                    .contains(roleServices.findByRole(RoleType.ADMIN.name()).get());
             LOG.debug("Member is Admin: {}", isAdmin);
         }
 
