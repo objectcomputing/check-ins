@@ -5,46 +5,47 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
 import io.micronaut.data.annotation.MappedEntity;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Table;
+import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.model.DataType;
+
+import javax.persistence.*;
 import java.util.UUID;
 
 @MappedEntity
 @Table(name = "member_roles")
 public class MemberRole {
 
-//    @JsonIgnore
-
     @EmbeddedId
-    private MemberRoleId memberRoleId;
+    private final MemberRoleId memberRoleId;
 
     @Column(name = "memberid")
-    private UUID memberProfileId;
+    @TypeDef(type = DataType.STRING)
+    private final UUID memberId;
 
     @Column(name = "roleid")
-    private UUID roleId;
+    @TypeDef(type = DataType.STRING)
+    private final UUID roleId;
 
-    public MemberRole(MemberRoleId memberRoleId, UUID memberProfileId, UUID roleId) {
+    public MemberRole(MemberRoleId memberRoleId, UUID memberId, UUID roleId) {
         this.memberRoleId = memberRoleId;
-        this.memberProfileId = memberProfileId;
+        this.memberId = memberId;
         this.roleId = roleId;
     }
 
     public MemberRole(UUID memberProfileId, UUID roleId) {
-        this.memberProfileId = memberProfileId;
-        this.roleId = roleId;
+        this(null, memberProfileId, roleId);
     }
 
     public MemberRoleId getMemberRoleId() {
         return memberRoleId;
     }
 
-    public UUID getMemberProfileId() {
-        return memberProfileId;
+    public UUID getMemberId() {
+        return memberId;
     }
 
     public UUID getRoleId() {
         return roleId;
     }
+
 }
