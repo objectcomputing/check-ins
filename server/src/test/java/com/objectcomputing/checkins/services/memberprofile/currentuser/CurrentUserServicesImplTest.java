@@ -55,7 +55,7 @@ public class CurrentUserServicesImplTest {
         MemberProfile expected = mkMemberProfile();
         expected.setId(UUID.randomUUID());
         expected.setWorkEmail("test.email");
-        Role mockRole = new Role(RoleType.MEMBER, "role description");
+        Role mockRole = new Role(RoleType.MEMBER.name(), "role description");
 
         when(memberProfileRepo.findByWorkEmail(expected.getWorkEmail())).thenReturn(java.util.Optional.empty());
         when(memberProfileRepo.save(any())).thenReturn(expected);

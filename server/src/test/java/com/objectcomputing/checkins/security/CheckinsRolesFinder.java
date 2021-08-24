@@ -36,7 +36,7 @@ public class CheckinsRolesFinder implements RolesFinder {
                 .ifPresent((memberProfile) -> {
                     roles.addAll(roleRepository.findUserRoles(memberProfile.getId())
                             .stream()
-                            .map(role -> role.getRole().toString())
+                            .map(role -> role.getRole())
                             .collect(Collectors.toList()));
                 });
         return roles;

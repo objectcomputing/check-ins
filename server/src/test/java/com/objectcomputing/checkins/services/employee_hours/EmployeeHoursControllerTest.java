@@ -45,7 +45,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         createADefaultMemberProfileForPdl(memberProfile);
 
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         final HttpResponse<EmployeeHoursResponseDTO> response = client.toBlocking().exchange(request, EmployeeHoursResponseDTO.class);
@@ -66,7 +66,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
                 .build();
 
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         final HttpRequest<MultipartBody> request = HttpRequest.POST("/upload", multipartBody).basicAuth(user.getWorkEmail(),ADMIN_ROLE).contentType(MediaType.MULTIPART_FORM_DATA);
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
@@ -95,7 +95,7 @@ public class EmployeeHoursControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfile=createADefaultMemberProfile();
         createADefaultMemberProfileForPdl(memberProfile);
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         createEmployeeHours();
         final HttpRequest<Object> request = HttpRequest.GET("/").basicAuth(user.getWorkEmail(),ADMIN_ROLE);

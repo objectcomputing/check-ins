@@ -57,7 +57,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         // Create an admin to request the changes
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         // create member and a DTO for the request to add them to the guild
         MemberProfile newMember = createADefaultMemberProfileWithBirthDay();
@@ -93,7 +93,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
 
         // Create an admin to request the changes
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         // create a guildUpdateDTO from existing guild
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
@@ -334,7 +334,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         GuildMember guildMember = createDefaultGuildMember(guildEntity, memberProfile);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
         GuildUpdateDTO.GuildMemberUpdateDTO newMember = updateDefaultGuildMemberDto(guildMember,true);
@@ -358,7 +358,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         guildEntity.setName(newName);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         GuildUpdateDTO requestBody = updateFromEntity(guildEntity);
 
@@ -416,7 +416,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         requestBody.setGuildMembers(new ArrayList<>());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final MutableHttpRequest<GuildUpdateDTO> request = HttpRequest.PUT("", requestBody)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -458,7 +458,7 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
         Guild guildEntity = createDefaultGuild();
         // create members
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
         //add members to guild
         createDefaultGuildMember(guildEntity, memberProfileOfAdmin);
 

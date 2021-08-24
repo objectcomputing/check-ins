@@ -35,7 +35,7 @@ public class BirthDayControllerTest extends TestContainersSuite implements Membe
     public void testGETFindByValueNameOfTheMonth() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         MemberProfile memberProfile = createADefaultMemberProfileWithBirthDay();
         final HttpRequest<Object> request = HttpRequest.

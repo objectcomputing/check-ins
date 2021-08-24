@@ -313,7 +313,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testDeleteAnActionItemByADMINIdWhenCompleted() {
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
-        createDefaultAdminRole(memberProfileOfUser);
+        createAndAssignAdminRole(memberProfileOfUser);
 
         CheckIn checkIn = createACompletedCheckIn(memberProfileOfPDL, memberProfileOfUser);
 
@@ -479,7 +479,7 @@ class ActionItemControllerTest extends TestContainersSuite implements MemberProf
     void testFindAllActionItemsByAdmin() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForAdmin = createADefaultMemberProfileForPdl(memberProfile);
-        createDefaultAdminRole(memberProfileForAdmin);
+        createAndAssignAdminRole(memberProfileForAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForAdmin);
 

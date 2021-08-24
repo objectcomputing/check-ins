@@ -75,7 +75,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     @Test
     void testPostLoginAlreadyExistingUserNoOverrides() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
@@ -88,8 +88,8 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     @Test
     void testPostLoginAlreadyExistingUserWithOverrides() {
         MemberProfile memberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.ADMIN, memberProfile);
-        createDefaultRole(RoleType.PDL, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.PDL, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", RoleType.Constants.MEMBER_ROLE))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);
@@ -103,7 +103,7 @@ public class LocalLoginControllerTest extends TestContainersSuite implements Mem
     void testPostLoginDoesNotThrowNullPointerIfUserNameIsNull() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         memberProfile.setFirstName(null);
-        createDefaultRole(RoleType.ADMIN, memberProfile);
+        createAndAssignRole(RoleType.ADMIN, memberProfile);
         HttpRequest<Map<String, String>> request = HttpRequest.POST("", Map.of("email", memberProfile.getWorkEmail(), "role", ""))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         String response = client.toBlocking().retrieve(request);

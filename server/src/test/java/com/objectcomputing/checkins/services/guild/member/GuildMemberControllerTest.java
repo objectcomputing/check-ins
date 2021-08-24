@@ -40,7 +40,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
@@ -302,7 +302,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMemberUpdateDTO guildMemberUpdateDTO = new GuildMemberUpdateDTO(guildMember.getId(), guildMember.getGuildId(), guildMember.getMemberId(), true);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final MutableHttpRequest<GuildMemberUpdateDTO> request = HttpRequest.PUT("", guildMemberUpdateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
@@ -477,7 +477,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -565,7 +565,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
         final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
@@ -607,7 +607,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);

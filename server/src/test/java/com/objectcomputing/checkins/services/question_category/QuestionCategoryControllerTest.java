@@ -113,7 +113,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     @Test
     public void testPUTSuccessfulUpdate() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
 
@@ -180,7 +180,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     public void testPOSTCreateAQuestionCategory() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
         newQuestionCategory.setName("Inquisitive");
@@ -213,7 +213,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     @Test
     public void testPOSTCreateAQuestionCategoryAlreadyExists() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();
@@ -247,7 +247,7 @@ public class QuestionCategoryControllerTest extends TestContainersSuite implemen
     @Test
     public void testDELETEQuestionCategory() {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         QuestionCategory questionCategory = createADefaultQuestionCategory();
         QuestionCategoryCreateDTO newQuestionCategory = new QuestionCategoryCreateDTO();

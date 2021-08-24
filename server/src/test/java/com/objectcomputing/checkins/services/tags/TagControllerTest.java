@@ -36,7 +36,7 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     void testCreateATag() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         String generatedString = RandomStringUtils.randomAlphabetic(10);
         TagCreateDTO tagCreateDTO = new TagCreateDTO();
@@ -55,7 +55,7 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     void deleteTagAsAdmin() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Tag tag = createADefaultTag();
         String name = "";
@@ -129,7 +129,7 @@ public class TagControllerTest extends TestContainersSuite implements TagFixture
     @Test
     public void testPUTUpdateTag() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         String name = null;
         Tag tag = createADefaultTag();
