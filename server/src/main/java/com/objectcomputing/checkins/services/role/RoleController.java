@@ -96,26 +96,8 @@ public class RoleController {
         }).observeOn(Schedulers.from(eventLoopGroup)).map(userRole -> {
                     return (HttpResponse<Role>) HttpResponse.ok(userRole);
                 }).subscribeOn(Schedulers.from(ioExecutorService));
-
     }
 
-    /**
-     * Find member roles that match all filled in parameters, return all results when given no params
-     *
-     * @param role     {@link RoleType} of role
-     * @return {@link List < Role > list of roles}
-     */
-    @Get("/{role}")
-    public Single<HttpResponse<Role>> findRole(RoleType role) {
-        return Single.fromCallable(() -> roleServices.findByRole(role)
-                        .orElseThrow(
-                                () -> new NotFoundException("Unable able to find Role with name of: " + role.name())
-                        )
-                )
-                .observeOn(Schedulers.from(eventLoopGroup))
-                .map(userRole -> (HttpResponse<Role>) HttpResponse.ok(userRole))
-                .subscribeOn(Schedulers.from(ioExecutorService));
-    }
 
     /**
      * Delete role
