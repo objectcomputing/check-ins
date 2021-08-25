@@ -90,6 +90,18 @@ flyway:
       placeholders:
         aeskey: ${ AES_KEY }
 ---
+
+mail-jet:
+  from_address: ${ FROM_ADDRESS }
+  from_name: ${ FROM_NAME }
+
+---
+
+ui-path:
+  web_ui_url: ${ WEB_UI_URL }
+
+---
+
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
   type: ${ TYPE }

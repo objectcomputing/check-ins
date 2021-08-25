@@ -350,7 +350,7 @@ const FeedbackRequestPage = () => {
       </div>
       <div className="current-step-content">
         {activeStep === 1 && <FeedbackTemplateSelector changeQuery={(key, value) => handleQueryChange(key, value)} query={query.template} />}
-        {activeStep === 2 && <FeedbackRecipientSelector changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
+        {activeStep === 2 && <FeedbackRecipientSelector forQuery={query.for} changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
         {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
       </div>
     </div>
