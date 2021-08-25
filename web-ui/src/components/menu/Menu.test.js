@@ -1,9 +1,10 @@
-import React from "react"
-import renderer from 'react-test-renderer';
-import Menu from "./Menu"
+import React from "react";
+import renderer from "react-test-renderer";
+import Menu from "./Menu";
 import { MemoryRouter } from "react-router-dom";
 import { AppContextProvider } from "../../context/AppContext";
-
+import EnzymeToJson from "enzyme-to-json";
+import { mount } from "enzyme";
 
 const initialState = {
   state: {
@@ -21,17 +22,17 @@ const initialState = {
   },
 };
 
-
-describe('<Menu />', () => {
-  it('renders correctly', () => {
-    const component = renderer.create(
-      <AppContextProvider value={initialState}>
-        <MemoryRouter initialEntries={['/guilds']}>
-          <Menu />
-        </MemoryRouter>
-      </AppContextProvider>
-    )
-    expect(component.toJSON()).toMatchSnapshot()
-  })
-})
-
+describe("<Menu />", () => {
+  it("renders correctly", () => {
+    const component = mount(
+      <>
+        <AppContextProvider value={initialState}>
+          <MemoryRouter initialEntries={["/guilds"]}>
+            <Menu />
+          </MemoryRouter>
+        </AppContextProvider>
+      </>
+    );
+    expect(EnzymeToJson(component)).toMatchSnapshot();
+  });
+});

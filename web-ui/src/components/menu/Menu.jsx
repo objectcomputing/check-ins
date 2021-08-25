@@ -133,16 +133,21 @@ function Menu() {
     formData.append("file", file);
     let res = await postEmployeeHours(csrf, formData);
     if (res?.error) {
-      let problem = res?.error?.response?.data?.message;
-      problem = res?.error?.response?.data?.message.substring(
-        problem.indexOf("Detail:")
-      );
+      let error = res?.error?.response?.data?.message;
+      //parse employee id from error
+      let tmpError = error.split("Detail: Key (employeeid)=(");
+      tmpError = tmpError[1].split(" ")[0].slice(0, -1);
+      let newError;
+      if (tmpError) {
+        newError = `Employee id ${tmpError} doesn't exist in system, please fix the .csv file and upload again`;
+      } else {
+        newError = "Hmm....we couldn't upload the file. Try again.";
+      }
       dispatch({
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast:
-            "Hmm...it seems like something is wrong with the file." + problem,
+          toast: newError,
         },
       });
     }
