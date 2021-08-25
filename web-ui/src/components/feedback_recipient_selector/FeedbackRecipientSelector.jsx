@@ -111,7 +111,6 @@ const FeedbackRecipientSelector = ({changeQuery, fromQuery, forQuery}) => {
 
     if (csrf && (searchText === "" || searchText.length === 0)) {
       getSuggestions().then((res) => {
-      console.log(" get suggestions res " + JSON.stringify(res))
         bindFromURL();
         if (res !== undefined && res !== null) {
           let filteredProfileCopy = profiles.filter(member => {
