@@ -85,7 +85,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         String newContent = "You have received a feedback request. Please go to your unique link at " + webURL + storedRequest.getId() + " to complete this request.";
-//        String newContent =  notificationContent + "<a href=\""+submitURL+storedRequest.getId()+"\">Check-Ins application</a>.";
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
         return storedRequest;
     }
