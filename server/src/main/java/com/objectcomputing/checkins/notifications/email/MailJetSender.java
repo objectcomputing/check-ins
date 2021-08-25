@@ -48,9 +48,6 @@ public class MailJetSender implements EmailSender{
     @Override
     public void sendEmail(String subject, String content, String... recipients) {
 
-        LOG.debug("address " + FROM_NAME);
-        LOG.debug("name + " + FROM_NAME);
-
         MailjetRequest request;
         MailjetResponse response;
         try {
