@@ -27,7 +27,7 @@ public class CurrentUserServicesImpl implements CurrentUserServices {
                                    SecurityService securityService) {
         this.memberProfileRepo = memberProfileRepository;
         this.roleServices = roleServices;
-        this.securityService = securityService;;
+        this.securityService = securityService;
     }
 
     @Override
