@@ -1,6 +1,7 @@
 package com.objectcomputing.checkins.services.guild.member;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.objectcomputing.checkins.notifications.email.EmailSender;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.GuildFixture;
 import com.objectcomputing.checkins.services.fixture.GuildMemberFixture;
@@ -16,7 +17,10 @@ import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -25,12 +29,89 @@ import java.util.stream.Collectors;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class GuildMemberControllerTest extends TestContainersSuite implements GuildFixture, MemberProfileFixture, RoleFixture, GuildMemberFixture {
 
     @Inject
     @Client("/services/guilds/members")
     HttpClient client;
+
+    @Mock
+    private EmailSender emailSender = mock(EmailSender.class);
+
+    @Inject
+    private GuildMemberServicesImpl guildMemberServices;
+
+    @BeforeEach
+    void resetMocks() {
+        Mockito.reset(emailSender);
+        guildMemberServices.setEmailSender(emailSender);
+    }
+
+    @Test
+    void testEmailSentWhenMemberRemovesThemselves() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+
+        GuildMember guildMember = createDefaultGuildMember(guild, memberProfile);
+
+        createLeadGuildMember(guild, createAnUnrelatedUser());
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        client.toBlocking().exchange(request, GuildMember.class);
+
+        verify(emailSender).sendEmail(
+                "Membership Changes have been made to the " +guild.getName()+" guild",
+                "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
+                "nobody@objectcomputing.com"
+        );
+    }
+
+    @Test
+    void testEmailSentWhenMemberAddsThemselves() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
+
+        createLeadGuildMember(guild, createAnUnrelatedUser());
+
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
+                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        client.toBlocking().exchange(request, GuildMember.class);
+
+        verify(emailSender).sendEmail(
+                "Membership changes have been made to the " +guild.getName()+" guild",
+                "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
+                "nobody@objectcomputing.com"
+        );
+    }
+
+
+    @Test
+    void noEmailSentToGuildLeadsThatRemoveThemselves() {
+        Guild guild = createDefaultGuild();
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember leavingGuildMember = createLeadGuildMember(guild, memberProfile);
+
+        createLeadGuildMember(guild, createAnUnrelatedUser());
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", leavingGuildMember.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        client.toBlocking().exchange(request, GuildMember.class);
+        // only sends email to the guild lead that is still in the guild
+        verify(emailSender).sendEmail(
+                "Membership Changes have been made to the " +guild.getName()+" guild",
+                "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
+                "nobody@objectcomputing.com"
+        );
+    }
 
     @Test
     void testCreateAGuildMemberByAdmin() {
