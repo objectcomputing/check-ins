@@ -27,7 +27,7 @@ describe("<Menu />", () => {
     const component = mount(
       <>
         <AppContextProvider value={initialState}>
-          <MemoryRouter initialEntries={["/guilds"]}>
+          <MemoryRouter initialEntries={["/guilds"]} keyLength={0}>
             <Menu />
           </MemoryRouter>
         </AppContextProvider>
