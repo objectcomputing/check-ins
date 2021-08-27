@@ -55,8 +55,11 @@ const CheckinsPage = () => {
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
   const selectedProfile = selectProfile(state, memberId);
-  const memberCheckins = selectCheckinsForMember(state, currentUserId)
-  const hasOpenCheckins = memberCheckins.some((checkin)=>!checkin.completed)
+  const memberCheckins = selectCheckinsForMember(
+    state,
+    selectedProfile ? selectedProfile.id : currentUserId
+  );
+  const hasOpenCheckins = memberCheckins.some((checkin) => !checkin.completed);
 
   useEffect(() => {
     if (selectedProfile) {
