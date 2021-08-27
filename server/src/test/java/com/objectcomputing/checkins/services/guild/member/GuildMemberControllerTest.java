@@ -93,6 +93,29 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
 
 
     @Test
+    void testEmailSentToMultipleRecipientsWhenMemberAddsThemselves() {
+        Guild guild = createDefaultGuild();
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMemberCreateDTO guildMemberCreateDTO = new GuildMemberCreateDTO(guild.getId(), memberProfile.getId(), false);
+
+        createLeadGuildMember(guild, createAnUnrelatedUser());
+        createLeadGuildMember(guild, createANewHireProfile());
+
+        final HttpRequest<GuildMemberCreateDTO> request = HttpRequest.POST("", guildMemberCreateDTO)
+                .basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        client.toBlocking().exchange(request, GuildMember.class);
+
+        verify(emailSender).sendEmail(
+                "Membership changes have been made to the " +guild.getName()+" guild",
+                "<h3>Bill Charles has joined the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
+                "nobody@objectcomputing.com",
+                "billm@objectcomputing.com"
+        );
+    }
+
+
+    @Test
     void noEmailSentToGuildLeadsThatRemoveThemselves() {
         Guild guild = createDefaultGuild();
 
@@ -111,6 +134,23 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
                 "<h3>Bill Charles has left the Ninja guild.</h3><a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.",
                 "nobody@objectcomputing.com"
         );
+    }
+
+    @Test
+    void guildLeadCantLeaveGuildIfNoOtherGuildLeadPresent() {
+        Guild guild = createDefaultGuild();
+
+        MemberProfile memberProfile = createADefaultMemberProfile();
+        GuildMember leavingGuildMember = createLeadGuildMember(guild, memberProfile);
+
+        final HttpRequest<Object> request = HttpRequest.
+                DELETE(String.format("/%s", leavingGuildMember.getId())).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
+
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request));
+
+        assertEquals(responseException.getMessage(), "At least one guild lead must be present in the guild at all times");
+        assertEquals(responseException.getStatus(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -563,7 +603,7 @@ class GuildMemberControllerTest extends TestContainersSuite implements GuildFixt
         final HttpRequest<Object> request = HttpRequest.
                 DELETE(String.format("/%s", guildMember.getId())).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
-        final HttpResponse<GuildMember> response = client.toBlocking().exchange(request, GuildMember.class);
+        final HttpResponse<?> response = client.toBlocking().exchange(request);
 
         assertEquals(HttpStatus.OK, response.getStatus());
     }
