@@ -11,6 +11,7 @@ import {
   selectCsrfToken,
   selectCheckin,
   selectProfile,
+  selectCheckinsForMember,
 } from "../context/selectors";
 import { getCheckins, createNewCheckin } from "../context/thunks";
 import { UPDATE_CHECKIN, UPDATE_TOAST } from "../context/actions";
@@ -54,6 +55,8 @@ const CheckinsPage = () => {
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
   const selectedProfile = selectProfile(state, memberId);
+  const memberCheckins = selectCheckinsForMember(state, currentUserId)
+  const hasOpenCheckins = memberCheckins.some((checkin)=>!checkin.completed)
 
   useEffect(() => {
     if (selectedProfile) {
@@ -126,6 +129,7 @@ const CheckinsPage = () => {
             />
             {(isAdmin || isPdl || currentUserId === memberId) && (
               <Button
+                disabled={hasOpenCheckins}
                 className={classes.addButton}
                 startIcon={<CheckCircleIcon />}
                 onClick={handleCreate}
