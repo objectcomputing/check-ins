@@ -24,7 +24,7 @@ import Note from "../components/notes/Note";
 import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Grid, Modal } from "@material-ui/core";
+import { Button, Grid, Modal, Tooltip } from "@material-ui/core";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 
 import "./CheckinsPage.css";
@@ -60,6 +60,7 @@ const CheckinsPage = () => {
     selectedProfile ? selectedProfile.id : currentUserId
   );
   const hasOpenCheckins = memberCheckins.some((checkin) => !checkin.completed);
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(hasOpenCheckins);
 
   useEffect(() => {
     if (selectedProfile) {
@@ -130,16 +131,29 @@ const CheckinsPage = () => {
               memberId={memberId}
               checkinId={checkinId}
             />
-            {(isAdmin || isPdl || currentUserId === memberId) && (
-              <Button
-                disabled={hasOpenCheckins}
-                className={classes.addButton}
-                startIcon={<CheckCircleIcon />}
-                onClick={handleCreate}
-              >
-                Create Check-In
-              </Button>
-            )}
+            <Tooltip
+              open={tooltipIsOpen && hasOpenCheckins}
+              onOpen={() => setTooltipIsOpen(true)}
+              onClose={() => setTooltipIsOpen(false)}
+              enterTouchDelay={0}
+              placement="top-start"
+              title={
+                "This is disabled because there is already an open Check-In"
+              }
+            >
+              <div className="create-checkin-tooltip-wrapper">
+                {(isAdmin || isPdl || currentUserId === memberId) && (
+                  <Button
+                    disabled={hasOpenCheckins}
+                    className={classes.addButton}
+                    startIcon={<CheckCircleIcon />}
+                    onClick={handleCreate}
+                  >
+                    Create Check-In
+                  </Button>
+                )}
+              </div>
+            </Tooltip>
           </div>
           {currentCheckin && currentCheckin.id && (
             <React.Fragment>
