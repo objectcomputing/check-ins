@@ -54,6 +54,15 @@ const CheckinsPage = () => {
   const currentUserId = memberProfile?.id;
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
+//     const getCheckinDate = () => {
+//       if (mostRecent) {
+//         const [year, month, day, hour, minute] = mostRecent.checkInDate;
+//         return new Date(year, month - 1, day, hour, minute, 0).getTime();
+//       }
+//     }
+//   const isOpenInPast = !mostRecent?.completed && getCheckinDate() < Date.now();
+//   console.log("output dates",  getCheckinDate(), Date.now())
+
   const selectedProfile = selectProfile(state, memberId);
   const memberCheckins = selectCheckinsForMember(
     state,
@@ -115,6 +124,16 @@ const CheckinsPage = () => {
     const newId = await createNewCheckin(selectedProfile, dispatch, csrf);
     if (newId) history.push(`/checkins/${memberId}/${newId}`);
   };
+
+//     if(isOpenInPast){
+//       window.snackDispatch({
+//               type: UPDATE_TOAST,
+//               payload: {
+//                 severity: "success",
+//                 toast: `Just so you know, this open Check-In is in the past`,
+//               },
+//             });
+//            }
 
   return (
     <div style={{ padding: 12 }}>

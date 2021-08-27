@@ -173,7 +173,7 @@ export const selectMostRecentCheckin = createSelector(
       return checkins
         .filter((currentCheckin) => currentCheckin.teamMemberId === memberid)
         .reduce((mostRecent, checkin) => {
-          return mostRecent === undefined ||
+          return mostRecent === undefined || !checkin.completed ? checkin :
             toDate(checkin.checkInDate) > toDate(mostRecent.checkInDate)
             ? checkin
             : mostRecent;
