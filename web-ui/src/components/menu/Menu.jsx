@@ -135,8 +135,10 @@ function Menu() {
     if (res?.error) {
       let error = res?.error?.response?.data?.message;
       //parse employee id from error
-      let tmpError = error.split("Detail: Key (employeeid)=(");
-      tmpError = tmpError[1].split(" ")[0].slice(0, -1);
+      let tmpError = error.includes("Detail: Key (employeeid)=(")
+        ? error.split("Detail: Key (employeeid)=(")
+        : null;
+      tmpError = tmpError && tmpError[1].split(" ")[0].slice(0, -1);
       let newError;
       if (tmpError) {
         newError = `Employee id ${tmpError} doesn't exist in system, please fix the .csv file and upload again`;
