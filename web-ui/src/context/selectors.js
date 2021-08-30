@@ -170,14 +170,20 @@ export const selectMostRecentCheckin = createSelector(
   (state, memberid) => memberid,
   (checkins, memberid) => {
     if (checkins && checkins.length) {
-      return checkins
-        .filter((currentCheckin) => currentCheckin.teamMemberId === memberid)
-        .reduce((mostRecent, checkin) => {
-          return mostRecent === undefined || !checkin.completed ? checkin :
-            toDate(checkin.checkInDate) > toDate(mostRecent.checkInDate)
-            ? checkin
-            : mostRecent;
-        }, undefined);
+      console.log(checkins.sort((a, b) => a.checkInDate - b.checkInDate));
+      return (
+        checkins
+          .filter((currentCheckin) => currentCheckin.teamMemberId === memberid)
+          // need to fix sort
+          // .sort((a, b) => a.checkInDate - b.checkInDate)
+          .reduce((mostRecent, checkin) => {
+            return mostRecent === undefined || !checkin.completed
+              ? checkin
+              : toDate(mostRecent.checkInDate) > toDate(mostRecent.checkInDate)
+              ? checkin
+              : mostRecent;
+          }, undefined)
+      );
     }
     return undefined;
   }
