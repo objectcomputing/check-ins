@@ -54,14 +54,15 @@ const CheckinsPage = () => {
   const currentUserId = memberProfile?.id;
   const mostRecent = selectMostRecentCheckin(state, memberId);
 
-//     const getCheckinDate = () => {
-//       if (mostRecent) {
-//         const [year, month, day, hour, minute] = mostRecent.checkInDate;
-//         return new Date(year, month - 1, day, hour, minute, 0).getTime();
-//       }
-//     }
-//   const isOpenInPast = !mostRecent?.completed && getCheckinDate() < Date.now();
-//   console.log("output dates",  getCheckinDate(), Date.now())
+  const getCheckinDate = () => {
+    if (mostRecent) {
+      const [year, month, day, hour, minute] = mostRecent.checkInDate;
+      return new Date(year, month - 1, day, hour, minute, 0).getTime();
+    }
+  }
+
+  const isOpenInPast = !mostRecent?.completed && new Date(getCheckinDate()).toLocaleDateString() < new Date(Date.now()).toLocaleDateString();
+  console.log("output dates",isOpenInPast, mostRecent);
 
   const selectedProfile = selectProfile(state, memberId);
   const memberCheckins = selectCheckinsForMember(
@@ -84,6 +85,18 @@ const CheckinsPage = () => {
       history.push(`/checkins/${memberId}/${mostRecent.id}`);
     }
   }, [currentUserId, memberId, checkinId, mostRecent, history]);
+
+    useEffect(() => {
+      if (isOpenInPast === true) {
+        window.snackDispatch({
+                  type: UPDATE_TOAST,
+                  payload: {
+                    severity: "success",
+                    toast: `Just so you know, this open Check-In is in the past`,
+                  },
+                });
+      }
+    }, [isOpenInPast]);
 
   const currentCheckin = selectCheckin(state, checkinId);
   const isAdmin = selectIsAdmin(state);
@@ -124,16 +137,6 @@ const CheckinsPage = () => {
     const newId = await createNewCheckin(selectedProfile, dispatch, csrf);
     if (newId) history.push(`/checkins/${memberId}/${newId}`);
   };
-
-//     if(isOpenInPast){
-//       window.snackDispatch({
-//               type: UPDATE_TOAST,
-//               payload: {
-//                 severity: "success",
-//                 toast: `Just so you know, this open Check-In is in the past`,
-//               },
-//             });
-//            }
 
   return (
     <div style={{ padding: 12 }}>
