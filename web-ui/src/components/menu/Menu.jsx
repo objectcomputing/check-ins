@@ -159,9 +159,10 @@ function Menu() {
         type: UPDATE_TOAST,
         payload: {
           severity: "success",
-          toast: `${data?.name} was successfully uploaded`,
+          toast: `File was successfully uploaded`,
         },
       });
+      closeHoursUpload();
     }
   };
 
