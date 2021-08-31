@@ -1,13 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+
+import { postEmployeeHours } from "../../api/hours";
+import { selectCsrfToken, selectIsAdmin } from "../../context/selectors";
+import { UPDATE_TOAST } from "../../context/actions";
+
 import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
+import AvatarMenu from "@material-ui/core/Menu";
 
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   AppBar,
   Avatar,
+  Button,
   CssBaseline,
   Collapse,
   Drawer,
@@ -16,6 +23,8 @@ import {
   List,
   ListItem,
   ListItemText,
+  MenuItem,
+  Modal,
   Toolbar,
 } from "@material-ui/core";
 
@@ -96,17 +105,67 @@ const isCollapsibleListOpen = (linksArr, loc) => {
 };
 
 function Menu() {
-  const { state } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const { userProfile } = state;
+  const csrf = selectCsrfToken(state);
   const { id, workEmail } =
     userProfile && userProfile.memberProfile ? userProfile.memberProfile : {};
-  const isAdmin =
-    userProfile && userProfile.role && userProfile.role.includes("ADMIN");
+  const isAdmin = selectIsAdmin(state);
   const classes = useStyles();
   const theme = useTheme();
+  const location = useLocation();
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const location = useLocation();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [showHoursUpload, setShowHoursUpload] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const uploadFile = async (file) => {
+    if (!file) {
+      return;
+    }
+    let formData = new FormData();
+    formData.append("file", file);
+    let res = await postEmployeeHours(csrf, formData);
+    if (res?.error) {
+      let error = res?.error?.response?.data?.message;
+      //parse employee id from error
+      let tmpError = error.includes("Detail: Key (employeeid)=(")
+        ? error.split("Detail: Key (employeeid)=(")
+        : null;
+      tmpError = tmpError && tmpError[1].split(" ")[0].slice(0, -1);
+      let newError;
+      if (tmpError) {
+        newError = `Employee id ${tmpError} doesn't exist in system, please fix the .csv file and upload again`;
+      } else {
+        newError = "Hmm....we couldn't upload the file. Try again.";
+      }
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "error",
+          toast: newError,
+        },
+      });
+    }
+    const data = res?.payload?.data;
+    if (data) {
+      dispatch({
+        type: UPDATE_TOAST,
+        payload: {
+          severity: "success",
+          toast: `File was successfully uploaded`,
+        },
+      });
+      closeHoursUpload();
+    }
+  };
+
   const [directoryOpen, setDirectoryOpen] = useState(
     isCollapsibleListOpen(directoryLinks, location.pathname)
   );
@@ -151,6 +210,19 @@ function Menu() {
     setDirectoryOpen(false);
   };
 
+  const closeAvatarMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const closeHoursUpload = () => {
+    setShowHoursUpload(false);
+    setSelectedFile(null);
+  };
+
+  const openHoursUpload = () => {
+    setShowHoursUpload(true);
+  };
+
   const isLinkSelected = (path) => {
     // /checkins route is special case as additional info is added to url
     if (path === "/checkins" && location.pathname.includes(`${path}/`))
@@ -181,6 +253,10 @@ function Menu() {
         />
       </ListItem>
     );
+  };
+
+  const onFileSelected = (e) => {
+    setSelectedFile(e.target.files[0]);
   };
 
   const createListJsx = (listArr, isSublink) => {
@@ -262,8 +338,7 @@ function Menu() {
           onClick={handleToggle}
         >
           <Avatar
-            component={Link}
-            to={`/profile/${id}`}
+            onClick={handleClick}
             src={getAvatarURL(workEmail)}
             style={{
               position: "absolute",
@@ -273,6 +348,31 @@ function Menu() {
               textDecoration: "none",
             }}
           />
+          <AvatarMenu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={closeAvatarMenu}
+          >
+            <MenuItem
+              component={Link}
+              onClick={closeAvatarMenu}
+              to={`/profile/${id}`}
+            >
+              Profile
+            </MenuItem>
+            {isAdmin && (
+              <MenuItem
+                onClick={() => {
+                  closeAvatarMenu();
+                  openHoursUpload();
+                }}
+              >
+                Upload Hours
+              </MenuItem>
+            )}
+          </AvatarMenu>
         </div>
       </AppBar>
       <nav className={classes.drawer}>
@@ -304,6 +404,39 @@ function Menu() {
             {drawer}
           </Drawer>
         </Hidden>
+        <Modal
+          open={showHoursUpload}
+          onBackdropClick={closeHoursUpload}
+          onClose={closeHoursUpload}
+        >
+          <div className="hours-upload-modal">
+            <Button color="primary">
+              <label htmlFor="file-upload">
+                <h3>Choose A CSV File</h3>
+                <input
+                  accept=".csv"
+                  id="file-upload"
+                  onChange={(e) => onFileSelected(e)}
+                  style={{ display: "none" }}
+                  type="file"
+                />
+              </label>
+            </Button>
+            <div className="buttons">
+              <Button color="secondary" onClick={closeHoursUpload}>
+                Cancel
+              </Button>
+              {selectedFile && (
+                <Button
+                  color="primary"
+                  onClick={() => uploadFile(selectedFile)}
+                >
+                  Upload &nbsp;<strong>{selectedFile.name}</strong>
+                </Button>
+              )}
+            </div>
+          </div>
+        </Modal>
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />

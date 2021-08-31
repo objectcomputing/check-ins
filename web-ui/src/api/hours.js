@@ -12,3 +12,13 @@ export const getEmployeeHours = async (cookie, employeeId) => {
     headers: { "X-CSRF-Header": cookie },
   });
 };
+
+export const postEmployeeHours = async (cookie, file) => {
+  return resolve({
+    method: "post",
+    url: hoursUrl + "/upload",
+    responseType: "json",
+    data: file,
+    headers: { "Content-Type": "multipart/form-data", "X-CSRF-Header": cookie },
+  });
+};
