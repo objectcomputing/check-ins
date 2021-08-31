@@ -96,6 +96,7 @@ const CheckinsPage = () => {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mostRecent]);
 
   const currentCheckin = selectCheckin(state, checkinId);
