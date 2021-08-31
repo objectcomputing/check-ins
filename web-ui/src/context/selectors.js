@@ -165,25 +165,18 @@ export const selectCheckinsForMember = createSelector(
       .sort((last, next) => toDate(last.checkInDate) - toDate(next.checkInDate))
 );
 
+export const selectOpenCheckinsForMember = createSelector(
+  selectCheckinsForMember,
+  (checkins) => checkins.filter((checkin) => !checkin.completed)
+);
+
 export const selectMostRecentCheckin = createSelector(
-  selectCheckins,
-  (state, memberid) => memberid,
-  (checkins, memberid) => {
-    if (checkins && checkins.length) {
-      return (
-        checkins
-          .filter((currentCheckin) => currentCheckin.teamMemberId === memberid)
-          .sort((a, b) => toDate(a.checkInDate) - toDate(b.checkInDate))
-          .reduce((mostRecent, checkin) => {
-            return mostRecent === undefined || !checkin.completed
-              ? checkin
-              : toDate(mostRecent.checkInDate) > toDate(checkin.checkInDate)
-              ? checkin
-              : mostRecent;
-          }, undefined)
-      );
-    }
-    return undefined;
+  selectCheckinsForMember,
+  selectOpenCheckinsForMember,
+  (checkins, openCheckins) => {
+    if (openCheckins && openCheckins.length > 0) {
+      return openCheckins[openCheckins.length - 1];
+    } else return checkins && checkins[checkins.length - 1];
   }
 );
 

@@ -163,7 +163,10 @@ const CheckinsPage = () => {
                 "This is disabled because there is already an open Check-In"
               }
             >
-              <div className="create-checkin-tooltip-wrapper">
+              <div
+                aria-describedby="checkin-tooltip-wrapper"
+                className="create-checkin-tooltip-wrapper"
+              >
                 {(isAdmin || isPdl || currentUserId === memberId) && (
                   <Button
                     disabled={hasOpenCheckins}
