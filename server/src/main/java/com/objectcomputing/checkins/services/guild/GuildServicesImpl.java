@@ -135,7 +135,11 @@ public class GuildServicesImpl implements GuildServices {
                         }
                     });
                     updated = fromEntity(newGuildEntity, newMembers);
-                    sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeads);
+
+                    if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
+                        sendGuildMemberChangeNotification(addedMembers, removedMembers, newGuildEntity.getName(), emailsOfGuildLeads);
+                    }
+
                 } else {
                     throw new BadArgException(String.format("Guild ID %s does not exist, can't update.", guildDTO.getId()));
                 }
@@ -229,11 +233,11 @@ public class GuildServicesImpl implements GuildServices {
                                                     String guildName, Set<String> emailsOfGuildLeads) {
         // don't send emails in local environment
         if (environment.getActiveNames().contains("local")) return;
-        if (!emailsOfGuildLeads.isEmpty() && (!addedMembers.isEmpty() || !removedMembers.isEmpty())){
-            String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
-            String subject = "Membership Changes have been made to the " + guildName +" guild";
-            emailSender.sendEmail(subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
-        }
+
+        String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
+        String subject = "Membership Changes have been made to the " + guildName +" guild";
+        emailSender.sendEmail(subject, emailContent, emailsOfGuildLeads.toArray(new String[0]));
+
     }
 
     private String constructEmailContent (List<MemberProfile> addedMembers, List<MemberProfile> removedMembers, String guildName){
