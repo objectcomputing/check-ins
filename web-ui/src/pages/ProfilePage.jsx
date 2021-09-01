@@ -141,11 +141,8 @@ const ProfilePage = () => {
             (member) => member.memberId === id
           );
           let res = await deleteGuildMember(memberToDelete.id, csrf);
-          let data =
-            res.payload && res.payload.data && !res.error
-              ? res.payload.data
-              : null;
-          if (data) {
+          let success = res.payload && !res.error ? true : false;
+          if (success) {
             const newGuildMembers = match.guildMembers.filter(
               (member) => member.memberId !== id
             );
