@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  selectMappedPdls,
-  selectProfile,
-  selectTerminatedMembers,
-} from "../context/selectors";
+import { selectProfile, selectTerminatedMembers } from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
