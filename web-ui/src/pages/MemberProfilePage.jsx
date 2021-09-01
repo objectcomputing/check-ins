@@ -32,7 +32,7 @@ const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
-  const [selectedMember, setSelectedMember] = useState({});
+  const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
     // in the case of a terminated member, member details will still display
