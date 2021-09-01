@@ -31,7 +31,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private EmailSender emailSender;
     private final String webAddress;
-    public static final String WEB_ADDRESS = "check-ins-web-address";
+    public static final String WEB_ADDRESS = "check-ins.web-address";
 
     public GuildMemberServicesImpl(GuildRepository guildRepo,
                                    GuildMemberRepository guildMemberRepo,
@@ -196,7 +196,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         String emailHtml =
                 "<h3>" + memberProfile.getFirstName() + " " + memberProfile.getLastName() + " has " + joinedOrLeft + " the " + guild.getName() + " guild.</h3>";
 
-        emailHtml += "<a href=\" " + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
+        emailHtml += "<a href=\"" + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
 
         return emailHtml;
     }

@@ -30,7 +30,7 @@ public class GuildServicesImpl implements GuildServices {
     private EmailSender emailSender;
     private final Environment environment;
     private final String webAddress;
-    public static final String WEB_ADDRESS = "check-ins-web-address";
+    public static final String WEB_ADDRESS = "check-ins.web-address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
@@ -265,7 +265,7 @@ public class GuildServicesImpl implements GuildServices {
             removedMembersHtml += "</ul>";
             emailHtml += removedMembersHtml;
         }
-        emailHtml += "<a href=\" " + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
+        emailHtml += "<a href=\"" + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
         return emailHtml;
     }
 }
