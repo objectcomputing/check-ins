@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { selectProfile } from "../context/selectors";
+import {
+  selectMappedPdls,
+  selectProfile,
+  selectTerminatedMembers,
+} from "../context/selectors";
 import { AppContext } from "../context/AppContext";
 import { getSelectedMemberSkills } from "../api/memberskill";
 import { getTeamByMember } from "../api/team";
@@ -28,8 +32,20 @@ const MemberProfilePage = () => {
   const { state } = useContext(AppContext);
   const { csrf, skills, userProfile } = state;
   const { memberId } = useParams();
+  const [selectedMember, setSelectedMember] = useState({});
 
-  const selectedMember = selectProfile(state, memberId);
+  useEffect(() => {
+    // in the case of a terminated member, member details will still display
+    const member = selectProfile(state, memberId);
+    const terminatedMember = selectTerminatedMembers(state)?.filter(
+      (terminatedMember) => terminatedMember.id === memberId
+    );
+    if (member) {
+      setSelectedMember(member);
+    } else if (terminatedMember) {
+      setSelectedMember(terminatedMember[0]);
+    }
+  }, [memberId, state]);
 
   const [selectedMemberSkills, setSelectedMemberSkills] = useState([]);
   const [teams, setTeams] = useState([]);
