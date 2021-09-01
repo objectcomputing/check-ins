@@ -65,6 +65,8 @@ public abstract class TestContainersSuite implements RepositoryFixture, TestProp
         properties.put("datasources.default.password", getPassword());
         properties.put("datasources.default.dialect", "POSTGRES");
         properties.put("datasources.default.driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver");
+        properties.put("mail-jet.from_address", "someEmail@gmail.com");
+        properties.put("mail-jet.from_name", "John Doe");
         return properties;
     }
 

@@ -10,6 +10,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
+import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.Valid;
@@ -29,13 +30,16 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
     private final CurrentUserServices currentUserServices;
     private final GuildMemberHistoryRepository guildMemberHistoryRepository;
     private EmailSender emailSender;
+    private final String webAddress;
+    public static final String WEB_ADDRESS = "check-ins-web-address";
 
     public GuildMemberServicesImpl(GuildRepository guildRepo,
                                    GuildMemberRepository guildMemberRepo,
                                    MemberProfileRepository memberRepo,
                                    CurrentUserServices currentUserServices,
                                    GuildMemberHistoryRepository guildMemberHistoryRepository,
-                                   EmailSender emailSender
+                                   EmailSender emailSender,
+                                   @Property(name = WEB_ADDRESS) String webAddress
     ) {
         this.guildRepo = guildRepo;
         this.guildMemberRepo = guildMemberRepo;
@@ -43,6 +47,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         this.currentUserServices = currentUserServices;
         this.guildMemberHistoryRepository=guildMemberHistoryRepository;
         this.emailSender = emailSender;
+        this.webAddress = webAddress;
     }
 
     public void setEmailSender(EmailSender emailSender) {
@@ -191,7 +196,7 @@ public class GuildMemberServicesImpl implements GuildMemberServices {
         String emailHtml =
                 "<h3>" + memberProfile.getFirstName() + " " + memberProfile.getLastName() + " has " + joinedOrLeft + " the " + guild.getName() + " guild.</h3>";
 
-        emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.";
+        emailHtml += "<a href=\" " + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
 
         return emailHtml;
     }

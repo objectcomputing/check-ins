@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 
 import javax.inject.Singleton;
@@ -28,19 +29,23 @@ public class GuildServicesImpl implements GuildServices {
     private final GuildMemberServices guildMemberServices;
     private EmailSender emailSender;
     private final Environment environment;
+    private final String webAddress;
+    public static final String WEB_ADDRESS = "check-ins-web-address";
 
     public GuildServicesImpl(GuildRepository guildsRepo,
                              GuildMemberRepository guildMemberRepo,
                              CurrentUserServices currentUserServices,
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
-                             EmailSender emailSender, Environment environment) {
+                             EmailSender emailSender, Environment environment,
+                             @Property(name = WEB_ADDRESS) String webAddress) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.currentUserServices = currentUserServices;
         this.memberProfileServices = memberProfileServices;
         this.guildMemberServices = guildMemberServices;
         this.emailSender = emailSender;
+        this.webAddress = webAddress;
         this.environment = environment;
     }
 
@@ -260,7 +265,7 @@ public class GuildServicesImpl implements GuildServices {
             removedMembersHtml += "</ul>";
             emailHtml += removedMembersHtml;
         }
-        emailHtml += "<a href=\"https://checkins.objectcomputing.com/guilds\">Click here</a> to view the changes in the Check-Ins app.";
+        emailHtml += "<a href=\" " + webAddress + "/guilds\">Click here</a> to view the changes in the Check-Ins app.";
         return emailHtml;
     }
 }
