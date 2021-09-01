@@ -36,6 +36,7 @@ exports[`has billable hours 1`] = `
       }
     }
   >
+    Billable Hours: 
     Contribution Hours: 
     925
      - Target Hours: 
@@ -82,6 +83,7 @@ exports[`has no billable hours 1`] = `
       }
     }
   >
+    Billable Hours: 
     Contribution Hours: 
     925
      - Target Hours: 

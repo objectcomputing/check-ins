@@ -140,13 +140,16 @@ const ProfilePage = () => {
           const memberToDelete = guildMembers.find(
             (member) => member.memberId === id
           );
-          await deleteGuildMember(memberToDelete.id, csrf);
-          const newGuildMembers = match.guildMembers.filter(
-            (member) => member.memberId !== id
-          );
-          let newGuild = { ...match };
-          newGuild.guildMembers = newGuildMembers;
-          dispatch({ type: UPDATE_GUILD, payload: newGuild });
+          let res = await deleteGuildMember(memberToDelete.id, csrf);
+          let success = res.payload && !res.error ? true : false;
+          if (success) {
+            const newGuildMembers = match.guildMembers.filter(
+              (member) => member.memberId !== id
+            );
+            let newGuild = { ...match };
+            newGuild.guildMembers = newGuildMembers;
+            dispatch({ type: UPDATE_GUILD, payload: newGuild });
+          }
         }
       }
     },
@@ -199,6 +202,7 @@ const ProfilePage = () => {
             />
             <CardContent>
               <Autocomplete
+                disableClearable
                 id="guildsSelect"
                 getOptionLabel={(option) => option.name}
                 getOptionSelected={(option, value) =>
