@@ -17,24 +17,21 @@ import javax.inject.Singleton;
 
 @Requires(property = MailJetSender.FROM_ADDRESS)
 @Requires(property = MailJetSender.FROM_NAME)
-
 @Singleton
-public class MailJetSender implements EmailSender{
+public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
+
     public static final String FROM_ADDRESS = "mail-jet.from_address";
     public static final String FROM_NAME = "mail-jet.from_name";
 
     private final String fromAddress;
     private final String fromName;
 
-    public MailJetSender(
-            MailjetClient client,
-            @Property(name = FROM_ADDRESS) String fromAddress,
-            @Property(name = FROM_NAME) String fromName
-    )
-    {
+    public MailJetSender(MailjetClient client,
+                         @Property(name = FROM_ADDRESS) String fromAddress,
+                         @Property(name = FROM_NAME) String fromName) {
         this.client = client;
         this.fromAddress = fromAddress;
         this.fromName = fromName;

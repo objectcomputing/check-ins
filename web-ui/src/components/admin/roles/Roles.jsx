@@ -1,8 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { AppContext } from "../../context/AppContext";
-import { DELETE_ROLE, UPDATE_ROLES, UPDATE_TOAST } from "../../context/actions";
-import { addUserToRole, addNewRole, removeUserFromRole } from "../../api/roles";
+import { AppContext } from "../../../context/AppContext";
+import {
+  DELETE_ROLE,
+  UPDATE_ROLES,
+  UPDATE_TOAST,
+} from "../../../context/actions";
+import {
+  addUserToRole,
+  addNewRole,
+  removeUserFromRole,
+} from "../../../api/roles";
 
 import RoleUserCards from "./RoleUserCards";
 

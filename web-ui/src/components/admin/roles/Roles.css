@@ -80,8 +80,8 @@
 
 .roles-content .roles .role {
   height: 100%;
-  max-height: 35rem;
-  min-height: 35rem;
+  max-height: 40rem;
+  min-height: 40rem;
   margin: 1rem;
   overflow: scroll;
 }

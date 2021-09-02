@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
@@ -16,9 +16,9 @@ import {
   CardContent,
   Container,
   makeStyles,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
-
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -40,9 +40,10 @@ const MemberSummaryCard = ({ member }) => {
   } = member;
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
   const classes = useStyles();
-  
+
   return (
     <Box display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
@@ -63,13 +64,21 @@ const MemberSummaryCard = ({ member }) => {
               </Typography>
             }
             disableTypography
-            avatar={isAdmin && terminationDate? 
-              (
+            avatar={
+              isAdmin && terminationDate ? (
                 <Avatar className={"large"}>
-                  <PriorityHighIcon />
+                  <Tooltip
+                    open={tooltipIsOpen}
+                    onOpen={() => setTooltipIsOpen(true)}
+                    onClose={() => setTooltipIsOpen(false)}
+                    enterTouchDelay={0}
+                    placement="top-start"
+                    title={"This member has been terminated"}
+                  >
+                    <PriorityHighIcon />
+                  </Tooltip>
                 </Avatar>
-              ) : 
-              (
+              ) : (
                 <Avatar className={"large"} src={getAvatarURL(workEmail)} />
               )
             }

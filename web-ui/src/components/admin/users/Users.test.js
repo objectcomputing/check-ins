@@ -1,11 +1,11 @@
 import React from "react";
-import UserPage from "./UserPage";
-import { AppContextProvider } from "../context/AppContext";
+import Users from "./Users";
+import { AppContextProvider } from "../../../context/AppContext";
 
 it("renders correctly", () => {
   snapshot(
     <AppContextProvider>
-      <UserPage />
+      <Users />
     </AppContextProvider>
   );
 });

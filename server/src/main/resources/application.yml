@@ -80,6 +80,7 @@ check-ins:
       notifications:
         subject: "Feedback request"
         content: "You have received a feedback request. Please go to the "
+  web-address: ${ WEB_ADDRESS }
 ---
 flyway:
   enabled: enabled
@@ -89,12 +90,6 @@ flyway:
       placeholder-replacement: true
       placeholders:
         aeskey: ${ AES_KEY }
----
-
-mail-jet:
-  from_address: ${ FROM_ADDRESS }
-  from_name: ${ FROM_NAME }
-
 ---
 
 ui-path:
@@ -121,3 +116,8 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
+
+---
+mail-jet:
+  from_address: ${ FROM_ADDRESS }
+  from_name: ${ FROM_NAME }

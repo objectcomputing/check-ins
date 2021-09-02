@@ -1,9 +1,10 @@
-import React from "react"
-import renderer from 'react-test-renderer';
-import Menu from "./Menu"
+import React from "react";
+import renderer from "react-test-renderer";
+import Menu from "./Menu";
 import { MemoryRouter } from "react-router-dom";
 import { AppContextProvider } from "../../context/AppContext";
-
+import EnzymeToJson from "enzyme-to-json";
+import { mount } from "enzyme";
 
 const initialState = {
   state: {
@@ -87,4 +88,3 @@ describe('<Menu />', () => {
     expect(component.toJSON()).toMatchSnapshot()
   });
 });
-
