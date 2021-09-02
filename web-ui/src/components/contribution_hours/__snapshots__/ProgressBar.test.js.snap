@@ -37,11 +37,13 @@ exports[`has billable hours 1`] = `
     }
   >
     Billable Hours: 
-    Contribution Hours: 
+     - Contribution Hours:
+     
     925
      - Target Hours: 
     1850
-     - PTO Hours: 
+     - PTO Hours:
+     
     0
   </p>
 </div>
@@ -84,11 +86,13 @@ exports[`has no billable hours 1`] = `
     }
   >
     Billable Hours: 
-    Contribution Hours: 
+     - Contribution Hours:
+     
     925
      - Target Hours: 
     1850
-     - PTO Hours: 
+     - PTO Hours:
+     
     0
   </p>
 </div>
