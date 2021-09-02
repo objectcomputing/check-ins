@@ -123,6 +123,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
           </Typography>
           <Button className="ad-hoc-next-button"
                   onClick={submitPreview}
+                  disabled={!newAdHocData.title || !newAdHocData.question}
                   color="inherit">
             {template.isAdHoc && !template.id ? "Create" : "Select"}
           </Button>
