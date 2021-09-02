@@ -53,7 +53,6 @@ const ProfilePage = () => {
   useEffect(() => {
     async function getHours() {
       let res = await getEmployeeHours(csrf, memberProfile?.employeeId);
-      console.log({ res });
       let data =
         res.payload && res.payload.data && !res.error ? res.payload.data : null;
       if (data && data.length > 0) setMyHours(data[0]);
@@ -62,9 +61,6 @@ const ProfilePage = () => {
       getHours();
     }
   }, [csrf, memberProfile]);
-  console.log({
-    myHours,
-  });
 
   useEffect(() => {
     async function updateBio() {
