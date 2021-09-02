@@ -38,7 +38,8 @@ public class GuildServicesImpl implements GuildServices {
                              MemberProfileServices memberProfileServices,
                              GuildMemberServices guildMemberServices,
                              EmailSender emailSender, Environment environment,
-                             @Property(name = WEB_ADDRESS) String webAddress) {
+                             @Property(name = WEB_ADDRESS) String webAddress
+    ) {
         this.guildsRepo = guildsRepo;
         this.guildMemberRepo = guildMemberRepo;
         this.currentUserServices = currentUserServices;
