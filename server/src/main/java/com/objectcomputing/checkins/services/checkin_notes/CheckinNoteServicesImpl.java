@@ -12,7 +12,7 @@ import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUs
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -135,7 +135,7 @@ public class CheckinNoteServicesImpl implements CheckinNoteServices {
         return checkinNoteRepository.search(nullSafeUUIDToString(checkinid), nullSafeUUIDToString(createbyid));
     }
 
-    private void validate(@NotNull boolean isError, @NotNull String message, Object... args) {
+    private void validate(boolean isError, String message, Object... args) {
         if (isError) {
             throw new BadArgException(String.format(message, args));
         }

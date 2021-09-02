@@ -5,7 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -35,7 +35,7 @@ public class AnniversaryReportServicesImpl implements AnniversaryServices {
         if (month != null) {
             memberProfiles = memberProfiles
                     .stream()
-                    .filter(member -> month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
+                    .filter(member -> member.getStartDate() != null && month.equalsIgnoreCase(member.getStartDate().getMonth().name()) && member.getTerminationDate() == null)
                     .collect(Collectors.toList());
         }
 

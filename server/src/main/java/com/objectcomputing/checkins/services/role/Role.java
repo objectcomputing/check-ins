@@ -1,7 +1,9 @@
 package com.objectcomputing.checkins.services.role;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
+import io.micronaut.data.jdbc.annotation.ColumnTransformer;
 import io.micronaut.data.model.DataType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -32,19 +34,29 @@ public class Role {
     @TypeDef(type = DataType.OBJECT)
     private RoleType role;
 
+    @Nullable
+    @Column(name = "description")
+    @ColumnTransformer(
+            read =  "pgp_sym_decrypt(description::bytea,'${aes.key}')",
+            write = "pgp_sym_encrypt(?,'${aes.key}') "
+    )
+    @Schema(description = "description of the role")
+    private String description;
+
+    public Role(RoleType role, @Nullable String description, UUID memberid) {
+        this(null, role, description, memberid);
+    }
+
     @NotNull
     @Column(name = "memberid")
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the member this entry is associated with", required = true)
     private UUID memberid;
 
-    public Role(RoleType role, UUID memberid) {
-        this(null, role, memberid);
-    }
-
-    public Role(UUID id, RoleType role, UUID memberid) {
+    public Role(UUID id, RoleType role, @Nullable String description, UUID memberid) {
         this.id = id;
         this.role = role;
+        this.description = description;
         this.memberid = memberid;
     }
 
@@ -64,6 +76,14 @@ public class Role {
         this.role = role;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public UUID getMemberid() {
         return memberid;
     }
@@ -79,12 +99,13 @@ public class Role {
         Role that = (Role) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(role, that.role) &&
+                Objects.equals(description, that.description) &&
                 Objects.equals(memberid, that.memberid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, role, memberid);
+        return Objects.hash(id, role, description, memberid);
     }
 
     @Override
@@ -92,6 +113,7 @@ public class Role {
         return "Role{" +
                 "id=" + id +
                 ", role=" + role +
+                ", description='" + description + '\'' +
                 ", memberid=" + memberid +
                 '}';
     }

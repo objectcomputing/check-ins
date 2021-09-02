@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.micronaut.context.annotation.Property;
 
 import javax.inject.Singleton;
 
@@ -20,8 +21,18 @@ public class MailJetSender implements EmailSender {
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
 
-    public MailJetSender(MailjetClient client) {
+    public static final String FROM_ADDRESS = "mail-jet.from_address";
+    public static final String FROM_NAME = "mail-jet.from_name";
+
+    private final String fromAddress;
+    private final String fromName;
+
+    public MailJetSender(MailjetClient client,
+                         @Property(name = FROM_ADDRESS) String fromAddress,
+                         @Property(name = FROM_NAME) String fromName) {
         this.client = client;
+        this.fromAddress = fromAddress;
+        this.fromName = fromName;
     }
 
     /**
@@ -30,19 +41,21 @@ public class MailJetSender implements EmailSender {
      * @param content {@link String} Contents of email
      */
     // emailAddressToBodiesMap is email, address, email body
-    public void sendEmail(String subject, String content) {
+    public void sendEmail(String subject, String content, String... recipients) {
         MailjetRequest request;
         MailjetResponse response;
         try {
+            JSONArray recipientList = new JSONArray();
+            for (String recipient: recipients){
+                recipientList.put(new JSONObject().put("Email", recipient));
+            }
             request = new MailjetRequest(Emailv31.resource)
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Email", "kimberlinm@objectcomputing.com")
-                                            .put("Name", "Michael Kimberlin"))
-                                    .put(Emailv31.Message.TO, new JSONArray()
-                                            .put(new JSONObject()
-                                                    .put("Email", "hr@objectcomputing.com")))
+                                            .put("Email", fromAddress)
+                                            .put("Name", fromName))
+                                    .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
             response = client.post(request);

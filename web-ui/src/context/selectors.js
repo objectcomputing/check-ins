@@ -10,6 +10,7 @@ export const selectCheckins = (state) => state.checkins;
 export const selectCsrfToken = (state) => state.csrf;
 export const selectMemberRoles = (state) => state.roles;
 export const selectTeams = (state) => state.teams;
+export const selectGuilds = (state) => state.guilds;
 
 export const selectCurrentUser = createSelector(
   selectUserProfile,
@@ -164,21 +165,18 @@ export const selectCheckinsForMember = createSelector(
       .sort((last, next) => toDate(last.checkInDate) - toDate(next.checkInDate))
 );
 
+export const selectOpenCheckinsForMember = createSelector(
+  selectCheckinsForMember,
+  (checkins) => checkins.filter((checkin) => !checkin.completed)
+);
+
 export const selectMostRecentCheckin = createSelector(
-  selectCheckins,
-  (state, memberid) => memberid,
-  (checkins, memberid) => {
-    if (checkins && checkins.length) {
-      return checkins
-        .filter((currentCheckin) => currentCheckin.teamMemberId === memberid)
-        .reduce((mostRecent, checkin) => {
-          return mostRecent === undefined ||
-            toDate(checkin.checkInDate) > toDate(mostRecent.checkInDate)
-            ? checkin
-            : mostRecent;
-        }, undefined);
-    }
-    return undefined;
+  selectCheckinsForMember,
+  selectOpenCheckinsForMember,
+  (checkins, openCheckins) => {
+    if (openCheckins && openCheckins.length > 0) {
+      return openCheckins[openCheckins.length - 1];
+    } else return checkins && checkins[checkins.length - 1];
   }
 );
 
@@ -267,7 +265,8 @@ export const selectNormalizedMembersAdmin = createSelector(
   selectTerminatedMembers,
   (state, searchText) => searchText,
   (memberProfiles, terminatedProfiles, searchText) =>
-    memberProfiles.concat(terminatedProfiles)
+    memberProfiles
+      .concat(terminatedProfiles)
       ?.filter((member) => {
         let normName = member.name
           .normalize("NFD")
@@ -291,4 +290,13 @@ export const selectNormalizedTeams = createSelector(
         .replace(/[\u0300-\u036f]/g, "");
       return normName.toLowerCase().includes(normSearchText.toLowerCase());
     })
+);
+
+export const selectMyGuilds = createSelector(
+  selectCurrentUserId,
+  selectGuilds,
+  (id, guilds) =>
+    guilds?.filter((guild) =>
+      guild.guildMembers?.some((member) => member.memberId === id)
+    )
 );

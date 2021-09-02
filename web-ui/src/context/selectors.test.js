@@ -11,6 +11,7 @@ import {
   selectCurrentMembers,
   selectNormalizedMembers,
   selectNormalizedTeams,
+  selectMostRecentCheckin,
 } from "./selectors";
 
 describe("Selectors", () => {
@@ -111,9 +112,9 @@ describe("Selectors", () => {
     ];
 
     const matchingProfiles = {
-        [testMemberProfiles[0].id]: testMemberProfiles[0],
-        [testMemberProfiles[1].id]: testMemberProfiles[1],
-        [testMemberProfiles[2].id]: testMemberProfiles[2],
+      [testMemberProfiles[0].id]: testMemberProfiles[0],
+      [testMemberProfiles[1].id]: testMemberProfiles[1],
+      [testMemberProfiles[2].id]: testMemberProfiles[2],
     };
 
     const testState = {
@@ -461,44 +462,44 @@ describe("Selectors", () => {
     const testState = {
       memberProfiles: [
         {
-            id: 1,
-            bioText: "foo",
-            employeeId: 11,
-            name: "A PersonA",
-            firstName: "A",
-            lastName: "PersonA",
-            location: "St Louis",
-            title: "engineer",
-            workEmail: "employee@sample.com",
-            pdlId: 9,
-            startDate: [2012, 9, 29],
-          },
-          {
-            id: 2,
-            bioText: "foo",
-            employeeId: 12,
-            name: "C PersonC",
-            firstName: "C",
-            lastName: "PersonC",
-            location: "St Louis",
-            title: "engineer",
-            workEmail: "employee@sample.com",
-            pdlId: 9,
-            startDate: [2012, 9, 29],
-          },
-          {
-            id: 3,
-            bioText: "foo",
-            employeeId: 13,
-            name: "B PersonB",
-            firstName: "B",
-            lastName: "PersonB",
-            location: "St Louis",
-            title: "engineer",
-            workEmail: "employee@sample.com",
-            pdlId: 9,
-            startDate: [2012, 9, 29],
-          },
+          id: 1,
+          bioText: "foo",
+          employeeId: 11,
+          name: "A PersonA",
+          firstName: "A",
+          lastName: "PersonA",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
+        {
+          id: 2,
+          bioText: "foo",
+          employeeId: 12,
+          name: "C PersonC",
+          firstName: "C",
+          lastName: "PersonC",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
+        {
+          id: 3,
+          bioText: "foo",
+          employeeId: 13,
+          name: "B PersonB",
+          firstName: "B",
+          lastName: "PersonB",
+          location: "St Louis",
+          title: "engineer",
+          workEmail: "employee@sample.com",
+          pdlId: 9,
+          startDate: [2012, 9, 29],
+        },
       ],
       roles: [
         {
@@ -922,4 +923,37 @@ it("selectNormalizedTeams should return an array of appropriate teams despite ac
   };
 
   expect(selectNormalizedTeams(testState, searchText)).toEqual(result.teams);
+});
+
+it("selectMostRecentCheckin should return the most recent and or open checkin", () => {
+  const memberId = "1";
+  const checkins = [
+    {
+      checkInDate: [2020, 9, 29, 10, 32, 29, 40000000],
+      completed: false,
+      id: "2",
+      pdlId: "1",
+      teamMemberId: "1",
+    },
+    {
+      checkInDate: [2020, 9, 30, 10, 32, 29, 40000000],
+      completed: false,
+      id: "1",
+      pdlId: "1",
+      teamMemberId: "1",
+    },
+  ];
+
+  const state = { checkins: [checkins[0], checkins[1]] };
+
+  const expectedResult = {
+    checkInDate: [2020, 9, 30, 10, 32, 29, 40000000],
+    completed: false,
+    id: "1",
+    pdlId: "1",
+    teamMemberId: "1",
+  };
+
+  console.log(selectMostRecentCheckin(state, memberId));
+  expect(selectMostRecentCheckin(state, memberId)).toEqual(expectedResult);
 });

@@ -13,3 +13,27 @@
   justify-content: flex-end;
   padding-right: 0;
 }
+
+.hours-upload-modal .buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.hours-upload-modal label {
+  cursor: pointer;
+}
+
+.hours-upload-modal {
+  background-color: #fff;
+  border: 2px solid #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 50%;
+  min-width: 400px;
+  max-width: 600px;
+  padding: 0.5rem;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

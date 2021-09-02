@@ -47,8 +47,11 @@ exports[`renders correctly 1`] = `
               Location: 
               <br />
               Supervisor: 
+              
               <br />
-              PDL: 
+              Current PDL: 
+              <br />
+              
             </p>
           </div>
         </div>
@@ -183,47 +186,56 @@ exports[`renders correctly 1`] = `
             </div>
           </div>
         </div>
-        <button
-          className="MuiButtonBase-root MuiButton-root MuiButton-text makeStyles-addButton-2"
-          disabled={false}
+        <div
+          aria-describedby="checkin-tooltip-wrapper"
+          className="create-checkin-tooltip-wrapper"
           onBlur={[Function]}
-          onClick={[Function]}
-          onDragLeave={[Function]}
           onFocus={[Function]}
-          onKeyDown={[Function]}
-          onKeyUp={[Function]}
-          onMouseDown={[Function]}
           onMouseLeave={[Function]}
-          onMouseUp={[Function]}
+          onMouseOver={[Function]}
           onTouchEnd={[Function]}
-          onTouchMove={[Function]}
           onTouchStart={[Function]}
-          tabIndex={0}
-          type="button"
+          title={null}
         >
-          <span
-            className="MuiButton-label"
+          <button
+            className="MuiButtonBase-root MuiButton-root MuiButton-text makeStyles-addButton-2 Mui-disabled Mui-disabled"
+            disabled={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={-1}
+            type="button"
           >
             <span
-              className="MuiButton-startIcon MuiButton-iconSizeMedium"
+              className="MuiButton-label"
             >
-              <svg
-                aria-hidden={true}
-                className="MuiSvgIcon-root"
-                focusable="false"
-                viewBox="0 0 24 24"
+              <span
+                className="MuiButton-startIcon MuiButton-iconSizeMedium"
               >
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                />
-              </svg>
+                <svg
+                  aria-hidden={true}
+                  className="MuiSvgIcon-root"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                  />
+                </svg>
+              </span>
+              Create Check-In
             </span>
-            Create Check-In
-          </span>
-          <span
-            className="MuiTouchRipple-root"
-          />
-        </button>
+          </button>
+        </div>
       </div>
     </div>
     <div

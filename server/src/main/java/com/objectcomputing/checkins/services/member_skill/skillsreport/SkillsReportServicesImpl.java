@@ -77,7 +77,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
     }
 
     @NotNull
-    private List<TeamMemberSkillDTO> getPotentialQualifyingMembers(@NotNull List<SkillLevelDTO> skills) {
+    private List<TeamMemberSkillDTO> getPotentialQualifyingMembers(List<SkillLevelDTO> skills) {
         // Get all member_skill entries that satisfy a requested skill
         final List<MemberSkill> entries = new ArrayList<>();
 
@@ -132,8 +132,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
     }
 
     @NotNull
-    private List<TeamMemberSkillDTO> getMembersSatisfyingAllSkills(@NotNull List<TeamMemberSkillDTO> potentialMembers,
-                                                                   @NotNull List<SkillLevelDTO> requestedSkills) {
+    private List<TeamMemberSkillDTO> getMembersSatisfyingAllSkills(List<TeamMemberSkillDTO> potentialMembers,
+                                                                   List<SkillLevelDTO> requestedSkills) {
         final List<TeamMemberSkillDTO> ret = new ArrayList<>();
         for (TeamMemberSkillDTO member : potentialMembers) {
             final List<SkillLevelDTO> memberSkills = member.getSkills();
@@ -162,8 +162,8 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
     }
 
     @NotNull
-    private List<TeamMemberSkillDTO> removeMembersNotRequested(@NotNull List<TeamMemberSkillDTO> potentialMembers,
-                                                               @NotNull Set<UUID> requestedMembers) {
+    private List<TeamMemberSkillDTO> removeMembersNotRequested(List<TeamMemberSkillDTO> potentialMembers,
+                                                               Set<UUID> requestedMembers) {
         final List<TeamMemberSkillDTO> ret = new ArrayList<>();
         for (TeamMemberSkillDTO member : potentialMembers) {
             if (requestedMembers.contains(member.getId())) {
@@ -174,7 +174,7 @@ public class SkillsReportServicesImpl implements SkillsReportServices {
         return ret;
     }
 
-    private boolean isSkillLevelSatisfied(@NotNull String first, @NotNull SkillLevel second) {
+    private boolean isSkillLevelSatisfied(String first, SkillLevel second) {
         final SkillLevel firstLevel = SkillLevel.convertFromString(first);
         return firstLevel.greaterThanOrEqual(second);
     }

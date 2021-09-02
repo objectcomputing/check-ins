@@ -35,5 +35,13 @@ flyway:
       placeholders:
         aeskey: BOGUS_TEST_KEY
 ---
+check-ins:
+  web-address: "https://checkins.objectcomputing.com"
+
+---
 aes:
   key: BOGUS_TEST_KEY
+
+mail-jet:
+  from_address: "someEmail@test.com"
+  from_name: "John Doe"
