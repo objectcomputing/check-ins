@@ -184,7 +184,13 @@ const ProfilePage = () => {
           <Grid item xs>
             {myHours && (
               <Card style={{ minHeight: 150 }}>
-                <CardHeader avatar={<Info />} title="Contribution Hours" />
+                <CardHeader
+                  avatar={<Info />}
+                  subheader={`Updated On: ${new Date(
+                    myHours.updatedDate
+                  ).toLocaleDateString()}`}
+                  title="Contribution Hours"
+                />
                 <CardContent>
                   <ProgressBar {...myHours} />
                 </CardContent>
