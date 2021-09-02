@@ -56,35 +56,35 @@ const pdlState = {
 
 describe('<Menu />', () => {
   it('renders correctly', () => {
-    const component = renderer.create(
+    const component = mount(
       <AppContextProvider value={initialState}>
-        <MemoryRouter initialEntries={['/guilds']}>
+        <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
-    )
-    expect(component.toJSON()).toMatchSnapshot()
+    );
+    expect(EnzymeToJson(component)).toMatchSnapshot();
   });
 
   it('renders correctly for admin', () => {
-    const component = renderer.create(
+    const component = mount(
       <AppContextProvider value={adminState}>
         <MemoryRouter initialEntries={['/guilds']}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
-    )
-    expect(component.toJSON()).toMatchSnapshot()
+    );
+    expect(EnzymeToJson(component)).toMatchSnapshot();
   });
 
   it('renders correctly for pdl', () => {
-    const component = renderer.create(
+    const component = mount(
       <AppContextProvider value={pdlState}>
         <MemoryRouter initialEntries={['/guilds']}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
-    )
-    expect(component.toJSON()).toMatchSnapshot()
+    );
+    expect(EnzymeToJson(component)).toMatchSnapshot();
   });
 });
