@@ -91,17 +91,7 @@ const ProfilePage = () => {
       if (!csrf) {
         return;
       }
-      if (newVal.length > 3) {
-        window.snackDispatch({
-          type: UPDATE_TOAST,
-          payload: {
-            severity: "error",
-            toast:
-              "You must contact the guild leader in order to be added to more guilds",
-          },
-        });
-        return;
-      }
+
       const myGuildsSet = new Set(myGuilds?.map((guild) => guild.id));
       const newValSet = new Set(newVal?.map((val) => val.id));
 
@@ -113,6 +103,17 @@ const ProfilePage = () => {
       );
 
       for (const guildId of newInSet2.values()) {
+        if (newVal.length > 3) {
+          window.snackDispatch({
+            type: UPDATE_TOAST,
+            payload: {
+              severity: "error",
+              toast:
+                "You must contact the guild leader in order to be added to more guilds",
+            },
+          });
+          return;
+        }
         let res = await addGuildMember(id, false, guildId, csrf);
         const match = newVal.find((guild) => guild.id === guildId);
         let data =
