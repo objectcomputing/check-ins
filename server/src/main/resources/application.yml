@@ -75,6 +75,7 @@ check-ins:
       scopes:
         scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
+  web-address: ${ WEB_ADDRESS }
 ---
 flyway:
   enabled: enabled
@@ -104,3 +105,8 @@ ehcache:
   caches:
     photo-cache:
       enabled: true
+
+---
+mail-jet:
+  from_address: ${ FROM_ADDRESS }
+  from_name: ${ FROM_NAME }
