@@ -77,7 +77,7 @@ jobs:
             --set-env-vars "CLIENT_X509_CERT_URL=${{ secrets.SA_CLIENT_X509_CERT_URL }}" \
             --set-env-vars "GSUITE_SUPER_ADMIN=${{ secrets.GSUITE_SUPER_ADMIN }}" \
             --set-env-vars "GIT_HUB_TOKEN=${{ secrets.GIT_HUB_TOKEN }}" \
-            --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com/" \
+            --set-env-vars "WEB_ADDRESS=https://checkins.objectcomputing.com" \
             --set-env-vars "FROM_ADDRESS=kimberlinm@objectcomputing.com" \
             --set-env-vars "FROM_NAME=Check-Ins" \
             --platform "managed" \
