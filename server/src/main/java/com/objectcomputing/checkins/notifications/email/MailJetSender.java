@@ -7,14 +7,16 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.micronaut.context.annotation.Property;
-
 import javax.inject.Singleton;
 
+@Requires(property = MailJetSender.FROM_ADDRESS)
+@Requires(property = MailJetSender.FROM_NAME)
 @Singleton
 public class MailJetSender implements EmailSender {
 
@@ -40,8 +42,9 @@ public class MailJetSender implements EmailSender {
      * @param subject, {@link String} Subject of email
      * @param content {@link String} Contents of email
      */
-    // emailAddressToBodiesMap is email, address, email body
+    @Override
     public void sendEmail(String subject, String content, String... recipients) {
+
         MailjetRequest request;
         MailjetResponse response;
         try {
@@ -70,5 +73,19 @@ public class MailJetSender implements EmailSender {
         } catch(MailjetSocketTimeoutException e) {
             LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+        try {
+            sendEmail(subject, content, recipients);
+        } catch(Exception e){
+            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        } catch(Error e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        }
+        return true;
     }
 }

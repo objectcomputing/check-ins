@@ -27,6 +27,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Grid, Modal, Tooltip } from "@material-ui/core";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 
+
 import "./CheckinsPage.css";
 import { updateCheckin } from "../api/checkins";
 

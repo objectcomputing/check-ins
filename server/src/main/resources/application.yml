@@ -75,6 +75,11 @@ check-ins:
       scopes:
         scopeForDriveApi: "https://www.googleapis.com/auth/drive.file"
         scopeForDirectoryApi: "https://www.googleapis.com/auth/admin.directory.user.readonly"
+    feedback:
+      max-suggestions: 6
+      notifications:
+        subject: "Feedback request"
+        content: "You have received a feedback request. Please go to the "
   web-address: ${ WEB_ADDRESS }
 ---
 flyway:
@@ -86,6 +91,12 @@ flyway:
       placeholders:
         aeskey: ${ AES_KEY }
 ---
+
+ui-path:
+  web_ui_url: ${ WEB_UI_URL }
+
+---
+
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
   type: ${ TYPE }

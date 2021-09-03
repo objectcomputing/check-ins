@@ -20,6 +20,14 @@ import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
 import Users from "../admin/users/Users";
 
 import { selectIsAdmin } from "../../context/selectors";
+import FeedbackRequestConfirmation from "../feedback_request_confirmation/FeedbackRequestConfirmation";
+import FeedbackRequestPage from "../../pages/FeedbackRequestPage";
+import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
+import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackResponses";
+import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
+import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
+import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
+
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -56,6 +64,27 @@ export default function Routes() {
         <Header title="Member Profile" />
         <MemberProfilePage />
       </Route>
+      <Route exact path="/feedback/request/confirmation">
+        <FeedbackRequestConfirmation />
+      </Route>
+      <Route path="/feedback/request">
+        <FeedbackRequestPage />
+      </Route>
+      <Route exact path="/feedback/view">
+        <ViewFeedbackPage />
+      </Route>
+      <Route exact path="/feedback/view/responses">
+        <ViewFeedbackResponses />
+      </Route>
+      <Route exact path="/feedback/submit/confirmation">
+        <FeedbackSubmitConfirmation />
+      </Route>
+      <Route path="/feedback/submit">
+        <FeedbackSubmitPage />
+      </Route>
+      <Route path="/feedback/received-requests">
+        <ReceivedRequestsPage />
+      </Route>
 
       {isAdmin && (
         <Switch>
@@ -86,6 +115,24 @@ export default function Routes() {
           <Route path="/admin/users">
             <Header title="Users"></Header>
             <Users />
+          </Route>
+          <Route exact path="/feedback/request/confirmation">
+            <FeedbackRequestConfirmation />
+          </Route>
+          <Route path="/feedback/request">
+            <FeedbackRequestPage />
+          </Route>
+          <Route exact path="/feedback/view">
+            <ViewFeedbackPage />
+          </Route>
+          <Route exact path="/feedback/view/responses">
+            <ViewFeedbackResponses />
+          </Route>
+          <Route exact path="/feedback/submit/confirmation">
+            <FeedbackSubmitConfirmation />
+          </Route>
+          <Route path="/feedback/submit">
+            <FeedbackSubmitPage />
           </Route>
         </Switch>
       )}
