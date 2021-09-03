@@ -12,6 +12,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import "./PeoplePage.css";
 
+import SkeletonLoader from "../components/skeleton_loader/SkeletonLoader"
+
 const useStyles = makeStyles({
   search: {
     display: "flex",
@@ -69,7 +71,10 @@ const PeoplePage = () => {
           />
         </Grid>
         <Grid item className={classes.members}>
-          {createMemberCards}
+          {createMemberCards.length? 
+            createMemberCards : 
+            Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="people" />)
+          }
         </Grid>
       </Grid>
     </div>

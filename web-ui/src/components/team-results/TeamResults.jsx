@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import { TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import "./TeamResults.css";
+import SkeletonLoader from "../skeleton_loader/SkeletonLoader"
 
 const useStyles = makeStyles((theme) => ({
   searchInput: {
@@ -50,13 +51,18 @@ const TeamResults = () => {
         <TeamsActions />
       </div>
       <div className="teams">
-        {teams.map((team, index) => (
-          <TeamSummaryCard
-            key={`team-summary-${team.id}`}
-            index={index}
-            team={team}
-          />
-        ))}
+        {
+          teams.length?
+            teams.map((team, index) => (
+              <TeamSummaryCard
+                key={`team-summary-${team.id}`}
+                index={index}
+                team={team}
+              />
+            )):
+            Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />)
+
+        }
       </div>
     </div>
   );
