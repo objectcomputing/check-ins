@@ -225,7 +225,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
                     <Button
                       className="response-link red-text"
                       onClick={handleViewAllResponsesClick}
-                      disabled={sortedResponses.length === 0}
+                      disabled={sortedResponses.length === 0 || sortedResponses.every(o => o.status === "pending") }
                     >
                       View all responses
                     </Button>

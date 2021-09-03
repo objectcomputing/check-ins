@@ -10,6 +10,17 @@ datasources:
     url:  jdbc:tc:postgresql:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
 ---
+
+mail-jet:
+  from_address: "someEmail@test.com"
+  from_name: "John Doe"
+
+---
+
+ui-path:
+  web_ui_url: "https://checkins-feedback-tuvcfzotpq-uc.a.run.app/feedback/submit?request="
+
+---
 credentials:
   roles:
     SUPER:
@@ -35,5 +46,13 @@ flyway:
       placeholders:
         aeskey: BOGUS_TEST_KEY
 ---
+check-ins:
+  web-address: "https://checkins.objectcomputing.com"
+
+---
 aes:
   key: BOGUS_TEST_KEY
+
+mail-jet:
+  from_address: "someEmail@test.com"
+  from_name: "John Doe"

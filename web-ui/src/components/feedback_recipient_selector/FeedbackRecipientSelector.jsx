@@ -40,10 +40,11 @@ const useStyles = makeStyles({
 
 const propTypes = {
   changeQuery: PropTypes.func.isRequired,
-  fromQuery: PropTypes.array.isRequired
+  fromQuery: PropTypes.array.isRequired,
+  forQuery: PropTypes.string.isRequired
 }
 
-const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
+const FeedbackRecipientSelector = ({changeQuery, fromQuery, forQuery}) => {
   const { state } = useContext(AppContext);
   const classes = useStyles();
   const csrf = selectCsrfToken(state);
@@ -96,10 +97,10 @@ const FeedbackRecipientSelector = ({changeQuery, fromQuery}) => {
     }}
 
     async function getSuggestions() {
-      if (id === undefined || id === null) {
+      if (forQuery === undefined || forQuery === null) {
         return;
       }
-      let res = await getFeedbackSuggestion(id, csrf);
+      let res = await getFeedbackSuggestion(forQuery, csrf);
       if (res && res.payload) {
         return res.payload.data && !res.error
           ? res.payload.data
