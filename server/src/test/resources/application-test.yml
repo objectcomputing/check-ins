@@ -16,11 +16,6 @@ mail-jet:
   from_name: "John Doe"
 
 ---
-
-ui-path:
-  web_ui_url: "https://checkins-feedback-tuvcfzotpq-uc.a.run.app/feedback/submit?request="
-
----
 credentials:
   roles:
     SUPER:

@@ -48,7 +48,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Property(name = FeedbackRequestServicesImpl.FEEDBACK_REQUEST_NOTIFICATION_CONTENT) String notificationContent;
 
-    @Property(name = "ui-path.web_ui_url") String submitURL;
+    @Property(name = "check-ins.web-address") String submitURL;
 
     @BeforeEach
     void resetMocks() {
@@ -190,7 +190,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         //verify appropriate email was sent
         assertTrue(response.getBody().isPresent());
-        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to your unique link at " + submitURL + response.getBody().get().getId()+ " to complete this request.", recipient.getWorkEmail());
+        verify(emailSender).sendEmail(notificationSubject, "You have received a feedback request. Please go to your unique link at " + submitURL + "/feedback/submit?request=" + response.getBody().get().getId()+ " to complete this request.", recipient.getWorkEmail());
     }
 
     @Test

@@ -92,11 +92,6 @@ flyway:
         aeskey: ${ AES_KEY }
 ---
 
-ui-path:
-  web_ui_url: ${ WEB_UI_URL }
-
----
-
 service-account-credentials:
   directory_id: ${ DIRECTORY_ID }
   type: ${ TYPE }
