@@ -148,10 +148,10 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createDefaultRole(RoleType.PDL, pdlMemberProfile);
-        final MemberProfile recipient = createADefaultRecipient();
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
 
         //create feedback request
-        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, recipient, recipient);
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, employeeMemberProfile);
         final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
 
         //send feedback request

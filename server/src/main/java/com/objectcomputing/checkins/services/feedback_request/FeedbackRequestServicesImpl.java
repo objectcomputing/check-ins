@@ -63,6 +63,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
+
+        if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
+            throw new BadArgException("Cannot save feedback request with the same recipient and requestee IDs");
+        }
     }
 
     @Override
