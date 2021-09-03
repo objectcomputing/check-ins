@@ -69,7 +69,7 @@ describe('<Menu />', () => {
   it('renders correctly for admin', () => {
     const component = mount(
       <AppContextProvider value={adminState}>
-        <MemoryRouter initialEntries={['/guilds']}>
+        <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>
@@ -80,7 +80,7 @@ describe('<Menu />', () => {
   it('renders correctly for pdl', () => {
     const component = mount(
       <AppContextProvider value={pdlState}>
-        <MemoryRouter initialEntries={['/guilds']}>
+        <MemoryRouter initialEntries={['/guilds']} keyLength={0}>
           <Menu />
         </MemoryRouter>
       </AppContextProvider>

@@ -5252,6 +5252,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
         "/guilds",
       ]
     }
+    keyLength={0}
   >
     <Router
       history={
@@ -5263,7 +5264,6 @@ exports[`<Menu /> renders correctly for admin 1`] = `
           "entries": Array [
             Object {
               "hash": "",
-              "key": "jz17x2",
               "pathname": "/guilds",
               "search": "",
               "state": undefined,
@@ -5277,7 +5277,6 @@ exports[`<Menu /> renders correctly for admin 1`] = `
           "listen": [Function],
           "location": Object {
             "hash": "",
-            "key": "jz17x2",
             "pathname": "/guilds",
             "search": "",
             "state": undefined,
@@ -12540,6 +12539,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
         "/guilds",
       ]
     }
+    keyLength={0}
   >
     <Router
       history={
@@ -12551,7 +12551,6 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
           "entries": Array [
             Object {
               "hash": "",
-              "key": "ei2hga",
               "pathname": "/guilds",
               "search": "",
               "state": undefined,
@@ -12565,7 +12564,6 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
           "listen": [Function],
           "location": Object {
             "hash": "",
-            "key": "ei2hga",
             "pathname": "/guilds",
             "search": "",
             "state": undefined,
