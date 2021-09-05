@@ -149,6 +149,26 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testCreateFeedbackRequestFailsWhenRecipientAndRequesteeAreSame() {
+        //create two member profiles: one for normal employee, one for PDL of normal employee
+        final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+
+        //create feedback request
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, employeeMemberProfile, employeeMemberProfile);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        //send feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
+    @Test
     void testCreateFeedbackRequestByAssignedPDL() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
