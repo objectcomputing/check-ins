@@ -37,7 +37,7 @@ const TeamResults = () => {
   const classes = useStyles();
 
   return (
-    <div>
+    <>
       <div className="team-search">
         <TextField
           className={classes.searchInput}
@@ -59,12 +59,13 @@ const TeamResults = () => {
                 index={index}
                 team={team}
               />
-            )):
-            Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="team" />)
-
+            ))
+            :
+            Array.from({length: 20})
+              .map((_, index) => <SkeletonLoader key={index} type="team" />)
         }
       </div>
-    </div>
+    </>
   );
 };
 

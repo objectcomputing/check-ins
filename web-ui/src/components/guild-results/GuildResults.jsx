@@ -8,6 +8,7 @@ import { TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import "./GuildResults.css";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader"
+
 const useStyles = makeStyles((theme) => ({
   searchInput: {
     width: "20em",
@@ -50,15 +51,16 @@ const GuildResults = () => {
       <div className="guilds">
         {guilds.length?
           guilds?.map((guild, index) =>
-          guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
-            <GuildSummaryCard
-              key={`guild-summary-${guild.id}`}
-              index={index}
-              guild={guild}
-            />
-          ) : null)
+            guild.name.toLowerCase().includes(searchText.toLowerCase()) ? (
+              <GuildSummaryCard
+                key={`guild-summary-${guild.id}`}
+                index={index}
+                guild={guild}
+              />
+            ) : null)
           :
-          Array.from({length: 20}).map((_, index) => <SkeletonLoader key={index} type="guild" />)
+          Array.from({length: 20})
+            .map((_, index) => <SkeletonLoader key={index} type="guild" />)
         }
       </div>
     </div>
