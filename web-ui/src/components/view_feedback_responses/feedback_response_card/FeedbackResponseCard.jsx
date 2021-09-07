@@ -4,7 +4,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {Typography} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import SentimentIcon from "../../sentiment_icon/SentimentIcon";
+// import SentimentIcon from "../../sentiment_icon/SentimentIcon";
 import "./FeedbackResponseCard.css";
 import {AppContext} from "../../../context/AppContext";
 import {selectProfile} from "../../../context/selectors";
@@ -40,9 +40,9 @@ const FeedbackResponseCard = (props) => {
             }
           }}
           variant="filled"/>
-        <div className="response-sentiment">
-          <SentimentIcon sentimentScore={props.sentiment}/>
-        </div>
+        {/*<div className="response-sentiment">*/}
+        {/*  <SentimentIcon sentimentScore={props.sentiment}/>*/}
+        {/*</div>*/}
       </CardContent>
     </Card>
   );
