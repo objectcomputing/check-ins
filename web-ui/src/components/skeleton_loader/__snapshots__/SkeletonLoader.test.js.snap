@@ -1,0 +1,214 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when 'guild' is passed as prop  1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": 50,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": undefined,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiBox-root MuiBox-root-4"
+  >
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": undefined,
+        }
+      }
+    />
+    <div
+      className="MuiBox-root MuiBox-root-5"
+    />
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": undefined,
+        }
+      }
+    />
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": 180,
+        }
+      }
+    />
+  </div>
+</div>
+`;
+
+exports[`renders correctly when 'people' is passed as prop  1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-avatar"
+    >
+      <span
+        className="MuiSkeleton-root MuiSkeleton-circle MuiSkeleton-pulse"
+        style={
+          Object {
+            "height": 45,
+            "width": 45,
+          }
+        }
+      />
+    </div>
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-body2 MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": 43,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": undefined,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+    </div>
+  </div>
+  <span
+    className="MuiSkeleton-root MuiSkeleton-rect MuiSkeleton-pulse"
+    style={
+      Object {
+        "height": 118,
+        "width": undefined,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`renders correctly when 'team' is passed as prop  1`] = `
+<div
+  className="MuiPaper-root MuiCard-root makeStyles-card-1 MuiPaper-elevation1 MuiPaper-rounded"
+>
+  <div
+    className="MuiCardHeader-root"
+  >
+    <div
+      className="MuiCardHeader-content"
+    >
+      <span
+        className="MuiTypography-root MuiCardHeader-title MuiTypography-h5 MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": 50,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+      <span
+        className="MuiTypography-root MuiCardHeader-subheader MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
+      >
+        <span
+          className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+          style={
+            Object {
+              "height": undefined,
+              "width": undefined,
+            }
+          }
+        />
+      </span>
+    </div>
+  </div>
+  <div
+    className="MuiBox-root MuiBox-root-2"
+  >
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": undefined,
+        }
+      }
+    />
+    <div
+      className="MuiBox-root MuiBox-root-3"
+    />
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": undefined,
+        }
+      }
+    />
+    <span
+      className="MuiSkeleton-root MuiSkeleton-text MuiSkeleton-pulse"
+      style={
+        Object {
+          "height": 15,
+          "width": 180,
+        }
+      }
+    />
+  </div>
+</div>
+`;
