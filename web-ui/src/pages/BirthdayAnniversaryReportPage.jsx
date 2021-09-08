@@ -72,8 +72,8 @@ const BirthdayAnniversaryReportPage = () => {
     } else {
       anniversaryResults = await getAnniversary(month, csrf);
       birthdayResults = await getBirthday(month, csrf);
-      setSearchBirthdayResults(birthdayResults.payload.data);
-      setSearchAnniversaryResults(anniversaryResults.payload.data);
+      setSearchBirthdayResults(birthdayResults.payload.data.sort((a,b)=>Number(b.birthDay.substring(b.birthDay.indexOf("/"), b.birthDay.length)) - Number(a.birthDay.substring(a.birthDay.indexOf("/"), a.birthDay.length))));
+      setSearchAnniversaryResults(anniversaryResults.payload.data.sort((a,b)=>b.yearsOfService - a.yearsOfService));
     }
     setHasSearched(true);
   };
