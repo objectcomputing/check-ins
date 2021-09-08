@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+Array [
+  <hr
+    className="MuiDivider-root person-divider"
+  />,
+  <div
+    className="MuiGrid-root person-row MuiGrid-container MuiGrid-spacing-xs-6"
+    style={
+      Object {
+        "paddingLeft": "16px",
+        "paddingRight": "16px",
+      }
+    }
+  >
+    <div
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"
+    >
+      <div
+        className="MuiGrid-root no-wrap MuiGrid-container MuiGrid-align-items-xs-center"
+      >
+        <div
+          className="MuiGrid-root MuiGrid-item"
+        >
+          <div
+            className="MuiAvatar-root MuiAvatar-circle"
+            style={
+              Object {
+                "marginRight": "1em",
+              }
+            }
+          >
+            <img
+              className="MuiAvatar-img"
+              src="http://localhost:8080/services/member-profiles/member-photos/undefined"
+            />
+          </div>
+        </div>
+        <div
+          className="MuiGrid-root small-margin MuiGrid-item MuiGrid-grid-xs-true"
+        >
+          <p
+            className="MuiTypography-root person-name MuiTypography-body1"
+          />
+          <p
+            className="MuiTypography-root position-text MuiTypography-body1"
+          />
+        </div>
+        <div
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
+        >
+          <p
+            className="MuiTypography-root makeStyles-darkGrayTypography-4 MuiTypography-body1"
+          >
+            Sent on 
+            July 07, 2020
+          </p>
+          <p
+            className="MuiTypography-root MuiTypography-body2"
+          >
+            No due date
+          </p>
+        </div>
+        <div
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
+        >
+          <p
+            className="MuiTypography-root makeStyles-greenTypography-3 MuiTypography-body1"
+          >
+            Submitted 
+            July 08, 2020
+          </p>
+        </div>
+        <div
+          className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-2"
+        >
+          <a
+            className="response-link"
+            href="/feedback/view/responses/?request=c15961e4-6e9b-42cd-8140-ece9efe2445c"
+            onClick={[Function]}
+          >
+            View response
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>,
+]
+`;

@@ -7,21 +7,34 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetServerException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import io.micronaut.context.annotation.Property;
+import io.micronaut.context.annotation.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.inject.Singleton;
 
+@Requires(property = MailJetSender.FROM_ADDRESS)
+@Requires(property = MailJetSender.FROM_NAME)
 @Singleton
 public class MailJetSender implements EmailSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailJetSender.class);
     private final MailjetClient client;
 
-    public MailJetSender(MailjetClient client) {
+    public static final String FROM_ADDRESS = "mail-jet.from_address";
+    public static final String FROM_NAME = "mail-jet.from_name";
+
+    private final String fromAddress;
+    private final String fromName;
+
+    public MailJetSender(MailjetClient client,
+                         @Property(name = FROM_ADDRESS) String fromAddress,
+                         @Property(name = FROM_NAME) String fromName) {
         this.client = client;
+        this.fromAddress = fromAddress;
+        this.fromName = fromName;
     }
 
     /**
@@ -29,8 +42,9 @@ public class MailJetSender implements EmailSender {
      * @param subject, {@link String} Subject of email
      * @param content {@link String} Contents of email
      */
-    // emailAddressToBodiesMap is email, address, email body
+    @Override
     public void sendEmail(String subject, String content, String... recipients) {
+
         MailjetRequest request;
         MailjetResponse response;
         try {
@@ -42,8 +56,8 @@ public class MailJetSender implements EmailSender {
                     .property(Emailv31.MESSAGES, new JSONArray()
                             .put(new JSONObject()
                                     .put(Emailv31.Message.FROM, new JSONObject()
-                                            .put("Email", "kimberlinm@objectcomputing.com")
-                                            .put("Name", "Michael Kimberlin"))
+                                            .put("Email", fromAddress)
+                                            .put("Name", fromName))
                                     .put(Emailv31.Message.TO, recipientList)
                                     .put(Emailv31.Message.SUBJECT, subject)
                                     .put(Emailv31.Message.HTMLPART, content)));
@@ -59,5 +73,19 @@ public class MailJetSender implements EmailSender {
         } catch(MailjetSocketTimeoutException e) {
             LOG.error("An unexpected timeout occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
         }
+    }
+
+    @Override
+    public boolean sendEmailReceivesStatus(String subject, String content, String... recipients) {
+        try {
+            sendEmail(subject, content, recipients);
+        } catch(Exception e){
+            LOG.error("An unexpected exception occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        } catch(Error e) {
+            LOG.error("An unexpected error occurred while sending the upload notification: "+ e.getLocalizedMessage(), e);
+            return false;
+        }
+        return true;
     }
 }

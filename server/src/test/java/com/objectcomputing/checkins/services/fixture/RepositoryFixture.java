@@ -7,6 +7,10 @@ import com.objectcomputing.checkins.services.checkindocument.CheckinDocumentRepo
 import com.objectcomputing.checkins.services.checkins.CheckInRepository;
 import com.objectcomputing.checkins.services.demographics.DemographicsRepository;
 import com.objectcomputing.checkins.services.feedback.FeedbackRepository;
+import com.objectcomputing.checkins.services.feedback_template.template_question.TemplateQuestionRepository;
+import com.objectcomputing.checkins.services.feedback_answer.FeedbackAnswerRepository;
+import com.objectcomputing.checkins.services.feedback_request.FeedbackRequestRepository;
+import com.objectcomputing.checkins.services.feedback_template.FeedbackTemplateRepository;
 import com.objectcomputing.checkins.services.guild.GuildRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberHistoryRepository;
 import com.objectcomputing.checkins.services.guild.member.GuildMemberRepository;
@@ -40,6 +44,14 @@ public interface RepositoryFixture {
 
     default TagRepository getTagRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(TagRepository.class);
+    }
+
+    default FeedbackTemplateRepository getFeedbackTemplateRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackTemplateRepository.class);
+    }
+
+    default TemplateQuestionRepository getTemplateQuestionRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(TemplateQuestionRepository.class);
     }
 
     default EntityTagRepository getEntityTagRepository() {
@@ -108,6 +120,9 @@ public interface RepositoryFixture {
     default GuildMemberRepository getGuildMemberRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(GuildMemberRepository.class);
     }
+    default FeedbackRequestRepository getFeedbackRequestRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackRequestRepository.class);
+    }
 
     default FeedbackRepository getFeedbackRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(FeedbackRepository.class);
@@ -123,6 +138,10 @@ public interface RepositoryFixture {
 
     default EmployeeHoursRepository getEmployeeHoursRepository() {
         return getEmbeddedServer().getApplicationContext().getBean(EmployeeHoursRepository.class);
+    }
+
+    default FeedbackAnswerRepository getFeedbackAnswerRepository() {
+        return getEmbeddedServer().getApplicationContext().getBean(FeedbackAnswerRepository.class);
     }
 
      default SettingsRepository getSettingsRepository() {

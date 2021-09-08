@@ -1,24 +1,33 @@
 import React, { useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 
-import AdminPage from "../../pages/AdminPage";
-
 import { AppContext } from "../../context/AppContext";
 
-import GroupIcon from "@material-ui/icons/Group";
-import Header from "../header/Header";
-import HomePage from "../../pages/HomePage";
-import TeamsPage from "../../pages/TeamsPage";
-import GuildsPage from "../../pages/GuildsPage";
+import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
 import CheckinsPage from "../../pages/CheckinsPage";
 import CheckinsReportPage from "../../pages/CheckinsReportPage";
+import EditSkillsPage from "../../pages/EditSkillsPage";
+import GroupIcon from "@material-ui/icons/Group";
+import GuildsPage from "../../pages/GuildsPage";
+import Header from "../header/Header";
+import HomePage from "../../pages/HomePage";
 import PeoplePage from "../../pages/PeoplePage";
 import MemberProfilePage from "../../pages/MemberProfilePage";
-import EditSkillsPage from "../../pages/EditSkillsPage";
+import Roles from "../admin/roles/Roles";
 import SkillReportPage from "../../pages/SkillReportPage";
+import TeamsPage from "../../pages/TeamsPage";
 import TeamSkillReportPage from "../../pages/TeamSkillReportPage";
-import BirthdayAnniversaryReportPage from "../../pages/BirthdayAnniversaryReportPage";
+import Users from "../admin/users/Users";
+
 import { selectIsAdmin } from "../../context/selectors";
+import FeedbackRequestConfirmation from "../feedback_request_confirmation/FeedbackRequestConfirmation";
+import FeedbackRequestPage from "../../pages/FeedbackRequestPage";
+import ViewFeedbackPage from "../../pages/ViewFeedbackPage";
+import ViewFeedbackResponses from "../view_feedback_responses/ViewFeedbackResponses";
+import FeedbackSubmitConfirmation from "../feedback_submit_confirmation/FeedbackSubmitConfirmation";
+import FeedbackSubmitPage from "../../pages/FeedbackSubmitPage";
+import ReceivedRequestsPage from "../../pages/ReceivedRequestsPage";
+
 
 export default function Routes() {
   const { state } = useContext(AppContext);
@@ -55,6 +64,27 @@ export default function Routes() {
         <Header title="Member Profile" />
         <MemberProfilePage />
       </Route>
+      <Route exact path="/feedback/request/confirmation">
+        <FeedbackRequestConfirmation />
+      </Route>
+      <Route path="/feedback/request">
+        <FeedbackRequestPage />
+      </Route>
+      <Route exact path="/feedback/view">
+        <ViewFeedbackPage />
+      </Route>
+      <Route exact path="/feedback/view/responses">
+        <ViewFeedbackResponses />
+      </Route>
+      <Route exact path="/feedback/submit/confirmation">
+        <FeedbackSubmitConfirmation />
+      </Route>
+      <Route path="/feedback/submit">
+        <FeedbackSubmitPage />
+      </Route>
+      <Route path="/feedback/received-requests">
+        <ReceivedRequestsPage />
+      </Route>
 
       {isAdmin && (
         <Switch>
@@ -78,11 +108,31 @@ export default function Routes() {
             <Header title="Birthday & Anniversary Reports" />
             <BirthdayAnniversaryReportPage />
           </Route>
-          <Route path="/admin">
-            <Header title="Admin">
-              <GroupIcon fontSize="large" />
-            </Header>
-            <AdminPage />
+          <Route path="/admin/roles">
+            <Header title="Roles"></Header>
+            <Roles />
+          </Route>
+          <Route path="/admin/users">
+            <Header title="Users"></Header>
+            <Users />
+          </Route>
+          <Route exact path="/feedback/request/confirmation">
+            <FeedbackRequestConfirmation />
+          </Route>
+          <Route path="/feedback/request">
+            <FeedbackRequestPage />
+          </Route>
+          <Route exact path="/feedback/view">
+            <ViewFeedbackPage />
+          </Route>
+          <Route exact path="/feedback/view/responses">
+            <ViewFeedbackResponses />
+          </Route>
+          <Route exact path="/feedback/submit/confirmation">
+            <FeedbackSubmitConfirmation />
+          </Route>
+          <Route path="/feedback/submit">
+            <FeedbackSubmitPage />
           </Route>
         </Switch>
       )}

@@ -67,16 +67,20 @@ const Personnel = () => {
     }
   }, [csrf, personnel, dispatch]);
 
+// Create feedback request link
+const createFeedbackRequestLink = (memberId) => (
+    <span className="feedback-link" onClick={(e) => {
+          e.stopPropagation();
+          history.push(`/feedback/request?for=${memberId}`);
+        }}>
+      Request Feedback
+    </span>);
+
   // Create entry of member and their last checkin
   function createEntry(person, lastCheckin, keyInput) {
     let key = keyInput ? keyInput : undefined;
     let name = "Team Member";
     let workEmail = "";
-    let lastCheckInDate = "Unknown";
-    if(lastCheckin?.checkInDate) {
-      const [year, month, day, hour, minute] = lastCheckin.checkInDate;
-      lastCheckInDate = new Date(year, month - 1, day, hour, minute, 0).toLocaleDateString();
-    }
 
     if (person) {
       let id = person.id ? person.id : null;
@@ -86,18 +90,19 @@ const Personnel = () => {
     }
 
     return (
-      <ListItem key={key} button
-          onClick={() => {
-            history.push(`/checkins/${person?.id}`);
-          }}
+      <ListItem key={key}
+
       >
         <ListItemAvatar>
           <Avatar
             alt={name}
             src={getAvatarURL(workEmail)}
+            onClick={() => {
+              history.push(`/checkins/${person?.id}`);
+            }}
           />
         </ListItemAvatar>
-        <ListItemText primary={name} secondary={lastCheckInDate}/>
+        <ListItemText primary={name} secondary={createFeedbackRequestLink(person.id)}/>
       </ListItem>
     );
   }

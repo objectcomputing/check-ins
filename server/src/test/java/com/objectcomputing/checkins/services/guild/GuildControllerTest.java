@@ -231,10 +231,8 @@ class GuildControllerTest extends TestContainersSuite implements GuildFixture,
     @Test
     void testReadGuild() {
         Guild guildEntity = createDefaultGuild() ;
-
         final HttpRequest<?> request = HttpRequest.GET(String.format("/%s", guildEntity.getId())).basicAuth(MEMBER_ROLE, MEMBER_ROLE);
         final HttpResponse<GuildResponseDTO> response = client.toBlocking().exchange(request, GuildResponseDTO.class);
-
         assertEntityDTOEqual(guildEntity, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
     }

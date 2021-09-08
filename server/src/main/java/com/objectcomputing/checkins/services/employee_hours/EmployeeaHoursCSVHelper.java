@@ -20,7 +20,6 @@ public class EmployeeaHoursCSVHelper {
             CSVParser csvParser = CSVFormat.RFC4180.withFirstRecordAsHeader().withIgnoreSurroundingSpaces().withNullString("").parse(input);
 
             for (CSVRecord csvRecord : csvParser) {
-                String fl = csvRecord.get("targetHours");
                 EmployeeHours employeeHours = new EmployeeHours(csvRecord.get("employeeId"),
                         Float.parseFloat(csvRecord.get("contributionHours")),
                         Float.parseFloat(csvRecord.get("billableHours")),
