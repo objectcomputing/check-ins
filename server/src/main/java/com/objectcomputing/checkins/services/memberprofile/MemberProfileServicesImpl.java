@@ -11,8 +11,6 @@ import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
 import com.objectcomputing.checkins.services.team.member.TeamMemberServices;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
@@ -24,7 +22,6 @@ import static com.objectcomputing.checkins.util.Util.nullSafeUUIDToString;
 @Singleton
 public class MemberProfileServicesImpl implements MemberProfileServices {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MemberProfileServicesImpl.class);
     private final MemberProfileRepository memberProfileRepository;
     private final CurrentUserServices currentUserServices;
     private final RoleServices roleServices;

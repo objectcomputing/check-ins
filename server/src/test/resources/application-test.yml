@@ -10,6 +10,12 @@ datasources:
     url:  jdbc:tc:postgresql:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
 ---
+
+mail-jet:
+  from_address: "someEmail@test.com"
+  from_name: "John Doe"
+
+---
 credentials:
   roles:
     SUPER:
