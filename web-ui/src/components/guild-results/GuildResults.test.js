@@ -37,3 +37,15 @@ it("renders correctly", () => {
     </AppContextProvider>
   );
 });
+
+
+
+it("renders correctly when no guilds are loaded", () => {
+  initialState.state.guilds = [];
+  
+  snapshot(
+    <AppContextProvider value={initialState}>
+        <GuildResults />
+    </AppContextProvider>
+  );
+});

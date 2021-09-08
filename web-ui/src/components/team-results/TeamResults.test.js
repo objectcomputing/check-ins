@@ -37,3 +37,29 @@ it("renders correctly", () => {
     </AppContextProvider>
   );
 });
+
+
+it("renders correctly when no teams are loaded", () => {
+  const stateWithoutTeams = {
+    state: {
+      userProfile: {
+        name: "holmes",
+        memberProfile: {
+          pdlId: "",
+          title: "Tester",
+          workEmail: "test@tester.com",
+        },
+        role: ["MEMBER", "ADMIN"],
+        imageUrl:
+          "https://upload.wikimedia.org/wikipedia/commons/7/74/SNL_MrBill_Doll.jpg",
+      },
+      teams: []
+    },
+  };
+
+  snapshot(
+    <AppContextProvider value={stateWithoutTeams}>
+      <TeamResults />
+    </AppContextProvider>
+  );
+});
