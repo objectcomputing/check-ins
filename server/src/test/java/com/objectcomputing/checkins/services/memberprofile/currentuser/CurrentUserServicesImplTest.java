@@ -5,6 +5,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfileReposito
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleServices;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ public class CurrentUserServicesImplTest {
 
     @Mock
     RoleServices roleServices;
+
+    @Mock
+    MemberRoleServices memberRoleServices;
 
     @InjectMocks
     CurrentUserServicesImpl testObject;
@@ -55,7 +59,7 @@ public class CurrentUserServicesImplTest {
         MemberProfile expected = mkMemberProfile();
         expected.setId(UUID.randomUUID());
         expected.setWorkEmail("test.email");
-        Role mockRole = new Role(RoleType.MEMBER, "role description", expected.getId());
+        Role mockRole = new Role(RoleType.MEMBER.name(), "role description");
 
         when(memberProfileRepo.findByWorkEmail(expected.getWorkEmail())).thenReturn(java.util.Optional.empty());
         when(memberProfileRepo.save(any())).thenReturn(expected);

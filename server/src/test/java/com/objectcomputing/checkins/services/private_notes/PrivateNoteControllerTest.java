@@ -92,7 +92,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfADMIN = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfADMIN);
+        createAndAssignAdminRole(memberProfileOfADMIN);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
         PrivateNote privateNote = createADefaultPrivateNote(checkIn, memberProfileOfPDL);
@@ -197,7 +197,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
         MemberProfile memberProfileOfUser = createADefaultMemberProfileForPdl(memberProfileOfPDL);
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfileOfUser, memberProfileOfPDL);
 
@@ -384,7 +384,7 @@ public class PrivateNoteControllerTest extends TestContainersSuite implements Me
     void testAdminUnableToUpdatePrivateNotes() {
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createADefaultMemberProfileForPdl(memberProfile);
-        createDefaultAdminRole(memberProfileForPDL);
+        createAndAssignAdminRole(memberProfileForPDL);
 
         CheckIn checkIn = createADefaultCheckIn(memberProfile, memberProfileForPDL);
 

@@ -34,9 +34,9 @@ public class CheckinsRolesFinder implements RolesFinder {
         List<String> roles = new ArrayList<>();
         memberProfileRepository.findByWorkEmail(openIdClaims.get(JWTOpenIdClaims.CLAIMS_EMAIL).toString())
                 .ifPresent((memberProfile) -> {
-                    roles.addAll(roleRepository.findByMemberid(memberProfile.getId())
+                    roles.addAll(roleRepository.findUserRoles(memberProfile.getId())
                             .stream()
-                            .map(role -> role.getRole().toString())
+                            .map(role -> role.getRole())
                             .collect(Collectors.toList()));
                 });
         return roles;

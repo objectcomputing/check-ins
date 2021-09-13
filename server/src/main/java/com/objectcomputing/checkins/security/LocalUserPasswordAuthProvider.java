@@ -1,10 +1,12 @@
 package com.objectcomputing.checkins.security;
 
+import com.objectcomputing.checkins.security.permissions.ExtendedUserDetails;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
-import com.objectcomputing.checkins.services.role.Role;
-import com.objectcomputing.checkins.services.role.RoleRepository;
-import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionServices;
+import com.objectcomputing.checkins.services.role.*;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleServices;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.StringUtils;
 import io.micronaut.http.HttpRequest;
@@ -15,6 +17,7 @@ import org.reactivestreams.Publisher;
 import io.micronaut.core.annotation.Nullable;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -22,15 +25,18 @@ import java.util.stream.Collectors;
 public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
 
     private final CurrentUserServices currentUserServices;
-    private final RoleRepository roleRepository;
     private final UsersStore usersStore;
+    private final PermissionServices permissionServices;
+    private final RoleServices roleServices;
+    private final MemberRoleServices memberRoleServices;
 
     public LocalUserPasswordAuthProvider(CurrentUserServices currentUserServices,
-                                         RoleRepository roleRepository,
-                                         UsersStore usersStore) {
+                                         UsersStore usersStore, PermissionServices permissionServices, RoleServices roleServices, MemberRoleServices memberRoleServices) {
         this.currentUserServices = currentUserServices;
-        this.roleRepository = roleRepository;
         this.usersStore = usersStore;
+        this.permissionServices = permissionServices;
+        this.roleServices = roleServices;
+        this.memberRoleServices = memberRoleServices;
     }
 
     @Override
@@ -38,34 +44,34 @@ public class LocalUserPasswordAuthProvider implements AuthenticationProvider {
         String email = authReq.getIdentity().toString();
         MemberProfile memberProfile = currentUserServices.findOrSaveUser(email, email, email);
 
-        List<String> roles;
         String role;
+        // if empty get default roles, otherwise create role on the fly
         if (StringUtils.isNotEmpty(role = authReq.getSecret().toString())) {
-            roles = usersStore.getUserRole(role);
+            List<String> roles = usersStore.getUserRole(role);
             if(roles == null) {
                 return Flowable.just(new AuthenticationFailed(String.format("Invalid role selected %s", role)));
             }
 
-            List<String> currentRoles = roleRepository.findByMemberid(memberProfile.getId()).stream()
-                    .map(r -> r.getRole().toString()).collect(Collectors.toList());
-            currentRoles.removeAll(roles);
+          // remove a user from the roles they currently have (as assigned in test data)
+            memberRoleServices.removeMemberFromRoles(memberProfile.getId());
 
-            // Create the roles if they don't already exist, delete roles not asked for
-            for (String curRole : currentRoles) {
-                roleRepository.deleteByRoleAndMemberid(RoleType.valueOf(curRole), memberProfile.getId());
-            }
-
+            // add the roles based on role override / configuration properties
             for (String curRole : roles) {
-                RoleType roleType = RoleType.valueOf(curRole);
-                if (roleRepository.findByRoleAndMemberid(roleType, memberProfile.getId()).isEmpty()) {
-                    roleRepository.save(new Role(roleType, "role description", memberProfile.getId()));
+                // if no role is found then create and save it
+                Role currentRole = roleServices.findByRole(curRole).orElse(null);
+                if (currentRole == null){
+                    currentRole = roleServices.save(new Role(null, curRole, "description"));
                 }
+                memberRoleServices.saveByIds(memberProfile.getId(), currentRole.getId());
             }
-        } else {
-            roles = roleRepository.findByMemberid(memberProfile.getId()).stream().map((r) -> r.getRole().toString())
-                    .collect(Collectors.toList());
         }
 
-        return Flowable.just(new UserDetails(email, roles));
+        List<Permission> permissions = permissionServices.findUserPermissions(memberProfile.getId());
+        List<String> permissionsAsString = permissions.stream().map(o -> o.getPermission()).collect(Collectors.toList());
+
+        Set<Role> userRoles = roleServices.findUserRoles(memberProfile.getId());
+        List<String> rolesAsString = userRoles.stream().map(o -> o.getRole()).collect(Collectors.toList());
+
+        return Flowable.just(new ExtendedUserDetails(email, rolesAsString, permissionsAsString));
     }
 }

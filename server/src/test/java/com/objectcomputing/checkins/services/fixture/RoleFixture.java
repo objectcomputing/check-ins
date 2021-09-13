@@ -2,17 +2,36 @@ package com.objectcomputing.checkins.services.fixture;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.role.Role;
+
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRole;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleId;
 
 import java.util.UUID;
 
 public interface RoleFixture extends RepositoryFixture {
-    default Role createDefaultAdminRole(MemberProfile memberProfile) {
-        return createDefaultRole(RoleType.ADMIN, memberProfile);
+    default Role createRole(Role role) {
+        return getRoleRepository().save(new Role(role.getRole(), role.getDescription()));
     }
 
-    default Role createDefaultRole(RoleType type, MemberProfile memberProfile) {
-        return getRoleRepository().save(new Role(type, "role description", memberProfile.getId()));
+    default Role createAndAssignAdminRole(MemberProfile memberProfile) {
+        return createAndAssignRole(RoleType.ADMIN, memberProfile);
+    }
+
+    // TODO phase out RoleType
+    default Role createAndAssignRole(RoleType type, MemberProfile memberProfile) {
+        Role role = getRoleRepository().save(new Role(type.name(), "role description"));
+        getMemberRoleRepository()
+                .saveByIds(memberProfile.getId(), role.getId());
+        return role;
+    }
+
+    default Role createAndAssignRole(String roleName, MemberProfile memberProfile) {
+        Role role = getRoleRepository().save(new Role(roleName, "role description"));
+        getMemberRoleRepository()
+                .save(new MemberRole(memberProfile.getId(), role.getId()));
+
+        return role;
     }
 
     default Role findRole(Role role) {

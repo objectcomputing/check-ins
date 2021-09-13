@@ -21,7 +21,6 @@ class RoleCreateDTOTest {
     void testDTOInstantiation() {
         RoleCreateDTO dto = new RoleCreateDTO();
         assertNull(dto.getRole());
-        assertNull(dto.getMemberid());
     }
 
     @Test
@@ -29,7 +28,7 @@ class RoleCreateDTOTest {
         RoleCreateDTO dto = new RoleCreateDTO();
 
         Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
-        assertEquals(violations.size(), 2);
+        assertEquals(violations.size(), 1);
         for (ConstraintViolation<RoleCreateDTO> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -40,13 +39,10 @@ class RoleCreateDTOTest {
         RoleCreateDTO dto = new RoleCreateDTO();
 
         RoleType roleType = RoleType.ADMIN;
-        UUID memberId = UUID.randomUUID();
 
-        dto.setRole(roleType);
-        assertEquals(dto.getRole(), roleType);
+        dto.setRole(roleType.name());
+        assertEquals(dto.getRole(), roleType.name());
 
-        dto.setMemberid(memberId);
-        assertEquals(dto.getMemberid(), memberId);
 
         Set<ConstraintViolation<RoleCreateDTO>> violations = validator.validate(dto);
         assertTrue(violations.isEmpty());

@@ -40,7 +40,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     @Test
     public void testGETFindByMonthReturnsEmptyBody() throws UnsupportedEncodingException {
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -53,7 +53,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     @Test
     public void testGETFindByMonthNotAuthorized() throws UnsupportedEncodingException {
         MemberProfile memberProfile = createAnUnrelatedUser();
-        createDefaultRole(RoleType.MEMBER, memberProfile);
+        createAndAssignRole(RoleType.MEMBER, memberProfile);
 
         final HttpRequest<Object> request = HttpRequest.
                 GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE);
@@ -71,7 +71,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
     public void testGETFindByNoValue() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpRequest<Object> request = HttpRequest.GET("").basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);

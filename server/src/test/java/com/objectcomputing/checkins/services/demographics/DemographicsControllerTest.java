@@ -77,7 +77,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     public void testGetAllDemographics() {
 
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
-        createDefaultAdminRole(alice);
+        createAndAssignAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
 
@@ -96,7 +96,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testGETFindByValidGender() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
-        createDefaultAdminRole(alice);
+        createAndAssignAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?gender=%s", demographic.getGender()))
@@ -114,7 +114,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testGETFindByWrongNameReturnsEmptyBody() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
-        createDefaultAdminRole(alice);
+        createAndAssignAdminRole(alice);
         Demographics demographic = createDefaultDemographics(alice.getId());
 
         final HttpRequest<Object> request = HttpRequest.GET(String.format("/?gender=%s", encodeValue("random")))
@@ -131,7 +131,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPOSTCreateADemographics() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
-        createDefaultAdminRole(alice);
+        createAndAssignAdminRole(alice);
 
         DemographicsCreateDTO newDemographics = new DemographicsCreateDTO();
         newDemographics.setMemberId(alice.getId());
@@ -150,7 +150,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPOSTCreateADemographicsNoName() {
         final MemberProfile alice = getMemberProfileRepository().save(mkMemberProfile("Alice"));
-        createDefaultAdminRole(alice);
+        createAndAssignAdminRole(alice);
 
         DemographicsCreateDTO newDemographics = new DemographicsCreateDTO();
 
@@ -167,7 +167,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTSuccessfulUpdate() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultAdminRole(lucy);
+        createAndAssignAdminRole(lucy);
 
         Demographics demographicToUpdate = createDefaultDemographics(lucy.getId());
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
@@ -187,7 +187,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultAdminRole(lucy);
+        createAndAssignAdminRole(lucy);
 
         Demographics demographicToUpdate = createDefaultDemographics(lucy.getId());
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
@@ -208,7 +208,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testPUTNoId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultAdminRole(lucy);
+        createAndAssignAdminRole(lucy);
 
         DemographicsUpdateDTO updatedDemographics = new DemographicsUpdateDTO();
 
@@ -225,7 +225,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographics() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultAdminRole(lucy);
+        createAndAssignAdminRole(lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 
@@ -240,7 +240,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographicsWrongId() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultAdminRole(lucy);
+        createAndAssignAdminRole(lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 
@@ -257,7 +257,7 @@ public class DemographicsControllerTest extends TestContainersSuite implements D
     @Test
     public void testDELETEDemographicsNoPermission() {
         final MemberProfile lucy = getMemberProfileRepository().save(mkMemberProfile("Lucy"));
-        createDefaultRole(RoleType.MEMBER, lucy);
+        createAndAssignRole(RoleType.MEMBER, lucy);
 
         Demographics demographic = createDefaultDemographics(lucy.getId());
 

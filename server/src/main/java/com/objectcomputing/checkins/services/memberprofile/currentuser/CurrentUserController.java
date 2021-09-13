@@ -2,7 +2,12 @@ package com.objectcomputing.checkins.services.memberprofile.currentuser;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileUtils;
+import com.objectcomputing.checkins.services.permissions.Permission;
+import com.objectcomputing.checkins.services.permissions.PermissionRepository;
+import com.objectcomputing.checkins.services.permissions.PermissionServices;
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleRepository;
+import com.objectcomputing.checkins.services.role.RoleServices;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -14,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.micronaut.core.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,12 +29,15 @@ import java.util.stream.Collectors;
 public class CurrentUserController {
 
     private final CurrentUserServices currentUserServices;
-    private final RoleRepository roleRepository;
+    private final RoleServices roleServices;
+    private final PermissionServices permissionServices;
 
     public CurrentUserController(CurrentUserServices currentUserServices,
-                                 RoleRepository roleRepository) {
+                                 RoleServices roleServices, PermissionServices permissionServices) {
         this.currentUserServices = currentUserServices;
-        this.roleRepository = roleRepository;
+        this.roleServices = roleServices;
+        this.permissionServices = permissionServices;
+
     }
 
     /**
@@ -51,24 +60,27 @@ public class CurrentUserController {
         String lastName = name.substring(name.indexOf(' ') + 1).trim();
 
         MemberProfile user = currentUserServices.findOrSaveUser(firstName, lastName, workEmail);
-        List<String> roles = roleRepository.findByMemberid(user.getId()).stream()
-                .map(role -> role.getRole().toString()).collect(Collectors.toList());
+        List<Permission> permissions = permissionServices.findUserPermissions(user.getId());
+
+        Set<Role> roles = roleServices.findUserRoles(user.getId());
+        List<String> rolesAsString = roles.stream().map(o -> o.getRole()).collect(Collectors.toList());
 
         return HttpResponse
                 .ok()
                 .headers(headers -> headers.location(location(user.getId())))
-                .body(fromEntity(user, imageUrl, roles));
+                .body(fromEntity(user, imageUrl, permissions, rolesAsString));
     }
 
     protected URI location(UUID uuid) {
         return URI.create("/services/member-profiles/" + uuid);
     }
 
-    private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<String> roles) {
+    private CurrentUserDTO fromEntity(MemberProfile entity, String imageUrl, List<Permission> permissions, List<String> roles) {
         CurrentUserDTO dto = new CurrentUserDTO();
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setName(MemberProfileUtils.getFullName(entity));
+        dto.setPermissions(permissions);
         dto.setRole(roles);
         dto.setImageUrl(imageUrl);
         dto.setMemberProfile(entity);

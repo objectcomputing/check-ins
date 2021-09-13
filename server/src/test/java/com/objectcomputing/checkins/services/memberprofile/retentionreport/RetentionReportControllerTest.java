@@ -105,7 +105,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("WEEKLY");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -127,7 +127,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -149,7 +149,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         dto.setFrequency("MoNtHlY");
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -176,7 +176,7 @@ public class RetentionReportControllerTest extends TestContainersSuite implement
         final MemberProfile memberProfile4 = createATerminatedNewHireProfile();
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<RetentionReportRequestDTO> request = HttpRequest.POST("", dto)
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);

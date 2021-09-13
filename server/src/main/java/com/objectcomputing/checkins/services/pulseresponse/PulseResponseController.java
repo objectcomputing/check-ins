@@ -39,7 +39,6 @@ import io.micronaut.scheduling.TaskExecutors;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name="pulse-responses")
-
 public class PulseResponseController {
 
     private final PulseResponseService pulseResponseServices;

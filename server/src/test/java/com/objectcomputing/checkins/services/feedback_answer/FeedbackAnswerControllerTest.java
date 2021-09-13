@@ -31,7 +31,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     HttpClient client;
 
     public FeedbackAnswer createSampleAnswer(MemberProfile sender, MemberProfile recipient) {
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
@@ -77,7 +77,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Test
     void testPostAnswerByAdminUnauthorized() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
@@ -144,7 +144,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     @Test
     void testUpdateByAdminUnauthorized() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         MemberProfile sender = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackAnswer feedbackAnswer = saveSampleAnswer(sender, recipient);
@@ -222,7 +222,7 @@ public class FeedbackAnswerControllerTest extends TestContainersSuite implements
     void testGetByRequestAndQuestionIdAuthorizedRequestOnly() {
         MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
