@@ -322,6 +322,28 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testCreateFeedbackRequestWithSameRecipientAndRequestee() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = requestee;
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with with same requestee and recipient ids
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("The requestee must not be the same person as the recipient", responseException.getMessage());
+    }
+
+
+    @Test
     void testGetFeedbackRequestByAdmin() {
         MemberProfile admin = createADefaultMemberProfile();
         createAndAssignAdminRole(admin);

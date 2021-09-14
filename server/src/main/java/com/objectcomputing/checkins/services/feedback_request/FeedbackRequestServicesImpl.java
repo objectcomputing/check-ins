@@ -72,7 +72,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         }
 
         if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
-            throw new BadArgException("Cannot save feedback request with the same recipient and requestee IDs");
+            throw new BadArgException("The requestee must not be the same person as the recipient");
         }
     }
 
