@@ -40,7 +40,7 @@ export const getGuildsForMember = async (id, cookie) => {
     url: guildUrl,
     responseType: "json",
     params: {
-      memberId: id,
+      memberid: id,
     },
     withCredentials: true,
     headers: { "X-CSRF-Header": cookie },

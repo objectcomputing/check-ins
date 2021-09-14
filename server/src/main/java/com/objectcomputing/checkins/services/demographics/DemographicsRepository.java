@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.demographics;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.repository.CrudRepository;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 

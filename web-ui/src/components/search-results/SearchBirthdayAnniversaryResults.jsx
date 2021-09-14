@@ -34,7 +34,7 @@ const SearchBirthdayAnniversaryResults = ({
   const getMemberProfile = (member) => selectProfile(state, member.userId);
   const BirthdayMap = () => {
     if (searchBirthdayResults.length > 0) {
-      return searchBirthdayResults.map((member, index) => {
+      return searchBirthdayResults.map((member) => {
         return (
           <Card
             className={"member-birthday-anniversary-card"}
@@ -71,7 +71,7 @@ const SearchBirthdayAnniversaryResults = ({
     if (searchAnniversaryResults.length > 0) {
       return (
         searchAnniversaryResults.length > 0 &&
-        searchAnniversaryResults.map((member, index) => {
+        searchAnniversaryResults.map((member) => {
           return (
             <Card
               className={"member-birthday-anniversary-card"}
