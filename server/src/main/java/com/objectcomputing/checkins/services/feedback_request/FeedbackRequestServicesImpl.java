@@ -91,7 +91,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("There is no valid feedback template selected.");
         }
 
-        if (feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
@@ -134,7 +134,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
