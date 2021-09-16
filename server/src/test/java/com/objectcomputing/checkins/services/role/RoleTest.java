@@ -24,21 +24,18 @@ class RoleTest {
     @Test
     void testRoleInstantiation() {
         final RoleType roleType = RoleType.ADMIN;
-        final UUID memberId = UUID.randomUUID();
-        Role role = new Role(roleType, "role description", memberId);
-        assertEquals(roleType, role.getRole(), role.getDescription());
-        assertEquals(memberId, role.getMemberid(), role.getDescription());
+        Role role = new Role(roleType.name(), "role description");
+        assertEquals(roleType.toString(), role.getRole(), role.getDescription());
+
     }
 
     @Test
     void testRoleInstantiation2() {
         final UUID id = UUID.randomUUID();
         final RoleType roleType = RoleType.ADMIN;
-        final UUID memberId = UUID.randomUUID();
-        Role role = new Role(id, roleType,"role description", memberId);
+        Role role = new Role(id, roleType.name(),"role description");
         assertEquals(id, role.getId());
-        assertEquals(roleType, role.getRole());
-        assertEquals(memberId, role.getMemberid());
+        assertEquals(roleType.toString(), role.getRole());
 
         Set<ConstraintViolation<Role>> violations = validator.validate(role);
         assertTrue(violations.isEmpty());
@@ -50,13 +47,13 @@ class RoleTest {
         final UUID id = UUID.randomUUID();
         final RoleType roleType = RoleType.ADMIN;
         final UUID memberId = UUID.randomUUID();
-        Role role = new Role(id, roleType, "role description", memberId);
+        Role role = new Role(id, roleType.toString(), "role description");
 
         role.setRole(null);
-        role.setMemberid(null);
+
 
         Set<ConstraintViolation<Role>> violations = validator.validate(role);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
         for (ConstraintViolation<Role> violation : violations) {
             assertEquals(violation.getMessage(), "must not be null");
         }
@@ -66,9 +63,8 @@ class RoleTest {
     void testEquals() {
         final UUID id = UUID.randomUUID();
         final RoleType role = RoleType.MEMBER;
-        final UUID memberId = UUID.randomUUID();
-        Role r = new Role(id, role,  "role description", memberId);
-        Role r2 = new Role(id, role, "role description", memberId);
+        Role r = new Role(id, role.toString(),  "role description");
+        Role r2 = new Role(id, role.toString(), "role description");
 
         assertEquals(r, r2);
 
@@ -80,7 +76,7 @@ class RoleTest {
 
         assertEquals(r, r2);
 
-        r2.setRole(RoleType.PDL);
+        r2.setRole(RoleType.PDL.toString());
 
         assertNotEquals(r, r2);
     }
@@ -90,8 +86,7 @@ class RoleTest {
         HashMap<Role, Boolean> map = new HashMap<>();
         final UUID id = UUID.randomUUID();
         final RoleType role = RoleType.MEMBER;
-        final UUID memberId = UUID.randomUUID();
-        Role r = new Role(id, role, "role description", memberId);
+        Role r = new Role(id, role.toString(), "role description");
 
         map.put(r, true);
 
@@ -102,12 +97,10 @@ class RoleTest {
     void testToString() {
         final UUID id = UUID.randomUUID();
         final RoleType role = RoleType.ADMIN;
-        final UUID memberId = UUID.randomUUID();
-        Role r = new Role(id, role,"role description", memberId);
+        Role r = new Role(id, role.toString(),"role description");
 
         String toString = r.toString();
         assertTrue(toString.contains(role.toString()));
         assertTrue(toString.contains(id.toString()));
-        assertTrue(toString.contains(memberId.toString()));
     }
 }

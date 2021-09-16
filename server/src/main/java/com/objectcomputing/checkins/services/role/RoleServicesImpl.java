@@ -1,11 +1,11 @@
 package com.objectcomputing.checkins.services.role;
 
 import com.objectcomputing.checkins.exceptions.BadArgException;
-import com.objectcomputing.checkins.services.memberprofile.MemberProfileRepository;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleRepository;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,26 +13,23 @@ import java.util.UUID;
 public class RoleServicesImpl implements RoleServices {
 
     private final RoleRepository roleRepo;
-    private final MemberProfileRepository memberRepo;
+    private final MemberRoleRepository memberRoleRepo;
 
-    public RoleServicesImpl(RoleRepository roleRepo,
-                            MemberProfileRepository memberRepo) {
+    public RoleServicesImpl(RoleRepository roleRepo, MemberRoleRepository memberRoleRepo) {
         this.roleRepo = roleRepo;
-        this.memberRepo = memberRepo;
+        this.memberRoleRepo = memberRoleRepo;
     }
 
     public Role save(@NotNull Role role) {
-        final UUID memberId = role.getMemberid();
-        final RoleType roleType = role.getRole();
 
-        if (roleType == null || memberId == null) {
+        final String roleType = role.getRole();
+
+        if (roleType == null) {
             throw new BadArgException(String.format("Invalid role %s", role));
         } else if (role.getId() != null) {
             throw new BadArgException(String.format("Found unexpected id %s for role", role.getId()));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
-        } else if (roleRepo.findByRoleAndMemberid(roleType, role.getMemberid()).isPresent()) {
-            throw new BadArgException(String.format("Member %s already has role %s", memberId, roleType));
+        } else if (roleRepo.findByRole(roleType).isPresent()){
+            throw new BadArgException(String.format("Role with name %s already exists in database", role.getRole()));
         }
 
         return roleRepo.save(role);
@@ -44,35 +41,28 @@ public class RoleServicesImpl implements RoleServices {
 
     public Role update(@NotNull Role role) {
         final UUID id = role.getId();
-        final UUID memberId = role.getMemberid();
-        final RoleType roleType = role.getRole();
+        final String roleType = role.getRole();
 
-        if (roleType == null || memberId == null) {
+        if (roleType == null) {
             throw new BadArgException(String.format("Invalid role %s", role));
         } else if (id == null || roleRepo.findById(id).isEmpty()) {
             throw new BadArgException(String.format("Unable to locate role to update with id %s", id));
-        } else if (memberRepo.findById(memberId).isEmpty()) {
-            throw new BadArgException(String.format("Member %s doesn't exist", memberId));
         }
 
         return roleRepo.update(role);
     }
 
-    public Set<Role> findByFields(RoleType role, UUID memberid) {
-        Set<Role> roles = new HashSet<>();
-        roleRepo.findAll().forEach(roles::add);
 
-        if (role != null) {
-            roles.retainAll(roleRepo.findByRole(role));
-        }
-        if (memberid != null) {
-            roles.retainAll(roleRepo.findByMemberid(memberid));
-        }
-
-        return roles;
+    public Set<Role> findUserRoles(@NotNull UUID memberId) {
+        return roleRepo.findUserRoles(memberId);
     }
 
     public void delete(@NotNull UUID id) {
+        memberRoleRepo.removeAllByRoleId(id);
         roleRepo.deleteById(id);
+    }
+
+    public Optional<Role> findByRole(String roleType) {
+        return roleRepo.findByRole(roleType);
     }
 }

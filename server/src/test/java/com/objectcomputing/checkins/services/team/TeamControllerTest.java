@@ -228,7 +228,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testUpdateTeamSuccess() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team teamEntity = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -284,7 +284,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
     @Test
     void testUpdateTeamNotExist() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team teamEntity = createDefaultTeam();
         UUID requestId = UUID.randomUUID();
@@ -331,7 +331,7 @@ class TeamControllerTest extends TestContainersSuite implements TeamFixture, Mem
         Team teamEntity = createDefaultTeam();
         // create members
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         //add members to team
         createDefaultTeamMember(teamEntity, memberProfileOfAdmin);

@@ -14,11 +14,15 @@ import io.micronaut.security.oauth2.endpoint.token.response.OpenIdClaims;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdTokenResponse;
 import io.micronaut.security.oauth2.endpoint.token.response.OpenIdUserDetailsMapper;
 import io.micronaut.test.annotation.MicronautTest;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -40,7 +44,7 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         MemberProfile memberProfile = createADefaultMemberProfile();
         List<String> roles = List.of(RoleType.Constants.ADMIN_ROLE, RoleType.Constants.PDL_ROLE);
         for (String role : roles) {
-            createDefaultRole(RoleType.valueOf(role), memberProfile);
+            createAndAssignRole(RoleType.valueOf(role), memberProfile);
         }
         String provider = "Test";
         OpenIdTokenResponse openIdTokenResponse = new OpenIdTokenResponse();
@@ -56,6 +60,8 @@ public class CheckinsOpenIdUserDetailMapperTest extends TestContainersSuite impl
         UserDetails userDetails = auth.getUserDetails().orElse(null);
         assertNotNull(userDetails);
         assertEquals(MemberProfileUtils.getFullName(memberProfile), userDetails.getUsername());
-        assertEquals(roles, userDetails.getRoles());
+        assertThat(userDetails.getRoles(), CoreMatchers.hasItems(RoleType.Constants.PDL_ROLE, RoleType.Constants.ADMIN_ROLE));
+        assertTrue(roles.containsAll(userDetails.getRoles()));
+        assertEquals(roles.size(), userDetails.getRoles().size());
     }
 }

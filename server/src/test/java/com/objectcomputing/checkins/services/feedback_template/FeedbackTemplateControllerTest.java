@@ -128,7 +128,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testPostAllowedByAdmin() {
          MemberProfile admin = createADefaultMemberProfile();
-         createDefaultAdminRole(admin);
+         createAndAssignAdminRole(admin);
          FeedbackTemplate feedbackTemplate = createFeedbackTemplate(admin.getId());
          FeedbackTemplateCreateDTO createDTO = createDTO(feedbackTemplate);
 
@@ -144,7 +144,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testPostInvalidCreator() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         FeedbackTemplate feedbackTemplate = createFeedbackTemplate(UUID.randomUUID());
         FeedbackTemplateCreateDTO createDTO = createDTO(feedbackTemplate);
 
@@ -172,7 +172,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testUpdateByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         // Template created by non-admin
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
@@ -459,7 +459,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     void testGetPrivateTemplateByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         final FeedbackTemplate privateTemplate = createFeedbackTemplate(memberOne.getId());
         privateTemplate.setIsPublic(false);
@@ -586,7 +586,7 @@ public class FeedbackTemplateControllerTest extends TestContainersSuite implemen
     @Test
     void testDeleteByCreatorIdAuthorizedByAdmin() {
         final MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         final MemberProfile memberOne = createASecondDefaultMemberProfile();
 
         // Save two ad-hoc feedback templates

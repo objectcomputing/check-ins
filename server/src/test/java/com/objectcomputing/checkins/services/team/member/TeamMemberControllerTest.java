@@ -291,7 +291,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testUpdateTeamMemberByAdmin() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -467,7 +467,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testDeleteTeamMemberAsAdmin() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -571,7 +571,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testMemberHistoryTableIsCreatedWhenTeamMemberIsUpdated() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();
@@ -603,7 +603,7 @@ class TeamMemberControllerTest extends TestContainersSuite implements TeamFixtur
     @Test
     void testMemberHistoryTableIsCreatedWhenTeamMemberIsRemoved() {
         MemberProfile user = createAnUnrelatedUser();
-        createDefaultAdminRole(user);
+        createAndAssignAdminRole(user);
 
         Team team = createDefaultTeam();
         MemberProfile memberProfile = createADefaultMemberProfile();

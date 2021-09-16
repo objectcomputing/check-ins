@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 
 import java.util.*;
 
+import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
@@ -31,7 +32,7 @@ import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMB
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture {
+public class FeedbackRequestControllerTest extends TestContainersSuite implements RepositoryFixture, MemberProfileFixture, FeedbackTemplateFixture, FeedbackRequestFixture, RoleFixture, MemberRoleFixture {
     @Inject
     @Client("/services/feedback/requests")
     HttpClient client;
@@ -131,7 +132,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         final MemberProfile memberProfile = createADefaultMemberProfile();
         final MemberProfile admin = getMemberProfileRepository().save(mkMemberProfile("admin"));
         final MemberProfile recipient = createADefaultRecipient();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         //create feedback request
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, memberProfile, recipient);
@@ -152,7 +153,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testCreateFeedbackRequestFailsWhenRecipientAndRequesteeAreSame() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
 
         //create feedback request
@@ -172,7 +173,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testCreateFeedbackRequestByAssignedPDL() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         final MemberProfile recipient = createADefaultRecipient();
 
@@ -195,7 +196,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testCreateFeedbackRequestSendsEmail() {
         //create two member profiles: one for normal employee, one for PDL of normal employee
         final MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         final MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         final MemberProfile recipient = createADefaultRecipient();
 
@@ -218,7 +219,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         //create two member profiles: one for normal employee, one for PDL of normal employee
         MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile memberProfileForPDL = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, memberProfileForPDL);
+        createAndAssignRole(RoleType.PDL, memberProfileForPDL);
         MemberProfile recipient = createAnUnrelatedUser();
 
         //create feedback request
@@ -259,7 +260,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         // Create feedback request with invalid creator ID
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -281,7 +282,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         // Create feedback request with invalid recipient ID
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -303,7 +304,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -323,7 +324,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetFeedbackRequestByAdmin() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         MemberProfile pdlMemberProfile = createASecondDefaultMemberProfile();
 
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
@@ -343,7 +344,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetFeedbackRequestByAssignedPDL() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
@@ -362,7 +363,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     void testGetFeedbackRequestByUnassignedPdl() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedPdl = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, unrelatedPdl);
+        createAndAssignRole(RoleType.PDL, unrelatedPdl);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
@@ -379,7 +380,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetFeedbackRequestByRequestee() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile memberProfile2 = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
@@ -398,7 +399,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetFeedbackRequestByRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
@@ -417,7 +418,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetFeedbackRequestByUnrelatedUser() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile unrelatedUser = createAnUnrelatedUser();
@@ -435,11 +436,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorIdPermitted() {
         //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
         MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
@@ -464,12 +466,14 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorIdPermittedMultipleReqs() {
         //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
-        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
-        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
+
         MemberProfile memberThree = createAThirdDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -496,7 +500,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorIdNotPermitted() {
         MemberProfile pdl = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdl);
+        createAndAssignRole(RoleType.PDL, pdl);
         MemberProfile employeeWithPdl = createADefaultMemberProfileForPdl(pdl);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdl, employeeWithPdl, recipient);
@@ -511,11 +515,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorRequesteeIdPermitted() {
         //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
         MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
@@ -539,11 +544,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorRequesteeIdNotPermitted() {
         //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
         MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
@@ -565,11 +571,12 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorRequesteeIdMultiplePermitted() {
         //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
@@ -592,11 +599,13 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Test
     void testGetLastThreeMonthsByCreator() {
+        //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
 
@@ -625,7 +634,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetLastThreeMonthsByCreatorRequesteeId() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
@@ -654,14 +663,16 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
     @Test
     void testGetLastThreeMonthsByRequesteeId() {
+        //create two employee-PDL relationships
+        Role pdlRole = createRole(new Role("PDL", "Is a PDL"));
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        assignMemberToRole(pdlMemberProfile, pdlRole);
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile pdlMemberProfileTwo = createASecondDefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfileTwo);
+        assignMemberToRole(pdlMemberProfileTwo, pdlRole);
+        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfileTwo);
         MemberProfile recipientOne = createADefaultRecipient();
         MemberProfile recipientTwo = createASecondDefaultRecipient();
-        MemberProfile memberTwo = createASecondDefaultMemberProfileForPdl(pdlMemberProfile);
 
         LocalDate now = LocalDate.now();
         LocalDate oldestDate = now.minusMonths(3);
@@ -687,7 +698,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetEveryAllTimeAdmin() {
         MemberProfile admin = createADefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         MemberProfile pdlMemberProfile = createASecondDefaultMemberProfile();
         MemberProfile memberOne = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipientOne = createADefaultRecipient();
@@ -719,7 +730,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateDueDateAuthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -739,7 +750,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateDueDateUnauthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -758,7 +769,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateStatusAndSubmitDateAuthorizedByRecipient() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -780,7 +791,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateStatusAuthorizedByCreator() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -800,7 +811,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateStatusNotAuthorized() {
         MemberProfile pdl = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdl);
+        createAndAssignRole(RoleType.PDL, pdl);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -819,7 +830,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateSubmitDateNotAuthorized() {
         MemberProfile pdl = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdl);
+        createAndAssignRole(RoleType.PDL, pdl);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdl);
         MemberProfile recipient = createADefaultRecipient();
 
@@ -861,7 +872,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile admin = createASecondDefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("complete");
@@ -896,7 +907,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testDeleteByAdmin() {
         MemberProfile admin = createASecondDefaultMemberProfile();
-        createDefaultAdminRole(admin);
+        createAndAssignAdminRole(admin);
         MemberProfile employeeMemberProfile = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackReq = saveFeedbackRequest(admin, employeeMemberProfile, recipient);
@@ -922,7 +933,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testDeleteFeedbackReqByUnassignedPDL() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile memberOne = createASecondDefaultMemberProfile();
         MemberProfile creator = createAnUnrelatedUser();
         MemberProfile recipient = createADefaultRecipient();
@@ -961,7 +972,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile adminUser = createAThirdDefaultMemberProfile();
-        createDefaultAdminRole(adminUser);
+        createAndAssignAdminRole(adminUser);
 
         // Save feedback request with send date in the future
         FeedbackRequest feedbackRequest = createFeedbackRequest(pdlMemberProfile, requestee, recipient);
