@@ -74,6 +74,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
             throw new BadArgException("Cannot save feedback request with the same recipient and requestee IDs");
         }
+
+        if (feedbackRequest.getRequesteeId() == null) {
+            throw new BadArgException("There is no valid requestee selected.");
+        }
+
+        if (feedbackRequest.getRecipientId() == null) {
+            throw new BadArgException("There is no valid recipient(s) selected.");
+        }
     }
 
     @Override
@@ -85,6 +93,14 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         if (feedbackRequest.getId() != null) {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
+        }
+
+        if (feedbackRequest.getTemplateId() == null) {
+            throw new BadArgException("There is no valid feedback template selected.");
+        }
+
+        if (feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+            throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
@@ -121,8 +137,13 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
+
         if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(feedbackRequest)) {
             throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        if (feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+            throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
         return feedbackReqRepository.update(feedbackRequest);
