@@ -74,14 +74,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
             throw new BadArgException("Cannot save feedback request with the same recipient and requestee IDs");
         }
-
-        if (feedbackRequest.getRequesteeId() == null) {
-            throw new BadArgException("There is no valid requestee selected.");
-        }
-
-        if (feedbackRequest.getRecipientId() == null) {
-            throw new BadArgException("There is no valid recipient(s) selected.");
-        }
     }
 
     @Override
