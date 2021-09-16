@@ -34,7 +34,7 @@ public class PermissionController {
     }
 
     /**
-     * Get all permissions
+     * Get all permissions (orders by permission name)
      *
      * @return {@link List < Permission > list of Permissions}
      */
@@ -46,6 +46,4 @@ public class PermissionController {
                 .map(permissions -> (HttpResponse<List<Permission>>) HttpResponse.ok(permissions))
                 .subscribeOn(Schedulers.from(ioExecutorService));
     }
-
-
 }

@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
