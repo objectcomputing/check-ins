@@ -71,13 +71,11 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
         let selectedMembers = profiles.filter((profile) =>
           fromQuery.includes(profile.id)
         );
-        console.log({ selectedMembers });
         let filteredNormalizedMembers = normalizedMembers.filter((member) => {
           return !selectedMembers.some((selectedMember) => {
             return selectedMember.id === member.id;
           });
         });
-        console.log({ filteredNormalizedMembers });
         setProfiles(filteredNormalizedMembers);
       } else {
         setProfiles(normalizedMembers);
@@ -85,14 +83,6 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
       searchTextUpdated.current = true;
     }
   }, [searchText, profiles, fromQuery, state, userProfile]);
-
-  console.log({
-    profiles,
-    fromQuery,
-    userProfile,
-    searchText,
-    forQuery,
-  });
 
   useEffect(() => {
     function bindFromURL() {
@@ -165,16 +155,10 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
 
     changeQuery("from", fromQuery);
     hasRenewedFromURL.current = false;
-    console.log("CLICKED", { fromQuery });
   };
 
   const getSelectedCards = () => {
     if (fromQuery) {
-      // Get all the selected templates
-      // const selected = selectedProfiles.filter(
-      //   (profile) => fromQuery && fromQuery.includes(profile.id)
-      // );
-      // console.log("CLICKED", { selected });
       const title = (
         <Typography
           style={{ fontWeight: "bold", color: "#454545", marginBottom: "1em" }}
