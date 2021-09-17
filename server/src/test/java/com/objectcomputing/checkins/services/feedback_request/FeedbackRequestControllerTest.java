@@ -559,7 +559,25 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(responseException);
+    }
 
+    @Test
+    void testGetByCreatorRecipientIdPermitted() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?recipientId=%s", feedbackRequest.getRecipientId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // recipient must be able to get the feedback request
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test
