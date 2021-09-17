@@ -79,7 +79,7 @@ const FeedbackRequestPage = () => {
   const location = useLocation();
   const history = useHistory();
   const csrf = selectCsrfToken(state);
-  const [query, setQuery] = useState({});
+  const [query, setQuery] = useState([]);
   const queryLoaded = useRef(false);
   const [readyToProceed, setReadyToProceed] = useState(false);
   const [templateIsValid, setTemplateIsValid] = useState();

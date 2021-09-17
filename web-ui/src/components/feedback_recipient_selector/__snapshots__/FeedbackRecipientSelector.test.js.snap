@@ -57,32 +57,7 @@ exports[`renders the component 1`] = `
   </div>
   <div
     className="selected-recipients-container"
-  >
-    <h5
-      className="MuiTypography-root MuiTypography-h5"
-      style={
-        Object {
-          "color": "#454545",
-          "fontWeight": "bold",
-          "marginBottom": "1em",
-        }
-      }
-    >
-      0
-       recipient
-      s
-       selected
-    </h5>
-    <p
-      style={
-        Object {
-          "color": "gray",
-        }
-      }
-    >
-      Click on recipients to request feedback from them
-    </p>
-  </div>
+  />
   <div
     className="selectable-recipients-container"
   >
