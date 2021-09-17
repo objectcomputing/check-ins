@@ -112,7 +112,7 @@ exports[`renders correctly 2`] = `
   >
     <div>
       <div
-        className="MuiFormControl-root MuiTextField-root"
+        className="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
       >
         <label
           className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
@@ -121,7 +121,7 @@ exports[`renders correctly 2`] = `
           Search skills
         </label>
         <div
-          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+          className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl"
           onClick={[Function]}
         >
           <input
@@ -133,7 +133,7 @@ exports[`renders correctly 2`] = `
             onBlur={[Function]}
             onChange={[Function]}
             onFocus={[Function]}
-            placeholder="Skill Name"
+            placeholder="Skill"
             required={false}
             type="text"
             value=""

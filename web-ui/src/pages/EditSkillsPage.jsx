@@ -31,7 +31,8 @@ const EditSkillsPage = (props) => {
         <div>
           <TextField
             label="Search skills"
-            placeholder="Skill Name"
+            placeholder="Skill"
+            fullWidth={true}
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
