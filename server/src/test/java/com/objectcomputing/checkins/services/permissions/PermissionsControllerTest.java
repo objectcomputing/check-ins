@@ -51,8 +51,8 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
     void testGetAllPermissionsEnsureAlphabeticalOrder() {
         Permission lastPermission = createACustomPermission("z");
         Permission firstPermission = createACustomPermission("A");
-        Permission middlePermisison = createACustomPermission("H");
-        List<Permission> list = new ArrayList<>(Arrays.asList(firstPermission, middlePermisison, lastPermission));
+        Permission middlePermission = createACustomPermission("H");
+        List<Permission> list = new ArrayList<>(Arrays.asList(firstPermission, middlePermission, lastPermission));
         final HttpRequest<Object> request = HttpRequest.
                 GET("/").basicAuth(MEMBER_ROLE, MEMBER_ROLE);
 
@@ -74,7 +74,7 @@ public class PermissionsControllerTest extends TestContainersSuite implements Pe
 
         assertEquals(HttpStatus.OK, response.getStatus());
         Assertions.assertTrue(response.getBody().isPresent());
-        assertEquals(response.getBody().get(), List.of());
+        assertTrue(response.getBody().get().isEmpty());
     }
 
     @Test
