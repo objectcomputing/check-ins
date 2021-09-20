@@ -35,8 +35,7 @@ const useStyles = makeStyles({
   },
   textField: {
     width: "40ch",
-    ["@media (max-width:767px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    "@media (max-width:767px)": {
       width: "100%",
     },
   },
@@ -82,7 +81,7 @@ const FeedbackRecipientSelector = ({ changeQuery, fromQuery, forQuery }) => {
       }
       searchTextUpdated.current = true;
     }
-  }, [searchText, profiles, fromQuery, state, userProfile]);
+  }, [searchText, profiles, fromQuery, state, userProfile, normalizedMembers]);
 
   useEffect(() => {
     function bindFromURL() {

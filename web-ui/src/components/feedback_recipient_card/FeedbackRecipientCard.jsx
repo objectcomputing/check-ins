@@ -24,8 +24,7 @@ const useStyles = makeStyles({
     marginRight: "2em",
     marginBottom: "2em",
     cursor: "pointer",
-    ["@media (max-width:767px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    "@media (max-width:767px)": {
       marginTop: "1em",
       height: "40%",
       width: "80%",
