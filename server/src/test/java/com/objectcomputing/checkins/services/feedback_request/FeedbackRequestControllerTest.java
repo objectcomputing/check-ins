@@ -570,7 +570,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testGetByCreatorRecipientIdPermitted() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, pdlMemberProfile);
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
         MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
         FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
