@@ -71,7 +71,7 @@ public class EmployeeHours {
         this.ptoHours = ptoHours;
         this.updatedDate=updatedDate;
         this.targetHours= targetHours;
-        this.asofDate= asOfDate;
+        this.asOfDate= asOfDate;
     }
 
     public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate, float targetHours, LocalDate asOfDate) {
@@ -129,7 +129,7 @@ public class EmployeeHours {
 
     public LocalDate getAsOfDate() { return asOfDate; }
 
-    public void setAsOfDate(LocalDate asOfDate) { this.asofDate = asOfDate; }
+    public void setAsOfDate(LocalDate asOfDate) { this.asOfDate = asOfDate; }
 
     @Override
     public boolean equals(Object o) {
