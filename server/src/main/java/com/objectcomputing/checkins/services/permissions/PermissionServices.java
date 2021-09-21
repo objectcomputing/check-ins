@@ -7,4 +7,6 @@ public interface PermissionServices {
     List<Permission> findUserPermissions(UUID id);
 
     List<Permission> findAll();
+
+    List<Permission> listOrderByPermission();
 }

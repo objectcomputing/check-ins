@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -24,6 +24,9 @@ public interface PermissionRepository extends CrudRepository<Permission, UUID> {
             "    ON permissions.id = role_permissions.permissionid " +
             "WHERE member_profile.id = :id")
     List<Permission> findUserPermissions(UUID id);
-
+    
+    @NonNull
     List<Permission> findAll();
+
+    List<Permission> listOrderByPermission();
 }
