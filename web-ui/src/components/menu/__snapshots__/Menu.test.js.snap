@@ -1671,6 +1671,25 @@ exports[`<Menu /> renders correctly 1`] = `
                                                   </div>
                                                 </div>
                                               </div>
+                                              <div
+                                                aria-disabled="false"
+                                                class="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                role="button"
+                                                tabindex="0"
+                                              >
+                                                <div
+                                                  class="MuiListItemText-root"
+                                                >
+                                                  <span
+                                                    class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                                                  >
+                                                    FEEDBACK
+                                                  </span>
+                                                </div>
+                                                <span
+                                                  class="MuiTouchRipple-root"
+                                                />
+                                              </div>
                                             </nav>
                                           </div>
                                         </div>,
@@ -3396,6 +3415,214 @@ exports[`<Menu /> renders correctly 1`] = `
                                                           </div>
                                                         </div>
                                                       </Transition>
+                                                    </ForwardRef(Collapse)>
+                                                  </WithStyles(ForwardRef(Collapse))>
+                                                  <WithStyles(ForwardRef(ListItem))
+                                                    button={true}
+                                                    onClick={[Function]}
+                                                  >
+                                                    <ForwardRef(ListItem)
+                                                      button={true}
+                                                      classes={
+                                                        Object {
+                                                          "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                                                          "button": "MuiListItem-button",
+                                                          "container": "MuiListItem-container",
+                                                          "dense": "MuiListItem-dense",
+                                                          "disabled": "Mui-disabled",
+                                                          "divider": "MuiListItem-divider",
+                                                          "focusVisible": "Mui-focusVisible",
+                                                          "gutters": "MuiListItem-gutters",
+                                                          "root": "MuiListItem-root",
+                                                          "secondaryAction": "MuiListItem-secondaryAction",
+                                                          "selected": "Mui-selected",
+                                                        }
+                                                      }
+                                                      onClick={[Function]}
+                                                    >
+                                                      <WithStyles(ForwardRef(ButtonBase))
+                                                        className="MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                        component="div"
+                                                        disabled={false}
+                                                        focusVisibleClassName="Mui-focusVisible"
+                                                        onClick={[Function]}
+                                                      >
+                                                        <ForwardRef(ButtonBase)
+                                                          className="MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                          classes={
+                                                            Object {
+                                                              "disabled": "Mui-disabled",
+                                                              "focusVisible": "Mui-focusVisible",
+                                                              "root": "MuiButtonBase-root",
+                                                            }
+                                                          }
+                                                          component="div"
+                                                          disabled={false}
+                                                          focusVisibleClassName="Mui-focusVisible"
+                                                          onClick={[Function]}
+                                                        >
+                                                          <div
+                                                            aria-disabled={false}
+                                                            className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                            onBlur={[Function]}
+                                                            onClick={[Function]}
+                                                            onDragLeave={[Function]}
+                                                            onFocus={[Function]}
+                                                            onKeyDown={[Function]}
+                                                            onKeyUp={[Function]}
+                                                            onMouseDown={[Function]}
+                                                            onMouseLeave={[Function]}
+                                                            onMouseUp={[Function]}
+                                                            onTouchEnd={[Function]}
+                                                            onTouchMove={[Function]}
+                                                            onTouchStart={[Function]}
+                                                            role="button"
+                                                            tabIndex={0}
+                                                          >
+                                                            <WithStyles(ForwardRef(ListItemText))
+                                                              key=".0"
+                                                              primary="FEEDBACK"
+                                                            >
+                                                              <ForwardRef(ListItemText)
+                                                                classes={
+                                                                  Object {
+                                                                    "dense": "MuiListItemText-dense",
+                                                                    "inset": "MuiListItemText-inset",
+                                                                    "multiline": "MuiListItemText-multiline",
+                                                                    "primary": "MuiListItemText-primary",
+                                                                    "root": "MuiListItemText-root",
+                                                                    "secondary": "MuiListItemText-secondary",
+                                                                  }
+                                                                }
+                                                                primary="FEEDBACK"
+                                                              >
+                                                                <div
+                                                                  className="MuiListItemText-root"
+                                                                >
+                                                                  <WithStyles(ForwardRef(Typography))
+                                                                    className="MuiListItemText-primary"
+                                                                    component="span"
+                                                                    display="block"
+                                                                    variant="body1"
+                                                                  >
+                                                                    <ForwardRef(Typography)
+                                                                      className="MuiListItemText-primary"
+                                                                      classes={
+                                                                        Object {
+                                                                          "alignCenter": "MuiTypography-alignCenter",
+                                                                          "alignJustify": "MuiTypography-alignJustify",
+                                                                          "alignLeft": "MuiTypography-alignLeft",
+                                                                          "alignRight": "MuiTypography-alignRight",
+                                                                          "body1": "MuiTypography-body1",
+                                                                          "body2": "MuiTypography-body2",
+                                                                          "button": "MuiTypography-button",
+                                                                          "caption": "MuiTypography-caption",
+                                                                          "colorError": "MuiTypography-colorError",
+                                                                          "colorInherit": "MuiTypography-colorInherit",
+                                                                          "colorPrimary": "MuiTypography-colorPrimary",
+                                                                          "colorSecondary": "MuiTypography-colorSecondary",
+                                                                          "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                                                          "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                                                          "displayBlock": "MuiTypography-displayBlock",
+                                                                          "displayInline": "MuiTypography-displayInline",
+                                                                          "gutterBottom": "MuiTypography-gutterBottom",
+                                                                          "h1": "MuiTypography-h1",
+                                                                          "h2": "MuiTypography-h2",
+                                                                          "h3": "MuiTypography-h3",
+                                                                          "h4": "MuiTypography-h4",
+                                                                          "h5": "MuiTypography-h5",
+                                                                          "h6": "MuiTypography-h6",
+                                                                          "noWrap": "MuiTypography-noWrap",
+                                                                          "overline": "MuiTypography-overline",
+                                                                          "paragraph": "MuiTypography-paragraph",
+                                                                          "root": "MuiTypography-root",
+                                                                          "srOnly": "MuiTypography-srOnly",
+                                                                          "subtitle1": "MuiTypography-subtitle1",
+                                                                          "subtitle2": "MuiTypography-subtitle2",
+                                                                        }
+                                                                      }
+                                                                      component="span"
+                                                                      display="block"
+                                                                      variant="body1"
+                                                                    >
+                                                                      <span
+                                                                        className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                                                                      >
+                                                                        FEEDBACK
+                                                                      </span>
+                                                                    </ForwardRef(Typography)>
+                                                                  </WithStyles(ForwardRef(Typography))>
+                                                                </div>
+                                                              </ForwardRef(ListItemText)>
+                                                            </WithStyles(ForwardRef(ListItemText))>
+                                                            <WithStyles(memo)
+                                                              center={false}
+                                                            >
+                                                              <ForwardRef(TouchRipple)
+                                                                center={false}
+                                                                classes={
+                                                                  Object {
+                                                                    "child": "MuiTouchRipple-child",
+                                                                    "childLeaving": "MuiTouchRipple-childLeaving",
+                                                                    "childPulsate": "MuiTouchRipple-childPulsate",
+                                                                    "ripple": "MuiTouchRipple-ripple",
+                                                                    "ripplePulsate": "MuiTouchRipple-ripplePulsate",
+                                                                    "rippleVisible": "MuiTouchRipple-rippleVisible",
+                                                                    "root": "MuiTouchRipple-root",
+                                                                  }
+                                                                }
+                                                              >
+                                                                <span
+                                                                  className="MuiTouchRipple-root"
+                                                                >
+                                                                  <TransitionGroup
+                                                                    childFactory={[Function]}
+                                                                    component={null}
+                                                                    exit={true}
+                                                                  />
+                                                                </span>
+                                                              </ForwardRef(TouchRipple)>
+                                                            </WithStyles(memo)>
+                                                          </div>
+                                                        </ForwardRef(ButtonBase)>
+                                                      </WithStyles(ForwardRef(ButtonBase))>
+                                                    </ForwardRef(ListItem)>
+                                                  </WithStyles(ForwardRef(ListItem))>
+                                                  <WithStyles(ForwardRef(Collapse))
+                                                    in={false}
+                                                    timeout="auto"
+                                                    unmountOnExit={true}
+                                                  >
+                                                    <ForwardRef(Collapse)
+                                                      classes={
+                                                        Object {
+                                                          "container": "MuiCollapse-container",
+                                                          "entered": "MuiCollapse-entered",
+                                                          "hidden": "MuiCollapse-hidden",
+                                                          "wrapper": "MuiCollapse-wrapper",
+                                                          "wrapperInner": "MuiCollapse-wrapperInner",
+                                                        }
+                                                      }
+                                                      in={false}
+                                                      timeout="auto"
+                                                      unmountOnExit={true}
+                                                    >
+                                                      <Transition
+                                                        addEndListener={[Function]}
+                                                        appear={false}
+                                                        enter={true}
+                                                        exit={true}
+                                                        in={false}
+                                                        mountOnEnter={false}
+                                                        onEnter={[Function]}
+                                                        onEntered={[Function]}
+                                                        onEntering={[Function]}
+                                                        onExit={[Function]}
+                                                        onExited={[Function]}
+                                                        onExiting={[Function]}
+                                                        timeout={null}
+                                                        unmountOnExit={true}
+                                                      />
                                                     </ForwardRef(Collapse)>
                                                   </WithStyles(ForwardRef(Collapse))>
                                                 </nav>
@@ -5190,6 +5417,214 @@ exports[`<Menu /> renders correctly 1`] = `
                                                 </div>
                                               </div>
                                             </Transition>
+                                          </ForwardRef(Collapse)>
+                                        </WithStyles(ForwardRef(Collapse))>
+                                        <WithStyles(ForwardRef(ListItem))
+                                          button={true}
+                                          onClick={[Function]}
+                                        >
+                                          <ForwardRef(ListItem)
+                                            button={true}
+                                            classes={
+                                              Object {
+                                                "alignItemsFlexStart": "MuiListItem-alignItemsFlexStart",
+                                                "button": "MuiListItem-button",
+                                                "container": "MuiListItem-container",
+                                                "dense": "MuiListItem-dense",
+                                                "disabled": "Mui-disabled",
+                                                "divider": "MuiListItem-divider",
+                                                "focusVisible": "Mui-focusVisible",
+                                                "gutters": "MuiListItem-gutters",
+                                                "root": "MuiListItem-root",
+                                                "secondaryAction": "MuiListItem-secondaryAction",
+                                                "selected": "Mui-selected",
+                                              }
+                                            }
+                                            onClick={[Function]}
+                                          >
+                                            <WithStyles(ForwardRef(ButtonBase))
+                                              className="MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                              component="div"
+                                              disabled={false}
+                                              focusVisibleClassName="Mui-focusVisible"
+                                              onClick={[Function]}
+                                            >
+                                              <ForwardRef(ButtonBase)
+                                                className="MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                classes={
+                                                  Object {
+                                                    "disabled": "Mui-disabled",
+                                                    "focusVisible": "Mui-focusVisible",
+                                                    "root": "MuiButtonBase-root",
+                                                  }
+                                                }
+                                                component="div"
+                                                disabled={false}
+                                                focusVisibleClassName="Mui-focusVisible"
+                                                onClick={[Function]}
+                                              >
+                                                <div
+                                                  aria-disabled={false}
+                                                  className="MuiButtonBase-root MuiListItem-root MuiListItem-gutters MuiListItem-button"
+                                                  onBlur={[Function]}
+                                                  onClick={[Function]}
+                                                  onDragLeave={[Function]}
+                                                  onFocus={[Function]}
+                                                  onKeyDown={[Function]}
+                                                  onKeyUp={[Function]}
+                                                  onMouseDown={[Function]}
+                                                  onMouseLeave={[Function]}
+                                                  onMouseUp={[Function]}
+                                                  onTouchEnd={[Function]}
+                                                  onTouchMove={[Function]}
+                                                  onTouchStart={[Function]}
+                                                  role="button"
+                                                  tabIndex={0}
+                                                >
+                                                  <WithStyles(ForwardRef(ListItemText))
+                                                    key=".0"
+                                                    primary="FEEDBACK"
+                                                  >
+                                                    <ForwardRef(ListItemText)
+                                                      classes={
+                                                        Object {
+                                                          "dense": "MuiListItemText-dense",
+                                                          "inset": "MuiListItemText-inset",
+                                                          "multiline": "MuiListItemText-multiline",
+                                                          "primary": "MuiListItemText-primary",
+                                                          "root": "MuiListItemText-root",
+                                                          "secondary": "MuiListItemText-secondary",
+                                                        }
+                                                      }
+                                                      primary="FEEDBACK"
+                                                    >
+                                                      <div
+                                                        className="MuiListItemText-root"
+                                                      >
+                                                        <WithStyles(ForwardRef(Typography))
+                                                          className="MuiListItemText-primary"
+                                                          component="span"
+                                                          display="block"
+                                                          variant="body1"
+                                                        >
+                                                          <ForwardRef(Typography)
+                                                            className="MuiListItemText-primary"
+                                                            classes={
+                                                              Object {
+                                                                "alignCenter": "MuiTypography-alignCenter",
+                                                                "alignJustify": "MuiTypography-alignJustify",
+                                                                "alignLeft": "MuiTypography-alignLeft",
+                                                                "alignRight": "MuiTypography-alignRight",
+                                                                "body1": "MuiTypography-body1",
+                                                                "body2": "MuiTypography-body2",
+                                                                "button": "MuiTypography-button",
+                                                                "caption": "MuiTypography-caption",
+                                                                "colorError": "MuiTypography-colorError",
+                                                                "colorInherit": "MuiTypography-colorInherit",
+                                                                "colorPrimary": "MuiTypography-colorPrimary",
+                                                                "colorSecondary": "MuiTypography-colorSecondary",
+                                                                "colorTextPrimary": "MuiTypography-colorTextPrimary",
+                                                                "colorTextSecondary": "MuiTypography-colorTextSecondary",
+                                                                "displayBlock": "MuiTypography-displayBlock",
+                                                                "displayInline": "MuiTypography-displayInline",
+                                                                "gutterBottom": "MuiTypography-gutterBottom",
+                                                                "h1": "MuiTypography-h1",
+                                                                "h2": "MuiTypography-h2",
+                                                                "h3": "MuiTypography-h3",
+                                                                "h4": "MuiTypography-h4",
+                                                                "h5": "MuiTypography-h5",
+                                                                "h6": "MuiTypography-h6",
+                                                                "noWrap": "MuiTypography-noWrap",
+                                                                "overline": "MuiTypography-overline",
+                                                                "paragraph": "MuiTypography-paragraph",
+                                                                "root": "MuiTypography-root",
+                                                                "srOnly": "MuiTypography-srOnly",
+                                                                "subtitle1": "MuiTypography-subtitle1",
+                                                                "subtitle2": "MuiTypography-subtitle2",
+                                                              }
+                                                            }
+                                                            component="span"
+                                                            display="block"
+                                                            variant="body1"
+                                                          >
+                                                            <span
+                                                              className="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                                                            >
+                                                              FEEDBACK
+                                                            </span>
+                                                          </ForwardRef(Typography)>
+                                                        </WithStyles(ForwardRef(Typography))>
+                                                      </div>
+                                                    </ForwardRef(ListItemText)>
+                                                  </WithStyles(ForwardRef(ListItemText))>
+                                                  <WithStyles(memo)
+                                                    center={false}
+                                                  >
+                                                    <ForwardRef(TouchRipple)
+                                                      center={false}
+                                                      classes={
+                                                        Object {
+                                                          "child": "MuiTouchRipple-child",
+                                                          "childLeaving": "MuiTouchRipple-childLeaving",
+                                                          "childPulsate": "MuiTouchRipple-childPulsate",
+                                                          "ripple": "MuiTouchRipple-ripple",
+                                                          "ripplePulsate": "MuiTouchRipple-ripplePulsate",
+                                                          "rippleVisible": "MuiTouchRipple-rippleVisible",
+                                                          "root": "MuiTouchRipple-root",
+                                                        }
+                                                      }
+                                                    >
+                                                      <span
+                                                        className="MuiTouchRipple-root"
+                                                      >
+                                                        <TransitionGroup
+                                                          childFactory={[Function]}
+                                                          component={null}
+                                                          exit={true}
+                                                        />
+                                                      </span>
+                                                    </ForwardRef(TouchRipple)>
+                                                  </WithStyles(memo)>
+                                                </div>
+                                              </ForwardRef(ButtonBase)>
+                                            </WithStyles(ForwardRef(ButtonBase))>
+                                          </ForwardRef(ListItem)>
+                                        </WithStyles(ForwardRef(ListItem))>
+                                        <WithStyles(ForwardRef(Collapse))
+                                          in={false}
+                                          timeout="auto"
+                                          unmountOnExit={true}
+                                        >
+                                          <ForwardRef(Collapse)
+                                            classes={
+                                              Object {
+                                                "container": "MuiCollapse-container",
+                                                "entered": "MuiCollapse-entered",
+                                                "hidden": "MuiCollapse-hidden",
+                                                "wrapper": "MuiCollapse-wrapper",
+                                                "wrapperInner": "MuiCollapse-wrapperInner",
+                                              }
+                                            }
+                                            in={false}
+                                            timeout="auto"
+                                            unmountOnExit={true}
+                                          >
+                                            <Transition
+                                              addEndListener={[Function]}
+                                              appear={false}
+                                              enter={true}
+                                              exit={true}
+                                              in={false}
+                                              mountOnEnter={false}
+                                              onEnter={[Function]}
+                                              onEntered={[Function]}
+                                              onEntering={[Function]}
+                                              onExit={[Function]}
+                                              onExited={[Function]}
+                                              onExiting={[Function]}
+                                              timeout={null}
+                                              unmountOnExit={true}
+                                            />
                                           </ForwardRef(Collapse)>
                                         </WithStyles(ForwardRef(Collapse))>
                                       </nav>
