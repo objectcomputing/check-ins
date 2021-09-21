@@ -34,7 +34,7 @@ public class EmployeeHours {
     @NotNull
     @Column(name="contributionhours")
     @TypeDef(type = DataType.FLOAT)
-    @Schema(description ="contibution hours of employee", required=true)
+    @Schema(description ="contribution hours of employee", required=true)
     private float contributionHours;
 
     @Column(name="billablehours")
@@ -57,9 +57,13 @@ public class EmployeeHours {
     @Schema(description = "Target hours for an employee", required = true)
     private float targetHours;
 
+    @Column(name="asofdate")
+    @Schema(description = "as of Date")
+    private LocalDate asOfDate;
 
 
-    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate,float targetHours) {
+
+    public EmployeeHours(UUID id, @NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate,float targetHours, LocalDate asOfDate) {
         this.id = id;
         this.employeeId = employeeId;
         this.contributionHours = contributionHours;
@@ -67,10 +71,11 @@ public class EmployeeHours {
         this.ptoHours = ptoHours;
         this.updatedDate=updatedDate;
         this.targetHours= targetHours;
+        this.asOfDate= asOfDate;
     }
 
-    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate, float targetHours) {
-        this(null,employeeId,contributionHours,billableHours,ptoHours,updatedDate,targetHours);
+    public EmployeeHours(@NotNull String employeeId, @NotNull float contributionHours, float billableHours, float ptoHours,LocalDate updatedDate, float targetHours, LocalDate asOfDate) {
+        this(null,employeeId,contributionHours,billableHours,ptoHours,updatedDate,targetHours,asOfDate);
     }
 
 
@@ -122,6 +127,10 @@ public class EmployeeHours {
 
     public void setTargetHours(float targetHours) { this.targetHours = targetHours; }
 
+    public LocalDate getAsOfDate() { return asOfDate; }
+
+    public void setAsOfDate(LocalDate asOfDate) { this.asOfDate = asOfDate; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -133,12 +142,13 @@ public class EmployeeHours {
                 id.equals(that.id) &&
                 employeeId.equals(that.employeeId) &&
                 updatedDate.equals(that.updatedDate) &&
-                Float.compare(that.targetHours, targetHours) == 0 ;
+                Float.compare(that.targetHours, targetHours) == 0 &&
+                asOfDate.equals(that.asOfDate) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours);
+        return Objects.hash(id, employeeId, contributionHours, billableHours, ptoHours, updatedDate,targetHours, asOfDate);
     }
 
     @Override
@@ -151,6 +161,7 @@ public class EmployeeHours {
                 ", ptoHours=" + ptoHours +
                 ", updatedDate=" + updatedDate +
                 ", targetHours=" + targetHours +
+                ", asOfDate=" + asOfDate +
                 '}';
     }
 }
