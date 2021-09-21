@@ -25,7 +25,7 @@ public class EmployeeaHoursCSVHelper {
                         Float.parseFloat(csvRecord.get("contributionHours")),
                         Float.parseFloat(csvRecord.get("billableHours")),
                          Float.parseFloat(csvRecord.get("ptoHours")), LocalDate.now(),Float.parseFloat(csvRecord.get("targetHours")),
-                        LocalDate.parse(csvRecord.get("asofDate"), formatter));
+                        LocalDate.parse(csvRecord.get("asOfDate"), formatter));
                 employeeHoursList.add(employeeHours);
             }
             return employeeHoursList;
