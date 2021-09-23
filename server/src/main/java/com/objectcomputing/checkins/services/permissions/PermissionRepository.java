@@ -12,7 +12,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface PermissionRepository extends CrudRepository<Permission, UUID> {
 
-    @Query("SELECT DISTINCT permissions.id, permissions.permission " +
+    @Query("SELECT DISTINCT permissions.id, permissions.permission, permissions.description " +
             "FROM member_profile " +
             "JOIN member_roles " +
             "    ON member_profile.id = member_roles.memberid " +

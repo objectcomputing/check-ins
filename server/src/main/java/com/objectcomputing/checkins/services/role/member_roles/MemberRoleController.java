@@ -9,7 +9,7 @@ import io.micronaut.security.rules.SecurityRule;
 import java.util.List;
 
 @Secured(SecurityRule.IS_ANONYMOUS)
-@Controller("/services/role/member")
+@Controller("/services/roles/members")
 public class MemberRoleController {
 
     private final MemberRoleServices memberRoleServices;
@@ -19,7 +19,7 @@ public class MemberRoleController {
     }
 
     @Get
-    HttpResponse<List<MemberRole>> getAllMemberRoles() {
+    HttpResponse<List<MemberRole>> getAllAssignedRoles() {
         return HttpResponse.ok(memberRoleServices.findAll());
     }
 
