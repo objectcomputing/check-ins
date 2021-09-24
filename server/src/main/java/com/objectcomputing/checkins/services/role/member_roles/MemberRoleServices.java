@@ -25,7 +25,5 @@ public interface MemberRoleServices {
     void removeAllByRoleId(UUID roleId);
 
 
-//    void delete(MemberRole memberRole);
-
 
 }
