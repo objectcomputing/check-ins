@@ -158,6 +158,13 @@ const ProfilePage = () => {
     [guilds]
   );
 
+  const subheader = (
+    <>
+      As Of: {new Date(myHours?.asOfDate).toLocaleDateString()} <br />
+      Updated On: {new Date(myHours?.updatedDate).toLocaleDateString()}
+    </>
+  );
+
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
@@ -186,9 +193,7 @@ const ProfilePage = () => {
               <Card style={{ minHeight: 150 }}>
                 <CardHeader
                   avatar={<Info />}
-                  subheader={`Updated On: ${new Date(
-                    myHours.updatedDate
-                  ).toLocaleDateString()}`}
+                  subheader={subheader}
                   title="Contribution Hours"
                 />
                 <CardContent>
@@ -223,10 +228,7 @@ const ProfilePage = () => {
                 required
                 value={myGuilds}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Join a guild..."
-                  />
+                  <TextField {...params} placeholder="Join a guild..." />
                 )}
               />
             </CardContent>
