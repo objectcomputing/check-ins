@@ -1,6 +1,6 @@
 package com.objectcomputing.checkins.services.permissions;
 
-import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.jdbc.annotation.JdbcRepository;
 import io.micronaut.data.model.query.builder.sql.Dialect;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @JdbcRepository(dialect = Dialect.POSTGRES)
 public interface PermissionRepository extends CrudRepository<Permission, UUID> {
 
-    @Query("SELECT DISTINCT permissions.id, permissions.permission " +
+    @Query("SELECT DISTINCT permissions.id, permissions.permission, permissions.description " +
             "FROM member_profile " +
             "JOIN member_roles " +
             "    ON member_profile.id = member_roles.memberid " +
@@ -24,6 +24,9 @@ public interface PermissionRepository extends CrudRepository<Permission, UUID> {
             "    ON permissions.id = role_permissions.permissionid " +
             "WHERE member_profile.id = :id")
     List<Permission> findUserPermissions(UUID id);
-
+    
+    @NonNull
     List<Permission> findAll();
+
+    List<Permission> listOrderByPermission();
 }
