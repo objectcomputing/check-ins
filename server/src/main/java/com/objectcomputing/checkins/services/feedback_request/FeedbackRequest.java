@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,31 +28,31 @@ public class FeedbackRequest {
     private UUID id;
 
     @Column(name = "creator_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
     @Column(name = "requestee_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
     @Column(name = "recipient_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
     @Column(name = "template_id")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template the feedback request references", required = true)
     private UUID templateId;
 
     @Column(name="send_date")
-    @NotBlank
+    @NotNull
     @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
 
@@ -61,7 +62,7 @@ public class FeedbackRequest {
     private LocalDate dueDate;
 
     @Column(name = "status")
-    @NotBlank
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "completion status of request", required = true)
     private String status;
