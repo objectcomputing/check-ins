@@ -41,11 +41,16 @@ const Users = () => {
 
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [includeTerminated, setIncludeTerminated] = useState(false);
+
+  const handleIncludeTerminated = () => {
+    setIncludeTerminated(!includeTerminated);
+  };
 
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
-  const normalizedMembers = isAdmin
+  const normalizedMembers = isAdmin && includeTerminated
     ? selectNormalizedMembersAdmin(state, searchText)
     : selectNormalizedMembers(state, searchText);
 
@@ -114,6 +119,15 @@ const Users = () => {
             </div>
           )}
         </Grid>
+          <div className="checkbox-row">
+            <label htmlFor="includeterminated">Include Terminated Members</label>
+            <input
+              id="includeterminated"
+              checked={includeTerminated}
+              onClick={handleIncludeTerminated}
+              type="checkbox"
+            />
+          </div>
         <Grid item className={classes.members}>
           {createMemberCards}
         </Grid>

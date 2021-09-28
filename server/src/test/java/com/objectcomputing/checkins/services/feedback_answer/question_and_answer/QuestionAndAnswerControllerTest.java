@@ -78,7 +78,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     @Test
     public void testGetExistingQuestionAndAnswerPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
         QuestionAndAnswerServices.Tuple tuple = saveSampleTuple(sender, recipient);
         final HttpRequest<?> request = HttpRequest.GET(String.format("/?questionId=%s&requestId=%s", tuple.getQuestion().getId(), tuple.getAnswer().getRequestId()))
@@ -95,7 +95,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     public void testGetQuestionAndRequestWhereAnswerNotSavedPermitted() {
         final MemberProfile sender = createADefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile requestee = createADefaultMemberProfileForPdl(sender);
         MemberProfile templateCreator = createADefaultSupervisor();
         FeedbackTemplate template = createFeedbackTemplate(templateCreator.getId());
@@ -120,7 +120,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     @Test
     public void testGetQuestionAndAnswerNotPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile random = createAnUnrelatedUser();
 
@@ -136,7 +136,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     @Test
     public void testGetAllQuestionsAndAnswersPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
         QuestionAndAnswerServices.Tuple tuple = saveSampleTuple(sender, recipient);
 
@@ -153,7 +153,7 @@ public class QuestionAndAnswerControllerTest extends TestContainersSuite impleme
     @Test
     public void testGetAllQuestionsAndAnswersNotPermitted() {
         MemberProfile sender = createADefaultMemberProfile();
-        createDefaultRole(RoleType.PDL, sender);
+        createAndAssignRole(RoleType.PDL, sender);
         MemberProfile recipient = createADefaultRecipient();
         MemberProfile random = createAnUnrelatedUser();
         QuestionAndAnswerServices.Tuple tuple = saveSampleTuple(sender, recipient);

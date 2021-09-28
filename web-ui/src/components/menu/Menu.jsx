@@ -90,16 +90,18 @@ const directoryLinks = [
   ["/teams", "Teams"],
 ];
 
-const feedbackLinks = [
-  ["/feedback/view", "View Feedback"],
-  ["/feedback/received-requests", "Received Requests"]
-];
+const getFeedbackLinks = (isAdmin, isPDL) => isAdmin || isPDL ?
+    [
+      ["/feedback/view", "View Feedback"],
+      ["/feedback/received-requests", "Received Requests"]
+    ] :
+    [ ["/feedback/received-requests", "Received Requests"] ];
 
 const reportsLinks = [
+  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
   ["/checkins-reports", "Check-ins"],
   ["/skills-reports", "Skills"],
   ["/team-skills-reports", "Team Skills"],
-  ["/birthday-anniversary-reports", "Birthdays & Anniversaries"],
 ];
 
 const isCollapsibleListOpen = (linksArr, loc) => {
@@ -127,6 +129,7 @@ function Menu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [showHoursUpload, setShowHoursUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const feedbackLinks = getFeedbackLinks(isAdmin, isPDL);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -312,21 +315,17 @@ function Menu() {
         <Collapse in={directoryOpen} timeout="auto" unmountOnExit>
           {createListJsx(directoryLinks, true)}
         </Collapse>
-      {(isAdmin || isPDL) && (
-        <React.Fragment>
-          <ListItem
-            button
-            onClick={toggleFeedback}
-            className={classes.listItem}
-          >
-            <ListItemText primary="FEEDBACK" />
-          </ListItem>
-          <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
-            {createListJsx(feedbackLinks, true)}
-          </Collapse>
-        </React.Fragment>
-      )}
-      {isAdmin && (
+        <ListItem
+          button
+          onClick={toggleFeedback}
+          className={classes.listItem}
+        >
+          <ListItemText primary="FEEDBACK" />
+        </ListItem>
+        <Collapse in={feedbackOpen} timeout="auto" unmountOnExit>
+          {createListJsx(feedbackLinks, true)}
+        </Collapse>
+        {isAdmin && (
           <React.Fragment>
             <ListItem
               button
@@ -340,7 +339,7 @@ function Menu() {
             </Collapse>
             {createLinkJsx("/edit-skills", "SKILLS", false)}
           </React.Fragment>
-      )}
+        )}
       </List>
     </div>
   );

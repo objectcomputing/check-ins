@@ -70,6 +70,10 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
         } catch (NotFoundException e) {
             throw new BadArgException("Cannot save feedback request with invalid requestee ID");
         }
+
+        if (feedbackRequest.getRequesteeId().equals(feedbackRequest.getRecipientId())) {
+            throw new BadArgException("The requestee must not be the same person as the recipient");
+        }
     }
 
     @Override
@@ -157,18 +161,16 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public List<FeedbackRequest> findByValues(UUID creatorId, UUID requesteeId, UUID recipientId, LocalDate oldestDate) {
-        MemberProfile currentUser = currentUserServices.getCurrentUser();
-        UUID currentUserId = currentUser.getId();
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
 
         List<FeedbackRequest> feedbackReqList = new ArrayList<>();
         if (currentUserId != null) {
             //users should be able to filter by only requests they have created
-            if (currentUserId.equals(creatorId) || currentUserServices.isAdmin()) {
+            if (currentUserId.equals(creatorId) || currentUserId.equals(recipientId) || currentUserServices.isAdmin()) {
                 feedbackReqList.addAll(feedbackReqRepository.findByValues(Util.nullSafeUUIDToString(creatorId), Util.nullSafeUUIDToString(requesteeId), Util.nullSafeUUIDToString(recipientId), oldestDate));
             } else {
                 throw new PermissionException("You are not authorized to do this operation");
             }
-
         }
 
         return feedbackReqList;

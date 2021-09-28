@@ -1,7 +1,9 @@
 import { resolve } from "./api.js";
 
-let emailURL = "/services/email-notifications"
-let testEmailURL = "https://checkins.objectcomputing.com/feedback/submit?requestId="
+let emailURL = "/services/email-notifications";
+let testEmailURL = process.env.REACT_APP_API_URL
+    ? process.env.REACT_APP_API_URL + "/feedback/submit?request="
+    : "https://checkins.objectcomputing.com/feedback/submit?request=";
 
 export const sendReminderNotification = async (feedbackRequestId, recipients, cookie) => {
   let subject = "Please fill out your OCI feedback request!"

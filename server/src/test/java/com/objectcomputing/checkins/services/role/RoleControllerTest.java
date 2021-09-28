@@ -4,9 +4,10 @@ package com.objectcomputing.checkins.services.role;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.MemberProfileFixture;
+import com.objectcomputing.checkins.services.fixture.MemberRoleFixture;
 import com.objectcomputing.checkins.services.fixture.RoleFixture;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import io.micronaut.core.type.Argument;
+import com.objectcomputing.checkins.services.role.member_roles.MemberRoleId;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -18,11 +19,11 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture {
+
+class RoleControllerTest extends TestContainersSuite implements MemberProfileFixture, RoleFixture, MemberRoleFixture {
 
     @Inject
     @Client("/services/roles")
@@ -30,62 +31,34 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
 
     @Test
       void testCreateARole() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-        roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(memberProfile.getId());
+        roleCreateDTO.setRole(RoleType.MEMBER.name());
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         Role role = response.body();
         assertNotNull(role);
-        assertEquals(roleCreateDTO.getMemberid(), role.getMemberid());
         assertEquals(roleCreateDTO.getRole(), role.getRole());
         assertEquals(HttpStatus.CREATED, response.getStatus());
         assertEquals(String.format("%s/%s", request.getPath(), role.getId()), response.getHeaders().get("location"));
     }
 
     @Test
-    void testCreateARoleAlreadyExists() {
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
-
-        Role alreadyExistingRole = createDefaultRole(RoleType.MEMBER, memberProfile);
-        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-        roleCreateDTO.setRole(alreadyExistingRole.getRole());
-        roleCreateDTO.setMemberid(alreadyExistingRole.getMemberid());
-
-        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("Member %s already has role %s", roleCreateDTO.getMemberid(), roleCreateDTO.getRole()),
-                error);
-        assertEquals(request.getPath(), href);
-    }
-
-    @Test
     void testCreateForbidden() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+        Role role = createAndAssignRole(RoleType.MEMBER, unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
-        roleCreateDTO.setRole(RoleType.MEMBER);
-        roleCreateDTO.setMemberid(UUID.randomUUID());
+        roleCreateDTO.setRole(RoleType.MEMBER.name());
+
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -96,56 +69,72 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testCreateAnInvalidRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
+        Role role = createAndAssignAdminRole(unrelatedProfile);
 
         RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
 
         final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
-        assertEquals("role.memberid: must not be null", errorList.get(0));
-        assertEquals("role.role: must not be null", errorList.get(1));
+        assertEquals("role.role: must not be null", body.get("message").asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
 
     @Test
-    void testCreateNonExistingMember() {
+    void createRoleOfSameNameAsExistingRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role role = createAndAssignAdminRole(unrelatedProfile);
 
-        RoleCreateDTO role = new RoleCreateDTO();
-        role.setMemberid(UUID.randomUUID());
-        role.setRole(RoleType.MEMBER);
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole("ADMIN");
 
 
-        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
-        assertEquals(request.getPath(), href);
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Role with name ADMIN already exists in database", body.get("message").asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
+
+    @Test
+    void createRoleOfSameNameCaseInsensitiveThrowsError() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role role = createAndAssignAdminRole(unrelatedProfile);
+
+        RoleCreateDTO roleCreateDTO = new RoleCreateDTO();
+        roleCreateDTO.setRole("admin");
+
+
+        final HttpRequest<RoleCreateDTO> request = HttpRequest.POST("", roleCreateDTO)
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Map.class));
+
+        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
+        JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
+        assertEquals("Role with name admin already exists in database", body.get("message").asText());
+        assertEquals(request.getPath(), href.asText());
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+    }
+
 
     @Test
     void testCreateANullRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
+        Role role = createAndAssignAdminRole(unrelatedProfile);
 
         final HttpRequest<String> request = HttpRequest.POST("", "")
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -160,12 +149,12 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testReadRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+        Role authRole = createAndAssignRole(RoleType.MEMBER, unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
+        Role role = createAndAssignAdminRole(memberProfile);
 
-        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+        final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", role.getId())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
         assertEquals(role, response.body());
@@ -175,137 +164,59 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testReadRoleNotFound() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
+        Role role = createAndAssignAdminRole(unrelatedProfile);
 
         final MutableHttpRequest<Object> request = HttpRequest.GET(String.format("/%s", UUID.randomUUID()))
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () -> client.toBlocking().exchange(request, Role.class));
 
         assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
-    @Test
-    void testFindRoles() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Set<Role> roles = Set.of(createDefaultRole(RoleType.ADMIN, memberProfile),
-                createDefaultRole(RoleType.PDL, memberProfile));
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?memberid=%s", memberProfile.getId()))
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-        final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
-
-        assertEquals(roles, response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
 
     @Test
-    void testFindRolesAllParams() {
+    void testFindRoleDoesNotExist() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role role = createAndAssignAdminRole(unrelatedProfile);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
+        final HttpRequest<?> request = HttpRequest.GET("/" + UUID.randomUUID())
+                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole());
 
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s&memberid=%s", role.getRole(),
-                role.getMemberid())).basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
+        HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
+                () -> client.toBlocking().exchange(request, Role.class));
 
-        assertEquals(Set.of(role), response.body());
-        assertEquals(HttpStatus.OK, response.getStatus());
-    }
-
-    @Test
-    void testFindRolesDoesNotExist() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role role = createDefaultAdminRole(unrelatedProfile);
-
-        final HttpRequest<?> request = HttpRequest.GET(String.format("/?role=%s", RoleType.PDL))
-                .basicAuth(unrelatedProfile.getWorkEmail(), role.getRole().name());
-        HttpResponse<Set<Role>> response = client.toBlocking().exchange(request, Argument.setOf(Role.class));
-
-        assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(Set.of(), response.body());
+        assertEquals(HttpStatus.NOT_FOUND, responseException.getStatus());
     }
 
     @Test
     void testUpdateRole() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
+        createAndAssignAdminRole(memberProfile);
 
-        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+        Role newRole = createRole(new Role("Test", "description"));
+        newRole.setRole("New name");
+        newRole.setDescription("New description");
+
+        final HttpRequest<Role> request = HttpRequest.PUT("", newRole)
+                .basicAuth(memberProfile.getWorkEmail(), "ADMIN");
         final HttpResponse<Role> response = client.toBlocking().exchange(request, Role.class);
 
-        assertEquals(role, response.body());
+        assertEquals(newRole, response.body());
         assertEquals(HttpStatus.OK, response.getStatus());
-        assertEquals(String.format("%s/%s", request.getPath(), role.getId()), response.getHeaders().get("location"));
+        assertEquals(String.format("%s/%s", request.getPath(), newRole.getId()), response.getHeaders().get("location"));
     }
 
-    @Test
-    void testUpdateNonExistingMember() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
-
-        role.setMemberid(UUID.randomUUID());
-
-        final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertEquals(String.format("Member %s doesn't exist", role.getMemberid()), error);
-        assertEquals(request.getPath(), href);
-    }
-
-    @Test
-    void testUpdateNonExistingRoleType() {
-        MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
-
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role roleToUpdate = createDefaultAdminRole(memberProfile);
-
-        Map<String, String> role = new HashMap<>();
-        role.put("id", roleToUpdate.getId().toString());
-        role.put("role", "ROLE_DOES_NOT_EXIST");
-        role.put("memberid", roleToUpdate.getMemberid().toString());
-
-        final HttpRequest<Map<String, String>> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
-        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
-                client.toBlocking().exchange(request, Map.class));
-
-        JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        String error = Objects.requireNonNull(body).get("message").asText();
-        String href = Objects.requireNonNull(body).get("_links").get("self").get("href").asText();
-
-        assertTrue(error.contains("not one of the values accepted for Enum class"));
-        assertEquals(request.getPath(), href);
-    }
 
     @Test
     void testUpdateNonExistingRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER, "role description", memberProfile.getId());
+        Role role = new Role(UUID.randomUUID(), RoleType.MEMBER.name(), "role description");
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -320,14 +231,14 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateWithoutId() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
         MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultRole(RoleType.MEMBER, memberProfile);
+        Role role = createAndAssignRole(RoleType.MEMBER, memberProfile);
         role.setId(null);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, Map.class));
 
@@ -342,12 +253,12 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateForbidden() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultRole(RoleType.MEMBER, unrelatedProfile);
+        Role authRole = createAndAssignRole(RoleType.MEMBER, unrelatedProfile);
 
-        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN, "role description", UUID.randomUUID());
+        Role r = new Role(UUID.randomUUID(), RoleType.ADMIN.name(), "role description");
 
         final HttpRequest<Role> request = HttpRequest.PUT("", r)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
                 client.toBlocking().exchange(request, String.class));
 
@@ -358,25 +269,21 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateAnInvalidRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
-        role.setMemberid(null);
+        Role role = createRole(new Role("Sample Name", "Sample Description"));
         role.setRole(null);
 
         final HttpRequest<Role> request = HttpRequest.PUT("", role)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
         JsonNode body = responseException.getResponse().getBody(JsonNode.class).orElse(null);
-        JsonNode errors = Objects.requireNonNull(body).get("_embedded").get("errors");
+
         JsonNode href = Objects.requireNonNull(body).get("_links").get("self").get("href");
-        List<String> errorList = List.of(errors.get(0).get("message").asText(), errors.get(1).get("message").asText())
-                .stream().sorted().collect(Collectors.toList());
-        assertEquals("role.memberid: must not be null", errorList.get(0));
-        assertEquals("role.role: must not be null", errorList.get(1));
+
+        assertEquals("role.role: must not be null", body.get("message").asText());
         assertEquals(request.getPath(), href.asText());
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
     }
@@ -384,10 +291,10 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void testUpdateANullRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
         final HttpRequest<String> request = HttpRequest.PUT("", "")
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -402,15 +309,14 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void deleteRole() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
-        MemberProfile memberProfile = createADefaultMemberProfile();
-        Role role = createDefaultAdminRole(memberProfile);
+        Role role = createRole(new Role ("name", "description"));
 
         assertNotNull(findRole(role));
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(role.getId().toString())
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -418,16 +324,38 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     }
 
     @Test
+    void deleteRoleWithUsersAssigned() {
+        MemberProfile unrelatedProfile = createAnUnrelatedUser();
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
+
+        MemberProfile member = createADefaultMemberProfile();
+        Role role = createRole(new Role ("name", "description"));
+
+        assignMemberToRole(member, role);
+        assertNotNull(findRole(role));
+        assertTrue(findMemberRole(new MemberRoleId(member.getId(), role.getId())).isPresent());
+
+        final MutableHttpRequest<Object> request = HttpRequest.DELETE(role.getId().toString())
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
+        final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertNull(findRole(role));
+    }
+
+
+
+    @Test
     void deleteRoleNonExisting() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
         UUID uuid = UUID.randomUUID();
 
         assertNull(findRoleById(uuid));
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid.toString())
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         final HttpResponse<String> response = client.toBlocking().exchange(request, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatus());
@@ -437,12 +365,12 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
     @Test
     void deleteRoleBadId() {
         MemberProfile unrelatedProfile = createAnUnrelatedUser();
-        Role authRole = createDefaultAdminRole(unrelatedProfile);
+        Role authRole = createAndAssignAdminRole(unrelatedProfile);
 
         String uuid = "Bill-Nye-The-Science-Guy";
 
         final MutableHttpRequest<Object> request = HttpRequest.DELETE(uuid)
-                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole().name());
+                .basicAuth(unrelatedProfile.getWorkEmail(), authRole.getRole());
         HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class,
                 () -> client.toBlocking().exchange(request, Map.class));
 
@@ -465,4 +393,5 @@ class RoleControllerTest extends TestContainersSuite implements MemberProfileFix
         assertEquals(HttpStatus.UNAUTHORIZED, responseException.getStatus());
         assertEquals("Unauthorized", responseException.getMessage());
     }
+
 }

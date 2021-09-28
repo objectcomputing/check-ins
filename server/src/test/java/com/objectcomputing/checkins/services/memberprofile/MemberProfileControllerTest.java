@@ -64,7 +64,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     public void testDeleteThrowsExceptionWhenUserDoesNotExist() {
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE("/01b7d769-9fa2-43ff-95c7-f3b950a27bf9")
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -89,7 +89,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         createADefaultCheckIn(memberProfileOfMember, memberProfileOfPDL);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -114,7 +114,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         createMemberSkill(memberProfileOfMember, testSkill, "Pro", LocalDate.now());
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -139,7 +139,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         createDefaultTeamMember(testTeam, memberProfileOfMember);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -159,10 +159,10 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         MemberProfile memberProfileOfPDL = createADefaultMemberProfile();
 
-        createDefaultRole(RoleType.PDL, memberProfileOfPDL);
+        createAndAssignRole(RoleType.PDL, memberProfileOfPDL);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfPDL.getId().toString())
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
@@ -184,7 +184,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfileOfMember = createADefaultMemberProfileForPdl(memberProfileOfPDL);
 
         MemberProfile memberProfileOfAdmin = createAnUnrelatedUser();
-        createDefaultAdminRole(memberProfileOfAdmin);
+        createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest request = HttpRequest.DELETE(memberProfileOfMember.getId().toString())
                 .basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);

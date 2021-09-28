@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Tooltip,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
@@ -55,6 +56,8 @@ const TeamSummaryCard = ({ team, index }) => {
   const { id } = team;
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
+
   const isAdmin =
     userProfile && userProfile.role && userProfile.role.includes("ADMIN");
 
@@ -120,7 +123,18 @@ const TeamSummaryCard = ({ team, index }) => {
           subheader: classes.title,
         }}
         title={team.name}
-        subheader={team.description}
+        subheader={
+          <Tooltip
+            open={tooltipIsOpen}
+            onOpen={() => setTooltipIsOpen(true)}
+            onClose={() => setTooltipIsOpen(false)}
+            enterTouchDelay={0}
+            placement="top-start"
+            title={team.description}
+          >
+            <div>{team.description}</div>
+          </Tooltip>
+        }
       />
       <CardContent>
         {team.teamMembers == null ? (
@@ -165,7 +179,12 @@ const TeamSummaryCard = ({ team, index }) => {
                 <Button onClick={handleCloseDeleteConfirmation} color="primary">
                   Cancel
                 </Button>
-                <Button disabled onClick={deleteATeam} color="primary" autoFocus>
+                <Button
+                  disabled
+                  onClick={deleteATeam}
+                  color="primary"
+                  autoFocus
+                >
                   Yes
                 </Button>
               </DialogActions>
