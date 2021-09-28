@@ -23,18 +23,19 @@ export const getMyAxios = async () => {
       // Any status code that lie within the range of 2xx cause this function to trigger
       (res) => {
         return res;
-      }, 
+      },
       // Any status codes that falls outside the range of 2xx cause this function to trigger
       (err) => {
-        if (401 === err.response.status){
+        if (401 === err.response.status) {
           // create a message for 401 error so that the Toast is updated properly
           err.response.data = {
-            message: "Your session has expired.  Please refresh the page to start a new session."
+            message:
+              "Your session has expired.  Please refresh the page to start a new session.",
           };
         }
         return Promise.reject(err);
       }
-    )
+    );
   }
   return myAxios;
 };
@@ -56,7 +57,7 @@ export const resolve = async (payload) => {
         type: UPDATE_TOAST,
         payload: {
           severity: "error",
-          toast: e.response.data.message,
+          toast: e?.response?.data?.message,
         },
       });
     }
