@@ -74,6 +74,9 @@ Array [
           </span>
           Add Team
         </span>
+        <span
+          className="MuiTouchRipple-root"
+        />
       </button>
     </div>
   </div>,
@@ -97,7 +100,19 @@ Array [
           <span
             className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
           >
-            string
+            <div
+              aria-describedby={null}
+              className=""
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title="string"
+            >
+              string
+            </div>
           </span>
         </div>
       </div>
@@ -146,6 +161,9 @@ Array [
               >
                 Edit Team
               </span>
+              <span
+                className="MuiTouchRipple-root"
+              />
             </button>
             <button
               aria-haspopup="menu"
@@ -181,6 +199,9 @@ Array [
                   />
                 </svg>
               </span>
+              <span
+                className="MuiTouchRipple-root"
+              />
             </button>
           </div>
         </div>
@@ -203,7 +224,19 @@ Array [
           <span
             className="MuiTypography-root MuiCardHeader-subheader makeStyles-title-4 MuiTypography-body1 MuiTypography-colorTextSecondary MuiTypography-displayBlock"
           >
-            
+            <div
+              aria-describedby={null}
+              className=""
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              title=""
+            >
+              
+            </div>
           </span>
         </div>
       </div>
@@ -252,6 +285,9 @@ Array [
               >
                 Edit Team
               </span>
+              <span
+                className="MuiTouchRipple-root"
+              />
             </button>
             <button
               aria-haspopup="menu"
@@ -287,6 +323,9 @@ Array [
                   />
                 </svg>
               </span>
+              <span
+                className="MuiTouchRipple-root"
+              />
             </button>
           </div>
         </div>
@@ -370,9 +409,6 @@ Array [
           </span>
           Add Team
         </span>
-        <span
-          className="MuiTouchRipple-root"
-        />
       </button>
     </div>
   </div>,

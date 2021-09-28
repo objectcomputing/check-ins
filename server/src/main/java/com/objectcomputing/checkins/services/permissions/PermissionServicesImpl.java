@@ -21,4 +21,6 @@ public class PermissionServicesImpl implements PermissionServices {
     public List<Permission> findAll(){
         return permissionRepository.findAll();
     }
+
+    public List<Permission> listOrderByPermission(){ return permissionRepository.listOrderByPermission(); }
 }

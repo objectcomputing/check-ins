@@ -344,6 +344,27 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testCreateFeedbackRequestWithSameRecipientAndRequestee() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = requestee;
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with with same requestee and recipient ids
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("The requestee must not be the same person as the recipient", responseException.getMessage());
+    }
+
+    @Test
     void testCreateFeedbackRequestWithNoRecipients() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
@@ -654,7 +675,25 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertUnauthorized(responseException);
+    }
 
+    @Test
+    void testGetByCreatorRecipientIdPermitted() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile requestee = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+        FeedbackRequest feedbackRequest = saveFeedbackRequest(pdlMemberProfile, requestee, recipient);
+
+        //get feedback request
+        final HttpRequest<?> request = HttpRequest.GET(String.format("/?recipientId=%s", feedbackRequest.getRecipientId()))
+                .basicAuth(recipient.getWorkEmail(), RoleType.Constants.MEMBER_ROLE);
+        final HttpResponse<FeedbackRequestResponseDTO> response = client.toBlocking().exchange(request, FeedbackRequestResponseDTO.class);
+
+        // recipient must be able to get the feedback request
+        assertEquals(HttpStatus.OK, response.getStatus());
+        assertTrue(response.getBody().isPresent());
+        assertResponseEqualsEntity(feedbackRequest, response.getBody().get());
     }
 
     @Test

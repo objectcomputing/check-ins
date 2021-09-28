@@ -150,8 +150,9 @@ const Roles = () => {
             <h2>Roles</h2>
             <TextField
               className="role-search"
-              label="Search Roles..."
-              placeholder="Role Name"
+              label="Search Roles"
+              placeholder="Role"
+              fullWidth={true}
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);

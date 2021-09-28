@@ -195,7 +195,7 @@ exports[`renders correctly 1`] = `
           onMouseOver={[Function]}
           onTouchEnd={[Function]}
           onTouchStart={[Function]}
-          title={null}
+          title="This is disabled because there is already an open Check-In"
         >
           <button
             className="MuiButtonBase-root MuiButton-root MuiButton-text makeStyles-addButton-2 Mui-disabled Mui-disabled"

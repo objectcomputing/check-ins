@@ -62,7 +62,7 @@ const ErrorFallback = ({ error }) => {
             &#128533;
           </span>
         </h1>
-        <h1 className="error">Error: {error.message || error}</h1>
+        <h1 className="error">Error: {error?.message || error}</h1>
         <h1 className="new-issue-message">
           Would you mind creating a new issue and explaining what happened?
         </h1>

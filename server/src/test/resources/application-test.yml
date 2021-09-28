@@ -10,11 +10,9 @@ datasources:
     url:  jdbc:tc:postgresql:///
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
 ---
-
 mail-jet:
   from_address: "someEmail@test.com"
   from_name: "John Doe"
-
 ---
 credentials:
   roles:
@@ -43,11 +41,9 @@ flyway:
 ---
 check-ins:
   web-address: "https://checkins.objectcomputing.com"
-
 ---
 aes:
   key: BOGUS_TEST_KEY
-
-mail-jet:
-  from_address: "someEmail@test.com"
-  from_name: "John Doe"
+---
+github-credentials:
+  github_token: "test github token"
