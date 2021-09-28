@@ -340,7 +340,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("id: must not be null", responseException.getMessage());
+        assertEquals("requestBody.requesteeId: must not be null", responseException.getMessage());
     }
 
     @Test
@@ -362,7 +362,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("id: must not be null", responseException.getMessage());
+        assertEquals("requestBody.recipientId: must not be null", responseException.getMessage());
     }
 
     @Test
@@ -384,7 +384,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
                 client.toBlocking().exchange(request, Map.class));
 
         assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
-        assertEquals("There is no valid feedback template selected.", responseException.getMessage());
+        assertEquals("requestBody.templateId: must not be null", responseException.getMessage());
     }
 
     @Test
