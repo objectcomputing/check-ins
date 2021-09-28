@@ -87,9 +87,6 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         }
 
-        if (feedbackRequest.getTemplateId() == null) {
-            throw new BadArgException("There is no valid feedback template selected.");
-        }
 
         if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
