@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -10,8 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,31 +27,31 @@ public class FeedbackRequest {
     private UUID id;
 
     @Column(name = "creator_id")
-    @NotNull
+    @NonNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
     @Column(name = "requestee_id")
-    @NotNull
+    @NonNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
     @Column(name = "recipient_id")
-    @NotNull
+    @NonNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
     @Column(name = "template_id")
-    @NotNull
+    @NonNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the template the feedback request references", required = true)
     private UUID templateId;
 
     @Column(name="send_date")
-    @NotNull
+    @NonNull
     @Schema(description = "date request was sent", required = true)
     private LocalDate sendDate;
 
@@ -62,7 +61,7 @@ public class FeedbackRequest {
     private LocalDate dueDate;
 
     @Column(name = "status")
-    @NotNull
+    @NonNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "completion status of request", required = true)
     private String status;

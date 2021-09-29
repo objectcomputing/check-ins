@@ -1,5 +1,6 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Introspected
 public class FeedbackRequestUpdateDTO {
 
-    @NotNull
+    @NonNull
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
@@ -48,6 +49,7 @@ public class FeedbackRequestUpdateDTO {
     public String getStatus() {
         return status;
     }
+
     @Nullable
     public void setStatus(String status) {
         this.status = status;
