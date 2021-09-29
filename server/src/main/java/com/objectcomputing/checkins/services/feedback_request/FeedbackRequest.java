@@ -92,12 +92,10 @@ public class FeedbackRequest {
     }
 
     public FeedbackRequest(UUID id,
-                           UUID creatorId,
                            @Nullable LocalDate dueDate,
                            String status,
                            @Nullable LocalDate submitDate) {
         this.id = id;
-        this.creatorId = creatorId;
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
