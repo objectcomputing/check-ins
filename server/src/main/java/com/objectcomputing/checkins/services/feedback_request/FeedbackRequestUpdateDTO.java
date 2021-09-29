@@ -12,7 +12,7 @@ import java.util.UUID;
 @Introspected
 public class FeedbackRequestUpdateDTO {
 
-    @NonNull
+    @NotNull
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
