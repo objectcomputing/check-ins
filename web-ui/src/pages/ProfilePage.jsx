@@ -158,13 +158,6 @@ const ProfilePage = () => {
     [guilds]
   );
 
-  const subheader = (
-    <>
-      As Of: {new Date(myHours?.asOfDate).toLocaleDateString()} <br />
-      Updated On: {new Date(myHours?.updatedDate).toLocaleDateString()}
-    </>
-  );
-
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
@@ -193,7 +186,9 @@ const ProfilePage = () => {
               <Card style={{ minHeight: 150 }}>
                 <CardHeader
                   avatar={<Info />}
-                  subheader={subheader}
+                  subheader={`As Of: ${new Date(
+                    myHours?.asOfDate
+                  ).toLocaleDateString()}`}
                   title="Contribution Hours"
                 />
                 <CardContent>
