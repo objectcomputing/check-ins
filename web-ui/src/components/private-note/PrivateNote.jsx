@@ -8,11 +8,11 @@ import {
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken, selectCurrentUser, selectIsPDL, selectIsAdmin, selectCheckin, selectProfile } from "../../context/selectors";
 import { debounce } from "lodash/function";
-import LockIcon from "@material-ui/icons/Lock";
-import Skeleton from "@material-ui/lab/Skeleton";
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import LockIcon from "@mui/icons-material/Lock";
+import Skeleton from '@mui/material/Skeleton';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 
 import "./PrivateNote.css";
 import MarkdownNote from "../markdown-note/MarkdownNote";

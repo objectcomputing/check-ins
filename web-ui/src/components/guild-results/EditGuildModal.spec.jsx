@@ -1,6 +1,6 @@
 import React from "react";
 import {AppContextProvider} from "../../context/AppContext";
-import { createMount } from "@material-ui/core/test-utils";
+import { createMount } from "@mui/material/test-utils";
 import EditGuildModal from "./EditGuildModal";
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'

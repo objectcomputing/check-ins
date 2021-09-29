@@ -7,10 +7,11 @@ import { UPDATE_TOAST } from "../../context/actions";
 import { useLocation, Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api";
-import AvatarMenu from "@material-ui/core/Menu";
+import AvatarMenu from "@mui/material/Menu";
 
-import MenuIcon from "@material-ui/icons/Menu";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   AppBar,
   Avatar,
@@ -26,7 +27,7 @@ import {
   MenuItem,
   Modal,
   Toolbar,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import "./Menu.css";
 
@@ -355,7 +356,7 @@ function Menu() {
             edge="start"
             onClick={handleDrawerToggle}
             className={classes.menuButton}
-          >
+            size="large">
             <MenuIcon />
           </IconButton>
         </Toolbar>
@@ -421,7 +422,7 @@ function Menu() {
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden smDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,

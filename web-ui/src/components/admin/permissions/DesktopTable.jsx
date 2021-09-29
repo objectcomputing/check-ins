@@ -1,13 +1,15 @@
-import { 
-  makeStyles, 
-  Paper, 
-  Table, 
-  TableBody, TableCell, 
-  TableRow, 
-  TableHead, 
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHead,
   TableContainer,
   Checkbox,
-} from '@material-ui/core'
+} from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import React from 'react'
 

@@ -24,7 +24,7 @@ Array [
           className="MuiGrid-root MuiGrid-item"
         >
           <div
-            className="MuiAvatar-root MuiAvatar-circle"
+            className="MuiAvatar-root MuiAvatar-circular"
             style={
               Object {
                 "marginRight": "1em",

@@ -1,19 +1,19 @@
 import React, {useContext, useEffect, useState} from "react";
 import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import {makeStyles} from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import {Search as SearchIcon} from "@material-ui/icons";
-import {Collapse, IconButton, InputAdornment} from "@material-ui/core";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from "@mui/material/Typography";
+import {Search as SearchIcon} from "@mui/icons-material";
+import {Collapse, IconButton, InputAdornment} from "@mui/material";
 import ReceivedRequestCard from "../components/received_request_card/ReceivedRequestCard";
 import {getFeedbackRequestsByRecipient} from "../api/feedback";
 import "./ReceivedRequestsPage.css";
 import {UPDATE_TOAST} from "../context/actions";
-import Divider from "@material-ui/core/Divider";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Divider from "@mui/material/Divider";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const useStyles = makeStyles({
   pageTitle: {
@@ -187,7 +187,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setReceivedRequestsExpanded(!receivedRequestsExpanded)}
           aria-label="show more"
           className={receivedRequestsExpanded ? classes.expandOpen : classes.expandClose}
-        >
+          size="large">
           <ExpandMoreIcon/>
         </IconButton>
       </div>
@@ -216,7 +216,7 @@ const ReceivedRequestsPage = () => {
           onClick={() => setSubmittedRequestsExpanded(!submittedRequestsExpanded)}
           aria-label="show more"
           className={submittedRequestsExpanded ? classes.expandOpen : classes.expandClose}
-        >
+          size="large">
           <ExpandMoreIcon/>
         </IconButton>
       </div>

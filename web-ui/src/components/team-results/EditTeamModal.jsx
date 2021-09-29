@@ -6,10 +6,10 @@ import {
   selectCurrentMembers,
 } from "../../context/selectors";
 
-import { Button } from "@material-ui/core";
-import Modal from "@material-ui/core/Modal";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Button } from "@mui/material";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Autocomplete from '@mui/material/Autocomplete';
 import "./EditTeamModal.css";
 
 const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
@@ -178,7 +178,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         <Autocomplete
           id="teamLeadSelect"
           multiple
-          getOptionSelected={(option, value) => {
+          isOptionEqualToValue={(option, value) => {
             return value ? value.memberId === option.memberId : false;
           }}
           options={teamMemberOptions}
@@ -201,7 +201,7 @@ const EditTeamModal = ({ team = {}, open, onSave, onClose, headerText }) => {
         />
         <Autocomplete
           multiple
-          getOptionSelected={(option, value) => {
+          isOptionEqualToValue={(option, value) => {
             return value ? value.memberId === option.memberId : false;
           }}
           options={teamMemberOptions}

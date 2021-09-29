@@ -6,10 +6,10 @@ import {
 import { AppContext } from "../../context/AppContext";
 import { updateCheckin } from "../../api/checkins";
 import { selectCsrfToken, selectCheckinsForMember, selectProfile } from "../../context/selectors";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import { DateTimePicker } from "@material-ui/pickers";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import DateTimePicker from "@mui/lab/DateTimePicker";
 
 import "./Checkin.css";
 
@@ -77,7 +77,7 @@ const CheckinsHistory = () => {
               disabled={index <= 0}
               aria-label="Previous Check-in`"
               onClick={previousCheckin}
-            >
+              size="large">
               <ArrowBackIcon
                 className={leftArrowClass}
                 style={{ fontSize: "1.2em" }}
@@ -99,7 +99,7 @@ const CheckinsHistory = () => {
               disabled={index >= checkins.length - 1}
               aria-label="Next Check-in`"
               onClick={nextCheckin}
-            >
+              size="large">
               <ArrowForwardIcon
                 className={rightArrowClass}
                 style={{ fontSize: "1.2em" }}

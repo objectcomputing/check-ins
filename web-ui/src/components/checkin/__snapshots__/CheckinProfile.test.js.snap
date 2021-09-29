@@ -5,7 +5,7 @@ exports[`renders correctly 1`] = `
   className="profile-section"
 >
   <div
-    className="MuiAvatar-root MuiAvatar-circle"
+    className="MuiAvatar-root MuiAvatar-circular"
     style={
       Object {
         "height": "120px",

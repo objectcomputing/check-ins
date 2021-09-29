@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef} from "react";
-import {DatePicker} from '@material-ui/pickers';
-import { makeStyles } from "@material-ui/core/styles";
+import DatePicker from '@mui/lab/DatePicker';
+import makeStyles from '@mui/styles/makeStyles';
 import DateFnsUtils from "@date-io/date-fns";
 import PropTypes from "prop-types";
 

@@ -1,19 +1,19 @@
 import React, {useContext} from "react";
 import PropTypes from "prop-types";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import {Link} from "react-router-dom";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import {sendReminderNotification} from "../../../api/notifications";
-import IconButton from "@material-ui/core/IconButton";
-import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import IconButton from "@mui/material/IconButton";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import {AppContext} from "../../../context/AppContext";
 import {selectCsrfToken, selectProfile} from "../../../context/selectors";
-import {Avatar, Tooltip} from "@material-ui/core";
+import {Avatar, Tooltip} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import {getAvatarURL} from "../../../api/api";
-import {makeStyles} from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles({
   redTypography: {
@@ -122,7 +122,8 @@ const FeedbackRequestSubcard = ({ request }) => {
                   <IconButton
                     onClick={handleReminderClick}
                     aria-label="Send Reminder"
-                  label = "Send Reminder">
+                    label = "Send Reminder"
+                    size="large">
                     <NotificationsActiveIcon/>
                   </IconButton>
                 </Tooltip>

@@ -5,8 +5,8 @@ import { createTeam } from "../../api/team";
 import { AppContext } from "../../context/AppContext";
 import { ADD_TEAM } from "../../context/actions";
 
-import { Button } from "@material-ui/core";
-import GroupIcon from "@material-ui/icons/Group";
+import { Button } from "@mui/material";
+import GroupIcon from "@mui/icons-material/Group";
 
 import "./TeamResults.css";
 

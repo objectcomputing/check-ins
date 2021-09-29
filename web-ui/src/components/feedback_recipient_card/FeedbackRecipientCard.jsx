@@ -2,20 +2,16 @@ import React, { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
-import { Card, CardHeader } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
-import { green } from "@material-ui/core/colors";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import Divider from "@material-ui/core/Divider";
+import { Card, CardHeader } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { green } from "@mui/material/colors";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Divider from "@mui/material/Divider";
 import "./FeedbackRecipientCard.css";
-import {
-  Box,
-  CardContent,
-  Container,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
+import { Box, CardContent, Container, Typography } from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles({
   root: {

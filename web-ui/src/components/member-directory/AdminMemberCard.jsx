@@ -7,9 +7,9 @@ import { UPDATE_MEMBER_PROFILES } from "../../context/actions";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardActions, CardHeader, Tooltip } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
+import { Card, CardActions, CardHeader, Tooltip } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 
 import "./MemberSummaryCard.css";
 import SplitButton from "../split-button/SplitButton";
@@ -27,9 +27,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  makeStyles,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   header: {

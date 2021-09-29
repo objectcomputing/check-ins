@@ -34,7 +34,7 @@ exports[`renders correctly 1`] = `
           onKeyUp={[Function]}
         >
           <div
-            className="MuiAvatar-root MuiAvatar-circle MuiChip-avatar"
+            className="MuiAvatar-root MuiAvatar-circular MuiChip-avatar"
           >
             <img
               className="MuiAvatar-img"

@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import Typography from "@material-ui/core/Typography";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from "@mui/material/Typography";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import makeStyles from '@mui/styles/makeStyles';
 import {selectCsrfToken, selectCurrentUser, selectProfile} from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import "./FeedbackSubmitConfirmation.css";
-import { green } from "@material-ui/core/colors";
+import { green } from "@mui/material/colors";
 import {getFeedbackRequestById} from "../../api/feedback";
 
 const useStyles = makeStyles({

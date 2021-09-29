@@ -1,14 +1,14 @@
 import React, {useContext} from "react";
 import PropTypes from "prop-types";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import {Typography} from "@material-ui/core";
-import TextField from "@material-ui/core/TextField";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import {Typography} from "@mui/material";
+import TextField from "@mui/material/TextField";
 import SentimentIcon from "../../sentiment_icon/SentimentIcon";
 import "./FeedbackResponseCard.css";
 import {AppContext} from "../../../context/AppContext";
 import {selectProfile} from "../../../context/selectors";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import { getAvatarURL } from "../../../api/api.js";
 
 const propTypes = {

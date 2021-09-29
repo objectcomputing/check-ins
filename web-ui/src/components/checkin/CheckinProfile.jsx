@@ -3,7 +3,7 @@ import { getMember } from "../../api/member";
 import { AppContext } from "../../context/AppContext";
 import { getAvatarURL } from "../../api/api.js";
 
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 
 import "./Checkin.css";
 const displayName = "CheckinProfile";

@@ -341,7 +341,7 @@ exports[`<Menu /> renders correctly 1`] = `
                           }
                         >
                           <div
-                            className="MuiAvatar-root MuiAvatar-circle"
+                            className="MuiAvatar-root MuiAvatar-circular"
                             onClick={[Function]}
                             style={
                               Object {
@@ -388,6 +388,11 @@ exports[`<Menu /> renders correctly 1`] = `
                                 },
                               }
                             }
+                            TransitionProps={
+                              Object {
+                                "onEntering": [Function],
+                              }
+                            }
                             anchorEl={null}
                             anchorOrigin={
                               Object {
@@ -399,7 +404,6 @@ exports[`<Menu /> renders correctly 1`] = `
                             id="simple-menu"
                             keepMounted={true}
                             onClose={[Function]}
-                            onEntering={[Function]}
                             open={false}
                             transformOrigin={
                               Object {
@@ -415,6 +419,11 @@ exports[`<Menu /> renders correctly 1`] = `
                                   "classes": Object {
                                     "root": "MuiMenu-paper",
                                   },
+                                }
+                              }
+                              TransitionProps={
+                                Object {
+                                  "onEntering": [Function],
                                 }
                               }
                               anchorEl={null}
@@ -434,7 +443,6 @@ exports[`<Menu /> renders correctly 1`] = `
                               id="simple-menu"
                               keepMounted={true}
                               onClose={[Function]}
-                              onEntering={[Function]}
                               open={false}
                               transformOrigin={
                                 Object {
@@ -1599,7 +1607,7 @@ exports[`<Menu /> renders correctly 1`] = `
                                                 />
                                               </div>
                                               <div
-                                                class="MuiCollapse-container MuiCollapse-entered"
+                                                class="MuiCollapse-root MuiCollapse-entered"
                                                 style="min-height: 0px;"
                                               >
                                                 <div
@@ -2545,9 +2553,9 @@ exports[`<Menu /> renders correctly 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -2573,7 +2581,7 @@ exports[`<Menu /> renders correctly 1`] = `
                                                         unmountOnExit={true}
                                                       >
                                                         <div
-                                                          className="MuiCollapse-container MuiCollapse-entered"
+                                                          className="MuiCollapse-root MuiCollapse-entered"
                                                           style={
                                                             Object {
                                                               "minHeight": "0px",
@@ -3596,9 +3604,9 @@ exports[`<Menu /> renders correctly 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -4547,9 +4555,9 @@ exports[`<Menu /> renders correctly 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -4575,7 +4583,7 @@ exports[`<Menu /> renders correctly 1`] = `
                                               unmountOnExit={true}
                                             >
                                               <div
-                                                className="MuiCollapse-container MuiCollapse-entered"
+                                                className="MuiCollapse-root MuiCollapse-entered"
                                                 style={
                                                   Object {
                                                     "minHeight": "0px",
@@ -5598,9 +5606,9 @@ exports[`<Menu /> renders correctly 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -6001,7 +6009,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                           }
                         >
                           <div
-                            className="MuiAvatar-root MuiAvatar-circle"
+                            className="MuiAvatar-root MuiAvatar-circular"
                             onClick={[Function]}
                             style={
                               Object {
@@ -6048,6 +6056,11 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                 },
                               }
                             }
+                            TransitionProps={
+                              Object {
+                                "onEntering": [Function],
+                              }
+                            }
                             anchorEl={null}
                             anchorOrigin={
                               Object {
@@ -6059,7 +6072,6 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                             id="simple-menu"
                             keepMounted={true}
                             onClose={[Function]}
-                            onEntering={[Function]}
                             open={false}
                             transformOrigin={
                               Object {
@@ -6075,6 +6087,11 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                   "classes": Object {
                                     "root": "MuiMenu-paper",
                                   },
+                                }
+                              }
+                              TransitionProps={
+                                Object {
+                                  "onEntering": [Function],
                                 }
                               }
                               anchorEl={null}
@@ -6094,7 +6111,6 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                               id="simple-menu"
                               keepMounted={true}
                               onClose={[Function]}
-                              onEntering={[Function]}
                               open={false}
                               transformOrigin={
                                 Object {
@@ -7461,7 +7477,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                 />
                                               </div>
                                               <div
-                                                class="MuiCollapse-container MuiCollapse-entered"
+                                                class="MuiCollapse-root MuiCollapse-entered"
                                                 style="min-height: 0px;"
                                               >
                                                 <div
@@ -8169,9 +8185,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -8654,9 +8670,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -8682,7 +8698,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                         unmountOnExit={true}
                                                       >
                                                         <div
-                                                          className="MuiCollapse-container MuiCollapse-entered"
+                                                          className="MuiCollapse-root MuiCollapse-entered"
                                                           style={
                                                             Object {
                                                               "minHeight": "0px",
@@ -9705,9 +9721,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -9913,9 +9929,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -10864,9 +10880,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -11349,9 +11365,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -11377,7 +11393,7 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                               unmountOnExit={true}
                                             >
                                               <div
-                                                className="MuiCollapse-container MuiCollapse-entered"
+                                                className="MuiCollapse-root MuiCollapse-entered"
                                                 style={
                                                   Object {
                                                     "minHeight": "0px",
@@ -12400,9 +12416,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -12608,9 +12624,9 @@ exports[`<Menu /> renders correctly for admin 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -13288,7 +13304,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                           }
                         >
                           <div
-                            className="MuiAvatar-root MuiAvatar-circle"
+                            className="MuiAvatar-root MuiAvatar-circular"
                             onClick={[Function]}
                             style={
                               Object {
@@ -13335,6 +13351,11 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                 },
                               }
                             }
+                            TransitionProps={
+                              Object {
+                                "onEntering": [Function],
+                              }
+                            }
                             anchorEl={null}
                             anchorOrigin={
                               Object {
@@ -13346,7 +13367,6 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                             id="simple-menu"
                             keepMounted={true}
                             onClose={[Function]}
-                            onEntering={[Function]}
                             open={false}
                             transformOrigin={
                               Object {
@@ -13362,6 +13382,11 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                   "classes": Object {
                                     "root": "MuiMenu-paper",
                                   },
+                                }
+                              }
+                              TransitionProps={
+                                Object {
+                                  "onEntering": [Function],
                                 }
                               }
                               anchorEl={null}
@@ -13381,7 +13406,6 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                               id="simple-menu"
                               keepMounted={true}
                               onClose={[Function]}
-                              onEntering={[Function]}
                               open={false}
                               transformOrigin={
                                 Object {
@@ -14637,7 +14661,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                                 />
                                               </div>
                                               <div
-                                                class="MuiCollapse-container MuiCollapse-entered"
+                                                class="MuiCollapse-root MuiCollapse-entered"
                                                 style="min-height: 0px;"
                                               >
                                                 <div
@@ -15583,9 +15607,9 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -15611,7 +15635,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                                         unmountOnExit={true}
                                                       >
                                                         <div
-                                                          className="MuiCollapse-container MuiCollapse-entered"
+                                                          className="MuiCollapse-root MuiCollapse-entered"
                                                           style={
                                                             Object {
                                                               "minHeight": "0px",
@@ -16634,9 +16658,9 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                                     <ForwardRef(Collapse)
                                                       classes={
                                                         Object {
-                                                          "container": "MuiCollapse-container",
                                                           "entered": "MuiCollapse-entered",
                                                           "hidden": "MuiCollapse-hidden",
+                                                          "root": "MuiCollapse-root",
                                                           "wrapper": "MuiCollapse-wrapper",
                                                           "wrapperInner": "MuiCollapse-wrapperInner",
                                                         }
@@ -17585,9 +17609,9 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }
@@ -17613,7 +17637,7 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                               unmountOnExit={true}
                                             >
                                               <div
-                                                className="MuiCollapse-container MuiCollapse-entered"
+                                                className="MuiCollapse-root MuiCollapse-entered"
                                                 style={
                                                   Object {
                                                     "minHeight": "0px",
@@ -18636,9 +18660,9 @@ exports[`<Menu /> renders correctly for pdl 1`] = `
                                           <ForwardRef(Collapse)
                                             classes={
                                               Object {
-                                                "container": "MuiCollapse-container",
                                                 "entered": "MuiCollapse-entered",
                                                 "hidden": "MuiCollapse-hidden",
+                                                "root": "MuiCollapse-root",
                                                 "wrapper": "MuiCollapse-wrapper",
                                                 "wrapperInner": "MuiCollapse-wrapperInner",
                                               }

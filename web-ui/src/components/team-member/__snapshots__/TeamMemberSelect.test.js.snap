@@ -13,7 +13,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",
@@ -37,7 +37,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",
@@ -61,7 +61,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",
@@ -85,7 +85,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",
@@ -109,7 +109,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",
@@ -133,7 +133,7 @@ exports[`renders correctly 1`] = `
     onClick={[Function]}
   >
     <div
-      className="MuiAvatar-root MuiAvatar-circle"
+      className="MuiAvatar-root MuiAvatar-circular"
       style={
         Object {
           "marginLeft": "10px",

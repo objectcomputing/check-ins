@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Avatar, Typography, Hidden } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Avatar, Typography, Hidden } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { AppContext } from "../../context/AppContext";
 import { selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
@@ -104,7 +104,7 @@ const Profile = ({ memberId, pdlId, checkinPdlId }) => {
 
   return (
     <div className={classes.flexRow}>
-      <Hidden xsDown>
+      <Hidden smDown>
         <Avatar
           className={classes.profileImage}
           alt="Profile"

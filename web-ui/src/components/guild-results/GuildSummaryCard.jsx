@@ -16,12 +16,12 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
-} from "@material-ui/core";
+} from "@mui/material";
 import PropTypes from "prop-types";
 import { deleteGuild, updateGuild } from "../../api/guild.js";
 import SplitButton from "../split-button/SplitButton";
 
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 const useStyles = makeStyles((theme) => ({
   card: {
     width: "340px",

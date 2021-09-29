@@ -1,8 +1,8 @@
 import React from 'react'
-import Skeleton from '@material-ui/lab/Skeleton';
+import Skeleton from '@mui/material/Skeleton';
 
-import {makeStyles} from "@material-ui/core/styles";
-import { Card, CardHeader, Box } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import { Card, CardHeader, Box } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -50,15 +50,15 @@ export default function SkeletonLoader({type}) {
       )
     }
     else if (type === "people"){
-      return(
+      return (
         <Card className={classes.card}>
           <CardHeader 
               title={<Skeleton height={43} variant="text" />}
               subheader={<Skeleton variant="text" />}
-              avatar={<Skeleton variant="circle" width={45} height={45} />}
+              avatar={<Skeleton variant="circular" width={45} height={45} />}
           />
-          <Skeleton variant="rect"  height={118} />
+          <Skeleton variant="rectangular"  height={118} />
         </Card>
-      )
+      );
     }
 }

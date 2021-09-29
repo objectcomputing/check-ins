@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@material-ui/core';
+import { useMediaQuery } from '@mui/material';
 import React, { useState } from 'react'
 import DesktopTable from "./DesktopTable"
 import MobileTable from "./MobileTable"

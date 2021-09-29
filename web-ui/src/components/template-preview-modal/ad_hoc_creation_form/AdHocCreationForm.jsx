@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {TextField} from "@material-ui/core";
+import {TextField} from "@mui/material";
 import PropTypes from "prop-types";
 const propTypes = {
   onFormChange: PropTypes.func
@@ -45,7 +45,7 @@ const AdHocCreationForm = (props) => {
         placeholder="How is your day going?"
         fullWidth
         multiline
-        rowsMax={10}
+        maxRows={10}
         margin="normal"
         required={true}
         value={question}

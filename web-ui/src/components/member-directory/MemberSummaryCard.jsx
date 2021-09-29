@@ -5,20 +5,15 @@ import { AppContext } from "../../context/AppContext";
 import { selectIsAdmin, selectProfileMap } from "../../context/selectors";
 import { getAvatarURL } from "../../api/api.js";
 
-import { Card, CardHeader } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import PriorityHighIcon from "@material-ui/icons/PriorityHigh";
+import { Card, CardHeader } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 
 import "./MemberSummaryCard.css";
 
-import {
-  Box,
-  CardContent,
-  Container,
-  makeStyles,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Box, CardContent, Container, Tooltip, Typography } from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   header: {

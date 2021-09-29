@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 
 import { AppContext } from "../context/AppContext";
 
-import { Button, TextField } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Button, TextField } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
 
 import "./BirthdayAnniversaryReportPage.css";
 
@@ -90,7 +90,7 @@ const BirthdayAnniversaryReportPage = () => {
           options={months}
           value={selectedMonth ? selectedMonth : months[currentMonth].month}
           onChange={onMonthChange}
-          getOptionSelected={(option, value) =>
+          isOptionEqualToValue={(option, value) =>
             value ? value.id === option.id : false
           }
           getOptionLabel={(option) =>

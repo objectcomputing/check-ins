@@ -1,14 +1,14 @@
 import React, {useContext} from "react";
-import {Avatar, Card, Tooltip, IconButton} from "@material-ui/core";
+import {Avatar, Card, Tooltip, IconButton} from "@mui/material";
 import {getAvatarURL} from "../../api/api";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {selectProfile} from "../../context/selectors";
 import DateFnsUtils from "@date-io/date-fns";
 import {AppContext} from "../../context/AppContext";
-import {makeStyles} from "@material-ui/core/styles";
-import {Edit as EditIcon} from "@material-ui/icons";
+import makeStyles from '@mui/styles/makeStyles';
+import {Edit as EditIcon} from "@mui/icons-material";
 
 const dateFns = new DateFnsUtils();
 
@@ -88,7 +88,7 @@ const ReceivedRequestCard = ({ request }) => {
               ? (
                 <Link to={`/feedback/submit?request=${request.id}`} style={{textDecoration: "none"}}>
                   <Tooltip title="Give feedback" arrow>
-                    <IconButton><EditIcon/></IconButton>
+                    <IconButton size="large"><EditIcon/></IconButton>
                   </Tooltip>
                 </Link>
               )
@@ -97,7 +97,7 @@ const ReceivedRequestCard = ({ request }) => {
         </div>
       </div>
     </Card>
-  )
+  );
 }
 ReceivedRequestCard.propTypes = propTypes;
 

@@ -1,15 +1,15 @@
 import "./TemplateCard.css";
 import React, {useContext, useEffect, useState} from "react";
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import PropTypes from "prop-types";
-import IconButton from '@material-ui/core/IconButton';
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import "./TemplateCard.css"
-import {withStyles} from "@material-ui/core/styles";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import {green} from "@material-ui/core/colors";
-import {CardHeader} from "@material-ui/core";
+import withStyles from '@mui/styles/withStyles';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {green} from "@mui/material/colors";
+import {CardHeader} from "@mui/material";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken} from "../../context/selectors";
 import {getMember} from "../../api/member";
@@ -48,9 +48,7 @@ const TemplateCardHeader = withStyles(templateCardHeaderStyles, {
     <div className={classes.root}>
         <div className={classes.header}>
             {allowPreview &&
-            <IconButton
-                onClick={onPreview}
-                aria-label="show more">
+            <IconButton onClick={onPreview} aria-label="show more" size="large">
                 <VisibilityIcon/>
             </IconButton>
             }

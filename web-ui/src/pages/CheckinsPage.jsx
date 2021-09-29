@@ -23,9 +23,9 @@ import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
 import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, Grid, Modal, Tooltip } from "@material-ui/core";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import makeStyles from '@mui/styles/makeStyles';
+import { Button, Grid, Modal, Tooltip } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import "./CheckinsPage.css";
 import { updateCheckin } from "../api/checkins";

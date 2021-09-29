@@ -37,49 +37,26 @@ import {
   ListItem,
   Modal,
   TextField,
-} from "@material-ui/core";
+  adaptV4Theme,
+} from "@mui/material";
 import Autocomplete, {
   createFilterOptions,
-} from "@material-ui/lab/Autocomplete";
-import BuildIcon from "@material-ui/icons/Build";
+} from '@mui/material/Autocomplete';
+import BuildIcon from "@mui/icons-material/Build";
 
-import { createMuiTheme, makeStyles } from "@material-ui/core/styles";
-import { ThemeProvider } from "@material-ui/styles";
-import createBreakpoints from "@material-ui/core/styles/createBreakpoints";
+import { createTheme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
-const customBreakpointValues = {
-  values: {
-    xs: 0,
-    sm: 360,
-    md: 768,
-    lg: 992,
-    xl: 1200,
-  },
-};
-
-const breakpoints = createBreakpoints({ ...customBreakpointValues });
-
-const muiTheme = createMuiTheme({
+const muiTheme = createTheme({
   breakpoints: {
-    ...customBreakpointValues,
-  },
-  overrides: {
-    MuiCardHeader: {
-      title: {
-        [breakpoints.down("sm")]: {
-          fontSize: "1.1rem",
-        },
-        [breakpoints.between("sm", "md")]: {
-          fontSize: "1.2rem",
-        },
-        [breakpoints.between("md", "lg")]: {
-          fontSize: "1.3rem",
-        },
-        [breakpoints.up("lg")]: {
-          fontSize: "1.5rem",
-        },
-      },
-    },
+    values: {
+        xs: 0,
+        sm: 360,
+        md: 768,
+        lg: 992,
+        xl: 1200,
+      }
   },
 });
 
@@ -87,6 +64,26 @@ const useStyles = makeStyles((theme) => ({
   skillRow: {
     fontWeight: "bold",
     justifyContent: "space-around",
+  },
+  components: {
+    MuiCardHeader: {
+      styleOverrides: {
+        title: {
+          [theme.breakpoints.down("md")]: {
+            fontSize: "1.1rem",
+          },
+          [theme.breakpoints.between("sm", "lg")]: {
+            fontSize: "1.2rem",
+          },
+          [theme.breakpoints.between("md", "xl")]: {
+            fontSize: "1.3rem",
+          },
+          [theme.breakpoints.up("lg")]: {
+            fontSize: "1.5rem",
+          },
+        },
+      },
+    },
   },
 }));
 
@@ -216,7 +213,7 @@ const SkillSection = ({ userId }) => {
 
   const SkillSelector = (props) => (
     <Autocomplete
-      getOptionSelected={(option, value) =>
+      isOptionEqualToValue={(option, value) =>
         value ? value.id === option.id : false
       }
       value={skillToAdd}
@@ -274,101 +271,103 @@ const SkillSection = ({ userId }) => {
   );
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <Modal open={open} onClose={handleClose}>
-        <div className="skill-modal">
-          <TextField
-            className="fullWidth"
-            id="skill-name-input"
-            label="Name"
-            placeholder="Skill Name"
-            required
-            value={skillToAdd.name ? skillToAdd.name : ""}
-            onChange={(e) =>
-              setSkillToAdd({ ...skillToAdd, name: e.target.value })
-            }
-          />
-          <TextField
-            className="fullWidth"
-            id="skill-description-input"
-            label="Description"
-            placeholder="Skill Description"
-            required
-            value={skillToAdd.description ? skillToAdd.description : ""}
-            onChange={(e) =>
-              setSkillToAdd({ ...skillToAdd, description: e.target.value })
-            }
-          />
-          <div className="skill-modal-actions fullWidth">
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button onClick={() => addSkill(skillToAdd.name)} color="primary">
-              Save Skill
-            </Button>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={muiTheme}>
+        <Modal open={open} onClose={handleClose}>
+          <div className="skill-modal">
+            <TextField
+              className="fullWidth"
+              id="skill-name-input"
+              label="Name"
+              placeholder="Skill Name"
+              required
+              value={skillToAdd.name ? skillToAdd.name : ""}
+              onChange={(e) =>
+                setSkillToAdd({ ...skillToAdd, name: e.target.value })
+              }
+            />
+            <TextField
+              className="fullWidth"
+              id="skill-description-input"
+              label="Description"
+              placeholder="Skill Description"
+              required
+              value={skillToAdd.description ? skillToAdd.description : ""}
+              onChange={(e) =>
+                setSkillToAdd({ ...skillToAdd, description: e.target.value })
+              }
+            />
+            <div className="skill-modal-actions fullWidth">
+              <Button onClick={handleClose} color="secondary">
+                Cancel
+              </Button>
+              <Button onClick={() => addSkill(skillToAdd.name)} color="primary">
+                Save Skill
+              </Button>
+            </div>
           </div>
-        </div>
-      </Modal>
-      <Card>
-        <CardHeader
-          avatar={<BuildIcon />}
-          title="Skills"
-          titleTypographyProps={{ variant: "h5", component: "h2" }}
-          action={<SkillSelector />}
-        />
-        <List>
-          {mySkills &&
-            mySkills.map((memberSkill) => {
-              return (
-                <ListItem
-                  key={`MemberSkill-${memberSkill.id}`}
-                  className={classes.skillRow}
-                >
-                  <SkillSlider
-                    description={memberSkill.description}
-                    id={memberSkill.id}
-                    name={memberSkill.name}
-                    startLevel={
-                      memberSkill.skilllevel ? memberSkill.skilllevel : 3
-                    }
-                    lastUsedDate={memberSkill.lastuseddate}
-                    onDelete={(id) => {
-                      handleOpenDeleteConfirmation();
-                      setSelectedSkillId(id);
-                    }}
-                    onUpdate={handleUpdate}
-                  />
-                </ListItem>
-              );
-            })}
-        </List>
-        <CardActions>
-          <div>
-            <Dialog
-              open={openDelete}
-              onClose={handleCloseDeleteConfirmation}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Delete Skill?</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Are you sure you want to delete the skill?
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleCloseDeleteConfirmation} color="primary">
-                  Cancel
-                </Button>
-                <Button onClick={handleDelete} color="primary" autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </div>
-        </CardActions>
-      </Card>
-    </ThemeProvider>
+        </Modal>
+        <Card>
+          <CardHeader
+            avatar={<BuildIcon />}
+            title="Skills"
+            titleTypographyProps={{ variant: "h5", component: "h2" }}
+            action={<SkillSelector />}
+          />
+          <List>
+            {mySkills &&
+              mySkills.map((memberSkill) => {
+                return (
+                  <ListItem
+                    key={`MemberSkill-${memberSkill.id}`}
+                    className={classes.skillRow}
+                  >
+                    <SkillSlider
+                      description={memberSkill.description}
+                      id={memberSkill.id}
+                      name={memberSkill.name}
+                      startLevel={
+                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
+                      }
+                      lastUsedDate={memberSkill.lastuseddate}
+                      onDelete={(id) => {
+                        handleOpenDeleteConfirmation();
+                        setSelectedSkillId(id);
+                      }}
+                      onUpdate={handleUpdate}
+                    />
+                  </ListItem>
+                );
+              })}
+          </List>
+          <CardActions>
+            <div>
+              <Dialog
+                open={openDelete}
+                onClose={handleCloseDeleteConfirmation}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">Delete Skill?</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete the skill?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseDeleteConfirmation} color="primary">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleDelete} color="primary" autoFocus>
+                    Yes
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+          </CardActions>
+        </Card>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 export default SkillSection;

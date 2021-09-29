@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 
 import "./FeedbackSubmitQuestion.css"
 
@@ -21,7 +21,7 @@ const FeedbackSubmitQuestion = (props) => {
         variant="outlined"
         placeholder="Type your answer..."
         multiline
-        rowsMax={20}
+        maxRows={20}
         InputProps={{
           readOnly: !props.editable
         }}

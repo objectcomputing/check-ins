@@ -10,9 +10,9 @@ import {
   selectNormalizedMembersAdmin,
 } from "../../../context/selectors";
 
-import { Button, TextField, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import PersonIcon from "@material-ui/icons/Person";
+import { Button, TextField, Grid } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import PersonIcon from "@mui/icons-material/Person";
 
 import "./Users.css";
 

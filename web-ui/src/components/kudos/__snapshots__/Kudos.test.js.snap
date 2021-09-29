@@ -14,7 +14,7 @@ exports[`renders correctly when 'kudosFrom' prop is not provided 1`] = `
         className="MuiCardHeader-avatar"
       >
         <div
-          className="MuiAvatar-root MuiAvatar-circle makeStyles-large-3"
+          className="MuiAvatar-root MuiAvatar-circular makeStyles-large-3"
         >
           <img
             className="MuiAvatar-img"
@@ -63,7 +63,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
         className="MuiCardHeader-avatar"
       >
         <div
-          className="MuiAvatar-root MuiAvatar-circle makeStyles-large-3"
+          className="MuiAvatar-root MuiAvatar-circular makeStyles-large-3"
         >
           <img
             className="MuiAvatar-img"
@@ -103,7 +103,7 @@ exports[`renders correctly when 'kudosFrom' prop is provided 1`] = `
         Jane Doe - Senior Software Engineer
       </h6>
       <div
-        className="MuiAvatar-root MuiAvatar-circle makeStyles-small-2"
+        className="MuiAvatar-root MuiAvatar-circular makeStyles-small-2"
       >
         <img
           className="MuiAvatar-img"

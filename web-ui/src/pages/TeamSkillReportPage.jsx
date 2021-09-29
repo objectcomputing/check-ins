@@ -13,11 +13,11 @@ import {
 } from "../context/selectors";
 import { levelMap } from "../context/util";
 
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete from '@mui/material/Autocomplete';
 
-import { Group, GroupAdd } from "@material-ui/icons";
+import { Group, GroupAdd } from "@mui/icons-material";
 
 import "./TeamSkillReportPage.css";
 
@@ -197,7 +197,7 @@ const TeamSkillReportPage = () => {
                 options={memberProfiles}
                 value={selectedMembers || []}
                 onChange={onMemberChange}
-                getOptionSelected={(option, value) =>
+                isOptionEqualToValue={(option, value) =>
                   value ? value.id === option.id : false
                 }
                 getOptionLabel={(option) => option.name}
@@ -217,7 +217,7 @@ const TeamSkillReportPage = () => {
               options={teams}
               value={selectedTeam || []}
               onChange={onTeamChange}
-              getOptionSelected={(option, value) =>
+              isOptionEqualToValue={(option, value) =>
                 value ? value.id === option.id : false
               }
               getOptionLabel={(option) => option.name}
@@ -240,7 +240,7 @@ const TeamSkillReportPage = () => {
             )}
             value={searchSkills ? searchSkills : []}
             onChange={onSkillsChange}
-            getOptionSelected={(option, value) =>
+            isOptionEqualToValue={(option, value) =>
               value ? value.id === option.id : false
             }
             getOptionLabel={(option) => option.name}

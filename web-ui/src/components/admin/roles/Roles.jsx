@@ -24,9 +24,9 @@ import {
   Modal,
   TextField,
   Typography,
-} from "@material-ui/core";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+} from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import Autocomplete from '@mui/material/Autocomplete';
 
 import "./Roles.css";
 

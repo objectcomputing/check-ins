@@ -8,18 +8,21 @@ import Menu from "./components/menu/Menu";
 import ErrorFallback from "./pages/ErrorBoundaryPage";
 import { AppContextProvider } from "./context/AppContext";
 import SnackBarWithContext from "./components/snackbar/SnackBarWithContext";
-
-import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
 
 const customHistory = createBrowserHistory();
 
+const theme = createTheme();
+
 function App() {
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router history={customHistory}>
+        <ThemeProvider theme={theme}>
         <AppContextProvider>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <div>
@@ -38,8 +41,9 @@ function App() {
           </ErrorBoundary>
           <SnackBarWithContext />
         </AppContextProvider>
+        </ThemeProvider>
       </Router>
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 }
 

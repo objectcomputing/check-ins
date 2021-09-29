@@ -5,8 +5,8 @@ import { AppContext } from "../../context/AppContext";
 import { selectNormalizedTeams } from "../../context/selectors";
 import TeamsActions from "./TeamsActions";
 import PropTypes from "prop-types";
-import { TextField } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { TextField } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import "./TeamResults.css";
 import SkeletonLoader from "../skeleton_loader/SkeletonLoader"
 

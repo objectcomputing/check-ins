@@ -1,4 +1,5 @@
-import { Box, Card, CardContent, CardHeader, makeStyles, Typography } from '@material-ui/core'
+import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react'
 import AvatarComponent from '../avatar/Avatar'
 

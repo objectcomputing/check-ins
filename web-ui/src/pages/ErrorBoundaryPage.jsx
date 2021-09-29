@@ -6,7 +6,7 @@ import { selectCsrfToken } from "../context/selectors";
 import { newGitHubIssue } from "../api/github";
 import MarkdownNote from "../components/markdown-note/MarkdownNote";
 
-import { Button, Modal, TextField } from "@material-ui/core";
+import { Button, Modal, TextField } from "@mui/material";
 
 import "./ErrorBoundaryPage.css";
 

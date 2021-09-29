@@ -24,7 +24,7 @@ exports[`renders correctly 1`] = `
           className="MuiCardHeader-avatar"
         >
           <div
-            className="MuiAvatar-root MuiAvatar-circle large"
+            className="MuiAvatar-root MuiAvatar-circular large"
           >
             <img
               className="MuiAvatar-img"

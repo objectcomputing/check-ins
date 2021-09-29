@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import "./FeedbackRecipientSelector.css";
 import FeedbackRecipientCard from "../feedback_recipient_card/FeedbackRecipientCard";
 import { AppContext } from "../../context/AppContext";
@@ -10,9 +10,9 @@ import {
 } from "../../context/selectors";
 import { getFeedbackSuggestion } from "../../api/feedback";
 import { selectCurrentUser } from "../../context/selectors";
-import Typography from "@material-ui/core/Typography";
-import { TextField, Grid, InputAdornment } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
+import Typography from "@mui/material/Typography";
+import { TextField, Grid, InputAdornment } from "@mui/material";
+import { Search } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles({

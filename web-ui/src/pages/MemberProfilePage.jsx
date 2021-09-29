@@ -22,7 +22,7 @@ import {
   Grid,
   Tooltip,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const MemberProfilePage = () => {
   const { state } = useContext(AppContext);

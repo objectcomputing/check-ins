@@ -8,11 +8,11 @@ import {
   FormControlLabel,
   IconButton,
   Tooltip,
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import TextField from "@material-ui/core/TextField";
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import DiscreteSlider from "../slider/Slider";
 
 const useStyles = makeStyles((theme) => ({
@@ -101,7 +101,7 @@ const SkillSlider = ({
           defaultValue={formatDate(lastUsed)}
         />
       )}
-      <IconButton onClick={(event) => onDelete(id)}>
+      <IconButton onClick={(event) => onDelete(id)} size="large">
         <DeleteIcon />
       </IconButton>
     </React.Fragment>

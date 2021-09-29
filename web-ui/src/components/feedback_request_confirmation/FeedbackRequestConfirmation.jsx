@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
-import Typography from "@material-ui/core/Typography";
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from "@mui/material/Typography";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import makeStyles from '@mui/styles/makeStyles';
 import { selectProfile } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import {Link, useLocation} from 'react-router-dom';
 import queryString from 'query-string';
 import DateFnsUtils from "@date-io/date-fns";
 import "./FeedbackRequestConfirmation.css";
-import { green } from "@material-ui/core/colors";
-import Button from "@material-ui/core/Button";
+import { green } from "@mui/material/colors";
+import Button from "@mui/material/Button";
 
 const dateUtils = new DateFnsUtils();
 

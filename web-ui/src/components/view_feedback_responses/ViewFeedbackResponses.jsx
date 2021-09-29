@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Avatar, Checkbox, Chip, TextField, Typography} from '@material-ui/core';
+import {Avatar, Checkbox, Chip, TextField, Typography} from '@mui/material';
 import "./ViewFeedbackResponses.css";
-import {makeStyles} from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
 import {getQuestionsAndAnswers} from "../../api/feedbackanswer";
 import {getFeedbackRequestById} from "../../api/feedback"
@@ -10,11 +10,11 @@ import {useLocation} from "react-router-dom";
 import {AppContext} from "../../context/AppContext";
 import {selectCsrfToken, selectProfile} from "../../context/selectors";
 import {UPDATE_TOAST} from "../../context/actions";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import {Group as GroupIcon, Search as SearchIcon} from "@material-ui/icons";
-import {Autocomplete} from "@material-ui/lab";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import InputAdornment from "@mui/material/InputAdornment";
+import {Group as GroupIcon, Search as SearchIcon} from "@mui/icons-material";
+import { Autocomplete } from '@mui/material';
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {getAvatarURL} from "../../api/api";
 
 const useStyles = makeStyles({

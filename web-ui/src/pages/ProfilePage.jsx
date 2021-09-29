@@ -19,16 +19,16 @@ import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
 
-import { Info } from "@material-ui/icons";
+import { Info } from "@mui/icons-material";
 import {
   Card,
   CardContent,
   CardHeader,
   Grid,
   TextField,
-} from "@material-ui/core";
-import GroupIcon from "@material-ui/icons/Group";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+} from "@mui/material";
+import GroupIcon from "@mui/icons-material/Group";
+import Autocomplete from '@mui/material/Autocomplete';
 
 import "./ProfilePage.css";
 
@@ -217,7 +217,7 @@ const ProfilePage = () => {
                 disableClearable
                 id="guildsSelect"
                 getOptionLabel={(option) => option.name}
-                getOptionSelected={(option, value) =>
+                isOptionEqualToValue={(option, value) =>
                   value ? value.id === option.id : false
                 }
                 multiple

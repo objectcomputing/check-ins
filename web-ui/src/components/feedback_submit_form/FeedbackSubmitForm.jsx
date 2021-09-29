@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import Typography from "@mui/material/Typography";
+import makeStyles from '@mui/styles/makeStyles';
+import withStyles from '@mui/styles/withStyles';
 import PropTypes from "prop-types";
-import { green } from '@material-ui/core/colors';
-import Button from "@material-ui/core/Button";
+import { green } from '@mui/material/colors';
+import Button from "@mui/material/Button";
 import "./FeedbackSubmitForm.css";
-import { Alert, AlertTitle } from "@material-ui/lab";
-import InfoIcon from '@material-ui/icons/Info';
-import { blue } from "@material-ui/core/colors";
+import { Alert, AlertTitle } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { selectCsrfToken } from "../../context/selectors";
@@ -19,7 +20,7 @@ import {
   updateSingleAnswer,
   updateFeedbackRequest
 } from "../../api/feedback";
-import TextField from "@material-ui/core/TextField";
+import TextField from "@mui/material/TextField";
 import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 
@@ -207,7 +208,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
             variant="outlined"
             multiline
             rows={10}
-            rowsMax={20}
+            maxRows={20}
             InputProps={{
               readOnly: isReviewing,
             }}

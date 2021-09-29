@@ -4,8 +4,8 @@ import { selectIsAdmin } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 
 import { format } from "date-fns";
-import { Card, CardContent, CardHeader, Typography } from "@material-ui/core";
-import AssignmentIcon from "@material-ui/icons/Assignment";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 const OpportunityCard = ({ opportunity }) => {
   const { state } = useContext(AppContext);
