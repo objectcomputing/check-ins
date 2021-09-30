@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile.memberphoto;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.services.admin.directory.Directory;
 import com.google.api.services.admin.directory.model.UserPhoto;
 import com.objectcomputing.checkins.util.googleapiaccess.GoogleApiAccess;
@@ -24,12 +26,23 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MemberPhotoServiceImpl.class);
     private final GoogleApiAccess googleApiAccess;
-    private final Environment environment;
+    private final byte[] defaultPhoto;
 
     public MemberPhotoServiceImpl(GoogleApiAccess googleApiAccess,
                                   Environment environment) {
+        byte[] defaultPhoto = new byte[0];
         this.googleApiAccess = googleApiAccess;
-        this.environment = environment;
+        Optional<URL> resource = environment.getResource("public/default_profile.jpg");
+        try {
+            if(resource.isPresent()) {
+                URL defaultImageUrl = resource.get();
+                InputStream in = defaultImageUrl.openStream();
+                defaultPhoto = IOUtils.toByteArray(in);
+            }
+        } catch (IOException e) {
+            LOG.error("Error occurred while loading the default profile photo.", e);
+        }
+        this.defaultPhoto = defaultPhoto;
     }
 
     @Override
@@ -37,19 +50,19 @@ public class MemberPhotoServiceImpl implements MemberPhotoService {
     public byte[] getImageByEmailAddress(@NotNull String workEmail) throws IOException {
 
         byte[] photoData;
-        Directory directory = googleApiAccess.getDirectory();
 
+        Directory directory = googleApiAccess.getDirectory();
         try {
             UserPhoto userPhoto = directory.users().photos().get(workEmail).execute();
             photoData = Base64.getUrlDecoder().decode(userPhoto.getPhotoData());
-        } catch (IOException e) {
-            LOG.error("Error occurred while retrieving files from Google Directory API.", e);
-            Optional<URL> resource = environment.getResource("public/default_profile.jpg");
-            if(resource.isPresent()) {
-                URL defaultImageUrl = resource.get();
-                InputStream in = defaultImageUrl.openStream();
-                photoData = IOUtils.toByteArray(in);
-            } else photoData = new byte[0];
+            LOG.debug(String.format("Photo data successfully retrieved from Google Directory API for: %s", workEmail));
+        } catch(GoogleJsonResponseException gjse) {
+            if(gjse.getStatusCode() == HttpStatusCodes.STATUS_CODE_NOT_FOUND) {
+                LOG.info(String.format("No photo was found for: %s", workEmail));
+            } else {
+                LOG.error(String.format("An unexpected error occurred while retrieving photo from Google Directory API for: %s", workEmail), gjse);
+            }
+            photoData = defaultPhoto;
         }
 
         return photoData;
