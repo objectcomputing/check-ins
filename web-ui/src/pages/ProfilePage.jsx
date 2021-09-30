@@ -15,6 +15,7 @@ import {
 import { addGuildMember, deleteGuildMember } from "../api/guild";
 import { updateMember } from "../api/member";
 import { getEmployeeHours } from "../api/hours";
+import { getTeamByMember } from "../api/team";
 import Profile from "../components/profile/Profile";
 import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
@@ -24,6 +25,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Chip,
   Grid,
   TextField,
 } from "@material-ui/core";
@@ -47,8 +49,27 @@ const ProfilePage = () => {
 
   const [bio, setBio] = useState();
   const [myHours, setMyHours] = useState(null);
+  const [teams, setTeams] = useState([]);
 
   const myGuilds = selectMyGuilds(state);
+
+  useEffect(() => {
+    async function getTeams() {
+      if (id) {
+        let teamRes = await getTeamByMember(id, csrf);
+        let teamData =
+          teamRes.payload && teamRes.payload.status === 200
+            ? teamRes.payload.data
+            : null;
+        let memberTeams = teamData && !teamRes.error ? teamData : [];
+        memberTeams.sort((a, b) => a.name.localeCompare(b.name));
+        setTeams(memberTeams);
+      }
+    }
+    if (csrf) {
+      getTeams();
+    }
+  }, [csrf, id]);
 
   useEffect(() => {
     async function getHours() {
@@ -238,6 +259,31 @@ const ProfilePage = () => {
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>
+      <Grid item xs>
+        <Card>
+          <CardHeader
+            avatar={<GroupIcon />}
+            title="Teams"
+            titleTypographyProps={{ variant: "h5", component: "h1" }}
+          />
+          <CardContent>
+            <div className="profile-teams">
+              {teams.length > 0 ? (
+                teams.map((team) => (
+                  <Chip
+                    className="chip"
+                    // color="primary"
+                    key={team.id}
+                    label={team.name}
+                  />
+                ))
+              ) : (
+                <h3>No teams found</h3>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </Grid>
     </div>
   );
 };
