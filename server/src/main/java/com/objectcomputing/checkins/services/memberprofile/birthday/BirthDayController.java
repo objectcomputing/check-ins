@@ -47,7 +47,7 @@ public class BirthDayController {
      */
 
     @Get("/{?month}")
-    public Single<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String month) {
+    public Single<HttpResponse<List<BirthDayResponseDTO>>> findByValue(@Nullable String[] month) {
 
         return Single.fromCallable(() -> birthDayServices.findByValue(month))
                 .observeOn(Schedulers.from(eventLoopGroup))
