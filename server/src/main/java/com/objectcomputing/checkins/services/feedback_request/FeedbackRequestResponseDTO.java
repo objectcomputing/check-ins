@@ -17,23 +17,23 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "unique id of the feedback request", required = true)
     private UUID id;
 
-    @NonNull
+    @NotNull
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @NonNull
+    @NotNull
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @NonNull
+    @NotNull
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
-    @NonNull
+    @NotNull
     @Schema(description = "id of the template the feedback request references", required = true)
     private UUID templateId;
 
-    @NonNull
+    @NotNull
     @Schema(description = "date request was sent")
     private LocalDate sendDate;
 
@@ -41,7 +41,7 @@ public class FeedbackRequestResponseDTO {
     @Schema(description = "date request is due, if applicable")
     private LocalDate dueDate;
 
-    @NonNull
+    @NotNull
     @Schema(description = "completion status of request", required = true)
     private String status;
 
