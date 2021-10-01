@@ -3,7 +3,6 @@ package com.objectcomputing.checkins.services.memberprofile.anniversaryreport;
 import com.objectcomputing.checkins.services.TestContainersSuite;
 import com.objectcomputing.checkins.services.fixture.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
-import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -19,8 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.ADMIN_ROLE;
 import static com.objectcomputing.checkins.services.role.RoleType.Constants.MEMBER_ROLE;
@@ -43,10 +40,11 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
         createAndAssignAdminRole(memberProfileOfAdmin);
 
         final HttpRequest<Object> request = HttpRequest.
-                GET(String.format("/?month=%s", encodeValue("dnc"))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
+                GET(String.format("/?month=%s", encodeValue("september"))).basicAuth(memberProfileOfAdmin.getWorkEmail(), ADMIN_ROLE);
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
+        assertEquals(memberProfileOfAdmin.getId(), response.body().get(0).getUserId());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 
@@ -78,8 +76,7 @@ public class AnniversaryReportControllerTest extends TestContainersSuite impleme
 
         final HttpResponse<List<AnniversaryReportResponseDTO>> response = client.toBlocking().exchange(request, Argument.listOf(AnniversaryReportResponseDTO.class));
 
-        assertEquals(memberProfileOfAdmin.getId(), response.body().get(0).getUserId());
-        assertEquals(memberProfile.getId(), response.body().get(1).getUserId());
+        assertEquals(0, response.body().size());
         assertEquals(HttpStatus.OK, response.getStatus());
     }
 }
