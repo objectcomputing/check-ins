@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
+import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -96,6 +98,7 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
+    @RequiredPermission(Permissions.CAN_CREATE_ORGANIZATION_MEMBERS)
     @Post()
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
@@ -134,6 +137,7 @@ public class MemberProfileController {
      * @param id {@link UUID} Member unique id
      * @return
      */
+    @RequiredPermission(Permissions.CAN_DELETE_ORGANIZATION_MEMBERS)
     @Delete("/{id}")
     public Single<HttpResponse> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))

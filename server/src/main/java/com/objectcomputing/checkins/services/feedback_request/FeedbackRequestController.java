@@ -1,5 +1,7 @@
 package com.objectcomputing.checkins.services.feedback_request;
 import com.objectcomputing.checkins.services.feedback.FeedbackResponseDTO;
+import com.objectcomputing.checkins.services.permissions.Permissions;
+import com.objectcomputing.checkins.services.permissions.RequiredPermission;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.Format;
 import io.micronaut.http.HttpResponse;
@@ -45,6 +47,7 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestCreateDTO} New feedback request to create
      * @return {@link FeedbackResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK)
     @Post()
     public Single<HttpResponse<FeedbackRequestResponseDTO>> save(@Body @Valid @NotNull FeedbackRequestCreateDTO requestBody) {
         return Single.fromCallable(() -> feedbackReqServices.save(fromDTO(requestBody)))
@@ -61,6 +64,7 @@ public class FeedbackRequestController {
      * @param requestBody {@link FeedbackRequestUpdateDTO} The updated feedback request
      * @return {@link FeedbackRequestResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK)
     @Put()
     public Single<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
         return Single.fromCallable(() -> feedbackReqServices.update(fromDTO(requestBody)))
@@ -78,6 +82,7 @@ public class FeedbackRequestController {
      * @param id {@link UUID} of the feedback request to be deleted
      * @return {@link HttpResponse}
      */
+    @RequiredPermission(Permissions.CAN_DELETE_FEEDBACK)
     @Delete("/{id}")
     public Single<? extends HttpResponse<?>> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> feedbackReqServices.delete(id))
@@ -92,6 +97,7 @@ public class FeedbackRequestController {
      * @param id {@link UUID} ID of the request
      * @return {@link FeedbackRequestResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK)
     @Get("/{id}")
     public Single<HttpResponse<FeedbackRequestResponseDTO>> getById(UUID id) {
         return Single.fromCallable(() -> feedbackReqServices.getById(id))
@@ -112,6 +118,7 @@ public class FeedbackRequestController {
      * @param oldestDate The date that filters out any requests that were made before that date
      * @return list of {@link FeedbackRequestResponseDTO}
      */
+    @RequiredPermission(Permissions.CAN_VIEW_FEEDBACK)
     @Get("/{?creatorId,requesteeId,recipientId,oldestDate}")
     public Single<HttpResponse<List<FeedbackRequestResponseDTO>>> findByValues(@Nullable UUID creatorId, @Nullable UUID requesteeId, @Nullable UUID recipientId, @Nullable @Format("yyyy-MM-dd") LocalDate oldestDate) {
         return Single.fromCallable(() -> feedbackReqServices.findByValues(creatorId, requesteeId, recipientId, oldestDate))
