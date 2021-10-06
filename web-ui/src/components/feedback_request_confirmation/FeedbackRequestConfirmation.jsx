@@ -30,7 +30,6 @@ const useStyles = makeStyles({
 });
 
 let today = new Date();
-today = dateUtils.format(today, "yyyy-MM-dd");
 
 const FeedbackRequestConfirmation = () => {
   const classes = useStyles();
@@ -42,6 +41,7 @@ const FeedbackRequestConfirmation = () => {
   const sendQuery = query.send?.toString();
   const requestee = selectProfile(state, forQuery);
   let recipientInfo = getRecipientNames();
+  let sendDate = dateUtils.parse(sendQuery, "MM/dd/yyyy", new Date());
 
   function getRecipientNames() {
     if (fromQuery !== undefined) {
@@ -65,7 +65,7 @@ const FeedbackRequestConfirmation = () => {
   return (
     <div className="request-confirmation">
       <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>checkmark-image</CheckCircleIcon>
-      <Typography className={classes.announcement} variant="h3"><b>Feedback request {sendQuery > today ? " scheduled on: " + sendQuery : " sent"} for {requestee?.name} </b></Typography>
+      <Typography className={classes.announcement} variant="h3"><b>Feedback request {dateUtils.isBefore(today, sendDate) ? " scheduled on: " + sendQuery : " sent"} for {requestee?.name} </b></Typography>
       <Typography className="recipients-list" variant="h6"><b>Sent to: </b>
         {recipientInfo?.map((member, index) =>
           `${selectProfile(state, member)?.name}${index === recipientInfo.length - 1 ? "" : ', '}`
