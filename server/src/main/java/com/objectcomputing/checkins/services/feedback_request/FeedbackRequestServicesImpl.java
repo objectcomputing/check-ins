@@ -99,7 +99,7 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
     }
 
     @Override
-    public FeedbackRequest update(FeedbackRequest feedbackRequest) {
+    public FeedbackRequest update(FeedbackRequestUpdateDTO feedbackRequest) {
         //only creator can update due date--only field they can update without making new request
         //status has to be updated with any permissions--fired on submission from any recipient
         //submit date can be updated only when the recipient is logged in--fired on submission from any recipient
@@ -113,29 +113,26 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
         validateMembers(originalFeedback);
 
-        feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
-        feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
-        feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
-        feedbackRequest.setSendDate(originalFeedback.getSendDate());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
+        originalFeedback.setDueDate(feedbackRequest.getDueDate());
+        originalFeedback.setStatus(feedbackRequest.getStatus());
+        originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
 
-        boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
-        boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
+        boolean dueDateUpdateAttempted = !Objects.equals(feedbackRequest.getDueDate(), originalFeedback.getDueDate());
+        boolean submitDateUpdateAttempted = !Objects.equals(feedbackRequest.getSubmitDate(), originalFeedback.getSubmitDate());
 
-        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(originalFeedback)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(feedbackRequest)) {
+        if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(originalFeedback)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+        if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(originalFeedback.getDueDate())){
             throw new BadArgException("Send date of feedback request must be before the due date.");
         }
 
-        return feedbackReqRepository.update(feedbackRequest);
+        return feedbackReqRepository.update(originalFeedback);
     }
 
     @Override

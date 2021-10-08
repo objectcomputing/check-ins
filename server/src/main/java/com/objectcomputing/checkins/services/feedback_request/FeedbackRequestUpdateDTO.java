@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,5 +62,4 @@ public class FeedbackRequestUpdateDTO {
     public void setSubmitDate(@Nullable LocalDate submitDate) {
         this.submitDate = submitDate;
     }
-
 }

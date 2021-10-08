@@ -1,6 +1,5 @@
 package com.objectcomputing.checkins.services.feedback_request;
 
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.annotation.AutoPopulated;
 import io.micronaut.data.annotation.TypeDef;
@@ -28,7 +27,7 @@ public class FeedbackRequest {
     private UUID id;
 
     @Column(name = "creator_id")
-    @NonNull
+    @NotNull
     @TypeDef(type = DataType.STRING)
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
@@ -86,16 +85,6 @@ public class FeedbackRequest {
         this.recipientId = recipientId;
         this.templateId = templateId;
         this.sendDate = sendDate;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.submitDate = submitDate;
-    }
-
-    public FeedbackRequest(UUID id,
-                           @Nullable LocalDate dueDate,
-                           String status,
-                           @Nullable LocalDate submitDate) {
-        this.id = id;
         this.dueDate = dueDate;
         this.status = status;
         this.submitDate = submitDate;
