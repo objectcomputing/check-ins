@@ -2,6 +2,7 @@ package com.objectcomputing.checkins.security;
 
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.*;
@@ -25,7 +26,7 @@ import io.reactivex.Single;
 import java.util.Collections;
 import java.util.Map;
 
-@Requires(env = "local")
+@Requires(env = Util.LOCAL)
 @Controller("/oauth/login/google")
 @Secured(SecurityRule.IS_ANONYMOUS)
 public class LocalLoginController {

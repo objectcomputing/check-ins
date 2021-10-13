@@ -8,6 +8,7 @@ import com.objectcomputing.checkins.services.guild.member.*;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfile;
 import com.objectcomputing.checkins.services.memberprofile.MemberProfileServices;
 import com.objectcomputing.checkins.services.memberprofile.currentuser.CurrentUserServices;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.env.Environment;
 
@@ -238,7 +239,7 @@ public class GuildServicesImpl implements GuildServices {
     private void sendGuildMemberChangeNotification(List<MemberProfile> addedMembers, List<MemberProfile> removedMembers,
                                                     String guildName, Set<String> emailsOfGuildLeads) {
         // don't send emails in local environment
-        if (environment.getActiveNames().contains("local")) return;
+        if (environment.getActiveNames().contains(Util.LOCAL)) return;
 
         String emailContent = constructEmailContent(addedMembers, removedMembers, guildName);
         String subject = "Membership Changes have been made to the " + guildName +" guild";

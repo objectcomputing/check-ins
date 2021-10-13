@@ -24,26 +24,27 @@ public class PermissionSecurityRule implements SecurityRule {
     }
 
     @Override
-    public SecurityRuleResult check(HttpRequest<?> request, @Nullable RouteMatch<?> routeMatch, @Nullable  Map<String, Object> claims){
-        if (routeMatch instanceof MethodBasedRouteMatch){
+    public SecurityRuleResult check(HttpRequest<?> request, @Nullable RouteMatch<?> routeMatch, @Nullable  Map<String, Object> claims) {
+        if (routeMatch instanceof MethodBasedRouteMatch) {
             MethodBasedRouteMatch methodBasedRouteMatch = (MethodBasedRouteMatch) routeMatch;
+
             if (methodBasedRouteMatch.hasAnnotation(RequiredPermission.class)) {
                 AnnotationValue<RequiredPermission> requiredPermissionAnnotation = methodBasedRouteMatch.getAnnotation(RequiredPermission.class);
-                Optional<String> optionalPermission = requiredPermissionAnnotation.stringValue("value");
-                if (optionalPermission.isPresent() && claims != null){
-                    String requiredPermission = optionalPermission.get();
-                    String userPermissions = claims.get("permissions").toString();
-                    if (userPermissions.contains(requiredPermission)){
-                        return SecurityRuleResult.ALLOWED;
+                Optional<String> optionalPermission = requiredPermissionAnnotation != null ? requiredPermissionAnnotation.stringValue("value") : Optional.empty();
+
+                if (optionalPermission.isPresent() && claims != null && claims.containsKey("permissions")) {
+                    final String requiredPermission = optionalPermission.get();
+                    final String userPermissions = claims.get("permissions").toString();
+
+                    if (!userPermissions.contains(requiredPermission)) {
+                        return SecurityRuleResult.REJECTED;
                     }
-                    else return SecurityRuleResult.REJECTED;
+
+                    return SecurityRuleResult.ALLOWED;
                 }
             }
         }
 
         return SecurityRuleResult.UNKNOWN;
-
     }
-
-
 }
