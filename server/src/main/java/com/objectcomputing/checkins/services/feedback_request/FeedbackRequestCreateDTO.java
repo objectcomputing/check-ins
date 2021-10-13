@@ -3,30 +3,30 @@ package com.objectcomputing.checkins.services.feedback_request;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Introspected
 public class FeedbackRequestCreateDTO {
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the feedback request creator", required = true)
     private UUID creatorId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the person who is getting feedback requested on them", required = true)
     private UUID requesteeId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the person who was requested to give feedback", required = true)
     private UUID recipientId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "id of the template the feedback request references", required = true)
     private UUID templateId;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "date request was sent")
     private LocalDate sendDate;
 
@@ -34,7 +34,7 @@ public class FeedbackRequestCreateDTO {
     @Schema(description = "date request is due (may be nullable)")
     private LocalDate dueDate;
 
-    @NotBlank
+    @NotNull
     @Schema(description = "completion status of request", required = true)
     private String status;
 

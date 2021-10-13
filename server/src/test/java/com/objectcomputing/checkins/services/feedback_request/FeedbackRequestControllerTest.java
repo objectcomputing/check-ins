@@ -10,6 +10,7 @@ import java.util.*;
 
 import com.objectcomputing.checkins.services.role.Role;
 import com.objectcomputing.checkins.services.role.RoleType;
+import com.objectcomputing.checkins.util.Util;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
@@ -322,6 +323,28 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testCreateFeedbackRequestWithNoRequestee() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with no requestee
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setRequesteeId(null);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("requestBody.requesteeId: must not be null", responseException.getMessage());
+    }
+
+    @Test
     void testCreateFeedbackRequestWithSameRecipientAndRequestee() {
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
@@ -342,6 +365,72 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         assertEquals("The requestee must not be the same person as the recipient", responseException.getMessage());
     }
 
+    @Test
+    void testCreateFeedbackRequestWithNoRecipients() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with no recipient(s)
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setRecipientId(null);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("requestBody.recipientId: must not be null", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithNoSelectedTemplate() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with no template
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setTemplateId(null);
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("requestBody.templateId: must not be null", responseException.getMessage());
+    }
+
+    @Test
+    void testCreateFeedbackRequestWithSendDateAfterDueDate() {
+        MemberProfile admin = createADefaultMemberProfile();
+        MemberProfile requestee = createASecondDefaultMemberProfile();
+        MemberProfile recipient = createADefaultRecipient();
+        createAndAssignAdminRole(admin);
+
+        // Create feedback request with invalid requestee ID
+        final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
+        feedbackRequest.setSendDate(LocalDate.of(1111, 11, 2));
+        feedbackRequest.setDueDate(LocalDate.of(1111, 11, 1));
+        final FeedbackRequestCreateDTO dto = createDTO(feedbackRequest);
+
+        // Post feedback request
+        final HttpRequest<?> request = HttpRequest.POST("", dto)
+                .basicAuth(admin.getWorkEmail(), RoleType.Constants.ADMIN_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Send date of feedback request must be before the due date.", responseException.getMessage());
+    }
 
     @Test
     void testGetFeedbackRequestByAdmin() {
@@ -788,6 +877,27 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     }
 
     @Test
+    void testUpdateDueDateToBeforeSendDate() {
+        MemberProfile pdlMemberProfile = createADefaultMemberProfile();
+        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
+        MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
+        MemberProfile recipient = createADefaultRecipient();
+
+        final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
+        feedbackReq.setSendDate(LocalDate.of(1111, 11, 2));
+        feedbackReq.setDueDate(LocalDate.of(1111, 11, 1));
+        final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
+
+        final HttpRequest<?> request = HttpRequest.PUT("", dto)
+                .basicAuth(pdlMemberProfile.getWorkEmail(), RoleType.Constants.PDL_ROLE);
+        final HttpClientResponseException responseException = assertThrows(HttpClientResponseException.class, () ->
+                client.toBlocking().exchange(request, Map.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+        assertEquals("Send date of feedback request must be before the due date.", responseException.getMessage());
+    }
+
+    @Test
     void testUpdateDueDateUnauthorized() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
         createAndAssignRole(RoleType.PDL, pdlMemberProfile);
@@ -795,7 +905,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile recipient = createADefaultRecipient();
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
-        feedbackReq.setDueDate(LocalDate.now());
+        feedbackReq.setDueDate(Util.MAX.toLocalDate());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
@@ -815,8 +925,6 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
 
         final FeedbackRequest feedbackReq = saveFeedbackRequest(pdlMemberProfile, employeeMemberProfile, recipient);
         feedbackReq.setStatus("complete");
-        feedbackReq.setDueDate(null);
-        feedbackReq.setSubmitDate(LocalDate.now());
         final FeedbackRequestUpdateDTO dto = updateDTO(feedbackReq);
 
         final HttpRequest<?> request = HttpRequest.PUT("", dto)
