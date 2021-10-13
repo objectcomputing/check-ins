@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public interface FeedbackRequestServices {
     FeedbackRequest save(FeedbackRequest feedbackRequest);
 
-    FeedbackRequest update(FeedbackRequestUpdateDTO feedbackRequest);
+    FeedbackRequest update(FeedbackRequest feedbackRequest);
 
     Boolean delete(UUID id);
 
