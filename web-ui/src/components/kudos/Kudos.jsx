@@ -1,29 +1,35 @@
 import { Box, Card, CardContent, CardHeader, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import React from 'react'
 import AvatarComponent from '../avatar/Avatar'
 
-const useStyles = makeStyles((theme) => ({
-  display: {
+const PREFIX = 'Kudos';
+const classes = {
+  display: `${PREFIX}-display`,
+  small: `${PREFIX}-small`,
+  large: `${PREFIX}-large`
+};
+
+const StyledCard = styled(Card)(({theme}) => ({
+  [`& .${classes.display}`]: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-around"
   },
-  small: {
+  [`& .${classes.small}`]: {
     width: theme.spacing(6),
     height: theme.spacing(6),
     margin: theme.spacing(1),
   },
-  large: {
+  [`& .${classes.large}`]: {
     width: theme.spacing(8),
     height: theme.spacing(8),
-  },
+  }
 }));
 
 export default function Kudos({kudosTo, kudosFrom, content}) {
-  const classes = useStyles();
   return (
-    <Card classes={{root: classes.display}}>
+    <StyledCard classes={{root: classes.display}}>
       <Box display="flex" justifyContent="center">
         <CardHeader
           avatar={
@@ -52,8 +58,8 @@ export default function Kudos({kudosTo, kudosFrom, content}) {
         </Box>
       }
       </CardContent>
-    </Card>
-  )
+    </StyledCard>
+  );
 }
 
 

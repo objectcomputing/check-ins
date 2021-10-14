@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 
+import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_GUILDS, UPDATE_TOAST } from "../../context/actions";
 import EditGuildModal from "./EditGuildModal";
@@ -21,22 +22,27 @@ import PropTypes from "prop-types";
 import { deleteGuild, updateGuild } from "../../api/guild.js";
 import SplitButton from "../split-button/SplitButton";
 
-import makeStyles from '@mui/styles/makeStyles';
-const useStyles = makeStyles((theme) => ({
-  card: {
+const PREFIX = 'GuildSummaryCard';
+const classes = {
+  card: `${PREFIX}-card`,
+  header: `${PREFIX}-header`,
+  title: `${PREFIX}-title`
+};
+const StyledCard = styled(Card)(() => ({
+  [`&.${classes.card}`]: {
     width: "340px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  header: {
+  [`& .${classes.header}`]: {
     width: "100%",
   },
-  title: {
+  [`& .${classes.title}`]: {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  },
+  }
 }));
 
 const propTypes = {
@@ -50,7 +56,6 @@ const propTypes = {
 const displayName = "GuildSummaryCard";
 
 const GuildSummaryCard = ({ guild, index }) => {
-  const classes = useStyles();
   const { state, dispatch } = useContext(AppContext);
   const { guilds, userProfile, csrf } = state;
   const [open, setOpen] = useState(false);
@@ -113,7 +118,7 @@ const GuildSummaryCard = ({ guild, index }) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <StyledCard className={classes.card}>
       <CardHeader
         classes={{
           content: classes.header,
@@ -211,7 +216,7 @@ const GuildSummaryCard = ({ guild, index }) => {
         }}
         headerText="Edit Your Guild"
       />
-    </Card>
+    </StyledCard>
   );
 };
 

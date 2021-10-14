@@ -8,8 +8,8 @@ import "@testing-library/jest-dom/extend-expect";
 
 Enzyme.configure({ adapter: new Adapter() });
 
-global.snapshot = (component) =>
-  expect(renderer.create(component).toJSON()).toMatchSnapshot();
+global.snapshot = (component, options) =>
+  expect(renderer.create(component, options).toJSON()).toMatchSnapshot();
 global.shallowSnapshot = (component) =>
   expect(shallow(component)).toMatchSnapshot();
 

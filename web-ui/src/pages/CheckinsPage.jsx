@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import {styled} from '@mui/material/styles';
 import { useParams, useHistory } from "react-router-dom";
 import ActionItemsPanel from "../components/action_item/ActionItemsPanel";
 import AgendaItems from "../components/agenda/Agenda";
@@ -23,27 +24,35 @@ import PDLGuidesPanel from "../components/guides/PDLGuidesPanel";
 import Note from "../components/notes/Note";
 import PrivateNote from "../components/private-note/PrivateNote";
 import Personnel from "../components/personnel/Personnel";
-import makeStyles from '@mui/styles/makeStyles';
 import { Button, Grid, Modal, Tooltip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import "./CheckinsPage.css";
 import { updateCheckin } from "../api/checkins";
 
-const useStyles = makeStyles({
-  navigate: {
+const PREFIX = 'CheckinsPage';
+const classes = {
+  root: `${PREFIX}-root`,
+  navigate: `${PREFIX}-navigate`,
+  addButton: `${PREFIX}-addButton`
+};
+
+const Root = styled('div')(() => ({
+  [`&.${classes.root}`]: {
+    padding: '12px',
+  },
+  [`& .${classes.navigate}`]: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
   },
-  addButton: {
+  [`& .${classes.addButton}`]: {
     height: "3em",
   },
-});
+}));
 
 const CheckinsPage = () => {
-  const classes = useStyles();
   const [open, setOpen] = useState(false);
   const history = useHistory();
   const { memberId, checkinId } = useParams();
@@ -140,7 +149,7 @@ const CheckinsPage = () => {
   };
 
   return (
-    <div style={{ padding: 12 }}>
+    <Root className={classes.root} >
       <Grid container spacing={3}>
         <Grid item xs={12} sm={9}>
           <Profile
@@ -245,7 +254,7 @@ const CheckinsPage = () => {
           </div>
         </Grid>
       </Grid>
-    </div>
+    </Root>
   );
 };
 

@@ -1,21 +1,29 @@
 import React, {useCallback, useEffect, useRef} from "react";
-import DatePicker from '@mui/lab/DatePicker';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import DateFnsUtils from "@date-io/date-fns";
 import PropTypes from "prop-types";
+import {TextField} from "@mui/material";
+import {MobileDatePicker} from "@mui/lab";
 
 const dateUtils = new DateFnsUtils();
+const PREFIX = 'SelectDate';
+const classes = {
+  pickerContain: `${PREFIX}-pickerContain`,
+  picker: `${PREFIX}-picker`
+};
 
-const useStyles = makeStyles({
-pickerContain: {
-  marginLeft: '2em',
-  marginTop:'2em',
-},
- picker: {
-  minWidth: '60%',
-  maxWidth: "80%",
-  display:'block',
- }
+const Root = styled('div')({
+  [`& .${classes.pickerContain}`]: {
+    marginLeft: '2em',
+    marginTop:'2em',
+  },
+  [`& .${classes.picker}`]: {
+    marginBottom: '0.5em',
+    marginTop: '1em',
+    minWidth: '60%',
+    maxWidth: "80%",
+    display:'block',
+  }
 });
 
 const propTypes = {
@@ -25,7 +33,6 @@ const propTypes = {
 };
 
 const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
-    const classes = useStyles();
     const hasPushedInitialValues = useRef(false);
     let todayDate = new Date();
     const sendDate = sendDateQuery ? dateUtils.parse(sendDateQuery.toString(), "yyyy-MM-dd") : todayDate;
@@ -52,35 +59,35 @@ const SelectDate = ({changeQuery, sendDateQuery, dueDateQuery}) =>{
     },[changeQuery]);
 
     return (
-    <React.Fragment>
-      <div className={classes.pickerContain}>
-        <DatePicker
-          className= {classes.picker}
-          disableToolbar
-          format="MM/dd/yyyy"
-          margin="normal"
-          id="set-send-date"
-          label="Send Date:"
-          value={sendDate}
-          minDate={dateUtils.date()}
-          onChange={handleSendDateChange}
-        />
-        <DatePicker
-          className= {classes.picker}
-          disableToolbar
-          format="MM/dd/yyyy"
-          margin="normal"
-          id="set-due-date"
-          label="Due Date:"
-          emptyLabel="No due date"
-          value={dueDate}
-          minDate={sendDate}
-          minDateMessage="Due date must not be prior to the send date"
-          clearable={true}
-          onChange={handleDueDateChange}
-        />
-      </div>
-    </React.Fragment>);
+      <Root>
+        <div className={classes.pickerContain}>
+          <MobileDatePicker
+            renderInput={props => <TextField className= {classes.picker} {...props}/>}
+            disableToolbar
+            format="MM/dd/yyyy"
+            margin="normal"
+            id="set-send-date"
+            label="Send Date:"
+            value={sendDate}
+            minDate={dateUtils.date()}
+            onChange={handleSendDateChange}
+          />
+          <MobileDatePicker
+            renderInput={props => <TextField className= {classes.picker} placeholder="No due date" {...props}/>}
+            disableToolbar
+            format="MM/dd/yyyy"
+            margin="normal"
+            id="set-due-date"
+            label="Due Date:"
+            value={dueDate}
+            minDate={sendDate}
+            minDateMessage="Due date must not be prior to the send date"
+            clearable={true}
+            onChange={handleDueDateChange}
+          />
+        </div>
+      </Root>
+    );
 };
 
 SelectDate.propTypes = propTypes;

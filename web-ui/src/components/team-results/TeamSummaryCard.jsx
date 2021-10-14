@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
-
+import { styled } from '@mui/material/styles';
 import { AppContext } from "../../context/AppContext";
 import { UPDATE_TEAMS, UPDATE_TOAST } from "../../context/actions";
 import EditTeamModal from "./EditTeamModal";
-
 import {
   Button,
   Card,
@@ -21,23 +20,29 @@ import PropTypes from "prop-types";
 import { deleteTeam, updateTeam } from "../../api/team.js";
 import SplitButton from "../split-button/SplitButton";
 
-import makeStyles from '@mui/styles/makeStyles';
-const useStyles = makeStyles((theme) => ({
-  card: {
+const PREFIX = 'TeamSummaryCard';
+const classes = {
+  card: `${PREFIX}-card`,
+  header: `${PREFIX}-header`,
+  title: `${PREFIX}-title`
+};
+
+const StyledCard = styled(Card)({
+  [`&.${classes.card}`]: {
     width: "340px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  header: {
+  [`& .${classes.header}`]: {
     width: "100%",
   },
-  title: {
+  [`& .${classes.title}`]: {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  },
-}));
+  }
+});
 
 const propTypes = {
   team: PropTypes.shape({
@@ -50,7 +55,6 @@ const propTypes = {
 const displayName = "TeamSummaryCard";
 
 const TeamSummaryCard = ({ team, index }) => {
-  const classes = useStyles();
   const { state, dispatch } = useContext(AppContext);
   const { teams, userProfile, csrf } = state;
   const { id } = team;
@@ -115,7 +119,7 @@ const TeamSummaryCard = ({ team, index }) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <StyledCard className={classes.card}>
       <CardHeader
         classes={{
           content: classes.header,
@@ -213,7 +217,7 @@ const TeamSummaryCard = ({ team, index }) => {
         }}
         headerText="Edit Your Team"
       />
-    </Card>
+    </StyledCard>
   );
 };
 

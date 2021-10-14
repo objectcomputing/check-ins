@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 
 import { AppContext } from "../../context/AppContext";
@@ -13,12 +14,15 @@ import "./MemberSummaryCard.css";
 
 import { Box, CardContent, Container, Tooltip, Typography } from "@mui/material";
 
-import makeStyles from '@mui/styles/makeStyles';
+const PREFIX = 'MemberSummaryCard';
+const classes = {
+  header: `${PREFIX}-header`
+};
 
-const useStyles = makeStyles(() => ({
-  header: {
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.header}`]: {
     cursor: "pointer",
-  },
+  }
 }));
 
 const MemberSummaryCard = ({ member }) => {
@@ -37,10 +41,8 @@ const MemberSummaryCard = ({ member }) => {
   const pdlProfile = selectProfileMap(state)[pdlId];
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
 
-  const classes = useStyles();
-
   return (
-    <Box display="flex" flexWrap="wrap">
+    <StyledBox display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
@@ -100,7 +102,7 @@ const MemberSummaryCard = ({ member }) => {
           </Container>
         </CardContent>
       </Card>
-    </Box>
+    </StyledBox>
   );
 };
 

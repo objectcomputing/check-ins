@@ -1,5 +1,5 @@
 import React, {useContext, useCallback, useEffect, useState, useRef} from "react";
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -20,21 +20,34 @@ import {getFeedbackTemplate} from "../api/feedbacktemplate";
 import {softDeleteAdHocTemplates} from "../api/feedbacktemplate";
 
 const dateUtils = new DateFnsUtils();
-const useStyles = makeStyles((theme) => ({
-  root: {
+const PREFIX = 'FeedbackRequestPage';
+const classes = {
+  root: `${PREFIX}-root`,
+  requestHeader: `${PREFIX}-requestHeader`,
+  stepContainer: `${PREFIX}-stepContainer`,
+  appBar: `${PREFIX}-appBar`,
+  media: `${PREFIX}-media`,
+  expand: `${PREFIX}-expand`,
+  expandOpen: `${PREFIX}-expandOpen`,
+  actionButtons: `${PREFIX}-actionButtons`,
+  backButton: `${PREFIX}-backButton`
+};
+
+const Root = styled('div')(({theme}) => ({
+  [`&.${classes.root}`]: {
     backgroundColor: "transparent",
     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       width: '100%',
       padding: 0,
     },
   },
-  requestHeader: {
+  [`& .${classes.requestHeader}`]: {
     ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "x-large",
       marginBottom: "1em",
     },
   },
-  stepContainer: {
+  [`& .${classes.stepContainer}`]: {
     ['@media min-width(321px) and (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       width: '80%',
     },
@@ -43,26 +56,33 @@ const useStyles = makeStyles((theme) => ({
     },
     backgroundColor: "transparent"
   },
-  appBar: {
+  [`& .${classes.appBar}`]: {
     position: "relative",
   },
-  media: {
+  [`& .${classes.media}`]: {
     height: 0,
   },
-  expand: {
+  [`& .${classes.expand}`]: {
     justifyContent: "right",
     transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
   },
-  expandOpen: {
+  [`& .${classes.expandOpen}`]: {
     justifyContent: "right",
   },
-  actionButtons: {
+  [`& .${classes.actionButtons}`]: {
     margin: "0.5em 0 0 1em",
     ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
       padding: "0",
     },
+  },
+  [`& .${classes.backButton}`]: {
+    backgroundColor: '#e0e0e0',
+    color: '#000000',
+    '&:hover': {
+      backgroundColor: '#d5d5d5'
+    }
   }
 }));
 
@@ -73,7 +93,6 @@ function getSteps() {
 const FeedbackRequestPage = () => {
   const {state, dispatch} = useContext(AppContext);
   const steps = getSteps();
-  const classes = useStyles();
   const memberProfile = selectCurrentUser(state);
   const currentUserId = memberProfile?.id;
   const location = useLocation();
@@ -321,12 +340,16 @@ const FeedbackRequestPage = () => {
   }, [canProceed]);
 
   return (
-    <div className="feedback-request-page">
+    <Root className="feedback-request-page">
       <div className="header-container">
         <Typography className={classes.requestHeader} variant="h4">Feedback Request for <b>{requestee?.name}</b></Typography>
         <div>
-          <Button className={classes.actionButtons} onClick={onBackClick} disabled={activeStep <= 1}
-            variant="contained">
+          <Button
+            className={`${classes.backButton} ${classes.actionButtons}`}
+            onClick={onBackClick}
+            disabled={activeStep <= 1}
+            variant="contained"
+          >
             Back
           </Button>
           <Button className={classes.actionButtons} onClick={onNextClick}
@@ -336,7 +359,7 @@ const FeedbackRequestPage = () => {
         </div>
       </div>
       <div className={classes.stepContainer}>
-        <Stepper activeStep={activeStep - 1} className={classes.root}>
+        <Stepper activeStep={activeStep - 1} className={classes.root} style={{padding: 24}}>
           {steps.map((label) => {
             const stepProps = {};
             const labelProps = {};
@@ -353,7 +376,7 @@ const FeedbackRequestPage = () => {
         {activeStep === 2 && <FeedbackRecipientSelector forQuery={query.for} changeQuery={(key, value) => handleQueryChange(key, value)} fromQuery={query.from ? (Array.isArray(query.from) ? query.from : [query.from]) : []} />}
         {activeStep === 3 && <SelectDate changeQuery={(key, value) => handleQueryChange(key, value)} sendDateQuery={query.send} dueDateQuery={query.due}/>}
       </div>
-    </div>
+    </Root>
   );
 }
 

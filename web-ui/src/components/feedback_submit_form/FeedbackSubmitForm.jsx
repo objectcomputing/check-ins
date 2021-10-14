@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { styled } from '@mui/material/styles';
 import Typography from "@mui/material/Typography";
-import makeStyles from '@mui/styles/makeStyles';
-import withStyles from '@mui/styles/withStyles';
 import PropTypes from "prop-types";
 import { green } from '@mui/material/colors';
 import Button from "@mui/material/Button";
@@ -25,28 +24,40 @@ import { debounce } from "lodash/function";
 import DateFnsUtils from "@date-io/date-fns";
 
 const dateUtils = new DateFnsUtils();
+const PREFIX = 'FeedbackSubmitForm';
+const classes = {
+  announcement: `${PREFIX}-announcement`,
+  tip: `${PREFIX}-tip`,
+  warning: `${PREFIX}-warning`,
+  button: `${PREFIX}-button`,
+  coloredButton: `${PREFIX}-coloredButton`
+};
 
-
-const useStyles = makeStyles({
-  announcement: {
+const Root = styled('div')({
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "22px"
     }
   },
-
-  tip: {
+  [`& .${classes.tip}`]: {
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "15px"
     }
   },
-
-  warning: {
+  [`& .${classes.warning}`]: {
     marginTop: "20px"
   },
-
-  button: {
-    margin: "3em 1em 1em 1em"
+  [`& .${classes.button}`]: {
+    margin: "3em 1em 1em 1em",
+  },
+  [`& .${classes.coloredButton}`]: {
+    margin: "3em 1em 1em 1em",
+    color: "white",
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700],
+    },
   }
 });
 
@@ -63,16 +74,6 @@ const randomTip = [
 
 const tip = randomTip[Math.floor(Math.random() * randomTip.length)];
 
-const ColorButton = withStyles({
-  root: {
-    color: "white",
-    backgroundColor: green[500],
-    '&:hover': {
-      backgroundColor: green[700],
-    },
-  },
-})(Button);
-
 const propTypes = {
   requesteeName: PropTypes.string.isRequired,
   requestId: PropTypes.string.isRequired,
@@ -82,7 +83,6 @@ const propTypes = {
 const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   const { state, dispatch } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const classes = useStyles();
   const [isReviewing, setIsReviewing] = useState(false);
   const history = useHistory();
   const [questionAnswerPairs, setQuestionAnswerPairs] = useState([])
@@ -187,7 +187,7 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
   }, [requestId, csrf]);
 
   return (
-    <div className="submit-form">
+    <Root className="submit-form">
       <Typography className={classes.announcement} variant="h3">Submitting Feedback on <b>{requesteeName}</b></Typography>
       <div className="wrapper">
         <InfoIcon style={{ color: blue[900], fontSize: '2vh' }}>info-icon</InfoIcon>
@@ -221,13 +221,13 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
       <div className="submit-action-buttons">
         {isReviewing ?
           <React.Fragment>
-            <ColorButton
-              className={classes.button}
+            <Button
+              className={classes.coloredButton}
               onClick={() => setIsReviewing(false)}
               variant="contained"
               color="primary">
               Edit
-            </ColorButton>
+            </Button>
             <Button
               className={classes.button}
               onClick={onSubmitHandler}
@@ -236,16 +236,16 @@ const FeedbackSubmitForm = ({ requesteeName, requestId, request }) => {
               Submit
             </Button>
           </React.Fragment> :
-          <ColorButton
-            className={classes.button}
+          <Button
+            className={classes.coloredButton}
             onClick={() => setIsReviewing(true)}
             variant="contained"
             color="primary">
             Review
-          </ColorButton>
+          </Button>
         }
       </div>
-    </div>
+    </Root>
   );
 };
 

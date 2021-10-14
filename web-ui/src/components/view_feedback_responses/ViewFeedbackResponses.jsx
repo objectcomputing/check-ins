@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
+import { styled } from '@mui/material/styles';
 import {Avatar, Checkbox, Chip, TextField, Typography} from '@mui/material';
 import "./ViewFeedbackResponses.css";
-import makeStyles from '@mui/styles/makeStyles';
 import FeedbackResponseCard from "./feedback_response_card/FeedbackResponseCard";
 import {getQuestionsAndAnswers} from "../../api/feedbackanswer";
 import {getFeedbackRequestById} from "../../api/feedback"
@@ -17,21 +17,30 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {getAvatarURL} from "../../api/api";
 
-const useStyles = makeStyles({
-  root: {
-    '&:last-child': {
+const PREFIX = 'MuiCardContent';
+const classes = {
+  root: `${PREFIX}-root`,
+  notFoundMessage: `${PREFIX}-notFoundMessage`,
+  popupIndicator: `${PREFIX}-popupIndicator`,
+  searchField: `${PREFIX}-searchField`,
+  responderField: `${PREFIX}-responderField`
+};
+
+const Root = styled('div')({
+  [`&.${classes.root}`]: {
+    ':last-child': {
       paddingBottom: '16px',
-    }
+    },
   },
-  notFoundMessage: {
+  [`& .${classes.notFoundMessage}`]: {
     color: "gray",
     marginTop: "3em",
     textAlign: "center"
   },
-  popupIndicator: {
+  [`& .${classes.popupIndicator}`]: {
     transform: "none"
   },
-  searchField: {
+  [`& .${classes.searchField}`]: {
     marginRight: "3em",
     width: "350px",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
@@ -39,17 +48,16 @@ const useStyles = makeStyles({
       width: "100%"
     }
   },
-  responderField: {
+  [`& .${classes.responderField}`]: {
     minWidth: "500px",
     ['@media (max-width: 800px)']: { // eslint-disable-line no-useless-computed-key
       minWidth: 0,
       width: "100%"
     }
   }
-}, {name: "MuiCardContent"});
+});
 
 const ViewFeedbackResponses = () => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const location = useLocation();
@@ -154,7 +162,7 @@ const ViewFeedbackResponses = () => {
   }, [filteredQuestionsAndAnswers]);
 
   return (
-    <div className="view-feedback-responses-page">
+    <Root className="view-feedback-responses-page">
       <Typography
          variant='h4'
          style={{textAlign: "center", marginBottom: "1em"}}>
@@ -237,7 +245,7 @@ const ViewFeedbackResponses = () => {
           </div>
         )
       })}
-    </div>
+    </Root>
   );
 }
 

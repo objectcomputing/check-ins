@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import {styled} from '@mui/styles';
 import FeedbackRequestSubcard from "./feedback_request_subcard/FeedbackRequestSubcard";
 import Card from '@mui/material/Card';
 import {Avatar, Typography} from '@mui/material';
@@ -19,8 +19,15 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import queryString from "query-string";
 
-const useStyles = makeStyles({
-  root: {
+const PREFIX = 'FeedbackRequestCard';
+const classes = {
+  root: `${PREFIX}-root`,
+  expandClose: `${PREFIX}-expandClose`,
+  expandOpen: `${PREFIX}-expandOpen`
+};
+
+const StyledCard = styled(Card)({
+  [`&.${classes.root}`]: {
     color: "gray",
     width: "100%",
     maxHeight: "10%",
@@ -29,43 +36,33 @@ const useStyles = makeStyles({
       maxWidth: '100%',
     },
   },
-  expandClose: {
+  [`& .${classes.expandClose}`]: {
     transform: 'rotate(0deg)',
     marginLeft: 'auto',
     transition: "transform 0.1s linear",
   },
-  expandOpen: {
+  [`& .${classes.expandOpen}`]: {
     transform: 'rotate(180deg)',
     transition: "transform 0.1s linear",
     marginLeft: 'auto',
   },
-});
-
-const useStylesCardContent = makeStyles({
-  root: {
+  '& .MuiCardContent-root': {
     paddingBottom: 0,
     paddingTop: 0,
-    '&:last-child': {
-      paddingBottom: 0,
+    "&:last-child": {
+      paddingBottom: 0
     }
-  }
-}, { name: "MuiCardContent" });
-
-const useStylesCardActions = makeStyles({
-  root: {
-    padding: 0,
-    maxHeight: "30px",
   },
-
-}, { name: 'MuiCardActions' });
-
-const useStylesText = makeStyles({
-  body1: {
+  '& .MuiCardActions-root': {
+    padding: 0,
+    maxHeight: "30px"
+  },
+  '& .MuiTypography-body1': {
     ['@media (max-width:767px)']: { // eslint-disable-line no-useless-computed-key
       fontSize: "0.7rem",
-    },
+    }
   }
-}, { name: "MuiTypography" });
+});
 
 const SortOption = {
   SENT_DATE: "sent_date",
@@ -99,13 +96,9 @@ const propTypes = {
 };
 
 const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, dateRange }) => {
-  const classes = useStyles();
   const {state} = useContext(AppContext);
   const requesteeProfile = selectProfile(state, requesteeId);
   const avatarURL = getAvatarURL(requesteeProfile?.workEmail);
-  useStylesCardActions();
-  useStylesText();
-  useStylesCardContent();
   const history = useHistory();
   const [expanded, setExpanded] = React.useState(false);
   const [sortedResponses, setSortedResponses] = useState(responses);
@@ -203,7 +196,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
 
   return (
     <div className="feedback-request-card">
-      <Card className={classes.root}>
+      <StyledCard className={classes.root}>
         <div className="has-padding-top">
           <CardContent className={classes.noBottomPadding}>
             <Grid container spacing={0}>
@@ -255,7 +248,7 @@ const FeedbackRequestCard = ({ requesteeId, templateName, responses, sortType, d
             }
           </CardContent>
         </Collapse>
-      </Card>
+      </StyledCard>
     </div>
   );
 }

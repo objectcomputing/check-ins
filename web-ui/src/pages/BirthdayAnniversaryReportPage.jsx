@@ -131,14 +131,14 @@ const BirthdayAnniversaryReportPage = () => {
         <input
           id="birthday"
           checked={birthday}
-          onClick={handleBirthday}
+          onChange={handleBirthday}
           type="checkbox"
         />
         <label htmlFor="anniversary">Include Anniversaries</label>
         <input
           id="anniversary"
           checked={anniversary}
-          onClick={handleAnniversary}
+          onChange={handleAnniversary}
           type="checkbox"
         />
       </div>

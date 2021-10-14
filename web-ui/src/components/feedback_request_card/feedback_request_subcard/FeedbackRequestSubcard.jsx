@@ -1,4 +1,5 @@
 import React, {useContext} from "react";
+import { styled } from '@mui/material/styles';
 import PropTypes from "prop-types";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -13,19 +14,27 @@ import {Avatar, Tooltip} from "@mui/material";
 import { UPDATE_TOAST } from "../../../context/actions";
 import DateFnsAdapter from "@date-io/date-fns";
 import {getAvatarURL} from "../../../api/api";
-import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles({
-  redTypography: {
+const PREFIX = 'FeedbackRequestSubcard';
+const classes = {
+  redTypography: `${PREFIX}-redTypography`,
+  yellowTypography: `${PREFIX}-yellowTypography`,
+  greenTypography: `${PREFIX}-greenTypography`,
+  darkGrayTypography: `${PREFIX}-darkGrayTypography`
+};
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')({
+  [`& .${classes.redTypography}`]: {
     color: "#FF0000"
   },
-  yellowTypography: {
+  [`& .${classes.yellowTypography}`]: {
       color: "#EE8C00"
   },
-  greenTypography: {
+  [`& .${classes.greenTypography}`]: {
       color: "#006400"
   },
-  darkGrayTypography: {
+  [`& .${classes.darkGrayTypography}`]: {
     color: "#333333"
   }
 });
@@ -39,7 +48,6 @@ const propTypes = {
 const FeedbackRequestSubcard = ({ request }) => {
   const {state} = useContext(AppContext);
   const csrf = selectCsrfToken(state);
-  const classes = useStyles();
   let { submitDate, dueDate, sendDate } = request;
   const recipient = selectProfile(state, request?.recipientId);
   submitDate = submitDate ? dateFns.format(new Date(submitDate.join("-")), "LLLL dd, yyyy") : null;
@@ -93,7 +101,7 @@ const FeedbackRequestSubcard = ({ request }) => {
   }
 
   return (
-    <React.Fragment>
+    <Root>
       <Divider className="person-divider"/>
       <Grid container spacing={6} style={{paddingLeft: "16px", paddingRight: "16px"}} className="person-row">
         <Grid item xs={12}>
@@ -135,7 +143,7 @@ const FeedbackRequestSubcard = ({ request }) => {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Root>
   );
 }
 

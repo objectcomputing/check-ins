@@ -13,16 +13,37 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import "./App.css";
+import {indigo} from "@mui/material/colors";
 
 const customHistory = createBrowserHistory();
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    primary: indigo
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontSize: '0.875rem',
+          lineHeight: 1.43,
+          letterSpacing: '0.01071rem'
+        }
+      }
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: "standard"
+      }
+    }
+  }
+});
 
 function App() {
   return (
+  <ThemeProvider theme={theme}>
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Router history={customHistory}>
-        <ThemeProvider theme={theme}>
         <AppContextProvider>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <div>
@@ -41,9 +62,9 @@ function App() {
           </ErrorBoundary>
           <SnackBarWithContext />
         </AppContextProvider>
-        </ThemeProvider>
       </Router>
     </LocalizationProvider>
+  </ThemeProvider>
   );
 }
 

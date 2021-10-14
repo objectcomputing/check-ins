@@ -6,6 +6,7 @@ import {
   selectCurrentUser,
   selectMyGuilds,
   selectUserProfile,
+  selectMyTeams,
 } from "../context/selectors";
 import {
   UPDATE_GUILD,
@@ -20,13 +21,7 @@ import SkillSection from "../components/skills/SkillSection";
 import ProgressBar from "../components/contribution_hours/ProgressBar";
 
 import { Info } from "@mui/icons-material";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Grid,
-  TextField,
-} from "@mui/material";
+import {Card, CardContent, CardHeader, Chip, TextField} from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -168,44 +163,45 @@ const ProfilePage = () => {
   return (
     <div className="Profile">
       <Profile memberId={id} pdlId={pdlId} />
-      <Card>
-        <CardHeader
-          avatar={<Info />}
-          title="Bio"
-          titleTypographyProps={{ variant: "h5", component: "h2" }}
-        />
-        <CardContent>
-          <TextField
-            onChange={handleBioChange}
-            value={bio}
-            id="Bio"
-            style={{ margin: 8 }}
-            placeholder="Tell us about yourself..."
-            multiline
-            fullWidth
-          />
-        </CardContent>
-      </Card>
-      <Grid container spacing={3}>
-        {myHours ? (
-          <Grid item xs>
-            {myHours && (
-              <Card style={{ minHeight: 150 }}>
-                <CardHeader
-                  avatar={<Info />}
-                  subheader={subheader}
-                  title="Contribution Hours"
-                />
-                <CardContent>
-                  <ProgressBar {...myHours} />
-                </CardContent>
-              </Card>
-            )}
-          </Grid>
-        ) : (
-          ""
+      <div className="profile-grid">
+        <div className="profile-page-bio">
+          <Card>
+            <CardHeader
+              avatar={<Info />}
+              title="Bio"
+              titleTypographyProps={{ variant: "h5", component: "h2" }}
+            />
+            <CardContent>
+              <TextField
+                onChange={handleBioChange}
+                value={bio}
+                id="Bio"
+                placeholder="Tell us about yourself..."
+                multiline
+                rows={3}
+                fullWidth
+                variant="standard"
+              />
+            </CardContent>
+        </Card>
+        </div>
+        {myHours && (
+          <div className="profile-hours">
+            <Card>
+              <CardHeader
+                avatar={<Info />}
+                subheader={`As Of: ${new Date(
+                  myHours?.asOfDate
+                ).toLocaleDateString()}`}
+                title="Contribution Hours"
+              />
+              <CardContent>
+                <ProgressBar {...myHours} />
+              </CardContent>
+            </Card>
+          </div>
         )}
-        <Grid item xs>
+        <div className="profile-guilds">
           <Card style={{ minHeight: 150 }}>
             <CardHeader
               avatar={<GroupIcon />}
@@ -218,7 +214,7 @@ const ProfilePage = () => {
                 id="guildsSelect"
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) =>
-                  value ? value.id === option.id : false
+                  value && value.id === option.id
                 }
                 multiple
                 onChange={(event, newVal) => {
@@ -228,13 +224,37 @@ const ProfilePage = () => {
                 required
                 value={myGuilds}
                 renderInput={(params) => (
-                  <TextField {...params} placeholder="Join a guild..." />
+                  <TextField {...params} placeholder="Join a guild..."/>
                 )}
               />
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </div>
+        <div className="profile-teams">
+          <Card>
+            <CardHeader
+              avatar={<GroupIcon/>}
+              title="Teams"
+              titleTypographyProps={{variant: "h5", component: "h1"}}
+            />
+            <CardContent>
+              <div className="profile-teams">
+                {myTeams.length > 0
+                  ? myTeams.map((team) => (
+                    <Chip
+                      className="chip"
+                      // color="primary"
+                      key={team.id}
+                      label={team.name}
+                    />
+                  ))
+                  : <h3>No teams found</h3>
+                }
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       <div className="skills-section">
         <SkillSection userId={id} />
       </div>

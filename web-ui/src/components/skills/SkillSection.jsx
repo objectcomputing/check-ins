@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-
+import { styled } from '@mui/material/styles';
 import "./SkillSection.css";
-
 import { AppContext } from "../../context/AppContext";
 import {
   selectMySkills,
@@ -37,54 +36,23 @@ import {
   ListItem,
   Modal,
   TextField,
-  adaptV4Theme,
 } from "@mui/material";
 import Autocomplete, {
   createFilterOptions,
 } from '@mui/material/Autocomplete';
 import BuildIcon from "@mui/icons-material/Build";
 
-import { createTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
-import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+const PREFIX = 'SkillSection';
+const classes = {
+  skillRow: `${PREFIX}-skillRow`,
+  components: `${PREFIX}-components`
+};
 
-const muiTheme = createTheme({
-  breakpoints: {
-    values: {
-        xs: 0,
-        sm: 360,
-        md: 768,
-        lg: 992,
-        xl: 1200,
-      }
-  },
-});
-
-const useStyles = makeStyles((theme) => ({
-  skillRow: {
+const Root = styled('span')(() => ({
+  [`& .${classes.skillRow}`]: {
     fontWeight: "bold",
     justifyContent: "space-around",
-  },
-  components: {
-    MuiCardHeader: {
-      styleOverrides: {
-        title: {
-          [theme.breakpoints.down("md")]: {
-            fontSize: "1.1rem",
-          },
-          [theme.breakpoints.between("sm", "lg")]: {
-            fontSize: "1.2rem",
-          },
-          [theme.breakpoints.between("md", "xl")]: {
-            fontSize: "1.3rem",
-          },
-          [theme.breakpoints.up("lg")]: {
-            fontSize: "1.5rem",
-          },
-        },
-      },
-    },
-  },
+  }
 }));
 
 const SkillSection = ({ userId }) => {
@@ -100,8 +68,6 @@ const SkillSection = ({ userId }) => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const classes = useStyles();
 
   const handleOpenDeleteConfirmation = () => setOpenDelete(true);
   const handleCloseDeleteConfirmation = () => setOpenDelete(false);
@@ -233,7 +199,11 @@ const SkillSection = ({ userId }) => {
             name: skill.name,
           };
         })}
-      renderOption={(option) => option.displayLabel}
+      renderOption={(props, option) => (
+        <li {...props}>
+          {option.displayLabel}
+        </li>
+      )}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
 
@@ -251,6 +221,7 @@ const SkillSection = ({ userId }) => {
           className="fullWidth"
           label="Add a skill..."
           placeholder="Enter a skill name"
+          variant="standard"
         />
       )}
       onChange={(event, value) => {
@@ -271,9 +242,8 @@ const SkillSection = ({ userId }) => {
   );
 
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={muiTheme}>
-        <Modal open={open} onClose={handleClose}>
+    <>
+      <Modal open={open} onClose={handleClose}>
           <div className="skill-modal">
             <TextField
               className="fullWidth"
@@ -307,6 +277,7 @@ const SkillSection = ({ userId }) => {
             </div>
           </div>
         </Modal>
+      <Root>
         <Card>
           <CardHeader
             avatar={<BuildIcon />}
@@ -316,29 +287,29 @@ const SkillSection = ({ userId }) => {
           />
           <List>
             {mySkills &&
-              mySkills.map((memberSkill) => {
-                return (
-                  <ListItem
-                    key={`MemberSkill-${memberSkill.id}`}
-                    className={classes.skillRow}
-                  >
-                    <SkillSlider
-                      description={memberSkill.description}
-                      id={memberSkill.id}
-                      name={memberSkill.name}
-                      startLevel={
-                        memberSkill.skilllevel ? memberSkill.skilllevel : 3
-                      }
-                      lastUsedDate={memberSkill.lastuseddate}
-                      onDelete={(id) => {
-                        handleOpenDeleteConfirmation();
-                        setSelectedSkillId(id);
-                      }}
-                      onUpdate={handleUpdate}
-                    />
-                  </ListItem>
-                );
-              })}
+            mySkills.map((memberSkill) => {
+              return (
+                <ListItem
+                  key={`MemberSkill-${memberSkill.id}`}
+                  className={classes.skillRow}
+                >
+                  <SkillSlider
+                    description={memberSkill.description}
+                    id={memberSkill.id}
+                    name={memberSkill.name}
+                    startLevel={
+                      memberSkill.skilllevel ? memberSkill.skilllevel : 3
+                    }
+                    lastUsedDate={memberSkill.lastuseddate}
+                    onDelete={(id) => {
+                      handleOpenDeleteConfirmation();
+                      setSelectedSkillId(id);
+                    }}
+                    onUpdate={handleUpdate}
+                  />
+                </ListItem>
+              );
+            })}
           </List>
           <CardActions>
             <div>
@@ -366,8 +337,8 @@ const SkillSection = ({ userId }) => {
             </div>
           </CardActions>
         </Card>
-      </ThemeProvider>
-    </StyledEngineProvider>
+      </Root>
+    </>
   );
 };
 export default SkillSection;

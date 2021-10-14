@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -21,34 +21,33 @@ import {ListItemAvatar, Tooltip} from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import {Group as GroupIcon, Person as PersonIcon} from "@mui/icons-material";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  labelRoot:{
-    fontSize: 25,
-  },
-  appBar: {
+const PREFIX = 'TemplatePreviewModal';
+const classes = {
+  root: `${PREFIX}-root`,
+  labelRoot: `${PREFIX}-labelRoot`,
+  appBar: `${PREFIX}-appBar`,
+  title: `${PREFIX}-title`,
+  textField: `${PREFIX}-textField`,
+  questionNumber: `${PREFIX}-questionNumber`,
+  questionListItem: `${PREFIX}-questionListItem`
+};
+
+const StyledDialog = styled(Dialog)(({theme}) => ({
+  [`& .${classes.appBar}`]: {
     position: 'relative',
   },
-  title: {
+  [`& .${classes.title}`]: {
     marginLeft: theme.spacing(2),
     flex: 1,
   },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: '25ch',
-  },
-  questionNumber: {
+  [`& .${classes.questionNumber}`]: {
     width: "2em",
     height: "2em",
     fontSize: "1em",
     color: "white",
     backgroundColor: theme.palette.primary.main
   },
-  questionListItem: {
+  [`& .${classes.questionListItem}`]: {
     padding: "1.5em 1.5em"
   }
 }));
@@ -66,7 +65,6 @@ const propTypes = {
 }
 
 const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }) => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const csrf = selectCsrfToken(state);
   const currentUserId = selectCurrentUser(state)?.id;
@@ -112,7 +110,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
   };
 
   return (
-    <Dialog fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
+    <StyledDialog className={classes.root} fullScreen open={open} onClose={onClose} TransitionComponent={Transition}>
       <AppBar className={classes.appBar}>
         <Toolbar>
           <IconButton
@@ -172,7 +170,7 @@ const TemplatePreviewModal = ({ open, onSubmit, onClose, template, createAdHoc }
         </React.Fragment>
       }
       </div>
-    </Dialog>
+    </StyledDialog>
   );
 }
 

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
+import { styled } from '@mui/material/styles';
 import Typography from "@mui/material/Typography";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import makeStyles from '@mui/styles/makeStyles';
 import { selectProfile } from "../../context/selectors";
 import { AppContext } from "../../context/AppContext";
 import {Link, useLocation} from 'react-router-dom';
@@ -12,28 +12,30 @@ import { green } from "@mui/material/colors";
 import Button from "@mui/material/Button";
 
 const dateUtils = new DateFnsUtils();
+const PREFIX = 'FeedbackRequestConfirmation';
+const classes = {
+  announcement: `${PREFIX}-announcement`,
+  checkmark: `${PREFIX}-checkmark`
+};
 
-const useStyles = makeStyles({
-  announcement: {
+const Root = styled('div')({
+  [`& .${classes.announcement}`]: {
     textAlign: "center",
       ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
         fontSize: "x-large",
       },
   },
-
-  checkmark: {
+  [`& .${classes.checkmark}`]: {
     ['@media (max-width:820px)']: { // eslint-disable-line no-useless-computed-key
       width: "65%",
     },
   },
-
 });
 
 let today = new Date();
 today = dateUtils.format(today, "yyyy-MM-dd");
 
 const FeedbackRequestConfirmation = () => {
-  const classes = useStyles();
   const { state } = useContext(AppContext);
   const location = useLocation();
   const query = queryString.parse(location?.search);
@@ -63,7 +65,7 @@ const FeedbackRequestConfirmation = () => {
 
   }
   return (
-    <div className="request-confirmation">
+    <Root className="request-confirmation">
       <CheckCircleIcon style={{ color: green[500], fontSize: '40vh' }}>checkmark-image</CheckCircleIcon>
       <Typography className={classes.announcement} variant="h3"><b>Feedback request {sendQuery > today ? " scheduled on: " + sendQuery : " sent"} for {requestee?.name} </b></Typography>
       <Typography className="recipients-list" variant="h6"><b>Sent to: </b>
@@ -74,7 +76,7 @@ const FeedbackRequestConfirmation = () => {
       <Link style={{marginTop: "4em", textDecoration: "none"}} to="/">
         <Button variant="outlined">Return home</Button>
       </Link>
-    </div>
+    </Root>
   );
 }
 

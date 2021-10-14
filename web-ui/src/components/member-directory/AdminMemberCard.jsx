@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 
 import MemberModal from "./MemberModal";
@@ -30,12 +31,15 @@ import {
   Typography,
 } from "@mui/material";
 
-import makeStyles from '@mui/styles/makeStyles';
+const PREFIX = 'AdminMemberCard';
+const classes = {
+  header: `${PREFIX}-header`
+};
 
-const useStyles = makeStyles(() => ({
-  header: {
+const StyledBox = styled(Box)(() => ({
+  [`& .${classes.header}`]: {
     cursor: "pointer",
-  },
+  }
 }));
 
 const AdminMemberCard = ({ member, index }) => {
@@ -56,8 +60,6 @@ const AdminMemberCard = ({ member, index }) => {
   const supervisorProfile = selectProfileMap(state)[supervisorid];
   const pdlProfile = selectProfileMap(state)[pdlId];
   const [tooltipIsOpen, setTooltipIsOpen] = useState(false);
-
-  const classes = useStyles();
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -94,7 +96,7 @@ const AdminMemberCard = ({ member, index }) => {
   };
 
   return (
-    <Box display="flex" flexWrap="wrap">
+    <StyledBox display="flex" flexWrap="wrap">
       <Card className={"member-card"}>
         <Link
           style={{ color: "black", textDecoration: "none" }}
@@ -208,7 +210,7 @@ const AdminMemberCard = ({ member, index }) => {
           </CardActions>
         )}
       </Card>
-    </Box>
+    </StyledBox>
   );
 };
 

@@ -9,7 +9,8 @@ import { selectCsrfToken, selectCheckinsForMember, selectProfile } from "../../c
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import {MobileDateTimePicker} from "@mui/lab";
+import TextField from "@mui/material/TextField";
 
 import "./Checkin.css";
 
@@ -69,9 +70,7 @@ const CheckinsHistory = () => {
   };
 
   return (
-    <div>
-      {getCheckinDate() && (
-        <div>
+      getCheckinDate() && (
           <div className="date-picker">
             <IconButton
               disabled={index <= 0}
@@ -83,9 +82,9 @@ const CheckinsHistory = () => {
                 style={{ fontSize: "1.2em" }}
               />
             </IconButton>
-            <DateTimePicker
+            <MobileDateTimePicker
+              renderInput={props => <TextField style={{width: '18em'}} {...props}/>}
               format="MMMM dd, yyyy @hh:mm aaaa"
-              style={{width: '18em'}}
               value={getCheckinDate()}
               onChange={pickDate}
               label="Check-In Date"
@@ -105,10 +104,8 @@ const CheckinsHistory = () => {
                 style={{ fontSize: "1.2em" }}
               />
             </IconButton>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
+    )
   );
 };
 

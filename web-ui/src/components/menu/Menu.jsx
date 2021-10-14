@@ -10,8 +10,7 @@ import { getAvatarURL } from "../../api/api";
 import AvatarMenu from "@mui/material/Menu";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { useTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import { styled, useTheme } from "@mui/material/styles";
 import {
   AppBar,
   Avatar,
@@ -19,7 +18,6 @@ import {
   CssBaseline,
   Collapse,
   Drawer,
-  Hidden,
   IconButton,
   List,
   ListItem,
@@ -32,25 +30,38 @@ import {
 import "./Menu.css";
 
 const drawerWidth = 150;
+const PREFIX = 'Menu';
+const classes = {
+  root: `${PREFIX}-root`,
+  drawer: `${PREFIX}-drawer`,
+  appBar: `${PREFIX}-appBar`,
+  menuButton: `${PREFIX}-menuButton`,
+  drawerPaper: `${PREFIX}-drawerPaper`,
+  content: `${PREFIX}-content`,
+  listStyle: `${PREFIX}-listStyle`,
+  nested: `${PREFIX}-nested`,
+  subListItem: `${PREFIX}-subListItem`
+};
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
+const Root = styled('div')(({theme}) => ({
+  [`&.${classes.root}`]: {
+    display: 'flex',
+    paddingRight: `${drawerWidth}px`
   },
-  drawer: {
+  [`& .${classes.drawer}`]: {
     [theme.breakpoints.up("sm")]: {
       width: drawerWidth,
       flexShrink: 0,
     },
   },
-  appBar: {
+  [`& .${classes.appBar}`]: {
     backgroundColor: "#e4e3e4",
     [theme.breakpoints.up("sm")]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
   },
-  menuButton: {
+  [`& .${classes.menuButton}`]: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
       display: "none",
@@ -58,25 +69,25 @@ const useStyles = makeStyles((theme) => ({
   },
   // necessary for content to be below app bar
   // toolbar: theme.mixins.toolbar,
-  drawerPaper: {
+  [`& .${classes.drawerPaper}`]: {
     width: drawerWidth,
     backgroundColor: "#a5a4a8",
   },
-  content: {
+  [`& .${classes.content}`]: {
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-  listStyle: {
+  [`& .${classes.listStyle}`]: {
     textDecoration: "none",
     color: "white",
     textAlign: "left",
   },
-  nested: {
+  [`& .${classes.nested}`]: {
     paddingLeft: theme.spacing(4),
   },
-  subListItem: {
+  [`& .${classes.subListItem}`]: {
     fontSize: "0.9rem",
-  },
+  }
 }));
 
 const adminLinks = [
@@ -121,7 +132,7 @@ function Menu() {
   const isAdmin = selectIsAdmin(state);
   const isPDL =
     userProfile && userProfile.role && userProfile.role.includes("PDL");
-  const classes = useStyles();
+
   const theme = useTheme();
   const location = useLocation();
 
@@ -346,7 +357,7 @@ function Menu() {
   );
 
   return (
-    <div className={classes.root} style={{ paddingRight: `${drawerWidth}px` }}>
+    <Root className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -405,34 +416,32 @@ function Menu() {
         </div>
       </AppBar>
       <nav className={classes.drawer}>
-        <Hidden smUp implementation="css">
-          <Drawer
-            variant="temporary"
-            disablePortal
-            anchor={theme.direction === "rtl" ? "right" : "left"}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden smDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
+        <Drawer
+          sx={{display: {sm: 'none', xs: 'block'}}}
+          variant="temporary"
+          disablePortal
+          anchor={theme.direction === "rtl" ? "right" : "left"}
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open
+          sx={{display: { xs: 'none', sm: 'block'}}}
+        >
+          {drawer}
+        </Drawer>
         <Modal
           open={showHoursUpload}
           onBackdropClick={closeHoursUpload}
@@ -470,7 +479,7 @@ function Menu() {
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>
-    </div>
+    </Root>
   );
 }
 

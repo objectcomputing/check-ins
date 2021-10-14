@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/material/styles';
 import InputAdornment from "@mui/material/InputAdornment";
 import Search from "@mui/icons-material/Search";
 import MenuItem from '@mui/material/MenuItem';
@@ -13,8 +13,17 @@ import {AppContext} from "../context/AppContext";
 import {selectCsrfToken, selectCurrentUserId, selectProfile} from "../context/selectors";
 import {getFeedbackTemplate} from "../api/feedbacktemplate";
 
-const useStyles = makeStyles({
-  pageTitle: {
+const PREFIX = 'ViewFeedbackPage';
+const classes = {
+  pageTitle: `${PREFIX}-pageTitle`,
+  textField: `${PREFIX}-textField`,
+  searchField: `${PREFIX}-searchField`,
+  formControl: `${PREFIX}-formControl`,
+  notFoundMessage: `${PREFIX}-notFoundMessage`
+};
+
+const Root = styled('div')({
+  [`& .${classes.pageTitle}`]: {
     paddingRight: "0.4em",
     minWidth: "330px",
     ['@media screen and (max-width: 600px)']: { // eslint-disable-line no-useless-computed-key
@@ -25,18 +34,18 @@ const useStyles = makeStyles({
       minWidth: "10px"
     },
   },
-  textField: {
+  [`& .${classes.textField}`]: {
     width: "100%",
   },
-  searchField: {
+  [`& .${classes.searchField}`]: {
     width: "100%",
     alignSelf: "start",
     marginTop: "30px"
   },
-  formControl: {
+  [`& .${classes.formControl}`]: {
     marginRight: "1em",
   },
-  notFoundMessage: {
+  [`& .${classes.notFoundMessage}`]: {
     color: "gray",
     marginTop: "4em",
     textAlign: "center"
@@ -59,7 +68,6 @@ const DateRange = {
 
 const ViewFeedbackPage = () => {
 
-  const classes = useStyles();
   const [feedbackRequests, setFeedbackRequests] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -171,7 +179,7 @@ const ViewFeedbackPage = () => {
   }, [searchText, sortValue, dateRange, feedbackRequests, classes.notFoundMessage]);
 
   return (
-    <div className="view-feedback-page">
+    <Root className="view-feedback-page">
       <div className="view-feedback-header-container">
         <Typography className={classes.pageTitle} variant="h4">Feedback Requests</Typography>
         <div className="input-row">
@@ -236,8 +244,8 @@ const ViewFeedbackPage = () => {
       <div className="feedback-requests-list-container">
         {getFilteredFeedbackRequests()}
       </div>
-    </div>
-  )
+    </Root>
+  );
 }
 
 export default ViewFeedbackPage;

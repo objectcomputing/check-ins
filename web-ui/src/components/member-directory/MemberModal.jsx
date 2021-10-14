@@ -9,7 +9,6 @@ import {
 import { Modal, TextField } from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
 import DatePicker from "@mui/lab/DatePicker";
-import DateFnsUtils from "@date-io/date-fns";
 import { format } from "date-fns";
 import { Button } from "@mui/material";
 
@@ -130,7 +129,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }
         />
         <DatePicker
-          className="halfWidth"
+          renderInput={props => <TextField className="halfWidth" {...props}/>}
           margin="normal"
           id="bday-datepicker-dialog"
           required
@@ -196,6 +195,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           )}
         />
         <DatePicker
+          renderInput={props => <TextField {...props}/>}
           margin="normal"
           id="start-datepicker-dialog"
           required
@@ -210,6 +210,7 @@ const MemberModal = ({ member = {}, open, onSave, onClose }) => {
           }}
         />
         <DatePicker
+          renderInput={props => <TextField {...props}/>}
           margin="normal"
           id="termination-datepicker-dialog"
           label="Termination Date"

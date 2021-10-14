@@ -1,12 +1,217 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-Array [
+.emotion-0 .FeedbackRequestSubcard-redTypography {
+  color: #FF0000;
+}
+
+.emotion-0 .FeedbackRequestSubcard-yellowTypography {
+  color: #EE8C00;
+}
+
+.emotion-0 .FeedbackRequestSubcard-greenTypography {
+  color: #006400;
+}
+
+.emotion-0 .FeedbackRequestSubcard-darkGrayTypography {
+  color: #333333;
+}
+
+.emotion-1 {
+  margin: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border-width: 0;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.12);
+  border-bottom-width: thin;
+}
+
+.emotion-2 {
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  width: 100%;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  margin-top: -48px;
+  width: calc(100% + 48px);
+  margin-left: -48px;
+}
+
+.emotion-2>.MuiGrid-item {
+  padding-top: 48px;
+}
+
+.emotion-2>.MuiGrid-item {
+  padding-left: 48px;
+}
+
+.emotion-3 {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+  flex-basis: 100%;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  max-width: 100%;
+}
+
+.emotion-4 {
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  width: 100%;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-5 {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.emotion-6 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.emotion-7 {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  object-fit: cover;
+  color: transparent;
+  text-indent: 10000px;
+}
+
+.emotion-8 {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-basis: 0;
+  -ms-flex-preferred-size: 0;
+  flex-basis: 0;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  max-width: 100%;
+}
+
+.emotion-9 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+}
+
+.emotion-11 {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-basis: 25%;
+  -ms-flex-preferred-size: 25%;
+  flex-basis: 25%;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  max-width: 25%;
+}
+
+.emotion-13 {
+  margin: 0;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+}
+
+.emotion-16 {
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-basis: 16.666667%;
+  -ms-flex-preferred-size: 16.666667%;
+  flex-basis: 16.666667%;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  max-width: 16.666667%;
+}
+
+<div
+  className="emotion-0"
+>
   <hr
-    className="MuiDivider-root person-divider"
-  />,
+    className="MuiDivider-root MuiDivider-fullWidth person-divider emotion-1"
+  />
   <div
-    className="MuiGrid-root person-row MuiGrid-container MuiGrid-spacing-xs-6"
+    className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-6 person-row emotion-2"
     style={
       Object {
         "paddingLeft": "16px",
@@ -15,16 +220,16 @@ Array [
     }
   >
     <div
-      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"
+      className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 emotion-3"
     >
       <div
-        className="MuiGrid-root no-wrap MuiGrid-container MuiGrid-align-items-xs-center"
+        className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-undefined no-wrap emotion-4"
       >
         <div
-          className="MuiGrid-root MuiGrid-item"
+          className="MuiGrid-root MuiGrid-item emotion-5"
         >
           <div
-            className="MuiAvatar-root MuiAvatar-circular"
+            className="MuiAvatar-root MuiAvatar-circular emotion-6"
             style={
               Object {
                 "marginRight": "1em",
@@ -32,48 +237,48 @@ Array [
             }
           >
             <img
-              className="MuiAvatar-img"
+              className="MuiAvatar-img emotion-7"
               src="http://localhost:8080/services/member-profiles/member-photos/undefined"
             />
           </div>
         </div>
         <div
-          className="MuiGrid-root small-margin MuiGrid-item MuiGrid-grid-xs-true"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-true small-margin emotion-8"
         >
           <p
-            className="MuiTypography-root person-name MuiTypography-body1"
+            className="MuiTypography-root MuiTypography-body1 person-name emotion-9"
           />
           <p
-            className="MuiTypography-root position-text MuiTypography-body1"
+            className="MuiTypography-root MuiTypography-body1 position-text emotion-9"
           />
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3 emotion-11"
         >
           <p
-            className="MuiTypography-root makeStyles-darkGrayTypography-4 MuiTypography-body1"
+            className="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-darkGrayTypography emotion-9"
           >
             Sent on 
             July 07, 2020
           </p>
           <p
-            className="MuiTypography-root MuiTypography-body2"
+            className="MuiTypography-root MuiTypography-body2 emotion-13"
           >
             No due date
           </p>
         </div>
         <div
-          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-3 emotion-11"
         >
           <p
-            className="MuiTypography-root makeStyles-greenTypography-3 MuiTypography-body1"
+            className="MuiTypography-root MuiTypography-body1 FeedbackRequestSubcard-greenTypography emotion-9"
           >
             Submitted 
             July 08, 2020
           </p>
         </div>
         <div
-          className="MuiGrid-root align-end MuiGrid-item MuiGrid-grid-xs-2"
+          className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 align-end emotion-16"
         >
           <a
             className="response-link"
@@ -85,6 +290,6 @@ Array [
         </div>
       </div>
     </div>
-  </div>,
-]
+  </div>
+</div>
 `;

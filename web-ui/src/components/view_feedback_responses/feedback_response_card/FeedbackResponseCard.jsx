@@ -36,7 +36,8 @@ const FeedbackResponseCard = (props) => {
           InputProps={{
             readOnly: true,
             style: {
-              padding: "0.5em 1em"
+              padding: "0.5em 1em",
+              lineHeight: '1.1876em'
             }
           }}
           variant="filled"/>
