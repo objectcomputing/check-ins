@@ -37,6 +37,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
     @Client("/services/member-profiles")
     private HttpClient client;
 
+    //TODO: Use Util.MAX instead of defining variable
     /*
      * LocalDate.Max cannot be used for end-to-end tests
      * LocalDate.Max year = 999999999
@@ -512,7 +513,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
         MemberProfile memberProfile = createADefaultMemberProfile();
         final HttpResponse<List < MemberProfileResponseDTO >> response = client
                 .toBlocking()
-                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+                .exchange(HttpRequest.GET("").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(1, response.body().size());
@@ -525,7 +526,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         final HttpResponse<List < MemberProfileResponseDTO >> response = client
                 .toBlocking()
-                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+                .exchange(HttpRequest.GET("").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(1, response.body().size());
@@ -538,7 +539,7 @@ public class MemberProfileControllerTest extends TestContainersSuite implements 
 
         final HttpResponse<List <MemberProfileResponseDTO >> response = client
                 .toBlocking()
-                .exchange(HttpRequest.GET("").basicAuth(MEMBER_ROLE, MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
+                .exchange(HttpRequest.GET("").basicAuth(memberProfile.getWorkEmail(), MEMBER_ROLE), Argument.listOf(MemberProfileResponseDTO.class));
 
         assertEquals(HttpStatus.OK, response.getStatus());
         assertEquals(0, response.body().size());
