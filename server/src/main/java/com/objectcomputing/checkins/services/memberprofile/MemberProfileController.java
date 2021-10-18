@@ -1,10 +1,17 @@
 package com.objectcomputing.checkins.services.memberprofile;
 
-import com.objectcomputing.checkins.services.permissions.Permissions;
-import com.objectcomputing.checkins.services.permissions.RequiredPermission;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
@@ -15,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.micronaut.core.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -98,7 +104,6 @@ public class MemberProfileController {
      * @param memberProfile {@link MemberProfileCreateDTO} Information of the member profile being created
      * @return {@link MemberProfileResponseDTO} The created member profile
      */
-    @RequiredPermission(Permissions.CAN_CREATE_ORGANIZATION_MEMBERS)
     @Post()
     public Single<HttpResponse<MemberProfileResponseDTO>> save(@Body @Valid MemberProfileCreateDTO memberProfile) {
 
@@ -137,7 +142,6 @@ public class MemberProfileController {
      * @param id {@link UUID} Member unique id
      * @return
      */
-    @RequiredPermission(Permissions.CAN_DELETE_ORGANIZATION_MEMBERS)
     @Delete("/{id}")
     public Single<HttpResponse> delete(@NotNull UUID id) {
         return Single.fromCallable(() -> memberProfileServices.deleteProfile(id))
