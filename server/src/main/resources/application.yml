@@ -46,6 +46,7 @@ micronaut:
           - isAuthenticated()
     reject-not-found: false
     redirect:
+      prior-to-login: true
       login-success: /
       on-rejection: /oauth/login/google
       unauthorized:

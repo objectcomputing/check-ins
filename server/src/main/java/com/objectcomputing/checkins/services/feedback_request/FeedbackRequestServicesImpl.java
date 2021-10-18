@@ -87,6 +87,11 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
             throw new BadArgException("Attempted to save feedback request with non-auto-populated ID");
         }
 
+
+        if (feedbackRequest.getDueDate() != null && feedbackRequest.getSendDate().isAfter(feedbackRequest.getDueDate())){
+            throw new BadArgException("Send date of feedback request must be before the due date.");
+        }
+
         FeedbackRequest storedRequest = feedbackReqRepository.save(feedbackRequest);
         String newContent = "You have received a feedback request. Please go to your unique link at " + webURL + "/feedback/submit?request=" + storedRequest.getId() + " to complete this request.";
         emailSender.sendEmail(notificationSubject, newContent, memberProfileServices.getById(storedRequest.getRecipientId()).getWorkEmail());
@@ -95,37 +100,48 @@ public class FeedbackRequestServicesImpl implements FeedbackRequestServices {
 
     @Override
     public FeedbackRequest update(FeedbackRequest feedbackRequest) {
-        //only creator can update due date--only field they can update without making new request
-        //status has to be updated with any permissions--fired on submission from any recipient
-        //submit date can be updated only when the recipient is logged in--fired on submission from any recipient
+        /*
+         * only creator can update due date--only field they can update without making new request
+         * status has to be updated with any permissions--fired on submission from any recipient
+         * submit date can be updated only when the recipient is logged in--fired on submission from any recipient
+         */
+
+        final UUID currentUserId = currentUserServices.getCurrentUser().getId();
         FeedbackRequest originalFeedback = null;
+
         if (feedbackRequest.getId() != null) {
             originalFeedback = getById(feedbackRequest.getId());
         }
+
         if (originalFeedback == null) {
             throw new BadArgException("Cannot update feedback request that does not exist");
         }
 
         validateMembers(originalFeedback);
 
-        feedbackRequest.setCreatorId(originalFeedback.getCreatorId());
-        feedbackRequest.setRecipientId(originalFeedback.getRecipientId());
-        feedbackRequest.setRequesteeId(originalFeedback.getRequesteeId());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
-        feedbackRequest.setSendDate(originalFeedback.getSendDate());
-        feedbackRequest.setTemplateId(originalFeedback.getTemplateId());
-
         boolean dueDateUpdateAttempted = !Objects.equals(originalFeedback.getDueDate(), feedbackRequest.getDueDate());
         boolean submitDateUpdateAttempted = !Objects.equals(originalFeedback.getSubmitDate(), feedbackRequest.getSubmitDate());
 
-        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(feedbackRequest)) {
-            throw new PermissionException("You are not authorized to do this operation");
-        }
-        if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(feedbackRequest)) {
+        if(currentUserId.equals(originalFeedback.getRecipientId()) && (dueDateUpdateAttempted || submitDateUpdateAttempted)) {
             throw new PermissionException("You are not authorized to do this operation");
         }
 
-        return feedbackReqRepository.update(feedbackRequest);
+        if (dueDateUpdateAttempted && !updateDueDateIsPermitted(originalFeedback)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        if (submitDateUpdateAttempted && !updateSubmitDateIsPermitted(originalFeedback)) {
+            throw new PermissionException("You are not authorized to do this operation");
+        }
+
+        if (feedbackRequest.getDueDate() != null && originalFeedback.getSendDate().isAfter(feedbackRequest.getDueDate())){
+            throw new BadArgException("Send date of feedback request must be before the due date.");
+        }
+
+        originalFeedback.setDueDate(feedbackRequest.getDueDate());
+        originalFeedback.setStatus(feedbackRequest.getStatus());
+        originalFeedback.setSubmitDate(feedbackRequest.getSubmitDate());
+        return feedbackReqRepository.update(originalFeedback);
     }
 
     @Override
