@@ -330,7 +330,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
 
         // Create feedback request with no requestee
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -372,7 +372,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
 
         // Create feedback request with no recipient(s)
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -394,7 +394,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
 
         // Create feedback request with no template
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -416,7 +416,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
         MemberProfile admin = createADefaultMemberProfile();
         MemberProfile requestee = createASecondDefaultMemberProfile();
         MemberProfile recipient = createADefaultRecipient();
-        createAndAssignAdminRole(admin);
+        assignAdminRole(admin);
 
         // Create feedback request with invalid requestee ID
         final FeedbackRequest feedbackRequest = createFeedbackRequest(admin, requestee, recipient);
@@ -879,7 +879,7 @@ public class FeedbackRequestControllerTest extends TestContainersSuite implement
     @Test
     void testUpdateDueDateToBeforeSendDate() {
         MemberProfile pdlMemberProfile = createADefaultMemberProfile();
-        createAndAssignRole(RoleType.PDL, pdlMemberProfile);
+        assignPdlRole(pdlMemberProfile);
         MemberProfile employeeMemberProfile = createADefaultMemberProfileForPdl(pdlMemberProfile);
         MemberProfile recipient = createADefaultRecipient();
 
