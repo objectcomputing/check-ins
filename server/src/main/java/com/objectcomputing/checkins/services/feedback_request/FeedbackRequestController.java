@@ -69,7 +69,7 @@ public class FeedbackRequestController {
     @RequiredPermission(Permissions.CAN_CREATE_FEEDBACK)
     @Put()
     public Single<HttpResponse<FeedbackRequestResponseDTO>> update(@Body @Valid @NotNull FeedbackRequestUpdateDTO requestBody) {
-        return Single.fromCallable(() -> feedbackReqServices.update(fromDTO(requestBody)))
+        return Single.fromCallable(() -> feedbackReqServices.update(requestBody))
                 .observeOn(Schedulers.from(eventLoopGroup))
                 .map(savedFeedback -> (HttpResponse<FeedbackRequestResponseDTO>) HttpResponse
                         .ok()
@@ -159,7 +159,4 @@ public class FeedbackRequestController {
                 dto.getSubmitDate());
     }
 
-    private FeedbackRequest fromDTO(FeedbackRequestUpdateDTO dto) {
-        return new FeedbackRequest(dto.getId(), dto.getDueDate(), dto.getStatus(), dto.getSubmitDate());
-    }
 }
